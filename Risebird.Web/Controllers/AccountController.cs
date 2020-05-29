@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -17,18 +21,19 @@ namespace Risebird.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private IAzureStorageHelper _azureStorageHelper;        
+        private IAzureStorageHelper _azureStorageHelper;
         private IApplicationErrorLogger _applicationErrorLogger;
         private IProjectService _projectService;
         private IAccountService _accountService;
+        private IConfiguration _configuration;
 
-        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService)
+        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _projectService = projectService;
             _accountService = accountService;
-            
+            _configuration = configuration;
         }
 
         [Authorize]
@@ -46,7 +51,7 @@ namespace Risebird.Web.Controllers
                     var accountList = _accountService.GetAccounts(emailid, profileName).ToList();
                     accountList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
                     accountModel.AccountList = accountList;
-                    
+
                     if (TempData["SuccessErrorMessageAccount"] != null)
                     {
                         accountModel.Message = TempData["SuccessErrorMessageAccount"].ToString();
@@ -194,7 +199,7 @@ namespace Risebird.Web.Controllers
 
                 var accountModel = new Account();
                 accountModel = _accountService.GetAccount();
-                
+
                 return View(accountModel);
             }
             else
@@ -422,7 +427,7 @@ namespace Risebird.Web.Controllers
                         string projectList = string.Empty;
                         var accountModel = new Account();
                         var accountCluster = _accountService.GetAccountCluster(accountId);
-                        if(accountCluster!=null && accountCluster.Count()!=0)
+                        if (accountCluster != null && accountCluster.Count() != 0)
                         {
                             accountCluster = accountCluster.Where(x => x.ClientId == clientId);
                             projectList = string.Join(",", from item in accountCluster select item.ProjectId);
@@ -430,11 +435,11 @@ namespace Risebird.Web.Controllers
                         }
                         var remainingProjects = _accountService.GetProjectbyClientId(clientId, projectList);
 
-                        
+
                         var objList = new List<AccountProjectMapping>();
                         objList.AddRange(accountCluster);
                         objList.AddRange(remainingProjects);
-                        
+
                         accountModel.AccountProjectMappings = (IList<AccountProjectMapping>)(objList);
                         if (accountModel.AccountProjectMappings.Count() == 0)
                         {
@@ -459,6 +464,79 @@ namespace Risebird.Web.Controllers
                 return null;
             }
 
+        }
+        [HttpPost]
+        public JsonResult ChatBox()
+        {
+            var user = string.Empty;
+            if (HttpContext.Session.GetString("email") == null)
+            {
+
+            }
+            else
+            {
+                user = HttpContext.Session.GetString("email")?.Trim();
+                user = user.Replace("\"", "");
+            }
+            var resultset = GetConversation(user, "");
+            var _lst = resultset.Select(x => x.Sender.ToUpper()).Distinct();
+            var _lstset = new List<Conversation>();
+            foreach (var item in _lst)
+            {
+                var Isonline = resultset.Where(x => x.Sender.ToUpper() == item).Select(x => x.IsOnline).FirstOrDefault();
+                _lstset.Add(new Conversation { Sender = item, IsOnline = Isonline });
+            }
+            ViewBag.UserList = _lstset;
+            ViewBag.Self = user.ToUpper();
+            return Json(new { result = _lstset, Self = user.ToUpper() });
+        }
+        public List<Conversation> GetConversation(string userid, string contact)
+        {
+            string connectionString = _configuration["ConnectionString:DBConnectionString"];
+            if (String.IsNullOrEmpty(userid))
+            {
+                userid = HttpContext.Session.GetString("email")?.Trim();
+            }
+            if (String.IsNullOrEmpty(contact))
+            {
+                contact = "";
+            }
+            userid = userid.Replace("\"", "");
+            contact = contact.Replace("\"", "");
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", userid);
+                parameters.Add("@contact", contact);
+                var result = SqlMapper.Query<Conversation>(con, "usp_GetConversation", parameters,
+                        commandType: CommandType.StoredProcedure);
+                foreach (var item in result)
+                {
+                    item.Sender = item.Sender.ToUpper();
+                    item.Reciver = item.Reciver.ToUpper();
+                }
+                return (List<Conversation>)result;
+            }
+        }
+        public void AddConversation(string userid, string contact, string message)
+        {
+            string connectionString = _configuration["ConnectionString:DBConnectionString"];
+            if (String.IsNullOrEmpty(userid))
+            {
+                userid = HttpContext.Session.GetString("email")?.Trim();
+            }
+            userid = userid.Replace("\"", "");
+            contact = contact.Replace("\"", "");
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@id", userid);
+                parameters.Add("@contact", contact);
+                parameters.Add("@message", message);
+                var result = SqlMapper.Query(con, "usp_AddConversation", parameters,
+                        commandType: CommandType.StoredProcedure);
+                // return result;
+            }
         }
 
     }

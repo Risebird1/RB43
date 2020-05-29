@@ -63,6 +63,11 @@ namespace Risebird.Web.Controllers
                             item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                             item.IRFStatus = "Paused";
                         }
+                        else if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.IRFStatus = "Archived";
+                        }
                         else
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
@@ -95,7 +100,7 @@ namespace Risebird.Web.Controllers
                         filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
                         filter.SubscriptionStatus = filter.SubscriptionStatus == null ? filter.SubscriptionStatus = model.IRFList.Select(x => x.SubscriptionStatus).ToArray() : filter.SubscriptionStatus;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = model.IRFList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                        filter.PrimarySkill=filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
                         model.IRFList = model.IRFList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && filter.RFID.Contains(c.IRFId)
@@ -114,6 +119,11 @@ namespace Risebird.Web.Controllers
                             {
                                 item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                                 item.IRFStatus = "Paused";
+                            }
+                            else if (item.IsDeleted)
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                item.IRFStatus = "Archived";
                             }
                             else if (item.EndDate >= DateTime.Now)
                             {
@@ -184,13 +194,13 @@ namespace Risebird.Web.Controllers
                     filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
-                    irfList = irfList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0]) 
+                    irfList = irfList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                     && filter.RFID.Contains(c.IRFId)
                     && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                     && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
                     && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                     && (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.JDTiltle) : c.JDTiltle == null)).ToList();
-                   
+
 
                     if (irfList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                     {
@@ -204,6 +214,11 @@ namespace Risebird.Web.Controllers
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                             item.IRFStatus = "Paused";
+                        }
+                        else if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.IRFStatus = "Archived";
                         }
                         else if (item.EndDate >= DateTime.Now)
                         {

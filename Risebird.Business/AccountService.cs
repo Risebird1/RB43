@@ -32,7 +32,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _accountRepository.GetAllAccounts();                
+                return _accountRepository.GetAllAccounts();
             }
 
             catch (Exception e)
@@ -107,12 +107,12 @@ namespace Risebird.Business
                 string projectList = string.Empty;
                 var account = _accountRepository.GetAccountById(id);
                 var accountCluster = _accountRepository.GetAccountCluster(id);
-                if(accountCluster!=null && accountCluster.Count()!=0)
+                if (accountCluster != null && accountCluster.Count() != 0)
                 {
                     projectList = string.Join(",", from item in accountCluster select item.ProjectId);
                 }
                 var remainingProjects = _accountRepository.GetProjectByClientId(account.ClientId, projectList);
-                
+
                 var objList = new List<AccountProjectMapping>();
                 objList.AddRange(accountCluster);
                 objList.AddRange(remainingProjects);
@@ -209,7 +209,18 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public string Signout(string EmailId)
+        {
+            try
+            {
+               return _accountRepository.Signout(EmailId);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
 
 

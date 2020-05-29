@@ -25,9 +25,68 @@
 
 
 
+    <style>
+        .min {
+            width: 250px;
+            height: 35px;
+            overflow: hidden !important;
+            padding: 0px !important;
+            margin: 0px;
+            float: left;
+            position: static !important;
+        }
 
+            .min .modal-dialog, .min .modal-content {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 0px !important;
+            }
 
+            .min .modal-header {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 3px 5px !important;
+            }
 
+        .display-none {
+            display: none;
+        }
+
+        button .fa {
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .min .fa {
+            font-size: 14px;
+        }
+
+        .min .menuTab {
+            display: none;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .minmaxCon {
+            height: 35px;
+            bottom: 1px;
+            position: fixed;
+            right: 5px;
+            z-index: 9999;
+        }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+        }
+    </style>
 
 
 
@@ -101,7 +160,221 @@
         @RenderBody()
     </div>
 
+    <div id="MyChatModel" class="modal mymodal" style="display: none;position: fixed;z-index: 1;padding-top: 50px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="col-md-10">
+                        <h5 class="modal-title" style="color:#fff">Chat <input type="text" value="" hidden id="txtself" /></h5>
+                    </div>
+                    <div class="col-md-1">
+                        <button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>
+                    </div>
+                    <div class="col-md-1">
+                        <span onclick="closeChatPopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+                    </div>
 
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row" style="padding:10px">
+                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                            <h6><lable id="lblChatname"></lable></h6>
+                            <div id="divchatbox" style="max-height: 300px;overflow-y: auto;">
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9" style="padding-right:0px">
+                                    <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
+                                </div>
+                                <div class="col-md-3" style="padding-left:0px">
+                                    <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <input style="background:#ff253a!important" type="button" onclick="closeChatPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 5px;
+        background-color: #fff;
+        color: white;"> </div>
+            </div>
+        </div>
+    </div>
+    <div class="minmaxCon"></div>
+
+    <script>
+        var flag = true;
+        var flagdisplay = true;
+        function closeChatPopUp() {
+            var modal = document.getElementById("MyChatModel");
+            modal.style.display = "none";
+            flag = false;
+        }
+        function checkConversation() {
+            $.ajax({
+                type: "POST",
+                url: "/Account/GetConversation",
+                data: { userid: $("#txtself").val(), contact: "" },
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].messageInfo == "Send") {
+                            var modal = document.getElementById("MyChatModel");
+                            modal.style.display = "block";
+                            flagdisplay = false;
+                            $(".modalMinimize").click();
+                        }
+                    }
+                    setTimeout(checkConversation(''), 5000);
+                }
+            });
+        }
+        function OpenChatPopUp() {
+            $.ajax({
+                type: "POST",
+                url: "/Account/ChatBox",
+                success: function (data) {
+                    var modal = document.getElementById("MyChatModel");
+                    modal.style.display = "block";
+                    var html = '';
+                    for (var i = 0; i < data.result.length; i++) {
+                        if (data.result[i].isOnline == 1) {
+                            html += ' <p><a onclick="Details(' + i + ')"><span class="dot" style="background-color:green;"></span>  ' + data.result[i].sender + '</a></p>';
+                        }
+                        else {
+                            html += ' <p><a onclick=""><span class="dot" ></span>  ' + data.result[i].sender + '</a></p>';
+                        }
+                        html += '<input type="text" hidden value="' + data.result[i].sender + '" id="txthiddenSorce_' + i + '" />';
+                    }
+                    $("#txtself").val(data.self);
+                    $("#lblChatname").text("");
+                    $("#divchatbox").empty().html(html);
+                    flag = true;
+                }
+            });
+        }
+        var sendvalue = '';
+        function Details(id) {
+            var Sender = $("#txthiddenSorce_" + id).val();
+            document.getElementById("txtmessage").style.display = "block";
+            document.getElementById("btnchatConversation").style.display = "block";
+            ChatConversation(Sender);
+        }
+        function directopenChat(Sender) {
+            var modal = document.getElementById("MyChatModel");
+            modal.style.display = "block";
+            flag = true;
+            document.getElementById("txtmessage").style.display = "block";
+            document.getElementById("btnchatConversation").style.display = "block";
+            ChatConversation(Sender);
+        }
+        function ChatConversation(Sender) {
+            if (Sender != "" && Sender != null) {
+                sendvalue = Sender;
+            } else {
+                Sender = sendvalue;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Account/GetConversation",
+                data: { contact: Sender, userid: $("#txtself").val() },
+                success: function (data) {
+                    var html = '';
+                    var countvalue = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                        if (data[i].sender != $("#txtself").val()) {
+                            html += '<div style="text-align:left;height: auto;background-color: lightgray;padding-top:15px" class="form-control col-md-6">' + data[i].message + '</div>';
+                            countvalue = i;
+                        } else {
+                            html += '<div class="col-md-6"></div><div style="text-align:Right;height: auto;background-color: aquamarine;padding-top:15px" class="form-control col-md-6">' + data[i].message + '</div>';
+                        }
+                        html += '</div>';
+
+                    }
+                    var createheader = '';
+                    if (data[countvalue].isOnline == 1) {
+                        createheader += Sender + ' (Online)';
+                    } else {
+                        createheader += Sender + ' (Offline)';
+                    }
+                    $("#divchatbox").empty().html(html);
+                    $("#lblChatname").text(createheader);
+                    $('#divchatbox').scrollTop($('#divchatbox')[0].scrollHeight);
+                    if (flag == true) {
+                        setTimeout(ChatConversation(''), 5000);
+                    }
+                    else {
+                        flag = true;
+                    }
+                }
+            });
+
+        }
+        function SendConversation() {
+            var Sender = sendvalue;
+            if (txtmessage != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/AddConversation",
+                    data: { contact: Sender, userid: $("#txtself").val(), message: $("#txtmessage").val() },
+                    success: function (data) {
+                        ChatConversation('');
+                        $("#txtmessage").val(''); 
+                    }
+                });
+            }
+        }
+        $(document).ready(function () {
+            checkConversation();
+            var $content, $modal, $apnData, $modalCon;
+            $content = $(".min");
+            $(".mdlFire").click(function (e) {
+                e.preventDefault();
+                var $id = $(this).attr("data-target");
+                $($id).modal({
+                    backdrop: false,
+                    keyboard: false
+                });
+
+            });
+
+            $(".modalMinimize").on("click", function () {
+                if (flagdisplay == false) {
+                    OpenChatPopUp();
+                }
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+                $($modal).toggleClass("min");
+                if ($($modal).hasClass("min")) {
+                    $(".minmaxCon").append($apnData);
+                    $(this).find("i").toggleClass('fa-minus').toggleClass('fa-clone');
+                } else {
+                    $(".container").append($apnData);
+                    $(this).find("i").toggleClass('fa-clone').toggleClass('fa-minus');
+                };
+            });
+            $("button[data-dismiss='modal']").click(function () {
+                $(this).closest(".mymodal").removeClass("min");
+                $(".container").removeClass($apnData);
+                $(this).next('.modalMinimize').find("i").removeClass('fa fa-clone').addClass('fa fa-minus');
+            });
+            $("#txtmessage").keypress(function () {
+                var keyCode = this.which ? this.which : this.keyCode
+                if (keyCode == 13) {
+                    SendConversation();
+                }
+
+            });
+        });
+    </script>
 
 
     <!--   Core JS Files   -->

@@ -712,6 +712,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsShortlisted = model.IsShortlisted;
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
+                        NewModel.IsOnline = model.IsOnline;
+                        NewModel.candidateEmail = model.candidateEmail;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -779,6 +781,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsShortlisted = model.IsShortlisted;
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
+                        NewModel.IsOnline = model.IsOnline;
+                        NewModel.candidateEmail = model.candidateEmail;
 
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
@@ -1035,6 +1039,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsShortlisted = model.IsShortlisted;
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
+                        NewModel.IsOnline = model.IsOnline;
+                        NewModel.candidateEmail = model.candidateEmail;
 
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {

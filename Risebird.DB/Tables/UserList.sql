@@ -11,7 +11,8 @@ CREATE TABLE [dbo].[UserList](
 			[LastLogin] [datetime] NULL,		
 			[LastLogout] [datetime] NULL,		
 			[IsActive] [bit] NULL,			
-			[ImageURL] [nvarchar](1000) NULL,			
+			[ImageURL] [nvarchar](1000) NULL,
+			[isonline] [varchar](1) NULL,
 			CONSTRAINT [FK_User_Group] FOREIGN KEY (idProfile) REFERENCES Profile(id),
  CONSTRAINT [PK_UserList] PRIMARY KEY CLUSTERED 					
 (					
