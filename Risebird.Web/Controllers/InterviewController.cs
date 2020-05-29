@@ -235,6 +235,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 27].Value = "Approval Comments";
                 Sheet.Cells[1, 28].Value = "Final Selection Status";
                 Sheet.Cells[1, 29].Value = "Final Selection Comments";
+                Sheet.Cells[1, 30].Value = "QC Interviewer";
 
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
@@ -342,6 +343,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 27].Value = item.ApprovalComments != null ? item.ApprovalComments : "Comments not submitted.";
                         Sheet.Cells[i, 28].Value = item.FinalSelectionStat != null ? item.FinalSelectionStat : "";
                         Sheet.Cells[i, 29].Value = item.FinalComments != null ? item.FinalComments : "Comments not submitted.";
+                        Sheet.Cells[i, 30].Value = item.QCInterviewer;
 
                         i++;
                     }

@@ -91,6 +91,7 @@ namespace Risebird.Repository
                     {
                         var parameters = new DynamicParameters();
                         parameters.Add("clientid", clientId);
+                        parameters.Add("Emailid", Emailid);
                         var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
                             commandType: CommandType.StoredProcedure);
                         return result;

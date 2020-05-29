@@ -21,7 +21,7 @@ inner join TransQualityController tqc on tqc.IRFId= IRF.id
 inner join UserList ul on tqc.UserId= ul.id
 where im.id not in(select InterviewId from QCFeedbackReport) and
 im.interviewer!=@emailID and ul.EmailId=@emailID and
-confirmationStatus=1 and interviewer is not null and interviewDate <= GETDATE() 
+confirmationStatus=1 and interviewer is not null 
 and (ic.InterviewStatus=2 or ic.InterviewStatus=4)
 
 END
