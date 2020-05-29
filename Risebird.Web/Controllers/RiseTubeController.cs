@@ -1225,6 +1225,36 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
+        public JsonResult ShareVedioLinkToMail(string Emailids, string vedioid, string Name, string comment, string skills)
+        {
+            var email = HttpContext.Session.GetString("email");
+            email = email.Replace("\"", "");
+            //var modelList = _meetingService.VedioShared(Emailids, vedioid, email);
+            string currenturl = vedioid;
 
+            //if (!String.IsNullOrEmpty(modelList))
+            //{
+            //    Mail _mail1 = new Mail();
+            //    _mail1.TO = Emailids;
+            //    _mail1.CC = email;
+            //    _mail1.Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you";
+            //    var result1 = _notificationHelper.SharedVideoNofitication(_mail1, Name, skills);
+            //}
+            //var modelemail = modelList.Split(";");
+            //foreach (var item in modelemail)
+            //{
+            //    Emailids = Emailids.Replace(item, "");
+            //    Emailids = Emailids.Replace(";;", ";");
+            //}
+            if (Emailids != "" && Emailids != ";")
+            {
+                Mail _mail = new Mail();
+                _mail.TO = Emailids;
+                _mail.CC = email;
+                _mail.Subject = "An interview video is shared with you";
+                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment);
+            }
+            return Json("");
+        }
     }
 }
