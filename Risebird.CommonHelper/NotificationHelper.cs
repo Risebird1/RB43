@@ -555,7 +555,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string SharedVideoNofiticationExternal(Mail model, string name, string url, string comment)
+                public string SharedVideoNofiticationExternal(Mail model, string name, string url,string comment)
         {
             try
             {
