@@ -626,6 +626,10 @@ background-color: rgba(0,0,0,0.4);
 .border-bottom {
     border-bottom: 1px #cccccc63 solid;
 }
+.unarchive-btn {
+    background: #848080eb !important;
+}
+
 
 .trash-btn {
     background:#d20505 !important;
@@ -678,8 +682,8 @@ background-color: rgba(0,0,0,0.4);
     cursor: pointer !important;
 }
 
-    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover, {
-        background: url("https://i.ya-webdesign.com/images/play-button-png-6.png");
+    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+        background: url("../../img/audio-button-set-4-transparent.png");
         background-size: 25px;
         background-repeat: no-repeat;
         background-position: 45%;

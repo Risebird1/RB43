@@ -37,8 +37,10 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Current Employer")]
         public string currentEmployerName { get; set; }
 
-        [Display(Name = "Salary Range")]
+        [Display(Name = "Expected Salary")]
         public string expectedPerHourRate { get; set; }
+        [Display(Name = "Notice Period")]
+        public string joiningTime { get; set; }
 
         public ProctoringReport Proctoring { get; set; }
 
@@ -133,7 +135,7 @@ namespace Risebird.Entities.ViewModel
         public string ThumbnailImage { get; set; }
         public string PrimarySkill { get; set; }
 
-        public string joiningTime { get; set; }
+        
 
     }
 }

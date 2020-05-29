@@ -77,11 +77,11 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Staffing Agency")]
 
         public string staffingAgency { get; set; }
-        [Display(Name = "Expected Per Hour Rate")]
-        [Required(ErrorMessage = "Please enter Expected Per Hour Rate.")]
+        [Display(Name = "Expected Salary")]
+        [Required(ErrorMessage = "Please enter Expected Salary.")]
         public string expectedPerHourRate { get; set; }
-        [Display(Name = "Expected Joining Time")]
-        [Required(ErrorMessage = "Please enter Joining Time.")]
+        [Display(Name = "Notice Period")]
+        [Required(ErrorMessage = "Please enter Notice Period.")]
         public string joiningTime { get; set; }
         public string InterviewerComment { get; set; }
         public int? InterviewStatus { get; set; }

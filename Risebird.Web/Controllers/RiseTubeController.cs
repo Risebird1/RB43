@@ -1212,7 +1212,7 @@ namespace Risebird.Web.Controllers
                 Mail _mail1 = new Mail();
                 _mail1.TO = Emailids;
                 _mail1.CC = email;
-                _mail1.Subject = "Risebird: Interview video is shared with you";
+                _mail1.Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you";
                 var result1 = _notificationHelper.SharedVideoNofitication(_mail1, Name,skills);
             }
             var modelemail = modelList.Split(";");
@@ -1226,7 +1226,7 @@ namespace Risebird.Web.Controllers
                 Mail _mail = new Mail();
                 _mail.TO = Emailids;
                 _mail.CC = email;
-                _mail.Subject = "Risebird: Interview video is shared with you";
+                _mail.Subject = "Risebird: Candidate Name: "+ Name+" Interview video is shared with you";
                 var result = _notificationHelper.SharedVideoNofiticationExternal(_mail,Name, currenturl);
             }
             return Json("");

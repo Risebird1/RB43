@@ -114,7 +114,7 @@
                                                 <tr id=@item.imid>
                                                     <td> @item.interviewDate </td>
                                                     <td> @item.candidateName </td>
-                                                    @if (item.QCInterview > 0)
+                                                    @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
                                                     {
                                                         <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
                                                     }
