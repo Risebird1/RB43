@@ -318,7 +318,7 @@
                                                                 <span>Total Interviews:</span> @(item.TotalMeetings != null ? item.TotalMeetings : 0)
                                                             </div> <br />
 
-                                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                                            @if (Model.Profile != "Recruiter")
                                                             {
                                                                 <div class="row ">
                                                                     <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
