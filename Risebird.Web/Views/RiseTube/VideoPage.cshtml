@@ -206,6 +206,24 @@
     .wrapper{
         height:auto !important
     }
+    .btn-danger:hover, .btn-danger:focus, .btn-danger:not(:disabled):not(.disabled):active, .btn-danger:not(:disabled):not(.disabled).active, .btn-danger:not(:disabled):not(.disabled):active:focus, .btn-danger:not(:disabled):not(.disabled).active:focus, .btn-danger:active:hover, .btn-danger.active:hover, .show > .btn-danger.dropdown-toggle, .show > .btn-danger.dropdown-toggle:focus, .show > .btn-danger.dropdown-toggle:hover {
+        background-color: #ff5555;
+        color: #000;
+        box-shadow: none;
+        border-color: #ff5555;
+    }
+    .dropdown-toggle::after {
+        color: rgba(0, 0, 0, 0.29);
+         position:relative;
+        right: 30px;
+        top: 14px;
+    }
+    .dropdown-toggle::after {
+        color: rgba(0, 0, 0, 0.29);
+        /* position: absolute; */
+        right: 30px;
+        top: 14px;
+    }
 </style>
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
@@ -673,9 +691,18 @@
                                                         {
                                                             @if (ViewBag.ProfileName == "CuratedUser")
                                                             {
-                                                                <div class="col-md-3">
-                                                                    <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                            Share
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Share to Public" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Share to Mail" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                        </div>
+                                                    </div>
+                                                   
+                                                </div>
                                                                 <div class="col-md-3 shortlist" style="text-align: end;">
                                                                     @if (Model.IsShortlisted > 0)
                                                                     {<i class="fa fa-check"></i>
@@ -1413,7 +1440,43 @@
         </div>
     </div>
 </div>
-
+<div id="MyShareModel1" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Share</h5>
+                <span onclick="closeSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                        <div class="talktext">
+                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="padding:10px">
+                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                        <div class="talktext">
+                            <textarea rows="2" id="comment" placeholder="Comment" style="width:100%"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;
+        background-color: #fff;
+        color: white;"> </div>
+        </div>
+    </div>
+</div>
 <div id="MyShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
         top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
     <!-- Modal content -->
@@ -2719,6 +2782,12 @@
             var modal = document.getElementById("MyShareModel");
             modal.style.display = "block";
         });
+        $("#btnShare1").on('click', function () {
+            var getComment = document.getElementById("IreportModel_InterviewerComment").val();
+            document.getElementById("comment").innerHTML = getComment;
+            var modal = document.getElementById("MyShareModel1");
+            modal.style.display = "block";
+        });
         $("#btnShortlist").on('click', function () {
             if ($(this).attr('Shortvalue') == 1) {
                 $(this).attr('Shortvalue', "2");
@@ -2871,6 +2940,20 @@
     function closeSharePopUp() {
         var modal = document.getElementById("MyShareModel");
         modal.style.display = "none";
+    }
+    function closeSharePopUp() {
+        var modal = document.getElementById("MyShareModel1");
+        modal.style.display = "none";
+    }
+    function ShareVedioLink() {
+        $.ajax({
+            type: "POST",
+            url: "/RiseTube/VedioSharedToMail",
+            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#txthiddenSkill").val() },
+            success: function (data) {
+                closeSharePopUp();
+            }
+        });
     }
     function ShareVedioLink() {
         $.ajax({
