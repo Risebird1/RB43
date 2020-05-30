@@ -113,7 +113,19 @@
                                             {
                                                 <tr id=@item.imid>
                                                     <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
+                                                    @if (item.IsOnline == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                        </td>
+                                                    }
+
                                                     @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
                                                     {
                                                         <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
@@ -184,7 +196,7 @@
 
         <!-- end row -->
     </div>
-  
+
 </div>
 
 <script>
