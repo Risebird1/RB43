@@ -712,6 +712,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsShortlisted = model.IsShortlisted;
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
+                        NewModel.IsOnline = model.IsOnline;
+                        NewModel.candidateEmail = model.candidateEmail;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -779,6 +781,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsShortlisted = model.IsShortlisted;
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
+                        NewModel.IsOnline = model.IsOnline;
+                        NewModel.candidateEmail = model.candidateEmail;
 
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
@@ -1035,6 +1039,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsShortlisted = model.IsShortlisted;
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
+                        NewModel.IsOnline = model.IsOnline;
+                        NewModel.candidateEmail = model.candidateEmail;
 
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
@@ -1225,6 +1231,24 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
+        public JsonResult ShareVedioLinkToMail(string Emailids, string vedioid, string Name,string comment, string skills)
+        {
+            var email = HttpContext.Session.GetString("email");
+            email = email.Replace("\"", "");
+           
+            string currenturl = vedioid;
 
+          
+            if (Emailids != "" && Emailids != ";")
+            {
+                Mail _mail = new Mail();
+                _mail.TO = Emailids;
+                _mail.CC = email;
+                _mail.Subject = "An interview of Candidate: "+ Name+" video is shared with you";
+                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment);
+            }
+            return Json("");
+        }
+          
     }
 }

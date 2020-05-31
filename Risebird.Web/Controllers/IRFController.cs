@@ -63,6 +63,11 @@ namespace Risebird.Web.Controllers
                             item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                             item.IRFStatus = "Paused";
                         }
+                        else if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.IRFStatus = "Archived";
+                        }
                         else
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
@@ -95,7 +100,7 @@ namespace Risebird.Web.Controllers
                         filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
                         filter.SubscriptionStatus = filter.SubscriptionStatus == null ? filter.SubscriptionStatus = model.IRFList.Select(x => x.SubscriptionStatus).ToArray() : filter.SubscriptionStatus;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = model.IRFList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                        filter.PrimarySkill=filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
                         model.IRFList = model.IRFList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && filter.RFID.Contains(c.IRFId)
@@ -115,6 +120,13 @@ namespace Risebird.Web.Controllers
                                 item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                                 item.IRFStatus = "Paused";
                             }
+
+                            else if (item.IsDeleted)
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                item.IRFStatus = "Archived";
+                            }
+
                             else if (item.EndDate >= DateTime.Now)
                             {
                                 item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
@@ -184,13 +196,13 @@ namespace Risebird.Web.Controllers
                     filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
-                    irfList = irfList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0]) 
+                    irfList = irfList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                     && filter.RFID.Contains(c.IRFId)
                     && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                     && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
                     && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                     && (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.JDTiltle) : c.JDTiltle == null)).ToList();
-                   
+
 
                     if (irfList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                     {
@@ -204,6 +216,12 @@ namespace Risebird.Web.Controllers
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                             item.IRFStatus = "Paused";
+                        }
+
+                        else if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.IRFStatus = "Archived";
                         }
                         else if (item.EndDate >= DateTime.Now)
                         {
@@ -3052,16 +3070,27 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
                 {
                     var model = _evaluatorService.GetCandidate(candidateId, irfId);
-
-                    var list = new SelectList(new[]
+                    model.CandidateAudios = /*(IList<CandidateAudio>)*/_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
+                    
+                    if(model.CandidateAudios.Where(x=>x.IsVoiceBiometric).Count()>0)
                     {
-                        new { ID = "Enrollment1", Name = "Enrollment 1"},
-                        new { ID = "Enrollment2", Name = "Enrollment 2"  },
-                        new { ID = "Enrollment3", Name = "Enrollment 3" }
-                    }, "ID", "Name", "Enrollment1");
-
-
-                    ViewData["list"] = list;
+                        model.HasVoiceBiometricAudio = true;
+                        model.PhraseList = new SelectList(_evaluatorService.GetPhrases(), "text", "text",model.CandidateAudios.Where(x=>x.IsVoiceBiometric).FirstOrDefault().PhraseDetail);
+                    }
+                    else
+                    {
+                        model.PhraseList = new SelectList(_evaluatorService.GetPhrases(), "text", "text");
+                    }
+                    if(model.CandidateAudios.Where(x => x.IsVoiceBiometric && !x.IsEnrolled).Count()>0)
+                    {
+                        model.ContainsUnEnrolled = true;
+                    }
+                    model.EnrollmentList = GetEnrollmentList();
+                    if (TempData["SuccessErrorMessageUploadAudio"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageUploadAudio"].ToString();
+                        TempData.Remove("SuccessErrorMessageUploadAudio");
+                    }
                     return View(model);
                 }
                 else
@@ -3117,13 +3146,13 @@ namespace Risebird.Web.Controllers
 
                         if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Audio uploaded successfully";
-                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
+                            TempData["SuccessErrorMessageUploadAudio"] = "Audio uploaded successfully";
+                            return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName=model.IRFName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Audio Upload failed.";
-                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
+                            TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
+                            return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
                         }
                     }
                     else
@@ -3139,8 +3168,8 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageAudio"] = "Audio Upload failed.";
-                return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
+                TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
+                return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
             }
         }
 
@@ -3181,12 +3210,67 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        //[Authorize]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> EnrollVoiceItUser(IFormCollection model)
+        //{
+
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null &&
+        //            HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+        //            {
+        //                var count = model.Count();
+        //                int imax = (count - 3) / 8;
+        //                var objList = new List<CandidateAudio>();
+        //                for (int i = 0; i < imax; i++)
+        //                {
+        //                    var obj = new CandidateAudio();
+        //                    obj.id = Convert.ToInt32(model["CandidateAudios[" + i + "].id"]);
+        //                    obj.IRFId = Convert.ToInt32(model["CandidateAudios[" + i + "].IRFId"]);
+        //                    obj.IRFName = model["CandidateAudios[" + i + "].IRFName"];
+        //                    obj.CandidateId = Convert.ToInt32(model["CandidateAudios[" + i + "].CandidateId"]);
+        //                    obj.IsEnrolled = Convert.ToBoolean(model["CandidateAudios[" + i + "].IsEnrolled"]);
+        //                    obj.AudioFileLink = model["CandidateAudios[" + i + "].AudioFileLink"];
+        //                    obj.PhraseDetail = model["CandidateAudios[" + i + "].PhraseDetail"];
+        //                    //VoiceItUserId
+        //                    obj.VoiceItUserId = model["CandidateAudios[" + i + "].VoiceItUserId"];
+        //                    objList.Add(obj);
+        //                }
+        //                var result = _evaluatorService.EnrollCandidate(objList);
+        //                TempData["SuccessErrorMessageEnroll"] = result;
+        //                return RedirectToAction("EnrollVoiceItUser", new { candidateId = model["CandidateAudios[0].CandidateId"], candidateEmail = model["CandidateEmail"], irfId = model["CandidateAudios[0].IRFId"], irfName = model["IRFName"] });
+
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessageEnrollment"] = "Failed!";
+        //        return RedirectToAction("EnrollVoiceItUser", new { candidateId = model["CandidateAudios[0].CandidateId"], irfId = model["CandidateAudios[0].IRFId"] });
+
+        //    }
+        //}
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EnrollVoiceItUser(IFormCollection model)
         {
-
+            CandidateAudio canObj = new CandidateAudio();
             try
             {
                 if (HttpContext.Session.GetString("email") != null &&
@@ -3197,7 +3281,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
                     {
                         var count = model.Count();
-                        int imax = (count - 3) / 8;
+                        int imax = (count - 1) / 8;
                         var objList = new List<CandidateAudio>();
                         for (int i = 0; i < imax; i++)
                         {
@@ -3214,8 +3298,9 @@ namespace Risebird.Web.Controllers
                             objList.Add(obj);
                         }
                         var result = _evaluatorService.EnrollCandidate(objList);
-                        TempData["SuccessErrorMessageEnroll"] = result;
-                        return RedirectToAction("EnrollVoiceItUser", new { candidateId = model["CandidateAudios[0].CandidateId"], candidateEmail = model["CandidateEmail"], irfId = model["CandidateAudios[0].IRFId"], irfName = model["IRFName"] });
+                        canObj = objList.First();
+                        TempData["SuccessErrorMessageUploadAudio"] = "Kindly check the table below for enrollment status of each audio.";
+                        return RedirectToAction("UploadAudio", new { candidateId = canObj.CandidateId, irfId = canObj.IRFId, rfName = canObj.IRFName });
 
                     }
                     else
@@ -3231,12 +3316,11 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageEnrollment"] = "Failed!";
-                return RedirectToAction("EnrollVoiceItUser", new { candidateId = model["CandidateAudios[0].CandidateId"], irfId = model["CandidateAudios[0].IRFId"] });
+                TempData["SuccessErrorMessageUploadAudio"] = "Enrollment Failed!";
+                return RedirectToAction("UploadAudio", new { candidateId = canObj.CandidateId, irfId = canObj.IRFId, rfName = canObj.IRFName });
 
             }
         }
-
         [Authorize]
         public IActionResult PauseIRF(int irfId, string irfName)
         {
@@ -3393,6 +3477,17 @@ namespace Risebird.Web.Controllers
                 return false;
             }
 
+        }
+
+        private SelectList GetEnrollmentList()
+        {
+            var listItems = new List<SelectListItem>();
+            foreach (var item in Enum.GetValues(typeof(VoiceEnrollment)))
+            {
+                listItems.Add(new SelectListItem { Text = item.ToString(), Value = item.ToString() });
+            }
+
+            return new SelectList(listItems, "Value", "Text", listItems.First().Value);
         }
     }
 }

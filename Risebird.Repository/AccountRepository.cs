@@ -328,6 +328,25 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public string Signout(string EmailId)
+        {
+            try
+            {
+                string query = "Update UserList set IsOnline=0, LastLogout=GETDATE() where EmailId=@EmailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@EmailId", EmailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return "success";
+                }
 
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
     }
 }
