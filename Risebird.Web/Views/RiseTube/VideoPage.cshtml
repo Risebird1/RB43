@@ -726,8 +726,16 @@
                                                             }
                                                             else
                                                             {
-                                                                <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                
+                                                                <div class="btn-group">
+                                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                        Share
+                                                                    </button>
+                                                                    <div class="dropdown-menu">
+                                                                        <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    </div>
+                                                                </div>
+
 
                                                             }
 
@@ -2774,7 +2782,8 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
         $("#btnShare1").on('click', function () {
             var modal = document.getElementById("MyShareModel1");
             modal.style.display = "block";
-            var getComment = document.getElementById("IreportModel_InterviewerComment").val;
+            var getComment = document.getElementById("IreportModel_InterviewerComment").value;
+            console.log(getComment)
             document.getElementById("comment").innerHTML = getComment;
         
         });
