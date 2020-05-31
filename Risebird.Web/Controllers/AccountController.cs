@@ -468,60 +468,60 @@ namespace Risebird.Web.Controllers
 
         }
         [HttpPost]
-        public JsonResult ChatBox()
-        {
-            var user = string.Empty;
-            if (HttpContext.Session.GetString("email") == null)
-            {
-                user = HttpContext.Session.GetString("email")?.Trim();
-                user = user.Replace("\"", "");
-            }
-            else
-            {
-                user = HttpContext.Session.GetString("email")?.Trim();
-                user = user.Replace("\"", "");
-            }
-            var resultset = GetConversation(user, "");
-            var _lst = resultset.Select(x => x.Sender.ToUpper()).Distinct();
-            var _lstset = new List<Conversation>();
-            foreach (var item in _lst)
-            {
-                var Isonline = resultset.Where(x => x.Sender.ToUpper() == item).Select(x => x.IsOnline).FirstOrDefault();
-                _lstset.Add(new Conversation { Sender = item, IsOnline = Isonline });
-            }
-            ViewBag.UserList = _lstset;
-            ViewBag.Self = user.ToUpper();
-            return Json(new { result = _lstset, Self = user.ToUpper() });
-        }
-      
-        public List<Conversation> GetConversation(string userid, string contact)
-        {
-            string connectionString = _configuration["ConnectionString:DBConnectionString"];
-            if (String.IsNullOrEmpty(userid))
-            {
-                userid = HttpContext.Session.GetString("email")?.Trim();
-            }
-            if (String.IsNullOrEmpty(contact))
-            {
-                contact = "";
-            }
-            userid = userid.Replace("\"", "");
-            contact = contact.Replace("\"", "");
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("@id", userid);
-                parameters.Add("@contact", contact);
-                var result = SqlMapper.Query<Conversation>(con, "usp_GetConversation", parameters,
-                        commandType: CommandType.StoredProcedure);
-                foreach (var item in result)
-                {
-                    item.Sender = item.Sender.ToUpper();
-                    item.Reciver = item.Reciver.ToUpper();
-                }
-                return (List<Conversation>)result;
-            }
-        }
+        //public JsonResult ChatBox()
+        //{
+        //    var user = string.Empty;
+        //    if (HttpContext.Session.GetString("email") == null)
+        //    {
+        //        user = HttpContext.Session.GetString("email")?.Trim();
+        //        user = user.Replace("\"", "");
+        //    }
+        //    else
+        //    {
+        //        user = HttpContext.Session.GetString("email")?.Trim();
+        //        user = user.Replace("\"", "");
+        //    }
+        //    var resultset = GetConversation(user, "");
+        //    var _lst = resultset.Select(x => x.Sender.ToUpper()).Distinct();
+        //    var _lstset = new List<Conversation>();
+        //    foreach (var item in _lst)
+        //    {
+        //        var Isonline = resultset.Where(x => x.Sender.ToUpper() == item).Select(x => x.IsOnline).FirstOrDefault();
+        //        _lstset.Add(new Conversation { Sender = item, IsOnline = Isonline });
+        //    }
+        //    ViewBag.UserList = _lstset;
+        //    ViewBag.Self = user.ToUpper();
+        //    return Json(new { result = _lstset, Self = user.ToUpper() });
+        //}
+
+        //public List<Conversation> GetConversation(string userid, string contact)
+        //{
+        //    string connectionString = _configuration["ConnectionString:DBConnectionString"];
+        //    if (String.IsNullOrEmpty(userid))
+        //    {
+        //        userid = HttpContext.Session.GetString("email")?.Trim();
+        //    }
+        //    if (String.IsNullOrEmpty(contact))
+        //    {
+        //        contact = "";
+        //    }
+        //    userid = userid.Replace("\"", "");
+        //    contact = contact.Replace("\"", "");
+        //    using (SqlConnection con = new SqlConnection(connectionString))
+        //    {
+        //        var parameters = new DynamicParameters();
+        //        parameters.Add("@id", userid);
+        //        parameters.Add("@contact", contact);
+        //        var result = SqlMapper.Query<Conversation>(con, "usp_GetConversation", parameters,
+        //                commandType: CommandType.StoredProcedure);
+        //        foreach (var item in result)
+        //        {
+        //            item.Sender = item.Sender.ToUpper();
+        //            item.Reciver = item.Reciver.ToUpper();
+        //        }
+        //        return (List<Conversation>)result;
+        //    }
+        //}
         public void AddConversation(string userid, string contact, string message)
         {
             string connectionString = _configuration["ConnectionString:DBConnectionString"];

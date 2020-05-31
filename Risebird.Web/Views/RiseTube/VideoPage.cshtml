@@ -1483,7 +1483,7 @@
                 <div class="row" style="padding:10px">
                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
                         <div class="talktext">
-                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                            <textarea rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                         </div>
                     </div>
                 </div>
@@ -2946,17 +2946,16 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
             url: "/RiseTube/ShareVedioLinkToMail",
             data: { Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val() },
             success: function (data) {
-                closeSharePopUp();
+                closeSharePopUp1();
             }
         });
     }
         function ShareVedioLink() {
-            var getEmail = document.getElementById("txtsharetext").val();
-            console.log(getEmail)
+           
         $.ajax({
             type: "POST",
             url: "/RiseTube/VedioShared",
-            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
+            data: { Emailids: $("#txtsharetext1").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
             success: function (data) {
                 closeSharePopUp();
             }
