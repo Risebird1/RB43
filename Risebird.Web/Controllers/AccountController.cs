@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -471,7 +473,8 @@ namespace Risebird.Web.Controllers
             var user = string.Empty;
             if (HttpContext.Session.GetString("email") == null)
             {
-
+                user = HttpContext.Session.GetString("email")?.Trim();
+                user = user.Replace("\"", "");
             }
             else
             {
@@ -490,6 +493,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Self = user.ToUpper();
             return Json(new { result = _lstset, Self = user.ToUpper() });
         }
+      
         public List<Conversation> GetConversation(string userid, string contact)
         {
             string connectionString = _configuration["ConnectionString:DBConnectionString"];
