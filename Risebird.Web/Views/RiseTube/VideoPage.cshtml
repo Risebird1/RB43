@@ -257,7 +257,7 @@
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
-                                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                    <div class="modal-header br-bm">
                                         <h5 class="modal-title" id="filterModalLabel" style="color:#fff">Filter</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
                                     </div>
@@ -504,8 +504,8 @@
                                                     <div class="form-group">
                                                         <div class="row">
                                                             <div class="col-md-12 col-sm-12">
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded reset-filter"> Reset Filter</button>
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded apply-filter">  Apply Filter</button>
 
                                                             </div>
                                                         </div>
@@ -610,7 +610,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <label id="lblErrorMsg" title="Record not fount...!" style="color:red;">Record not found...!</label>
+                                                        <label id="lblErrorMsg" class="lblErrorMsg" title="Record not fount...!">Record not found...!</label>
                                                     }
                                                 </div>
                                             </div>
@@ -694,20 +694,20 @@
                                                                 {
                                                                     @if (Model.IsIntrested == "Interest Sent")
                                                                     {
-                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
+                                                                        <input type="button" class="form-control btninterest showinter interest-sent" id="btnIntrest" value="Interest Sent" Shortvalue="2" />
                                                                     }
                                                                     else if (Model.IsIntrested == "Interest Accepted")
                                                                     {
-                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 0px;height: 30px;" />
+                                                                        <input type="button" class="form-control btninterest showinter interest-accepted" id="btnIntrest" value="Interest Accepted" Shortvalue="2" />
                                                                     }
                                                                     else
                                                                     {
-                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        <input type="button" class="form-control btninterest showinter show-interest" id="btnIntrest" value="Show Interest" Shortvalue="1"  />
                                                                     }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    <input type="button" class="form-control btninterest sharebtn1 share" id="btnShare" value="Share" Shortvalue="1"  />
 
                                                                 }
 
@@ -743,7 +743,7 @@
                                                                             <div class="chart-box">
                                                                                 <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
                                                                                 <div class="col-lg-12 col-md-12 col-sm-12">
-                                                                                    <div id="scoreChart" style="height: 200px; width: 100%;"></div>
+                                                                                    <div id="scoreChart" class="scoreChart"></div>
                                                                                 </div>
                                                                             </div>
 
@@ -754,7 +754,7 @@
                                                                                 @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
 
 
-                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                <div class="talk-bubble tri-right border-bubble right-in">
                                                                                     <div class="talktext">
 
 
@@ -959,7 +959,7 @@
                                                                             @Html.LabelFor(model => model.IreportModel.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
 
-                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
+                                                                            <div class="talk-bubble tri-right border-bubble right-in w-fulll">
                                                                                 <div class="talktext">
 
                                                                                     @Html.TextAreaFor(m => m.IreportModel.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
@@ -1132,7 +1132,7 @@
                                                                             <div class="form-group">
                                                                                 @Html.LabelFor(model => model.IreportModel.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
+                                                                                <div class="talk-bubble tri-right border-bubble right-in w-full">
                                                                                     <div class="talktext">
 
 
@@ -1278,7 +1278,7 @@
                                                                                 @Html.LabelFor(model => model.IreportModel.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
 
-                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
+                                                                                <div class="talk-bubble tri-right border-bubble right-in w-full">
                                                                                     <div class="talktext">
 
                                                                                         @Html.TextAreaFor(m => m.IreportModel.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
@@ -1371,8 +1371,7 @@
                     <label id="callingLabel text-center mt-20"><b>Calling...</b></label>
                 </div>
                 <div class="">
-                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
-    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" class="btn btn-fill btn-danger hang-btn" value="Hang Up">
                 </div>
             </div>
 
@@ -1389,9 +1388,9 @@
             </div>
             <div class="modal-body" style="padding: 2px 16px;">
                 <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                    <div class="talk-bubble tri-right border-bubble right-in w-full">
                         <div class="talktext">
-                            <textarea rows="2" id="txtintrestecomment" placeholder="Please enter comment" style="width:100%"></textarea>
+                            <textarea rows="2" id="txtintrestecomment" placeholder="Please enter comment" class="w-full"></textarea>
                         </div>
                     </div>
                 </div>
@@ -1409,8 +1408,7 @@
     </div>
 </div>
 
-<div id="MyShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="MyShareModel" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -1419,23 +1417,21 @@
                 <span onclick="closeSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
             </div>
             <div class="modal-body" style="padding: 2px 16px;">
-                <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                <div class="row">
+                    <div class="talk-bubble tri-right border-bubble right-in w-full">
                         <div class="talktext">
-                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" class="w-full" ></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input  type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;
-        background-color: #fff;
-        color: white;"> </div>
+            <div class="modal-footer"></div>
         </div>
     </div>
 </div>

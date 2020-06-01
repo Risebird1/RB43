@@ -411,6 +411,9 @@ table {
 .mc-button-area {
     text-align: right;
 }
+.upload {
+    margin: 10px 0px 0px 0px;
+}
 
 .upload a {
     text-decoration: none;
