@@ -1024,11 +1024,11 @@ namespace Risebird.Business
             }
 
         }
-        public string AddTotalViewCount(int id)
+        public string AddTotalViewCount(int id,string emailaddress)
         {
             try
             {
-                var meeting = _meetingRespository.AddTotalViewCount(id);
+                var meeting = _meetingRespository.AddTotalViewCount(id, emailaddress);
                 return "";
 
             }
@@ -1203,6 +1203,22 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<VideoCountdetail> GetTotalViewCount(int id)
+        {
+            try
+            {
+                var meeting = _meetingRespository.GetTotalViewCount(id);
+                return meeting;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
                 return null;
             }
         }
