@@ -177,6 +177,8 @@ namespace Risebird.Entities.ViewModel
         public int shared { get; set; }
         public string newprofielName { get; set; }
         public DateTime? SharedOn { get; set; }
+        public int IsOnline { get; set; }
+        public string QCInterviewer { get; set; }
     }
     public class VedioComments
     {

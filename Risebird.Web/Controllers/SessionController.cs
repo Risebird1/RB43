@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Web.Hepler;
@@ -19,11 +20,14 @@ namespace Risebird.Web.Controllers
     {
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly HttpClient _httpClient;
-        public SessionController(HttpClientHelper factory, IOptions<AzureAdB2COptions> b2cOptions, IApplicationErrorLogger applicationErrorLogger)
+        private IAccountService _accountService;
+
+        public SessionController(HttpClientHelper factory, IOptions<AzureAdB2COptions> b2cOptions, IApplicationErrorLogger applicationErrorLogger, IAccountService accountService)
         {
             _httpClient = factory.GetHttpClient();
             AzureAdB2COptions = b2cOptions.Value;
             _applicationErrorLogger = applicationErrorLogger;
+            _accountService = accountService;
         }
 
         public AzureAdB2COptions AzureAdB2COptions { get; set; }
@@ -112,6 +116,10 @@ namespace Risebird.Web.Controllers
             {
                 if (User.Identity.IsAuthenticated)
                 {
+                    //to db change
+                    var userClaims = User.Identity as ClaimsIdentity;
+                    string emailId = userClaims?.FindFirst("emails")?.Value;
+                    var updated= _accountService.Signout(emailId);
                     var callbackUrl = Url.Action(nameof(SignedOut), "Session", values: null, protocol: Request.Scheme);
                     var token = HttpContext.Session.GetString("Token");
                     var path = $"https://{AzureAdB2COptions.TenantName}.b2clogin.com/{AzureAdB2COptions.TenantName}.onmicrosoft.com/{AzureAdB2COptions.SignUpSignInPolicyId}/oauth2/v2.0/logout?post_logout_redirect_uri={AzureAdB2COptions.RedirectUri}";
@@ -120,7 +128,7 @@ namespace Risebird.Web.Controllers
                     var response = _httpClient.SendAsync(request, ct).Result;
 
                     if (token != null)
-                    {                                 
+                    {
                         HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
                         HttpContext.Session.Clear();
                         CookieOptions option = new CookieOptions();

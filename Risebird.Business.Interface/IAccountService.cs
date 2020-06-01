@@ -19,5 +19,6 @@ namespace Risebird.Business.Interface
         IEnumerable<Account> GetAccounts(string emailId, string profile);
         IEnumerable<AccountProjectMapping> GetAccountCluster(int accountId);
         IEnumerable<AccountProjectMapping> GetProjectbyClientId(int clientId, string projectList=null);
+        string Signout(string EmailId);
     }
 }
