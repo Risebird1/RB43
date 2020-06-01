@@ -203,6 +203,47 @@
 
     }
 </script>
+<style>
+    .tooltip1 {
+        position: relative;
+        display: inline-block;
+    }
+
+        .tooltip1 .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            max-height: 220px;
+            overflow-y: auto;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            top: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+            .tooltip1 .tooltiptext::after {
+                content: "";
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: transparent transparent #555 transparent;
+            }
+
+        .tooltip1:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+</style>
 
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
@@ -545,7 +586,7 @@
                                                                     {
                                                                         <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
-                                                                           
+
                                                                         </video>
                                                                     }
                                                                     else
@@ -676,18 +717,18 @@
                                                         {
                                                             @if (ViewBag.ProfileName == "CuratedUser")
                                                             {
-                                                <div class="col-md-3">
-                                                    <div class="btn-group">
-                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                            Share
-                                                        </button>
-                                                        <div class="dropdown-menu">
-                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                        </div>
-                                                    </div>
-                                                   
-                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <div class="btn-group">
+                                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                            Share
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
                                                                 <div class="col-md-3 shortlist" style="text-align: end;">
                                                                     @if (Model.IsShortlisted > 0)
                                                                     {<i class="fa fa-check"></i>
@@ -703,37 +744,37 @@
 
                                                         }
                                                     }
-                                                <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
-                                                    @if (Model.VideoLink != null)
-                                                    {
-                                                        @if (ViewBag.VedioStatus != "Public")
+                                                    <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
+                                                        @if (Model.VideoLink != null)
                                                         {
-                                                            @if (ViewBag.ProfileName == "CuratedUser")
+                                                            @if (ViewBag.VedioStatus != "Public")
                                                             {
-                                                                @if (Model.IsIntrested == "Interest Sent")
+                                                                @if (ViewBag.ProfileName == "CuratedUser")
                                                                 {
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
-                                                                }
-                                                                else if (Model.IsIntrested == "Interest Accepted")
-                                                                {
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 0px;height: 30px;" />
+                                                                    @if (Model.IsIntrested == "Interest Sent")
+                                                                    {
+                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
+                                                                    }
+                                                                    else if (Model.IsIntrested == "Interest Accepted")
+                                                                    {
+                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 0px;height: 30px;" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <div class="btn-group">
-                                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                        Share
-                                                                    </button>
-                                                                    <div class="dropdown-menu">
-                                                                        <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                        <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    <div class="btn-group">
+                                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                            Share
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        </div>
                                                                     </div>
-                                                                </div>
 
 
                                                                 }
@@ -1496,7 +1537,7 @@
                         </div>
                     </div>
                 </div>
-               
+
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
@@ -2782,7 +2823,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
 
         $("#btnShare").on('click', function () {
             var modal = document.getElementById("MyShareModel");
-            
+
             modal.style.display = "block";
         });
         $("#btnShare1").on('click', function () {
@@ -2791,7 +2832,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
             var getComment = document.getElementById("IreportModel_InterviewerComment").value;
             console.log(getComment)
             document.getElementById("comment").innerHTML = getComment;
-        
+
         });
         $("#btnShortlist").on('click', function () {
             if ($(this).attr('Shortvalue') == 1) {
@@ -2960,8 +3001,8 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
             }
         });
     }
-        function ShareVedioLink() {
-           
+    function ShareVedioLink() {
+
         $.ajax({
             type: "POST",
             url: "/RiseTube/VedioShared",
