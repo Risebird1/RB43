@@ -453,8 +453,6 @@ namespace Risebird.Business
         {
             try
             {
-                //create USer;
-                //_voiceItRepository.CreateUser();
                 return _evaluatorRespository.GetCandidate(id, irfId);
             }
             catch (Exception ex)
@@ -463,6 +461,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<Phrase> GetPhrases()
+        {
+            try
+            {
+                return _evaluatorRespository.GetPhrases();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<bool> AddCandidateAudio(CandidateAudio obj, string emailId, string profile)
         {
             try
@@ -504,7 +515,7 @@ namespace Risebird.Business
                 string voiceItUserId = string.Empty;
                 string finalStatus = "Successful!";
                 //check if the candidate is a  VoiceIt user already
-                if(candidateList != null && candidateList.First().VoiceItUserId == null)
+                if(candidateList != null && (candidateList.First().VoiceItUserId == null || candidateList.First().VoiceItUserId ==""))
                 {
                     //create user
                     var result = _voiceItRepository.CreateUser();

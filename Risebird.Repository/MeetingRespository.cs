@@ -1863,7 +1863,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@Email", item);
                     parameters.Add("@VedioId", vedioid);
-                    parameters.Add("@@EmailAddress", Userid);
+                    parameters.Add("@EmailAddress", Userid);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewvedioSharedetails", parameters,

@@ -15,7 +15,7 @@ CREATE PROCEDURE [dbo].[usp_GetClientMeetings]
 @EmailId varchar(300)        
 AS      
 BEGIN      
-select im.*, im.id as imid, IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink, ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,ic.ApprovalComments,ic.FinalComments,QCF.InterviewId as QCInterview, cm.id as CandidateId,(select distinct Isonline from UserList where Emailid=im.candidateEmail) as IsOnline from InterviewMeetings im 
+select im.*, im.id as imid, IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink, ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,ic.ApprovalComments,ic.FinalComments,QCF.InterviewId as QCInterview, cm.id as CandidateId,ul.Isonline as IsOnline from InterviewMeetings im 
 inner join IRF on im.IRFId = IRF.IRFId 
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
 left join QCFeedbackReport QCF on im.id=QCF.InterviewId 
