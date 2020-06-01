@@ -47,12 +47,7 @@
 </script>
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-<style>
-    #comment{
-        width:650px;
-        height:95px;
-    }
-</style>
+
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 <link href="~/Newassets/css/risetube.css" rel="stylesheet" />
@@ -731,8 +726,16 @@
                                                             }
                                                             else
                                                             {
-                                                                <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                
+                                                                <div class="btn-group">
+                                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                        Share
+                                                                    </button>
+                                                                    <div class="dropdown-menu">
+                                                                        <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    </div>
+                                                                </div>
+
 
                                                             }
 
@@ -1440,7 +1443,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" style="color:#fff">Share</h5>
-                <span onclick="closeSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+                <span onclick="closeSharePopUp1()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
             </div>
             <div class="modal-body" style="padding: 2px 16px;">
                 <div class="row" style="padding:10px">
@@ -1460,7 +1463,7 @@
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -1483,35 +1486,14 @@
                 <div class="row" style="padding:10px">
                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
                         <div class="talktext">
-                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                            <textarea rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                         </div>
                     </div>
                 </div>
-                <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                     <label><h6>Canditate Name :</h6></label><label id="cnName"></label>
-                    </div>
-                </div>
-                <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                        <div class="talktext">
-                            <h6>Video Link</h6>
-                            <label id="video"></label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                        <div class="talktext">
-                            <h6>Comment</h6>
-                            <textarea id="comment"></textarea>
-                        </div>
-                    </div>
-                </div>
+               
                 <div class="row">
                     <div class="col-md-12 text-right">
-                        <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
                         <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -2794,20 +2776,14 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
 
         $("#btnShare").on('click', function () {
             var modal = document.getElementById("MyShareModel");
-            var getUrl = document.getElementById("videoUrl").src;
-            document.getElementById("video").innerHTML = getUrl;
-            var comment = document.getElementById("IreportModel_InterviewerComment").value;
-            //console.log("harisj",comment)
-            document.getElementById("comment").innerHTML = comment;
-            var cName = document.getElementById("canName").textContent;
-            document.getElementById("cnName").innerHTML = cName
             
             modal.style.display = "block";
         });
         $("#btnShare1").on('click', function () {
             var modal = document.getElementById("MyShareModel1");
             modal.style.display = "block";
-            var getComment = document.getElementById("IreportModel_InterviewerComment").val;
+            var getComment = document.getElementById("IreportModel_InterviewerComment").value;
+            console.log(getComment)
             document.getElementById("comment").innerHTML = getComment;
         
         });
@@ -2964,7 +2940,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
         var modal = document.getElementById("MyShareModel");
         modal.style.display = "none";
     }
-    function closeSharePopUp() {
+    function closeSharePopUp1() {
         var modal = document.getElementById("MyShareModel1");
         modal.style.display = "none";
     }
@@ -2974,29 +2950,18 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
             url: "/RiseTube/ShareVedioLinkToMail",
             data: { Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val() },
             success: function (data) {
-                closeSharePopUp();
+                closeSharePopUp1();
             }
         });
     }
-    function ShareVedioLink() {
+        function ShareVedioLink() {
+           
         $.ajax({
             type: "POST",
             url: "/RiseTube/VedioShared",
-            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
+            data: { Emailids: $("#txtsharetext1").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
             success: function (data) {
                 closeSharePopUp();
-            }
-        });
-    }
-    function ShareVedioLinkToMail() {
-        $.ajax({
-            type: "POST",
-            url: "/RiseTube/ShareVedioLinkToMail",
-            data: {
-                Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val()
-},
-            success: function (data) {
-                closeSharePopUp()
             }
         });
     }

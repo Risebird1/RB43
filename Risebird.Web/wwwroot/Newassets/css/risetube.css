@@ -309,11 +309,17 @@ textarea::-webkit-scrollbar-thumb {
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
 }
 
-    .dropdown-toggle::after {
+    /*.dropdown-toggle::after {
         color: rgba(0, 0, 0, 0.29);
         position: absolute;
         right: 30px;
         top: 14px;
+    }*/
+    .dropdown-toggle::after {
+        color: rgba(0, 0, 0, 0.29);
+       
+        right: -3px;
+        top: 0px;
     }
 
 .mdc-card button.dropdown-toggle:focus {
