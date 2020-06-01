@@ -67,7 +67,7 @@
 
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.IRFId, Model.IRFList, new { @class = "form-control", @onchange = "IRFChanged(this.value)" })
+                                        @Html.DropDownListFor(model => model.IRFId, Model.IRFList, new { @class = "select-css form-control", @onchange = "IRFChanged(this.value)" })
                                         @*@Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
                                     </div>
@@ -81,13 +81,17 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.interviewSlot, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownListFor(x => Model.interviewSlot, Model.InterviewSlotList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.DropDownListFor(x => Model.interviewSlot, Model.InterviewSlotList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                         @Html.ValidationMessageFor(model => model.interviewSlot, "", new { @class = "text-danger" })
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.interviewDuration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.interviewDuration, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.EditorFor(model => model.interviewDuration, new { htmlAttributes = new { @class = "form-control input" } })
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                         @Html.ValidationMessageFor(model => model.interviewDuration, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -111,7 +115,7 @@
                                 <div class="col-lg-4  col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ClientHrContact, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.ClientHrContact, Model.ClientHrContactList, new { @class = "form-control" })
+                                        @Html.DropDownListFor(model => model.ClientHrContact, Model.ClientHrContactList, new { @class = "select-css form-control" })
 
                                         @*@Html.EditorFor(model => model.ClientHrContact, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.ClientHrContact, "", new { @class = "text-danger" })
@@ -130,7 +134,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.confirmationStatus, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownListFor(x => Model.confirmationStatus, Model.ConfirmationStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.DropDownListFor(x => Model.confirmationStatus, Model.ConfirmationStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                         @Html.ValidationMessageFor(model => model.confirmationStatus, "", new { @class = "text-danger" })
                                     </div>
 
@@ -191,7 +195,7 @@
                                     <div style="display:none" id="uploadDiv">
                                         @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control upload", @accept = ".doc, .docx, .pdf, .txt" })
                                         <label class="text-danger" id="error_uploadDiv" style="color:red;font-size:14px"></label>
 
                                     </div>
@@ -210,7 +214,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.staffingAgency, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.staffingAgency, Model.StaffingAgencyList, new { @class = "form-control" })
+                                        @Html.DropDownListFor(model => model.staffingAgency, Model.StaffingAgencyList, new { @class = "form-control select-css" })
                                         @*@Html.EditorFor(model => model.staffingAgency, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.staffingAgency, "", new { @class = "text-danger" })
                                     </div>
@@ -418,4 +422,27 @@
             }
         }
     }
+</script>
+<script>
+
+    document.body.className += "js";
+
+    var spinner = document.querySelector('.input');
+    var buttonUp = document.querySelector('.up');
+    var buttonDown = document.querySelector('.down');
+
+    buttonUp.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        spinner.value = value;
+    };
+
+    buttonDown.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value--;
+        spinner.value = value;
+    };
+
 </script>
