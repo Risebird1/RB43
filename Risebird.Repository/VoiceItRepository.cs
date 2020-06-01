@@ -95,5 +95,24 @@ namespace Risebird.Repository
 
         }
 
+        public PhraseResponse GetPhrases()
+        {
+            //var result = string.Empty;
+            try
+            {
+                VoiceIt2 myVoiceIt = new VoiceIt2(voiceItApiKey, voiceItApiToken);
+                var response = myVoiceIt.GetPhrases(voiceItLanguage);
+                return JsonConvert.DeserializeObject<PhraseResponse>(response);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+
+        }
+
+
     }
 }

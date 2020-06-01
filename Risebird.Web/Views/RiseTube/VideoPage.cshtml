@@ -551,6 +551,7 @@
                                                                     {
                                                                         <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
+                                                                           
                                                                         </video>
                                                                     }
                                                                     else
@@ -685,9 +686,18 @@
                                                         {
                                                             @if (ViewBag.ProfileName == "CuratedUser")
                                                             {
-                                                                <div class="col-md-3">
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                            Share
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                        </div>
+                                                    </div>
+                                                   
+                                                </div>
                                                                 <div class="col-md-3 shortlist" style="text-align: end;">
                                                                     @if (Model.IsShortlisted > 0)
                                                                     {<i class="fa fa-check"></i>
@@ -772,7 +782,7 @@
                                                                                 @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
 
 
-                                                                                <div class="talk-bubble tri-right border-bubble right-in">
+                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                                     <div class="talktext">
 
 
@@ -993,10 +1003,10 @@
                                                                 <h3 class="tab_drawer_heading" rel="link4">  Questions Discussed</h3>
                                                                 <div id="link4" class="tab_content">
                                                                     <div>
-                                                                        <div class="table-responsive-sm">
+                                                                        <div class="table-responsive-sm ">
                                                                             @if (Model.IreportModel.QuestionsList != null)
                                                                             {
-                                                                                <table class="table table-bordered mbn" id="QuestionsTable">
+                                                                                <table class="table table-bordered mbn disQus" id="QuestionsTable">
                                                                                     <thead>
                                                                                         <tr>
                                                                                             <th width="40%">Questions</th>
@@ -1425,8 +1435,46 @@
         </div>
     </div>
 </div>
+<div id="MyShareModel1" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Share</h5>
+                <span onclick="closeSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                        <div class="talktext">
+                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="padding:10px">
+                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                        <div class="talktext">
+                            <textarea rows="2" id="comment" placeholder="Comment" style="width:100%"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;
+        background-color: #fff;
+        color: white;"> </div>
+        </div>
+    </div>
+</div>
 
-<div id="MyShareModel" class="modal modal-bg">
+<div id="MyShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -2757,6 +2805,13 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
             
             modal.style.display = "block";
         });
+        $("#btnShare1").on('click', function () {
+            var modal = document.getElementById("MyShareModel1");
+            modal.style.display = "block";
+            var getComment = document.getElementById("IreportModel_InterviewerComment").val;
+            document.getElementById("comment").innerHTML = getComment;
+        
+        });
         $("#btnShortlist").on('click', function () {
             if ($(this).attr('Shortvalue') == 1) {
                 $(this).attr('Shortvalue', "2");
@@ -2910,6 +2965,20 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
         var modal = document.getElementById("MyShareModel");
         modal.style.display = "none";
     }
+    function closeSharePopUp() {
+        var modal = document.getElementById("MyShareModel1");
+        modal.style.display = "none";
+    }
+    function ShareVedioLinkToMail() {
+        $.ajax({
+            type: "POST",
+            url: "/RiseTube/ShareVedioLinkToMail",
+            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val() },
+            success: function (data) {
+                closeSharePopUp();
+            }
+        });
+    }
     function ShareVedioLink() {
         $.ajax({
             type: "POST",
@@ -2986,6 +3055,12 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
+                    'next .sharebtn1': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+                {
                     'next .sharebtn1': 'Share the video by clicking here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
@@ -3022,6 +3097,12 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                 },
                 {
                     'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .disQus': 'Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3191,20 +3272,31 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
+                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
                     'next .btnvideo': 'Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .shortlist': 'Click here to Shortlist the Candidate',
+                    'next .btn2': 'Click here to like the Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .showinter': 'Click here to Send interest to the Candidate',
+                    'next .btn3': 'Click here to unlike Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
+                {
+                    'next .sharebtn1': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
                 {
                     'next .item1': 'Interview Report Details',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3235,8 +3327,14 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                 {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
+                {
+                    'next .item4': 'Questions Discussed during interview',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .disQus': 'Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 

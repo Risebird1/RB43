@@ -6,7 +6,30 @@
     border-radius: 5px;
 }
 
+.wrapper {
+    height: auto !important
+}
 
+.btn-danger:hover, .btn-danger:focus, .btn-danger:not(:disabled):not(.disabled):active, .btn-danger:not(:disabled):not(.disabled).active, .btn-danger:not(:disabled):not(.disabled):active:focus, .btn-danger:not(:disabled):not(.disabled).active:focus, .btn-danger:active:hover, .btn-danger.active:hover, .show > .btn-danger.dropdown-toggle, .show > .btn-danger.dropdown-toggle:focus, .show > .btn-danger.dropdown-toggle:hover {
+    background-color: #ff5555;
+    color: #000;
+    box-shadow: none;
+    border-color: #ff5555;
+}
+
+.dropdown-toggle::after {
+    color: rgba(0, 0, 0, 0.29);
+    position: relative;
+    right: 30px;
+    top: 14px;
+}
+
+.dropdown-toggle::after {
+    color: rgba(0, 0, 0, 0.29);
+    /* position: absolute; */
+    right: 30px;
+    top: 14px;
+}
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
