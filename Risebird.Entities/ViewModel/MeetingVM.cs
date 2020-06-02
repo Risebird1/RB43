@@ -177,6 +177,9 @@ namespace Risebird.Entities.ViewModel
         public int shared { get; set; }
         public string newprofielName { get; set; }
         public DateTime? SharedOn { get; set; }
+        public int IsOnline { get; set; }
+        public string QCInterviewer { get; set; }
+        public List<VideoCountdetail> VideoCountDetail { get; set; }
         public string FeedbackAudioLink { get; set; }
     }
     public class VedioComments
@@ -188,5 +191,10 @@ namespace Risebird.Entities.ViewModel
     {
         public int totalcount { get; set; }
         public string Email { get; set; }
+    }
+    public class VideoCountdetail
+    {
+        public string UserName { get; set; }
+        public string Count { get; set; }
     }
 }

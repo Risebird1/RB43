@@ -16,13 +16,11 @@ Create PROCEDURE [dbo].[usp_GetIRFInterviewMeetings]
 AS
 Begin
 
-declare
-@IRFId nvarchar(100) = (select IRFId from [dbo].[IRF] where id=@id)
-
-select irf.PerMintuteRate, irf.TotalBudget,QCF.InterviewId as QCInterview,im.id imid, * from InterviewMeetings im
-left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId left join irf on IRF.IRFId = im.IRFId
-left join QCFeedbackReport QCF on im.id=QCF.InterviewId
- where im.IRFId = @IRFId
+declare  
+@IRFId nvarchar(100) = (select IRFId from [dbo].[IRF] where id=@id)  
+select irf.PerMintuteRate, irf.TotalBudget,im.id imid,(Select distinct Isonline from userlist where EmailId=im.candidateEmail) as IsOnline, * from InterviewMeetings im  
+left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId left join irf on IRF.IRFId = im.IRFId  
+where im.IRFId = @IRFId 
 
 
 End

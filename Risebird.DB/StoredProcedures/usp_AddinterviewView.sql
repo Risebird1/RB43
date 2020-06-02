@@ -8,11 +8,25 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE Procedure [dbo].[usp_AddinterviewView]
-@Interviewid int
-AS
-BEGIN
-DECLARE @ViewCount int
-Select @ViewCount=TotalView from InterviewComments where InterviewId=@Interviewid
-Update InterviewComments set TotalView=((IsNull(@ViewCount,0))+1) where InterviewId=@Interviewid
+@Interviewid int,
+@EmailId varchar(100)
+AS  
+BEGIN  
+DECLARE @ViewCount int  
+DECLARE @Id int
+DECLARE @Count int
+Set @Count=0
+select @Id=id from UserList where Emailid=@EmailId
+Select @ViewCount=TotalView from InterviewComments where InterviewId=@Interviewid  
+Update InterviewComments set TotalView=((IsNull(@ViewCount,0))+1) where InterviewId=@Interviewid  
 
+Select @Count=Count from VideoCountDetails where Videoid=@Interviewid and Userid=@Id
+if(@Count=0)
+begin
+Insert into VideoCountDetails values(@Interviewid,@Id,1,GETDATE())
+End
+else
+begin
+Update VideoCountDetails set Count=(@Count+1) where Videoid=@Interviewid and Userid=@Id
+end
 END

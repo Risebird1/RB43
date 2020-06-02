@@ -108,7 +108,7 @@
 
 
 
-                                                <i type="submit" class="fa fa-file-excel-o excel-file"  data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>
+                                                <i type="submit" class="fa fa-file-excel-o excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>
 
                                             </div>
                                         </div>
@@ -328,6 +328,7 @@
                                                     <th>End Client Name</th>
                                                     <th>Video Link</th>
                                                     <th>Interview Slot</th>
+                                                    <th>QC Interviewer</th>
                                                     <th>Staffing Agenecy</th>
                                                     <th>Interview Duration</th>
                                                     <th>Expected Joining Time</th>
@@ -366,6 +367,7 @@
                                                     <th>End Client Name</th>
                                                     <th>Video Link</th>
                                                     <th>Interview Slot</th>
+                                                    <th>QC Interviewer</th>
                                                     <th>Staffing Agenecy</th>
                                                     <th>Interview Duration</th>
                                                     <th>Expected Joining Time</th>
@@ -392,7 +394,18 @@
                                                     <tr id=@item.imid>
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
-                                                        <td> @item.candidateName</td>
+                                                        @if (item.IsOnline == 1)
+                                                        {
+                                                            <td>
+                                                                <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                            </td>
+                                                        }
                                                         <td> @item.candidateEmail</td>
                                                         <td> @item.JDTiltle.Split("|")[0] </td>
                                                         <td> @item.interviewer</td>
@@ -441,6 +454,7 @@
                                                             <td>No Video</td>
                                                         }
                                                         <td>@item.interviewSlot</td>
+                                                        <td>@item.QCInterviewer</td>
                                                         <td>@item.staffingAgency</td>
                                                         <td> @item.interviewDuration </td>
                                                         <td> @item.joiningTime</td>

@@ -47,12 +47,7 @@
 </script>
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-<style>
-    #comment{
-        width:650px;
-        height:95px;
-    }
-</style>
+
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 <link href="~/Newassets/css/risetube.css" rel="stylesheet" />
@@ -77,10 +72,10 @@
 </script>
 
 <script type="text/javascript">
-    
+
     function getOption(id) {
         selectElement = document.querySelector('#droplevel');
-         output =
+        output =
             selectElement.options[selectElement.selectedIndex].text;
 
 
@@ -208,6 +203,48 @@
 
     }
 </script>
+<style>
+    .tooltip1 {
+        position: relative;
+        display: inline-block;
+    }
+
+        .tooltip1 .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            max-height: 220px;
+            overflow-y: auto;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            top: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+            .tooltip1 .tooltiptext::after {
+                content: "";
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: transparent transparent #555 transparent;
+            }
+
+        .tooltip1:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+</style>
+
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
@@ -540,15 +577,16 @@
 
                                                                     @if (@Model.VideoLink.Contains(".mp4"))
                                                                     {
-                                                                <video controls class="vjs-tech video-width btnvideo" autoplay>
-                                                                    <source  src="@Model.VideoLink" type="video/mp4">
-                                                                    <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
-                                                                </video>
+                                                                        <video controls class="vjs-tech video-width btnvideo" autoplay>
+                                                                            <source src="@Model.VideoLink" type="video/mp4">
+                                                                            <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
+                                                                        </video>
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
                                                                     {
                                                                         <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
+
                                                                         </video>
                                                                     }
                                                                     else
@@ -579,7 +617,7 @@
                                                                                         {
                                                                                             @if (videolist.ThumbnailImage != null)
                                                                                             {<img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />}
-                                                                                            <video  controls style=" background:black!important;width:100%; height:100% " >
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% ">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                             <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a> }
@@ -611,10 +649,10 @@
                                                             </div>
                                                         </div>
                                                     }
-                                                    else 
+                                                    else
                                                     {
 
-                                                    }                                                   
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -622,9 +660,17 @@
                                             <div class=" col-md-8 video-contop">
                                                 @if (Model.JDTiltle != null)
                                                 {
-                                                    <h1 class="title style-scope name-video-primary-info-renderer" id="canName" style="margin-bottom:0;">
-                                                        @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
-                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                    <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                        @if (Model.IsOnline == 1)
+                                                        {
+                                                            <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a onclick="">   @Model.candidateName <span class="dot"></span></a>
+                                                        }
+                                                        <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
+                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                         <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                         <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
 
@@ -672,7 +718,17 @@
                                                             @if (ViewBag.ProfileName == "CuratedUser")
                                                             {
                                                                 <div class="col-md-3">
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    <div class="btn-group">
+                                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                            Share
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare2" value="Public Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        </div>
+                                                                    </div>
+
                                                                 </div>
                                                                 <div class="col-md-3 shortlist" style="text-align: end;">
                                                                     @if (Model.IsShortlisted > 0)
@@ -689,41 +745,57 @@
 
                                                         }
                                                     }
-                                                <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
-                                                    @if (Model.VideoLink != null)
-                                                    {
-                                                        @if (ViewBag.VedioStatus != "Public")
+                                                    <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
+                                                        @if (Model.VideoLink != null)
                                                         {
-                                                            @if (ViewBag.ProfileName == "CuratedUser")
+                                                            @if (ViewBag.VedioStatus != "Public")
                                                             {
-                                                                @if (Model.IsIntrested == "Interest Sent")
+                                                                @if (ViewBag.ProfileName == "CuratedUser")
                                                                 {
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
-                                                                }
-                                                                else if (Model.IsIntrested == "Interest Accepted")
-                                                                {
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 0px;height: 30px;" />
+                                                                    @if (Model.IsIntrested == "Interest Sent")
+                                                                    {
+                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
+                                                                    }
+                                                                    else if (Model.IsIntrested == "Interest Accepted")
+                                                                    {
+                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 0px;height: 30px;" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    <div class="btn-group">
+                                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                            Share
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare2" value="Public Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        </div>
+                                                                    </div>
+
+
                                                                 }
-                                                            }
-                                                            else
-                                                            {
-                                                                <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                
 
                                                             }
-
                                                         }
-                                                    }
-                                                </div>
-                                                    <div class="col-md-4 views" style="text-align: end;">
+                                                    </div>
+                                                    <div class="col-md-4 views tooltip1" style="text-align: end;">
                                                         @if (Model.VideoLink != null)
                                                         {
-                                                            <p style="text-align:end"><b>Total Views:</b> @Model.TotalView - View(s)</p>
+                                                            <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
                                                         }
+                                                        <span class="tooltiptext">
+                                                            @foreach (var item in Model.VideoCountDetail)
+                                                            {
+                                                                <p>@item.UserName - @item.Count</p>
+                                                            }
+
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <div class="single-video-info-content ">
@@ -759,7 +831,7 @@
                                                                                 @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
 
 
-                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
                                                                                     <div class="talktext">
 
 
@@ -983,7 +1055,7 @@
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new {ID="droplevel",  @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1026,10 +1098,10 @@
                                                                 <h3 class="tab_drawer_heading" rel="link4">  Questions Discussed</h3>
                                                                 <div id="link4" class="tab_content">
                                                                     <div>
-                                                                        <div class="table-responsive-sm">
+                                                                        <div class="table-responsive-sm ">
                                                                             @if (Model.IreportModel.QuestionsList != null)
                                                                             {
-                                                                                <table class="table table-bordered mbn" id="QuestionsTable">
+                                                                                <table class="table table-bordered mbn disQus" id="QuestionsTable">
                                                                                     <thead>
                                                                                         <tr>
                                                                                             <th width="40%">Questions</th>
@@ -1158,7 +1230,7 @@
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "dropques form-control", @onchange = "CalculateOverAll(this.id, this.value)"})
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "dropques form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1232,7 +1304,7 @@
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new {ID="droplevel", @class = "form-control", @readonly = "readonly"})
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1304,7 +1376,7 @@
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new {ID="droplevel", @class = "form-control", @readonly = "readonly" })
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1459,7 +1531,43 @@
         </div>
     </div>
 </div>
-
+<div id="MyShareModel1" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Share</h5>
+                <span onclick="closeSharePopUp1()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                        <div class="talktext">
+                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="padding:10px">
+                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                        <div class="talktext">
+                            <textarea rows="2" id="comment" placeholder="Comment" style="width:100%"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;
+        background-color: #fff;
+        color: white;"> </div>
+        </div>
+    </div>
+</div>
 <div id="MyShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
         top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
     <!-- Modal content -->
@@ -1473,36 +1581,46 @@
                 <div class="row" style="padding:10px">
                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
                         <div class="talktext">
-                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                     <label><h6>Canditate Name :</h6></label><label id="cnName"></label>
-                    </div>
-                </div>
-                <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                        <div class="talktext">
-                            <h6>Video Link</h6>
-                            <label id="video"></label>
+                            <textarea rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                         </div>
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;
+        background-color: #fff;
+        color: white;"> </div>
+        </div>
+    </div>
+</div>
+<div id="PublicShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Share</h5>
+                <span onclick="closepublicSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 2px 16px;">
                 <div class="row" style="padding:10px">
                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
                         <div class="talktext">
-                            <h6>Comment</h6>
-                            <textarea id="comment"></textarea>
+                            <textarea rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-12 text-right">
-                        <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input type="button" onclick="SharepublicVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input style="background:#ff253a!important" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -1569,7 +1687,7 @@
 
 </script>
 <script>
-
+    < script >
     jQuery(document).ready(function ($) {
 
 
@@ -1597,7 +1715,6 @@
         }
         $('.btn').addClass('disabled');
         $(document).ready(main)
-    }
 </script>
 <script>
             $('form').submit(function () {
@@ -2515,7 +2632,7 @@
             techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
 
         }
-    obj.y = parseInt(techTotal) / 4;
+obj.y = parseInt(techTotal) / 4;
         obj.label = "Tech Skills Score";
         obj.legendText = "Tech Skills Score";
         arr.push(obj);
@@ -2530,7 +2647,7 @@
 
         }
 
-    objGen.y = parseInt(genTotal) / 4;
+objGen.y = parseInt(genTotal) / 4;
         objGen.label = "General Skills Score";
         objGen.legendText = "General Skills Score";
         arr.push(objGen);
@@ -2544,7 +2661,7 @@
             joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
 
         }
-    objJoin.y = parseInt(joinabilityTotal) / 4;
+objJoin.y = parseInt(joinabilityTotal) / 4;
         objJoin.label = "Joinability Score";
         objJoin.legendText = "Joinability Score";
         arr.push(objJoin);
@@ -2558,7 +2675,7 @@
             selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
 
         }
-    objSelect.y = parseInt(selectabilityTotal) / 4;
+objSelect.y = parseInt(selectabilityTotal) / 4;
         objSelect.label = "Selectability Score";
         objSelect.legendText = "Selectability Score";
         arr.push(objSelect);
@@ -2785,15 +2902,24 @@
 
         $("#btnShare").on('click', function () {
             var modal = document.getElementById("MyShareModel");
-            var getUrl = document.getElementById("videoUrl").src;
-            document.getElementById("video").innerHTML = getUrl;
-            var comment = document.getElementById("IreportModel_InterviewerComment").value;
-            //console.log("harisj",comment)
-            document.getElementById("comment").innerHTML = comment;
-            var cName = document.getElementById("canName").textContent;
-            document.getElementById("cnName").innerHTML = cName
-            
+
             modal.style.display = "block";
+        });
+        $("#btnShare1").on('click', function () {
+            var modal = document.getElementById("MyShareModel1");
+            modal.style.display = "block";
+            var getComment = document.getElementById("IreportModel_InterviewerComment").value;
+            console.log(getComment);
+            document.getElementById("comment").innerHTML = getComment;
+
+        });
+        $("#btnShare2").on('click', function () {
+            var modal = document.getElementById("PublicShareModel");
+            modal.style.display = "block";
+            //var getComment = document.getElementById("IreportModel_InterviewerComment").value;
+            //console.log(getComment)
+            //document.getElementById("comment").innerHTML = getComment;
+
         });
         $("#btnShortlist").on('click', function () {
             if ($(this).attr('Shortvalue') == 1) {
@@ -2948,25 +3074,32 @@
         var modal = document.getElementById("MyShareModel");
         modal.style.display = "none";
     }
-    function ShareVedioLink() {
-        $.ajax({
-            type: "POST",
-            url: "/RiseTube/VedioShared",
-            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
-            success: function (data) {
-                closeSharePopUp();
-            }
-        });
+    function closeSharePopUp1() {
+        var modal = document.getElementById("MyShareModel1");
+        modal.style.display = "none";
+    }
+    function closepublicSharePopUp() {
+        var modal = document.getElementById("PublicShareModel");
+        modal.style.display = "none";
     }
     function ShareVedioLinkToMail() {
         $.ajax({
             type: "POST",
             url: "/RiseTube/ShareVedioLinkToMail",
-            data: {
-                Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val()
-},
+            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val() },
             success: function (data) {
-                closeSharePopUp()
+                closeSharePopUp1();
+            }
+        });
+    }
+    function ShareVedioLink() {
+
+        $.ajax({
+            type: "POST",
+            url: "/RiseTube/VedioShared",
+            data: { Emailids: $("#txtsharetext1").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
+            success: function (data) {
+                closeSharePopUp();
             }
         });
     }
@@ -2982,6 +3115,18 @@
         var vid = document.getElementsByClassName("vjs-tech");
         vid[0].currentTime = time;
         //time should be in seconds
+    }
+    function SharepublicVedioLink() {
+        if ($("#txtpublicsharing").val() != "") {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VedioShare",
+                data: { value: "Public", vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), Emailids: $("#txtpublicsharing").val() },
+                success: function (data) {
+                    closepublicSharePopUp();
+                }
+            });
+        }
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
@@ -3024,6 +3169,12 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
+                    'next .sharebtn1': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+                {
                     'next .sharebtn1': 'Share the video by clicking here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
@@ -3034,7 +3185,7 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                 {
+                {
                     'next .itemchart': 'Check candidate overall score here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
@@ -3045,7 +3196,7 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
-                },  
+                },
                 {
                     'next .item2': 'Candidate Details',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3060,6 +3211,12 @@
                 },
                 {
                     'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .disQus': 'Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3139,7 +3296,7 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                 {
+                {
                     'next .itemchart': 'Check candidate overall score here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
@@ -3150,7 +3307,7 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
-                },  
+                },
                 {
                     'next .item2': 'Candidate Details',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3229,20 +3386,31 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
+                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
                     'next .btnvideo': 'Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .shortlist': 'Click here to Shortlist the Candidate',
+                    'next .btn2': 'Click here to like the Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .showinter': 'Click here to Send interest to the Candidate',
+                    'next .btn3': 'Click here to unlike Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
+                {
+                    'next .sharebtn1': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
                 {
                     'next .item1': 'Interview Report Details',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3260,7 +3428,7 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
-                },                
+                },
                 {
                     'next .item2': 'Candidate Details',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3273,8 +3441,14 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                 {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
+                {
+                    'next .item4': 'Questions Discussed during interview',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .disQus': 'Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3313,4 +3487,4 @@
             }, 10000)
         </script>
     }
-} 
+}
