@@ -292,7 +292,19 @@
                                                 </div>
                                             </div>
 
+                                            <div class="mdc-card-wrapper__text-section">
 
+
+
+                                                <div class="choose-file">
+                                                    <label class="file-lable"> Upload Feedback Audio File</label>
+
+                                                    @*<div class="form-group">*@
+                                                    @Html.LabelFor(model => model.FeedbackAudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    @Html.TextBoxFor(model => model.FeedbackAudioFile, new { type = "file", @class = "form-control", @accept = ".mp3, .wav, .m4a" })
+
+                                                </div>
+                                            </div>
                                         </div>
 
 
@@ -378,6 +390,53 @@
                                     </div>
 
                                 </div>
+                                @if (Model.FeedbackAudioLink != null)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Uploaded Feedback Audio</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="30%">File</th>
+                                                            <th width="35%">Play</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+
+                                                            <td>
+                                                                <a href='@Model.FeedbackAudioLink' download>
+                                                                    @Model.FeedbackAudioLink.Split('/').Last()
+                                                                </a>
+                                                            </td>
+
+
+                                                            <td>
+                                                                <audio src='@Model.FeedbackAudioLink' controls></audio>
+                                                            </td>
+
+                                                        </tr>
+                                                        
+
+                                                    </tbody>
+                                                </table>
+
+
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+                                }
+
+
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
