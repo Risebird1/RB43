@@ -67,6 +67,21 @@ height: 55px;
     border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
 }
 
+
+.public-share {
+    background-image: url('https://img.icons8.com/color/48/000000/share-3.png') !important;
+    background-repeat: no-repeat !important;
+    background-size: 14% !important;
+    background-position: 8% 50% !important;
+    border: none;
+    background-color: white !important;
+    font-weight: normal;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+    border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
+}
+
 .email-share {
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') !important;
     background-repeat: no-repeat !important;
@@ -131,22 +146,22 @@ height: 55px;
         color: #fff;
         text-align: center;
         border-radius: 6px;
-        padding: 5px 10px;
+       
         position: absolute;
         z-index: 1;
-        top: 50%;
+        top: 70%;
         /* overflow: hidden; */
         left: 50%;
         margin-left: -60px;
         opacity: 0;
+        border-radius: 3px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.24);
         transition: all ease 0.5s;
     }
         .tooltip1 .tooltiptext p {
             margin-bottom: 0rem;
-            background: #555555ba;
-            padding: 5px 10px;
-            border-radius: 3px;
-            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.24);
+            background: #555555e3;
+            padding: 3px 10px 3px 10px;
         }
     .tooltip1:hover .tooltiptext::after {
         content: "";
