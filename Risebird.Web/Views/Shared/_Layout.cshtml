@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <!-- CSS Files -->
     <link href="~/Newassets/css/bootstrap.min.css" rel="stylesheet" />
-
+    <link href="~/Newassets/css/chat.css" rel="stylesheet" />
 
     <link href="~/Newassets/css/now-ui-dashboard.css?v=1.4.1" rel="stylesheet" />
 
@@ -51,68 +51,6 @@
         <script src="~/assets/MultiSelect/Newfolder/isteven-multi-select.js"></script>
         <script src="~/js/angular/InfiniteScroll.js"></script>*@
     <style>
-        .dot {
-            height: 10px;
-            width: 10px;
-            margin: 0 2px;
-            background-color: #bbb;
-            border-radius: 50%;
-            display: inline-block;
-            transition: background-color 0.6s ease;
-        }
-
-        .min {
-            width: 250px;
-            height: 35px;
-            overflow: hidden !important;
-            padding: 0px !important;
-            margin: 0px;
-            float: left;
-            position: static !important;
-        }
-
-            .min .modal-dialog, .min .modal-content {
-                height: 100%;
-                width: 100%;
-                margin: 0px !important;
-                padding: 0px !important;
-            }
-
-            .min .modal-header {
-                height: 100%;
-                width: 100%;
-                margin: 0px !important;
-                padding: 3px 5px !important;
-            }
-
-        .display-none {
-            display: none;
-        }
-
-        button .fa {
-            font-size: 16px;
-            margin-left: 10px;
-        }
-
-        .min .fa {
-            font-size: 14px;
-        }
-
-        .min .menuTab {
-            display: none;
-        }
-
-        button:focus {
-            outline: none;
-        }
-
-        .minmaxCon {
-            height: 35px;
-            bottom: 1px;
-            position: fixed;
-            right: 1px;
-            z-index: 9999;
-        }
     </style>
 </head>
 <body class=" sidebar-mini ">
@@ -167,40 +105,63 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="col-md-10">
-                        <h5 class="modal-title" style="color:#fff">Chat <input type="text" value="" hidden id="txtself" /></h5>
+                    <div>
+                        <h5 class="modal-title" style="color:#fff"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(255, 255, 255)" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" /></svg> Chat <input type="text" value="" hidden id="txtself" /></h5>
                     </div>
-                    <div class="col-md-1">
+                    <div>
                         <button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>
                     </div>
-                    <div class="col-md-1">
+                    <div>
                         <span onclick="closeChatPopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
                     </div>
 
                 </div>
                 <div class="modal-body" style="padding: 2px 16px;">
-                    <div class="row" style="padding:10px">
-                        <p><a onclick="OpenChatPopUp()">Back to list</a></p>
-                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                            <h6><lable id="lblChatname"></lable></h6>
-                            <div id="divchatbox" style="max-height: 300px;overflow-y: auto;">
+                    <div>
+                       
+                        <div class="pull-left"> <h5><lable id="lblChatname"></lable></h5></div>
+                        <div class="pull-right">
+                            <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
 
-                            </div>
-                            <div class="row">
-                                <div class="col-md-9" style="padding-right:0px">
-                                    <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
+                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+
+                                <div id="divchatbox" class="scroll-box">
+
                                 </div>
-                                <div class="col-md-3" style="padding-left:0px">
-                                    <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
+                                <div>
+
+                                    <form >
+                                        <div id="msger-inputarea">
+                                            <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Start writting here....." style="display:none" />
+
+
+                                            <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" class="form-control" />
+                                        </div>
+                                            </form>
+
+
+
+
+
+
+
+                                    <!--    <div class="col-md-9" style="padding-right:0px">
+                 <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
+             </div>
+             <div class="col-md-3" style="padding-left:0px">
+                 <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
+             </div>
+            -->
+
+
+
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-right">
-                            <input style="background:#ff253a!important" type="button" onclick="closeChatPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
-                        </div>
-                    </div>
+          
+
+
+
                 </div>
                 <div class="modal-footer" style="padding: 5px;
         background-color: #fff;
@@ -244,6 +205,9 @@
                 success: function (data) {
                     var modal = document.getElementById("MyChatModel");
                     modal.style.display = "block";
+
+                    var msg = document.getElementById("msger-inputarea");
+                    msg.style.display = "none";
                     var html = '';
                     for (var i = 0; i < data.result.length; i++) {
                         if (data.result[i].isOnline == 1) {
@@ -294,7 +258,7 @@
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
                         if (data[i].sender != $("#txtself").val()) {
-                            html += '<div style="text-align:left;height: auto;background-color: lightgray;padding-top:15px" class="form-control col-md-6">' + data[i].message + '</div>';
+                            html += '<div class="msg-bubble fadeInUp" class="form-control col-md-6">' + data[i].message + '</div>';
                             countvalue = i;
                         } else {
                             html += '<div class="col-md-6"></div><div style="text-align:Right;height: auto;background-color: aquamarine;padding-top:15px" class="form-control col-md-6">' + data[i].message + '</div>';
@@ -335,6 +299,8 @@
                 });
             }
         }
+
+
         $(document).ready(function () {
             checkConversation();
             var $content, $modal, $apnData, $modalCon;
