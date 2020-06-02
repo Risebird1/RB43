@@ -60,6 +60,59 @@
             display: inline-block;
             transition: background-color 0.6s ease;
         }
+
+        .min {
+            width: 250px;
+            height: 35px;
+            overflow: hidden !important;
+            padding: 0px !important;
+            margin: 0px;
+            float: left;
+            position: static !important;
+        }
+
+            .min .modal-dialog, .min .modal-content {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 0px !important;
+            }
+
+            .min .modal-header {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 3px 5px !important;
+            }
+
+        .display-none {
+            display: none;
+        }
+
+        button .fa {
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .min .fa {
+            font-size: 14px;
+        }
+
+        .min .menuTab {
+            display: none;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .minmaxCon {
+            height: 35px;
+            bottom: 1px;
+            position: fixed;
+            right: 1px;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body class=" sidebar-mini ">
@@ -127,6 +180,7 @@
                 </div>
                 <div class="modal-body" style="padding: 2px 16px;">
                     <div class="row" style="padding:10px">
+                        <p><a onclick="OpenChatPopUp()">Back to list</a></p>
                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
                             <h6><lable id="lblChatname"></lable></h6>
                             <div id="divchatbox" style="max-height: 300px;overflow-y: auto;">
@@ -183,6 +237,7 @@
             });
         }
         function OpenChatPopUp() {
+            flag = false;
             $.ajax({
                 type: "POST",
                 url: "/Account/ChatBox",
@@ -201,6 +256,8 @@
                     }
                     $("#txtself").val(data.self);
                     $("#lblChatname").text("");
+                    document.getElementById("txtmessage").style.display = "none";
+                    document.getElementById("btnchatConversation").style.display = "none";
                     $("#divchatbox").empty().html(html);
                     flag = true;
                 }

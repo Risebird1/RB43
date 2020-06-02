@@ -1,57 +1,190 @@
 ﻿body {
     font-family: Roboto, sans-serif;
 }
-
 #style-2::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 5px;
 }
-
 #comment {
     width: 650px;
     height: 95px;
 }
 
+.text-areadiv #comment {
+height: 55px;
+}
+.counts-liks .dropdown-menu {
+    z-index: 1; padding:0;
+}
+.modal .label-field {
+    font-size: 15px;
+    font-weight: normal;
+}
+.modal textarea::-webkit-input-placeholder { /* Edge */
+    font-size:13px;
+}
+
+.modal textarea:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    font-size: 13px;
+}
+
+.modal textarea::placeholder {
+    font-size: 13px;
+}
+.text-areadiv{
+    height:auto!important;
+}
+.text-areadiv textarea {
+    width: 100%;
+    border: 0;
+    background: #f5f5f5;
+    padding: 5px 0px 0px 0px;
+}
+.modal .form-control.text-areadiv {
+    border-bottom: 0px;
+    padding: 0;
+}
+
+
+    .modal .form-control.text-areadiv textarea {
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+        padding: 8px;
+    }
+.modal .form-control.text-areadiv textarea:focus {
+    border-bottom: 2px rgb(80, 158, 235) solid !important;
+}
+.private-share {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
+    background-repeat: no-repeat !important;
+    background-size: 12% !important;
+    background-position: 8% 50% !important;
+    border: none;
+    background-color: white !important;
+    font-weight: normal;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+    border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
+}
+
+
+.public-share {
+    background-image: url('https://img.icons8.com/color/48/000000/share-3.png') !important;
+    background-repeat: no-repeat !important;
+    background-size: 14% !important;
+    background-position: 8% 50% !important;
+    border: none;
+    background-color: white !important;
+    font-weight: normal;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+    border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
+}
+
+.email-share {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') !important;
+    background-repeat: no-repeat !important;
+    background-size: 13% !important;
+    background-position: 8% 50% !important;
+    border: none;
+    background-color: white !important;
+    font-weight: normal;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+    border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
+}
+
+
+
+.showinter .btn{margin-top:0px;}
+
+.share-btn {
+    color: #32363a;
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    background:none;
+    border:0;margin:10px 0px;
+}
+.show .dropdown-menu:before {
+    display: inline-block;
+    position: absolute;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    content: "";
+    top: -5px;
+    left: 55px;
+    right: auto;
+    color: #FFFFFF;
+    border-bottom: .6em solid;
+    border-right: .6em solid transparent;
+    border-left: .6em solid transparent;
+}
+
 .tooltip1 {
     position: relative;
     display: inline-block;
+   
+}
+
+
+.tooltip1:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
 }
 
     .tooltip1 .tooltiptext {
         visibility: hidden;
-        width: 220px;
-        max-height: 180px;
+        min-width: 220px;
+        min-height: 35px;
         overflow-y: auto;
-        background-color: #555;
+        transition: all ease 1s;
         color: #fff;
         text-align: center;
         border-radius: 6px;
-        padding: 5px 0;
+       
         position: absolute;
         z-index: 1;
-        top: 125%;
+        top: 70%;
+        /* overflow: hidden; */
         left: 50%;
         margin-left: -60px;
         opacity: 0;
-        transition: opacity 0.3s;
+        border-radius: 3px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.24);
+        transition: all ease 0.5s;
+    }
+        .tooltip1 .tooltiptext p {
+            margin-bottom: 0rem;
+            background: #555555e3;
+            padding: 3px 10px 3px 10px;
+        }
+    .tooltip1:hover .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: -9%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        opacity: 0;
+        border-color: transparent transparent #555555ba transparent;
     }
 
-        .tooltip1 .tooltiptext::after {
-            content: "";
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: transparent transparent #555 transparent;
-        }
+    .tooltip1:hover .tooltiptext::after {
+        visibility: visible;
+        opacity: 1;
+    }
+
 
     .tooltip1:hover .tooltiptext {
         visibility: visible;
         opacity: 1;
     }
-
 .wrapper {
     height: auto !important
 }
@@ -76,7 +209,6 @@
     right: 30px;
     top: 14px;
 }
-
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
@@ -89,20 +221,18 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
-
 #QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
     cursor: pointer !important;
+  
 }
-
-    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {      
         background: url("../../img/audio-button-set-4-transparent.png");
         background-size: 25px;
         background-repeat: no-repeat;
         background-position: 45%;
         z-index: 1000;
     }
-
-.pagination-container > ul > li {
+        .pagination-container > ul > li {
     padding: 5px 12px !important;
     border-radius: 21px !important;
     border: 1px solid blanchedalmond !important;
@@ -113,52 +243,41 @@ textarea::-webkit-scrollbar-thumb {
 .pagination-container {
     float: right !important;
 }
-
 .mn-section {
     position: absolute;
     width: calc(100% - 30px);
 }
+.comment-area{width:100%;float:left;}
 
-.comment-area {
-    width: 100%;
-    float: left;
-}
-
-    .comment-area .talk-bubble {
+ .comment-area .talk-bubble {
         width: 89%;
         margin: 0;
-        float: left;
+        float:left;
         padding: 0;
     }
-
 .video-width {
     background: black !important;
     width: 100%;
     height: 406px;
 }
+ .comment-area .talktext {
+        padding: 0px 8px 0px 8px;
+        text-align: left;
+        line-height: 1.5em;
+    }
+    .comment-area textarea {
+        min-height: 50px;
+        background: #fff!important;
+        width: 100%!important;
+        border: 0!important;
+        padding: 7px 0px;
+    }
+    .side-player {
+        margin-left: auto !important;
+        margin-top: 10px
+    }
 
-.comment-area .talktext {
-    padding: 0px 8px 0px 8px;
-    text-align: left;
-    line-height: 1.5em;
-}
-
-.comment-area textarea {
-    min-height: 50px;
-    background: #fff !important;
-    width: 100% !important;
-    border: 0 !important;
-    padding: 7px 0px;
-}
-
-.side-player {
-    margin-left: auto !important;
-    margin-top: 10px
-}
-
-.video-contop {
-    margin-top: 425px;
-}
+.video-contop{margin-top:425px;}
 
 #myForm input {
     outline: none;
@@ -181,7 +300,7 @@ textarea::-webkit-scrollbar-thumb {
         background: #fff;
         border: solid 1px #ccc;
         padding: 0px 10px 0px 20px;
-        height: 35px;
+        height:35px;
         width: 265px;
         font-family: arial;
         -webkit-border-radius: 5px;
@@ -344,13 +463,10 @@ textarea::-webkit-scrollbar-thumb {
 }
 
     .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid;
+        border-bottom: 2px rgb(80, 158, 235) solid!important;
     }
 
-.mtop-10 {
-    margin-top: 10px;
-}
-
+.mtop-10{margin-top:10px;}
 .caret {
     display: none !important;
 }
@@ -380,6 +496,7 @@ textarea::-webkit-scrollbar-thumb {
     }*/
     .dropdown-toggle::after {
         color: rgba(0, 0, 0, 0.29);
+       
         right: -3px;
         top: 0px;
     }
@@ -387,23 +504,22 @@ textarea::-webkit-scrollbar-thumb {
 .mdc-card button.dropdown-toggle:focus {
     border-bottom: 2px rgb(80, 158, 235) solid !important;
 }
-
 .mt-20 {
     margin-top: 20px;
 }
 
 .modal-bg {
     display: none;
-    position: fixed;
-    z-index: 1;
+    position: fixed; 
+    z-index: 1; 
     padding-top: 100px;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; 
+    height: 100%; 
     overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
 }
 
 .modal-content .modal-body {
@@ -454,7 +570,6 @@ textarea::-webkit-scrollbar-thumb {
     margin: 0px 0 16px;
     font-size: 15px;
 }
-
 .nav-pills.nav-pills-primary .nav-item .nav-link.active, .nav-pills.nav-pills-primary .nav-item .nav-link.active:focus, .nav-pills.nav-pills-primary .nav-item .nav-link.active:hover {
     background-color: #53a5f5;
 }
@@ -467,7 +582,6 @@ textarea::-webkit-scrollbar-thumb {
 .nav-pills.nav-pills:not(.flex-column) .nav-item:not(:last-child) .nav-link {
     margin-right: 6px !important;
 }
-
 .single-video-left {
     -ms-flex: 0 0 66.666667%;
     flex: 0 0 66.666667%;
@@ -476,7 +590,7 @@ textarea::-webkit-scrollbar-thumb {
 
 .title.name-video-primary-info-renderer {
     display: block;
-    max-height: initial;
+    max-height:initial;
     overflow: hidden;
     font-size: 1.0rem;
     font-weight: 600;
@@ -807,7 +921,6 @@ textarea::-webkit-scrollbar-thumb {
     text-align: left;
     line-height: 1.5em;
 }
-
 .border-bubble {
     border: 1px solid #620bee21;
 }
@@ -829,7 +942,6 @@ textarea::-webkit-scrollbar-thumb {
         background: #fff;
         padding: 5px;
     }
-
 .single-video-info-content {
     border-top: 1px #cccccc9c solid;
 }
@@ -851,21 +963,16 @@ textarea::-webkit-scrollbar-thumb {
     margin-top: 0px;
 }
 
-.showinter {
-    padding: 0;
-}
+.showinter{padding:0;}
 
 .views {
     padding: 10px 10px 0px 10px;
 }
-
 .tab-space {
     padding: 0px 0 30px 0px;
 }
 
-.shortlist .fa-check {
-    line-height: 40px;
-}
+.shortlist .fa-check{line-height:40px;}
 
 @media screen and (max-width: 991px) {
     .interviewer-comment .talk-bubble {
@@ -892,11 +999,8 @@ textarea::-webkit-scrollbar-thumb {
         max-width: 100%;
     }
 
-    .col-md-8.video-contop .mdc-button--outlined {
-        font-size: 11px
-    }
+    .col-md-8.video-contop .mdc-button--outlined{font-size:11px}
 }
-
 @media screen and (max-width: 768px) {
     .tabs {
         display: none;
@@ -929,7 +1033,6 @@ textarea::-webkit-scrollbar-thumb {
         border-bottom: 1px #ccc solid;
         margin-bottom: 15px;
     }
-
     .col-md-8.video-contop {
         /* width: 68%;
         padding: 0;*/
@@ -939,7 +1042,6 @@ textarea::-webkit-scrollbar-thumb {
         flex: 0 0 100%;
         max-width: 100%;
     }
-
     .mn-section {
         /*position: absolute;
         width: calc(100% - 30px);*/
@@ -976,7 +1078,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .col-md-8.video-contop .title.name-video-primary-info-renderer, .col-md-8.video-contop span {
-        font-size: 13.5px !important;
+        font-size: 13.5px!important;
     }
 
     .col-md-8.video-contop .mdc-button--outlined {
@@ -986,7 +1088,6 @@ textarea::-webkit-scrollbar-thumb {
         height: 30px;
         line-height: 16px;
     }
-
     .left-chart, .interviewer-comment {
         max-width: 100% !important;
         flex: 0 0 100%;
@@ -996,8 +1097,7 @@ textarea::-webkit-scrollbar-thumb {
     .comment-area .talk-bubble {
         width: 85%;
     }
-}
-
+    }
 @media screen and (max-width: 767px) {
 
     .single-video-left .comment-area textarea {
@@ -1007,14 +1107,12 @@ textarea::-webkit-scrollbar-thumb {
     .shortlist {
         margin-left: -50%;
     }
-
     .k {
         width: 50%;
         margin: 0;
         position: absolute;
         top: 35px;
     }
-
     .views {
         padding: 0px 10px 0px 10px;
     }
@@ -1040,6 +1138,10 @@ textarea::-webkit-scrollbar-thumb {
         width: 100%;
     }
 
+    .showinter .btn-group {
+        right: 10px;
+    }
+
     .k {
         width: 50%;
         margin: 0;
@@ -1056,33 +1158,28 @@ textarea::-webkit-scrollbar-thumb {
         padding: 25px 9px;
     }
 
-    .views {
-        padding: 10px 10px 0px 10px;
-    }
+ 
+ .views{
+    padding: 0px 10px 0px 10px;
+    right: 4px;
+}
 
     .comment-area .talk-bubble {
         width: 86%;
     }
-
-    #wrapper #content-wrapper .container-wrap {
+        #wrapper #content-wrapper .container-wrap {
         padding: 0px !important;
     }
-
-    .video-contop {
-        margin-top: 0;
-    }
-
+    .video-contop{margin-top:0;}
     .col-md-8.video-contop {
         width: 100%;
         padding: 0px 15px;
     }
-
-    .video-width {
+        .video-width {
         background: black !important;
         width: 100%;
         height: auto;
     }
-
     .card-text {
         text-align: center
     }
@@ -1101,12 +1198,10 @@ textarea::-webkit-scrollbar-thumb {
         margin: 0;
         padding-left: 20px;
     }
-
         .shortlist .fa-check {
             line-height: 75px;
             float: left;
         }
-
     .views {
         margin: 0;
     }
@@ -1120,11 +1215,9 @@ textarea::-webkit-scrollbar-thumb {
     .single-video-left .comment-area textarea {
         width: 72%;
     }
-
     .comment-area .talk-bubble {
         width: 83%;
     }
-
     .col-md-8.video-contop .mdc-button--outlined {
         font-size: 13px;
         font-size: 12px;
@@ -1132,7 +1225,6 @@ textarea::-webkit-scrollbar-thumb {
         width: 100%;
     }
 }
-
 @media screen and (max-width: 375px) {
     .comment-area .talk-bubble {
         width: 78%;

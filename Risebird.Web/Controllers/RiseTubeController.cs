@@ -1163,7 +1163,15 @@ namespace Risebird.Web.Controllers
             _mail.CC = email;
             _mail.Subject = "Risebird: Interview video is shared with you";
             var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
-            return Json("Success");
+            if(result.Contains("Mail sent successfully"))
+            {
+                return Json("Success");
+            }
+            else
+            {
+                return Json("Fail");
+            }
+            
         }
         [HttpPost]
         public JsonResult VedioComment(string comment, string vedioid)
