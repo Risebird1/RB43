@@ -222,7 +222,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Account/GetConversation",
-                data: { userid: $("#txtself").val(), contact: "" },
+                data: { userid: $("#txtself").val(), contact: "",status:"Chat" },
                 success: function (data) {
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].messageInfo == "Send") {
@@ -293,7 +293,7 @@
                     var countvalue = 0;
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
-                        if (data[i].sender != $("#txtself").val()) {
+                        if (data[i].self != 1) {
                             html += '<div style="text-align:left;height: auto;background-color: lightgray;padding-top:15px" class="form-control col-md-6">' + data[i].message + '</div>';
                             countvalue = i;
                         } else {
