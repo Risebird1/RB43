@@ -478,7 +478,7 @@ namespace Risebird.Web.Controllers
                 user = HttpContext.Session.GetString("email")?.Trim();
                 user = user.Replace("\"", "");
             }
-            var resultset = GetConversation(user, "");
+            var resultset = GetConversation(user, "", "Chat");
             var _lst = resultset.Select(x => x.Sender.ToUpper()).Distinct();
             var _lstset = new List<Conversation>();
             foreach (var item in _lst)
@@ -490,7 +490,7 @@ namespace Risebird.Web.Controllers
             ViewBag.Self = user.ToUpper();
             return Json(new { result = _lstset, Self = user.ToUpper() });
         }
-        public List<Conversation> GetConversation(string userid, string contact)
+        public List<Conversation> GetConversation(string userid, string contact, string status)
         {
             string connectionString = _configuration["ConnectionString:DBConnectionString"];
             if (String.IsNullOrEmpty(userid))
@@ -508,14 +508,29 @@ namespace Risebird.Web.Controllers
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", userid);
                 parameters.Add("@contact", contact);
-                var result = SqlMapper.Query<Conversation>(con, "usp_GetConversation", parameters,
-                        commandType: CommandType.StoredProcedure);
-                foreach (var item in result)
+                if (status == "Chat")
                 {
-                    item.Sender = item.Sender.ToUpper();
-                    item.Reciver = item.Reciver.ToUpper();
+                    var result = SqlMapper.Query<Conversation>(con, "usp_GetConversation", parameters,
+                          commandType: CommandType.StoredProcedure);
+                    foreach (var item in result)
+                    {
+                        item.Sender = item.Sender.ToUpper();
+                        item.Reciver = item.Reciver.ToUpper();
+                    }
+                    return (List<Conversation>)result;
                 }
-                return (List<Conversation>)result;
+                else
+                {
+                    var result = SqlMapper.Query<Conversation>(con, "usp_GetConversationdetails", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    foreach (var item in result)
+                    {
+                        item.Sender = item.Sender.ToUpper();
+                        item.Reciver = item.Reciver.ToUpper();
+                    }
+                    return (List<Conversation>)result;
+                }
+
             }
         }
         public void AddConversation(string userid, string contact, string message)
