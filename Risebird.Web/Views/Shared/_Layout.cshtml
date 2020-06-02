@@ -106,7 +106,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <div>
-                        <h5 class="modal-title" style="color:#fff"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(255, 255, 255)" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" /></svg> Chat <input type="text" value="" hidden id="txtself" /></h5>
+                        <h5 class="modal-title" style="color:#fff"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" /></svg> Chat <input type="text" value="" hidden id="txtself" /></h5>
                     </div>
                     <div>
                         <button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>
@@ -118,47 +118,46 @@
                 </div>
                 <div class="modal-body" style="padding: 2px 16px;">
                     <div>
-                       
+
                         <div class="pull-left"> <h5><lable id="lblChatname"></lable></h5></div>
                         <div class="pull-right">
-                            <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
+                            <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a>
+                        </div>
 
-                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
 
-                                <div id="divchatbox" class="scroll-box">
+                            <div id="divchatbox" class="scroll-box">
 
-                                </div>
-                                <div>
+                            </div>
+                            <div>
 
-                                    <form >
-                                        <div id="msger-inputarea">
-                                            <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Start writting here....." style="display:none" />
-
-
-                                            <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" class="form-control" />
-                                        </div>
-                                            </form>
-
+                                <form>
+                                    <div id="msger-inputarea">
+                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Start writting here....." style="display:none" />
+                                        <input type="button" id="btnchatConversation" class="msger-send-btn form-control" style="display:none" value="send" onclick="SendConversation()" />
+                                    </div>
+                                </form>
 
 
 
 
 
 
-                                    <!--    <div class="col-md-9" style="padding-right:0px">
-                 <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
-             </div>
-             <div class="col-md-3" style="padding-left:0px">
-                 <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
-             </div>
-            -->
+
+                                <!--    <div class="col-md-9" style="padding-right:0px">
+                                     <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
+                                 </div>
+                                 <div class="col-md-3" style="padding-left:0px">
+                                     <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
+                                 </div>
+                                -->
 
 
 
-                                </div>
                             </div>
                         </div>
-          
+                    </div>
+
 
 
 
@@ -183,7 +182,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Account/GetConversation",
-                data: { userid: $("#txtself").val(), contact: "",status:"Chat" },
+                data: { userid: $("#txtself").val(), contact: "", status: "Chat" },
                 success: function (data) {
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].messageInfo == "Send") {
@@ -206,8 +205,7 @@
                     var modal = document.getElementById("MyChatModel");
                     modal.style.display = "block";
 
-                    var msg = document.getElementById("msger-inputarea");
-                    msg.style.display = "none";
+
                     var html = '';
                     for (var i = 0; i < data.result.length; i++) {
                         if (data.result[i].isOnline == 1) {
@@ -222,6 +220,8 @@
                     $("#lblChatname").text("");
                     document.getElementById("txtmessage").style.display = "none";
                     document.getElementById("btnchatConversation").style.display = "none";
+                    var msg = document.getElementById("msger-inputarea");
+                    msg.style.display = "none";
                     $("#divchatbox").empty().html(html);
                     flag = true;
                 }
@@ -232,6 +232,8 @@
             var Sender = $("#txthiddenSorce_" + id).val();
             document.getElementById("txtmessage").style.display = "block";
             document.getElementById("btnchatConversation").style.display = "block";
+            var msg = document.getElementById("msger-inputarea");
+            msg.style.display = "block";
             ChatConversation(Sender);
         }
         function directopenChat(Sender) {
@@ -257,11 +259,11 @@
                     var countvalue = 0;
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
-                        if (data[i].sender != $("#txtself").val()) {
+                        if (data[i].self != 1) {
                             html += '<div class="msg-bubble fadeInUp" class="form-control col-md-6">' + data[i].message + '</div>';
                             countvalue = i;
                         } else {
-                            html += '<div class="col-md-6"></div><div style="text-align:Right;height: auto;background-color: aquamarine;padding-top:15px" class="form-control col-md-6">' + data[i].message + '</div>';
+                            html += '<div class="col-md-6"></div><div style="text-align:Right;height: auto;background-color: aquamarine;padding-top:15px" class="form-control col-md-6 msg-bubble fadeInUp">' + data[i].message + '</div>';
                         }
                         html += '</div>';
 
@@ -287,7 +289,7 @@
         }
         function SendConversation() {
             var Sender = sendvalue;
-            if (txtmessage != "") {
+            if ($("#txtmessage").val() != "") {
                 $.ajax({
                     type: "POST",
                     url: "/Account/AddConversation",
