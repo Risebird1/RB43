@@ -91,6 +91,9 @@
                                         <div class="spinner">
                                             <button type="button" class="up button">&rsaquo;</button>
                                             <button type="button" class="down button">&lsaquo;</button>
+                                        </div> <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
                                         </div>
                                         @Html.ValidationMessageFor(model => model.interviewDuration, "", new { @class = "text-danger" })
                                     </div>
@@ -265,14 +268,7 @@
 
 </div>
 
-<style>
-    .fa-spinner {
-        font-size: 18px;
-        position: relative;
-        top: 6px;
-        left: 4px;
-    }
-</style>
+
 <script>
     $(document).ready(function () {
         var inputs = document.getElementsByTagName("input");

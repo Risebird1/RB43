@@ -6,7 +6,18 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 5px;
 }
+textarea::-webkit-scrollbar {
+    width: 2px;
+    height: 6px;
+    background-color: var(--mdc-theme-primary, #018786) !important;
+}
 
+textarea::-webkit-scrollbar-thumb {
+    background-color: #56a9ff;
+    border: 1px solid #56a9ff;
+    margin: 2px;
+    border-radius: 2px;
+}
 .no-sort::after {
     display: none !important;
 }
@@ -165,10 +176,97 @@ table th {
     .select-css:disabled:hover, .select-css[aria-disabled=true] {
         border-color: #aaa;
     }
+
+.input {
+    position: relative;
+}
+
+.spinner {
+    top: 15px;
+    width: 0.8rem;
+    position: absolute;
+    background: whitesmoke;
+    border-radius: 0;
+    display: none;
+    height: 2rem;
+    right: 20px;
+}
+
+.js .spinner {
+    display: block;
+}
+
+.container:hover .spinner {
+    right: 0;
+    top: 1px;
+}
+
+.spinner .button {
+    position: relative;
+    color: #8c8686;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    padding: 0;
+    display: block;
+}
+
+    .spinner .button:hover {
+        color: gray;
+    }
+
+    .spinner .button:active {
+        color: darkgray
+    }
+
+.up {
+    transform: rotate(-90deg);
+    top: -.5rem;
+}
+
+.down {
+    transform: rotate(-90deg);
+    top: -2rem;
+}
+.spinner-wrap{position:relative}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
 #AudioFile {
     margin: 0px 10px 10px 10px;
     width: calc(100% - 20px);
 }
+.text-areadiv {
+    height: auto;
+    padding: 0px 10px !important;
+}
+
+    .text-areadiv textarea {
+        width: 100%;
+        border: 0;
+        background: #f5f5f5;
+        padding: 5px 10px 5px 10px;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+
+
+ .text-areadiv textarea:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+
+
+
+
 
 #PageVideoLink {
     margin: 0px 10px 10px 10px;
