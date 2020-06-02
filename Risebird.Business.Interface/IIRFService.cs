@@ -55,5 +55,6 @@ namespace Risebird.Business.Interface
         IEnumerable<IRF> GetAllIRFs(string emailId, string profileName);
         Task<bool> SubscribeIRF(int id, string emailId, string profile);
         Task<bool> UnSubscribeIRF(int id, string emailId, string profile);
+        bool SaveCandidateStatus(int candidateId, int status);
     }
 }
