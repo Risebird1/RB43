@@ -203,47 +203,6 @@
 
     }
 </script>
-<style>
-    .tooltip1 {
-        position: relative;
-        display: inline-block;
-    }
-
-        .tooltip1 .tooltiptext {
-            visibility: hidden;
-            width: 220px;
-            max-height: 220px;
-            overflow-y: auto;
-            background-color: #555;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            position: absolute;
-            z-index: 1;
-            top: 125%;
-            left: 50%;
-            margin-left: -60px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-            .tooltip1 .tooltiptext::after {
-                content: "";
-                position: absolute;
-                bottom: 100%;
-                left: 50%;
-                margin-left: -5px;
-                border-width: 5px;
-                border-style: solid;
-                border-color: transparent transparent #555 transparent;
-            }
-
-        .tooltip1:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-</style>
 
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
@@ -683,7 +642,7 @@
                                                             @if (Model.IsLike == "Liked")
                                                             {
                                                                 <div class="btn2">
-                                                                    <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: blue;font-size: 24px;padding-right:10px">
+                                                                    <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="color: blue;font-size: 24px;padding-right:10px">
                                                                         &nbsp;
                                                                         <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                     </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px">
@@ -694,7 +653,7 @@
                                                             else if (Model.IsLike == "Disliked")
                                                             {
                                                                 <div class="btn3">
-                                                                    <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px;padding-right:10px">
+                                                                    <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px;padding-right:10px">
                                                                         &nbsp;
                                                                         <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                     </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:10px">
@@ -703,7 +662,7 @@
                                                                 </div>
                                                             }
                                                             else
-                                                            { <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px; padding-right: 30px">
+                                                            { <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 30px">
                                                                     &nbsp;
                                                                     <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                 </i> <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px">
@@ -719,13 +678,14 @@
                                                             {
                                                                 <div class="col-md-3">
                                                                     <div class="btn-group">
-                                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            Share
+                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                   <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;
+"> Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
-                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare2" value="Public Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1"  />
+                                                                            <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
                                                                         </div>
                                                                     </div>
 
@@ -745,7 +705,7 @@
 
                                                         }
                                                     }
-                                                    <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
+                                                    <div class="col-md-2 showinter" style="text-align: end;">
                                                         @if (Model.VideoLink != null)
                                                         {
                                                             @if (ViewBag.VedioStatus != "Public")
@@ -768,13 +728,14 @@
                                                                 else
                                                                 {
                                                                     <div class="btn-group">
-                                                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            Share
+                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;
+">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
-                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Private Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare1" value="Email Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                            <input type="button" class="form-control btninterest sharebtn1" id="btnShare2" value="Public Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                            <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1"  />
+                                                                            <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
                                                                         </div>
                                                                     </div>
 
@@ -1491,23 +1452,25 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Share</h5>
+                <h5 class="modal-title" style="color:#fff">Email Share</h5>
                 <span onclick="closeSharePopUp1()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 2px 16px;">
+            <div class="modal-body" >
                 <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                        <div class="talktext">
+                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
+              
+                        <div class="form-control text-areadiv">
                             <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                         </div>
-                    </div>
+                 
                 </div>
                 <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                        <div class="talktext">
+                    <label class="label-field desp-label" for="Comment">Please Enter Comment</label>
+                   
+                        <div class="form-control text-areadiv">
                             <textarea rows="2" id="comment" placeholder="Comment" style="width:100%"></textarea>
                         </div>
-                    </div>
+                  
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
@@ -1528,16 +1491,17 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Share</h5>
+                <h5 class="modal-title" style="color:#fff">Private Share</h5>
                 <span onclick="closeSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 2px 16px;">
+            <div class="modal-body">
                 <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                        <div class="talktext">
+                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
+                 
+                        <div class="form-control text-areadiv">
                             <textarea rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                         </div>
-                    </div>
+                    
                 </div>
 
                 <div class="row">
@@ -1559,15 +1523,16 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Share</h5>
+                <h5 class="modal-title" style="color:#fff">Public Share</h5>
                 <span onclick="closepublicSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 2px 16px;">
+            <div class="modal-body" >
                 <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                        <div class="talktext">
-                            <textarea rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
-                        </div>
+
+                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
+                    <div class="form-control text-areadiv">
+                        <textarea rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+
                     </div>
                 </div>
 
