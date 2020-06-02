@@ -712,6 +712,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IsShortlisted = model.IsShortlisted;
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
+                        NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
