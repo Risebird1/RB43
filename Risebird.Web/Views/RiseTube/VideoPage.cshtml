@@ -3018,7 +3018,14 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
             url: "/RiseTube/VedioShared",
             data: { Emailids: $("#txtsharetext1").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
             success: function (data) {
+                if (data == "Success") {
+                    alert("Interview shared successfully.");
                 closeSharePopUp();
+
+                } else {
+                    alert("Fail to share Interview.");
+
+                }
             }
         });
     }
