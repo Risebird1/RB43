@@ -1151,9 +1151,18 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VedioShare(string value, string vedioid)
+        public JsonResult VedioShare(string value, string vedioid, string Name, string Emailids)
         {
             var modelList = _meetingService.VedioShare(value, vedioid);
+            //send a email
+            var email = HttpContext.Session.GetString("email");
+            email = email.Replace("\"", "");
+            string currenturl = Request.Host.ToString() + Request.Path.ToString() + "/" + vedioid;
+            Mail _mail = new Mail();
+            _mail.TO = Emailids;
+            _mail.CC = email;
+            _mail.Subject = "Risebird: Interview video is shared with you";
+            var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
             return Json("Success");
         }
         [HttpPost]
@@ -1262,6 +1271,6 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-          
+
     }
 }

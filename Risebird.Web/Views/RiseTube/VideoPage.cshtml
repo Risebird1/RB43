@@ -1553,6 +1553,37 @@
         </div>
     </div>
 </div>
+<div id="PublicShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Share</h5>
+                <span onclick="closepublicSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                        <div class="talktext">
+                            <textarea rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="SharepublicVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input style="background:#ff253a!important" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;
+        background-color: #fff;
+        color: white;"> </div>
+        </div>
+    </div>
+</div>
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 @*
@@ -2836,9 +2867,9 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
             document.getElementById("comment").innerHTML = getComment;
 
         });
-         $("#btnShare2").on('click', function () {
-            //var modal = document.getElementById("MyShareModel1");
-            //modal.style.display = "block";
+        $("#btnShare2").on('click', function () {
+            var modal = document.getElementById("PublicShareModel");
+            modal.style.display = "block";
             //var getComment = document.getElementById("IreportModel_InterviewerComment").value;
             //console.log(getComment)
             //document.getElementById("comment").innerHTML = getComment;
@@ -3001,6 +3032,10 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
         var modal = document.getElementById("MyShareModel1");
         modal.style.display = "none";
     }
+    function closepublicSharePopUp() {
+        var modal = document.getElementById("PublicShareModel");
+        modal.style.display = "none";
+    }
     function ShareVedioLinkToMail() {
         $.ajax({
             type: "POST",
@@ -3034,6 +3069,18 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
         var vid = document.getElementsByClassName("vjs-tech");
         vid[0].currentTime = time;
         //time should be in seconds
+    }
+    function SharepublicVedioLink() {
+        if ($("#txtpublicsharing").val() != "") {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VedioShare",
+                data: { value: "Public", vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), Emailids: $("#txtpublicsharing").val() },
+                success: function (data) {
+                    closepublicSharePopUp();
+                }
+            });
+        }
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
