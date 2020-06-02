@@ -2428,20 +2428,20 @@ namespace Risebird.Web.Controllers
                                 for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
                                 {
                                     var candidate = new Candidate();
-                                    candidate.Name = workSheet.Cells[rowIterator, 1].Value.ToString();
+                                    candidate.Name = (workSheet.Cells[rowIterator, 1] != null) ? workSheet.Cells[rowIterator, 1].Value.ToString() : "";
                                     candidate.EmailId = workSheet.Cells[rowIterator, 2].Value.ToString();
-                                    candidate.ResumeLink = workSheet.Cells[rowIterator, 3].Value.ToString();
-                                    candidate.Type = workSheet.Cells[rowIterator, 4].Value.ToString();
-                                    candidate.Location = workSheet.Cells[rowIterator, 5].Value.ToString();
-                                    candidate.Skill = workSheet.Cells[rowIterator, 6].Value.ToString();
-                                    candidate.WorkAuth = workSheet.Cells[rowIterator, 7].Value.ToString();
-                                    candidate.CurrentLocation = workSheet.Cells[rowIterator, 8].Value.ToString();
-                                    candidate.CurrentEmployer = workSheet.Cells[rowIterator, 9].Value.ToString();
-                                    candidate.Phone = workSheet.Cells[rowIterator, 10].Value.ToString();
-                                    candidate.TotalExperience = Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value);
-                                    candidate.CurrentSalary = Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value);
-                                    candidate.ExpectedSalary = Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value);
-                                    candidate.Notice = Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value);
+                                    candidate.ResumeLink = (workSheet.Cells[rowIterator, 3].Value != null) ? workSheet.Cells[rowIterator, 3].Value.ToString() : "";         //workSheet.Cells[rowIterator, 3].Value.ToString();
+                                    candidate.Type = (workSheet.Cells[rowIterator, 4].Value != null) ? workSheet.Cells[rowIterator, 4].Value.ToString() : ""; //workSheet.Cells[rowIterator, 4].Value.ToString();
+                                    candidate.Location = (workSheet.Cells[rowIterator, 5].Value != null) ? workSheet.Cells[rowIterator, 5].Value.ToString() : "";            //workSheet.Cells[rowIterator, 5].Value.ToString();
+                                    candidate.Skill = (workSheet.Cells[rowIterator, 6].Value != null) ? workSheet.Cells[rowIterator, 6].Value.ToString() : "";            // workSheet.Cells[rowIterator, 6].Value.ToString();
+                                    candidate.WorkAuth = (workSheet.Cells[rowIterator, 7].Value != null) ? workSheet.Cells[rowIterator, 7].Value.ToString() : "";               //workSheet.Cells[rowIterator, 7].Value.ToString();
+                                    candidate.CurrentLocation = (workSheet.Cells[rowIterator, 8].Value != null) ? workSheet.Cells[rowIterator, 8].Value.ToString() : "";                 //workSheet.Cells[rowIterator, 8].Value.ToString();
+                                    candidate.CurrentEmployer = (workSheet.Cells[rowIterator, 9].Value != null) ? workSheet.Cells[rowIterator, 9].Value.ToString() : "";                 //workSheet.Cells[rowIterator, 9].Value.ToString();
+                                    candidate.Phone = (workSheet.Cells[rowIterator, 10].Value != null) ? ("+" + workSheet.Cells[rowIterator, 10].Value.ToString()) : "";                  // "+" + workSheet.Cells[rowIterator, 10].Value.ToString();
+                                    candidate.TotalExperience = (workSheet.Cells[rowIterator, 11].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value) : 0;                // Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value);
+                                    candidate.CurrentSalary = (workSheet.Cells[rowIterator, 12].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value) : 0;                  // Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value);
+                                    candidate.ExpectedSalary = (workSheet.Cells[rowIterator, 13].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value) : 0;                //Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value);
+                                    candidate.Notice = (workSheet.Cells[rowIterator, 14].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value) : 0;                   //Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value);
 
                                     candidate.IRFId = IRFId;
                                     candidateList.Add(candidate);
@@ -2468,7 +2468,7 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
-                return RedirectToAction("Index");
+                return RedirectToAction("Candidates", new { id = Convert.ToInt16(irfId), irfName = IRFName });
             }
             return null;
         }
