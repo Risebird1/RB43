@@ -756,7 +756,10 @@ namespace Risebird.Web.Controllers
                     if (status == "Public")
                     {
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
-
+                        if(IRListModel==null)
+                        {
+                            IRListModel = new InterviewReport();
+                        }
                         MeetingVM NewModel = new MeetingVM();
                         NewModel.SubVideo_List = new List<MeetingVM>();
                         NewModel.candidateName = model.candidateName;
@@ -794,19 +797,25 @@ namespace Risebird.Web.Controllers
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         var videodetailscount = _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount;
-                        if (NewModel.IreportModel.QuestionsCollection == null)
+                        if (NewModel.IreportModel != null)
                         {
-                            ViewBag.QuestionsDiscussedCount = 0;
+                            if (NewModel.IreportModel.QuestionsCollection == null)
+                            {
+                                ViewBag.QuestionsDiscussedCount = 0;
+                            }
+                            else
+                            {
+                                ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
+                            }
                         }
                         else
                         {
-                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
+                            ViewBag.QuestionsDiscussedCount = 0;
                         }
-
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
-                        //ViewBag.VedioStatus = "Public";
-                        ViewBag.VedioStatus = "Private";
+                        ViewBag.VedioStatus = "Public";
+                        //ViewBag.VedioStatus = "Private";
 
                         //desible Like and dilisk button and share button and comment opetion
                         return View(NewModel);

@@ -26,5 +26,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime Created_at { get; set; }
         public string MessageInfo { get; set; }
         public int IsOnline { get; set; }
+        public int self { get; set; }
     }
 }

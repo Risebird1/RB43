@@ -495,7 +495,14 @@ namespace Risebird.Web.Controllers
             string connectionString = _configuration["ConnectionString:DBConnectionString"];
             if (String.IsNullOrEmpty(userid))
             {
-                userid = HttpContext.Session.GetString("email")?.Trim();
+                if (HttpContext.Session.GetString("email")?.Trim() == null)
+                {
+                    userid = "";
+                }
+                else
+                {
+                    userid = HttpContext.Session.GetString("email")?.Trim();
+                }
             }
             if (String.IsNullOrEmpty(contact))
             {
@@ -527,6 +534,14 @@ namespace Risebird.Web.Controllers
                     {
                         item.Sender = item.Sender.ToUpper();
                         item.Reciver = item.Reciver.ToUpper();
+                        if(item.Sender==userid.ToUpper())
+                        {
+                            item.self = 1;
+                        }
+                        else
+                        {
+                            item.self = 0;
+                        }
                     }
                     return (List<Conversation>)result;
                 }
