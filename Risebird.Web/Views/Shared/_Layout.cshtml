@@ -50,8 +50,7 @@
         <link href="~/assets/MultiSelect/Newfolder/isteven-multi-select.css" rel="stylesheet" />
         <script src="~/assets/MultiSelect/Newfolder/isteven-multi-select.js"></script>
         <script src="~/js/angular/InfiniteScroll.js"></script>*@
-    <style>
-    </style>
+    
 </head>
 <body class=" sidebar-mini ">
 
@@ -126,15 +125,17 @@
 
                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
 
-                            <div id="divchatbox" class="scroll-box">
+                            <div class=" scroll-box">
+                                <div id="divchatbox">
 
+                                </div>
                             </div>
                             <div>
 
                                 <form>
                                     <div id="msger-inputarea">
-                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Start writting here....." style="display:none" />
-                                        <input type="button" id="btnchatConversation" class="msger-send-btn form-control" style="display:none" value="send" onclick="SendConversation()" />
+                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" />
+                                        <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" />
                                     </div>
                                 </form>
 
@@ -260,10 +261,10 @@
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
                         if (data[i].self != 1) {
-                            html += '<div class="msg-bubble fadeInUp" class="form-control col-md-6">' + data[i].message + '</div>';
+                            html += '<div class="col-md-6"><div class="msg-bubble fadeInUp">' + data[i].message + '</div></div><div class="col-md-6"></div>';
                             countvalue = i;
                         } else {
-                            html += '<div class="col-md-6"></div><div style="text-align:Right;height: auto;background-color: aquamarine;padding-top:15px" class="form-control col-md-6 msg-bubble fadeInUp">' + data[i].message + '</div>';
+                            html += '<div class="col-md-6"></div><div class="col-md-6"><div class=" msg-bubble-right fadeInUp">' + data[i].message + '</div></div>';
                         }
                         html += '</div>';
 
