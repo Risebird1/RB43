@@ -460,6 +460,7 @@
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
                                                 <th>Report Link</th>
+                                                <th>Aadhar Link</th>
                                                 <th>Video</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -479,6 +480,7 @@
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
                                                 <th>Report Link</th>
+                                                <th>Aadhar Link</th>
                                                 <th>Video</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -489,64 +491,74 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    @if (item.IsOnline == 1)
-                                                    {
-                                                        <td>
-                                                            <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>
-                                                            <a onclick="">@item.candidateName <span class="dot"></span></a>
-                                                        </td>
-                                                    }s
-                                                    <td> @item.ClientHrContact </td>
-                                                    @if (item.zoomLink != null && item.zoomLink != "")
-                                                    {
-                                                        <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Interview Link</td>
-                                                    }
-                                                    <td> @item.ClientName </td>
-                                                    <td> @item.JDTiltle.Split("|")[0] </td>
-                                                    <td> @item.confirmationStatus</td>
-                                                    <td> @item.MeetingStatusStatusDesc</td>
-                                                    @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
-                                                    {
-                                                        <td> @item.intervieweStatusStatDesc</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
-                                                    @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
-                                                    {
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                @if (item.IsOnline == 1)
+                                                {
+                                                    <td>
+                                                        <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                    </td>
+                                                }
+                                                <td> @item.ClientHrContact </td>
+                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                {
+                                                    <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Interview Link</td>
+                                                }
+                                                <td> @item.ClientName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
+                                                <td> @item.confirmationStatus</td>
+                                                <td> @item.MeetingStatusStatusDesc</td>
+                                                @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
+                                                {
+                                                    <td> @item.intervieweStatusStatDesc</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
+                                                {
 
-                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Report</td>
-                                                    }
+                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Report</td>
+                                                }
+                                                @if (item.AadharFileLink != null && item.AadharFileLink != "")
+                                                {
+                                                    <td>
 
-                                                    @if (item.VideoLink != null && item.VideoLink != "" && item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
-                                                    {
-                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Video</td>
-                                                    }
-                                                    <td>@item.NextLevelApprovalStat</td>
-                                                    <td>@item.FinalSelectionStat</td>
-                                                    <td>@item.OfferStatusStatDesc</td>
-                                                    <td>@item.JoiningStatusStatDesc</td>
-                                                </tr>
+                                                        <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No document</td>
+                                                }
+                                                @if (item.VideoLink != null && item.VideoLink != "" && item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
+                                                {
+                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Video</td>
+                                                }
+                                                <td>@item.NextLevelApprovalStat</td>
+                                                <td>@item.FinalSelectionStat</td>
+                                                <td>@item.OfferStatusStatDesc</td>
+                                                <td>@item.JoiningStatusStatDesc</td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
