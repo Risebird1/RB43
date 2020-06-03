@@ -55,7 +55,9 @@
 </head>
 <body class=" sidebar-mini ">
 
-
+    <audio id="chatAudio" controls="controls" hidden>
+        <source src="~/audio/done-for-you.ogg" type="audio/ogg" />
+    </audio>
 
     @*<!-- START PAGE CONTAINER -->
         <div class="page-container" ng-app="MyApp">
@@ -190,6 +192,7 @@
                             modal.style.display = "block";
                             flagdisplay = false;
                             $(".modalMinimize").click();
+                            $('#chatAudio')[0].play();
                         }
                     }
                     setTimeout(checkConversation(''), 5000);
