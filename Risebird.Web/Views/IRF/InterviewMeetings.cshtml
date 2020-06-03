@@ -160,7 +160,17 @@
                                                     {
                                                         <td>No Interview Link</td>
                                                     }
-                                                    <td> @item.confirmationStatus</td>
+                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                    {
+                                                        <td>
+
+                                                            <a style="background-color:red;border-radius:16px;padding:5px 10px"> @item.confirmationStatus</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-center"> @item.confirmationStatus</td>
+                                                    }
                                                     <td> @item.MeetingStatusStatusDesc </td>
                                                     @if (item.QCInterview > 0)
                                                     {
