@@ -721,6 +721,7 @@ namespace Risebird.Web.Controllers
                         // to get videocount details
                         var videodetailscount = _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount;
+                        NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -793,6 +794,7 @@ namespace Risebird.Web.Controllers
                         NewModel.IsIntrested = model.IsIntrested;
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         var videodetailscount = _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount;
                         if (NewModel.IreportModel != null)
@@ -1064,6 +1066,7 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         var videodetailscount = _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount;
+                        NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;

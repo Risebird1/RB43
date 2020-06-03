@@ -1054,5 +1054,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public bool SaveCandidateStatus(int candidateId, int status)
+        {
+            try
+            {
+                return _irfRepository.SaveCandidateStatus(candidateId, status);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }
