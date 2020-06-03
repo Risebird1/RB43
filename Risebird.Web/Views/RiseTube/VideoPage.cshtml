@@ -537,7 +537,7 @@
 
                                                                     @if (@Model.VideoLink.Contains(".mp4"))
                                                                     {
-                                                                        <video controls class="vjs-tech video-width btnvideo" autoplay>
+                                                                        <video controls class="vjs-tech video-width btnvideo">
                                                                             <source src="@Model.VideoLink" type="video/mp4">
                                                                             <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
                                                                         </video>
@@ -551,7 +551,7 @@
                                                                     }
                                                                     else
                                                                     {
-                                                                        <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
+                                                                        <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink" allowfullscreen></iframe>
                                                                     }
                                                                 }
                                                                 else
@@ -925,75 +925,78 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    @if (ViewBag.ProfileName != "CuratedUser")
+                                                                    @if (ViewBag.VedioStatus != "Public")
                                                                     {
-                                                                        <div class="row">
-                                                                            <div class="col-md-6 col-sm-6">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-6 col-sm-6">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12 col-sm-12">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                    @{
-                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                    }
-                                                                                </div>
-                                                                            </div>
-                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                            {
+                                                                        @if (ViewBag.ProfileName != "CuratedUser")
+                                                                        {
+                                                                            <div class="row">
                                                                                 <div class="col-md-6 col-sm-6">
-                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
                                                                                 </div>
-                                                                            }
-                                                                        </div>
-                                                                    }
-                                                                    @if (Model.IsIntrested == "Interest Accepted" && ViewBag.ProfileName == "CuratedUser")
-                                                                    {
-                                                                        <div class="row">
-                                                                            <div class="col-md-6 col-sm-6">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-6 col-sm-6">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12 col-sm-12">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                    @{
-                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                    }
-                                                                                </div>
-                                                                            </div>
-                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                            {
                                                                                 <div class="col-md-6 col-sm-6">
-                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
                                                                                 </div>
-                                                                            }
-                                                                        </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12 col-sm-12">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                        @{
+                                                                                            if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                                {
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                    </div>
+                                                                                }
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.IsIntrested == "Interest Accepted" && ViewBag.ProfileName == "CuratedUser")
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-md-6 col-sm-6">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6 col-sm-6">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12 col-sm-12">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                        @{
+                                                                                            if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                                {
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                    </div>
+                                                                                }
+                                                                            </div>
+                                                                        }
                                                                     }
                                                                 </div>
 
@@ -2910,7 +2913,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
     jQuery(document).ready(function ($) {
 
         if ($("#txtVideostatus").val() == "Public") {
-             var modal = document.getElementById("PublicShareVideo");
+            var modal = document.getElementById("PublicShareVideo");
             modal.style.display = "block";
         }
         $("#btnShare").on('click', function () {
