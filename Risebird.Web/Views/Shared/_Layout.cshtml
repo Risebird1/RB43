@@ -54,7 +54,9 @@
 </head>
 <body class=" sidebar-mini ">
 
-
+    <audio id="chatAudio" controls="controls" hidden>
+        <source src="~/audio/done-for-you.ogg" type="audio/ogg" />
+    </audio>
 
     @*<!-- START PAGE CONTAINER -->
         <div class="page-container" ng-app="MyApp">
@@ -98,7 +100,7 @@
         @RenderBody()
     </div>
 
-    <div id="MyChatModel" class="modal mymodal modal-bg">
+    <div id="MyChatModel" class="modal mymodal modal-bg" style="padding-top:30px;">
         <!-- Modal content -->
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -197,6 +199,7 @@
                             modal.style.display = "block";
                             flagdisplay = false;
                             $(".modalMinimize").click();
+                            $('#chatAudio')[0].play();
                         }
                     }
                     setTimeout(checkConversation(''), 5000);
@@ -270,7 +273,7 @@
                             html += '<div class="col-md-6"><div class="msg-bubble fadeInUp">' + data[i].message + '</div></div><div class="col-md-6"></div>';
                             countvalue = i;
                         } else {
-                            html += '<div class="col-md-6"></div><div class="col-md-6"><div class=" msg-bubble-right fadeInUp">' + data[i].message + '</div></div>';
+                            html += '<div class="col-md-6"></div><div class="col-md-6"><div class="msg-bubble-right fadeInUp">' + data[i].message + '</div></div>';
                         }
                         html += '</div>';
 

@@ -237,6 +237,7 @@
                                 </div>
                                 <div class="pull-right">
                                     <div>
+                                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VedioStatus" />
                                         @if (ViewBag.actionstatus != "SkillChannel")
                                         {
                                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
@@ -620,13 +621,20 @@
                                                 @if (Model.JDTiltle != null)
                                                 {
                                                     <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                        @if (Model.IsOnline == 1)
+                                                        @if (ViewBag.VedioStatus != "Public")
                                                         {
-                                                            <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            @if (Model.IsOnline == 1)
+                                                            {
+                                                                <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a onclick="">   @Model.candidateName <span class="dot"></span></a>
+                                                            }
                                                         }
                                                         else
                                                         {
-                                                            <a onclick="">   @Model.candidateName <span class="dot"></span></a>
+                                                            @Model.candidateName
                                                         }
                                                         <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
                                                         <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
@@ -679,8 +687,7 @@
                                                                 <div class="col-md-3">
                                                                     <div class="btn-group">
                                                                         <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                   <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;
-"> Share
+                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;"> Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
                                                                             <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1"  />
@@ -729,8 +736,7 @@
                                                                 {
                                                                     <div class="btn-group">
                                                                         <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;
-">  Share
+                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
                                                                             <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
@@ -745,6 +751,10 @@
                                                             }
                                                         }
                                                     </div>
+                                                    @if (ViewBag.VedioStatus == "Public")
+                                                    {
+                                                        <div class="col-md-6"></div>
+                                                    }
                                                     <div class="col-md-4 views tooltip1" style="text-align: end;">
                                                         @if (Model.VideoLink != null)
                                                         {
@@ -1501,22 +1511,22 @@
                 <h5 class="modal-title" style="color:#fff">Email Share</h5>
                 <span onclick="closeSharePopUp1()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
             </div>
-            <div class="modal-body" >
+            <div class="modal-body">
                 <div class="row" style="padding:10px">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
-              
-                        <div class="form-control text-areadiv">
-                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
-                        </div>
-                 
+
+                    <div class="form-control text-areadiv">
+                        <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                    </div>
+
                 </div>
                 <div class="row" style="padding:10px">
                     <label class="label-field desp-label" for="Comment">Please Enter Comment</label>
-                   
-                        <div class="form-control text-areadiv">
-                            <textarea rows="2" id="comment" placeholder="Comment" style="width:100%"></textarea>
-                        </div>
-                  
+
+                    <div class="form-control text-areadiv">
+                        <textarea rows="2" id="comment" placeholder="Comment" style="width:100%"></textarea>
+                    </div>
+
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
@@ -1543,11 +1553,11 @@
             <div class="modal-body">
                 <div class="row" style="padding:10px">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
-                 
-                        <div class="form-control text-areadiv">
-                            <textarea rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
-                        </div>
-                    
+
+                    <div class="form-control text-areadiv">
+                        <textarea rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                    </div>
+
                 </div>
 
                 <div class="row">
@@ -1572,7 +1582,7 @@
                 <h5 class="modal-title" style="color:#fff">Public Share</h5>
                 <span onclick="closepublicSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
             </div>
-            <div class="modal-body" >
+            <div class="modal-body">
                 <div class="row" style="padding:10px">
 
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
@@ -1586,6 +1596,37 @@
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="SharepublicVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
                         <input style="background:#ff253a!important" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;
+        background-color: #fff;
+        color: white;"> </div>
+        </div>
+    </div>
+</div>
+
+<div id="PublicShareVideo" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Enter emailid</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="padding:10px">
+
+                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email</label>
+                    <div class="form-control text-areadiv">
+                        <input type="text" id="txtvideoemailid" class="form-control" />
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
                     </div>
                 </div>
             </div>
@@ -2865,6 +2906,10 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
 
     jQuery(document).ready(function ($) {
 
+        if ($("#txtVideostatus").val() == "Public") {
+             var modal = document.getElementById("PublicShareVideo");
+            modal.style.display = "block";
+        }
         $("#btnShare").on('click', function () {
             var modal = document.getElementById("MyShareModel");
 
@@ -3066,7 +3111,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
             success: function (data) {
                 if (data == "Success") {
                     alert("Interview shared successfully.");
-                closeSharePopUp();
+                    closeSharePopUp();
 
                 } else {
                     alert("Fail to share Interview.");
@@ -3099,6 +3144,22 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                 }
             });
         }
+    }
+    function SubmitEmail() {
+        if ($("#txtvideoemailid").val() != "") {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VedioShareEmail",
+                data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val() },
+                success: function (data) {
+                    closepublicSharePopUpvideo();
+                }
+            });
+        }
+    }
+    function closepublicSharePopUpvideo() {
+        var modal = document.getElementById("PublicShareVideo");
+        modal.style.display = "none";
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")

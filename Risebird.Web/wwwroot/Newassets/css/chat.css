@@ -54,6 +54,7 @@ button:focus {
 }
 
 .minmaxCon {
+    width:270px;
     height: 35px;
     bottom: 1px;
     position: fixed;
