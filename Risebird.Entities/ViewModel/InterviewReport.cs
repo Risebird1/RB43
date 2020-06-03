@@ -135,7 +135,9 @@ namespace Risebird.Entities.ViewModel
         public string ThumbnailImage { get; set; }
         public string PrimarySkill { get; set; }
 
-        
+        [Display(Name = "Feedback Audio File")]
+        public IFormFile FeedbackAudioFile { get; set; }
 
+        public string FeedbackAudioLink { get; set; }
     }
 }
