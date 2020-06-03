@@ -9,7 +9,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
 CREATE PROCEDURE [dbo].[usp_UpdateInterviewComments](
 		@interviewId int, 
 		@interviewStatus int = null,
@@ -27,7 +26,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewComments](
 				@OfferStatus int = null, 
 				@PreparationStatus int = null, 
 				@JoiningStatus int =  null,
-				@ThumbnailImage varchar(Max))  
+				@ThumbnailImage varchar(Max),
+				@FeedbackAudioLink nvarchar(max) =null)  
 AS  
 Begin Try  
   BEGIN TRAN UpdateUser   
@@ -51,7 +51,8 @@ Begin Try
 		   ClientInterviewStatus = ISNULL(@ClientInterviewStatus,ClientInterviewStatus), 
           AudioLink = ISNULL(@audiolink,AudioLink) ,  
           VideoLink = ISNULL(@videolink, VideoLink) ,
-		  ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage)
+		  ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage),
+		  FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink)
       WHERE        interviewId = @InterviewId  
   
                       
@@ -73,7 +74,10 @@ Begin Try
           JoiningStatus, 
 		  ClientInterviewStatus, 
           TrainerComment,
-		  AudioLink,VideoLink,ThumbnailImage)   
+		  AudioLink,
+		  VideoLink,
+		  ThumbnailImage,
+		  FeedbackAudioLink)   
     VALUES  
          (@interviewId,  
           @InterviewStatus,  
@@ -88,7 +92,11 @@ Begin Try
           @PreparationStatus,  
           @JoiningStatus,
 		  @ClientInterviewStatus,  
-          @TrainerComment,@audiolink,@videolink,@ThumbnailImage)  
+          @TrainerComment,
+		  @audiolink,
+		  @videolink,
+		  @ThumbnailImage,
+		  @FeedbackAudioLink)  
 
 	INSERT INTO 
 	InterviewReport 
@@ -116,6 +124,17 @@ Begin Catch
   
  Rollback;  
 End Catch  
+  
+  
+  
+  
+  
+  
+
+
+
+
+GO
   
   
   

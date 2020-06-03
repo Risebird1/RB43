@@ -2157,6 +2157,8 @@ namespace Risebird.Web.Controllers
                         {
 
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
+                            candidateList.Where(x=>x.Status!=null).ToList().ForEach(x =>  x.StatusValue = ((CandidateStatus)x.Status).GetDescription());
+
                         }
 
                         if (TempData["SuccessErrorMessageCandidate"] != null)
@@ -3489,5 +3491,21 @@ namespace Risebird.Web.Controllers
 
             return new SelectList(listItems, "Value", "Text", listItems.First().Value);
         }
+
+        public bool SaveCandidateStatus(int candidateId, int statusValue)
+        {
+            var result = _irfService.SaveCandidateStatus(candidateId, statusValue);
+            if (result)
+            {
+                TempData["SuccessErrorMessageCandidate"] = "Candidate status saved Successfully";
+
+            }
+            else
+                TempData["SuccessErrorMessageCandidate"] = "Failed to save candidate status";
+
+            return result;
+
+        }
+
     }
 }
