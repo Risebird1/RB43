@@ -27,9 +27,9 @@ namespace Risebird.Entities.Enum
         [Description("Duplicate")]
         Duplicate,
 
-        [Display(Name = "Not Interested In UST")]
-        [Description("Not Interested In UST")]
-        NotInterestedInUST,
+        [Display(Name = "Not Interested")]
+        [Description("Not Interested")]
+        NotInterested,
 
         [Display(Name = "Got Another Offer")]
         [Description("Got Another Offer")]
