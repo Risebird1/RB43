@@ -19,11 +19,12 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class RiseTubeController : Controller
     {
 
         private IMeetingService _meetingService;
+        private IUserService _userService;
         private IApplicationErrorLogger _applicationErrorLogger;
         private IAzureStorageHelper _azureStorageHelper;
         private ISkillService _skillService;
@@ -31,8 +32,7 @@ namespace Risebird.Web.Controllers
         private IIRFRepository _iRFRepository;
         private IUserRepository _userRepository;
         private INotificationHelper _notificationHelper;
-
-        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper)
+        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper, IUserService userService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -42,6 +42,7 @@ namespace Risebird.Web.Controllers
             _iRFService = iRFService;
             _userRepository = userRepository;
             _notificationHelper = notificationHelper;
+            _userService = userService;
         }
 
 
@@ -427,6 +428,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         public async Task<IActionResult> VideoPage(int id, string irfid, string actionstatus)
         {
             try
@@ -755,8 +757,9 @@ namespace Risebird.Web.Controllers
                     var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
                     if (status == "Public")
                     {
+                        
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
-                        if(IRListModel==null)
+                        if (IRListModel == null)
                         {
                             IRListModel = new InterviewReport();
                         }
@@ -782,7 +785,7 @@ namespace Risebird.Web.Controllers
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
                         NewModel.zoomLink = model.zoomLink;
-                        NewModel.IreportModel = IRListModel;
+                        NewModel.IreportModel = IRListModel == null ? new InterviewReport() : IRListModel;
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
@@ -797,26 +800,27 @@ namespace Risebird.Web.Controllers
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         var videodetailscount = _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount;
-                        if (NewModel.IreportModel != null)
+                        if (NewModel.IreportModel.QuestionsCollection == null)
                         {
-                            if (NewModel.IreportModel.QuestionsCollection == null)
-                            {
-                                ViewBag.QuestionsDiscussedCount = 0;
-                            }
-                            else
-                            {
-                                ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
-                            }
+                            ViewBag.QuestionsDiscussedCount = 0;
                         }
                         else
                         {
-                            ViewBag.QuestionsDiscussedCount = 0;
+                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
                         ViewBag.VedioStatus = "Public";
                         //ViewBag.VedioStatus = "Private";
-
+                        var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                        if (menus != null)
+                        {
+                            HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                        }
+                        if (IRListModel != null)
+                        {
+                            GetStatusList(IRListModel, model.irfIntId);
+                        }
                         //desible Like and dilisk button and share button and comment opetion
                         return View(NewModel);
                         //END: Share button functionaly
@@ -1175,7 +1179,7 @@ namespace Risebird.Web.Controllers
             _mail.CC = email;
             _mail.Subject = "Risebird: Interview video is shared with you";
             var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
-            if(result.Contains("Mail sent successfully"))
+            if (result.Contains("Mail sent successfully"))
             {
                 return Json("Success");
             }
@@ -1183,7 +1187,7 @@ namespace Risebird.Web.Controllers
             {
                 return Json("Fail");
             }
-            
+
         }
         [HttpPost]
         public JsonResult VedioComment(string comment, string vedioid)
@@ -1291,6 +1295,13 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-
+        public JsonResult VedioShareEmail(string vedioid, string Emailid)
+        {
+            //Start:Save View counts of vedio
+            Emailid = Emailid.Replace("\"", "");
+            _meetingService.AddTotalViewCount(Convert.ToInt32(vedioid), Emailid);
+            //End:Save View counts of vedio
+            return Json("Succecss");
+        }
     }
 }
