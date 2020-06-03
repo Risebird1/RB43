@@ -757,15 +757,37 @@ namespace Risebird.Web.Controllers
                     var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
                     if (status == "Public")
                     {
-                        
+
+
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
                         if (IRListModel == null)
                         {
                             IRListModel = new InterviewReport();
                         }
+                        var usernames = IRListModel.CandidateName.Trim().Split(" ");
+                        var namemodel = String.Empty;
+                        foreach (var name in usernames)
+                        {
+                            if (name != null && name.Length >= 2)
+                                namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                            else if (name != null && name.Length == 1)
+                                namemodel = namemodel + name?.ToCharArray()[0];
+                        }
+                        IRListModel.CandidateName = namemodel;
                         MeetingVM NewModel = new MeetingVM();
                         NewModel.SubVideo_List = new List<MeetingVM>();
-                        NewModel.candidateName = model.candidateName;
+                        //NewModel.candidateName = model.candidateName;
+
+                        usernames = model.candidateName.Trim().Split(" ");
+                        namemodel = String.Empty;
+                        foreach (var name in usernames)
+                        {
+                            if (name != null && name.Length >= 2)
+                                namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                            else if (name != null && name.Length == 1)
+                                namemodel = namemodel + name?.ToCharArray()[0];
+                        }
+                        NewModel.candidateName = namemodel;
 
                         ViewBag.ProfileName = "";
                         NewModel.CandidateId = model.CandidateId;
