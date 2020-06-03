@@ -19,11 +19,12 @@ using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class RiseTubeController : Controller
     {
 
         private IMeetingService _meetingService;
+        private IUserService _userService;
         private IApplicationErrorLogger _applicationErrorLogger;
         private IAzureStorageHelper _azureStorageHelper;
         private ISkillService _skillService;
@@ -32,7 +33,7 @@ namespace Risebird.Web.Controllers
         private IUserRepository _userRepository;
         private INotificationHelper _notificationHelper;
 
-        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper)
+        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper, IUserService userService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -42,6 +43,7 @@ namespace Risebird.Web.Controllers
             _iRFService = iRFService;
             _userRepository = userRepository;
             _notificationHelper = notificationHelper;
+            _userService = userService;
         }
 
 
@@ -427,6 +429,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         public async Task<IActionResult> VideoPage(int id, string irfid, string actionstatus)
         {
             try
@@ -755,7 +758,7 @@ namespace Risebird.Web.Controllers
                     if (status == "Public")
                     {
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
-                        if(IRListModel==null)
+                        if (IRListModel == null)
                         {
                             IRListModel = new InterviewReport();
                         }
@@ -814,7 +817,11 @@ namespace Risebird.Web.Controllers
                         NewModel.IreportModel.IsQC = isQC;
                         ViewBag.VedioStatus = "Public";
                         //ViewBag.VedioStatus = "Private";
-
+                        var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                        if (menus != null)
+                        {
+                            HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                        }
                         //desible Like and dilisk button and share button and comment opetion
                         return View(NewModel);
                         //END: Share button functionaly
@@ -1172,7 +1179,7 @@ namespace Risebird.Web.Controllers
             _mail.CC = email;
             _mail.Subject = "Risebird: Interview video is shared with you";
             var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
-            if(result.Contains("Mail sent successfully"))
+            if (result.Contains("Mail sent successfully"))
             {
                 return Json("Success");
             }
@@ -1180,7 +1187,7 @@ namespace Risebird.Web.Controllers
             {
                 return Json("Fail");
             }
-            
+
         }
         [HttpPost]
         public JsonResult VedioComment(string comment, string vedioid)
