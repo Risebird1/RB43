@@ -219,7 +219,7 @@
                     var html = '';
                     for (var i = 0; i < data.result.length; i++) {
                         if (data.result[i].isOnline == 1) {
-                            html += ' <p><a onclick="Details(' + i + ')"><span class="dot" style="background-color:green;"></span>  ' + data.result[i].sender + '</a></p>';
+                            html += ' <div><a onclick="Details(' + i + ')"><span class="dot" style="background-color:green;"></span>  ' + data.result[i].sender + '</a></div>';
                         }
                         else {
                             html += ' <p><a onclick=""><span class="dot" ></span>  ' + data.result[i].sender + '</a></p>';
@@ -243,7 +243,7 @@
             document.getElementById("txtmessage").style.display = "block";
             document.getElementById("btnchatConversation").style.display = "block";
             var msg = document.getElementById("msger-inputarea");
-            msg.style.display = "block";
+            msg.style.display = "flex";
             ChatConversation(Sender);
         }
         function directopenChat(Sender) {

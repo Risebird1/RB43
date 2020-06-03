@@ -56,7 +56,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 <style>
-   
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/tooltip.js"></script>
 <script>
@@ -692,9 +691,16 @@
                                                                             <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;"> Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
-                                                                            <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1"  />
-                                                                            <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
-                                                                            <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
+                                                                            <span class="tooltip--left" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                            </span>
+
+                                                                            <span class="tooltip--left" data-tooltip="To convey the act of sharing  through email ">
+
+                                                                                <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+
+                                                                            </span>
+                                                                            <span class="tooltip--left" data-tooltip="To convey the act of sharing to any user publicly ">   <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
                                                                         </div>
                                                                     </div>
 
@@ -741,9 +747,17 @@
                                                                             <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
-                                                                            <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
-                                                                            <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1"  />
-                                                                            <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
+                                                                            <span class="tooltip--left" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                            </span>
+
+                                                                            <span class="tooltip--left" data-tooltip="To convey the act of sharing to any user through email ">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+                                                                            </span>
+
+                                                                            <span class="tooltip--left" data-tooltip="To convey the act of sharing publicly">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
+                                                                            </span>
                                                                         </div>
                                                                     </div>
 
@@ -1610,37 +1624,40 @@
         </div>
     </div>
 </div>
-
-<div id="PublicShareVideo" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+<div class="blk-bg"></div>
+    <div id="PublicShareVideo" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
         top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Enter emailid</h5>
-            </div>
-            <div class="modal-body">
-                <div class="row" style="padding:10px">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
 
-                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email</label>
-                    <div class="form-control text-areadiv">
-                        <input type="text" id="txtvideoemailid" class="form-control" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color:#fff">Enter emailid</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="padding:10px">
 
+                        <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email</label>
+                        <div class="form-control text-areadiv">
+                            <input type="text" id="txtvideoemailid" class="form-control" />
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                        </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer" style="padding: 5px;
+                <div class="modal-footer" style="padding: 5px;
         background-color: #fff;
         color: white;"> </div>
+            </div>
+
         </div>
     </div>
-</div>
+
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 @*
