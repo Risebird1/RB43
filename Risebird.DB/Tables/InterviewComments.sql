@@ -31,6 +31,7 @@ CREATE TABLE [dbo].[InterviewComments](
 	[ThumbnailImage] [varchar](Max) NULL,
 	[TotalView] [int] NULL,
 	[IsShared] [varchar](10) NULL,
+	[FeedbackAudioLink] [nvarchar](max) NULL,
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
  CONSTRAINT [PK_InterviewComments] PRIMARY KEY CLUSTERED 
@@ -45,7 +46,17 @@ CREATE TABLE [dbo].[InterviewComments](
 
 End
 Else 
-begin
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'FeedbackAudioLink')
+      AND Object_ID = Object_ID(N'FeedbackAudioLink'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add FeedbackAudioLink nvarchar(MAX)
+END
+
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
