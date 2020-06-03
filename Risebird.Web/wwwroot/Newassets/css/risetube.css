@@ -13,11 +13,25 @@
 .text-areadiv #comment {
 height: 55px;
 }
+
+
+
+    .text-areadiv #comment::-webkit-input-placeholder { /* Edge */
+        line-height: 40px !important
+    }
+    .text-areadiv #comment:-ms-input-placeholder { /* Internet Explorer 10-11 */
+        line-height: 40px !important
+    }
+    .text-areadiv #comment::placeholder {
+        line-height: 40px !important
+    }
+
+
 .counts-liks .dropdown-menu {
     z-index: 1; padding:0;
 }
 .modal .label-field {
-    font-size: 15px;
+    font-size: 17px;
     font-weight: normal;
 }
 .modal textarea::-webkit-input-placeholder { /* Edge */
@@ -50,6 +64,22 @@ height: 55px;
         border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
         padding: 8px;
     }
+
+  .modal .form-control.text-areadiv textarea::-webkit-input-placeholder { /* Edge */
+         line-height:30px!important
+        }
+
+        .modal .form-control.text-areadiv textarea:-ms-input-placeholder { /* Internet Explorer 10-11 */
+            line-height: 30px !important
+        }
+
+        .modal .form-control.text-areadiv textarea::placeholder {
+            line-height: 30px !important
+        }
+
+
+
+
 .modal .form-control.text-areadiv textarea:focus {
     border-bottom: 2px rgb(80, 158, 235) solid !important;
 }

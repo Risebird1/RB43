@@ -50,8 +50,7 @@
         <link href="~/assets/MultiSelect/Newfolder/isteven-multi-select.css" rel="stylesheet" />
         <script src="~/assets/MultiSelect/Newfolder/isteven-multi-select.js"></script>
         <script src="~/js/angular/InfiniteScroll.js"></script>*@
-    <style>
-    </style>
+    
 </head>
 <body class=" sidebar-mini ">
 
@@ -101,8 +100,7 @@
         @RenderBody()
     </div>
 
-    <div id="MyChatModel" class="modal mymodal" style="display: none;position: fixed;z-index: 1;padding-top: 50px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <div id="MyChatModel" class="modal mymodal modal-bg">
         <!-- Modal content -->
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -123,20 +121,29 @@
 
                         <div class="pull-left"> <h5><lable id="lblChatname"></lable></h5></div>
                         <div class="pull-right">
-                            <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a>
+                            <div class="desktop">   <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
+
+                            <div class="mobile">   <a class="back" onclick="OpenChatPopUp()"><svg class="svg-icon" width="24" height="24" viewBox="0 0 20 20">
+    <path d="M11.739,13.962c-0.087,0.086-0.199,0.131-0.312,0.131c-0.112,0-0.226-0.045-0.312-0.131l-3.738-3.736c-0.173-0.173-0.173-0.454,0-0.626l3.559-3.562c0.173-0.175,0.454-0.173,0.626,0c0.173,0.172,0.173,0.451,0,0.624l-3.248,3.25l3.425,3.426C11.911,13.511,11.911,13.789,11.739,13.962 M18.406,10c0,4.644-3.763,8.406-8.406,8.406S1.594,14.644,1.594,10S5.356,1.594,10,1.594S18.406,5.356,18.406,10 M17.521,10c0-4.148-3.373-7.521-7.521-7.521c-4.148,0-7.521,3.374-7.521,7.521c0,4.148,3.374,7.521,7.521,7.521C14.147,17.521,17.521,14.148,17.521,10"></path>
+</svg> </a></div>
+
+
                         </div>
+                        <div class="clearfix"></div>
 
                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
 
-                            <div id="divchatbox" class="scroll-box">
+                            <div class=" scroll-box">
+                                <div id="divchatbox">
 
+                                </div>
                             </div>
                             <div>
 
                                 <form>
                                     <div id="msger-inputarea">
-                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Start writting here....." style="display:none" />
-                                        <input type="button" id="btnchatConversation" class="msger-send-btn form-control" style="display:none" value="send" onclick="SendConversation()" />
+                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" />
+                                        <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" />
                                     </div>
                                 </form>
 
@@ -263,10 +270,10 @@
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
                         if (data[i].self != 1) {
-                            html += '<div class="msg-bubble fadeInUp" class="form-control col-md-6">' + data[i].message + '</div>';
+                            html += '<div class="col-md-6"><div class="msg-bubble fadeInUp">' + data[i].message + '</div></div><div class="col-md-6"></div>';
                             countvalue = i;
                         } else {
-                            html += '<div class="col-md-6"></div><div style="text-align:Right;height: auto;background-color: aquamarine;padding-top:15px" class="form-control col-md-6 msg-bubble fadeInUp">' + data[i].message + '</div>';
+                            html += '<div class="col-md-6"></div><div class="col-md-6"><div class=" msg-bubble-right fadeInUp">' + data[i].message + '</div></div>';
                         }
                         html += '</div>';
 
