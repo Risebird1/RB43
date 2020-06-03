@@ -1442,8 +1442,8 @@ namespace Risebird.Repository
             parameters.Add("@fraudCheckStatus", entity.FraudCheckStatus);
             parameters.Add("@hrComment", entity.HRComment);
             parameters.Add("@ClientInterviewStatus", entity.FinalInterviewMeetingStatus);
-            parameters.Add("@qcStatus", entity.QCStatus);
-            parameters.Add("@qcComment", entity.QCComment);
+            parameters.Add("@QCStatus", entity.QCStatus);
+            parameters.Add("@QCComment", entity.QCComment);
             parameters.Add("@trainingStatus", entity.TrainingStatus);
             parameters.Add("@trainerComment", entity.TrainerComment);
             parameters.Add("@audiolink", entity.AudioLink);
@@ -1452,6 +1452,8 @@ namespace Risebird.Repository
             parameters.Add("@OfferStatus", entity.OfferStatus);
             parameters.Add("@PreparationStatus", entity.PreparationStatus);
             parameters.Add("@JoiningStatus", entity.JoiningStatus);
+            parameters.Add("@ThumbnailImage", entity.ThumbnailImage);
+            parameters.Add("@AadharFileLink", entity.AadharFileLink);
             return parameters;
         }
 

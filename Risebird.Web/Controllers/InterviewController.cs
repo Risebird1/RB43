@@ -3424,6 +3424,24 @@ namespace Risebird.Web.Controllers
                         if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                         {
+
+                            if (interviewComments.AadharFile != null)
+                            {
+                                await _azureStorageHelper.InsertBlob(interviewComments.AadharFile.FileName, "documents", interviewComments.AadharFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("documents");
+                                var blob = containerRef.GetBlockBlobReference(interviewComments.AadharFile.FileName);
+                                string uploadedAadharFileURL = blob.Uri.ToString();
+                                if (uploadedAadharFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Aadhar Upload has failed.");
+                                    GetStatusList(interviewComments);
+                                    return View("InterviewComments", interviewComments);
+                                }
+                                else
+                                {
+                                    interviewComments.AadharFileLink = uploadedAadharFileURL;
+                                }
+                            }
                             if (interviewComments.AudioFile != null)
                             {
 
