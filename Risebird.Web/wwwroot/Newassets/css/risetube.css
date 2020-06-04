@@ -298,6 +298,7 @@ height: 55px;
     height: 100%;
     background: rgba(0, 0, 0, 0.8) !important;
     position: fixed;
+    top: 0;
 }
 .wrapper {
     height: auto !important
