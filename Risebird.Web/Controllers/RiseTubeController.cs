@@ -1193,9 +1193,14 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VedioShare(string value, string vedioid, string Name, string Emailids)
+        public JsonResult VedioShare(string value, string vedioid, string name, string Emailids)
         {
             var modelList = _meetingService.VedioShare(value, vedioid);
+            string Name = string.Empty;
+            if (name != null && name.Length >= 2)
+                Name = Name +name?.ToCharArray()[0] + name?.ToCharArray()[1];
+            else if (name != null && name.Length == 1)
+                Name = Name + name?.ToCharArray()[0];
             //send a email
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");

@@ -104,19 +104,20 @@
                                                 <th>Selectability Score</th>
                                                 <th>Status</th>
                                                 <th> Actions </th>
+                                                <th style="text-align:center">Call</th>
                                                 <th>Type</th>
                                                 <th>Location(Applied for)</th>
                                                 <th>Skill</th>
                                                 <th>Work Auth</th>
                                                 <th>Current Location</th>
                                                 <th>Current Employer</th>
-                                                @*<th>Phone</th>*@
+
                                                 <th>Total Experience</th>
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
 
-                                                <th style="text-align:center">Call</th>
+
 
                                             </tr>
                                         </thead>
@@ -132,19 +133,20 @@
                                                 <th>Selectability Score</th>
                                                 <th>Status</th>
                                                 <th> Actions </th>
+                                                <th style="text-align:center">Call</th>
                                                 <th>Type</th>
                                                 <th>Location(Applied for)</th>
                                                 <th>Skill</th>
                                                 <th>Work Auth</th>
                                                 <th>Current Location</th>
                                                 <th>Current Employer</th>
-                                                @*<th>Phone</th>*@
+                                              
                                                 <th>Total Experience</th>
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
 
-                                                <th style="text-align:center">Call</th>
+
 
                                             </tr>
                                         </tfoot>
@@ -235,23 +237,11 @@
                                                         </button>
 
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
-                                                            <span onclick="OpenStatusModal('@item.id', '@item.Name','@item.Status')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                            <span onclick="OpenStatusModal('@item.id', '@item.Name','@item.Status')" class="mdc-fab__icon material-icons" title="Candidate Status"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                         </button>
 
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Enroll User for Biometric verification">
-                    <span onclick="location.href = '@Url.Action("EnrollVoiceItUser", "IRF", new { candidateId = item.CandidateMasterId,candidateEmail=item.EmailId, irfId= item.IRFId, irfName = ViewBag.IRFName})'" title="Enroll User for Biometric verification" class="mdc-fab__icon material-icons">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" /></svg>
-                    </span>
-                </button>*@
 
 
-                                                        <!--
-
-            <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
-            <span onclick="location.href = '@Url.Action("CancelInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="btn btn-round btn-danger btn-icon btn-sm like"><i class="fa fa-times"></i></span>
-            <span onclick="location.href = '@Url.Action("UploadAudio", "IRF", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
-            <span onclick="location.href = '@Url.Action("EnrollVoiceItUser", "IRF", new { candidateId = item.CandidateMasterId,candidateEmail=item.EmailId, irfId= item.IRFId, irfName = ViewBag.IRFName})'" title="Enroll User for Biometric verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-sign-in"></i></span>
-            -->
 
 
                                                     }
@@ -280,14 +270,19 @@
                                                     </button>
 
 
-                                                    <!--
-            <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
-            <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
-            <span onclick="location.href = '@Url.Action("CandidateReport", "IRF", new { candidateId = item.CandidateMasterId, irfId= item.IRFId})'" title="Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-        -->
+
 
                                                 </td>
+                                                <td>
+                                                    @if (item.Phone != null && item.Phone != string.Empty)
+                                                    {
 
+
+                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+
+                                                    }
+
+                                                </td>
                                                 <td>@item.Type</td>
                                                 <td>@item.Location</td>
                                                 <td>@item.Skill</td>
@@ -300,16 +295,7 @@
                                                 <td>@item.ExpectedSalary</td>
                                                 <td>@item.Notice</td>
 
-                                                <td>
-                                                    @if (item.Phone != null && item.Phone != string.Empty)
-                                                    {
-                                                        <!--  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
 
-                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
-
-                                                    }
-
-                                                </td>
                                             </tr>
                                             }
                                         </tbody>

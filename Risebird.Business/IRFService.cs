@@ -657,12 +657,12 @@ namespace Risebird.Business
             try
             {
                 //check if the candidate email exists for the IRFId
-                var duplicate = _irfRepository.GetIRFCandidates(obj.IRFId).Where(x=> x.EmailId==obj.EmailId);
+                var duplicate = _irfRepository.GetIRFCandidates(obj.IRFId).Where(x=> x.EmailId.ToLower()==obj.EmailId?.Trim().ToLower());
                 if(duplicate != null && duplicate.Count()>0)
                 {
                     return "Sorry! Candidate already exists for the IRF.";
                 }
-                var userId = _irfRepository.GetUserId(emailId, profile);
+                var userId = _irfRepository.GetUserId(emailId?.Trim().ToLower(), profile);
                 obj.AddedByUserId = userId;
                 var result = _irfRepository.AddCandidate(obj).Result;
                 if (result.Contains("successfully"))

@@ -111,7 +111,10 @@ namespace Risebird.Functions
                                 }
 
                                 interviewDate = Convert.ToDateTime(interviewDatestr);
-                                
+                                if(interviewDate < DateTime.Now)
+                                {
+                                    return req.CreateResponse(HttpStatusCode.OK, "Past date Interview Update " + "Ok");
+                                }
                                 zoomLink = ((JProperty)mainFamilies1).Value["location"].ToString();
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.invitee")

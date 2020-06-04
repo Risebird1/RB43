@@ -1810,7 +1810,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", obj.IRFId);
                 parameters.Add("@Name", obj.Name?.Trim());
-                parameters.Add("@EmailId", obj.EmailId?.Trim());
+                parameters.Add("@EmailId", obj.EmailId?.Trim().ToLower());
                 parameters.Add("@ResumeLink", obj.ResumeLink );
                 parameters.Add("@Type", obj.Type );
                 parameters.Add("@Location", obj.Location );
@@ -1963,7 +1963,7 @@ namespace Risebird.Repository
                 //var query = "update Candidate set [Name] = @Name, EmailId=@EmailId, ResumeLink = @ResumeLink, Type=@Type, Location=@Location, Skill=@Skill, WorkAuth=@WorkAuth, CurrentLocation=@CurrentLocation, CurrentEmployer=@CurrentEmployer, Phone=@Phone, TotalExperience=@TotalExperience, CurrentSalary=@CurrentSalary, ExpectedSalary=@ExpectedSalary, Notice=@Notice  where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Name", obj.Name);
-                dynamicParameters.Add("@EmailId", obj.EmailId);
+                dynamicParameters.Add("@EmailId", obj.EmailId?.Trim().ToLower());
                 dynamicParameters.Add("@ResumeLink", obj.ResumeLink);
                 dynamicParameters.Add("@Type", obj.Type);
                 dynamicParameters.Add("@Location", obj.Location);

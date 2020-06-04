@@ -33,8 +33,24 @@ namespace Risebird.Entities.Enum
 
         [Display(Name = "Got Another Offer")]
         [Description("Got Another Offer")]
-        GotAnotherOffer
-
-
+        GotAnotherOffer,
+        [Display(Name = "Cold")]
+        [Description("Cold")]
+        Cold, 
+        [Display(Name = "Hold")]
+        [Description("Hold")]
+        Hold,
+        [Display(Name = "Cancelled")]
+        [Description("Cancelled")]
+        Cancelled,
+        [Display(Name = "Dropped")]
+        [Description("Dropped")]
+        Dropped,
+        [Display(Name = "No Show")]
+        [Description("No Show")]
+        NoShow,
+        [Display(Name = "Completed")]
+        [Description("Completed")]
+        Completed
     }
 }
