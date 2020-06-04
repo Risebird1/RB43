@@ -16,8 +16,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewComments](
              @fraudCheckStatus int = null,
 			  @hrComment varchar(500) = null,
 			  @ClientInterviewStatus int = null,
-			   @qcStatus int = null,
-			    @qcComment varchar(500) = null,   
+			   @QCStatus int = null,
+			    @QCComment varchar(max) = null,   
              @trainingStatus int = null,
 			  @trainerComment varchar(500) = null,
 			   @audiolink varchar(max) = null,
@@ -27,21 +27,20 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewComments](
 				@PreparationStatus int = null, 
 				@JoiningStatus int =  null,
 				@ThumbnailImage varchar(Max),
-				@FeedbackAudioLink nvarchar(max) =null)  
+				@FeedbackAudioLink nvarchar(max) =null,
+				@AadharFileLink nvarchar(max) = null)  
 AS  
 Begin Try  
   BEGIN TRAN UpdateUser   
        
-       IF EXISTS( SELECT 1 FROM InterviewMeetings where id = @InterviewId)  
-     BEGIN  
-   IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId)  
-     BEGIN  
+	IF EXISTS( SELECT 1 FROM InterviewMeetings where id = @InterviewId)  
+		BEGIN  
+		IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId)  
+			BEGIN  
      UPDATE [InterviewComments] SET interviewStatus = ISNULL(@InterviewStatus,interviewStatus) ,  
           interviewerComment =  ISNULL(@interviewerComment,interviewerComment),   
           FraudCheckStatus =  ISNULL(@FraudCheckStatus,FraudCheckStatus),  
-          HRComment =  ISNULL(@HRComment,HRComment),  
-          QCStatus = ISNULL(@QCStatus,QCStatus),  
-          QCComment = ISNULL(@QCComment,QCComment),  
+          HRComment =  ISNULL(@HRComment,HRComment),           
           TrainingStatus = ISNULL(@TrainingStatus,TrainingStatus),  
           TrainerComment = ISNULL(@TrainerComment,TrainerComment),  
           MeetingStatus = ISNULL(@MeetingStatus,MeetingStatus),  
@@ -52,67 +51,79 @@ Begin Try
           AudioLink = ISNULL(@audiolink,AudioLink) ,  
           VideoLink = ISNULL(@videolink, VideoLink) ,
 		  ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage),
-		  FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink)
+		  FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink),
+		  AadharFileLink = ISNULL(@AadharFileLink, AadharFileLink)
       WHERE        interviewId = @InterviewId  
   
                       
      END  
-   ELSE  
-     BEGIN  
-    INSERT INTO [InterviewComments]  
-                      (interviewId,  
-          interviewStatus,  
-          interviewerComment,   
-          FraudCheckStatus,  
-          HRComment,  
-          QCStatus,  
-           QCComment,  
-          TrainingStatus,  
-          MeetingStatus,  
-          OfferStatus,  
-          PreparationStatus,  
-          JoiningStatus, 
-		  ClientInterviewStatus, 
-          TrainerComment,
-		  AudioLink,
-		  VideoLink,
-		  ThumbnailImage,
-		  FeedbackAudioLink)   
-    VALUES  
-         (@interviewId,  
-          @InterviewStatus,  
-          @interviewerComment,  
-          @FraudCheckStatus,  
-          @HRComment,  
-          @QCStatus,  
-          @QCComment,  
-          @TrainingStatus,  
-          @MeetingStatus,  
-          @OfferStatus,  
-          @PreparationStatus,  
-          @JoiningStatus,
-		  @ClientInterviewStatus,  
-          @TrainerComment,
-		  @audiolink,
-		  @videolink,
-		  @ThumbnailImage,
-		  @FeedbackAudioLink)  
+		ELSE  
+			BEGIN  
+				INSERT INTO [InterviewComments]  
+					 (interviewId,  
+					  interviewStatus,  
+					  interviewerComment,   
+					  FraudCheckStatus,  
+					  HRComment,  
+					  TrainingStatus,  
+					  MeetingStatus,  
+					  OfferStatus,  
+					  PreparationStatus,  
+					  JoiningStatus, 
+					  ClientInterviewStatus, 
+					  TrainerComment,
+					  AudioLink,
+					  VideoLink,
+					  ThumbnailImage,
+					  FeedbackAudioLink,
+					  AadharFileLink)   
+				VALUES  
+					 (@interviewId,  
+					  @InterviewStatus,  
+					  @interviewerComment,  
+					  @FraudCheckStatus,  
+					  @HRComment,  					  
+					  @TrainingStatus,  
+					  @MeetingStatus,  
+					  @OfferStatus,  
+					  @PreparationStatus,  
+					  @JoiningStatus,
+					  @ClientInterviewStatus,  
+					  @TrainerComment,
+					  @audiolink,
+					  @videolink,
+					  @ThumbnailImage,
+					  @FeedbackAudioLink,
+					  @AadharFileLink)  
 
-	INSERT INTO 
-	InterviewReport 
-		(IRFId, 
-		InterviewId, 
-		CandidateName
-		 )
-	values
-		(
-			(select ir.id from IRF ir join InterviewMeetings im on ir.irfid = im.irfid where im.id = @interviewId),
-			@interviewId,
-			(select im.CandidateName from InterviewMeetings im where im.id = @interviewId)  
-		)
+				INSERT INTO 
+					InterviewReport 
+						(IRFId, 
+						InterviewId, 
+						CandidateName)
+						 
+						values
+						(
+							(select ir.id from IRF ir join InterviewMeetings im on ir.irfid = im.irfid where im.id = @interviewId),
+							@interviewId,
+							(select im.CandidateName from InterviewMeetings im where im.id = @interviewId)  
+						)
         
-     END  
-        END  
+			END  
+
+		IF EXISTS(SELECT 1 FROM QCFeedbackReport where InterviewId= @InterviewId)
+			Begin
+				Update QCFeedbackReport set QCStatus = @QCStatus, QCComment=@QCComment where InterviewId=@interviewId
+			End
+		Else
+			Begin
+				Insert into QCFeedbackReport (InterviewId, QCStatus, QCComment)
+				values
+				(@interviewId, @QCStatus, @QCStatus)
+			End
+        END 
+		
+		
      
  Commit TRAN UpdateUser;  
 End Try   
@@ -124,6 +135,16 @@ Begin Catch
   
  Rollback;  
 End Catch  
+  
+  
+  
+  
+  
+  
+
+
+
+
   
   
   
