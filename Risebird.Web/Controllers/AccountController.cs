@@ -478,19 +478,20 @@ namespace Risebird.Web.Controllers
                 user = HttpContext.Session.GetString("email")?.Trim();
                 user = user.Replace("\"", "");
             }
-            var resultset = GetConversation(user, "", "Chat");
+            var resultset = GetConversation(user, "", "Chat","");
             var _lst = resultset.Select(x => x.Sender.ToUpper()).Distinct();
             var _lstset = new List<Conversation>();
             foreach (var item in _lst)
             {
                 var Isonline = resultset.Where(x => x.Sender.ToUpper() == item).Select(x => x.IsOnline).FirstOrDefault();
-                _lstset.Add(new Conversation { Sender = item, IsOnline = Isonline });
+                var Whosend = resultset.Where(x => x.Sender.ToUpper() == item).Select(x => x.WhoSend).FirstOrDefault();
+                _lstset.Add(new Conversation { Sender = item, IsOnline = Isonline,WhoSend= Whosend});
             }
             ViewBag.UserList = _lstset;
             ViewBag.Self = user.ToUpper();
             return Json(new { result = _lstset, Self = user.ToUpper() });
         }
-        public List<Conversation> GetConversation(string userid, string contact, string status)
+        public List<Conversation> GetConversation(string userid, string contact, string status,string WhoSend)
         {
             string connectionString = _configuration["ConnectionString:DBConnectionString"];
             if (String.IsNullOrEmpty(userid))
@@ -528,6 +529,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
+                    parameters.Add("@WhoSend", WhoSend);
                     var result = SqlMapper.Query<Conversation>(con, "usp_GetConversationdetails", parameters,
                            commandType: CommandType.StoredProcedure);
                     foreach (var item in result)
@@ -557,17 +559,31 @@ namespace Risebird.Web.Controllers
             }
             userid = userid.Replace("\"", "");
             contact = contact.Replace("\"", "");
+            string WhoSend = "U";
+            if(contact.Contains("@"))
+            {
+                WhoSend = "U";
+            }
+            else
+            {
+                WhoSend = "G";
+            }
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@id", userid);
                 parameters.Add("@contact", contact);
                 parameters.Add("@message", message);
+                parameters.Add("@WhoSend", WhoSend);
+
                 var result = SqlMapper.Query(con, "usp_AddConversation", parameters,
                         commandType: CommandType.StoredProcedure);
                 // return result;
             }
         }
+        public void AddGroup()
+        {
 
+        }
     }
 }

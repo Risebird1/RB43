@@ -38,6 +38,14 @@
     IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
     IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
 }
+@*<style>
+        .blk-bg{
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.8)!important;
+            position:fixed;
+        }
+    </style>*@
 <link href="//amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
 <script src="//amp.azure.net/libs/amp/latest/azuremediaplayer.min.js"></script>
 <script>
@@ -1592,6 +1600,7 @@
         </div>
     </div>
 </div>
+
 <div id="PublicShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
         top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
     <!-- Modal content -->
@@ -1618,21 +1627,16 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;
-        background-color: #fff;
-        color: white;"> </div>
+            <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
         </div>
     </div>
 </div>
-
-<div id="PublicShareVideo" class="modal" style="display: none;position: fixed;z-index: 10000000;padding-top: 100px;left: 0;
+@if (ViewBag.VedioStatus == "Public")
+{
+    <div id="divbackground" class="blk-bg"></div>
+}
+<div id="PublicShareVideo" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
         top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
-
-
-    @if (ViewBag.VedioStatus == "Public")
-    {
-        <div class="blk-bg"></div>
-    }
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
 
@@ -2935,8 +2939,8 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
     jQuery(document).ready(function ($) {
 
         if ($("#txtVideostatus").val() == "Public") {
-          
-          
+
+
             var modal = document.getElementById("PublicShareVideo");
             modal.style.display = "block";
         }
@@ -3183,6 +3187,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                 data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val() },
                 success: function (data) {
                     closepublicSharePopUpvideo();
+                    $("#divbackground").removeClass("blk-bg");
                 }
             });
         }

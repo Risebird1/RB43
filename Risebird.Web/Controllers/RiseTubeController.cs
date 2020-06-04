@@ -1198,7 +1198,7 @@ namespace Risebird.Web.Controllers
             //send a email
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
-            string currenturl = Request.Host.ToString() + Request.Path.ToString() + "/" + vedioid;
+            string currenturl = Request.Host.ToString() + "/RiseTube/VideoPage/" + vedioid;
             Mail _mail = new Mail();
             _mail.TO = Emailids;
             _mail.CC = email;
