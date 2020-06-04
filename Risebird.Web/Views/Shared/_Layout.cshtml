@@ -121,6 +121,7 @@
 
                         <div class="pull-left"> <h5><lable id="lblChatname"></lable></h5></div>
                         <div class="pull-right">
+                            <a class="back" onclick="CreateGroup()">Create/Edit Group</a>
                             <div class="desktop">   <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
 
                             <div class="mobile">
@@ -138,6 +139,10 @@
                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
 
                             <div class=" scroll-box">
+                                <div id="divgroup">
+                                    <inupt type="text" id="txtgroup" placeholder="Group Name" />
+                                    <input type="button" id="btngroup" value="Add Group" />
+                                </div>
                                 <div id="divchatbox">
 
                                 </div>
@@ -219,8 +224,6 @@
                 success: function (data) {
                     var modal = document.getElementById("MyChatModel");
                     modal.style.display = "block";
-
-                    debugger;
                     var html = '';
                     for (var i = 0; i < data.result.length; i++) {
                         if (data.result[i].isOnline == 1) {
@@ -364,6 +367,11 @@
 
             });
         });
+        function CreateGroup() {
+            //fetch group list
+            //Create a html for this page
+            alert("List");
+        }
     </script>
 
 
