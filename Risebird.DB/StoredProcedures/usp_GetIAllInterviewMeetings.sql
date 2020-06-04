@@ -15,10 +15,12 @@ CREATE PROCEDURE [dbo].[usp_GetIAllInterviewMeetings]
 AS    
 Begin    
     
-select im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId from InterviewMeetings im    
+select im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId,
+(Select distinct Isonline from UserList where Emailid=im.candidateEmail) as IsOnline from InterviewMeetings im    
 inner join IRF on im.IRFId = IRF.IRFId  
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
 left join CandidatesMaster cm on im.candidateEmail = cm.EmailId
+
    
 End    
    

@@ -111,59 +111,81 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.imid>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.candidateName </td>
-                                                @if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
-                                                {
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Report</td>
-                                                }
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                @if (item.MobileNumber != null)
-                                                {
-                                                    <td>@item.MobileNumber</td>
+                                                <tr id=@item.imid>
+                                                    <td> @item.interviewDate </td>
+                                                    @if (item.IsOnline == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                        </td>
+                                                    }
 
-                                                }
-                                                else
-                                                {
-                                                    <td>No Contact</td>
-                                                }
-                                                <td> @item.ClientHrContact </td>
-                                                @if (item.zoomLink != null && item.zoomLink != "")
-                                                {
-                                                    <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Interview Link</td>
-                                                }
-                                                <td> @item.confirmationStatus</td>
-                                                <td> @item.MeetingStatusStatusDesc </td>
-                                                @if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
-                                                {
-                                                    <td> @item.intervieweStatusStatDesc </td>
-                                                }
-                                                else
-                                                {
-                                                    <td></td>
-                                                }
-                                                <td> @item.currentEmployerName </td>
-                                                <td> @item.expectedPerHourRate </td>
-                                                <td> @item.joiningTime </td>
-                                                <td> @item.preferredLocation </td>
-                                                <td>@item.staffingAgency</td>
-                                            </tr>
+                                                    @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
+                                                    {
+                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Report</td>
+                                                    }
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    @if (item.MobileNumber != null)
+                                                    {
+                                                        <td>@item.MobileNumber</td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Contact</td>
+                                                    }
+                                                    <td> @item.ClientHrContact </td>
+                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                    {
+                                                        <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Interview Link</td>
+                                                    }
+                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                    {
+                                                        <td>
+
+                                                            <a style="background-color:red;border-radius:16px;padding:5px 10px"> @item.confirmationStatus</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-center"> @item.confirmationStatus</td>
+                                                    }
+                                                    <td> @item.MeetingStatusStatusDesc </td>
+                                                    @if (item.QCInterview > 0)
+                                                    {
+                                                        <td> @item.intervieweStatusStatDesc </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    <td> @item.currentEmployerName </td>
+                                                    <td> @item.expectedPerHourRate </td>
+                                                    <td> @item.joiningTime </td>
+                                                    <td> @item.preferredLocation </td>
+                                                    <td>@item.staffingAgency</td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -184,7 +206,7 @@
 
         <!-- end row -->
     </div>
-  
+
 </div>
 
 <script>

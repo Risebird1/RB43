@@ -90,8 +90,8 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("clientid", clientId);
-                        parameters.Add("Emailid", Emailid);
+                        parameters.Add("@clientid", clientId);
+                        parameters.Add("@Emailid", Emailid);
                         var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
                             commandType: CommandType.StoredProcedure);
                         return result;
@@ -884,7 +884,7 @@ namespace Risebird.Repository
                     parameters.Add("EmailId", emailID);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientMeetings", parameters,
                          commandType: CommandType.StoredProcedure);
-                } 
+                }
             }
             catch (SqlException ex)
             {
@@ -920,6 +920,7 @@ namespace Risebird.Repository
                     parameters.Add("@audiolink", reportDetails.AudioLink);
                     parameters.Add("@videolink", reportDetails.VideoLink);
                     parameters.Add("@ThumbnailImage", reportDetails.ThumbnailImage);
+                    parameters.Add("@FeedbackAudioLink", reportDetails.FeedbackAudioLink);
                     if (reportDetails.IsEdited)
                     {
                         var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
@@ -1441,8 +1442,8 @@ namespace Risebird.Repository
             parameters.Add("@fraudCheckStatus", entity.FraudCheckStatus);
             parameters.Add("@hrComment", entity.HRComment);
             parameters.Add("@ClientInterviewStatus", entity.FinalInterviewMeetingStatus);
-            parameters.Add("@qcStatus", entity.QCStatus);
-            parameters.Add("@qcComment", entity.QCComment);
+            parameters.Add("@QCStatus", entity.QCStatus);
+            parameters.Add("@QCComment", entity.QCComment);
             parameters.Add("@trainingStatus", entity.TrainingStatus);
             parameters.Add("@trainerComment", entity.TrainerComment);
             parameters.Add("@audiolink", entity.AudioLink);
@@ -1451,6 +1452,8 @@ namespace Risebird.Repository
             parameters.Add("@OfferStatus", entity.OfferStatus);
             parameters.Add("@PreparationStatus", entity.PreparationStatus);
             parameters.Add("@JoiningStatus", entity.JoiningStatus);
+            parameters.Add("@ThumbnailImage", entity.ThumbnailImage);
+            parameters.Add("@AadharFileLink", entity.AadharFileLink);
             return parameters;
         }
 
@@ -1567,17 +1570,18 @@ namespace Risebird.Repository
 
             return null;
         }
-        public string AddTotalViewCount(int id)
+        public string AddTotalViewCount(int id, string emailaddress)
         {
             try
             {
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Interviewid", id);
+                parameters.Add("@EmailId", emailaddress);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewView", parameters,
+                    var result = SqlMapper.Query<string>(con, "usp_AddinterviewView", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";
                 }
@@ -1862,14 +1866,14 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@Email", item);
                     parameters.Add("@VedioId", vedioid);
-                    parameters.Add("@@EmailAddress", Userid);
+                    parameters.Add("@EmailAddress", Userid);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewvedioSharedetails", parameters,
                             commandType: CommandType.StoredProcedure);
                         if (String.IsNullOrEmpty(emailidreturn))
                         {
-                            emailidreturn =  result;
+                            emailidreturn = result;
                         }
                         else
                         {
@@ -1886,6 +1890,28 @@ namespace Risebird.Repository
             }
 
             return "";
+        }
+        public List<VideoCountdetail> GetTotalViewCount(int id)
+        {
+            try
+            {
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Interviewid", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<VideoCountdetail>(con, "usp_GetinterviewView", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return (List<VideoCountdetail>)result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

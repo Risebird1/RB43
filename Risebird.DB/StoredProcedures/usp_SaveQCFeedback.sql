@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
  
-create PROCEDURE [dbo].[usp_SaveQCFeedback]     
+Create PROCEDURE [dbo].[usp_SaveQCFeedback]     
 @InterviewId int,
 @QCStatus int,
 @QCComment varchar(max),
@@ -33,7 +33,6 @@ create PROCEDURE [dbo].[usp_SaveQCFeedback]
 
 AS      
 BEGIN      
-   update InterviewComments set QCStatus=@QCStatus, QCComment=@QCComment where InterviewId=@InterviewId
    
    if not exists(select 1 from QCFeedbackReport where InterviewId = @InterviewId)
    begin
@@ -54,7 +53,9 @@ BEGIN
             ,[CommentsFilled]
 		    ,[MeaningfulAssessments]
 		    ,[CorrectEnglishGrammar]
-		    ,[ProctoringReportFilled]		   
+		    ,[ProctoringReportFilled]
+			,[QCStatus]
+			,[QCComment]
 		   )
 		   values
 		   (@InterviewId,		   
@@ -72,7 +73,9 @@ BEGIN
 @CommentsFilled,
 @MeaningfulAssessments,
 @CorrectEnglishGrammar,
-@ProctoringReportFilled)
+@ProctoringReportFilled,
+@QCStatus,
+@QCComment)
    
 
    end
@@ -94,7 +97,9 @@ BEGIN
    [CommentsFilled]=@CommentsFilled,
    [MeaningfulAssessments]=@MeaningfulAssessments,
    [CorrectEnglishGrammar]=@CorrectEnglishGrammar,
-   [ProctoringReportFilled]=@ProctoringReportFilled
+   [ProctoringReportFilled]=@ProctoringReportFilled,
+   [QCStatus]=@QCStatus,
+   [QCComment]=@QCComment
    where InterviewId=@InterviewId
    end
 END   

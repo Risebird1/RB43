@@ -318,7 +318,18 @@
                                                     <td> @item.interviewSlot </td>
                                                     <td> @item.interviewDuration </td>
                                                     <td> @item.JobLevelDesc </td>
-                                                    <td> @item.candidateName</td>
+                                                    @if (item.IsOnilne == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                        </td>
+                                                    }
                                                     <td> @item.candidateEmail</td>
 
                                                     @if (item.resumeLink != null && item.resumeLink != "")
@@ -360,18 +371,18 @@
                                                             <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
                                                                 <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="UnAssigned Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
                                                             </button>
-                                                         }
+                                                        }
 
-                                                            <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
-                                                                <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
-                                                                <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
-                                                                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                            </button>
-                                                       
+                                                        <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
+                                                            <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
+                                                            <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
+                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                        </button>
+
 
                                                     </td>
                                                     <td class="callcandidatebtn">
@@ -405,7 +416,7 @@
                 <!-- Modal content -->
 
                 <div class="modal-bg">
-                    <div class="modal-content" >
+                    <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Call Candidate!</h5>
                             <span class="close" id="callPopUp">&times;</span>
@@ -425,7 +436,7 @@
 
 
                 </div>
-                
+
 
             </div>
             <!-- end row -->
@@ -1019,4 +1030,4 @@
 
 
 
-    <!-- PAGE CONTENT WRAPPER -->
+<!-- PAGE CONTENT WRAPPER -->

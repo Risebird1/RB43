@@ -17,6 +17,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UnArchiveAccount(int id);
         Task<IEnumerable<Account>> GetAccounts(string emailID, string profileName);
         IEnumerable<AccountProjectMapping> GetProjectsbyClientId(int clientId);
-        IEnumerable<AccountProjectMapping> GetProjectByClientId(int clientId, string projectIdList=null);
+        IEnumerable<AccountProjectMapping> GetProjectByClientId(int clientId, string projectIdList = null);
+        string Signout(string EmailId);
     }
 }

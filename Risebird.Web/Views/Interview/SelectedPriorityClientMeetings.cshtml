@@ -56,7 +56,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-               
+
             </div>
 
         </div>
@@ -384,6 +384,7 @@
 
 
                                                 <th>Report Link</th>
+                                                <th>Aadhar Link</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
                                                 <th>Offer Status</th>
@@ -407,6 +408,7 @@
 
 
                                                 <th>Report Link</th>
+                                                <th>Aadhar Link</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
                                                 <th>Offer Status</th>
@@ -421,72 +423,94 @@
                                             {
                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.ClientName </td>
-                                                    <td> @item.JDTiltle.Split("|")[0] </td>
-
-                                                    @if (item.VideoLink != null && item.VideoLink != "")
-                                                    {
-                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Video</td>
-                                                    }
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                @if (item.IsOnline == 1)
+                                                {
                                                     <td>
-                                                        <div class="talk-bubble tri-right border-bubble right-in">
-                                                            <div class="talktext">
-                                                                <textarea style="height:40px;">@item.InterviewerComment</textarea>
-                                                            </div>
-                                                        </div>
+                                                        <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
                                                     </td>
-                                                    <td>  </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                    </td>
+                                                }
+                                                <td> @item.ClientHrContact </td>
+                                                <td> @item.ClientName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
+
+                                                @if (item.VideoLink != null && item.VideoLink != "")
+                                                {
+                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Video</td>
+                                                }
+                                                <td>
+                                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                                        <div class="talktext">
+                                                            <textarea style="height:40px;">@item.InterviewerComment</textarea>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>  </td>
 
 
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                    <td>@item.NextLevelApprovalStat</td>
-                                                    <td>@item.FinalSelectionStat</td>
-                                                    <td>@item.OfferStatusStatDesc</td>
-                                                    <td>@item.JoiningStatusStatDesc</td>
-                                                    <td class="text-center action">
+                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                @if (item.AadharFileLink != null && item.AadharFileLink != "")
+                                                {
+                                                    <td>
+
+                                                        <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No document</td>
+                                                }
+                                                <td>@item.NextLevelApprovalStat</td>
+                                                <td>@item.FinalSelectionStat</td>
+                                                <td>@item.OfferStatusStatDesc</td>
+                                                <td>@item.JoiningStatusStatDesc</td>
+                                                <td class="text-center action">
 
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback">
-                                                            <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback">
+                                                        <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                    </button>
+
+                                                    @if (item.IsBiometricEnabled)
+                                                    {
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Verify">
+                                                            <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
                                                         </button>
 
-                                                        @if (item.IsBiometricEnabled)
-                                                        {
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Verify">
-                                                                <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                            </button>
 
 
 
 
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                    {
+                                                        <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
 
-                                                        }
-                                                    </td>
-                                                    <td>
-                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                        {
-                                                            <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
 
-
-                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
 
 
 
 
 
-                                                        }
+                                                    }
 
-                                                    </td>
-                                                </tr>
+                                                </td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -623,7 +647,7 @@
                                                 <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
                                             </div>
                                         </div>
-                                     
+
                                     </div>
 
                                 </div>
@@ -683,15 +707,15 @@
         <!-- end row -->
     </div>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
-@if (ViewBag.Message != null)
-{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+    <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+    @if (ViewBag.Message != null)
+    {
 
-    <script type="text/javascript">
+        <script type="text/javascript">
 
         function my_code() {
             var msg = '@ViewBag.Message';
@@ -734,10 +758,10 @@
         }
 
         window.onload = my_code();
-    </script>
+        </script>
 
-}
-<script>
+    }
+    <script>
             $(document).ready(function () {
 
                 $("#ResetFilter").click(function () {
@@ -860,350 +884,350 @@
                     }
                 });
             }
-</script>
+    </script>
 
-<script>
-    var imid = "";
-    var span = document.getElementById("feedbackPopUp");
-    var comm = '';
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
+    <script>
+        var imid = "";
+        var span = document.getElementById("feedbackPopUp");
+        var comm = '';
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
 
-    // When the user clicks anywhere outside of the modal, close it
-    //window.onclick = function (event) {
-    //    var modal = document.getElementById("myModal");
-    //    if (event.target == modal) {
-    //        modal.style.display = "none";
-    //    }
-    //}
-</script>
-<script>
-    function ModalButtonClick(item) {
-        imid = item.imid;
+        // When the user clicks anywhere outside of the modal, close it
+        //window.onclick = function (event) {
+        //    var modal = document.getElementById("myModal");
+        //    if (event.target == modal) {
+        //        modal.style.display = "none";
+        //    }
+        //}
+    </script>
+    <script>
+        function ModalButtonClick(item) {
+            imid = item.imid;
 
-        // Get the modal
-        var modal = document.getElementById("myModal");
+            // Get the modal
+            var modal = document.getElementById("myModal");
 
-        // Get the button that opens the modal
-        var btn = document.getElementById("myBtn_" + item.imid);
-
-
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-
-        //document.getElementById("IsApproved").checked = item.IsApproved;
-        document.getElementById("appComments").value = item.ApprovalComments;
-
-        document.getElementById("selecComments").value = item.FinalComments;
-
-        document.getElementById("joinComments").value = item.JoiningComments;
-
-        document.getElementById("offComments").value = item.OfferComments;
+            // Get the button that opens the modal
+            var btn = document.getElementById("myBtn_" + item.imid);
 
 
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getApprovalStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+            //document.getElementById("IsApproved").checked = item.IsApproved;
+            document.getElementById("appComments").value = item.ApprovalComments;
+
+            document.getElementById("selecComments").value = item.FinalComments;
+
+            document.getElementById("joinComments").value = item.JoiningComments;
+
+            document.getElementById("offComments").value = item.OfferComments;
+
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/getApprovalStatusList",
+                data: "{}",
+                success: function (data) {
+                    var s = '<option value="-1">Please Select a Status</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                    }
+                    $("#approveDropdown").html(s);
+                    if (item.IsApproved != null) {
+                        $("#approveDropdown").val(item.IsApproved);
+                    }
+                    else {
+                        $("#approveDropdown").val("-1");
+
+                    }
                 }
-                $("#approveDropdown").html(s);
-                if (item.IsApproved != null) {
-                    $("#approveDropdown").val(item.IsApproved);
-                }
-                else {
-                    $("#approveDropdown").val("-1");
+            });
 
-                }
-            }
-        });
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getSelectionStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                }
-                $("#selectionDropdown").html(s);
-                if (item.IsSelected != null) {
-                    $("#selectionDropdown").val(item.IsSelected);
-                }
-                else {
-                    $("#selectionDropdown").val("-1");
-                }
-
-
-            }
-        });
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getOfferStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                }
-                $("#offerDropdown").html(s);
-                if (item.OfferStatus != null) {
-                    $("#offerDropdown").val(item.OfferStatus);
-                }
-                else {
-                    $("#offerDropdown").val("-1");
-                }
-
-            }
-        });
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getJoiningStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                }
-                $("#joiningDropdown").html(s);
-                if (item.JoiningStatus != null) {
-                    $("#joiningDropdown").val(item.JoiningStatus);
-                }
-                else {
-                    $("#joiningDropdown").val("-1");
-                }
-
-            }
-        });
-
-
-    }
-
-
-    function SavePopUp() {
-
-        var approvalComment = document.getElementById("appComments").value;
-        var isApproved = document.getElementById("approveDropdown").value;
-
-        var selectionComment = document.getElementById("selecComments").value;
-        var isSelected = document.getElementById("selectionDropdown").value;
-
-        var joiningComment = document.getElementById("joinComments").value;
-        var joiningStatus = document.getElementById("joiningDropdown").value;
-
-        var offerComment = document.getElementById("offComments").value;
-        var offerStatus = document.getElementById("offerDropdown").value;
-        var id = imid;
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/SaveClientFeedback",
-            data: { 'imid': id, 'isApproved': isApproved, 'approvalComment': approvalComment, 'isSelected': isSelected, 'selectionComment': selectionComment, 'joiningStatus': joiningStatus, 'joiningComment': joiningComment, 'offerStatus': offerStatus, 'offerComment': offerComment },
-            success: function (data) {
-
-                location.reload(true);
-
-            }
-        });
-    }
-
-</script>
-
-
-<script type="text/javascript">
-    //// script for loader starts here
-    $(".dataloading").hide();
-    $("#meeting").hide();
-    var loader;
-    function ShowProgress() {
-        $(".dataloading").hide();
-        $("#meeting").hide();
-        loader = document.getElementsByClassName("loader")[0];
-        loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
-        loader.style.left = left + "px";
-    };
-    ShowProgress();
-
-    window.onload = function () {
-        setTimeout(function () {
-            loader.style.display = "none";
-            $(".dataloading").show();
-            $("#meeting").show();
-        }, 2000);
-    };
-    //// script for loader ends here
-</script>
-
-<script>
-    function FilterInterviews(filterValue) {
-        $.ajax({
-            type: "GET",
-            url: "/Interview/GetSelectedPriorityClientFilteredMeetings",
-            data: { 'filterValue': filterValue },
-            success: function (data) {
-                if (data == '' && filterValue == 'Next Seven Days') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews for the next seven days.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                if (data == '' && filterValue == 'All') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                if (data == '') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews for ' + filterValue + '.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                $('#tableID').css("margin-left", "");
-                $('#tableID').html('');
-                $('#tableID').html(data);
-
-                $('#meeting').DataTable({
-                    "pagingType": "full_numbers",
-                    "lengthMenu": [
-                        [10, 25, 50, -1],
-                        [10, 25, 50, "All"]
-                    ],
-                    responsive: true,
-                    language: {
-                        search: "_INPUT_",
-                        searchPlaceholder: "Search records",
+            $.ajax({
+                type: "GET",
+                url: "/Interview/getSelectionStatusList",
+                data: "{}",
+                success: function (data) {
+                    var s = '<option value="-1">Please Select a Status</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                    }
+                    $("#selectionDropdown").html(s);
+                    if (item.IsSelected != null) {
+                        $("#selectionDropdown").val(item.IsSelected);
+                    }
+                    else {
+                        $("#selectionDropdown").val("-1");
                     }
 
-                });
-                var table = $('#meeting').DataTable();
+
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/getOfferStatusList",
+                data: "{}",
+                success: function (data) {
+                    var s = '<option value="-1">Please Select a Status</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                    }
+                    $("#offerDropdown").html(s);
+                    if (item.OfferStatus != null) {
+                        $("#offerDropdown").val(item.OfferStatus);
+                    }
+                    else {
+                        $("#offerDropdown").val("-1");
+                    }
+
+                }
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/getJoiningStatusList",
+                data: "{}",
+                success: function (data) {
+                    var s = '<option value="-1">Please Select a Status</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                    }
+                    $("#joiningDropdown").html(s);
+                    if (item.JoiningStatus != null) {
+                        $("#joiningDropdown").val(item.JoiningStatus);
+                    }
+                    else {
+                        $("#joiningDropdown").val("-1");
+                    }
+
+                }
+            });
 
 
-
-            },
-            error: function (err) {
-                alert(err.responseText);
-            }
-        });
-    }
-</script>
-<script>
-    var candidate = "";
-    var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
-
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
-
-    });
-
-    function callCandidate(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
-
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-    });
-
-    function afterTimeOut() {
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
-
-    });
-
-    function CallButtonClick(candidateName, mobileNumber) {
-        candidate = candidateName;
-        // Get the modal
-        var modal = document.getElementById("myCallModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        callCandidate(mobileNumber);
-    }
-    function closeCallPopUp() {
-        hangUp();
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
-
-
-</script>
-<!-- Keep the Page Content Here.-->
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
-{
-<script src="~/Newassets/js/enjoyhint.min.js"></script>
-<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-<script>
-    var enjoyhint_instance = new EnjoyHint({});
-
-    var enjoyhint_script_steps = [
-       {
-            'next .first': 'Selected Candidate Priority View and click on continue to know its features',
-            'nextButton': { className: "myNext", text: "Continue" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .second': 'By default last 30 days interview details will be available here, prior of that click on filter and select date range',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .three': 'Filters here based on available attributes or reset filters if applied earlier',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .exportfive': 'Export the Selected Candidates Interview data over excel',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'click .four': "Click here to see detail view of Selected Candidates Interview"
         }
 
 
-    ];
-    setTimeout(function () {
-        enjoyhint_instance.set(enjoyhint_script_steps);
-        enjoyhint_instance.run();
-    }, 5000)
-</script>
-}
-<loading></loading>
+        function SavePopUp() {
 
-<!-- PAGE CONTENT WRAPPER -->
+            var approvalComment = document.getElementById("appComments").value;
+            var isApproved = document.getElementById("approveDropdown").value;
+
+            var selectionComment = document.getElementById("selecComments").value;
+            var isSelected = document.getElementById("selectionDropdown").value;
+
+            var joiningComment = document.getElementById("joinComments").value;
+            var joiningStatus = document.getElementById("joiningDropdown").value;
+
+            var offerComment = document.getElementById("offComments").value;
+            var offerStatus = document.getElementById("offerDropdown").value;
+            var id = imid;
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/SaveClientFeedback",
+                data: { 'imid': id, 'isApproved': isApproved, 'approvalComment': approvalComment, 'isSelected': isSelected, 'selectionComment': selectionComment, 'joiningStatus': joiningStatus, 'joiningComment': joiningComment, 'offerStatus': offerStatus, 'offerComment': offerComment },
+                success: function (data) {
+
+                    location.reload(true);
+
+                }
+            });
+        }
+
+    </script>
+
+
+    <script type="text/javascript">
+        //// script for loader starts here
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        var loader;
+        function ShowProgress() {
+            $(".dataloading").hide();
+            $("#meeting").hide();
+            loader = document.getElementsByClassName("loader")[0];
+            loader.style.display = "block";
+            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+            loader.style.top = top + "px";
+            loader.style.left = left + "px";
+        };
+        ShowProgress();
+
+        window.onload = function () {
+            setTimeout(function () {
+                loader.style.display = "none";
+                $(".dataloading").show();
+                $("#meeting").show();
+            }, 2000);
+        };
+        //// script for loader ends here
+    </script>
+
+    <script>
+        function FilterInterviews(filterValue) {
+            $.ajax({
+                type: "GET",
+                url: "/Interview/GetSelectedPriorityClientFilteredMeetings",
+                data: { 'filterValue': filterValue },
+                success: function (data) {
+                    if (data == '' && filterValue == 'Next Seven Days') {
+                        $('#tableID').html('');
+                        $('#tableID').html('No interviews for the next seven days.');
+                        $('#tableID').css("margin-left", "452px");
+                        return;
+                    }
+                    if (data == '' && filterValue == 'All') {
+                        $('#tableID').html('');
+                        $('#tableID').html('No interviews.');
+                        $('#tableID').css("margin-left", "452px");
+                        return;
+                    }
+                    if (data == '') {
+                        $('#tableID').html('');
+                        $('#tableID').html('No interviews for ' + filterValue + '.');
+                        $('#tableID').css("margin-left", "452px");
+                        return;
+                    }
+                    $('#tableID').css("margin-left", "");
+                    $('#tableID').html('');
+                    $('#tableID').html(data);
+
+                    $('#meeting').DataTable({
+                        "pagingType": "full_numbers",
+                        "lengthMenu": [
+                            [10, 25, 50, -1],
+                            [10, 25, 50, "All"]
+                        ],
+                        responsive: true,
+                        language: {
+                            search: "_INPUT_",
+                            searchPlaceholder: "Search records",
+                        }
+
+                    });
+                    var table = $('#meeting').DataTable();
+
+
+
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+        }
+    </script>
+    <script>
+        var candidate = "";
+        var span = document.getElementById("callPopUp");
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            hangUp();
+            var modal = document.getElementById("myCallModal");
+            modal.style.display = "none";
+        }
+        $(document).ready(function () {
+            $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+                // Set up the Twilio Client Device with the token
+                Twilio.Device.setup(data.token);
+            });
+        });
+
+        /* Callback to let us know Twilio Client is ready */
+        Twilio.Device.ready(function (device) {
+
+        });
+
+        function callCandidate(phoneNumber) {
+            var params = { "phoneNumber": phoneNumber };
+            Twilio.Device.connect(params);
+        }
+        function hangUp() {
+            Twilio.Device.disconnectAll();
+        }
+
+        Twilio.Device.connect(function (connection) {
+            var appendText = "In call with " + "<b>" + candidate + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+        });
+
+        function afterTimeOut() {
+            var modal = document.getElementById("myCallModal");
+            modal.style.display = "none";
+        }
+
+        Twilio.Device.disconnect(function (connection) {
+            var appendText = "Call disconnected! ";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            setTimeout(afterTimeOut, 2000);
+
+        });
+
+        function CallButtonClick(candidateName, mobileNumber) {
+            candidate = candidateName;
+            // Get the modal
+            var modal = document.getElementById("myCallModal");
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+            var appendText = "Calling... " + "<b>" + candidate + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            callCandidate(mobileNumber);
+        }
+        function closeCallPopUp() {
+            hangUp();
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+
+
+    </script>
+    <!-- Keep the Page Content Here.-->
+    @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'next .first': 'Selected Candidate Priority View and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .second': 'By default last 30 days interview details will be available here, prior of that click on filter and select date range',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .three': 'Filters here based on available attributes or reset filters if applied earlier',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .exportfive': 'Export the Selected Candidates Interview data over excel',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .four': "Click here to see detail view of Selected Candidates Interview"
+                }
+
+
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 5000)
+        </script>
+    }
+    <loading></loading>
+
+    <!-- PAGE CONTENT WRAPPER -->

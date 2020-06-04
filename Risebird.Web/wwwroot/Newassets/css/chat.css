@@ -1,0 +1,252 @@
+﻿.dot {
+    height: 10px;
+    width: 10px;
+    margin: 0 2px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+
+.min {
+    width: 250px;
+    height: 35px;
+    overflow: hidden !important;
+    padding: 0px !important;
+    margin: 0px;
+    float: left;
+    position: static !important;
+}
+
+    .min .modal-dialog, .min .modal-content {
+        height: 100%;
+        width: 100%;
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+
+    .min .modal-header {
+        height: 100%;
+        width: 100%;
+        margin: 0px !important;
+        padding: 3px 15px !important;
+    }
+
+.display-none {
+    display: none;
+}
+
+button .fa {
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.min .fa {
+    font-size: 14px;
+}
+
+.min .menuTab {
+    display: none;
+}
+
+button:focus {
+    outline: none;
+}
+
+.minmaxCon {
+    width: 270px;
+    height: 46px;
+    bottom: 0px;
+    position: fixed;
+    right: 1px;
+    z-index: 9999;
+}
+#MyChatModel .modal .modal-header .close {
+    color: #fb1128;
+    text-shadow: none;
+    font-size: 30px !important;
+    position: relative;
+    top: 0px;
+    opacity: 0.7 !important;
+    right: 3px;
+}
+#msger-inputarea {
+    display: flex;
+    padding: 10px;
+    border-top: 2px #ddd solid;
+    background: #eee;
+    width: 100%
+}
+    #msger-inputarea input.form-control:focus{border:0!important;}
+.msger-input {
+    flex: 1;
+    background: #ddd!important;
+    border: 0 !important;
+    font-size: 15px !important;
+    color: #3a3737 !important;
+    font-weight: 500;
+}
+
+    .msger-input::-webkit-input-placeholder { /* Edge */
+       font-weight:500;
+    }
+
+    .msger-input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+        font-weight: 500;
+    }
+
+    .msger-input::placeholder {
+        font-weight: 500;
+    }
+
+
+.msger-send-btn {
+    margin-left: 10px;
+    background: rgb(0, 196, 65);
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.23s;
+    border: 0;
+    padding: 0px 20px;
+    border-radius: 3px;
+    text-transform: capitalize;
+}
+.back {
+    margin: 10px;
+    display: block;
+}
+#divchatbox{padding:5px;}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 100%, 0);
+        transform: translate3d(0, 100%, 0);
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+.msg-bubble {
+    min-width: 200px;
+    max-width: 100%;
+    padding: 15px;
+    border-radius: 15px;
+    background: #ececec;
+    color: #666;
+    word-break: break-all;
+    border-bottom-left-radius: 0;
+    -webkit-animation: zoomIn .2s cubic-bezier(.42, 0, .58, 1);
+    animation: zoomIn .2s cubic-bezier(.42, 0, .58, 1);
+    text-align: left;
+    float: left;
+}
+
+
+
+.msg-bubble-right {
+    background: #6fadfd;
+    color: #fff;
+    min-width: 200px;
+    max-width: 100%;
+    padding: 15px;
+    border-radius: 15px;
+    word-break: break-all;
+    text-align: right;
+    border-bottom-right-radius: 0;
+    -webkit-animation: zoomIn .2s cubic-bezier(.42, 0, .58, 1);
+    animation: zoomIn .2s cubic-bezier(.42, 0, .58, 1);
+    border-bottom-right-radius: 0;
+    float: right;
+}
+
+.scroll-box::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+.scroll-box::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 3px;
+}
+
+/* Handle */
+.scroll-box::-webkit-scrollbar-thumb {
+    background: #9c9fa2;
+    border-radius: 10px;
+}
+
+
+
+
+
+
+
+.scroll-box {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0px 10px;
+    width:100%;
+}
+
+#MyChatModel .close.modalMinimize {
+    color: #fb1128;
+    text-shadow: none;
+    font-size: 30px !important;
+    position: absolute;
+    top: 13px;
+    opacity: 0.8 !important;
+    right: 60px;
+    padding: 10px 0px;
+}
+
+#MyChatModel h5.modal-title {
+    margin: 0px;
+}
+
+#MyChatModel h5 {
+    margin: 10px 0px 10px 0px;
+}
+#MyChatModel .modal-content .modal-header {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.modal-bg {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+.desktop {
+    display: block
+}
+
+.mobile {
+    display: none
+}
+@media screen and (max-width: 767px) {
+    #MyChatModel h5 {
+        font-size:17px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .desktop{display:none}
+    .mobile{display:block}
+    .back {
+        margin: 10px 0!important;
+        display: block;
+    }
+}

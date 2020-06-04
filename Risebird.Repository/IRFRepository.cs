@@ -2462,6 +2462,30 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public bool SaveCandidateStatus(int id, int status)
+        {
+            try
+            {
+                var query = "update Candidate set [Status]=@Status where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Status", status);
+                dynamicParameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
 
     }
 }

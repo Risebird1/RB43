@@ -1,0 +1,17 @@
+/****** Object:  Table [dbo].[Phrase]    Script Date: 06-04-2020 9.30.34 PM ******/
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'Phrase')
+BEGIN
+CREATE TABLE [dbo].[Phrase](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[text] [varchar](max) NOT NULL,
+ CONSTRAINT [PK_Phrases] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+END
+
+GO
+
+

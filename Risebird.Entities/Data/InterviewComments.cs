@@ -79,5 +79,8 @@ namespace Risebird.Entities.Data
         public int? TotalView { get; set; }
         public string IsShared { get; set; }
 
+        [Display(Name = "Upload Aadhar File")]
+        public IFormFile AadharFile { get; set; }
+        public string AadharFileLink { get; set; }
     }
 }

@@ -917,6 +917,28 @@ namespace Risebird.Repository
             }
         }
 
+        public IEnumerable<Phrase> GetPhrases()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    
+                    return SqlMapper.Query<Phrase>(con, "usp_GetPhrases", commandType: CommandType.StoredProcedure);
+
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }

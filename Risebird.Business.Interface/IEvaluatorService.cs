@@ -28,6 +28,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddCandidateAudio(CandidateAudio obj, string emailId, string profile);
         Task<IList<CandidateAudio>> GetCandidateAudios(int candidateId, int irfId);
         string EnrollCandidate(IList<CandidateAudio> candidateList);
-
+        IEnumerable<Phrase> GetPhrases();
     }
 }

@@ -61,8 +61,8 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-               
-                
+
+
             </div>
 
         </div>
@@ -92,11 +92,11 @@
 
 
                                     <div class="card-header">
-                                       
-                                            <div class="pull-left first">
-                                                <h4 class="card-title">All Interview Priority View</h4>
-                                            </div>
-                                        
+
+                                        <div class="pull-left first">
+                                            <h4 class="card-title">All Interview Priority View</h4>
+                                        </div>
+
                                         <div class="pull-right">
                                             <div>
 
@@ -460,6 +460,7 @@
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
                                                 <th>Report Link</th>
+                                                <th>Aadhar Link</th>
                                                 <th>Video</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -479,6 +480,7 @@
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
                                                 <th>Report Link</th>
+                                                <th>Aadhar Link</th>
                                                 <th>Video</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -489,32 +491,54 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.imid>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.candidateName </td>
-                                                <td> @item.ClientHrContact </td>
-                                                @if (item.zoomLink != null && item.zoomLink != "")
-                                                {
-                                                    <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Interview Link</td>
-                                                }
-                                                <td> @item.ClientName </td>
-                                                <td> @item.JDTiltle.Split("|")[0] </td>
-                                                <td> @item.confirmationStatus</td>
-                                                <td> @item.MeetingStatusStatusDesc</td>
-                                                @if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
-                                                {
-                                                    <td> @item.intervieweStatusStatDesc</td>
-                                                }
-                                                else
-                                                {
-                                                    <td></td>
-                                                }
-                                                @if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
-                                                {
+                                                <tr id=@item.imid>
+                                                    <td> @item.interviewDate </td>
+                                                    @if (item.IsOnline == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                        </td>
+                                                    }s
+                                                    <td> @item.ClientHrContact </td>
+                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                    {
+                                                        <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Interview Link</td>
+                                                    }
+                                                    <td> @item.ClientName </td>
+                                                    <td> @item.JDTiltle.Split("|")[0] </td>
+                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                    {
+                                                        <td>
+
+                                                            <a style="background-color:red;border-radius:16px;padding:5px 10px"> @item.confirmationStatus</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-center"> @item.confirmationStatus</td>
+                                                    }
+
+                                                    <td> @item.MeetingStatusStatusDesc</td>
+                                                    @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
+                                                    {
+                                                        <td> @item.intervieweStatusStatDesc</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
+                                                    {
 
                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                 }
@@ -522,8 +546,18 @@
                                                 {
                                                     <td>No Report</td>
                                                 }
+                                                @if (item.AadharFileLink != null && item.AadharFileLink != "")
+                                                {
+                                                    <td>
 
-                                                @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
+                                                        <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No document</td>
+                                                }
+                                                @if (item.VideoLink != null && item.VideoLink != "" && item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
                                                 {
                                                     <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
                                                 }
@@ -816,47 +850,46 @@
 <!-- Keep the Page Content Here.-->
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
 {
-<script src="~/Newassets/js/enjoyhint.min.js"></script>
-<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-<script>
-    var enjoyhint_instance = new EnjoyHint({});
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+        var enjoyhint_instance = new EnjoyHint({});
 
-    var enjoyhint_script_steps = [
-        {
-            'next .first': 'All Interview Priority View and click on continue to know its features',
-            'nextButton': { className: "myNext", text: "Continue" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .second': 'By default last 30 days interview details will be available here, prior of that click on filter and select date range',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
+        var enjoyhint_script_steps = [
+            {
+                'next .first': 'All Interview Priority View and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .second': 'By default last 30 days interview details will be available here, prior of that click on filter and select date range',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
          {
             'next .itemInterviewLink': 'By clicking this column link you can join meeting',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
-        
-        {
-            'next .three': 'Filter here based on available attributes or reset filter if applied earlier',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .exportfive': 'Export the Candidates Interview data over excel',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
+            {
+                'next .three': 'Filter here based on available attributes or reset filter if applied earlier',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .exportfive': 'Export the Candidates Interview data over excel',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
             'click .four': "Click here to see All Interview Detail View of the Candidate Interviews"
-        }
-    ];
-    setTimeout(function () {
-        enjoyhint_instance.set(enjoyhint_script_steps);
-        enjoyhint_instance.run();
-    }, 2000)
-</script>
+            }
+        ];
+        setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 2000)
+    </script>
 }
 <loading></loading>
 
