@@ -764,30 +764,33 @@ namespace Risebird.Web.Controllers
                         {
                             IRListModel = new InterviewReport();
                         }
-                        var usernames = IRListModel.CandidateName.Trim().Split(" ");
-                        var namemodel = String.Empty;
-                        foreach (var name in usernames)
+                        else
                         {
-                            if (name != null && name.Length >= 2)
-                                namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
-                            else if (name != null && name.Length == 1)
-                                namemodel = namemodel + name?.ToCharArray()[0];
+                            var usernames = IRListModel.CandidateName.Trim().Split(" ");
+                            var namemodel = String.Empty;
+                            foreach (var name in usernames)
+                            {
+                                if (name != null && name.Length >= 2)
+                                    namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                else if (name != null && name.Length == 1)
+                                    namemodel = namemodel + name?.ToCharArray()[0];
+                            }
+                            IRListModel.CandidateName = namemodel;
                         }
-                        IRListModel.CandidateName = namemodel;
                         MeetingVM NewModel = new MeetingVM();
                         NewModel.SubVideo_List = new List<MeetingVM>();
                         //NewModel.candidateName = model.candidateName;
 
-                        usernames = model.candidateName.Trim().Split(" ");
-                        namemodel = String.Empty;
-                        foreach (var name in usernames)
+                        var usernames1 = model.candidateName.Trim().Split(" ");
+                        var namemodel1 = String.Empty;
+                        foreach (var name in usernames1)
                         {
                             if (name != null && name.Length >= 2)
-                                namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                namemodel1 = namemodel1 + name?.ToCharArray()[0] + name?.ToCharArray()[1];
                             else if (name != null && name.Length == 1)
-                                namemodel = namemodel + name?.ToCharArray()[0];
+                                namemodel1 = namemodel1 + name?.ToCharArray()[0];
                         }
-                        NewModel.candidateName = namemodel;
+                        NewModel.candidateName = namemodel1;
 
                         ViewBag.ProfileName = "";
                         NewModel.CandidateId = model.CandidateId;
