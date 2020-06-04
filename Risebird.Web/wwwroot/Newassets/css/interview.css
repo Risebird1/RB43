@@ -22,12 +22,11 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
-
+.interview .card-header .fa-file-excel-o:before{font-size:35px;}
 
 
 .select-css {
     display: block;
- 
     line-height: 1.3;
     padding: .6em 1.4em .5em .8em;
     width: 100%;
@@ -39,9 +38,8 @@ textarea::-webkit-scrollbar-thumb {
     border-radius: .5em;
     -moz-appearance: none;
     -webkit-appearance: none;
-    appearance: none!important;
+    appearance: none !important;
     background-color: #fff;
-    
     background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
     background-repeat: no-repeat !important;
     /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
