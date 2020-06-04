@@ -27,5 +27,6 @@ namespace Risebird.Entities.ViewModel
         public string MessageInfo { get; set; }
         public int IsOnline { get; set; }
         public int self { get; set; }
+        public string WhoSend { get; set; }
     }
 }
