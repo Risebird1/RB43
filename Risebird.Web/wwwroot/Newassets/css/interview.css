@@ -179,6 +179,19 @@ input[type=number] {
     }
 
 
+[type="datetime-local"] {
+    background: #fff url(https://cdn.iconscout.com/icon/free/png-256/calender-date-day-time-clock-schedule-event-6-3126.png) 97% 50% no-repeat !important;
+    background-size: 5% !important;
+}
+
+    [type="datetime-local"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="datetime-local"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
+
 
 
 
