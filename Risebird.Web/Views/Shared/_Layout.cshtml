@@ -50,7 +50,7 @@
         <link href="~/assets/MultiSelect/Newfolder/isteven-multi-select.css" rel="stylesheet" />
         <script src="~/assets/MultiSelect/Newfolder/isteven-multi-select.js"></script>
         <script src="~/js/angular/InfiniteScroll.js"></script>*@
-    
+
 </head>
 <body class=" sidebar-mini ">
 
@@ -123,9 +123,13 @@
                         <div class="pull-right">
                             <div class="desktop">   <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
 
-                            <div class="mobile">   <a class="back" onclick="OpenChatPopUp()"><svg class="svg-icon" width="24" height="24" viewBox="0 0 20 20">
-    <path d="M11.739,13.962c-0.087,0.086-0.199,0.131-0.312,0.131c-0.112,0-0.226-0.045-0.312-0.131l-3.738-3.736c-0.173-0.173-0.173-0.454,0-0.626l3.559-3.562c0.173-0.175,0.454-0.173,0.626,0c0.173,0.172,0.173,0.451,0,0.624l-3.248,3.25l3.425,3.426C11.911,13.511,11.911,13.789,11.739,13.962 M18.406,10c0,4.644-3.763,8.406-8.406,8.406S1.594,14.644,1.594,10S5.356,1.594,10,1.594S18.406,5.356,18.406,10 M17.521,10c0-4.148-3.373-7.521-7.521-7.521c-4.148,0-7.521,3.374-7.521,7.521c0,4.148,3.374,7.521,7.521,7.521C14.147,17.521,17.521,14.148,17.521,10"></path>
-</svg> </a></div>
+                            <div class="mobile">
+                                <a class="back" onclick="OpenChatPopUp()">
+                                    <svg class="svg-icon" width="24" height="24" viewBox="0 0 20 20">
+                                        <path d="M11.739,13.962c-0.087,0.086-0.199,0.131-0.312,0.131c-0.112,0-0.226-0.045-0.312-0.131l-3.738-3.736c-0.173-0.173-0.173-0.454,0-0.626l3.559-3.562c0.173-0.175,0.454-0.173,0.626,0c0.173,0.172,0.173,0.451,0,0.624l-3.248,3.25l3.425,3.426C11.911,13.511,11.911,13.789,11.739,13.962 M18.406,10c0,4.644-3.763,8.406-8.406,8.406S1.594,14.644,1.594,10S5.356,1.594,10,1.594S18.406,5.356,18.406,10 M17.521,10c0-4.148-3.373-7.521-7.521-7.521c-4.148,0-7.521,3.374-7.521,7.521c0,4.148,3.374,7.521,7.521,7.521C14.147,17.521,17.521,14.148,17.521,10"></path>
+                                    </svg>
+                                </a>
+                            </div>
 
 
                         </div>
@@ -182,6 +186,7 @@
     <script>
         var flag = true;
         var flagdisplay = true;
+        var whosend = "U";
         function closeChatPopUp() {
             var modal = document.getElementById("MyChatModel");
             modal.style.display = "none";
@@ -215,7 +220,7 @@
                     var modal = document.getElementById("MyChatModel");
                     modal.style.display = "block";
 
-
+                    debugger;
                     var html = '';
                     for (var i = 0; i < data.result.length; i++) {
                         if (data.result[i].isOnline == 1) {
@@ -225,6 +230,7 @@
                             html += ' <p><a onclick=""><span class="dot" ></span>  ' + data.result[i].sender + '</a></p>';
                         }
                         html += '<input type="text" hidden value="' + data.result[i].sender + '" id="txthiddenSorce_' + i + '" />';
+                        html += '<input type="text" hidden value="' + data.result[i].whoSend + '" id="txtWhoSend_' + i + '" />';
                     }
                     $("#txtself").val(data.self);
                     $("#lblChatname").text("");
@@ -244,6 +250,7 @@
             document.getElementById("btnchatConversation").style.display = "block";
             var msg = document.getElementById("msger-inputarea");
             msg.style.display = "flex";
+            whosend = $("#txtWhoSend_" + id).val();
             ChatConversation(Sender);
         }
         function directopenChat(Sender) {
@@ -263,7 +270,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Account/GetConversation",
-                data: { contact: Sender, userid: $("#txtself").val() },
+                data: { contact: Sender, userid: $("#txtself").val(),WhoSend:whosend },
                 success: function (data) {
                     var html = '';
                     var countvalue = 0;
