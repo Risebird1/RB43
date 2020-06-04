@@ -581,6 +581,9 @@ namespace Risebird.Web.Controllers
                 // return result;
             }
         }
+        public void AddGroup()
+        {
 
+        }
     }
 }
