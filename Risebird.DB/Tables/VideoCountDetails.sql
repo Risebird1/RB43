@@ -10,6 +10,7 @@ CREATE TABLE [dbo].[VideoCountDetails](
 	[Userid] [int] NULL,
 	[Count] [int] NULL,
 	[OnDate] [datetime] NULL,
+	[Emailid] [varchar](100)
  CONSTRAINT [PK_VideoCountDetails] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

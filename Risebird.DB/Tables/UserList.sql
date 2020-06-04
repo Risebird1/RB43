@@ -29,7 +29,7 @@ IF NOT EXISTS(
     WHERE Name IN (N'Isonline')
       AND Object_ID = Object_ID(N'UserList'))
 BEGIN
-    ALTER TABLE Client
+    ALTER TABLE UserList
     Add [Isonline] [bit] NULL
 END
 END
