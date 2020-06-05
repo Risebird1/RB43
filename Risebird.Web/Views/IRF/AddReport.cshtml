@@ -175,7 +175,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -187,7 +187,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "form-control" })
+                                            @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control" })
                                             @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
                                         </div>
@@ -197,7 +197,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -339,7 +339,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
                                                             </td>
                                                             <td>
@@ -347,7 +347,7 @@
 
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
 
                                                             </td>
 
@@ -379,7 +379,7 @@
                                                             <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                 </td>
@@ -389,7 +389,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control droprating" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control droprating" })
 
 
                                                                 </td>
@@ -470,7 +470,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                 </td>
                                                                 <td>
@@ -552,7 +552,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                 </td>
                                                                 <td>
@@ -629,7 +629,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
+                                                                    @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @readonly = "readonly" })
 
                                                                 </td>
                                                                 <td>
@@ -708,7 +708,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
+                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @readonly = "readonly" })
 
                                                                 </td>
                                                                 <td>
