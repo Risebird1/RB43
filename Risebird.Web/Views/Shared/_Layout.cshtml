@@ -121,7 +121,7 @@
 
                         <div class="pull-left"> <h5><lable id="lblChatname"></lable></h5></div>
                         <div class="pull-right">
-                            <a class="back" onclick="CreateGroup()">Create/Edit Group</a>
+                            <a class="back" onclick="FetchGroup()">Create/Edit Group</a>
                             <div class="desktop">   <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
 
                             <div class="mobile">
@@ -139,10 +139,6 @@
                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
 
                             <div class=" scroll-box">
-                                <div id="divgroup" style="display:none">
-                                    <inupt type="text" id="txtgroup" placeholder="Group Name" />
-                                    <input type="button" id="btngroup" value="Add Group" />
-                                </div>
                                 <div id="divchatbox">
 
                                 </div>
@@ -260,6 +256,8 @@
             flag = true;
             document.getElementById("txtmessage").style.display = "block";
             document.getElementById("btnchatConversation").style.display = "block";
+            var msg = document.getElementById("msger-inputarea");
+            msg.style.display = "flex";
             ChatConversation(Sender);
         }
         function ChatConversation(Sender) {
@@ -271,7 +269,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Account/GetConversation",
-                data: { contact: Sender, userid: $("#txtself").val(),WhoSend:whosend },
+                data: { contact: Sender, userid: $("#txtself").val(), WhoSend: whosend },
                 success: function (data) {
                     var html = '';
                     var countvalue = 0;
@@ -284,13 +282,18 @@
                             html += '<div class="col-md-6"></div><div class="col-md-6"><div class="msg-bubble-right fadeInUp">' + data[i].message + '</div></div>';
                         }
                         html += '</div>';
-
                     }
+
                     var createheader = '';
-                    if (data[countvalue].isOnline == 1) {
-                        createheader += Sender + ' (Online)';
-                    } else {
-                        createheader += Sender + ' (Offline)';
+                    if (data.length > 0) {
+                        if (data[countvalue].isOnline == 1) {
+                            createheader += Sender + ' (Online)';
+                        } else {
+                            createheader += Sender + ' (Offline)';
+                        }
+                    }
+                    else {
+                        createheader += Sender;
                     }
                     $("#divchatbox").empty().html(html);
                     $("#lblChatname").text(createheader);
@@ -365,10 +368,101 @@
 
             });
         });
-        function CreateGroup() {
-            //fetch group list
-            //Create a html for this page
-            alert("List");
+        function FetchGroup() {
+            flag = false;
+            document.getElementById("txtmessage").style.display = "block";
+            document.getElementById("btnchatConversation").style.display = "block";
+            var msg = document.getElementById("msger-inputarea");
+            msg.style.display = "flex";
+            $.ajax({
+                type: "POST",
+                url: "/Account/FetchGroup",
+                success: function (data) {
+                    var html = '';
+                    html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                    html += '<div class="col-md-6"><div><input type="text" id="txtgroupname" /></div></div>';
+                    html += '<div class="col-md-6"><div><input type="button" value="Add Group" onclick="AddGroup()" /></div></div>';
+                    html += '</div>';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                        html += '<div class="col-md-6"><div><a onclick="FetchUser(' + data[i].id + ')">' + data[i].groupName + '</a></div></div>';
+                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteGroup(' + data[i].id + ')" /></div></div>';
+                        html += '</div>';
+                    }
+                    $("#divchatbox").empty().html(html);
+                    $("#lblChatname").text('');
+                }
+            });
+        }
+        function AddGroup() {
+            if ($("#txtgroupname").val().trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/AddGroup",
+                    data: { GroupName: $("#txtgroupname").val() },
+                    success: function (data) {
+                        FetchGroup();
+                    }
+                });
+            } else {
+                alert("Please Enter GroupName");
+            }
+        }
+        function DeleteGroup(Id) {
+            $.ajax({
+                type: "POST",
+                url: "/Account/DeleteGroup",
+                data: { GroupId: Id },
+                success: function (data) {
+                    FetchGroup();
+                }
+            });
+        }
+        function FetchUser(Id) {
+            $.ajax({
+                type: "POST",
+                url: "/Account/FetchUser",
+                data: { GroupId: Id },
+                success: function (data) {
+                    var html = '';
+                    html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                    html += '<div class="col-md-6"><div><input type="text" id="txtgroupEmailid" /></div></div>';
+                    html += '<div class="col-md-6"><div><input type="button" value="Add User" onclick="AddUser(' + Id + ')" /></div></div>';
+                    html += '</div>';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                        html += '<div class="col-md-6"><div>' + data[i].emailid + '</div></div>';
+                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ')" /></div></div>';
+                        html += '</div>';
+                    }
+                    $("#divchatbox").empty().html(html);
+                    $("#lblChatname").text('');
+                }
+            });
+        }
+        function AddUser(GroupId) {
+            if ($("#txtgroupEmailid").val().trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/AddUser",
+                    data: { GroupId: GroupId, Emailid: $("#txtgroupEmailid").val() },
+                    success: function (data) {
+                        FetchUser(GroupId);
+                    }
+                });
+            } else {
+                alert("Please Enter Emailid");
+            }
+        }
+        function DeleteUser(Id) {
+            $.ajax({
+                type: "POST",
+                url: "/Account/DeleteUser",
+                data: { Userid:Id },
+                success: function (data) {
+                    FetchUser(GroupId);
+                }
+            });
         }
     </script>
 
