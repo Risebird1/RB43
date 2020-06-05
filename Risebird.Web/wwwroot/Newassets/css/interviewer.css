@@ -409,7 +409,7 @@ table {
         border-bottom: 2px rgb(80, 158, 235) solid;
     }
 
-.trash-btn {
+.mdc-fab.trash-btn {
     background: #d20505 !important;
 }
 

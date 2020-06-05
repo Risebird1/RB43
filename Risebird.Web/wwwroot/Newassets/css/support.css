@@ -425,6 +425,7 @@ table {
     padding: 15px 11px;
 }
 .mt-20{margin-top:20px;}
-.trash-btn {
+
+.mdc-fab.trash-btn {
     background: #d20505 !important;
 }
