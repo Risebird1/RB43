@@ -1308,7 +1308,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-        public JsonResult ShareVedioLinkToMail(string Emailids, string vedioid, string Name, string comment, string skills)
+        public JsonResult ShareVedioLinkToMail(string Emailids, string vedioid, string Name, string comment, string skills, string resumeLink)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
@@ -1322,7 +1322,7 @@ namespace Risebird.Web.Controllers
                 _mail.TO = Emailids;
                 _mail.CC = email;
                 _mail.Subject = "An interview of Candidate: " + Name + " video is shared with you";
-                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment);
+                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
             }
             return Json("");
         }
