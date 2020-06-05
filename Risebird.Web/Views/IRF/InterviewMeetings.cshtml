@@ -52,7 +52,7 @@
                                         <div class="pull-right">
                                             <div>
                                                 <div class="form-group" style="width:100px;float:left;    margin-right: 5px;">
-                                                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
+                                                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control", onchange = "FilterInterviews(this.value);" })
                                                 </div>
                                                 @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                             </div>
@@ -162,9 +162,9 @@
                                                     }
                                                     @if (item.confirmationStatus.Trim() == "Cancelled")
                                                     {
-                                                        <td>
+                                                        <td class="text-center">
 
-                                                            <a style="background-color:red;border-radius:16px;padding:5px 10px"> @item.confirmationStatus</a>
+                                                            <a style="color:red"> @item.confirmationStatus</a>
                                                         </td>
                                                     }
                                                     else

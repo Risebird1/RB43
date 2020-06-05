@@ -61,6 +61,7 @@ button:focus {
     right: 1px;
     z-index: 9999;
 }
+
 #MyChatModel .modal .modal-header .close {
     color: #fb1128;
     text-shadow: none;
@@ -70,6 +71,7 @@ button:focus {
     opacity: 0.7 !important;
     right: 3px;
 }
+
 #msger-inputarea {
     display: flex;
     padding: 10px;
@@ -77,10 +79,14 @@ button:focus {
     background: #eee;
     width: 100%
 }
-    #msger-inputarea input.form-control:focus{border:0!important;}
+
+    #msger-inputarea input.form-control:focus {
+        border: 0 !important;
+    }
+
 .msger-input {
     flex: 1;
-    background: #ddd!important;
+    background: #ddd !important;
     border: 0 !important;
     font-size: 15px !important;
     color: #3a3737 !important;
@@ -88,7 +94,7 @@ button:focus {
 }
 
     .msger-input::-webkit-input-placeholder { /* Edge */
-       font-weight:500;
+        font-weight: 500;
     }
 
     .msger-input:-ms-input-placeholder { /* Internet Explorer 10-11 */
@@ -100,9 +106,14 @@ button:focus {
     }
 
 
+
+
 .msger-send-btn {
     margin-left: 10px;
-    background: rgb(0, 196, 65);
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(0, 196, 65)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>') !important;
+    background-repeat: no-repeat !important;
+    background-size: 90% !important;
+    background-position: 80% 0%;
     color: #fff;
     font-weight: bold;
     cursor: pointer;
@@ -111,12 +122,22 @@ button:focus {
     padding: 0px 20px;
     border-radius: 3px;
     text-transform: capitalize;
+    text-indent: -999px;
 }
+
+    .msger-send-btn:focus {
+        outline: 0;
+    }
+
 .back {
     margin: 10px;
     display: block;
 }
-#divchatbox{padding:5px;}
+
+#divchatbox {
+    padding: 5px;
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -130,6 +151,7 @@ button:focus {
         transform: none;
     }
 }
+
 .msg-bubble {
     min-width: 200px;
     max-width: 100%;
@@ -190,7 +212,7 @@ button:focus {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0px 10px;
-    width:100%;
+    width: 100%;
 }
 
 #MyChatModel .close.modalMinimize {
@@ -211,6 +233,7 @@ button:focus {
 #MyChatModel h5 {
     margin: 10px 0px 10px 0px;
 }
+
 #MyChatModel .modal-content .modal-header {
     padding-left: 20px;
     padding-right: 20px;
@@ -229,6 +252,7 @@ button:focus {
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
 }
+
 .desktop {
     display: block
 }
@@ -236,17 +260,24 @@ button:focus {
 .mobile {
     display: none
 }
+
 @media screen and (max-width: 767px) {
     #MyChatModel h5 {
-        font-size:17px;
+        font-size: 17px;
     }
 }
 
 @media screen and (max-width: 500px) {
-    .desktop{display:none}
-    .mobile{display:block}
+    .desktop {
+        display: none
+    }
+
+    .mobile {
+        display: block
+    }
+
     .back {
-        margin: 10px 0!important;
+        margin: 10px 0 !important;
         display: block;
     }
 }
