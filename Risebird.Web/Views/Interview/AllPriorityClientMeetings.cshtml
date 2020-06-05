@@ -504,7 +504,7 @@
                                                         <td>
                                                             <a onclick="">@item.candidateName <span class="dot"></span></a>
                                                         </td>
-                                                    }s
+                                                    }
                                                     <td> @item.ClientHrContact </td>
                                                     @if (item.zoomLink != null && item.zoomLink != "")
                                                     {
@@ -518,10 +518,10 @@
                                                     <td> @item.JDTiltle.Split("|")[0] </td>
                                                     @if (item.confirmationStatus.Trim() == "Cancelled")
                                                     {
-                                                        <td>
+                                                <td>
 
-                                                            <a style="background-color:red;border-radius:16px;padding:5px 10px"> @item.confirmationStatus</a>
-                                                        </td>
+                                                    <a style="color:red"> @item.confirmationStatus</a>
+                                                </td>
                                                     }
                                                     else
                                                     {
