@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Http.Internal;
 using System.Text;
 using Risebird.Web.Controllers.AzureMediaservice;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http.Headers;
 
 namespace Risebird.Web.Controllers
 {
@@ -3805,23 +3806,23 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        if (model.FeedbackAudioFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(model.FeedbackAudioFile.FileName, "audios", model.FeedbackAudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.FeedbackAudioFile.FileName);
-                            string uploadedfbaudioFileURL = blob.Uri.ToString();
-                            if (uploadedfbaudioFileURL == null)
-                            {
-                                ModelState.AddModelError(string.Empty, "Feedback audio upload has failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
-                            }
-                            else
-                            {
-                                model.FeedbackAudioLink = uploadedfbaudioFileURL;
-                            }
-                        }
+                        //if (model.FeedbackAudioFile != null)
+                        //{
+                        //    await _azureStorageHelper.InsertBlob(model.FeedbackAudioFile.FileName, "audios", model.FeedbackAudioFile);
+                        //    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                        //    var blob = containerRef.GetBlockBlobReference(model.FeedbackAudioFile.FileName);
+                        //    string uploadedfbaudioFileURL = blob.Uri.ToString();
+                        //    if (uploadedfbaudioFileURL == null)
+                        //    {
+                        //        ModelState.AddModelError(string.Empty, "Feedback audio upload has failed.");
+                        //        GetStatusList(model);
+                        //        return View("AddReport", model);
+                        //    }
+                        //    else
+                        //    {
+                        //        model.FeedbackAudioLink = uploadedfbaudioFileURL;
+                        //    }
+                        //}
 
                         if (model.AudioFile != null)
                         {
@@ -5815,6 +5816,25 @@ namespace Risebird.Web.Controllers
                 item.DateRequired = item.interviewDate.ToString("dd/MMM/yyyy");
             }
             return Json(model);
+        }
+
+        [HttpPost]
+        public async Task<string> UploadAudio()
+        {
+            var file = Request.Form.Files;
+
+            var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
+            var interviewId = (fileName.Split("_")[2]).Split(".")[0];
+            string uploadedfbaudioFileURL = string.Empty;
+            if (file != null)
+            {
+                await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
+                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                var blob = containerRef.GetBlockBlobReference(fileName);
+                uploadedfbaudioFileURL = blob.Uri.ToString();
+            }
+            _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL);
+            return uploadedfbaudioFileURL;
         }
     }
 

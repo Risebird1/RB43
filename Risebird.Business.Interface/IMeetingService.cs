@@ -62,7 +62,7 @@ namespace Risebird.Business.Interface
         List<Meeting> InterestListClient(string emailid, string IRFID);
         string Fetchusername(string emailid);
         List<VideoCountdetail> GetTotalViewCount(int id);
-
+        bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink);
 
     }
 }

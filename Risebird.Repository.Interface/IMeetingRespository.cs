@@ -82,8 +82,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> InterestListClient(string emailid, string IRFID);
         string Fetchusername(string Emailid);
         List<VideoCountdetail> GetTotalViewCount(int id);
-
-
+        bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink);
 
     }
 }
