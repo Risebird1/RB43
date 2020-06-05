@@ -22,7 +22,7 @@ namespace Risebird.CommonHelper.Interface
         string SendCuratedUserMail(List<string> curatedUsers, string meetingDate, string irf, string primarySkill, string codedName);
         string SharedVideoNofitication(Mail model,  string UrlDetails,string Skills);
         string SharedVideoNofiticationExternal(Mail model, string UrlDetails, string Url);
-        string SharedVideoNofiticationExternal(Mail model, string name, string Url,string comment, string resumeLink);
+        string SharedVideoNofiticationExternal(Mail model, string name, string Url,string comment);
 
     }
 }
