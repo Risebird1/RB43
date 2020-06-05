@@ -311,6 +311,20 @@ height: 55px;
     border-color: #ff5555;
 }
 
+
+[type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+}
+
+    [type="date"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
+
 .dropdown-toggle::after {
     color: rgba(0, 0, 0, 0.29);
     position: relative;
@@ -347,7 +361,7 @@ textarea::-webkit-scrollbar-thumb {
         background-position: 45%;
         z-index: 1000;
     }
-        .pagination-container > ul > li {
+.pagination-container > ul > li {
     padding: 5px 12px !important;
     border-radius: 21px !important;
     border: 1px solid blanchedalmond !important;
@@ -358,18 +372,108 @@ textarea::-webkit-scrollbar-thumb {
 .pagination-container {
     float: right !important;
 }
+
+.br-bm {
+    border-bottom: 1px solid #e9ecef
+}
+.w-color{color:#fff;}
+.lblErrorMsg{color:red;}
+
+.interest-sent {
+    border: none;
+    background-color: yellow;
+    font-weight: bold;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+}
+.interest-accepted {
+    border: none;
+    background-color: limegreen;
+    font-weight: bold;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+}
+.show-interest {
+    border: none;
+    background-color: white;
+    font-weight: bold;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+}
+.share {
+    border: none;
+    background-color: white;
+    font-weight: bold;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+}
+
+.scoreChart {
+    height: 200px;
+    width: 100%;
+}
+.w-full {
+    width: 100%!important;
+}
+.hang-btn {
+    margin: 10px auto;
+    display: block;
+    background: #ff253a !important;
+}
+
+.reset-filter {
+    margin-top: 30px;
+    float: right;
+    margin-left: 5px;
+    font-size: 12px;
+}
+.apply-filter {
+    margin-top: 30px;
+    float: right;
+    font-size: 12px;
+}
 .mn-section {
     position: absolute;
     width: calc(100% - 30px);
 }
 .comment-area{width:100%;float:left;}
 
- .comment-area .talk-bubble {
-        width: 89%;
-        margin: 0;
-        float:left;
-        padding: 0;
-    }
+.thumbnailImage {
+    height: 179px;
+    position: absolute;
+    z-index: auto;
+}
+.thumb-height {
+    height: 179px !important;
+}
+
+.video-thumb {
+    height: 179px !important;
+    background: black;
+    width: 100%
+}
+
+.video-view .fa {
+    font-size: 14px;
+    color: #888888;
+}
+
+.video-view span {
+    color: #606060;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.comment-area .talk-bubble {
+    width: 89%;
+    margin: 0;
+    float: left;
+    padding: 0;
+}
 .video-width {
     background: black !important;
     width: 100%;
@@ -622,7 +726,9 @@ textarea::-webkit-scrollbar-thumb {
 .mt-20 {
     margin-top: 20px;
 }
-
+.p10 {
+    padding: 10px
+}
 .modal-bg {
     display: none;
     position: fixed; 
@@ -639,6 +745,12 @@ textarea::-webkit-scrollbar-thumb {
 
 .modal-content .modal-body {
     padding-top: 10px;
+}
+
+.modal-footer {
+    padding: 5px;
+    background-color: #fff;
+    color: white;
 }
 
 .modal .form-group {

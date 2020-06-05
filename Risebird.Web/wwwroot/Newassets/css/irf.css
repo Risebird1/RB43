@@ -6,7 +6,18 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 5px;
 }
+textarea::-webkit-scrollbar {
+    width: 2px;
+    height: 6px;
+    background-color: var(--mdc-theme-primary, #018786) !important;
+}
 
+textarea::-webkit-scrollbar-thumb {
+    background-color: #56a9ff;
+    border: 1px solid #56a9ff;
+    margin: 2px;
+    border-radius: 2px;
+}
 .no-sort::after {
     display: none !important;
 }
@@ -66,6 +77,20 @@ table th {
     color: #000000e0;
     background: #fff;
 }
+
+
+[type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+}
+
+    [type="date"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
 .card .card-header .card-title, .card .card-header h4.card-title {
     margin: 0 0px 10px 0;
 }
@@ -89,10 +114,159 @@ table th {
     padding-top: 65px;
     background: none !important;
 }
+
+.select-css {
+    display: block;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 100%;
+    max-width: 100%; /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none !important;
+    background-color: #fff;
+    /* note: bg image below uses 2 urls. The first is an svg data uri for the arrow icon, and the second is the gradient. 
+		for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
+		
+	*/
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat !important;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right .7em top 50%, 0 0 !important;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100% !important;
+}
+    /* Hide arrow icon in IE browsers */
+    .select-css::-ms-expand {
+        display: none;
+    }
+    /* Hover style */
+    .select-css:hover {
+        border-color: #888;
+    }
+    /* Focus style */
+    .select-css:focus {
+        color: #222;
+        outline: none;
+    }
+
+    /* Set options to normal weight */
+    .select-css option {
+        font-weight: normal;
+    }
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+    background-position: left .7em top 50%, 0 0;
+    padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+    color: graytext;
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat;
+}
+
+    .select-css:disabled:hover, .select-css[aria-disabled=true] {
+        border-color: #aaa;
+    }
+
+.input {
+    position: relative;
+}
+
+.spinner {
+    top: 15px;
+    width: 0.8rem;
+    position: absolute;
+    background: whitesmoke;
+    border-radius: 0;
+    display: none;
+    height: 2rem;
+    right: 20px;
+}
+
+.js .spinner {
+    display: block;
+}
+
+.container:hover .spinner {
+    right: 0;
+    top: 1px;
+}
+
+.spinner .button {
+    position: relative;
+    color: #8c8686;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    padding: 0;
+    display: block;
+}
+
+    .spinner .button:hover {
+        color: gray;
+    }
+
+    .spinner .button:active {
+        color: darkgray
+    }
+
+.up {
+    transform: rotate(-90deg);
+    top: -.5rem;
+}
+
+.down {
+    transform: rotate(-90deg);
+    top: -2rem;
+}
+.spinner-wrap{position:relative}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
 #AudioFile {
     margin: 0px 10px 10px 10px;
     width: calc(100% - 20px);
 }
+.text-areadiv {
+    height: auto;
+    padding: 0px 10px !important;
+}
+
+    .text-areadiv textarea {
+        width: 100%;
+        border: 0;
+        background: #f5f5f5;
+        padding: 5px 10px 5px 10px;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+
+
+ .text-areadiv textarea:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+
+
+
+
 
 #PageVideoLink {
     margin: 0px 10px 10px 10px;

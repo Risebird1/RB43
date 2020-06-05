@@ -133,8 +133,8 @@
                             <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
-                                        <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title btn3" id="filterModalLabel" style="color:#fff;"> Filter</h5>
+                                        <div class="modal-header br-bm">
+                                            <h5 class="modal-title btn3 w-color" id="filterModalLabel"> Filter</h5>
                                             <button type="button" class="close " data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -380,10 +380,10 @@
 
 
                                                             <div class="row">
-                                                                <div class="col-md-12 mc-button-area" style="text-align:right">
+                                                                <div class="col-md-12 mc-button-area text-right">
 
-                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                      Reset Filter
                                                                     </button>
 
 
@@ -391,8 +391,8 @@
 
 
 
-                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5" style="margin-top: 30px;float:right">
-                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                      Apply Filter
                                                                     </button>
 
 
@@ -440,9 +440,9 @@
                                                     {
                                                         @if (item.ThumbnailImage != null)
                                                         {
-                                                            <img src="@item.ThumbnailImage" style="height: 179px; position: absolute; z-index: auto; " />
+                                                            <img src="@item.ThumbnailImage" class="thumbnailImage" />
                                                         }
-                                                        <video controls style="height: 179px !important; background:black;width:100% ">
+                                                        <video controls class="video-thumb">
                                                             <source src="@item.VideoLink" type="video/mp4">
                                                         </video>
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
@@ -451,11 +451,11 @@
                                                     {
                                                         @if (item.ThumbnailImage != null)
                                                         {
-                                                            <img src="@item.ThumbnailImage" style="height: 179px !important; " />
+                                                            <img src="@item.ThumbnailImage" class="thumb-height"  />
                                                         }
                                                         else
                                                         {
-                                                            <img src="~/RiseTube/img/video-icon.png" style="height: 179px !important;" />
+                                                            <img src="~/RiseTube/img/video-icon.png" class="thumb-height"  />
                                                         }
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
                                                     }
@@ -473,10 +473,7 @@
 
                                                     </div>
                                                     <div class="video-view">
-                                                        &nbsp;<i style="    font-size: 14px;
-    color: #888888;" class="fas fa-calendar-alt"></i> <span style="color: #606060;
-    font-weight: 600;
-    font-size: 12px;">@item.interviewDate</span>
+                                                        &nbsp;<i  class="fas fa-calendar-alt"></i> <span>@item.interviewDate</span>
 </div>
 </div>
 </div>
