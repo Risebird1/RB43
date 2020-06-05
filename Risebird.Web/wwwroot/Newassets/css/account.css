@@ -436,10 +436,10 @@ body {
     text-align: center;
 }
 
-.trash-btn {
+
+.mdc-fab.trash-btn {
     background: #d20505 !important;
 }
-
 
 
 .mc-button-area {

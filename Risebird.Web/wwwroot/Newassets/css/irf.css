@@ -805,8 +805,8 @@ background-color: rgba(0,0,0,0.4);
 }
 
 
-.trash-btn {
-    background:#d20505 !important;
+.mdc-fab.trash-btn {
+    background: #d20505 !important;
 }
 #btnPlus {
     top: -3px;
