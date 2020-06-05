@@ -123,7 +123,17 @@
                 <td>No Contact</td>
             }
             <td> @item.ClientHrContact </td>
-            <td> @item.confirmationStatus</td>
+            @if (item.confirmationStatus.Trim() == "Cancelled")
+            {
+                <td class="text-center">
+
+                    <a style="color:red"> @item.confirmationStatus</a>
+                </td>
+            }
+            else
+            {
+                <td class="text-center"> @item.confirmationStatus</td>
+            }
             @if (item.zoomLink != null && item.zoomLink != "")
             {
                 <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
