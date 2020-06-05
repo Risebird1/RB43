@@ -393,32 +393,42 @@
                                     </div><!--end of col-md-12-->
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="row">
-                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="text-align:center">
-                                                <button id="startRecButton" type="button" class="btn btn-success" style="width:35%" onclick="startRecording()">Start Recording</button>
-                                            </div>
-                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="text-align:center">
-                                                <button id="stopRecButton" type="button" class="btn btn-danger" style="width:35%" onclick="stopRecording('@Model.InterviewId')" disabled="disabled">Stop Recording</button>
-                                            </div>
-                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="text-align:center">
-                                                <button id="cancelRecButton" type="button" class="btn btn-dark" style="width:36%" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                                <p style="font-size:18px" id="recordingStatus"></p>
-                                            </div>
-                                        </div>
-                                        <div class="row" id="recordingRow" style="display:none">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                                <h3 style="background-color:antiquewhite">Recordings</h3>
-                                                <div id="recordingsList"></div>
+
+
+                                            <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
+
+
+                                                <div class="pull-left"> <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br/> Recording</span></div>
+                                                <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
+                                                <div class="pull-left">
+                                                    <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
+                                                </div>
+                                                </div>
+                                            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                        <p style="font-size:18px" id="recordingStatus"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="recordingRow" style="display:none">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                        <h3 style="background-color:antiquewhite">Recordings</h3>
+                                                        <div id="recordingsList"></div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <input type="text" asp-for="FeedbackAudioLink" style="display:none">
+                                                </div>
+
                                             </div>
 
-                                        </div>
-                                        <div class="row">
-                                            <input type="text" asp-for="FeedbackAudioLink" style="display:none">
-                                        </div>
 
+                                          
+                                          
+                                          
+                                        </div>
+                                    
                                     </div>
 
 
