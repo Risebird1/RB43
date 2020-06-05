@@ -3,13 +3,7 @@
     ViewData["Title"] = "Multiple Candidate Invites";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<script src="~/Newassets/js/interview.js"></script>
-<link href="~/Newassets/css/interview.css" rel="stylesheet" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -64,7 +58,7 @@
 
 
 
-                                            <i type="submit" class="fa fa-file-excel-o" style="margin-left:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MultipleCandidateInvitesExporttoExcel", "Interview")'"></i>
+                                            <i type="submit" class="fa fa-file-excel-o excel-file" style="margin-left:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MultipleCandidateInvitesExporttoExcel", "Interview")'"></i>
                                         </div>
                                     </div>
 
