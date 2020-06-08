@@ -1325,7 +1325,7 @@ namespace Risebird.Web.Controllers
                 _mail.TO = Emailids;
                 _mail.CC = email;
                 _mail.Subject = "An interview of Candidate: " + Name + " video is shared with you";
-                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment);
+                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
             }
             return Json("");
         }
