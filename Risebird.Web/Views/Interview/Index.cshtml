@@ -33,13 +33,8 @@
     Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
 }
 
-<link href="~/Newassets/css/interview.css" rel="stylesheet" />
-<script src="~/Newassets/js/interview.js"></script>
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -392,180 +387,180 @@
                                                 {
                                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                <tr id=@item.imid>
-                                                    <td title=@item.IRFId> @item.IRFId </td>
-                                                    <td> @item.interviewDate </td>
-                                                    @if (item.IsOnline == 1)
-                                                    {
-                                                        <td>
-                                                            <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>
-                                                            <a onclick="">@item.candidateName <span class="dot"></span></a>
-                                                        </td>
-                                                    }
-                                                    <td> @item.candidateEmail</td>
-                                                    <td> @item.JDTiltle.Split("|")[0] </td>
-                                                    <td> @item.interviewer</td>
-                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                    {
-                                                        <td class="text-center">
-
-                                                            <a style="color:red"> @item.confirmationStatus</a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td class="text-center"> @item.confirmationStatus</td>
-                                                    }
-
-                                                    <td> @item.MeetingStatusStatusDesc</td>
-                                                    <td> @item.intervieweStatusStatDesc</td>
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
-                                                    {
-                                                        <td>
-
-                                                            <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    @if (item.JDLink != null && item.JDLink != "")
-                                                    {
-                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No JD</td>
-                                                    }
-
-                                                    @if (item.zoomLink != null && item.zoomLink != "")
-                                                    {
-                                                        <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Zoom Link</td>
-                                                    }
-                                                    <td> @item.risebirdHR</td>
-
-
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.ClientName </td>
-
-                                                    @if (item.VideoLink != null && item.VideoLink != "")
-                                                    {
-                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Video</td>
-                                                    }
-                                                    <td>@item.interviewSlot</td>
-                                                    <td>@item.QCInterviewer</td>
-                                                    <td>@item.staffingAgency</td>
-                                                    <td> @item.interviewDuration </td>
-                                                    <td> @item.joiningTime</td>
-                                                    <td> @item.preferredLocation</td>
-                                                    <td> @item.expectedPerHourRate</td>
-                                                    <td> @item.currentEmployerName</td>
-                                                    <td>
-                                                        @item.IsEmergency
-                                                    </td>
-                                                    @if (item.AadharFileLink != null && item.AadharFileLink != "")
-                                                    {
-                                                        <td>
-
-                                                            <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No document</td>
-                                                    }
-                                                    <td>
-                                                        @item.NextLevelApprovalStat
-                                                    </td>
-                                                    <td>
-                                                        <div class="talk-bubble tri-right border-bubble right-in cmt-w">
-                                                            <div class="talktext">
-                                                                <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
-                                                            </div>
-                                                        </div>
-
-
-
-
-
-
-
-
-                                                    </td>
-                                                    <td></td>
-
-
-                                                    <td>
-                                                        @item.FinalSelectionStat
-                                                    </td>
-                                                    <td>
-                                                        <div class="talk-bubble tri-right border-bubble right-in cmt-w">
-                                                            <div class="talktext">
-                                                                <textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td></td>
-                                                    @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
-                                                    <td class="text-right action">
-
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                            <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                        </button>
-                                                        <!--<span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span> -->
-
-
-
-                                                        <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Comment">
-                                                            <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3zm-4 8H5V9h8v2zm0-3H5V6h8v2z" /></svg></span>
-                                                        </button>
-
-
-
-                                                        <!--  <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>-->
-                                                        <!--  <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>-->
-
-
-
-
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                        </button>
-
-                                                        @if (item.IsBiometricEnabled)
+                                                    <tr id=@item.imid>
+                                                        <td title=@item.IRFId> @item.IRFId </td>
+                                                        <td> @item.interviewDate </td>
+                                                        @if (item.IsOnline == 1)
                                                         {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                            <td>
+                                                                <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                            </td>
+                                                        }
+                                                        <td> @item.candidateEmail</td>
+                                                        <td> @item.JDTiltle.Split("|")[0] </td>
+                                                        <td> @item.interviewer</td>
+                                                        @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                        {
+                                                            <td class="text-center">
+
+                                                                <a style="color:red"> @item.confirmationStatus</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="text-center"> @item.confirmationStatus</td>
+                                                        }
+
+                                                        <td> @item.MeetingStatusStatusDesc</td>
+                                                        <td> @item.intervieweStatusStatDesc</td>
+                                                        @if (item.resumeLink != null && item.resumeLink != "")
+                                                        {
+                                                            <td>
+
+                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Resume</td>
+                                                        }
+                                                        @if (item.JDLink != null && item.JDLink != "")
+                                                        {
+                                                            <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No JD</td>
+                                                        }
+
+                                                        @if (item.zoomLink != null && item.zoomLink != "")
+                                                        {
+                                                            <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Zoom Link</td>
+                                                        }
+                                                        <td> @item.risebirdHR</td>
+
+
+                                                        <td> @item.ClientHrContact </td>
+                                                        <td> @item.ClientName </td>
+
+                                                        @if (item.VideoLink != null && item.VideoLink != "")
+                                                        {
+                                                            <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Video</td>
+                                                        }
+                                                        <td>@item.interviewSlot</td>
+                                                        <td>@item.QCInterviewer</td>
+                                                        <td>@item.staffingAgency</td>
+                                                        <td> @item.interviewDuration </td>
+                                                        <td> @item.joiningTime</td>
+                                                        <td> @item.preferredLocation</td>
+                                                        <td> @item.expectedPerHourRate</td>
+                                                        <td> @item.currentEmployerName</td>
+                                                        <td>
+                                                            @item.IsEmergency
+                                                        </td>
+                                                        @if (item.AadharFileLink != null && item.AadharFileLink != "")
+                                                        {
+                                                            <td>
+
+                                                                <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No document</td>
+                                                        }
+                                                        <td>
+                                                            @item.NextLevelApprovalStat
+                                                        </td>
+                                                        <td>
+                                                            <div class="talk-bubble tri-right border-bubble right-in cmt-w">
+                                                                <div class="talktext">
+                                                                    <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
+                                                                </div>
+                                                            </div>
+
+
+
+
+
+
+
+
+                                                        </td>
+                                                        <td></td>
+
+
+                                                        <td>
+                                                            @item.FinalSelectionStat
+                                                        </td>
+                                                        <td>
+                                                            <div class="talk-bubble tri-right border-bubble right-in cmt-w">
+                                                                <div class="talktext">
+                                                                    <textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td></td>
+                                                        @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
+                                                        <td class="text-right action">
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            </button>
+                                                            <!--<span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span> -->
+
+
+
+                                                            <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Comment">
+                                                                <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3zm-4 8H5V9h8v2zm0-3H5V6h8v2z" /></svg></span>
                                                             </button>
 
-                                                        }
-                                                    </td>
-                                                    <td>
-                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                        {
-                                                            <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-
-                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
 
 
-                                                        }
+                                                            <!--  <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>-->
+                                                            <!--  <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>-->
 
-                                                    </td>
-                                                </tr>
+
+
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                            </button>
+
+                                                            @if (item.IsBiometricEnabled)
+                                                            {
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                    <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                                </button>
+
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+
+                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+
+
+                                                            }
+
+                                                        </td>
+                                                    </tr>
                                                 }
                                             </tbody>
                                         </table>
@@ -623,6 +618,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
 
 
 <script type="text/javascript">
@@ -908,6 +906,7 @@
 
 
 </script>
+
 
 
 
