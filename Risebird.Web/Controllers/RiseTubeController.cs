@@ -1314,7 +1314,10 @@ namespace Risebird.Web.Controllers
             email = email.Replace("\"", "");
 
             string currenturl = vedioid;
-
+            if(resumeLink==null)
+            {
+                resumeLink = string.Empty;
+            }
 
             if (Emailids != "" && Emailids != ";")
             {
