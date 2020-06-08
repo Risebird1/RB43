@@ -333,7 +333,11 @@ button:focus {
 
 @media screen and (max-width: 767px) {
     #MyChatModel h5 {
-        font-size: 17px;
+        font-size: 20px;
+    }
+
+    #MyChatModel .modal-lg {
+        max-width: 600px !important;
     }
 }
 
