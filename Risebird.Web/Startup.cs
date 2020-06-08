@@ -17,6 +17,8 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Hepler;
 using System;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 
 namespace Risebird.Web
 {
@@ -59,7 +61,11 @@ namespace Risebird.Web
                 o.Cookie.HttpOnly = true;
                 o.Cookie.IsEssential = true;
             });
+            services.AddResponseCompression();
 
+            services.Configure<GzipCompressionProviderOptions>(options => {
+                options.Level = CompressionLevel.Fastest;
+            });
             services.AddMvc();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IConfiguration>(Configuration);
