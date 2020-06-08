@@ -3870,55 +3870,55 @@ namespace Risebird.Web.Controllers
 
                             //Start:Generate Thumbnail from Vedio
 
-                            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
+                            //string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
 
 
-                            using (var stream = new FileStream(path, FileMode.Create))
-                            {
-                                await model.VideoFile.CopyToAsync(stream);
-                            }
+                            //using (var stream = new FileStream(path, FileMode.Create))
+                            //{
+                            //    await model.VideoFile.CopyToAsync(stream);
+                            //}
 
-                            var inputFile = new MediaFile { Filename = path };
-                            string outputFileName = path.Substring(0, path.LastIndexOf(".")) + ".jpg";
-                            var outputFile = new MediaFile { Filename = @outputFileName };
-                            for (int i = 0; i < 1000; i++)
-                            {
-                                using (var engine = new Engine())
-                                {
-                                    engine.GetMetadata(inputFile);
-                                    var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(i) };
-                                    if (System.IO.File.Exists(outputFileName))
-                                    {
-                                        System.IO.File.Delete(outputFileName);
-                                        engine.GetThumbnail(inputFile, outputFile, options);
-                                    }
-                                    else
-                                    {
-                                        engine.GetThumbnail(inputFile, outputFile, options);
-                                    }
-                                }
-                                var resultset = _azureFaceApi.FaceDetectionResult(outputFileName);
-                                if (resultset.Contains("faceId"))
-                                {
-                                    break;
-                                }
-                            }
-                            //End:Generate Thumbnail from Vedio
-                            using (var stream = System.IO.File.OpenRead(outputFileName))
-                            {
-                                var imagefile = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name))
-                                {
-                                    Headers = new HeaderDictionary(),
-                                    ContentType = "application/jpg"
-                                };
-                                await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", imagefile);
-                                var containerImageRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                                var imageblob = containerImageRef.GetBlockBlobReference(outputFileName);
-                                string uploadedImageFileURL = imageblob.Uri.ToString();
-                                model.ThumbnailImage = uploadedImageFileURL;
-                                System.IO.File.Delete(path);
-                                System.IO.File.Delete(outputFileName);
-                            }
+                            //var inputFile = new MediaFile { Filename = path };
+                            //string outputFileName = path.Substring(0, path.LastIndexOf(".")) + ".jpg";
+                            //var outputFile = new MediaFile { Filename = @outputFileName };
+                            //for (int i = 0; i < 1000; i++)
+                            //{
+                            //    using (var engine = new Engine())
+                            //    {
+                            //        engine.GetMetadata(inputFile);
+                            //        var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(i) };
+                            //        if (System.IO.File.Exists(outputFileName))
+                            //        {
+                            //            System.IO.File.Delete(outputFileName);
+                            //            engine.GetThumbnail(inputFile, outputFile, options);
+                            //        }
+                            //        else
+                            //        {
+                            //            engine.GetThumbnail(inputFile, outputFile, options);
+                            //        }
+                            //    }
+                            //    var resultset = _azureFaceApi.FaceDetectionResult(outputFileName);
+                            //    if (resultset.Contains("faceId"))
+                            //    {
+                            //        break;
+                            //    }
+                            //}
+                            ////End:Generate Thumbnail from Vedio
+                            //using (var stream = System.IO.File.OpenRead(outputFileName))
+                            //{
+                            //    var imagefile = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name))
+                            //    {
+                            //        Headers = new HeaderDictionary(),
+                            //        ContentType = "application/jpg"
+                            //    };
+                            //    await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", imagefile);
+                            //    var containerImageRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                            //    var imageblob = containerImageRef.GetBlockBlobReference(outputFileName);
+                            //    string uploadedImageFileURL = imageblob.Uri.ToString();
+                            //    model.ThumbnailImage = uploadedImageFileURL;
+                            //    System.IO.File.Delete(path);
+                            //    System.IO.File.Delete(outputFileName);
+                            //}
 
 
 
