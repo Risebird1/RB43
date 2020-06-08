@@ -555,7 +555,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string SharedVideoNofiticationExternal(Mail model, string name, string url,string comment, string resumeLink)
+        public string SharedVideoNofiticationExternal(Mail model, string name, string url,string comment)
         {
             try
             {
@@ -568,7 +568,7 @@ namespace Risebird.CommonHelper
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
                 var anchrTag = "<a href=" + url + ">Please Click to see the video</a>";
-                object[] parameters = new object[] { name, anchrTag, comment, resumeLink };
+                object[] parameters = new object[] { name, anchrTag, comment };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplateNew.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
