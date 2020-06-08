@@ -684,7 +684,7 @@ namespace Risebird.Web.Controllers
             {
                 if (count == 0)
                 {
-                    if (id == 0)
+                    if (id != 0)
                     {
                         var query = "Insert into ChatGroupUsers values(@GroupId,@Id)";
                         var parameters = new DynamicParameters();

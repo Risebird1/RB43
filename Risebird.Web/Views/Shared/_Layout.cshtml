@@ -145,7 +145,18 @@
 
                         <div class="pull-left"> <h5><lable id="lblChatname"></lable></h5></div>
                         <div class="pull-right">
-                            <a class="back" onclick="FetchGroup()">Create/Edit Group</a>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
+                                {
+                                    var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                    var email = emailid.Trim('"');
+                                    @if (email.ToUpper() == "TALENT@RISEBIRD.IO")
+                                    {
+                                        <a class="back" onclick="FetchGroup()">Create/Edit Group</a>
+                                    }
+                                }
+                            }
                             <div class="desktop">   <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
 
                             <div class="mobile">
@@ -155,26 +166,26 @@
                                     </svg>
                                 </a>
                             </div>
-                            </div>
-
                         </div>
-                        <div class="clearfix"></div>
 
-                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                    </div>
+                    <div class="clearfix"></div>
 
-                            <div class=" scroll-box">
-                                <div id="divchatbox">
+                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
 
+                        <div class=" scroll-box">
+                            <div id="divchatbox">
+
+                            </div>
+                        </div>
+                        <div>
+
+                            <form>
+                                <div id="msger-inputarea">
+                                    <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" onkeypress="return MessagekeyChat(event);" />
+                                    <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" />
                                 </div>
-                            </div>
-                            <div>
-
-                                <form>
-                                    <div id="msger-inputarea">
-                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" />
-                                        <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" />
-                                    </div>
-                                </form>
+                            </form>
 
 
 
@@ -182,27 +193,27 @@
 
 
 
-                                <!--    <div class="col-md-9" style="padding-right:0px">
-                                     <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
-                                 </div>
-                                 <div class="col-md-3" style="padding-left:0px">
-                                     <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
-                                 </div>
-                                -->
+                            <!--    <div class="col-md-9" style="padding-right:0px">
+                                 <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
+                             </div>
+                             <div class="col-md-3" style="padding-left:0px">
+                                 <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
+                             </div>
+                            -->
 
 
 
-                            </div>
                         </div>
                     </div>
-
-
-
-
                 </div>
-                <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
+
+
+
+
             </div>
+            <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
         </div>
+    </div>
     </div>
     <div class="minmaxCon"></div>
 
@@ -384,14 +395,14 @@
                 $(".container").removeClass($apnData);
                 $(this).next('.modalMinimize').find("i").removeClass('fa fa-clone').addClass('fa fa-minus');
             });
-            $("#txtmessage").keypress(function () {
-                var keyCode = this.which ? this.which : this.keyCode
-                if (keyCode == 13) {
-                    SendConversation();
-                }
 
-            });
         });
+        function MessagekeyChat(event) {
+            var keyCode = event.which ? event.which : event.keyCode
+            if (keyCode == 13) {
+                SendConversation();
+            }
+        }
         function FetchGroup() {
             flag = false;
             document.getElementById("txtmessage").style.display = "none";
