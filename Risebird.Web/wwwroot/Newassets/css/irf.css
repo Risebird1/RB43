@@ -68,7 +68,9 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
     padding: 7px;
     font-weight: normal !important;
 }
-
+.table > tbody > tr > td {
+    padding: 0px 5px;
+}
 table td {
     color: #504e4e;
 }
@@ -126,8 +128,8 @@ table th {
     border: 1px solid #aaa;
     box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
     border-radius: .5em;
-    -moz-appearance: none;
-    -webkit-appearance: none;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
     appearance: none !important;
     background-color: #fff;
     /* note: bg image below uses 2 urls. The first is an svg data uri for the arrow icon, and the second is the gradient. 
@@ -962,9 +964,12 @@ background-color: rgba(0,0,0,0.4);
     padding: 5px 10px;
     border-radius: 16px;
 }
+#uploadDiv #videoId{background:none; text-decoration:none;}
 
-
-
+.interviewr-cmt #videoId {
+    background: none;
+    text-decoration: none;
+}
 
 #meetingIRF_length, #meetingIRF_filter {
     margin: 10px 0px
