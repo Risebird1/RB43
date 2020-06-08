@@ -412,7 +412,7 @@
                                                 </div>
                                                 <div class="row" id="recordingRow" style="display:none">
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                                        <h3 style="background-color:antiquewhite">Recordings</h3>
+                                                        @*<h3 style="background-color:antiquewhite">Recordings</h3>*@
                                                         <div id="recordingsList"></div>
                                                     </div>
 
@@ -461,14 +461,14 @@
                                                             <tr>
 
                                                                 <td>
-                                                                    <a href='@Model.FeedbackAudioLink' download>
+                                                                    <a href='@Model.FeedbackAudioLink' asp-append-version="true" download>
                                                                         @Model.FeedbackAudioLink.Split('/').Last()
                                                                     </a>
                                                                 </td>
 
 
                                                                 <td>
-                                                                    <audio src='@Model.FeedbackAudioLink' controls></audio>
+                                                                    <audio src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
                                                                 </td>
 
                                                             </tr>
@@ -509,14 +509,14 @@
                                                         <tr>
 
                                                             <td>
-                                                                <a id="anchorAudioId" href='@Model.FeedbackAudioLink' download>
+                                                                <a id="anchorAudioId" href='@Model.FeedbackAudioLink' asp-append-version="true" download>
                                                                     @Model.FeedbackAudioLink.Split('/').Last()
                                                                 </a>
                                                             </td>
 
 
                                                             <td>
-                                                                <audio id="controlAudioId" src='@Model.FeedbackAudioLink' controls></audio>
+                                                                <audio id="controlAudioId" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
                                                             </td>
 
                                                         </tr>
