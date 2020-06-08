@@ -323,12 +323,12 @@ namespace Risebird.Business
                     }
                     if (role == 1)
                     {
-                        result = result.Where(m => m.ClientHrContact?.Trim() == email).ToList();
+                        result = result.Where(m => m.ClientHrContact?.Trim().ToLower() == email.ToLower()).ToList();
                         return result;
                     }
                     else if (role == 4)
                     {
-                        result = result.Where(m => m.staffingAgency?.Trim() == email).ToList();
+                        result = result.Where(m => m.staffingAgency?.Trim().ToLower() == email.ToLower()).ToList();
                         return result;
                     }
                     else

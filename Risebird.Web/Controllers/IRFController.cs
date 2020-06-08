@@ -2208,18 +2208,18 @@ namespace Risebird.Web.Controllers
                         var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(irfId))?.ToList();
                         if (candidateList != null && candidateList.Count > 0)
                         {
-
+                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription());
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
                         }
 
                         string userEmailId = string.Empty;
 
-                        Sheet.Cells["A1:P1"].Style.Font.Bold = true;
-                        Sheet.Cells["A1:P1"].Style.Font.Size = 12;
-                        Sheet.Cells["A1:P1"].Style.WrapText = true;
+                        Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                        Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                        Sheet.Cells["A1:Z1"].Style.WrapText = true;
                         //Sheet.Column(1).Width = 30;
                         //Sheet.Column(2).Width = 30;
-                        int startColumn = 1; int endColumn = 18;
+                        int startColumn = 1; int endColumn = 25;
                         for (int a = startColumn; a <= endColumn; a++)
                         {
                             Sheet.Column(a).Width = 30;
@@ -2240,7 +2240,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 14].Value = "Notice";
                         Sheet.Cells[1, 15].Value = "Invites Sent";
                         Sheet.Cells[1, 16].Value = "Invite Confirmation";
-
+                        Sheet.Cells[1, 17].Value = "Schedule Status";
 
                         int i = 2;
                         //string LastAction = null; ;
@@ -2290,7 +2290,7 @@ namespace Risebird.Web.Controllers
 
                                 Sheet.Cells[i, 15].Value = item.TotalInvites;
                                 Sheet.Cells[i, 16].Value = item.InviteConfirmation;
-
+                                Sheet.Cells[i, 17].Value = item.StatusValue;
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
