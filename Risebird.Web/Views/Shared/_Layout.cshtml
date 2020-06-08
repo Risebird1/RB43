@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
 <html>
 <head>
 
@@ -121,7 +123,20 @@
 
                         <div class="pull-left"> <h5><lable id="lblChatname"></lable></h5></div>
                         <div class="pull-right">
+                            @*@if (User.Identity.IsAuthenticated)
+                                {
+                                    @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
+                                    {
+                                        var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                        var email = emailid.Trim('"');
+                                        @if (email == "talent@risebird.io")
+                                        {
+                                            <a class="back" onclick="FetchGroup()">Create/Edit Group</a>
+                                        }
+                                    }
+                                }*@
                             <a class="back" onclick="FetchGroup()">Create/Edit Group</a>
+
                             <div class="desktop">   <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
 
                             <div class="mobile">
@@ -370,10 +385,10 @@
         });
         function FetchGroup() {
             flag = false;
-            document.getElementById("txtmessage").style.display = "block";
-            document.getElementById("btnchatConversation").style.display = "block";
+            document.getElementById("txtmessage").style.display = "none";
+            document.getElementById("btnchatConversation").style.display = "none";
             var msg = document.getElementById("msger-inputarea");
-            msg.style.display = "flex";
+            msg.style.display = "none";
             $.ajax({
                 type: "POST",
                 url: "/Account/FetchGroup",
@@ -432,7 +447,7 @@
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
                         html += '<div class="col-md-6"><div>' + data[i].emailid + '</div></div>';
-                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ')" /></div></div>';
+                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ',' + Id + ')" /></div></div>';
                         html += '</div>';
                     }
                     $("#divchatbox").empty().html(html);
@@ -447,18 +462,22 @@
                     url: "/Account/AddUser",
                     data: { GroupId: GroupId, Emailid: $("#txtgroupEmailid").val() },
                     success: function (data) {
-                        FetchUser(GroupId);
+                        if (data == "success") {
+                            FetchUser(GroupId);
+                        } else {
+                            alert(data);
+                        }
                     }
                 });
             } else {
                 alert("Please Enter Emailid");
             }
         }
-        function DeleteUser(Id) {
+        function DeleteUser(Id, GroupId) {
             $.ajax({
                 type: "POST",
                 url: "/Account/DeleteUser",
-                data: { Userid:Id },
+                data: { Userid: Id },
                 success: function (data) {
                     FetchUser(GroupId);
                 }
