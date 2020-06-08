@@ -238,23 +238,28 @@
                                 </div>
                                 <div class="pull-right">
                                     <div>
-                                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VedioStatus" />
-                                        @if (ViewBag.actionstatus != "SkillChannel")
-                                        {
-                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
-                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                                <div class="mdc-button__ripple"></div>
-                                            </button>
-                                        }
+                                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
+                                        @if (ViewBag.VideoStatus != "Public")
+                                        {  
+                                            @if (ViewBag.actionstatus != "SkillChannel")
+                                            {
+                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                    <div class="mdc-button__ripple"></div>
+                                                </button>
+                                            }                                       
 
-                                        @if (ViewBag.actionstatus == "SkillChannel")
-                                        {<a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a> }
-                                        else
-                                        {
-                                            @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                            @if (ViewBag.actionstatus == "SkillChannel")
+                                            {
+                                                <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                            }
                                         }
-                                        <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
-                                    </div>
+                                            <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -622,7 +627,7 @@
                                                 @if (Model.JDTiltle != null)
                                                 {
                                                     <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                        @if (ViewBag.VedioStatus != "Public")
+                                                        @if (ViewBag.VideoStatus != "Public")
                                                         {
                                                             @if (Model.IsOnline == 1)
                                                             {
@@ -645,7 +650,7 @@
                                                     </h1>
                                                 }
                                                 <div class="row counts-liks">
-                                                    @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
                                                     {
                                                         <div class="k col-md-6">
                                                             @if (Model.IsLike == "Liked")
@@ -681,7 +686,7 @@
                                                     }
                                                     @if (Model.VideoLink != null)
                                                     {
-                                                        @if (ViewBag.VedioStatus != "Public")
+                                                        @if (ViewBag.VideoStatus != "Public")
                                                         {
                                                             @if (ViewBag.ProfileName == "CuratedUser")
                                                             {
@@ -723,7 +728,7 @@
                                                     <div class="col-md-2 showinter" style="text-align: end;">
                                                         @if (Model.VideoLink != null)
                                                         {
-                                                            @if (ViewBag.VedioStatus != "Public")
+                                                            @if (ViewBag.VideoStatus != "Public")
                                                             {
                                                                 @if (ViewBag.ProfileName == "CuratedUser")
                                                                 {
@@ -766,7 +771,7 @@
                                                             }
                                                         }
                                                     </div>
-                                                    @if (ViewBag.VedioStatus == "Public")
+                                                    @if (ViewBag.VideoStatus == "Public")
                                                     {
                                                         <div class="col-md-6"></div>
                                                     }
@@ -940,7 +945,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    @if (ViewBag.VedioStatus != "Public")
+                                                                    @if (ViewBag.VideoStatus != "Public")
                                                                     {
                                                                         @if (ViewBag.ProfileName != "CuratedUser")
                                                                         {
@@ -1413,7 +1418,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
                                                         {
                                                             <div>
                                                                 <form>
@@ -1625,7 +1630,7 @@
         </div>
     </div>
 </div>
-@if (ViewBag.VedioStatus == "Public")
+@if (ViewBag.VideoStatus == "Public")
 {
     <div id="divbackground" class="blk-bg"></div>
 }
