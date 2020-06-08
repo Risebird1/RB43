@@ -1308,7 +1308,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-        public JsonResult ShareVedioLinkToMail(string Emailids, string vedioid, string Name, string comment, string skills)
+        public JsonResult ShareVedioLinkToMail(string Emailids, string vedioid, string Name, string comment, string skills, string resumeLink)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
