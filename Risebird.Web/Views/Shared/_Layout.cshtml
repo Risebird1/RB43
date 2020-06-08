@@ -24,6 +24,8 @@
     <link href="~/Newassets/css/interview.css" rel="stylesheet" />
     <link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
     <link href="~/Newassets/css/irf.css" rel="stylesheet" />
+    <link href="~/Newassets/css/risetube.css" rel="stylesheet" />
+    <link href="~/Newassets/css/interviewer.css" rel="stylesheet" />
     <script src="~/Newassets/js/interview.js"></script>
     <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 
@@ -141,8 +143,8 @@
 
                         <div class="pull-left"> <h5><lable id="lblChatname"></lable></h5></div>
                         <div class="pull-right">
-                            <a class="back" onclick="FetchGroup()">Create/Edit Group</a>
-                            <div class="desktop">   <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
+                            <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" onclick="FetchGroup()">Create/Edit Group</a>
+                            <div class="desktop">   <a class="back text-right" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
 
                             <div class="mobile">
                                 <a class="back" onclick="OpenChatPopUp()">
@@ -400,13 +402,13 @@
                 success: function (data) {
                     var html = '';
                     html += '<div class="row" style="padding: 10px 20px 10px 20px">';
-                    html += '<div class="col-md-6"><div><input type="text" id="txtgroupname" /></div></div>';
-                    html += '<div class="col-md-6"><div><input type="button" value="Add Group" onclick="AddGroup()" /></div></div>';
+                    html += '<div><div class="pull-left "><input placeholder="Enter name of group" type="text" id="txtgroupname" class="input-box" /></div><div class="pull-left mdc-button mdc-button--raised mdc-ripple-upgraded add-btn-m"><input  class="add-btn" type="button" value="Add Group" onclick="AddGroup()" /></div></div>';
+
                     html += '</div>';
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
-                        html += '<div class="col-md-6"><div><a onclick="FetchUser(' + data[i].id + ')">' + data[i].groupName + '</a></div></div>';
-                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteGroup(' + data[i].id + ')" /></div></div>';
+                        html += '<div><div class="pull-left "><a class="user-group" onclick="FetchUser(' + data[i].id + ')">' + data[i].groupName + '</a></div><div class="pull-left"><input class="del-btn" type="button" value="Delete" onclick="DeleteGroup(' + data[i].id + ')" /></div></div>';
+
                         html += '</div>';
                     }
                     $("#divchatbox").empty().html(html);
@@ -446,13 +448,13 @@
                 success: function (data) {
                     var html = '';
                     html += '<div class="row" style="padding: 10px 20px 10px 20px">';
-                    html += '<div class="col-md-6"><div><input type="text" id="txtgroupEmailid" /></div></div>';
-                    html += '<div class="col-md-6"><div><input type="button" value="Add User" onclick="AddUser(' + Id + ')" /></div></div>';
+                    html += '<div><div class="pull-left "><input placeholder="Enter name of user" type="text" id="txtgroupEmailid" class="input-box" /></div><div class="pull-left mdc-button mdc-button--raised mdc-ripple-upgraded add-btn-m "><input class="add-btn" type="button" value="Add User" onclick="AddUser(' + Id + ')" /></div></div>';
+
                     html += '</div>';
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
-                        html += '<div class="col-md-6"><div>' + data[i].emailid + '</div></div>';
-                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ')" /></div></div>';
+                        html += '<div><div class="pull-left user-group">' + data[i].emailid + '</div><div class="pull-left"><input class="del-btn" type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ')" /></div></div>';
+
                         html += '</div>';
                     }
                     $("#divchatbox").empty().html(html);
@@ -478,7 +480,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Account/DeleteUser",
-                data: { Userid:Id },
+                data: { Userid: Id },
                 success: function (data) {
                     FetchUser(GroupId);
                 }

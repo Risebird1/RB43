@@ -250,6 +250,8 @@ height: 55px;
         transform: translateX(-50%) translateY(0);
     }
 
+
+
 .show .tooltip--left:after {
     top: 5px;
     left: 0%;
