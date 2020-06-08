@@ -130,14 +130,14 @@ button:focus {
     }
 
 .back {
-    margin: 10px;
+    margin: 5px 10px 10px 10px;
     display: block;
 }
 #MyChatModel .mdc-button--outlined {
     font-size: 12px;
     padding: 0px 10px;
     height: 30px;
-    margin-top: 10px;
+
 }
 .input-box {
     display: block;
@@ -347,7 +347,7 @@ button:focus {
     }
 
     .back {
-        margin: 10px 0 !important;
+        margin: 0px 0px 10px 0 !important;
         display: block;
     }
 }
