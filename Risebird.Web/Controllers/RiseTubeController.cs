@@ -740,7 +740,7 @@ namespace Risebird.Web.Controllers
                         {
                             GetStatusList(IRListModel, model.irfIntId);
                         }
-                        ViewBag.VedioStatus = "Private";
+                        ViewBag.VideoStatus = "Private";
 
                         return View(NewModel);
                     }
@@ -835,8 +835,8 @@ namespace Risebird.Web.Controllers
                         }
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
-                        ViewBag.VedioStatus = "Public";
-                        //ViewBag.VedioStatus = "Private";
+                        ViewBag.VideoStatus = "Public";
+                        //ViewBag.VideoStatus = "Private";
                         var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                         if (menus != null)
                         {
@@ -1110,7 +1110,7 @@ namespace Risebird.Web.Controllers
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
                         GetStatusList(IRListModel, model.irfIntId);
-                        ViewBag.VedioStatus = "Private";
+                        ViewBag.VideoStatus = "Private";
 
 
                         return View(NewModel);
