@@ -95,6 +95,7 @@
                                                     <th>Candidate Contact</th>
                                                     <th>Client HR</th>
                                                     <th>Staffing Agenecy</th>
+                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -113,27 +114,46 @@
                                                     <th>Candidate Contact</th>
                                                     <th>Client HR</th>
                                                     <th>Staffing Agenecy</th>
+                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
                                                 @foreach (var item in Model)
                                                 {
-                                                    <tr id=@item.imid>
-                                                        <td> @item.InviteCount </td>
-                                                        <td> @item.interviewDate </td>
-                                                        <td> @item.candidateName</td>
-                                                        <td> @item.candidateEmail</td>
-                                                        <td> @item.JDTiltle.Split("|")[0] </td>
-                                                        <td> @item.interviewer</td>
-                                                        <td> @item.confirmationStatus</td>
-                                                        <td> @item.MeetingStatusStatusDesc</td>
-                                                        <td> @item.intervieweStatusStatDesc</td>
-                                                        <td> @item.IRFId</td>
-                                                        <td> @item.risebirdHR</td>
-                                                        <td>@item.MobileNumber</td>
-                                                        <td> @item.ClientHrContact </td>
-                                                        <td>@item.staffingAgency</td>
-                                                    </tr>
+                                                <tr id=@item.imid>
+                                                    <td> @item.InviteCount </td>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.candidateName</td>
+                                                    <td> @item.candidateEmail</td>
+                                                    <td> @item.JDTiltle.Split("|")[0] </td>
+                                                    <td> @item.interviewer</td>
+                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                    {
+                                                        <td class="text-center">
+
+                                                            <a style="color:red"> @item.confirmationStatus</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-center"> @item.confirmationStatus</td>
+                                                    }
+                                                    <td> @item.MeetingStatusStatusDesc</td>
+                                                    <td> @item.intervieweStatusStatDesc</td>
+                                                    <td> @item.IRFId</td>
+                                                    <td> @item.risebirdHR</td>
+                                                    <td>@item.MobileNumber</td>
+                                                    <td> @item.ClientHrContact </td>
+                                                    <td>@item.staffingAgency</td>
+                                                    <td class="text-right action">
+                                                        @if (item.IsAdmin && item.MeetingStatusStatusDesc != "Completed")
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                <span onclick="location.href = '@Url.Action("DeleteInterview", "Interview", new { id = item.imid,controllerName="Interview" })'" title="Delete Interview" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                            </button>
+                                                        }
+                                                    </td>
+                                                </tr>
                                                 }
                                             </tbody>
                                         </table>
