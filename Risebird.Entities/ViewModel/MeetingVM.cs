@@ -182,6 +182,7 @@ namespace Risebird.Entities.ViewModel
         public List<VideoCountdetail> VideoCountDetail { get; set; }
         public string FeedbackAudioLink { get; set; }
         public string AadharFileLink { get; set; }
+        public bool IsAdmin { get; set; }
 
     }
     public class VedioComments

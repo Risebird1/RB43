@@ -381,25 +381,28 @@ namespace Risebird.Web.Controllers
                     {
 
                         var modelList = _meetingService.MultipleCandidateInvites();
-
+                        if (profileName == "Admin")
+                        {
+                            modelList.ForEach(x => x.IsAdmin = true);
+                        }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
                         return View(modelList);
                     }
                     else
                     {
-                        return RedirectToAction("SignOut", "Session");
+                        return RedirectToAction("Index", "Interview");
                     }
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    return RedirectToAction("Index", "Interview");
                 }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return RedirectToAction("Index", "Interview");
             }
 
         }
@@ -5816,6 +5819,52 @@ namespace Risebird.Web.Controllers
                 item.DateRequired = item.interviewDate.ToString("dd/MMM/yyyy");
             }
             return Json(model);
+        }
+
+        public async Task<IActionResult> DeleteInterview(int id, string controllerName, string irfId)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    if (await _meetingService.DeleteInterview(id))
+                    {
+                        TempData["SuccessErrorMessageUser"] = "Interview is deleted Successfully";
+                        if(controllerName == "IRF")
+                            return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
+                        else
+                            return RedirectToAction("MultipleCandidateInvites", controllerName);
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageUser"] = "Deletion of Interview Failed";
+                        if (controllerName == "IRF")
+                            return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
+                        else
+                            return RedirectToAction("MultipleCandidateInvites", controllerName);
+                    }                    
+                   
+                }            
+                else
+                {
+                    if (controllerName == "IRF")
+                        return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
+                    else
+                        return RedirectToAction("MultipleCandidateInvites", controllerName);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageUser"] = "Deletion of Interview Failed";
+                if (controllerName == "IRF")
+                    return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
+                else
+                    return RedirectToAction("MultipleCandidateInvites", controllerName);
+
+            }
         }
 
         [HttpPost]
