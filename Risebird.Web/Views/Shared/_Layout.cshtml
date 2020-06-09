@@ -133,10 +133,10 @@
                         <h5 class="modal-title" style="color:#fff"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" /></svg> Chat <input type="text" value="" hidden id="txtself" /></h5>
                     </div>
                     <div>
-                        <button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>
+                        <button class="close modalMinimize" title="Minimize"> <i class='fa fa-minus'></i> </button>
                     </div>
                     <div>
-                        <span onclick="closeChatPopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+                        <span onclick="closeChatPopUp()" style="cursor:pointer;" title="Close" class="close" id="SharePopUp">&times;</span>
                     </div>
 
                 </div>
@@ -214,7 +214,7 @@
             <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
         </div>
     </div>
-    </div>
+   
     <div class="minmaxCon"></div>
 
     <script>
@@ -375,7 +375,7 @@
 
             $(".modalMinimize").on("click", function () {
                 if (flagdisplay == false) {
-                    OpenChatPopUp();
+                   OpenChatPopUp();
                 }
                 $modalCon = $(this).closest(".mymodal").attr("id");
                 $apnData = $(this).closest(".mymodal");
@@ -467,7 +467,7 @@
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
                         html += '<div class="col-md-6"><div>' + data[i].emailid + '</div></div>';
-                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ')" /></div></div>';
+                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ','+Id+')" /></div></div>';
                         html += '</div>';
                     }
                     $("#divchatbox").empty().html(html);
