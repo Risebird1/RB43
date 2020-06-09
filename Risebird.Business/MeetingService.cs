@@ -62,6 +62,44 @@ namespace Risebird.Business
             }
         }
 
+        /// <summary>
+        /// FInd duplicate interview invite based on Skill Channel
+        /// </summary>
+        /// <param name="IRFId"></param>
+        /// <returns></returns>
+        public List<MeetingVM> IRFMultipleCandidateInvites(string IRFId)
+        {
+            try
+            {
+
+                return _meetingRespository.IRFMultipleCandidateInvites(IRFId).Result.ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Delete Interview Record
+        /// </summary>
+        /// <param name="imid"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteInterview(int imid)
+        {
+            try
+            {
+                await _meetingRespository.DeleteInterview(imid);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+               
+            }
+        }
 
         public List<MeetingVM> MultipleCandidateInvites()
         {

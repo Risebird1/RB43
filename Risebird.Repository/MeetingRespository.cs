@@ -109,6 +109,55 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<MeetingVM>> IRFMultipleCandidateInvites(string IRFId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("IRFId", IRFId);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_IRFMultipleCandidateInvites", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> DeleteInterview(int imid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("imid", imid);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_DeleteInterview", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                    
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+           
+        }
         public async Task<IEnumerable<MeetingVM>> MultipleCandidateInvites()
         {
             try
