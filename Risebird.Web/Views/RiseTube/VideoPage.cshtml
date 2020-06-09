@@ -2022,7 +2022,7 @@
         obj.y = parseInt(techTotal) / 4;
         obj.label = "Tech Skills Score";
         obj.legendText = "Tech Skills Score";
-        arr.push(obj);
+        arr.push(obj.y);
 
         //SkillsGeneral actual weightage total
         var objGen = { y: "", legendText: "", label: "" }
@@ -2037,7 +2037,7 @@
         objGen.y = parseInt(genTotal) / 4;
         objGen.label = "General Skills Score";
         objGen.legendText = "General Skills Score";
-        arr.push(objGen);
+        arr.push(objGen.y);
 
         //Joinability actual weightage total
         var objJoin = { y: "", legendText: "", label: "" }
@@ -2051,7 +2051,7 @@
         objJoin.y = parseInt(joinabilityTotal) / 4;
         objJoin.label = "Joinability Score";
         objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
+        arr.push(objJoin.y);
 
         //Selectability actual weightage total
         var objSelect = { y: "", legendText: "", label: "" }
@@ -2065,7 +2065,7 @@
         objSelect.y = parseInt(selectabilityTotal) / 4;
         objSelect.label = "Selectability Score";
         objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
+        arr.push(objSelect.y);
 
         totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = totalScore;
@@ -2104,10 +2104,10 @@
             // Add data
             chart.data = [{
                 "country": "Tech",
-                "visits": arr[0],
+                "visits": arr[0]
 
             }, {
-                "country": "Genaral",
+                "country": "General",
                 "visits": arr[1]
             }, {
                 "country": "Joinability",
