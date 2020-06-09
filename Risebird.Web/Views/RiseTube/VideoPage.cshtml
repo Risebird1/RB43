@@ -47,7 +47,9 @@
     amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/latest/techs/SmoothStreamingPlayer.xap"
 </script>
 
-
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
 <script>
     function dropDwnToolTips(id) {
@@ -105,96 +107,96 @@
 </script>
 @*<script>
 
-    window.onload = function () {
+        window.onload = function () {
 
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; {
+            var totalScore = 0;
+            var arr = [];
+            var obj = { y: "", legendText: "", label: "" }
+            //TechSkills actual weightage total
+            var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+            var techTotal = 0;
+            for (i = 0; i < techItems.length; {
 
-            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
+                techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
+
+            }
+                obj.y = parseInt(techTotal) / 4;
+            obj.label = "Tech Skills Score";
+            obj.legendText = "Tech Skills Score";
+            arr.push(obj);
+
+            //SkillsGeneral actual weightage total
+            var objGen = { y: "", legendText: "", label: "" }
+            var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
+            var genTotal = 0;
+            for (i = 0; i < genSkillsItems.length; {
+                var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+                genTotal = parseInt(genTotal) + parseInt(weightage);
+
+            }
+
+                objGen.y = parseInt(genTotal) / 4;
+            objGen.label = "General Skills Score";
+            objGen.legendText = "General Skills Score";
+            arr.push(objGen);
+
+            //Joinability actual weightage total
+            var objJoin = { y: "", legendText: "", label: "" }
+            var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
+            var joinabilityTotal = 0;
+            for (i = 0; i < joinabilityItems.length; {
+
+                joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+
+            }
+                objJoin.y = parseInt(joinabilityTotal) / 4;
+            objJoin.label = "Joinability Score";
+            objJoin.legendText = "Joinability Score";
+            arr.push(objJoin);
+
+            //Selectability actual weightage total
+            var objSelect = { y: "", legendText: "", label: "" }
+            var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+            var selectabilityTotal = 0;
+            for (i = 0; i < selectabilityItems.length; {
+
+                selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+            }
+                objSelect.y = parseInt(selectabilityTotal) / 4;
+            objSelect.label = "Selectability Score";
+            objSelect.legendText = "Selectability Score";
+            arr.push(objSelect);
+
+            totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+            document.getElementById("totScore").innerHTML = totalScore;
+
+
+            var chart = new CanvasJS.Chart("scoreChart", {
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                width: 400,//in pixels
+                height: 200,//in pixels
+                animationEnabled: true,
+                title: {
+                    text: "Score Chart"
+                },
+                data: [{
+                    type: "column",
+                    //startAngle: 60,
+                    //innerRadius: 55,
+                    indexLabelFontSize: 8,
+                    indexLabel: "{label}  {y}",
+                    toolTipContent: "<b>{label} </b>({y})",
+                    dataPoints: arr
+
+                }]
+            });
+            chart.render();
+
+
 
         }
-            obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; {
-            var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-            objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen);
-
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; {
-
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        }
-            objJoin.y = parseInt(joinabilityTotal) / 4;
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-            objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
-
-        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        document.getElementById("totScore").innerHTML = totalScore;
-
-
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
-
-            }]
-        });
-        chart.render();
-
-
-
-    }
-</script>*@
+    </script>*@
 
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
@@ -231,14 +233,14 @@
                                     <div>
                                         <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
                                         @if (ViewBag.VideoStatus != "Public")
-                                        {  
+                                        {
                                             @if (ViewBag.actionstatus != "SkillChannel")
                                             {
                                                 <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
                                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
-                                            }                                       
+                                            }
 
                                             @if (ViewBag.actionstatus == "SkillChannel")
                                             {
@@ -249,8 +251,8 @@
                                                 @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                             }
                                         }
-                                            <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
-                                        </div>
+                                        <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -768,19 +770,19 @@
                                                     }
                                                     else
                                                     {
-                                                    <div class="col-md-4 views tooltip1" style="text-align: end;">
-                                                        @if (Model.VideoLink != null)
-                                                        {
-                                                            <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
-                                                        }
-                                                        <span class="tooltiptext">
-                                                            @foreach (var item in Model.VideoCountDetail)
+                                                        <div class="col-md-4 views tooltip1" style="text-align: end;">
+                                                            @if (Model.VideoLink != null)
                                                             {
-                                                                <p>@item.UserName - @item.Count</p>
+                                                                <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
                                                             }
+                                                            <span class="tooltiptext">
+                                                                @foreach (var item in Model.VideoCountDetail)
+                                                                {
+                                                                    <p>@item.UserName - @item.Count</p>
+                                                                }
 
-                                                        </span>
-                                                    </div>
+                                                            </span>
+                                                        </div>
                                                     }
                                                 </div>
                                                 <div class="single-video-info-content ">
@@ -1122,7 +1124,7 @@
 
                                                                                                 </td>
 
-             
+
                                                                                             </tr>
                                                                                         }
                                                                                         else
@@ -1153,7 +1155,7 @@
 
                                                                                                     </td>
 
-                                                                                                   
+
                                                                                                 </tr>
 
 
@@ -1503,7 +1505,7 @@
             </div>
             <div class="modal-footer" style="padding: 5px;
         background-color: #fff;
-        color: white;"> </div>
+        color: white;"></div>
         </div>
     </div>
 </div>
@@ -1542,7 +1544,7 @@
             </div>
             <div class="modal-footer" style="padding: 5px;
         background-color: #fff;
-        color: white;"> </div>
+        color: white;"></div>
         </div>
     </div>
 </div>
@@ -1574,7 +1576,7 @@
             </div>
             <div class="modal-footer" style="padding: 5px;
         background-color: #fff;
-        color: white;"> </div>
+        color: white;"></div>
         </div>
     </div>
 </div>
@@ -1646,7 +1648,7 @@
             </div>
             <div class="modal-footer" style="padding: 5px;
         background-color: #fff;
-        color: white;"> </div>
+        color: white;"></div>
         </div>
 
     </div>
@@ -1992,7 +1994,7 @@
 
     });
 
-   
+
 
 </script>
 
@@ -2069,26 +2071,95 @@
         document.getElementById("totScore").innerHTML = totalScore;
 
 
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
+        //var chart = new CanvasJS.Chart("scoreChart", {
+        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
+        //    width: 400,//in pixels
+        //    height: 200,//in pixels
+        //    animationEnabled: true,
+        //    title: {
+        //        text: "Score Chart"
+        //    },
+        //    data: [{
+        //        type: "column",
+        //        //startAngle: 60,
+        //        //innerRadius: 55,
+        //        indexLabelFontSize: 8,
+        //        indexLabel: "{label}  {y}",
+        //        toolTipContent: "<b>{label} </b>({y})",
+        //        dataPoints: arr
 
-            }]
+        //    }]
+        //});
+        //chart.render();
+
+        am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("scoreChart", am4charts.XYChart);
+
+            // Add data
+            chart.data = [{
+                "country": "Tech",
+                "visits": arr[0],
+
+            }, {
+                "country": "Genaral",
+                "visits": arr[1]
+            }, {
+                "country": "Joinability",
+                "visits": arr[2]
+            }, {
+                "country": "Selectability",
+                "visits": arr[3]
+            }];
+
+            // Create axes
+            chart.logo.disabled = true;
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "country";
+            categoryAxis.renderer.inside = true;
+            categoryAxis.renderer.labels.template.valign = "top";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+
+            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy + 25;
+                }
+                return dy;
+            });
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "visits";
+            series.dataFields.categoryX = "country";
+            series.name = "Visits";
+            series.colorField = "color";
+            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+            series.columns.template.fillOpacity = .8;
+
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 2;
+            columnTemplate.strokeOpacity = 1;
+            chart.colors.list = [
+                am4core.color("#845EC2"),
+                am4core.color("#D65DB1"),
+                am4core.color("#FF6F91"),
+                am4core.color("#FF9671")
+
+            ];
+            series.columns.template.events.once("inited", function (event) {
+                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+            });
+
         });
-        chart.render();
+
         if (isTheaterMode === true) {
             getThMode();
             console.log("hai")
@@ -2186,96 +2257,96 @@
 
 @*<script>
 
-    window.onload = function () {
+        window.onload = function () {
 
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; {
+            var totalScore = 0;
+            var arr = [];
+            var obj = { y: "", legendText: "", label: "" }
+            //TechSkills actual weightage total
+            var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
+            var techTotal = 0;
+            for (i = 0; i < techItems.length; {
 
-            techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
+                techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
+
+            }
+    obj.y = parseInt(techTotal) / 4;
+            obj.label = "Tech Skills Score";
+            obj.legendText = "Tech Skills Score";
+            arr.push(obj);
+
+            //SkillsGeneral actual weightage total
+            var objGen = { y: "", legendText: "", label: "" }
+            var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
+            var genTotal = 0;
+            for (i = 0; i < genSkillsItems.length; {
+                var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+                genTotal = parseInt(genTotal) + parseInt(weightage);
+
+            }
+
+    objGen.y = parseInt(genTotal) / 4;
+            objGen.label = "General Skills Score";
+            objGen.legendText = "General Skills Score";
+            arr.push(objGen);
+
+            //Joinability actual weightage total
+            var objJoin = { y: "", legendText: "", label: "" }
+            var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
+            var joinabilityTotal = 0;
+            for (i = 0; i < joinabilityItems.length; {
+
+                joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+
+            }
+    objJoin.y = parseInt(joinabilityTotal) / 4;
+            objJoin.label = "Joinability Score";
+            objJoin.legendText = "Joinability Score";
+            arr.push(objJoin);
+
+            //Selectability actual weightage total
+            var objSelect = { y: "", legendText: "", label: "" }
+            var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+            var selectabilityTotal = 0;
+            for (i = 0; i < selectabilityItems.length; {
+
+                selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+            }
+    objSelect.y = parseInt(selectabilityTotal) / 4;
+            objSelect.label = "Selectability Score";
+            objSelect.legendText = "Selectability Score";
+            arr.push(objSelect);
+
+            totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+            document.getElementById("totScore").innerHTML = totalScore;
+
+
+            var chart = new CanvasJS.Chart("scoreChart", {
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                width: 400,//in pixels
+                height: 200,//in pixels
+                animationEnabled: true,
+                title: {
+                    text: "Score Chart"
+                },
+                data: [{
+                    type: "column",
+                    //startAngle: 60,
+                    //innerRadius: 55,
+                    indexLabelFontSize: 8,
+                    indexLabel: "{label}  {y}",
+                    toolTipContent: "<b>{label} </b>({y})",
+                    dataPoints: arr
+
+                }]
+            });
+            chart.render();
+
+
 
         }
-obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; {
-            var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen);
-
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; {
-
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        }
-objJoin.y = parseInt(joinabilityTotal) / 4;
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
-
-        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        document.getElementById("totScore").innerHTML = totalScore;
-
-
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
-
-            }]
-        });
-        chart.render();
-
-
-
-    }
-</script>*@
+    </script>*@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -2659,7 +2730,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
         $.ajax({
             type: "POST",
             url: "/RiseTube/ShareVedioLinkToMail",
-            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val(), resumeLink : resume },
+            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val(), resumeLink: resume },
             success: function (data) {
                 closeSharePopUp1();
             }
@@ -2765,7 +2836,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
-                
+
 
                 {
                     'next .sharebtn1': 'Share the video by clicking here',
@@ -2808,7 +2879,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                
+
                 {
                     'next .item5': 'General Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -2973,13 +3044,13 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'nextButton': { className: "myNext", text: "Continue" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
-                
+
                 {
                     'next .btnvideo': 'Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
-               {
+                {
                     'next .shortlist': 'Click here to Shortlist the Candidate',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
@@ -2989,7 +3060,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
-                
+
 
                 {
                     'next .item1': 'Interview Report Details',
@@ -3021,13 +3092,13 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-               {
+                {
                     'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                
+
                 {
                     'next .item5': 'General Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
