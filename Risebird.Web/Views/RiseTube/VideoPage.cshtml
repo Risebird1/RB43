@@ -59,15 +59,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/tooltip.js"></script>
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-<link href="~/Newassets/css/risetube.css" rel="stylesheet" />
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/tooltip.js"></script>
 
 <script>
     function dropDwnToolTips(id) {
@@ -251,14 +242,14 @@
                                     <div>
                                         <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
                                         @if (ViewBag.VideoStatus != "Public")
-                                        {
+                                        {  
                                             @if (ViewBag.actionstatus != "SkillChannel")
                                             {
                                                 <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
                                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
-                                            }
+                                            }                                       
 
                                             @if (ViewBag.actionstatus == "SkillChannel")
                                             {
@@ -269,8 +260,8 @@
                                                 @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                             }
                                         }
-                                        <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
-                                    </div>
+                                            <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -788,19 +779,19 @@
                                                     }
                                                     else
                                                     {
-                                                        <div class="col-md-4 views tooltip1" style="text-align: end;">
-                                                            @if (Model.VideoLink != null)
+                                                    <div class="col-md-4 views tooltip1" style="text-align: end;">
+                                                        @if (Model.VideoLink != null)
+                                                        {
+                                                            <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
+                                                        }
+                                                        <span class="tooltiptext">
+                                                            @foreach (var item in Model.VideoCountDetail)
                                                             {
-                                                                <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
+                                                                <p>@item.UserName - @item.Count</p>
                                                             }
-                                                            <span class="tooltiptext">
-                                                                @foreach (var item in Model.VideoCountDetail)
-                                                                {
-                                                                    <p>@item.UserName - @item.Count</p>
-                                                                }
 
-                                                            </span>
-                                                        </div>
+                                                        </span>
+                                                    </div>
                                                     }
                                                 </div>
                                                 <div class="single-video-info-content ">
@@ -3252,7 +3243,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
-
+                
 
                 {
                     'next .sharebtn1': 'Share the video by clicking here',
@@ -3295,7 +3286,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-
+                
                 {
                     'next .item5': 'General Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3460,13 +3451,13 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'nextButton': { className: "myNext", text: "Continue" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
-
+                
                 {
                     'next .btnvideo': 'Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
-                {
+               {
                     'next .shortlist': 'Click here to Shortlist the Candidate',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
@@ -3476,7 +3467,7 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
-
+                
 
                 {
                     'next .item1': 'Interview Report Details',
@@ -3508,13 +3499,13 @@ objSelect.y = parseInt(selectabilityTotal) / 4;
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                {
+               {
                     'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-
+                
                 {
                     'next .item5': 'General Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
