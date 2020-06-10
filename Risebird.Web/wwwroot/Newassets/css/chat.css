@@ -36,7 +36,7 @@
     display: none;
 }
 
-button .fa {
+#MyChatModel button .fa {
     font-size: 16px;
     margin-left: 10px;
 }
@@ -112,8 +112,8 @@ button:focus {
     margin-left: 10px;
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(0, 196, 65)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>') !important;
     background-repeat: no-repeat !important;
-    background-size: 90% !important;
-    background-position: 80% 0%;
+    background-size: 70% !important;
+    background-position: 90% 70%;
     color: #fff;
     font-weight: bold;
     cursor: pointer;
@@ -130,13 +130,83 @@ button:focus {
     }
 
 .back {
-    margin: 10px;
+    margin: 5px 10px 10px 10px;
     display: block;
 }
+#MyChatModel .mdc-button--outlined {
+    font-size: 12px;
+    padding: 0px 10px;
+    height: 30px;
 
-#divchatbox {
-    padding: 5px;
 }
+.input-box {
+    display: block;
+    width: 100%;
+    padding: .6rem .75rem;
+    font-size: 14px;
+    line-height: 1.25;
+    color: #464a4c;
+    background-color: #fff;
+    background-image: none;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+}
+    .input-box:focus {
+        border: 1px #53a5f5 solid;
+        outline: 0;
+    }
+    #divchatbox {
+        padding: 5px;
+    }
+
+
+.del-btn {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(175, 23, 23)" d="M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>') !important;
+    border: 0;
+    outline: 0;
+    background-repeat: no-repeat;
+    text-indent: -999px;
+    background-color: transparent;
+    width: 20px;
+    background-position: 10%;
+}
+.add-btn-m {
+    padding: 10px 10px 10px 0px!important;
+    margin-left: 10px;
+}
+.add-btn {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(255, 255, 255)" d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>') !important;
+    border: 0;
+    outline: 0;
+    background-repeat: no-repeat;
+    background-color: transparent;
+    background-position: 10% 50%;
+    padding: 4px 0px 4px 32px;
+    width: auto;
+    font-size: 14px;
+    line-height:32px;
+    color: #fff;
+    font-family: Roboto, sans-serif;
+    text-transform: uppercase;
+}
+.user-group {
+    background: #dfdfdf;
+    padding: 5px 10px 5px 10px;
+    border-radius: 100px;
+    font-size:15px;
+    line-height:17px;
+}
+
+
+
+
 
 @keyframes fadeInUp {
     from {
@@ -222,7 +292,7 @@ button:focus {
     position: absolute;
     top: 13px;
     opacity: 0.8 !important;
-    right: 60px;
+    right: 70px;
     padding: 10px 0px;
 }
 
@@ -263,7 +333,11 @@ button:focus {
 
 @media screen and (max-width: 767px) {
     #MyChatModel h5 {
-        font-size: 17px;
+        font-size: 20px;
+    }
+
+    #MyChatModel .modal-lg {
+        max-width: 600px !important;
     }
 }
 
@@ -277,7 +351,32 @@ button:focus {
     }
 
     .back {
-        margin: 10px 0 !important;
+        margin: 0px 0px 10px 0 !important;
         display: block;
+    }
+}
+
+
+@media screen and (max-width: 360px) {
+    .add-btn {
+        background-image: url(data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>) !important;
+        border: 0;
+        outline: 0;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        background-position: 34% 50%;
+        padding: 4px 0px 4px 32px;
+        width: auto;
+        font-size: 14px;
+        line-height: 32px;
+        color: #fff;
+        font-family: Roboto, sans-serif;
+        text-transform: uppercase;
+        text-indent: -999px;
+    }
+    .add-btn-m {
+        padding: 10px 0px 10px 0px !important;
+        margin-left: 2px;
+        min-width: 35px !important;
     }
 }

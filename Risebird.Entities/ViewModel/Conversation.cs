@@ -29,4 +29,10 @@ namespace Risebird.Entities.ViewModel
         public int self { get; set; }
         public string WhoSend { get; set; }
     }
+    public class GroupDetails
+    {
+        public int id { get; set; }
+        public string GroupName { get; set; }
+        public string Emailid { get; set; }
+    }
 }

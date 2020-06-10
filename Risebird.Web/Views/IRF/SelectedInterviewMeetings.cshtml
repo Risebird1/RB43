@@ -6,14 +6,6 @@
 
 
 
-
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
-
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="~/Newassets/css/irf.css" rel="stylesheet" />
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -28,7 +20,7 @@
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
                 <a class="navbar-brand">
-                    Interview Selected Meetings
+                    /  &nbsp;  Interview Selected Meetings
 
                 </a>
             </div>
@@ -55,8 +47,8 @@
 
                                         <div class="pull-right">
                                             <div>
-                                                <div class="form-group" style="width:100px;float:left;">
-                                                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
+                                                <div class="form-group" style="float:left;">
+                                                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control", onchange = "FilterInterviews(this.value);" })
                                                 </div>
                                                 @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                             </div>
@@ -91,7 +83,7 @@
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
                                                 <th>Approval Status</th>
-                                                <th>Approval Comments</th>
+                                                <th>Approval CommentSSs</th>
                                                 <th class="no-sort"></th>
                                                 <th>Final Selection Status</th>
                                                 <th>Final Selection Comments</th>
@@ -165,7 +157,7 @@
                                                         {
                                                             <td>No Contact</td>
                                                         }*@
-                                                    <td> @item.ClientHrContact </td>
+                                                    <td style="white-space:normal;"> @item.ClientHrContact </td>
                                                     <td> @item.confirmationStatus</td>
                                                     <td> @item.MeetingStatusStatusDesc </td>
                                                     <td> @item.intervieweStatusStatDesc </td>

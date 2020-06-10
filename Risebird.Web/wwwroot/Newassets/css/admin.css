@@ -44,8 +44,9 @@ textarea::-webkit-scrollbar-thumb {
     border: 1px solid #aaa;
     box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
     border-radius: .5em;
-    -moz-appearance: none;
+    -moz-appearance: none !important;
     -webkit-appearance: none !important;
+    appearance: none !important;
     background-color: #fff;
     background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
     background-repeat: no-repeat !important;
