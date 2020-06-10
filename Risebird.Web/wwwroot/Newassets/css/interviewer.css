@@ -530,7 +530,9 @@ table {
 .uploadfile-txt{
     padding:20px;
 }
-
+.table-responsive-sm .table > tbody > tr > td {
+    padding: 12px 5px !important;
+}
 
 @media screen and (max-width: 980px) {
     .uploadfile-txt {

@@ -59,7 +59,7 @@
                                 <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.IRFId, Model.IRFList, new { @class = "form-control", @onchange = "IRFChanged(this.value)" })
+                                        @Html.DropDownListFor(model => model.IRFId, Model.IRFList, new { @class = "select-css form-control", @onchange = "IRFChanged(this.value)" })
                                         @*@Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
                                     </div>
@@ -70,13 +70,17 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.interviewSlot, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(x => Model.interviewSlot, Model.InterviewSlotList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.DropDownListFor(x => Model.interviewSlot, Model.InterviewSlotList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                         @Html.ValidationMessageFor(model => model.interviewSlot, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.interviewDuration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.interviewDuration, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.EditorFor(model => model.interviewDuration, new { htmlAttributes = new { @class = "input form-control" } })
                                         @Html.ValidationMessageFor(model => model.interviewDuration, "", new { @class = "text-danger" })
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.candidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -100,7 +104,7 @@
 
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ClientHrContact, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.ClientHrContact, Model.ClientHrContactList, new { @class = "form-control" })
+                                        @Html.DropDownListFor(model => model.ClientHrContact, Model.ClientHrContactList, new { @class = "select-css form-control" })
 
                                         @*@Html.EditorFor(model => model.ClientHrContact, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.ClientHrContact, "", new { @class = "text-danger" })
@@ -118,13 +122,14 @@
                                     <div class="form-group">
                                         @Html.LabelFor(Model => Model.ConfirmationStatusList, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownListFor(x => Model.confirmationStatus, Model.ConfirmationStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.DropDownListFor(x => Model.confirmationStatus, Model.ConfirmationStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                         @Html.ValidationMessageFor(model => model.confirmationStatus, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.interviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.interviewer, new { htmlAttributes = new { @class = "form-control" } })
                                         @Html.ValidationMessageFor(model => model.interviewer, "", new { @class = "text-danger" })
+
                                     </div>
                                     <div>
                                         Upload Resume
@@ -228,7 +233,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.staffingAgency, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.staffingAgency, Model.StaffingAgencyList, new { @class = "form-control" })
+                                        @Html.DropDownListFor(model => model.staffingAgency, Model.StaffingAgencyList, new { @class = "select-css form-control" })
 
                                         @*@Html.EditorFor(model => model.staffingAgency, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.staffingAgency, "", new { @class = "text-danger" })
@@ -280,4 +285,28 @@
 
 
 <script src="~/Newassets/js/interview.js"></script>
+<script>
+
+    document.body.className += "js";
+
+    var spinner = document.querySelector('.input');
+    var buttonUp = document.querySelector('.up');
+    var buttonDown = document.querySelector('.down');
+
+    buttonUp.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        spinner.value = value;
+    };
+
+    buttonDown.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value--;
+        spinner.value = value;
+    };
+
+</script>
+
 

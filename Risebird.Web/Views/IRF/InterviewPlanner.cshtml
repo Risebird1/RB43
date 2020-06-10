@@ -5,12 +5,7 @@
 }
 
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="~/Newassets/css/irf.css" rel="stylesheet" />
 
 
 <div class="main-panel" id="main-panel">
@@ -26,7 +21,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
-                /   &nbsp;<a class="navbar-brand">Interview Planner</a>
+                <a class="navbar-brand">  / &nbsp;Interview Planner</a>
             </div>
 
         </div>
@@ -56,205 +51,207 @@
                                     <div class="w-full">&nbsp;</div>
                                 </div>
                                 <div id="tableID">
-                                    <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th>Stages</th>
-                                                <th>Desired success rate</th>
-                                                <th>Actual success rate</th>
-                                                <th>Processing Time</th>
-                                                <th width="40%">Owned by</th>
-                                                <th>Number of interviews</th>
-                                                <th>Dates</th>
+                                    <div class="table-responsive-sm">
+                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Stages</th>
+                                                    <th>Desired success rate</th>
+                                                    <th>Actual success rate</th>
+                                                    <th>Processing Time</th>
+                                                    <th width="40%">Owned by</th>
+                                                    <th>Number of interviews</th>
+                                                    <th>Dates</th>
 
-                                            </tr>
-                                        </thead>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Stages</th>
-                                                <th>Desired success rate</th>
-                                                <th>Actual success rate</th>
-                                                <th>Processing Time</th>
-                                                <th width="40%">Owned by</th>
-                                                <th>Number of interviews</th>
-                                                <th>Dates</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Stages</th>
+                                                    <th>Desired success rate</th>
+                                                    <th>Actual success rate</th>
+                                                    <th>Processing Time</th>
+                                                    <th width="40%">Owned by</th>
+                                                    <th>Number of interviews</th>
+                                                    <th>Dates</th>
 
-                                            </tr>
-                                        </tfoot>
-                                        <tbody>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
 
-                                            <tr>
-                                                <td>Joining rate</td>
-                                                <td>50%</td>
-                                                <td>@Model.JoiningPercentage%</td>
+                                                <tr>
+                                                    <td>Joining rate</td>
+                                                    <td>50%</td>
+                                                    <td>@Model.JoiningPercentage%</td>
 
-                                                <td class="spinner-wrap">
-                                                    @Html.EditorFor(m => m.JoiningProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
-                                                    <div class="spinner">
-                                                        <button type="button" class="up button">&rsaquo;</button>
-                                                        <button type="button" class="down button">&lsaquo;</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @Html.EditorFor(model => model.JoiningOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                   
-                                                </td>
-                                                <td>@Model.JoiningTotal</td>
-                                                <td>
-                                                    @Model.IRFCreatedOn.AddDays(Model.OverAllProcessingTime - Model.JoiningProcessingTime)
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Offer Acceptance rate</td>
-                                                <td>50%</td>
-                                                <td>@Model.OfferAcceptancePercentage%</td>
+                                                    <td class="spinner-wrap joiningtime">
+                                                        @Html.EditorFor(m => m.JoiningProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
+                                                        <div class="spinner">
+                                                            <button type="button" class="up button">&rsaquo;</button>
+                                                            <button type="button" class="down button">&lsaquo;</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @Html.EditorFor(model => model.JoiningOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                                                <td class="spinner-wrap">
-                                                    @Html.EditorFor(m => m.OfferProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
-                                                    <div class="spinner">
-                                                        <button type="button" class="up button">&rsaquo;</button>
-                                                        <button type="button" class="down button">&lsaquo;</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @Html.EditorFor(model => model.OfferOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                               
-                                                </td>
-                                                <td>@Model.OfferAcceptanceTotal</td>
-                                                <td>
-                                                    @Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime + Model.RisebirdSelectionProcessingTime + Model.ApprovalProcessingTime + Model.FinalSelectionProcessingTime)
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Final selection rate</td>
-                                                <td>33%</td>
-                                                <td>@Model.FinalSelectionPercentage%</td>
-                                                <td class="spinner-wrap">
-                                                    @Html.EditorFor(m => m.FinalSelectionProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
-                                                    <div class="spinner">
-                                                        <button type="button" class="up button">&rsaquo;</button>
-                                                        <button type="button" class="down button">&lsaquo;</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @Html.EditorFor(model => model.FinalSelectionOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                    </td>
+                                                    <td>@Model.JoiningTotal</td>
+                                                    <td>
+                                                        @Model.IRFCreatedOn.AddDays(Model.OverAllProcessingTime - Model.JoiningProcessingTime)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Offer Acceptance rate</td>
+                                                    <td>50%</td>
+                                                    <td>@Model.OfferAcceptancePercentage%</td>
 
-                                                </td>
-                                                <td>@Model.FinalSelectionTotal</td>
-                                                <td>
-                                                    @Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime + Model.RisebirdSelectionProcessingTime + Model.ApprovalProcessingTime)
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Approval Rate</td>
-                                                <td>80%</td>
-                                                <td>@Model.ApprovalPercentage%</td>
-                                                <td class="spinner-wrap">
-                                                    @Html.EditorFor(m => m.ApprovalProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
-                                                    <div class="spinner">
-                                                        <button type="button" class="up button">&rsaquo;</button>
-                                                        <button type="button" class="down button">&lsaquo;</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @Html.EditorFor(model => model.ApprovalOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                    <td class="spinner-wrap joiningtime">
+                                                        @Html.EditorFor(m => m.OfferProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
+                                                        <div class="spinner">
+                                                            <button type="button" class="up button">&rsaquo;</button>
+                                                            <button type="button" class="down button">&lsaquo;</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @Html.EditorFor(model => model.OfferOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                                                </td>
-                                                <td>@Model.ApprovalTotal</td>
-                                                <td>
-                                                    @Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime + Model.RisebirdSelectionProcessingTime)
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Risebird Selection rate</td>
-                                                <td>33%</td>
-                                                <td>@Model.RisebirdSelectionPercentage%</td>
-                                                <td class="spinner-wrap">
-                                                    @Html.EditorFor(m => m.RisebirdSelectionProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
-                                                    <div class="spinner">
-                                                        <button type="button" class="up button">&rsaquo;</button>
-                                                        <button type="button" class="down button">&lsaquo;</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @Html.EditorFor(model => model.RisebirdSelectionOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                    </td>
+                                                    <td>@Model.OfferAcceptanceTotal</td>
+                                                    <td>
+                                                        @Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime + Model.RisebirdSelectionProcessingTime + Model.ApprovalProcessingTime + Model.FinalSelectionProcessingTime)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Final selection rate</td>
+                                                    <td>33%</td>
+                                                    <td>@Model.FinalSelectionPercentage%</td>
+                                                    <td class="spinner-wrap joiningtime">
+                                                        @Html.EditorFor(m => m.FinalSelectionProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
+                                                        <div class="spinner">
+                                                            <button type="button" class="up button">&rsaquo;</button>
+                                                            <button type="button" class="down button">&lsaquo;</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @Html.EditorFor(model => model.FinalSelectionOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                                                </td>
-                                                <td>@Model.RisebirdSelectionTotal</td>
-                                                <td>@Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime)</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Completion Rate</td>
-                                                <td>80%</td>
-                                                <td>@Model.CompletionPercentage%</td>
-                                                <td class="spinner-wrap">
-                                                    @Html.EditorFor(m => m.CompletionProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
-                                                    <div class="spinner">
-                                                        <button type="button" class="up button">&rsaquo;</button>
-                                                        <button type="button" class="down button">&lsaquo;</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @Html.EditorFor(model => model.CompletionOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                    </td>
+                                                    <td>@Model.FinalSelectionTotal</td>
+                                                    <td>
+                                                        @Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime + Model.RisebirdSelectionProcessingTime + Model.ApprovalProcessingTime)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Approval Rate</td>
+                                                    <td>80%</td>
+                                                    <td>@Model.ApprovalPercentage%</td>
+                                                    <td class="spinner-wrap joiningtime">
+                                                        @Html.EditorFor(m => m.ApprovalProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
+                                                        <div class="spinner">
+                                                            <button type="button" class="up button">&rsaquo;</button>
+                                                            <button type="button" class="down button">&lsaquo;</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @Html.EditorFor(model => model.ApprovalOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                                                </td>
-                                                <td>@Model.CompletionTotal</td>
-                                                <td>@Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime)</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Confirmation Rate</td>
-                                                <td>80%</td>
-                                                <td>@Model.ConfirmationPercentage%</td>
-                                                <td class="spinner-wrap">
-                                                    @Html.EditorFor(m => m.ConfirmationProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
-                                                    <div class="spinner">
-                                                        <button type="button" class="up button">&rsaquo;</button>
-                                                        <button type="button" class="down button">&lsaquo;</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @Html.EditorFor(model => model.ConfirmationOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                    </td>
+                                                    <td>@Model.ApprovalTotal</td>
+                                                    <td>
+                                                        @Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime + Model.RisebirdSelectionProcessingTime)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Risebird Selection rate</td>
+                                                    <td>33%</td>
+                                                    <td>@Model.RisebirdSelectionPercentage%</td>
+                                                    <td class="spinner-wrap joiningtime">
+                                                        @Html.EditorFor(m => m.RisebirdSelectionProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
+                                                        <div class="spinner">
+                                                            <button type="button" class="up button">&rsaquo;</button>
+                                                            <button type="button" class="down button">&lsaquo;</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @Html.EditorFor(model => model.RisebirdSelectionOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                                                </td>
-                                                <td>@Model.ConfirmationTotal</td>
-                                                <td>@Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime)</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Invite Rate</td>
-                                                <td>90%</td>
-                                                <td>@Model.InvitePercentage%</td>
-                                                <td class="spinner-wrap">
-                                                    @Html.EditorFor(m => m.InviteProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
-                                                    <div class="spinner">
-                                                        <button type="button" class="up button">&rsaquo;</button>
-                                                        <button type="button" class="down button">&lsaquo;</button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @Html.EditorFor(model => model.InviteOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                    </td>
+                                                    <td>@Model.RisebirdSelectionTotal</td>
+                                                    <td>@Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Completion Rate</td>
+                                                    <td>80%</td>
+                                                    <td>@Model.CompletionPercentage%</td>
+                                                    <td class="spinner-wrap joiningtime">
+                                                        @Html.EditorFor(m => m.CompletionProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
+                                                        <div class="spinner">
+                                                            <button type="button" class="up button">&rsaquo;</button>
+                                                            <button type="button" class="down button">&lsaquo;</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @Html.EditorFor(model => model.CompletionOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                                                </td>
-                                                <td>@Model.TotalInvites</td>
-                                                <td>@Model.IRFCreatedOn</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Overall</td>
-                                                <td>1.25%</td>
-                                                <td>@Model.OverallPercentage%</td>
-                                                <td class="spinner-wrap">
-                                                    @Html.EditorFor(m => m.OverAllProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
-                                                    <div class="spinner">
-                                                        <button type="button" class="up button">&rsaquo;</button>
-                                                        <button type="button" class="down button">&lsaquo;</button>
-                                                    </div>
-                                                </td>
-                                                <td></td>
-                                                <td>@Model.Overall</td>
-                                                <td></td>
-                                            </tr>
+                                                    </td>
+                                                    <td>@Model.CompletionTotal</td>
+                                                    <td>@Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Confirmation Rate</td>
+                                                    <td>80%</td>
+                                                    <td>@Model.ConfirmationPercentage%</td>
+                                                    <td class="spinner-wrap joiningtime">
+                                                        @Html.EditorFor(m => m.ConfirmationProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
+                                                        <div class="spinner">
+                                                            <button type="button" class="up button">&rsaquo;</button>
+                                                            <button type="button" class="down button">&lsaquo;</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @Html.EditorFor(model => model.ConfirmationOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                                        </tbody>
-                                    </table>
+                                                    </td>
+                                                    <td>@Model.ConfirmationTotal</td>
+                                                    <td>@Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Invite Rate</td>
+                                                    <td>90%</td>
+                                                    <td>@Model.InvitePercentage%</td>
+                                                    <td class="spinner-wrap joiningtime">
+                                                        @Html.EditorFor(m => m.InviteProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
+                                                        <div class="spinner">
+                                                            <button type="button" class="up button">&rsaquo;</button>
+                                                            <button type="button" class="down button">&lsaquo;</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @Html.EditorFor(model => model.InviteOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                    </td>
+                                                    <td>@Model.TotalInvites</td>
+                                                    <td>@Model.IRFCreatedOn</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Overall</td>
+                                                    <td>1.25%</td>
+                                                    <td>@Model.OverallPercentage%</td>
+                                                    <td class="spinner-wrap joiningtime">
+                                                        @Html.EditorFor(m => m.OverAllProcessingTime, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number" } })
+                                                        <div class="spinner">
+                                                            <button type="button" class="up button">&rsaquo;</button>
+                                                            <button type="button" class="down button">&lsaquo;</button>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                    <td>@Model.Overall</td>
+                                                    <td></td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
 
