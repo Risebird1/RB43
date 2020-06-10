@@ -1961,5 +1961,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@InterviewId", interviewId);//@IrfId
+                dynamicParameters.Add("@FeedbackAudioLink", feedbackAudioLink);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_SaveFeedbackAudio", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
     }
 }

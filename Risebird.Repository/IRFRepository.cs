@@ -1673,16 +1673,17 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<Candidate> GetIRFCandidates(int id)
+        public IEnumerable<Candidate> GetIRFCandidates(int irfId)
         {
             try
             {
-                var query = "select ca.*,IRF.EndDate, cm.id as CandidateMasterId from Candidate ca join IRF on ca.IRFId=IRF.id join CandidatesMaster cm on ca.EmailId=cm.EmailId where ca.IRFId = @IRFId";
+                //var query = "Select InterviewPlanner.*,IRF.CreatedOn as [IRFCreatedOn] from InterviewPlanner inner join [IRF] on InterviewPlanner.IRFId = [IRF].id  where InterviewPlanner.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId", id);
+                dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<Candidate>(query, dynamicParameters);
+                    var results = SqlMapper.Query<Candidate>(con, "usp_GetIRFCandidates", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
                     return results;
                 }
             }
@@ -1692,6 +1693,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
 
         public IEnumerable<string> GetIRFCandidatesEmail(string irfName)
         {
