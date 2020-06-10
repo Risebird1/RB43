@@ -95,7 +95,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card">
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckInterviewerComments()">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -187,7 +187,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -1387,25 +1387,25 @@
 </script>
 
 <script>
-    $('form').submit(function () {
-        if ($(this).valid()) {
-            $(':submit', this).attr('disabled', 'disabled');
-        }
-    });
-    $("#btnUpload").click(function () {
-        ShowProgress();
-    });
-     var loader;
-    function ShowProgress() {
-        $(".dataloading").hide();
-        loader = document.getElementsByClassName("loader")[0];
-        loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
-        loader.style.left = left + "px";
-        $(window).scrollTop();
-    };
+    //$('form').submit(function () {
+    //    if ($(this).valid()) {
+    //        $(':submit', this).attr('disabled', 'disabled');
+    //    }
+    //});
+    //$("#btnUpload").click(function () {
+    //    ShowProgress();
+    //});
+    // var loader;
+    //function ShowProgress() {
+    //    $(".dataloading").hide();
+    //    loader = document.getElementsByClassName("loader")[0];
+    //    loader.style.display = "block";
+    //    var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+    //    var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+    //    loader.style.top = top + "px";
+    //    loader.style.left = left + "px";
+    //    $(window).scrollTop();
+    //};
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -1837,6 +1837,33 @@
         });
 
 
+    }
+
+    function MeetingStatusChanged(value) {
+        debugger;
+        if (value == 1 || value == 3) {
+            document.getElementById("InterviewStatus").disabled = true;
+        }
+        else {
+            document.getElementById("InterviewStatus").disabled = false;
+        }
+    }
+
+    function CheckInterviewerComments() {
+        debugger;
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value == 4) {
+            var comments = document.getElementById("InterviewerComment").value;
+            if (comments.length >= 250) {
+                return true;
+            }
+            else {
+                document.getElementById("InterviewerComment").focus();
+                return false;
+            }
+        }
+        else
+            return true;
     }
 
     $(document).ready(function () {
