@@ -660,10 +660,11 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-        public void AddUser(string GroupId, string Emailid)
+        public JsonResult AddUser(string GroupId, string Emailid)
         {
             string connectionString = _configuration["ConnectionString:DBConnectionString"];
             int id = 0;
+            int count = 0;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 var query = "Select Id from UserList where Emailid=@Emailid";
@@ -673,11 +674,35 @@ namespace Risebird.Web.Controllers
             }
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                var query = "Insert into ChatGroupUsers values(@GroupId,@Id)";
+                var query = "Select Count(*) from ChatGroupUsers where Userid=@Id and Groupid=@GroupId";
                 var parameters = new DynamicParameters();
                 parameters.Add("@Id", id);
                 parameters.Add("@GroupId", GroupId);
-                var results = con.Query(query, parameters);
+                count = con.Query<int>(query, parameters).FirstOrDefault();
+            }
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                if (count == 0)
+                {
+                    if (id != 0)
+                    {
+                        var query = "Insert into ChatGroupUsers values(@GroupId,@Id)";
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@Id", id);
+                        parameters.Add("@GroupId", GroupId);
+                        var results = con.Query(query, parameters);
+                        return Json("success");
+                    }
+                    else
+                    {
+                        return Json("User Not found");
+
+                    }
+                }
+                else
+                {
+                    return Json("Duplicate User");
+                }
             }
         }
         public void DeleteUser(string Userid)
