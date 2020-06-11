@@ -71,7 +71,6 @@ function startRecording() {
 //}
 
 function stopRecording(id) {
-    debugger;
     document.getElementById("stopRecButton").disabled = true;
     document.getElementById("startRecButton").disabled = false;
     document.getElementById("cancelRecButton").disabled = true;
@@ -90,7 +89,6 @@ function stopRecording(id) {
 }
 
 function createDownloadLink(blob) {
-    debugger;
     var list = document.getElementById("recordingsList");
     var firstChild = list.firstChild;
     if (firstChild) {

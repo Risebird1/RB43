@@ -1840,7 +1840,6 @@
     }
 
     function MeetingStatusChanged(value) {
-        debugger;
         if (value == 1 || value == 3) {
             document.getElementById("InterviewStatus").disabled = true;
         }
@@ -1850,7 +1849,6 @@
     }
 
     function CheckInterviewerComments() {
-        debugger;
         var meetingStatusElem = document.getElementById("MeetingStatus");
         if (meetingStatusElem.value == 4) {
             var comments = document.getElementById("InterviewerComment").value;

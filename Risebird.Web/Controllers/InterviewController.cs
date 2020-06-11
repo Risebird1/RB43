@@ -3486,7 +3486,7 @@ namespace Risebird.Web.Controllers
 
                             if (_meetingService.UpdateComments(interviewComments))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Comments added Successfully";
+                                TempData["SuccessErrorMessageInterviewComment"] = "Comments added Successfully";
                                 return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });
                             }
                             else
