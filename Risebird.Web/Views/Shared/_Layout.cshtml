@@ -258,7 +258,7 @@
         function checkConversation() {
             $.ajax({
                 type: "POST",
-                url: "/Account/GetConversation",
+                url: "/Chat/GetConversation",
                 data: { userid: $("#txtself").val(), contact: "", status: "Chat" },
                 success: function (data) {
                     for (var i = 0; i < data.length; i++) {
@@ -279,7 +279,7 @@
             flag = false;
             $.ajax({
                 type: "POST",
-                url: "/Account/ChatBox",
+                url: "/Chat/ChatBox",
                 success: function (data) {
                     var modal = document.getElementById("MyChatModel");
                     modal.style.display = "block";
@@ -317,6 +317,7 @@
             whosend = $("#txtWhoSend_" + id).val();
             $("#btncreategroup").attr('clickmethod', '1');
             ChatConversation(Sender);
+
         }
         function directopenChat(Sender) {
             var modal = document.getElementById("MyChatModel");
@@ -327,6 +328,7 @@
             var msg = document.getElementById("msger-inputarea");
             msg.style.display = "flex";
             ChatConversation(Sender);
+            $(".modalMinimize").click();
         }
         function ChatConversation(Sender) {
             if ($("#btncreategroup").attr('clickmethod') == 1) {
@@ -337,7 +339,7 @@
                 }
                 $.ajax({
                     type: "POST",
-                    url: "/Account/GetConversation",
+                    url: "/Chat/GetConversation",
                     data: { contact: Sender, userid: $("#txtself").val(), WhoSend: whosend },
                     success: function (data) {
                         var html = '';
@@ -382,7 +384,7 @@
             if ($("#txtmessage").val() != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/Account/AddConversation",
+                    url: "/Chat/AddConversation",
                     data: { contact: Sender, userid: $("#txtself").val(), message: $("#txtmessage").val() },
                     success: function (data) {
                         ChatConversation('');
@@ -448,7 +450,7 @@
             msg.style.display = "none";
             $.ajax({
                 type: "POST",
-                url: "/Account/FetchGroup",
+                url: "/Chat/FetchGroup",
                 success: function (data) {
                     var html = '';
                     html += '<div class="row" style="padding: 10px 10px 10px 10px">';
@@ -470,7 +472,7 @@
             if ($("#txtgroupname").val().trim() != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/Account/AddGroup",
+                    url: "/Chat/AddGroup",
                     data: { GroupName: $("#txtgroupname").val() },
                     success: function (data) {
                         FetchGroup();
@@ -483,7 +485,7 @@
         function DeleteGroup(Id) {
             $.ajax({
                 type: "POST",
-                url: "/Account/DeleteGroup",
+                url: "/Chat/DeleteGroup",
                 data: { GroupId: Id },
                 success: function (data) {
                     FetchGroup();
@@ -493,7 +495,7 @@
         function FetchUser(Id) {
             $.ajax({
                 type: "POST",
-                url: "/Account/FetchUser",
+                url: "/Chat/FetchUser",
                 data: { GroupId: Id },
                 success: function (data) {
                     var html = '';
@@ -509,7 +511,7 @@
                         html += '</div>';
 
 
-                        
+
                     }
                     $("#divchatbox").empty().html(html);
                     $("#lblChatname").text('');
@@ -520,7 +522,7 @@
             if ($("#txtgroupEmailid").val().trim() != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/Account/AddUser",
+                    url: "/Chat/AddUser",
                     data: { GroupId: GroupId, Emailid: $("#txtgroupEmailid").val() },
                     success: function (data) {
                         if (data == "success") {
@@ -537,7 +539,7 @@
         function DeleteUser(Id, GroupId) {
             $.ajax({
                 type: "POST",
-                url: "/Account/DeleteUser",
+                url: "/Chat/DeleteUser",
                 data: { Userid: Id },
                 success: function (data) {
                     FetchUser(GroupId);
