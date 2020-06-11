@@ -156,7 +156,7 @@
                                     var email = emailid.Trim('"');
                                     @if (email.ToUpper() == "TALENT@RISEBIRD.IO")
                                     {
-                                        <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" onclick="FetchGroup()">Create/Edit Group</a>
+                                        <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" id="btncreategroup" clickmethod="1" onclick="FetchGroup()">Create/Edit Group</a>
                                     }
                                 }
                             }
@@ -259,6 +259,7 @@
                 }
             });
         }
+        //$("#btncreategroup").attr('clickmethod') == 1
         function OpenChatPopUp() {
             flag = false;
             $.ajax({
@@ -299,6 +300,7 @@
             var msg = document.getElementById("msger-inputarea");
             msg.style.display = "flex";
             whosend = $("#txtWhoSend_" + id).val();
+            $("#btncreategroup").attr('clickmethod', '1');
             ChatConversation(Sender);
         }
         function directopenChat(Sender) {
@@ -312,52 +314,53 @@
             ChatConversation(Sender);
         }
         function ChatConversation(Sender) {
-            if (Sender != "" && Sender != null) {
-                sendvalue = Sender;
-            } else {
-                Sender = sendvalue;
-            }
-            $.ajax({
-                type: "POST",
-                url: "/Account/GetConversation",
-                data: { contact: Sender, userid: $("#txtself").val(), WhoSend: whosend },
-                success: function (data) {
-                    var html = '';
-                    var countvalue = 0;
-                    for (var i = 0; i < data.length; i++) {
-                        html += '<div class="row" style="padding: 10px 20px 10px 20px">';
-                        if (data[i].self != 1) {
-                            html += '<div class="col-md-6"><div class="msg-bubble fadeInUp">' + data[i].message + '</div></div><div class="col-md-6"></div>';
-                            countvalue = i;
-                        } else {
-                            html += '<div class="col-md-6"></div><div class="col-md-6"><div class="msg-bubble-right fadeInUp">' + data[i].message + '</div></div>';
-                        }
-                        html += '</div>';
-                    }
-
-                    var createheader = '';
-                    if (data.length > 0) {
-                        if (data[countvalue].isOnline == 1) {
-                            createheader += Sender + ' (Online)';
-                        } else {
-                            createheader += Sender + ' (Offline)';
-                        }
-                    }
-                    else {
-                        createheader += Sender;
-                    }
-                    $("#divchatbox").empty().html(html);
-                    $("#lblChatname").text(createheader);
-                    $('#divchatbox').scrollTop($('#divchatbox')[0].scrollHeight);
-                    if (flag == true) {
-                        setTimeout(ChatConversation(''), 5000);
-                    }
-                    else {
-                        flag = true;
-                    }
+            if ($("#btncreategroup").attr('clickmethod') == 1) {
+                if (Sender != "" && Sender != null) {
+                    sendvalue = Sender;
+                } else {
+                    Sender = sendvalue;
                 }
-            });
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/GetConversation",
+                    data: { contact: Sender, userid: $("#txtself").val(), WhoSend: whosend },
+                    success: function (data) {
+                        var html = '';
+                        var countvalue = 0;
+                        for (var i = 0; i < data.length; i++) {
+                            html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                            if (data[i].self != 1) {
+                                html += '<div class="col-md-6"><div class="msg-bubble fadeInUp">' + data[i].message + '</div></div><div class="col-md-6"></div>';
+                                countvalue = i;
+                            } else {
+                                html += '<div class="col-md-6"></div><div class="col-md-6"><div class="msg-bubble-right fadeInUp">' + data[i].message + '</div></div>';
+                            }
+                            html += '</div>';
+                        }
 
+                        var createheader = '';
+                        if (data.length > 0) {
+                            if (data[countvalue].isOnline == 1) {
+                                createheader += Sender + ' (Online)';
+                            } else {
+                                createheader += Sender + ' (Offline)';
+                            }
+                        }
+                        else {
+                            createheader += Sender;
+                        }
+                        $("#divchatbox").empty().html(html);
+                        $("#lblChatname").text(createheader);
+                        $('#divchatbox').scrollTop($('#divchatbox')[0].scrollHeight);
+                        if (flag == true) {
+                            setTimeout(ChatConversation(''), 5000);
+                        }
+                        else {
+                            flag = true;
+                        }
+                    }
+                });
+            }
         }
         function SendConversation() {
             var Sender = sendvalue;
@@ -422,6 +425,7 @@
             }
         }
         function FetchGroup() {
+            $("#btncreategroup").attr('clickmethod', '0');
             flag = false;
             document.getElementById("txtmessage").style.display = "none";
             document.getElementById("btnchatConversation").style.display = "none";
