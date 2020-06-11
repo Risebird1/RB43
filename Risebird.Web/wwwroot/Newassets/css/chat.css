@@ -130,8 +130,11 @@ button:focus {
     }
 
 .back {
-    margin: 5px 10px 10px 10px;
+    margin: 0px 10px 10px 10px;
+    cursor: pointer;
+    color: #888 !important;
     display: block;
+    text-transform: uppercase;
 }
 #MyChatModel .mdc-button--outlined {
     font-size: 12px;
@@ -139,9 +142,14 @@ button:focus {
     height: 30px;
 
 }
+
+#MyChatModel .modal .modal-header .close {
+    right: 10px;
+    top: 15px;
+}
 .input-box {
     display: block;
-    width: 100%;
+    width: 300px;
     padding: .6rem .75rem;
     font-size: 14px;
     line-height: 1.25;
@@ -301,14 +309,14 @@ button:focus {
 }
 
 #MyChatModel h5 {
-    margin: 10px 0px 10px 0px;
+    margin: 10px 0px 8px 0px;
 }
 
 #MyChatModel .modal-content .modal-header {
     padding-left: 20px;
     padding-right: 20px;
 }
-
+#MyChatModel .modal-lg{max-width:600px!important;}
 .modal-bg {
     display: none;
     position: fixed;
@@ -339,6 +347,7 @@ button:focus {
     #MyChatModel .modal-lg {
         max-width: 600px !important;
     }
+    .input-box{width:100%;}
 }
 
 @media screen and (max-width: 500px) {
@@ -353,6 +362,9 @@ button:focus {
     .back {
         margin: 0px 0px 10px 0 !important;
         display: block;
+    }
+    #MyChatModel .modal-lg {
+     max-width: 100% !important;
     }
 }
 

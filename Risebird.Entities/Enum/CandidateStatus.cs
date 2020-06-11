@@ -15,7 +15,7 @@ namespace Risebird.Entities.Enum
         [Description("In Progress")]
         InProgress,
 
-        [Description("WFR")]
+        [Description("Waiting For Response")]
         WFR,
 
         [Description("Scheduled")]
@@ -39,18 +39,6 @@ namespace Risebird.Entities.Enum
         Cold, 
         [Display(Name = "Hold")]
         [Description("Hold")]
-        Hold,
-        [Display(Name = "Cancelled")]
-        [Description("Cancelled")]
-        Cancelled,
-        [Display(Name = "Dropped")]
-        [Description("Dropped")]
-        Dropped,
-        [Display(Name = "No Show")]
-        [Description("No Show")]
-        NoShow,
-        [Display(Name = "Completed")]
-        [Description("Completed")]
-        Completed
+        Hold
     }
 }

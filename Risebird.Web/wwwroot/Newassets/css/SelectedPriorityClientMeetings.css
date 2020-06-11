@@ -116,14 +116,14 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .spinner {
-    top: 15px;
+    top: 30px;
     width: 0.8rem;
     position: absolute;
     background: whitesmoke;
     border-radius: 0;
     display: none;
     height: 2rem;
-    right: 20px;
+    right: 10px;
 }
 
 .js .spinner {

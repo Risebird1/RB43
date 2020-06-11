@@ -4,16 +4,9 @@
     ViewData["Title"] = "Edit Skills Channel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="~/Newassets/css/irf.css" rel="stylesheet" />
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -167,13 +160,22 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                        @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                     </div>
                                     <div class="form-group  mb-0">
                                         @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
+
                                     </div>
                                     <div class="form-group">
                                         Upload Company Details
@@ -244,14 +246,21 @@
                                 <div class="col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                        @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @class = "text-danger" })
-
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
@@ -2446,5 +2455,29 @@
 
 
     }
+
+</script>
+
+<script>
+
+    document.body.className += "js";
+
+    var spinner = document.querySelector('.input');
+    var buttonUp = document.querySelector('.up');
+    var buttonDown = document.querySelector('.down');
+
+    buttonUp.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        spinner.value = value;
+    };
+
+    buttonDown.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value--;
+        spinner.value = value;
+    };
 
 </script>

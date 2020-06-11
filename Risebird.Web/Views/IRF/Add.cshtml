@@ -128,7 +128,7 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
-                                       <h2 style="margin-top:0px;">Job Details</h2>
+                                        <h2 style="margin-top:0px;">Job Details</h2>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 pr-1">
@@ -200,9 +200,12 @@
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfPosition">No of Open Positions </label>*@
 
-                                        @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
-
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                         @*<input class="form-control text-box single-line" id="NoOfPosition" name="NoOfPosition" type="number" value="">*@
 
                                     </div>
@@ -211,9 +214,12 @@
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="noofintterview">no of interviews to be conducted</label>*@
 
-                                        @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
-
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                         @*<input class="form-control text-box single-line" id="NoOfIntterview" name="NoOfIntterview" type="number" value="">*@
 
                                     </div>
@@ -244,9 +250,12 @@
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>*@
 
-                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
-
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                         @*<input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="number" step="0.01" value="">*@
 
                                     </div>
@@ -255,9 +264,12 @@
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>*@
 
-                                        @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                        @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @class = "text-danger" })
-
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                         @*<input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="number" step="0.01" value="">*@
 
                                     </div>
@@ -327,7 +339,7 @@
                                         @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
                                     </div>
-                                   
+
                                 </div>
                             </div>
 
@@ -369,8 +381,8 @@
                                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -436,8 +448,8 @@
 
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -498,8 +510,8 @@
                                                         <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -560,8 +572,8 @@
                                                         <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -616,8 +628,8 @@
                                                         <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -671,8 +683,8 @@
 
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -727,8 +739,8 @@
 
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -778,8 +790,8 @@
                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -813,7 +825,7 @@
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">User</th>
-                                                    <th width="10%"  class="table_heading text-center">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -828,8 +840,8 @@
                                                         <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -875,8 +887,8 @@
 
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddRowHR()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddRowHR()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -930,8 +942,8 @@
                                                         <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                         @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                            <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                        </button>*@
+                                                                <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                            </button>*@
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -2217,5 +2229,29 @@
     }
 
 
+
+</script>
+
+<script>
+
+    document.body.className += "js";
+
+    var spinner = document.querySelector('.input');
+    var buttonUp = document.querySelector('.up');
+    var buttonDown = document.querySelector('.down');
+
+    buttonUp.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        spinner.value = value;
+    };
+
+    buttonDown.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value--;
+        spinner.value = value;
+    };
 
 </script>
