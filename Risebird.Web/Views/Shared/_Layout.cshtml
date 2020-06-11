@@ -143,10 +143,10 @@
                         <h5 class="modal-title" style="color:#fff"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" /></svg> Chat <input type="text" value="" hidden id="txtself" /></h5>
                     </div>
                     <div>
-                        <button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>
+                        <button class="close modalMinimize" title="minimize"> <i class='fa fa-minus'></i> </button>
                     </div>
                     <div>
-                        <span onclick="closeChatPopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+                        <span onClick="closeChatPopUp()" style="cursor:pointer;" class="close" id="SharePopUp" title="Close">&times;</span>
                     </div>
 
                 </div>
@@ -164,22 +164,22 @@
                                     var email = emailid.Trim('"');
                                     @if (email.ToUpper() == "TALENT@RISEBIRD.IO")
                                     {
-                                        <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" onclick="FetchGroup()">Create/Edit Group</a>
+                                        <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" onClick="FetchGroup()">Create/Edit Group</a>
                                     }
                                 }
                             }
 
-                            @*<div class="pull-right">
 
                             <div class="pull-right">
 
-                                <div class="desktop">   <a class="back text-right" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
+                                <div class="desktop">   <a class="back text-right" onClick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(136, 136, 136)" d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
 
                                 <div class="mobile">
-                                    <a class="back" onclick="OpenChatPopUp()">
-                                        <svg class="svg-icon" width="24" height="24" viewBox="0 0 20 20">
-                                            <path d="M11.739,13.962c-0.087,0.086-0.199,0.131-0.312,0.131c-0.112,0-0.226-0.045-0.312-0.131l-3.738-3.736c-0.173-0.173-0.173-0.454,0-0.626l3.559-3.562c0.173-0.175,0.454-0.173,0.626,0c0.173,0.172,0.173,0.451,0,0.624l-3.248,3.25l3.425,3.426C11.911,13.511,11.911,13.789,11.739,13.962 M18.406,10c0,4.644-3.763,8.406-8.406,8.406S1.594,14.644,1.594,10S5.356,1.594,10,1.594S18.406,5.356,18.406,10 M17.521,10c0-4.148-3.373-7.521-7.521-7.521c-4.148,0-7.521,3.374-7.521,7.521c0,4.148,3.374,7.521,7.521,7.521C14.147,17.521,17.521,14.148,17.521,10"></path>
+                                    <a class="back" onClick="OpenChatPopUp()">
+                                        <svg class="svg-icon" width="22" height="22" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" fill="rgb(136, 136, 136)" d="M11.739,13.962c-0.087,0.086-0.199,0.131-0.312,0.131c-0.112,0-0.226-0.045-0.312-0.131l-3.738-3.736c-0.173-0.173-0.173-0.454,0-0.626l3.559-3.562c0.173-0.175,0.454-0.173,0.626,0c0.173,0.172,0.173,0.451,0,0.624l-3.248,3.25l3.425,3.426C11.911,13.511,11.911,13.789,11.739,13.962 M18.406,10c0,4.644-3.763,8.406-8.406,8.406S1.594,14.644,1.594,10S5.356,1.594,10,1.594S18.406,5.356,18.406,10 M17.521,10c0-4.148-3.373-7.521-7.521-7.521c-4.148,0-7.521,3.374-7.521,7.521c0,4.148,3.374,7.521,7.521,7.521C14.147,17.521,17.521,14.148,17.521,10"></path>
                                         </svg>
+                                        BACK
                                     </a>
                                 </div>
                             </div>
@@ -189,25 +189,17 @@
 
                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
 
+                            <div class=" scroll-box">
+                                <div id="divchatbox">
 
-                            <div class="row">
-                                <div class=" scroll-box col-md-4">
-                                    <div class="col-md-12" id="divchatboxmenu">
-
-                                    </div>
-                                </div>
-                                <div class=" scroll-box col-md-8">
-                                    <div class="col-md-12" id="divchatbox">
-
-                                    </div>
                                 </div>
                             </div>
                             <div>
 
                                 <form>
                                     <div id="msger-inputarea">
-                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" onkeypress="return MessagekeyChat(event);" />
-                                        <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" />
+                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" />
+                                        <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onClick="SendConversation()" />
                                     </div>
                                 </form>
 
@@ -289,14 +281,12 @@
                         html += '<input type="text" hidden value="' + data.result[i].whoSend + '" id="txtWhoSend_' + i + '" />';
                     }
                     $("#txtself").val(data.self);
-                    //$("#lblChatname").text("");
-                    //document.getElementById("txtmessage").style.display = "none";
-                    //document.getElementById("btnchatConversation").style.display = "none";
-                    //var msg = document.getElementById("msger-inputarea");
-                    //msg.style.display = "none";
-                    $("#divchatboxmenu").empty().html(html);
-                    setTimeout(OpenChatPopUp(), 5000);
-                    //Details(0);
+                    $("#lblChatname").text("");
+                    document.getElementById("txtmessage").style.display = "none";
+                    document.getElementById("btnchatConversation").style.display = "none";
+                    var msg = document.getElementById("msger-inputarea");
+                    msg.style.display = "none";
+                    $("#divchatbox").empty().html(html);
                     flag = true;
                 }
             });
@@ -398,6 +388,7 @@
                 });
 
             });
+
             $(".modalMinimize").on("click", function () {
                 if (flagdisplay == false) {
                     OpenChatPopUp();
@@ -420,23 +411,20 @@
                 $(".container").removeClass($apnData);
                 $(this).next('.modalMinimize').find("i").removeClass('fa fa-clone').addClass('fa fa-minus');
             });
-            var modal = document.getElementById("MyChatModel");
-            modal.style.display = "block";
-            $(".modalMinimize").click();
-            OpenChatPopUp();
+            $("#txtmessage").keypress(function () {
+                var keyCode = this.which ? this.which : this.keyCode
+                if (keyCode == 13) {
+                    SendConversation();
+                }
+
+            });
         });
-        function MessagekeyChat(event) {
-            var keyCode = event.which ? event.which : event.keyCode
-            if (keyCode == 13) {
-                SendConversation();
-            }
-        }
         function FetchGroup() {
             flag = false;
-            document.getElementById("txtmessage").style.display = "none";
-            document.getElementById("btnchatConversation").style.display = "none";
+            document.getElementById("txtmessage").style.display = "block";
+            document.getElementById("btnchatConversation").style.display = "block";
             var msg = document.getElementById("msger-inputarea");
-            msg.style.display = "none";
+            msg.style.display = "flex";
             $.ajax({
                 type: "POST",
                 url: "/Account/FetchGroup",
@@ -494,8 +482,8 @@
                     html += '</div>';
                     for (var i = 0; i < data.length; i++) {
                         html += '<div class="row" style="padding: 10px 20px 10px 20px">';
-                        html += '<div class="col-md-6"><div>' + data[i].emailid + '</div></div>';
-                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ',' + Id + ')" /></div></div>';
+                        html += '<div><div class="pull-left user-group">' + data[i].emailid + '</div><div class="pull-left"><input class="del-btn" type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ',' + Id + ')" /></div></div>';
+
                         html += '</div>';
                     }
                     $("#divchatbox").empty().html(html);
@@ -510,11 +498,7 @@
                     url: "/Account/AddUser",
                     data: { GroupId: GroupId, Emailid: $("#txtgroupEmailid").val() },
                     success: function (data) {
-                        if (data == "success") {
-                            FetchUser(GroupId);
-                        } else {
-                            alert(data);
-                        }
+                        FetchUser(GroupId);
                     }
                 });
             } else {
