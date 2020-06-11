@@ -5873,7 +5873,7 @@ namespace Risebird.Web.Controllers
             var file = Request.Form.Files;
 
             var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
-            var interviewId = (fileName.Split("_")[2]).Split(".")[0];
+            var interviewId = fileName.Split("_")[2];
             string uploadedfbaudioFileURL = string.Empty;
             if (file != null)
             {
