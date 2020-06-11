@@ -122,6 +122,9 @@
     </div>
 
 </div>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 <script type="text/javascript">
     $.ajax({
         url: '/IRF/NewChart',
@@ -429,51 +432,99 @@
     });
     $.ajax({
         url: '/IRF/FunnelChart',
-       
-        success: function (chData) {
-            
-            var chart = new CanvasJS.Chart("myFunnelChart", {
-                animationEnabled: true,
-                title: {
-                    text: ""
-                },
-                data: [{
-                    type: "funnel",
-                    reversed: true,
-                    indexLabel: "{label} - {y}",
-                    indexLabelFontSize: 14,
-                    indexLabelFontColor: "grey",
-                    toolTipContent: "<b>{label}</b>: {y} <b>({percentage}%)</b>",
-                    neckWidth: 20,
-                    neckHeight: 0,
-                    valueRepresents: "area",
-                    dataPoints: [
-                        { y: chData.totalCandidates, label: "Total Candidates" },
-                        { y: chData.totalInvites, label: "Total Invites" },
-                        { y: chData.totalConfirmations, label: "Total Confirmations" },
-                        { y: chData.totalCompleted, label: "Completed" },
-                        { y: chData.totalRisebirdSelection, label: "Total Risebird Selections" },
-                        { y: chData.totalApproved, label: "Total Approved" },
-                        { y: chData.totalFinalSelections, label: "Final Selections" },
-                        { y: chData.totalOffered, label: "Total Offers released" },
-                        { y: chData.totalJoined, label: "Total Joined" }
-                    ]
-                }]
-            });
-            calculatePercentage();
-            chart.render();
 
-            function calculatePercentage() {
-                var dataPoint = chart.options.data[0].dataPoints;
-                var total = dataPoint[0].y;
-                for (var i = 0; i < dataPoint.length; i++) {
-                    if (i == 0) {
-                        chart.options.data[0].dataPoints[i].percentage = 100;
-                    } else {
-                        chart.options.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
-                    }
-                }
-            }
+        success: function (chData) {
+            am4core.ready(function () {
+
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+                let chart = am4core.create("myFunnelChart", am4charts.SlicedChart);
+                chart.data = [{
+                    "name": "Total Joined   ",
+                    "value": chData.totalJoined
+                }, {
+                    "name": "Total Offers released",
+                    "value": chData.totalOffered
+                }, {
+                    "name": "Total Final Selections",
+                    "value": chData.totalFinalSelections
+                }, {
+                    "name": "Total Approve",
+                    "value": chData.totalApproved
+                }, {
+                    "name": "Total Risebird Selections",
+                    "value": chData.totalRisebirdSelection
+                }, {
+                    "name": "Completed",
+                    "value": chData.totalCompleted
+                }, {
+                    "name": "Total Confirmations",
+                    "value": chData.totalConfirmations
+                }, {
+                    "name": "Total Invites",
+                    "value": chData.totalInvites
+                }, {
+                    "name": "Total Candidates",
+                    "value": chData.totalCandidates
+                }];
+                chart.logo.disabled = true;
+                let series = chart.series.push(new am4charts.FunnelSeries());
+                series.dataFields.value = "value";
+                series.dataFields.category = "name";
+
+                var fillModifier = new am4core.LinearGradientModifier();
+                fillModifier.brightnesses = [-0.5, 1, -0.5];
+                fillModifier.offsets = [0, 0.5, 1];
+                series.slices.template.fillModifier = fillModifier;
+                series.alignLabels = true;
+
+                series.labels.template.text = "{category}: [bold]{value}[/]";
+
+            });
+            //var chart = new CanvasJS.Chart("myFunnelChart", {
+            //    animationEnabled: true,
+            //    title: {
+            //        text: ""
+            //    },
+            //    data: [{
+            //        type: "funnel",
+            //        reversed: true,
+            //        indexLabel: "{label} - {y}",
+            //        indexLabelFontSize: 14,
+            //        indexLabelFontColor: "grey",
+            //        toolTipContent: "<b>{label}</b>: {y} <b>({percentage}%)</b>",
+            //        neckWidth: 20,
+            //        neckHeight: 0,
+            //        valueRepresents: "area",
+            //        dataPoints: [
+            //            { y: chData.totalCandidates, label: "Total Candidates" },
+            //            { y: chData.totalInvites, label: "Total Invites" },
+            //            { y: chData.totalConfirmations, label: "Total Confirmations" },
+            //            { y: chData.totalCompleted, label: "Completed" },
+            //            { y: chData.totalRisebirdSelection, label: "Total Risebird Selections" },
+            //            { y: chData.totalApproved, label: "Total Approved" },
+            //            { y: chData.totalFinalSelections, label: "Final Selections" },
+            //            { y: chData.totalOffered, label: "Total Offers released" },
+            //            { y: chData.totalJoined, label: "Total Joined" }
+            //        ]
+            //    }]
+            //});
+            //calculatePercentage();
+            //chart.render();
+
+            //function calculatePercentage() {
+            //    var dataPoint = chart.options.data[0].dataPoints;
+            //    var total = dataPoint[0].y;
+            //    for (var i = 0; i < dataPoint.length; i++) {
+            //        if (i == 0) {
+            //            chart.options.data[0].dataPoints[i].percentage = 100;
+            //        } else {
+            //            chart.options.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
+            //        }
+            //    }
+            //}
         }
     });
 
