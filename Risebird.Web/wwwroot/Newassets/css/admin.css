@@ -33,6 +33,79 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
+.select-css {
+    display: block;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 100%;
+    max-width: 100%; /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: #fff;
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat !important;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right .7em top 50%, 0 0 !important;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100% !important;
+}
+    /* Hide arrow icon in IE browsers */
+    .select-css::-ms-expand {
+        display: none;
+    }
+    /* Hover style */
+    .select-css:hover {
+        border-color: #888;
+    }
+    /* Focus style */
+    .select-css:focus {
+        color: #222;
+        outline: none;
+    }
+
+    /* Set options to normal weight */
+    .select-css option {
+        font-weight: normal;
+    }
+
+        .select-css option:hover {
+            background: pink !important;
+        }
+
+select * {
+    background-color: #fff;
+    border: 0 !important;
+    padding: 5px;
+}
+
+select {
+    padding: 10px;
+}
+
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+    background-position: left .7em top 50%, 0 0;
+    padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+    color: graytext;
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat;
+}
+
+    .select-css:disabled:hover, .select-css[aria-disabled=true] {
+        border-color: #aaa;
+    }
+
 
 .w-full{width:100%;}
 
@@ -338,7 +411,8 @@ table {
         border-bottom: 2px rgb(80, 158, 235) solid;
     }
 
-.trash-btn {
+
+.mdc-fab.trash-btn {
     background: #d20505 !important;
 }
 /* Needed */

@@ -84,7 +84,7 @@ height: 55px;
     border-bottom: 2px rgb(80, 158, 235) solid !important;
 }
 .private-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
     background-repeat: no-repeat !important;
     background-size: 12% !important;
     background-position: 8% 50% !important;
@@ -246,9 +246,11 @@ height: 55px;
         display: block;
         opacity: 1;
         visibility: visible;
-        -webkit-transform: translateX(-50%) translateY(0);
-        transform: translateX(-50%) translateY(0);
+        -webkit-transform: translateX(45%) translateY(0);
+        transform: translateX(45%) translateY(0);
     }
+
+
 
 .show .tooltip--left:after {
     top: 5px;
@@ -260,6 +262,26 @@ height: 55px;
 .show .tooltip--left:hover:after {
     -webkit-transform: translateX(-103%) translateY(0);
     transform: translateX(-103%) translateY(0);
+}
+
+.show .tooltip--right:after {
+    top: 5px;
+    left: 100%;
+    -webkit-transform: translateX(45%) translateY(0);
+    transform: translateX(45%) translateY(0);
+}
+.show .tooltip--right:first-child:after {
+    top: 5px;
+    left: 100%;
+    -webkit-transform: translateX(65%) translateY(0)!important;
+    transform: translateX(65%) translateY(0)!important;
+}
+
+.show .tooltip--right:last-child:after {
+    top: 5px;
+    left: 100%;
+    -webkit-transform: translateX(50%) translateY(0) !important;
+    transform: translateX(50%) translateY(0) !important;
 }
 
 
@@ -293,6 +315,9 @@ height: 55px;
     transform: translateX(-50%) translateY(0);
 }
 
+
+
+
 .blk-bg {
     width: 100%;
     height: 100%;
@@ -310,6 +335,20 @@ height: 55px;
     box-shadow: none;
     border-color: #ff5555;
 }
+
+
+[type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+}
+
+    [type="date"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
 
 .dropdown-toggle::after {
     color: rgba(0, 0, 0, 0.29);
@@ -347,7 +386,7 @@ textarea::-webkit-scrollbar-thumb {
         background-position: 45%;
         z-index: 1000;
     }
-        .pagination-container > ul > li {
+.pagination-container > ul > li {
     padding: 5px 12px !important;
     border-radius: 21px !important;
     border: 1px solid blanchedalmond !important;
@@ -358,18 +397,108 @@ textarea::-webkit-scrollbar-thumb {
 .pagination-container {
     float: right !important;
 }
+
+.br-bm {
+    border-bottom: 1px solid #e9ecef
+}
+.w-color{color:#fff;}
+.lblErrorMsg{color:red;}
+
+.interest-sent {
+    border: none;
+    background-color: yellow;
+    font-weight: bold;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+}
+.interest-accepted {
+    border: none;
+    background-color: limegreen;
+    font-weight: bold;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+}
+.show-interest {
+    border: none;
+    background-color: white;
+    font-weight: bold;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+}
+.share {
+    border: none;
+    background-color: white;
+    font-weight: bold;
+    font-size: 13px !important;
+    padding: 0px 0px;
+    height: 30px;
+}
+
+.scoreChart {
+    height: 200px;
+    width: 100%;
+}
+.w-full {
+    width: 100%!important;
+}
+.hang-btn {
+    margin: 10px auto;
+    display: block;
+    background: #ff253a !important;
+}
+
+.reset-filter {
+    margin-top: 30px;
+    float: right;
+    margin-left: 5px;
+    font-size: 12px;
+}
+.apply-filter {
+    margin-top: 30px;
+    float: right;
+    font-size: 12px;
+}
 .mn-section {
     position: absolute;
     width: calc(100% - 30px);
 }
 .comment-area{width:100%;float:left;}
 
- .comment-area .talk-bubble {
-        width: 89%;
-        margin: 0;
-        float:left;
-        padding: 0;
-    }
+.thumbnailImage {
+    height: 179px;
+    position: absolute;
+    z-index: auto;
+}
+.thumb-height {
+    height: 179px !important;
+}
+
+.video-thumb {
+    height: 179px !important;
+    background: black;
+    width: 100%
+}
+
+.video-view .fa {
+    font-size: 14px;
+    color: #888888;
+}
+
+.video-view span {
+    color: #606060;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.comment-area .talk-bubble {
+    width: 89%;
+    margin: 0;
+    float: left;
+    padding: 0;
+}
 .video-width {
     background: black !important;
     width: 100%;
@@ -622,7 +751,9 @@ textarea::-webkit-scrollbar-thumb {
 .mt-20 {
     margin-top: 20px;
 }
-
+.p10 {
+    padding: 10px
+}
 .modal-bg {
     display: none;
     position: fixed; 
@@ -639,6 +770,12 @@ textarea::-webkit-scrollbar-thumb {
 
 .modal-content .modal-body {
     padding-top: 10px;
+}
+
+.modal-footer {
+    padding: 5px;
+    background-color: #fff;
+    color: white;
 }
 
 .modal .form-group {

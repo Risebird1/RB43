@@ -1207,9 +1207,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRFId, JDTiltle from IRF where IsDeleted = @IsDeleted and id = @id";
+                var query = "Select IRFId, JDTiltle from IRF where id = @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IsDeleted", 0);
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1962,5 +1961,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@InterviewId", interviewId);//@IrfId
+                dynamicParameters.Add("@FeedbackAudioLink", feedbackAudioLink);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_SaveFeedbackAudio", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
     }
 }

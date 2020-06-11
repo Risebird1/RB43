@@ -2197,8 +2197,8 @@ namespace Risebird.Web.Controllers
                         {
 
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
-                            candidateList.Where(x=>x.Status!=null).ToList().ForEach(x =>  x.StatusValue = ((CandidateStatus)x.Status).GetDescription());
-
+                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription() );
+                            candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); });
                         }
 
                         if (TempData["SuccessErrorMessageCandidate"] != null)

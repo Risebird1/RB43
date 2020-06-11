@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html>
 <head>
 
@@ -12,10 +15,26 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <!-- CSS Files -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <!-- CSS Files -->
     <link href="~/Newassets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Newassets/css/chat.css" rel="stylesheet" />
-
     <link href="~/Newassets/css/now-ui-dashboard.css?v=1.4.1" rel="stylesheet" />
+    <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="~/Newassets/css/interview.css" rel="stylesheet" />
+    <link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
+    <link href="~/Newassets/css/irf.css" rel="stylesheet" />
+    <link href="~/Newassets/css/risetube.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+    <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 
     <script src="~/Newassets/js/core/jquery.min.js"></script>
     <script src="~/Newassets/js/core/popper.min.js"></script>
@@ -23,6 +42,18 @@
     <script src="~/Newassets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <script src="~/Newassets/js/plugins/moment.min.js"></script>
 
+    <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/assets/Validations/jquery.validate.min.js"></script>
+    <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="~/js/canvasjs.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/tooltip.js"></script>
 
 
 
@@ -109,49 +140,68 @@
                         <h5 class="modal-title" style="color:#fff"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" /></svg> Chat <input type="text" value="" hidden id="txtself" /></h5>
                     </div>
                     <div>
-                        <button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>
+                        <button class="close modalMinimize" title="Minimize"> <i class='fa fa-minus'></i> </button>
                     </div>
-                    <div>
-                        <span onclick="closeChatPopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
-                    </div>
+                    @*<div>
+                            <span onclick="closeChatPopUp()" style="cursor:pointer;" title="Close" class="close" id="SharePopUp">&times;</span>
+                        </div>*@
 
                 </div>
                 <div class="modal-body" style="padding: 2px 16px;">
                     <div>
 
-                        <div class="pull-left"> <h5><lable id="lblChatname"></lable></h5></div>
-                        <div class="pull-right">
-                            <a class="back" onclick="CreateGroup()">Create/Edit Group</a>
-                            <div class="desktop">   <a class="back" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
+                        <div class="w-full"> <h5><lable id="lblChatname"></lable></h5></div>
+                        <div class="w-full">
 
-                            <div class="mobile">
-                                <a class="back" onclick="OpenChatPopUp()">
-                                    <svg class="svg-icon" width="24" height="24" viewBox="0 0 20 20">
-                                        <path d="M11.739,13.962c-0.087,0.086-0.199,0.131-0.312,0.131c-0.112,0-0.226-0.045-0.312-0.131l-3.738-3.736c-0.173-0.173-0.173-0.454,0-0.626l3.559-3.562c0.173-0.175,0.454-0.173,0.626,0c0.173,0.172,0.173,0.451,0,0.624l-3.248,3.25l3.425,3.426C11.911,13.511,11.911,13.789,11.739,13.962 M18.406,10c0,4.644-3.763,8.406-8.406,8.406S1.594,14.644,1.594,10S5.356,1.594,10,1.594S18.406,5.356,18.406,10 M17.521,10c0-4.148-3.373-7.521-7.521-7.521c-4.148,0-7.521,3.374-7.521,7.521c0,4.148,3.374,7.521,7.521,7.521C14.147,17.521,17.521,14.148,17.521,10"></path>
-                                    </svg>
-                                </a>
-                            </div>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
+                                {
+                                    var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
+                                    var email = emailid.Trim('"');
+                                    @if (email.ToUpper() == "TALENT@RISEBIRD.IO")
+                                    {
+                                        <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" onclick="FetchGroup()">Create/Edit Group</a>
+                                    }
+                                }
+                            }
 
+                            @*<div class="pull-right">
+
+                                    <div class="desktop">   <a class="back text-right" onclick="OpenChatPopUp()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" /></svg> Back to list</a></div>
+
+                                    <div class="mobile">
+                                        <a class="back" onclick="OpenChatPopUp()">
+                                            <svg class="svg-icon" width="24" height="24" viewBox="0 0 20 20">
+                                                <path d="M11.739,13.962c-0.087,0.086-0.199,0.131-0.312,0.131c-0.112,0-0.226-0.045-0.312-0.131l-3.738-3.736c-0.173-0.173-0.173-0.454,0-0.626l3.559-3.562c0.173-0.175,0.454-0.173,0.626,0c0.173,0.172,0.173,0.451,0,0.624l-3.248,3.25l3.425,3.426C11.911,13.511,11.911,13.789,11.739,13.962 M18.406,10c0,4.644-3.763,8.406-8.406,8.406S1.594,14.644,1.594,10S5.356,1.594,10,1.594S18.406,5.356,18.406,10 M17.521,10c0-4.148-3.373-7.521-7.521-7.521c-4.148,0-7.521,3.374-7.521,7.521c0,4.148,3.374,7.521,7.521,7.521C14.147,17.521,17.521,14.148,17.521,10"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>*@
 
                         </div>
                         <div class="clearfix"></div>
 
                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
 
-                            <div class=" scroll-box">
-                                <div id="divgroup" style="display:none">
-                                    <inupt type="text" id="txtgroup" placeholder="Group Name" />
-                                    <input type="button" id="btngroup" value="Add Group" />
-                                </div>
-                                <div id="divchatbox">
 
+                            <div class="row">
+                                <div class=" scroll-box col-md-4">
+                                    <div class="col-md-12" id="divchatboxmenu">
+
+                                    </div>
+                                </div>
+                                <div class=" scroll-box col-md-8">
+                                    <div class="col-md-12" id="divchatbox">
+
+                                    </div>
                                 </div>
                             </div>
                             <div>
 
                                 <form>
                                     <div id="msger-inputarea">
-                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" />
+                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" onkeypress="return MessagekeyChat(event);" />
                                         <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" />
                                     </div>
                                 </form>
@@ -234,12 +284,14 @@
                         html += '<input type="text" hidden value="' + data.result[i].whoSend + '" id="txtWhoSend_' + i + '" />';
                     }
                     $("#txtself").val(data.self);
-                    $("#lblChatname").text("");
-                    document.getElementById("txtmessage").style.display = "none";
-                    document.getElementById("btnchatConversation").style.display = "none";
-                    var msg = document.getElementById("msger-inputarea");
-                    msg.style.display = "none";
-                    $("#divchatbox").empty().html(html);
+                    //$("#lblChatname").text("");
+                    //document.getElementById("txtmessage").style.display = "none";
+                    //document.getElementById("btnchatConversation").style.display = "none";
+                    //var msg = document.getElementById("msger-inputarea");
+                    //msg.style.display = "none";
+                    $("#divchatboxmenu").empty().html(html);
+                    setTimeout(OpenChatPopUp(), 5000);
+                    //Details(0);
                     flag = true;
                 }
             });
@@ -260,6 +312,8 @@
             flag = true;
             document.getElementById("txtmessage").style.display = "block";
             document.getElementById("btnchatConversation").style.display = "block";
+            var msg = document.getElementById("msger-inputarea");
+            msg.style.display = "flex";
             ChatConversation(Sender);
         }
         function ChatConversation(Sender) {
@@ -271,7 +325,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Account/GetConversation",
-                data: { contact: Sender, userid: $("#txtself").val(),WhoSend:whosend },
+                data: { contact: Sender, userid: $("#txtself").val(), WhoSend: whosend },
                 success: function (data) {
                     var html = '';
                     var countvalue = 0;
@@ -284,13 +338,18 @@
                             html += '<div class="col-md-6"></div><div class="col-md-6"><div class="msg-bubble-right fadeInUp">' + data[i].message + '</div></div>';
                         }
                         html += '</div>';
-
                     }
+
                     var createheader = '';
-                    if (data[countvalue].isOnline == 1) {
-                        createheader += Sender + ' (Online)';
-                    } else {
-                        createheader += Sender + ' (Offline)';
+                    if (data.length > 0) {
+                        if (data[countvalue].isOnline == 1) {
+                            createheader += Sender + ' (Online)';
+                        } else {
+                            createheader += Sender + ' (Offline)';
+                        }
+                    }
+                    else {
+                        createheader += Sender;
                     }
                     $("#divchatbox").empty().html(html);
                     $("#lblChatname").text(createheader);
@@ -334,7 +393,6 @@
                 });
 
             });
-
             $(".modalMinimize").on("click", function () {
                 if (flagdisplay == false) {
                     OpenChatPopUp();
@@ -357,18 +415,116 @@
                 $(".container").removeClass($apnData);
                 $(this).next('.modalMinimize').find("i").removeClass('fa fa-clone').addClass('fa fa-minus');
             });
-            $("#txtmessage").keypress(function () {
-                var keyCode = this.which ? this.which : this.keyCode
-                if (keyCode == 13) {
-                    SendConversation();
-                }
-
-            });
+            var modal = document.getElementById("MyChatModel");
+            modal.style.display = "block";
+            $(".modalMinimize").click();
+            OpenChatPopUp();
         });
-        function CreateGroup() {
-            //fetch group list
-            //Create a html for this page
-            alert("List");
+        function MessagekeyChat(event) {
+            var keyCode = event.which ? event.which : event.keyCode
+            if (keyCode == 13) {
+                SendConversation();
+            }
+        }
+        function FetchGroup() {
+            flag = false;
+            document.getElementById("txtmessage").style.display = "none";
+            document.getElementById("btnchatConversation").style.display = "none";
+            var msg = document.getElementById("msger-inputarea");
+            msg.style.display = "none";
+            $.ajax({
+                type: "POST",
+                url: "/Account/FetchGroup",
+                success: function (data) {
+                    var html = '';
+                    html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                    html += '<div><div class="pull-left "><input placeholder="Enter name of group" type="text" id="txtgroupname" class="input-box" /></div><div class="pull-left mdc-button mdc-button--raised mdc-ripple-upgraded add-btn-m"><input  class="add-btn" type="button" value="Add Group" onclick="AddGroup()" /></div></div>';
+
+                    html += '</div>';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                        html += '<div><div class="pull-left "><a class="user-group" onclick="FetchUser(' + data[i].id + ')">' + data[i].groupName + '</a></div><div class="pull-left"><input class="del-btn" type="button" value="Delete" onclick="DeleteGroup(' + data[i].id + ')" /></div></div>';
+
+                        html += '</div>';
+                    }
+                    $("#divchatbox").empty().html(html);
+                    $("#lblChatname").text('');
+                }
+            });
+        }
+        function AddGroup() {
+            if ($("#txtgroupname").val().trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/AddGroup",
+                    data: { GroupName: $("#txtgroupname").val() },
+                    success: function (data) {
+                        FetchGroup();
+                    }
+                });
+            } else {
+                alert("Please Enter GroupName");
+            }
+        }
+        function DeleteGroup(Id) {
+            $.ajax({
+                type: "POST",
+                url: "/Account/DeleteGroup",
+                data: { GroupId: Id },
+                success: function (data) {
+                    FetchGroup();
+                }
+            });
+        }
+        function FetchUser(Id) {
+            $.ajax({
+                type: "POST",
+                url: "/Account/FetchUser",
+                data: { GroupId: Id },
+                success: function (data) {
+                    var html = '';
+                    html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                    html += '<div><div class="pull-left "><input placeholder="Enter name of user" type="text" id="txtgroupEmailid" class="input-box" /></div><div class="pull-left mdc-button mdc-button--raised mdc-ripple-upgraded add-btn-m "><input class="add-btn" type="button" value="Add User" onclick="AddUser(' + Id + ')" /></div></div>';
+
+                    html += '</div>';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                        html += '<div class="col-md-6"><div>' + data[i].emailid + '</div></div>';
+                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ',' + Id + ')" /></div></div>';
+                        html += '</div>';
+                    }
+                    $("#divchatbox").empty().html(html);
+                    $("#lblChatname").text('');
+                }
+            });
+        }
+        function AddUser(GroupId) {
+            if ($("#txtgroupEmailid").val().trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/AddUser",
+                    data: { GroupId: GroupId, Emailid: $("#txtgroupEmailid").val() },
+                    success: function (data) {
+                        if (data == "success") {
+                            FetchUser(GroupId);
+                        } else {
+                            alert(data);
+                        }
+                    }
+                });
+            } else {
+                alert("Please Enter Emailid");
+            }
+        }
+        function DeleteUser(Id, GroupId) {
+            $.ajax({
+                type: "POST",
+                url: "/Account/DeleteUser",
+                data: { Userid: Id },
+                success: function (data) {
+                    FetchUser(GroupId);
+                }
+            });
         }
     </script>
 

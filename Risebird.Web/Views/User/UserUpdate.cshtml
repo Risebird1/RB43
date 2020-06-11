@@ -59,7 +59,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.UserProfiles, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.IdProfile, Model.UserProfiles, "Select Profile", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.IdProfile, "", new { @class = "text-danger" })
 
                                         </div>
