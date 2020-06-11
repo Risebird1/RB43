@@ -95,7 +95,7 @@
                                                 <th>Invite Confirmation</th>
                                                 <th>Joinability Score</th>
                                                 <th>Selectability Score</th>
-                                                <th>Status</th>
+                                                <th>Schedule Status</th>
                                                 <th> Actions </th>
                                                 <th style="text-align:center">Call</th>
                                                 <th>Type</th>
@@ -109,6 +109,12 @@
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
+                                                <th>Confirmation Status</th>
+                                                <th>Video Link</th>
+                                                <th>Meeting Status</th>
+                                                <th>Interview Status</th>
+                                                <th>Interview Date</th>
+
 
 
 
@@ -124,7 +130,7 @@
                                                 <th>Invite Confirmation</th>
                                                 <th>Joinability Score</th>
                                                 <th>Selectability Score</th>
-                                                <th>Status</th>
+                                                <th>Schedule Status</th>
                                                 <th> Actions </th>
                                                 <th style="text-align:center">Call</th>
                                                 <th>Type</th>
@@ -133,11 +139,17 @@
                                                 <th>Work Auth</th>
                                                 <th>Current Location</th>
                                                 <th>Current Employer</th>
-                                              
+
                                                 <th>Total Experience</th>
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
+                                                <th>Confirmation Status</th>
+                                                <th>Video Link</th>
+                                                <th>Meeting Status</th>
+                                                <th>Interview Status</th>
+                                                <th>Interview Date</th>
+
 
 
 
@@ -287,7 +299,46 @@
                                                 <td>@item.CurrentSalary</td>
                                                 <td>@item.ExpectedSalary</td>
                                                 <td>@item.Notice</td>
-
+                                                @if (item.confirmationStatusDesc != "0")
+                                                {
+                                                    <td>@item.confirmationStatusDesc</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                @if (item.VideoLink != null && item.VideoLink != "")
+                                                {
+                                                    <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Video</td>
+                                                }
+                                                @if (item.MeetingStatusDesc != "0")
+                                                {
+                                                    <td>@item.MeetingStatusDesc</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                @if (item.InterviewStatusDesc != "0")
+                                                {
+                                                    <td>@item.InterviewStatusDesc</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                @if (item.interviewDate != null)
+                                                {
+                                                    <td>@item.interviewDate</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
 
                                             </tr>
                                             }

@@ -9,7 +9,44 @@ body {
     border-radius: 5px;
 }
 
+#startRecButton {
+    background: url("../../img/play-recrd.png") no-repeat;
+    text-indent: -999px;
+    background-size: 60%;
+    border: 0;
+    height: 60px;
+    cursor: pointer;
+    background-position: 50% 0%;
+}
 
+
+#stopRecButton {
+    background: url("../../img/stop-recording.png") no-repeat;
+    text-indent: -999px;
+    background-size: 65%;
+    border: 0;
+    height: 60px;
+    cursor: pointer;
+    background-position: 50% 0%;
+}
+
+#cancelRecButton {
+    background: url("../../img/cancel-record.png") no-repeat;
+    text-indent: -999px;
+    background-size: 60%;
+    border: 0;cursor:pointer;
+  
+    height: 60px;
+    background-position: 50% 0%;
+}
+.record-txt {
+    display: block;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 500;
+    line-height: 16px;
+    padding-bottom:10px;
+}
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
