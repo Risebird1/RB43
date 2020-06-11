@@ -561,7 +561,7 @@ table {
     @media screen and (max-width:640px) {
 
         .cmt-w, .talk-bubble {
-            width: 100%;
+            width: 98%;
         }
 
         .upload a {

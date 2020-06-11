@@ -18,6 +18,9 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <!-- CSS Files -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <!-- CSS Files -->
     <link href="~/Newassets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Newassets/css/chat.css" rel="stylesheet" />
     <link href="~/Newassets/css/now-ui-dashboard.css?v=1.4.1" rel="stylesheet" />
@@ -28,11 +31,13 @@
     <link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
     <link href="~/Newassets/css/irf.css" rel="stylesheet" />
     <link href="~/Newassets/css/risetube.css" rel="stylesheet" />
-
+    <link href="~/Newassets/css/interviewer.css" rel="stylesheet" />
+    <link href="~/Newassets/css/account.css" rel="stylesheet" />
+    <link href="~/Newassets/css/project.css" rel="stylesheet" />
+    <link href="https:/cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
     <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 
@@ -50,10 +55,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
     <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="~/js/canvasjs.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/tooltip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+
 
 
 
@@ -185,13 +194,14 @@
                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
 
 
-                            <div class="row">
-                                <div class=" scroll-box col-md-4">
-                                    <div class="col-md-12" id="divchatboxmenu">
+                            <div class="row" style="padding: 10px 20px 10px 20px">
+                                <div class=" col-md-5">
+                                    <div class="scroll-box-wrap">
+                                        <div class="col-md-12 scroll-box-list" id="divchatboxmenu"></div>
 
                                     </div>
                                 </div>
-                                <div class=" scroll-box col-md-8">
+                                <div class=" scroll-box col-md-7">
                                     <div class="col-md-12" id="divchatbox">
 
                                     </div>
@@ -441,7 +451,7 @@
                 url: "/Account/FetchGroup",
                 success: function (data) {
                     var html = '';
-                    html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                    html += '<div class="row" style="padding: 10px 10px 10px 10px">';
                     html += '<div><div class="pull-left "><input placeholder="Enter name of group" type="text" id="txtgroupname" class="input-box" /></div><div class="pull-left mdc-button mdc-button--raised mdc-ripple-upgraded add-btn-m"><input  class="add-btn" type="button" value="Add Group" onclick="AddGroup()" /></div></div>';
 
                     html += '</div>';
@@ -487,15 +497,19 @@
                 data: { GroupId: Id },
                 success: function (data) {
                     var html = '';
-                    html += '<div class="row" style="padding: 10px 20px 10px 20px">';
+                    html += '<div class="row" style="padding: 10px 20px 10px 20px;" >';
                     html += '<div><div class="pull-left "><input placeholder="Enter name of user" type="text" id="txtgroupEmailid" class="input-box" /></div><div class="pull-left mdc-button mdc-button--raised mdc-ripple-upgraded add-btn-m "><input class="add-btn" type="button" value="Add User" onclick="AddUser(' + Id + ')" /></div></div>';
 
                     html += '</div>';
                     for (var i = 0; i < data.length; i++) {
-                        html += '<div class="row" style="padding: 10px 20px 10px 20px">';
-                        html += '<div class="col-md-6"><div>' + data[i].emailid + '</div></div>';
-                        html += '<div class="col-md-6"><div><input type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ',' + Id + ')" /></div></div>';
+
+                        html += '<div class="row" style="padding:10px 20px;">';
+                        html += '<div><div class="pull-left user-group">' + data[i].emailid + '</div><div class="pull-left"><input class="del-btn" type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ',' + Id + ')" /></div></div>';
+
                         html += '</div>';
+
+
+                        
                     }
                     $("#divchatbox").empty().html(html);
                     $("#lblChatname").text('');
