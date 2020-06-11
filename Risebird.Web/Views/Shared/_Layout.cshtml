@@ -51,7 +51,7 @@
     <script src="~/assets/Validations/jquery.validate.min.js"></script>
     <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
-    @*<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>*@
+   <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
     <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="~/js/canvasjs.min.js"></script>
@@ -189,38 +189,43 @@
 
                                     </div>
                                 </div>
-                                <div class=" scroll-box col-md-7">
-                                    <div class="col-md-12" id="divchatbox">
+                                <div class="col-md-7 nopad-7">
+                                    <div class=" scroll-box">
+                                        <div class="col-md-12" id="divchatbox">
+
+                                        </div>
+                                    </div>
+
+
+                                    <div>
+
+                                        <form>
+                                            <div id="msger-inputarea">
+                                                <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" onkeypress="return MessagekeyChat(event);" />
+                                                <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" />
+                                            </div>
+                                        </form>
+
+
+
+
+
+
+
+                                        <!--    <div class="col-md-9" style="padding-right:0px">
+             <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
+         </div>
+         <div class="col-md-3" style="padding-left:0px">
+             <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
+         </div>
+        -->
+
+
 
                                     </div>
                                 </div>
                             </div>
-                            <div>
-
-                                <form>
-                                    <div id="msger-inputarea">
-                                        <input type="text" id="txtmessage" class="form-control msger-input" placeholder="Enter Your Message" style="display:none" onkeypress="return MessagekeyChat(event);" />
-                                        <input type="button" id="btnchatConversation" class="msger-send-btn" style="display:none" value="send" onclick="SendConversation()" />
-                                    </div>
-                                </form>
-
-
-
-
-
-
-
-                                <!--    <div class="col-md-9" style="padding-right:0px">
-                                     <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
-                                 </div>
-                                 <div class="col-md-3" style="padding-left:0px">
-                                     <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
-                                 </div>
-                                -->
-
-
-
-                            </div>
+                            
                         </div>
                     </div>
 

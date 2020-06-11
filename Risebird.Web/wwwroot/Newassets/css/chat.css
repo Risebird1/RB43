@@ -77,7 +77,7 @@ button:focus {
     padding: 10px;
     border-top: 2px #ddd solid;
     background: #eee;
-    width: 100%
+    width: calc(100% - 6px);
 }
 
     #msger-inputarea input.form-control:focus {
@@ -147,6 +147,7 @@ button:focus {
     right: 10px;
     top: 15px;
 }
+
 .input-box {
     display: block;
     width: 230px;
@@ -278,9 +279,10 @@ button:focus {
     background: #9c9fa2;
     border-radius: 10px;
 }
+.nopad-7{padding:0;}
 
 .scroll-box-list {
-    height: 250px;
+    height: 260px;
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
@@ -289,7 +291,7 @@ button:focus {
 }
 
 .scroll-box-wrap {
-    padding: 10px 10px;
+    padding: 10px 0px;
     line-height: 40px;
     background: #e8e7e7;
 }
@@ -312,7 +314,7 @@ button:focus {
 
 
 .scroll-box {
-    height: 250px;
+    height: 225px;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0px;
@@ -374,6 +376,10 @@ button:focus {
         max-width: 600px !important;
     }
     .input-box{width:100%;}
+
+    .nopad-7 {
+        padding: 0 4px!important;
+    }
 }
 
 @media screen and (max-width: 500px) {
