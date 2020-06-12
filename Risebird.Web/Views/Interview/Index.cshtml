@@ -90,15 +90,6 @@
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
 
-                                
-                                                <button type="button" id="broadcastButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to broadcast a message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
-                                                </button>
-
-
-                                                @*<button type="button" onclick="OpenBroadcastModal()" class="btn btn-primary"></button>*@
-
-
 
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
@@ -591,43 +582,7 @@
                         </div>
                     </div>
 
-                    <div id="broadcastModal" class="modal modal-bg">
-                        <!-- Modal content -->
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                    <h5 class="modal-title" id="broadcastHeading">Broadcast</h5>
-                                    <span class="close" id="broadcastPopUp" style="cursor:pointer;">&times;</span>
-                                </div>
-                                <div class="modal-body">
-                                    <form method="post" action="@Url.Action("Broadcast","Interview")">
-                                        <p>Please select from the following:</p>
-                                        <input type="radio" for="BroadcastReciever" id="radOne" name="receivers" value="Interviewer">@*@Risebird.Entities.Enum.BroadcastOptions.Interviewer*@
-                                        <label for="radOne">All Interviewers</label><br>
-                                        <input type="radio" for="BroadcastReciever" id="radTwo" name="receivers" value="Candidate">
-                                        <label for="radTwo">All Candidates</label><br>
-                                        <input type="radio" for="BroadcastReciever" id="radThree" name="receivers" value="Client">
-                                        <label for="radThree">All Clients</label>
-
-                                        <br />
-
-                                        <label for="Subject">Subject</label>
-                                        <input type="text" for="Subject" />
-
-                                        <br />
-
-                                        <label for="Message">Message</label>
-                                        <textarea for="Message" />
-
-                                        <button type="Submit" class="btn btn-primary">Send</button>
-                                    </form>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
+                    
                     <!-- end row -->
                 </div>
 
@@ -877,12 +832,6 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
-    var spanbroadcast = document.getElementById("broadcastPopUp");
-    // When the user clicks on <span> (x), close the modal
-    spanbroadcast.onclick = function () {
-        var modal = document.getElementById("broadcastModal");
-        modal.style.display = "none";
-    }
     $(document).ready(function () {
         $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
             // Set up the Twilio Client Device with the token
@@ -940,19 +889,6 @@
 
 </script>
 
-<script type="text/javascript">
-   
-    function OpenBroadcastModal() {
-        debugger;
-        // Get the modal
-        var modal = document.getElementById("broadcastModal");
-        
-        //// When the user clicks the button, open the modal
-        modal.style.display = "block";
-        return;
 
-    }
-
-</script>
 
 
