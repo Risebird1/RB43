@@ -278,12 +278,17 @@
                     modal.style.display = "block";
                     var html = '';
                     for (var i = 0; i < data.result.length; i++) {
+                        html += '<p>';
                         if (data.result[i].isOnline == 1) {
-                            html += ' <p><a onclick="Details(' + i + ')" style="cursor:pointer"><span class="dot" style="background-color:green;"></span>  ' + data.result[i].sender + '</a></p>';
+                            html += ' <a onclick="Details(' + i + ')" style="cursor:pointer"><span class="dot" style="background-color:green;"></span>  ' + data.result[i].sender + '</a>';
                         }
                         else {
-                            html += ' <p><a onclick="" style="cursor:pointer"><span class="dot" ></span>  ' + data.result[i].sender + '</a></p>';
+                            html += ' <a onclick="" style="cursor:pointer"><span class="dot" ></span>  ' + data.result[i].sender + '</a>';
                         }
+                        if (data.result[i].status == "Sent") {
+                            html += ' <span class="fa-amazon""></span>';
+                        }
+                        html += '</p>';
                         html += '<input type="text" hidden value="' + data.result[i].sender + '" id="txthiddenSorce_' + i + '" />';
                         html += '<input type="text" hidden value="' + data.result[i].whoSend + '" id="txtWhoSend_' + i + '" />';
                     }

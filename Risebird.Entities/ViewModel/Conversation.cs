@@ -6,15 +6,6 @@ namespace Risebird.Entities.ViewModel
 {
     public class Conversation
     {
-        public Conversation()
-        {
-            Status = messageStatus.Sent;
-        }
-        public enum messageStatus
-        {
-            Sent,
-            Delivered
-        }
         public int id { get; set; }
         public int Senderid { get; set; }
         public int Reciverid { get; set; }
@@ -22,7 +13,7 @@ namespace Risebird.Entities.ViewModel
         public string Reciver { get; set; }
 
         public string message { get; set; }
-        public messageStatus Status { get; set; }
+        public string Status { get; set; }
         public DateTime Created_at { get; set; }
         public string MessageInfo { get; set; }
         public int IsOnline { get; set; }
