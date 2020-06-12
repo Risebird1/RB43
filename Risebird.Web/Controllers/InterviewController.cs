@@ -5885,6 +5885,44 @@ namespace Risebird.Web.Controllers
             _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL);
             return uploadedfbaudioFileURL;
         }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Broadcast(BroadcastModel model)
+        {
+
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
+                    {
+
+                        var result = _meetingService.Broadcast(model);
+                        TempData["SuccessErrorMessageInterview"] = result;
+                        return RedirectToAction("Index");
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Broadcast failed.";
+                return RedirectToAction("Index");
+            }
+        }
     }
 
 }

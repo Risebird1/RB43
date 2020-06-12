@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
@@ -89,7 +90,13 @@
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
 
+                                
+                                                <button type="button" id="broadcastButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to broadcast a message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
+                                                </button>
 
+
+                                                @*<button type="button" onclick="OpenBroadcastModal()" class="btn btn-primary"></button>*@
 
 
 
@@ -476,51 +483,51 @@
                                                         {
                                                             <td>
 
-                                                            <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
+                                                                <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No document</td>
+                                                        }
+                                                        <td>
+                                                            @item.NextLevelApprovalStat
                                                         </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No document</td>
-                                                    }
-                                                    <td>
-                                                        @item.NextLevelApprovalStat
-                                                    </td>
-                                                    <td>
-                                                        <div class="talk-bubble tri-right border-bubble right-in cmt-w">
-                                                            <div class="talktext">
-                                                                <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
+                                                        <td>
+                                                            <div class="talk-bubble tri-right border-bubble right-in cmt-w">
+                                                                <div class="talktext">
+                                                                    <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                   
+                                                        </td>
 
 
-                                                    <td>
-                                                        @item.FinalSelectionStat
-                                                    </td>
-                                                    <td>
-                                                        <div class="talk-bubble tri-right border-bubble right-in cmt-w">
-                                                            <div class="talktext">
-                                                                <textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea>
+
+                                                        <td>
+                                                            @item.FinalSelectionStat
+                                                        </td>
+                                                        <td>
+                                                            <div class="talk-bubble tri-right border-bubble right-in cmt-w">
+                                                                <div class="talktext">
+                                                                    <textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td></td>
-                                                   
-                                                    <td class="text-right action">
+                                                        </td>
+                                                        <td></td>
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                            <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                        </button>
-                                                   
-                                                        <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Comment">
-                                                            <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR and QC Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3zm-4 8H5V9h8v2zm0-3H5V6h8v2z" /></svg></span>
-                                                        </button>
+                                                        <td class="text-right action">
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                        </button>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            </button>
+
+                                                            <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Comment">
+                                                                <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR and QC Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3zm-4 8H5V9h8v2zm0-3H5V6h8v2z" /></svg></span>
+                                                            </button>
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                            </button>
 
                                                             @if (item.IsBiometricEnabled)
                                                             {
@@ -579,6 +586,44 @@
         color: white;">
 
                                 </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div id="broadcastModal" class="modal modal-bg">
+                        <!-- Modal content -->
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                    <h5 class="modal-title" id="broadcastHeading">Broadcast</h5>
+                                    <span class="close" id="broadcastPopUp" style="cursor:pointer;">&times;</span>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post" action="@Url.Action("Broadcast","Interview")">
+                                        <p>Please select from the following:</p>
+                                        <input type="radio" for="BroadcastReciever" id="radOne" name="receivers" value="Interviewer">@*@Risebird.Entities.Enum.BroadcastOptions.Interviewer*@
+                                        <label for="radOne">All Interviewers</label><br>
+                                        <input type="radio" for="BroadcastReciever" id="radTwo" name="receivers" value="Candidate">
+                                        <label for="radTwo">All Candidates</label><br>
+                                        <input type="radio" for="BroadcastReciever" id="radThree" name="receivers" value="Client">
+                                        <label for="radThree">All Clients</label>
+
+                                        <br />
+
+                                        <label for="Subject">Subject</label>
+                                        <input type="text" for="Subject" />
+
+                                        <br />
+
+                                        <label for="Message">Message</label>
+                                        <textarea for="Message" />
+
+                                        <button type="Submit" class="btn btn-primary">Send</button>
+                                    </form>
+
+                                </div>
+
                             </div>
 
                         </div>
@@ -769,7 +814,7 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-         
+
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
@@ -832,6 +877,12 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
+    var spanbroadcast = document.getElementById("broadcastPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanbroadcast.onclick = function () {
+        var modal = document.getElementById("broadcastModal");
+        modal.style.display = "none";
+    }
     $(document).ready(function () {
         $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
             // Set up the Twilio Client Device with the token
@@ -878,6 +929,7 @@
         var appendText = "Calling... " + "<b>" + candidate + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
         callCandidate(candidateObj.MobileNumber);
+        //callCandidate('+918888571923');
     }
     function closeCallPopUp() {
         hangUp();
@@ -888,6 +940,19 @@
 
 </script>
 
+<script type="text/javascript">
+   
+    function OpenBroadcastModal() {
+        debugger;
+        // Get the modal
+        var modal = document.getElementById("broadcastModal");
+        
+        //// When the user clicks the button, open the modal
+        modal.style.display = "block";
+        return;
 
+    }
+
+</script>
 
 
