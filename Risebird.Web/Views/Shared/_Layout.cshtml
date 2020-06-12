@@ -51,7 +51,7 @@
     <script src="~/assets/Validations/jquery.validate.min.js"></script>
     <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
-   <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+    <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
     <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="~/js/canvasjs.min.js"></script>
@@ -213,19 +213,19 @@
 
 
                                         <!--    <div class="col-md-9" style="padding-right:0px">
-             <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
-         </div>
-         <div class="col-md-3" style="padding-left:0px">
-             <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
-         </div>
-        -->
+                                             <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
+                                         </div>
+                                         <div class="col-md-3" style="padding-left:0px">
+                                             <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
+                                         </div>
+                                        -->
 
 
 
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
 
@@ -278,12 +278,17 @@
                     modal.style.display = "block";
                     var html = '';
                     for (var i = 0; i < data.result.length; i++) {
+                        html += '<p>';
                         if (data.result[i].isOnline == 1) {
-                            html += ' <p><a onclick="Details(' + i + ')" style="cursor:pointer"><span class="dot" style="background-color:green;"></span>  ' + data.result[i].sender + '</a></p>';
+                            html += ' <a onclick="Details(' + i + ')" style="cursor:pointer"><span class="dot" style="background-color:green;"></span>  ' + data.result[i].sender + '</a>';
                         }
                         else {
-                            html += ' <p><a onclick="" style="cursor:pointer"><span class="dot" ></span>  ' + data.result[i].sender + '</a></p>';
+                            html += ' <a onclick="" style="cursor:pointer"><span class="dot" ></span>  ' + data.result[i].sender + '</a>';
                         }
+                        if (data.result[i].status == "Sent") {
+                            html += ' <span class="fa-amazon""></span>';
+                        }
+                        html += '</p>';
                         html += '<input type="text" hidden value="' + data.result[i].sender + '" id="txthiddenSorce_' + i + '" />';
                         html += '<input type="text" hidden value="' + data.result[i].whoSend + '" id="txtWhoSend_' + i + '" />';
                     }
@@ -435,9 +440,11 @@
             OpenChatPopUp();
         });
         function MessagekeyChat(event) {
-            var keyCode = event.which ? event.which : event.keyCode
+            event = event || window.event;
+            var keyCode = event.keyCode
             if (keyCode == 13) {
                 SendConversation();
+                event.preventDefault();
             }
         }
         function FetchGroup() {

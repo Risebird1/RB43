@@ -38,7 +38,8 @@ namespace Risebird.Web.Controllers
             {
                 var Isonline = resultset.Where(x => x.Sender.ToUpper() == item).Select(x => x.IsOnline).FirstOrDefault();
                 var Whosend = resultset.Where(x => x.Sender.ToUpper() == item).Select(x => x.WhoSend).FirstOrDefault();
-                _lstset.Add(new Conversation { Sender = item, IsOnline = Isonline, WhoSend = Whosend });
+                var status = resultset.Where(x => x.Sender.ToUpper() == item).Select(x => x.Status).FirstOrDefault();
+                _lstset.Add(new Conversation { Sender = item, IsOnline = Isonline, WhoSend = Whosend, Status = status });
             }
             ViewBag.UserList = _lstset;
             ViewBag.Self = user.ToUpper();
