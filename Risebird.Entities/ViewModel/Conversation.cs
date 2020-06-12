@@ -10,6 +10,7 @@ namespace Risebird.Entities.ViewModel
         public int Senderid { get; set; }
         public int Reciverid { get; set; }
         public string Sender { get; set; }
+        public string SenderName { get; set; }
         public string Reciver { get; set; }
 
         public string message { get; set; }
