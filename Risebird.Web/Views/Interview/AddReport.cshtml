@@ -248,7 +248,7 @@
                                                         </div>
                                                     </div>
                                                     @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                    @*@Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })*@
                                                 </div>
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -1840,7 +1840,8 @@
     }
 
     function MeetingStatusChanged(value) {
-        if (value == 1 || value == 3) {
+        if (value == 1 || value == 2 || value == 3) {
+            document.getElementById("InterviewStatus").value = '';
             document.getElementById("InterviewStatus").disabled = true;
         }
         else {
