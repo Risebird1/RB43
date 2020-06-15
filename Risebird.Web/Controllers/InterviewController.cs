@@ -5887,8 +5887,8 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Broadcast(BroadcastModel model)
+        //[HttpPost]
+        public IActionResult Broadcast(string message, string subject, string receiver)
         {
 
             try
@@ -5900,10 +5900,13 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-
+                        var model = new BroadcastModel();
+                        model.BroadcastReciever = receiver;
+                        model.Message = message;
+                        model.Subject = subject;
                         var result = _meetingService.Broadcast(model);
-                        TempData["SuccessErrorMessageInterview"] = result;
-                        return RedirectToAction("Index");
+                        TempData["SuccessErrorMessageInterview"] = result.Result;
+                        return Json(result.Result);
 
                     }
                     else
@@ -5918,9 +5921,9 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterview"] = "Broadcast failed.";
-                return RedirectToAction("Index");
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }
