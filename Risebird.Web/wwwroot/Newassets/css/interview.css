@@ -1268,7 +1268,7 @@ select:-moz-focusring {
     max-height: 120px !important;
 }
 .table > tbody > tr > td {
-    padding: 12px 5px!important;
+    padding: 12px 5px;
 }
 
 
