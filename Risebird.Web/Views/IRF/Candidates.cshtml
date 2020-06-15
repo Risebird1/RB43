@@ -205,7 +205,12 @@
                                                 <td style="color:@selectabilityColor; text-align:center;">
                                                     <b>@item.SelectabilityScore</b>
                                                 </td>
-                                                @if (item.StatusValue != null)
+
+                                                @if(item.InviteConfirmation>0)
+                                                {
+                                                    <td>Scheduled</td>
+                                                }
+                                                else if (item.StatusValue != null)
                                                 {
                                                     <td>@item.StatusValue</td>
 
@@ -690,8 +695,6 @@
     }
 
     function OpenStatusModal(id, name, status) {
-        debugger;
-        console.log(id, name);
         candidateId = id;
         // Get the modal
         var modal = document.getElementById("statusModal");
@@ -707,7 +710,6 @@
 
     }
     function SaveStatusPopUp() {
-        debugger;
         var statusValue = document.getElementById("statusDrpDwn").value;
         
         $.ajax({

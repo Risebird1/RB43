@@ -85,6 +85,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> IRFMultipleCandidateInvites(string IRFId);
         Task<bool> DeleteInterview(int imid);
         bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink);
-
+        Task<IEnumerable<string>> GetEmailsforBroadcast(string profile);
     }
 }

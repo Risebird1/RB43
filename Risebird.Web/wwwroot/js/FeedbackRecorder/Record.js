@@ -71,7 +71,6 @@ function startRecording() {
 //}
 
 function stopRecording(id) {
-    debugger;
     document.getElementById("stopRecButton").disabled = true;
     document.getElementById("startRecButton").disabled = false;
     document.getElementById("cancelRecButton").disabled = true;
@@ -90,7 +89,6 @@ function stopRecording(id) {
 }
 
 function createDownloadLink(blob) {
-    debugger;
     var list = document.getElementById("recordingsList");
     var firstChild = list.firstChild;
     if (firstChild) {
@@ -106,7 +104,7 @@ function createDownloadLink(blob) {
     var link = document.createElement('a');
     //var recordingList = document.getElementById("recordingsList");
     //name of .wav file to use during upload and download (without extendion)
-    var filename = "Audio_FeedBack_" + interviewId;//new Date().toISOString();
+    var filename = "Audio_FeedBack_" + interviewId +"_"+ new Date().toISOString();//new Date().toISOString();
 
     //add controls to the <audio> element
     au.controls = true;
