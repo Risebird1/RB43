@@ -117,9 +117,10 @@ Begin Try
 			End
 		Else
 			Begin
-				Insert into QCFeedbackReport (InterviewId, QCStatus, QCComment)
-				values
-				(@interviewId, @QCStatus, @QCStatus)
+				if @QCStatus is not null
+					Insert into QCFeedbackReport (InterviewId, QCStatus, QCComment)
+					values
+					(@interviewId, @QCStatus, @QCStatus)
 			End
         END 
 		

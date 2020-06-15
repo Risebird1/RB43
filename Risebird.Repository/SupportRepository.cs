@@ -156,5 +156,25 @@ namespace Risebird.Repository
             return false;
         }
 
+        public IEnumerable<string> GetAllSupportHREmails()
+        {
+            try
+            {
+                //var query = "Select * from Support";
+                var query = "Select EmailId from support";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }
