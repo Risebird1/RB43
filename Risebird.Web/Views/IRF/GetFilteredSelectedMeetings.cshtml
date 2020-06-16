@@ -64,71 +64,95 @@
         {
             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-        <tr id=@item.imid>
-            <td> @item.interviewDate </td>
-            <td> @item.candidateName </td>
-            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId, IsSelected = true})'>Report</a> </td>
-            @if (item.resumeLink != null && item.resumeLink != "")
-            {
-                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-            }
-            else
-            {
-                <td>No Resume</td>
-            }
-            @*@if (item.MobileNumber != null)
-            {
-                <td>@item.MobileNumber</td>
+            <tr id=@item.imid>
+                <td> @item.interviewDate </td>
+                @if (item.IsOnline == 1)
+                {
+                    <td>
+                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName </a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                    </td>
+                }
+                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId, IsSelected = true})'>Report</a> </td>
+                @if (item.resumeLink != null && item.resumeLink != "")
+                {
+                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                }
+                else
+                {
+                    <td>No Resume</td>
+                }
+                @*@if (item.MobileNumber != null)
+                    {
+                        <td>@item.MobileNumber</td>
 
-            }
-            else
-            {
-                <td>No Contact</td>
-            }*@
-            <td style="white-space:normal;"> @item.ClientHrContact </td>
-            <td> @item.confirmationStatus</td>
-            <td> @item.MeetingStatusStatusDesc </td>
-            <td> @item.intervieweStatusStatDesc </td>
-            <td> @item.currentEmployerName </td>
-            <td> @item.expectedPerHourRate </td>
-            <td> @item.joiningTime </td>
-            <td> @item.preferredLocation </td>
-            <td>@item.staffingAgency</td>
-            <td>
-                @item.NextLevelApprovalStat
-            </td>
-            <td>
-                <div class="talk-bubble tri-right border-bubble right-in cmt-w">
-                    <div class="talktext">
-                        <textarea style="height: 40px; width:100%;" id="style-4">@item.ApprovalComments</textarea>
-                        </div></div>
-            </td>
-            <td></td>
-
-            <td>
-                @item.FinalSelectionStat
-            </td>
-            <td>
-                <div class="talk-bubble tri-right border-bubble right-in cmt-w">
-                    <div class="talktext">
-                        <textarea style="height: 40px; width:100%;" id="style-4">@item.FinalComments</textarea>
+                    }
+                    else
+                    {
+                        <td>No Contact</td>
+                    }*@
+                @*<td style="white-space:normal;"> @item.ClientHrContact </td>*@
+                @if (item.IsHrOnline == 1)
+                {
+                    <td>
+                        <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                    </td>
+                }
+                <td> @item.confirmationStatus</td>
+                <td> @item.MeetingStatusStatusDesc </td>
+                <td> @item.intervieweStatusStatDesc </td>
+                <td> @item.currentEmployerName </td>
+                <td> @item.expectedPerHourRate </td>
+                <td> @item.joiningTime </td>
+                <td> @item.preferredLocation </td>
+                <td>@item.staffingAgency</td>
+                <td>
+                    @item.NextLevelApprovalStat
+                </td>
+                <td>
+                    <div class="talk-bubble tri-right border-bubble right-in cmt-w">
+                        <div class="talktext">
+                            <textarea style="height: 40px; width:100%;" id="style-4">@item.ApprovalComments</textarea>
                         </div>
                     </div>
-            </td>
-            <td></td>
-            <td class="text-right">
-                @if (ViewBag.ProfileName == "client")
-                {
-                    <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                }
-                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                {
-                    <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
-                    <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
+                </td>
+                <td></td>
 
-                }
-            </td>
-        </tr>
+                <td>
+                    @item.FinalSelectionStat
+                </td>
+                <td>
+                    <div class="talk-bubble tri-right border-bubble right-in cmt-w">
+                        <div class="talktext">
+                            <textarea style="height: 40px; width:100%;" id="style-4">@item.FinalComments</textarea>
+                        </div>
+                    </div>
+                </td>
+                <td></td>
+                <td class="text-right">
+                    @if (ViewBag.ProfileName == "client")
+                    {
+                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                    }
+                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                    {
+                        <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
+                        <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
+
+                    }
+                </td>
+            </tr>
         }
     </tbody>
 </table>

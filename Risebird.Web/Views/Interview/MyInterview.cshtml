@@ -316,13 +316,13 @@
                                                     @if (item.IsOnilne == 1)
                                                     {
                                                         <td>
-                                                            <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
                                                         </td>
                                                     }
                                                     else
                                                     {
                                                         <td>
-                                                            <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
                                                         </td>
                                                     }
                                                     <td> @item.candidateEmail</td>
