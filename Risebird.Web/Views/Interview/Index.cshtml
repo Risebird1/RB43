@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Risebird.Entities
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
@@ -89,9 +90,9 @@
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
 
-
-
-
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px; display:none">
+                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">Broadcast</font></span>
+                                                </button>
 
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
@@ -492,17 +493,9 @@
                                                                     <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
                                                                 </div>
                                                             </div>
-
-
-
-
-
-
-
-
                                                         </td>
-                                                        <td></td>
 
+                                                        <td></td>
 
                                                         <td>
                                                             @item.FinalSelectionStat
@@ -515,27 +508,16 @@
                                                             </div>
                                                         </td>
                                                         <td></td>
-                                                        @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
+
                                                         <td class="text-right action">
 
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                 <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                             </button>
-                                                            <!--<span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span> -->
-
-
 
                                                             <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Comment">
-                                                                <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3zm-4 8H5V9h8v2zm0-3H5V6h8v2z" /></svg></span>
+                                                                <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="HR and QC Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3zm-4 8H5V9h8v2zm0-3H5V6h8v2z" /></svg></span>
                                                             </button>
-
-
-
-                                                            <!--  <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>-->
-                                                            <!--  <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>-->
-
-
-
 
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                 <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
@@ -602,6 +584,8 @@
 
                         </div>
                     </div>
+
+
                     <!-- end row -->
                 </div>
 
@@ -612,6 +596,54 @@
     </div>
 </div>
 
+<div id="broadcastModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                <h5 class="modal-title" id="broadcastHeading">Broadcast</h5>
+                <span class="close" id="broadcastPopUp" style="cursor:pointer;">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Please select from the following:</p>
+
+                <input type="radio"  id="radOne" name="receivers" value="Interviewer">
+                <label for="radOne">All Interviewers</label><br>
+                <input type="radio" id="radTwo" name="receivers" value="Candidate">
+                <label for="radTwo">All Candidates</label><br>
+                <input type="radio" id="radThree" name="receivers" value="Client">
+                <label for="radThree">All Clients</label>
+                <br />
+
+                <div class="row">
+                    <div class="form-group">
+                        <label for="Subject">Subject</label>
+                        <input type="text" id="bcSubject"/>
+                    </div>
+
+                </div>
+
+                <br />
+
+                <div class="row">
+                    <div class="form-group">
+                        <label for="Message">Message</label>
+                        <input type="text" id="bcMessage"/>
+                    </div>
+
+                </div>
+
+                <br />
+                <div class="modal-footer" style="padding: 2px 16px;background-color: #fff;color: white;">
+                    <button type="button" onclick="SendBroadcast()" class="btn btn-primary">Send</button>
+                </div>
+                
+            </div>
+            
+        </div>
+
+    </div>
+</div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
@@ -897,6 +929,7 @@
         var appendText = "Calling... " + "<b>" + candidate + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
         callCandidate(candidateObj.MobileNumber);
+        //callCandidate('+918888571923');
     }
     function closeCallPopUp() {
         hangUp();
@@ -908,5 +941,51 @@
 </script>
 
 
+<script type="text/javascript">
+    var spanbroadcast = document.getElementById("broadcastPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanbroadcast.onclick = function () {
+        var modal = document.getElementById("broadcastModal");
+        modal.style.display = "none";
+    }
+    function OpenBroadcastModal() {
+        // Get the modal
+        var modalBct = document.getElementById("broadcastModal");
+
+        //// When the user clicks the button, open the modal
+        modalBct.style.display = "block";
+        return;
+
+    }
+
+    function SendBroadcast() {
+        var message = document.getElementById("bcMessage").value;
+        var subject = document.getElementById("bcSubject").value;
+
+        var ele = document.getElementsByName('receivers');
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked) {
+               var receiver = ele[i].value;
+            }
+        }
+                
+        
+
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/Broadcast",
+            data: {
+                'message': message, 'subject': subject, 'receiver': receiver
+            },
+            success: function (data) {
+                debugger;
+                location.reload(true);
+
+            }
+        });
+    }
+
+</script>
 
 

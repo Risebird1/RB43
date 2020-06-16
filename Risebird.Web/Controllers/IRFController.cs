@@ -2250,6 +2250,8 @@ namespace Risebird.Web.Controllers
                         {
                             candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription());
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
+                            candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); });
+
                         }
 
                         string userEmailId = string.Empty;
@@ -2281,6 +2283,11 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 15].Value = "Invites Sent";
                         Sheet.Cells[1, 16].Value = "Invite Confirmation";
                         Sheet.Cells[1, 17].Value = "Schedule Status";
+                        Sheet.Cells[1, 18].Value = "Confirmation Status";
+                        Sheet.Cells[1, 19].Value = "Meeting Status";
+                        Sheet.Cells[1, 20].Value = "Interview Status";
+                        Sheet.Cells[1, 21].Value = "Interview Date";
+                        Sheet.Cells[1, 22].Value = "Video Link";
 
                         int i = 2;
                         //string LastAction = null; ;
@@ -2330,7 +2337,29 @@ namespace Risebird.Web.Controllers
 
                                 Sheet.Cells[i, 15].Value = item.TotalInvites;
                                 Sheet.Cells[i, 16].Value = item.InviteConfirmation;
-                                Sheet.Cells[i, 17].Value = item.StatusValue;
+                                Sheet.Cells[i, 17].Value = item.InviteConfirmation > 0 ? "Scheduled" : item.StatusValue; 
+                                Sheet.Cells[i, 18].Value = item.confirmationStatusDesc != "0" ? item.confirmationStatusDesc : "NA";
+                                Sheet.Cells[i, 19].Value = item.MeetingStatusDesc != "0" ? item.MeetingStatusDesc : "NA";
+                                Sheet.Cells[i, 20].Value = item.InterviewStatusDesc != "0" ? item.InterviewStatusDesc : "NA";
+                                Sheet.Cells[i, 21].Value = item.interviewDate != null ? item.interviewDate?.ToString("dd MMMM yyyy") : "NA";
+                                if (!string.IsNullOrEmpty(item.VideoLink))
+                                {
+                                    try
+                                    {
+                                        Sheet.Cells[i, 22].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                        Sheet.Cells[i, 22].Value = "Video Link";
+                                        Sheet.Cells[i, 22].Style.Font.UnderLine = true;
+                                        Sheet.Cells[i, 22].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Sheet.Cells[i, 22].Value = "No Video";
+                                    }
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 22].Value = "No Video";
+                                }
                                 i++;
                             }
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
