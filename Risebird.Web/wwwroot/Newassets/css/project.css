@@ -206,7 +206,9 @@ table {
     color: black;
     font-size: 11px;
 }
-
+.cmt-w {
+    width: 300px;
+}
 .desc {
     display: inline-block;
     width: 120px;
@@ -674,7 +676,7 @@ table {
 .talk-bubble {
     display: inline-block;
     position: relative;
-    width: 200px;
+    width: 300px;
     height: auto;
     border-radius: 7px;
     margin: 5px 0px;
@@ -757,6 +759,9 @@ table {
         padding: 12px 5px !important;
     }
 
+    .selectedinterview .table > tbody > tr > td {
+        padding: 12px 5px !important;
+    }
     .card-header-buttons {
         text-align: center;
     }

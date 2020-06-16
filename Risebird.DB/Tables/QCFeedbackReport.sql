@@ -51,7 +51,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'QCFeedbackReport'))
 BEGIN
     ALTER TABLE QCFeedbackReport
-    Add QCComment int
+    Add QCComment VARCHAR(max)
 END
 
 END
