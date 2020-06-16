@@ -1049,9 +1049,9 @@ background-color: rgba(0,0,0,0.4);
         border-color: #4a93de;
     }
 
-    #meetingIRF_filter input {
-        outline: none;
-    }
+.dataTables_filter input {
+    outline: none;
+}
 
 #meeting input[type=search] {
     -webkit-appearance: textfield;

@@ -344,9 +344,9 @@ table {
         border-color: #4a93de;
     }
 
-    #meeting_filter input {
-        outline: none;
-    }
+.dataTables_filter input{
+    outline: none;
+}
 
 #meeting input[type=search] {
     -webkit-appearance: textfield;
