@@ -2,6 +2,7 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using System.Text.RegularExpressions
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = " QC Open Interviews";
@@ -96,7 +97,7 @@
                                                     <td> @item.interviewDate </td>
                                                     <td> @item.interviewSlot </td>
                                                     <td> @item.interviewDuration </td>
-                                                    <td> @item.candidateName</td>
+                                                    <td> @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")</td>
                                                     @if (item.resumeLink != null && item.resumeLink != "")
                                                     {
                                                         <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
