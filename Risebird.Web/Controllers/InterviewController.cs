@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Http.Internal;
 using System.Text;
 using Risebird.Web.Controllers.AzureMediaservice;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Cors;
 
 namespace Risebird.Web.Controllers
 {
@@ -3710,6 +3711,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
+        [EnableCors("AllowOrigin")]
         public IActionResult AddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false)
         {
             try
