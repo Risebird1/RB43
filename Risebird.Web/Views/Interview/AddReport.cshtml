@@ -1823,9 +1823,10 @@
 
     }
 
-    function QuestionChanged(id , val ) {
+    function QuestionChanged(id, val) {
+        var num = id.match(/(\d+)/); 
 
-        var index = id.charAt(20);
+        var index = num[0];//id.charAt(20);
         var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
         $.ajax({
             type: "GET",
