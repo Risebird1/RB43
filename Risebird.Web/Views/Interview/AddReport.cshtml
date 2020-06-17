@@ -1623,9 +1623,9 @@
                 }
                 return dy;
             });
-
+            categoryAxis.renderer.grid.template.disabled = true;
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
+            valueAxis.renderer.grid.template.disabled = true;
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";
@@ -1639,10 +1639,10 @@
             columnTemplate.strokeWidth = 2;
             columnTemplate.strokeOpacity = 1;
             chart.colors.list = [
-                am4core.color("#845EC2"),
-                am4core.color("#D65DB1"),
-                am4core.color("#FF6F91"),
-                am4core.color("#FF9671")
+                am4core.color("#3440eb"),
+                am4core.color("#00ff00"),
+                am4core.color("#ff0000"),
+                am4core.color("#ffff00")
 
             ];
             series.columns.template.events.once("inited", function (event) {
