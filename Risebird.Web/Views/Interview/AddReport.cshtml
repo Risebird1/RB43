@@ -1637,12 +1637,12 @@
 
             var columnTemplate = series.columns.template;
             columnTemplate.strokeWidth = 2;
-            columnTemplate.strokeOpacity = 1;
+            columnTemplate.strokeOpacity = 1;//07BEF3
             chart.colors.list = [
-                am4core.color("#3440eb"),
-                am4core.color("#00ff00"),
-                am4core.color("#ff0000"),
-                am4core.color("#ffff00")
+                am4core.color("#07BEF3"),
+                am4core.color("#00F96B"),
+                am4core.color("#F64042"),
+                am4core.color("#00A8B0")
 
             ];
             series.columns.template.events.once("inited", function (event) {
@@ -2145,6 +2145,9 @@
 
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
+            categoryAxis.renderer.grid.template.disabled = true;
+            valueAxis.renderer.grid.template.disabled = true;
+
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";
@@ -2158,10 +2161,10 @@
             columnTemplate.strokeWidth = 2;
             columnTemplate.strokeOpacity = 1;
             chart.colors.list = [
-                am4core.color("#845EC2"),
-                am4core.color("#D65DB1"),
-                am4core.color("#FF6F91"),
-                am4core.color("#FF9671")
+                am4core.color("#07BEF3"),
+                am4core.color("#00F96B"),
+                am4core.color("#F64042"),
+                am4core.color("#00A8B0")
 
             ];
             series.columns.template.events.once("inited", function (event) {

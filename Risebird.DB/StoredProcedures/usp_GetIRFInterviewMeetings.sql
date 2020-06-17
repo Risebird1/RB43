@@ -18,11 +18,17 @@ Begin
 
 declare  
 @IRFId nvarchar(100) = (select IRFId from [dbo].[IRF] where id=@id)  
-select irf.PerMintuteRate, irf.TotalBudget,QCF.InterviewId as QCInterview,im.id imid,(Select distinct Isonline from userlist where EmailId=im.candidateEmail) as IsOnline, * from InterviewMeetings im  
+select irf.PerMintuteRate, irf.TotalBudget,QCF.InterviewId as QCInterview,im.id as imid, im.IRFId, im.interviewDate, 
+im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
+im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
+im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
+(Select distinct Isonline from userlist where EmailId=im.candidateEmail) as IsOnline from InterviewMeetings im  
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId left join irf on IRF.IRFId = im.IRFId  
 left join QCFeedbackReport QCF on im.id=QCF.InterviewId
+left join Candidate ca on im.candidateEmail = ca.EmailId and irf.id= ca.IRFId
 where im.IRFId = @IRFId 
-
 
 End
 
