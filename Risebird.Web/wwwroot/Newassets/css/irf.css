@@ -437,7 +437,7 @@ input[type=number] {
     color: #807e7e;
     font-size: 12px;
 }
-#meeting_length, #meeting_filter {
+/*#meeting_length, #meeting_filter {
     margin: 10px 0px
 }
 
@@ -503,7 +503,7 @@ input[type=number] {
 #meeting_filter input::-webkit-input-placeholder {
     color: #999;
 }
-
+    */
 .spanclass {
     color: black;
     font-size: 11px;
@@ -1033,7 +1033,7 @@ background-color: rgba(0,0,0,0.4);
     text-decoration: none;
 }
 
-#meetingIRF_length, #meetingIRF_filter {
+/*#meetingIRF_length, #meetingIRF_filter {
     margin: 10px 0px
 }
 
@@ -1049,9 +1049,9 @@ background-color: rgba(0,0,0,0.4);
         border-color: #4a93de;
     }
 
-    #meetingIRF_filter input {
-        outline: none;
-    }
+.dataTables_filter input {
+    outline: none;
+}
 
 #meeting input[type=search] {
     -webkit-appearance: textfield;
@@ -1099,7 +1099,7 @@ background-color: rgba(0,0,0,0.4);
 #meetingIRF_filter input::-webkit-input-placeholder {
     color: #999;
 }
-
+    */
 
 
 .select-box {
