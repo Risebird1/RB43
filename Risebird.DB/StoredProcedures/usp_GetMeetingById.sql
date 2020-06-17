@@ -26,7 +26,7 @@ SELECT [InterviewMeetings].id as imid
 	 ,interviewDuration
 	 ,candidateEmail
 	 ,ClientHrContact
-	 ,resumeLink
+	 ,ca.ResumeLink as resumeLink
 	 ,confirmationStatus
 	 ,zoomLink
 	 ,[InterviewMeetings].risebirdHR
@@ -38,7 +38,7 @@ SELECT [InterviewMeetings].id as imid
 	 ,candidateName
 	 ,joiningTime
 	 ,currentEmployerName
-	 ,MobileNumber
+	 ,ca.Phone as MobileNumber
 	 ,JoiningBiometryScore
 	 ,InterviewBiometryScore
 	 ,InterviewComments.ApprovalComments
@@ -51,6 +51,7 @@ FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId
 left join InterviewComments on InterviewMeetings.id=InterviewComments.InterviewId
+left join Candidate ca on ca.EmailId = InterviewMeetings.candidateEmail and ca.IRFId = irf.id
 WHERE
       [InterviewMeetings].id = @interviewId
 End

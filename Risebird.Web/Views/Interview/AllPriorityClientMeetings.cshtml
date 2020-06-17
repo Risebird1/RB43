@@ -491,16 +491,28 @@
                                                     @if (item.IsOnline == 1)
                                                     {
                                                         <td>
-                                                            <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
                                                         </td>
                                                     }
                                                     else
                                                     {
                                                         <td>
-                                                            <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
                                                         </td>
                                                     }
-                                                    <td> @item.ClientHrContact </td>
+                                                    @if (item.IsHrOnline == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                        </td>
+                                                    }
+                                                   
                                                     @if (item.zoomLink != null && item.zoomLink != "")
                                                     {
                                                         <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
@@ -513,10 +525,10 @@
                                                     <td> @item.JDTiltle.Split("|")[0] </td>
                                                     @if (item.confirmationStatus.Trim() == "Cancelled")
                                                     {
-                                                    <td class="text-center">
+                                                        <td class="text-center">
 
-                                                    <a style="color:red"> @item.confirmationStatus</a>
-                                                    </td>
+                                                            <a style="color:red"> @item.confirmationStatus</a>
+                                                        </td>
                                                     }
                                                     else
                                                     {
@@ -535,36 +547,36 @@
                                                     @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
                                                     {
 
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Report</td>
-                                                }
-                                                @if (item.AadharFileLink != null && item.AadharFileLink != "")
-                                                {
-                                                    <td>
+                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Report</td>
+                                                    }
+                                                    @if (item.AadharFileLink != null && item.AadharFileLink != "")
+                                                    {
+                                                        <td>
 
-                                                        <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No document</td>
-                                                }
-                                                @if (item.VideoLink != null && item.VideoLink != "" && item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
-                                                {
-                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Video</td>
-                                                }
-                                                <td>@item.NextLevelApprovalStat</td>
-                                                <td>@item.FinalSelectionStat</td>
-                                                <td>@item.OfferStatusStatDesc</td>
-                                                <td>@item.JoiningStatusStatDesc</td>
-                                            </tr>
+                                                            <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No document</td>
+                                                    }
+                                                    @if (item.VideoLink != null && item.VideoLink != "" && item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
+                                                    {
+                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Video</td>
+                                                    }
+                                                    <td>@item.NextLevelApprovalStat</td>
+                                                    <td>@item.FinalSelectionStat</td>
+                                                    <td>@item.OfferStatusStatDesc</td>
+                                                    <td>@item.JoiningStatusStatDesc</td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -678,10 +690,30 @@
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
             }
 
         });
         var table = $('#meeting').DataTable();
+    });
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
     });
 
     function ResetFilter() {
@@ -861,11 +893,11 @@
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Skip" }
             },
-         {
-            'next .itemInterviewLink': 'By clicking this column link you can join meeting',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
+            {
+                'next .itemInterviewLink': 'By clicking this column link you can join meeting',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
             {
                 'next .three': 'Filter here based on available attributes or reset filter if applied earlier',
                 'nextButton': { className: "myNext", text: "Next" },
@@ -877,7 +909,7 @@
                 'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
-            'click .four': "Click here to see All Interview Detail View of the Candidate Interviews"
+                'click .four': "Click here to see All Interview Detail View of the Candidate Interviews"
             }
         ];
         setTimeout(function () {
