@@ -112,13 +112,13 @@
                                                     @if (item.IsOnline == 1)
                                                     {
                                                         <td>
-                                                            <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName </a>
                                                         </td>
                                                     }
                                                     else
                                                     {
                                                         <td>
-                                                            <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
                                                         </td>
                                                     }
 
@@ -147,7 +147,18 @@
                                                     {
                                                         <td>No Contact</td>
                                                     }
-                                                    <td> @item.ClientHrContact </td>
+                                                    @if (item.IsHrOnline == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                        </td>
+                                                    }
                                                     @if (item.zoomLink != null && item.zoomLink != "")
                                                     {
                                                         <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
@@ -159,7 +170,6 @@
                                                     @if (item.confirmationStatus.Trim() == "Cancelled")
                                                     {
                                                         <td class="text-center">
-
                                                             <a style="color:red"> @item.confirmationStatus</a>
                                                         </td>
                                                     }
