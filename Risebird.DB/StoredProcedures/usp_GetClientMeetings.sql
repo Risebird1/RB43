@@ -23,7 +23,8 @@ ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,
 ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,
 ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink, QCF.InterviewId as QCInterview,
-cm.id as CandidateId,ul.Isonline as IsOnline from InterviewMeetings im 
+cm.id as CandidateId,ul.Isonline as IsOnline,(Select Distinct Isonline from UserList where EmailId=im.ClientHrContact) as IsHrOnline
+from InterviewMeetings im 
 inner join IRF on im.IRFId = IRF.IRFId 
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
 left join QCFeedbackReport QCF on im.id=QCF.InterviewId 
