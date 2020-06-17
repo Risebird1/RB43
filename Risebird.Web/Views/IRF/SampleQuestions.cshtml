@@ -87,10 +87,11 @@
 
                                                         <td class="text-center action-area">
 
+                                                            <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>
+                                                            @*<button class="mdc-fab app-fab--absolute"  aria-label="Add">
+            <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+        </button>*@
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -129,9 +130,10 @@
 
                                                                 <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
+
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                    <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>*@
+            <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+        </button>*@
 
 
                                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -303,9 +305,11 @@
                     function () //confirm
                     {
                         //if Yes do this
-                        //window.location.href = '/Project/Index';
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
+                        //location.reload(true);
+
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                     }
                 )
 
@@ -320,9 +324,10 @@
                 },
                     function ()
                     {
-                        //window.location.href = '/Project/Index';
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
+                        //location.reload(true);
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                     }
                 )
             }

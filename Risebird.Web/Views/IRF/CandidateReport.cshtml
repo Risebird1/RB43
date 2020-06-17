@@ -325,7 +325,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.HRReport.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new {ID="droplevel", @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'HRReport_JoinabilityHRReportCollection')", onmouseover = "getOption(this)" })
+                                                                    @Html.DropDownListFor(m => m.HRReport.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { ID = "droplevel", @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'HRReport_JoinabilityHRReportCollection')", onmouseover = "getOption(this)" })
 
                                                                 </td>
                                                                 <td>
@@ -475,14 +475,14 @@
                                                                     @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].Name, new {  @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].Value, new {  @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    @Html.TextBoxFor(m => m.SkillGeneralEvaluatorReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new {ID="droplevel", @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')", onmouseover = "getOption(this)" })
+                                                                    @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { ID = "droplevel", @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')", onmouseover = "getOption(this)" })
 
                                                                 </td>
                                                                 <td>
@@ -623,7 +623,9 @@
 
 </div>
 
-
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
 @*<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>*@
@@ -752,7 +754,7 @@
         objJoin.y = parseInt(joinabilityTotal);
         objJoin.label = "Joinability Score";
         objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
+        arr.push(objJoin.y);
         document.getElementById("HRReport_JoinabilityScore").value = joinabilityTotal;
 
         //Selectability actual weightage total
@@ -767,7 +769,7 @@
         objSelect.y = parseInt(selectabilityTotal);
         objSelect.label = "Selectability Score";
         objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
+        arr.push(objSelect.y);
         document.getElementById("SelectabilityScore").value = selectabilityTotal;
 
 
@@ -783,7 +785,7 @@
         objTech.y = parseInt(techTotal);
         objTech.label = "Tech Skills Score";
         objTech.legendText = "Tech Skills Score";
-        arr.push(objTech);
+        arr.push(objTech.y);
         document.getElementById("TechSkillScore").value = techTotal;
 
         var objGenSkill = { y: "", legendText: "", label: "" }
@@ -798,30 +800,102 @@
         objGenSkill.y = parseInt(genSkillTotal);
         objGenSkill.label = "General Skills Score";
         objGenSkill.legendText = "General Skills Score";
-        arr.push(objGenSkill);
+        arr.push(objGenSkill.y);
         document.getElementById("SkillGeneralScore").value = genSkillTotal;
 
 
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
+        //var chart = new CanvasJS.Chart("scoreChart", {
+        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
+        //    width: 400,//in pixels
+        //    height: 200,//in pixels
+        //    animationEnabled: true,
+        //    title: {
+        //        text: "Score Chart"
+        //    },
+        //    data: [{
+        //        type: "column",
+        //        //startAngle: 60,
+        //        //innerRadius: 55,
+        //        indexLabelFontSize: 8,
+        //        indexLabel: "{label}  {y}",
+        //        toolTipContent: "<b>{label} </b>({y})",
+        //        dataPoints: arr
 
-            }]
+        //    }]
+        //});
+        //chart.render();
+
+        am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("scoreChart", am4charts.XYChart);//Tech General Joinability Selectability
+
+            // Add data
+            chart.data = [{
+                "country": "Joinability",
+                "visits": arr[0]
+
+            }, {
+                    "country": "Selectability",
+                "visits": arr[1]
+            }, {
+                    "country": "Tech",
+                "visits": arr[2]
+            }, {
+                    "country": "General",
+                "visits": arr[3]
+            }];
+
+            // Create axes
+            chart.logo.disabled = true;
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "country";
+            categoryAxis.renderer.inside = true;
+            categoryAxis.renderer.labels.template.valign = "top";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+
+            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy + 25;
+                }
+                return dy;
+            });
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            categoryAxis.renderer.grid.template.disabled = true;
+            valueAxis.renderer.grid.template.disabled = true;
+
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "visits";
+            series.dataFields.categoryX = "country";
+            series.name = "Visits";
+            series.colorField = "color";
+            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+            series.columns.template.fillOpacity = .8;
+
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 2;
+            columnTemplate.strokeOpacity = 1;
+            chart.colors.list = [
+                am4core.color("#07BEF3"),
+                am4core.color("#00F96B"),
+                am4core.color("#F64042"),
+                am4core.color("#00A8B0")
+
+            ];
+            series.columns.template.events.once("inited", function (event) {
+                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+            });
+
         });
-        chart.render();
+
 
     }
 
