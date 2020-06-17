@@ -394,13 +394,13 @@
                                                         @if (item.IsOnline == 1)
                                                         {
                                                             <td>
-                                                                <a onclick="directopenChat('@item.candidateEmail')">    @item.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                                <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
                                                             </td>
                                                         }
                                                         else
                                                         {
                                                             <td>
-                                                                <a onclick="">@item.candidateName <span class="dot"></span></a>
+                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
                                                             </td>
                                                         }
                                                         <td> @item.candidateEmail</td>
@@ -450,8 +450,18 @@
                                                         }
                                                         <td> @item.risebirdHR</td>
 
-
-                                                        <td> @item.ClientHrContact </td>
+                                                        @if (item.IsHrOnline == 1)
+                                                        {
+                                                            <td>
+                                                                <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                            </td>
+                                                        }
                                                         <td> @item.ClientName </td>
 
                                                         @if (item.VideoLink != null && item.VideoLink != "")
@@ -609,24 +619,19 @@
                     <div class="col-md-6 col-sm-6 border-rv">
                         <p>Please select from the following:</p>
 
-                        <input type="radio" id="radOne" name="receivers" value="Interviewer">
-                        <label for="radOne">All Interviewers</label><br>
-                        <input type="radio" id="radTwo" name="receivers" value="Candidate">
-                        <label for="radTwo">All Candidates</label><br>
-                        <input type="radio" id="radThree" name="receivers" value="Client">
-                        <label for="radThree">All Clients</label>
-                    </div>
+                <input type="radio"  id="radOne" name="receivers" value="Interviewer">
+                <label for="radOne">All Interviewers</label><br>
+                <input type="radio" id="radTwo" name="receivers" value="Candidate">
+                <label for="radTwo">All Candidates</label><br>
+                <input type="radio" id="radThree" name="receivers" value="Client">
+                <label for="radThree">All Clients</label>
+                <br />
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Subject">Subject</label>
-                           
-                            <div>
-                                <div class="text-areadiv1">
-                                    <textarea class="scrollbar" style="width:100%;" id="bcSubject"></textarea>
-                                </div>
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="Subject">Subject</label>
+                        <input type="text" id="bcSubject"/>
+                    </div>
 
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label" for="Message">Message</label>
@@ -636,26 +641,24 @@
                                 </div>
                             </div>
 
+                <br />
 
-
-                            
-                        </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label for="Message">Message</label>
+                        <input type="text" id="bcMessage"/>
+                    </div>
 
                     </div>
 
-                    <div class="col-md-12 col-sm-12"><button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right">Send</button></div>
-
-                    </div>
-              
-
-
-
-                   
-               
-
+                <br />
+                <div class="modal-footer" style="padding: 2px 16px;background-color: #fff;color: white;">
+                    <button type="button" onclick="SendBroadcast()" class="btn btn-primary">Send</button>
                 </div>
-
+                
             </div>
+            
+        </div>
 
     </div>
 </div>
@@ -1018,11 +1021,11 @@
         var ele = document.getElementsByName('receivers');
         for (i = 0; i < ele.length; i++) {
             if (ele[i].checked) {
-               var receiver = ele[i].value;
+                var receiver = ele[i].value;
             }
         }
-                
-        
+
+
 
 
         $.ajax({
