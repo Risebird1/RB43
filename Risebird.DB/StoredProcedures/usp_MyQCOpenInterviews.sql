@@ -14,15 +14,17 @@ CREATE PROCEDURE [dbo].[usp_MyQCOpenInterviews]
 @emailID varchar(200)
 AS
 BEGIN
-select im.*,irf.id as irfIntId, irf.JDLink from InterviewMeetings im
-inner join InterviewComments ic on ic.InterviewId=im.id
-inner join IRF irf on im.IRFId=irf.IRFId 
-inner join TransQualityController tqc on tqc.IRFId= IRF.id
-inner join UserList ul on tqc.UserId= ul.id
-where im.id not in(select InterviewId from QCFeedbackReport) and
-im.interviewer!=@emailID and ul.EmailId=@emailID and
-confirmationStatus=1 and interviewer is not null 
-and (ic.InterviewStatus=2 or ic.InterviewStatus=4)
+select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
+im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
+im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
+irf.id as irfIntId, irf.JDLink from InterviewMeetings im
+inner join IRF irf on im.IRFId=irf.IRFId left join InterviewComments ic on ic.InterviewId= im.id
+left join Candidate ca on irf.id=ca.IRFId and im.candidateEmail = ca.EmailId
+where IRF.id in (select IRFId from TransQualityController tqc join UserList ul on tqc.UserId= ul.id where EmailId = @emailID)
+and im.confirmationStatus=1 and ic.MeetingStatus=4 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and im.interviewer!=@emailID
+
 
 END
 GO
