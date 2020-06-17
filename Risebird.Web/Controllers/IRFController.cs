@@ -837,10 +837,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_irfService.AddSkillComments(model))
                         {
-                            //TempData["SuccessErrorMessage"] = 
+                            //TempData["SuccessErrorMessage"] = "Questions saved successfully";
                             model.Message = "Questions saved successfully";
                             model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(model.IRFId)), "id", "Name");
                             return View(model);
+                            //return RedirectToAction("Index");
+
                         }
                         else
                         {
@@ -848,6 +850,8 @@ namespace Risebird.Web.Controllers
                             model.Message = "Questions were not saved.";
                             model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(model.IRFId)), "id", "Name");
                             return View(model);
+                            //return RedirectToAction("Index");
+
                         }
                     }
                     else
