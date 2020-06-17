@@ -566,7 +566,7 @@ table {
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
-
+/*
 #meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter {
     margin: 10px 0px
 }
@@ -594,8 +594,8 @@ table {
     font-size: 100%;
 }
 
-#meeting_filter input::-webkit-search-decoration,
-#meeting_filter input::-webkit-search-cancel-button, #OpeninterviewList_filter input::-webkit-search-decoration,
+.dataTables_filter input::-webkit-search-decoration,
+.dataTables_filter input::-webkit-search-cancel-button, #OpeninterviewList_filter input::-webkit-search-decoration,
 #OpeninterviewList_filter input::-webkit-search-cancel-button, #MyInterviewList_filter input::-webkit-search-decoration,
 #MyInterviewList_filter input::-webkit-search-cancel-button {
     display: none;
@@ -628,15 +628,15 @@ table {
     }
 
 
-#meeting_filter input:-moz-placeholder, #OpeninterviewList_filter input:-moz-placeholder, #MyInterviewList_filter input:-moz-placeholder {
+.dataTables_filter input:-moz-placeholder:-moz-placeholder, #OpeninterviewList_filter input:-moz-placeholder, #MyInterviewList_filter input:-moz-placeholder {
     color: #999;
 }
 
-#meeting_filter input::-webkit-input-placeholder, #OpeninterviewList_filter input::-webkit-input-placeholder, #MyInterviewList_filter input::-webkit-input-placeholder {
+.dataTables_filter input:-moz-placeholder input::-webkit-input-placeholder, #OpeninterviewList_filter input::-webkit-input-placeholder, #MyInterviewList_filter input::-webkit-input-placeholder {
     color: #999;
 }
 
-
+*/
 
 
 .multiselect-selected-text {
@@ -1253,6 +1253,19 @@ select:-moz-focusring {
         border: 0;
         background: #f5f5f5;
         padding: 5px 0px 0px 0px;
+
+    }
+
+.text-areadiv1 {
+    height: auto;
+    padding: 0px ;
+}
+
+    .text-areadiv1 textarea {
+        border: 0;
+        background: #f5f5f5;
+        padding: 5px 10px 5px 10px;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid
     }
 
 .enjoyhint_disable_events {

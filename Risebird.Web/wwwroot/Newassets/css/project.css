@@ -572,7 +572,7 @@ table {
 .mc-button-area {
     text-align: right;
 }
-#meeting_length, #meeting_filter {
+/*#meeting_length, #meeting_filter {
     margin: 10px 0px
 }
 
@@ -599,8 +599,8 @@ table {
     font-size: 100%;
 }
 
-.dataTables_filter input::-webkit-search-decoration,
-.dataTables_filter input::-webkit-search-cancel-button {
+#meeting input::-webkit-search-decoration,
+#meeting input::-webkit-search-cancel-button {
     display: none;
 }
 
@@ -638,7 +638,7 @@ table {
 #meeting_filter input::-webkit-input-placeholder {
     color: #999;
 }
-
+*/
 #resumeId, #zoomlinkId {
     background: #e2f0ff;
     color: #1d3b5e;
