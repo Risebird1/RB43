@@ -166,7 +166,7 @@ table {
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
-
+/*
 #interviewer_length, #interviewer_filter {
     margin: 10px 0px
 }
@@ -234,7 +234,7 @@ table {
     color: #999;
 }
 
-
+    */
 
 .multiselect-selected-text {
     text-transform: capitalize;
