@@ -110,7 +110,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @if (Model.IsInterviewer)
+                                            @if (Model.IsInterviewer && Model.CandidateName != null)
                                             {                                               
                                                @Regex.Replace(@Model.CandidateName, "[a-zA-Z0-9]", "*")
                                             }

@@ -784,6 +784,7 @@ namespace Risebird.Business
 
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
+                reportModel.CandidateName = interviewDetails.candidateName;
                 reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = interviewDetails.candidateEmail;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
