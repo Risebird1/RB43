@@ -213,10 +213,19 @@
                                                                 {
                                                                     <td>Successful</td>
                                                                 }
+                                                                else if (Model.CandidateAudios[i].EnrollmentMessage.ToLower().Contains("for"))
+                                                                {
+                                                                    var startIndex = Model.CandidateAudios[i].EnrollmentMessage.IndexOf("for") -1;
+                                                                    var endIndex = Model.CandidateAudios[i].EnrollmentMessage.IndexOf(",");
+                                                                    var length = endIndex - startIndex;
+                                                                    var subSt = Model.CandidateAudios[i].EnrollmentMessage.Substring(startIndex, length);
+
+
+                                                                    <td>@Model.CandidateAudios[i].EnrollmentMessage.Replace(subSt, "")</td>
+                                                                }
                                                                 else
                                                                 {
-                                                                    <td>@Model.CandidateAudios[i].EnrollmentMessage</td>
-
+                                                                    <td>Failed</td>
                                                                 }
                                                             }
                                                             else
@@ -325,7 +334,7 @@
 
 @if (ViewBag.Message != null)
 {
-    <script type="text/javascript">
+<script type="text/javascript">
 
         function my_code() {
             var msg = '@ViewBag.Message';
@@ -343,9 +352,8 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
-                        //window.location.reload(true);
+                        
+                        window.location.reload();
                     }
                 )
 
@@ -361,9 +369,11 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
-                        //window.location.reload(true);
+
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        window.location.reload();
+
                     }
                 )
 
@@ -378,7 +388,8 @@
                 },
                     function ()
                     {
-                        window.location.reload(true);
+
+                        window.location.reload();
                     }
                 )
             }
@@ -386,6 +397,6 @@
         }
 
         window.onload = my_code();
-    </script>
+</script>
 
 }
