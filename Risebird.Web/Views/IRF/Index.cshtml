@@ -33,12 +33,7 @@
 
 }
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="~/Newassets/css/irf.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -632,11 +627,33 @@
                                                 <div class="form-group">
 
                                                     <div>
-                                                        <input id="gstCheckId" name="gstCheckId" type="checkbox" class="" style="">
-                                                        <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
-                                                        <label class="control-label  desp-label" for="gstCheck" style="margin-top:26px; padding-right:10px;">
+
+
+                                                        <div class="mdc-form-field">
+                                                            <div class="mdc-checkbox">
+
+                                                                <input id="gstCheckId" name="gstCheckId" type="checkbox" class="mdc-checkbox__native-control" style="">
+                                                                <div class="mdc-checkbox__background">
+                                                                    <svg class="mdc-checkbox__checkmark"
+                                                                         viewBox="0 0 24 24">
+                                                                        <path class="mdc-checkbox__checkmark-path"
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    </svg>
+                                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                                </div>
+                                                                <div class="mdc-checkbox__ripple"></div>
+
+
+                                                            </div>
+                                                        </div>
+
+
+                                                        <label class="control-label  desp-label" for="gstCheck">
                                                             Apply GST
                                                         </label>
+
+                                                        <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -680,7 +697,7 @@
 
 
 
-            if (msg.includes("Success")) {
+            if (msg.toLowerCase().includes("success")) {
                 swal({
                     title: 'Successful',
                     text: '@Model.Message',

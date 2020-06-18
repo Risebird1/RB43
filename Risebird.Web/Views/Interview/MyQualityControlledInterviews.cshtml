@@ -31,13 +31,7 @@
     //InterviewDuration = filter.InterviewDuration != null ? filter.InterviewDuration : new string[] { };
 }
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-<link href="~/Newassets/css/interview.css" rel="stylesheet" />
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -225,7 +219,7 @@
                                 <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
                                         <label for="qcDropdown">QC Status</label>
-                                        <select class="form-control" id="qcDropdown" name="qcDropdown"></select>
+                                        <select class="select-css form-control" id="qcDropdown" name="qcDropdown"></select>
                                     </div>
 
                                 </div>
@@ -669,47 +663,6 @@
 
 
 
-<style>
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-    .dropdown-toggle {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
-    }
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-
-    .text-areadiv {
-        height: auto;
-        padding: 0px 10px !important;
-    }
-
-        .text-areadiv textarea {
-            width: 100%;
-            border: 0;
-            background: #f5f5f5;
-            padding: 5px 0px 0px 0px;
-        }
-</style>
-
 <script>
     $(document).ready(function () {
         @*$("#ResetFilter").click(function () {
@@ -770,10 +723,30 @@
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
             }
 
         });
         var table = $('#MyInterviewList').DataTable();
+    });
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
     });
     function ResetFilter() {
 

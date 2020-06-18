@@ -7,16 +7,6 @@
 }
 
 
-
-
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-<link href="~/Newassets/css/irf.css" rel="stylesheet" />
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -175,7 +165,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -187,7 +177,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "form-control" })
+                                            @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control" })
                                             @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
                                         </div>
@@ -197,7 +187,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -306,7 +296,7 @@
                                         </p>
                                         @*<div class="col-md-6 col-sm-6">
 
-                </div>*@
+                                            </div>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -339,7 +329,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
                                                             </td>
                                                             <td>
@@ -347,7 +337,7 @@
 
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
 
                                                             </td>
 
@@ -358,13 +348,13 @@
 
                                                             <td>
                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                                               
+
 
 
                                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
 
                                                                     <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                                                    
+
                                                                 </button>
 
 
@@ -379,7 +369,7 @@
                                                             <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                 </td>
@@ -389,7 +379,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control droprating" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control droprating" })
 
 
                                                                 </td>
@@ -403,11 +393,11 @@
                                                                 <td>
 
                                                                     <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                             
+
 
 
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                     <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
 
                                                                     </button>
 
@@ -470,7 +460,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                 </td>
                                                                 <td>
@@ -552,7 +542,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                 </td>
                                                                 <td>
@@ -629,7 +619,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
+                                                                    @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @readonly = "readonly" })
 
                                                                 </td>
                                                                 <td>
@@ -708,7 +698,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
+                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @readonly = "readonly" })
 
                                                                 </td>
                                                                 <td>
@@ -1006,7 +996,9 @@
 
 </div>
 
-
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
 @*<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>*@
@@ -1083,25 +1075,26 @@
     }
 
     function CalculateOverAll(id, value) {
-
+        var num = id.match(/(\d+)/);
+        var index = num[0];
         value = parseInt(value);
         var index;
         var skillName;
         if (id.includes("Tech")) {
-            index = id.charAt(26);
+            
             skillName = "TechSkillReportCollection";
         }
 
         else if (id.includes("General")) {
-            index = id.charAt(29);
+           
             skillName = "SkillGeneralReportCollection";
         }
         else if (id.includes("Joinability")) {
-            index = id.charAt(30);
+           
             skillName = "JoinabilityHRReportCollection";
         }
         else {
-            index = id.charAt(39);
+          
             skillName = "SelectabilityEvaluatorReportCollection";
         }
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
@@ -1143,7 +1136,7 @@
         obj.y = parseInt(techTotal) / 4;
         obj.label = "Tech Skills Score";
         obj.legendText = "Tech Skills Score";
-        arr.push(obj);
+        arr.push(obj.y);
 
         //SkillsGeneral actual weightage total
         var objGen = { y: "", legendText: "", label: "" }
@@ -1158,7 +1151,7 @@
         objGen.y = parseInt(genTotal) / 4;
         objGen.label = "General Skills Score";
         objGen.legendText = "General Skills Score";
-        arr.push(objGen);
+        arr.push(objGen.y);
 
         //Joinability actual weightage total
         var objJoin = { y: "", legendText: "", label: "" }
@@ -1172,7 +1165,7 @@
         objJoin.y = parseInt(joinabilityTotal) / 4;
         objJoin.label = "Joinability Score";
         objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
+        arr.push(objJoin.y);
 
         //Selectability actual weightage total
         var objSelect = { y: "", legendText: "", label: "" }
@@ -1186,32 +1179,100 @@
         objSelect.y = parseInt(selectabilityTotal) / 4;
         objSelect.label = "Selectability Score";
         objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
+        arr.push(objSelect.y);
 
         //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = average;
 
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
+        //var chart = new CanvasJS.Chart("scoreChart", {
+        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
+        //    width: 400,//in pixels
+        //    height: 200,//in pixels
+        //    animationEnabled: true,
+        //    title: {
+        //        text: "Score Chart"
+        //    },
+        //    data: [{
+        //        type: "column",
+        //        //startAngle: 60,
+        //        //innerRadius: 55,
+        //        indexLabelFontSize: 8,
+        //        indexLabel: "{label}  {y}",
+        //        toolTipContent: "<b>{label} </b>({y})",
+        //        dataPoints: arr
 
-            }]
+        //    }]
+        //});
+        //chart.render();
+        am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("scoreChart", am4charts.XYChart);
+
+            // Add data
+            chart.data = [{
+                "country": "Tech",
+                "visits": arr[0]
+
+            }, {
+                "country": "General",
+                "visits": arr[1]
+            }, {
+                "country": "Joinability",
+                "visits": arr[2]
+            }, {
+                "country": "Selectability",
+                "visits": arr[3]
+            }];
+
+            // Create axes
+            chart.logo.disabled = true;
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "country";
+            categoryAxis.renderer.inside = true;
+            categoryAxis.renderer.labels.template.valign = "top";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+
+            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy;
+                }
+                return dy;
+            });
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            
+            categoryAxis.renderer.grid.template.disabled = true;
+            valueAxis.renderer.grid.template.disabled = true;
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "visits";
+            series.dataFields.categoryX = "country";
+            series.name = "Visits";
+            series.colorField = "color";
+            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+            series.columns.template.fillOpacity = .8;
+
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 2;
+            columnTemplate.strokeOpacity = 1;
+            chart.colors.list = [
+                am4core.color("#07BEF3"),
+                am4core.color("#00F96B"),
+                am4core.color("#F64042"),
+                am4core.color("#00A8B0")
+
+            ];
+            series.columns.template.events.once("inited", function (event) {
+                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+            });
+
         });
-        chart.render();
-
 
     }
 
@@ -1796,7 +1857,7 @@
         obj.y = parseInt(techTotal) / 4;
         obj.label = "Tech Skills Score";
         obj.legendText = "Tech Skills Score";
-        arr.push(obj);
+        arr.push(obj.y);
 
         //SkillsGeneral actual weightage total
         var objGen = { y: "", legendText: "", label: "" }
@@ -1811,7 +1872,7 @@
         objGen.y = parseInt(genTotal) / 4;
         objGen.label = "General Skills Score";
         objGen.legendText = "General Skills Score";
-        arr.push(objGen);
+        arr.push(objGen.y);
 
         //Joinability actual weightage total
         var objJoin = { y: "", legendText: "", label: "" }
@@ -1825,7 +1886,7 @@
         objJoin.y = parseInt(joinabilityTotal) / 4;
         objJoin.label = "Joinability Score";
         objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
+        arr.push(objJoin.y);
 
         //Selectability actual weightage total
         var objSelect = { y: "", legendText: "", label: "" }
@@ -1839,33 +1900,101 @@
         objSelect.y = parseInt(selectabilityTotal) / 4;
         objSelect.label = "Selectability Score";
         objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
+        arr.push(objSelect.y);
 
         totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = totalScore;
 
 
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
+        //var chart = new CanvasJS.Chart("scoreChart", {
+        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
+        //    width: 400,//in pixels
+        //    height: 200,//in pixels
+        //    animationEnabled: true,
+        //    title: {
+        //        text: "Score Chart"
+        //    },
+        //    data: [{
+        //        type: "column",
+        //        //startAngle: 60,
+        //        //innerRadius: 55,
+        //        indexLabelFontSize: 8,
+        //        indexLabel: "{label}  {y}",
+        //        toolTipContent: "<b>{label} </b>({y})",
+        //        dataPoints: arr
 
-            }]
+        //    }]
+        //});
+        //chart.render();
+        am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("scoreChart", am4charts.XYChart);
+
+            // Add data
+            chart.data = [{
+                "country": "Tech",
+                "visits": arr[0]
+
+            }, {
+                "country": "General",
+                "visits": arr[1]
+            }, {
+                "country": "Joinability",
+                "visits": arr[2]
+            }, {
+                "country": "Selectability",
+                "visits": arr[3]
+            }];
+
+            // Create axes
+            chart.logo.disabled = true;
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "country";
+            categoryAxis.renderer.inside = true;
+            categoryAxis.renderer.labels.template.valign = "top";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+
+            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy;
+                }
+                return dy;
+            });
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            categoryAxis.renderer.grid.template.disabled = true;
+            valueAxis.renderer.grid.template.disabled = true;
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "visits";
+            series.dataFields.categoryX = "country";
+            series.name = "Visits";
+            series.colorField = "color";
+            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+            series.columns.template.fillOpacity = .8;
+
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 2;
+            columnTemplate.strokeOpacity = 1;
+            chart.colors.list = [
+                am4core.color("#07BEF3"),
+                am4core.color("#00F96B"),
+                am4core.color("#F64042"),
+                am4core.color("#00A8B0")
+
+            ];
+            series.columns.template.events.once("inited", function (event) {
+                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+            });
+
         });
-        chart.render();
-
 
 
     }

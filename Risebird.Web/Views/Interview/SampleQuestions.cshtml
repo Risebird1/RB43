@@ -138,15 +138,8 @@
             top: -3px;
         }
     </style>
-<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -181,10 +174,10 @@
                                 <div class="card-header">
                                     <h4 class="card-title">Sample Questions</h4>
                                 </div>
-
+                                <div style="width:100%; float:left;height:10px;"></div>
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive-sm">
+                                    <div>
                                         <table class="table table-bordered mbn" id="SkillTable">
                                             <thead>
                                                 <tr>
@@ -199,7 +192,7 @@
                                                     <tr>
                                                         <td>
 
-                                                            @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "form-control" })
+                                                            @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
 
                                                         </td>
 
@@ -244,7 +237,7 @@
                                                         <tr>
                                                             <td>
 
-                                                                @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "form-control" })
+                                                                @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
                                                             </td>
 
                                                             <td>

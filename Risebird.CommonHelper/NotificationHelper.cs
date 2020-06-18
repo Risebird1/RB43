@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -555,7 +556,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string SharedVideoNofiticationExternal(Mail model, string name, string url,string comment)
+        public string SharedVideoNofiticationExternal(Mail model, string name, string url,string comment, string resumeLink)
         {
             try
             {
@@ -568,7 +569,7 @@ namespace Risebird.CommonHelper
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
                 var anchrTag = "<a href=" + url + ">Please Click to see the video</a>";
-                object[] parameters = new object[] { name, anchrTag, comment };
+                object[] parameters = new object[] { name, anchrTag, comment, resumeLink };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplateNew.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -587,5 +588,40 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
+        public string SendBroadcastMail(List<string> receivers, List<string> supportEmails, BroadcastModel model)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                //mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                foreach (var email in receivers)
+                {
+                    mailMessage.Bcc.Add(new MailAddress(email, null));
+                }
+                foreach (var supportEmail in supportEmails)
+                {
+                    mailMessage.To.Add(new MailAddress(supportEmail, null));
+                }
+                object[] parameters = new object[] { model.BroadcastReciever,  model.Message};
+                mailMessage.Subject = model.Subject;
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Broadcast mail sent Successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Broadcast failed.";
+            }
+        }
+
     }
 }

@@ -25,6 +25,7 @@ using System.Text;
 using Risebird.Web.Controllers.AzureMediaservice;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Cors;
+using System.Net.Http.Headers;
 
 namespace Risebird.Web.Controllers
 {
@@ -3486,7 +3487,7 @@ namespace Risebird.Web.Controllers
 
                             if (_meetingService.UpdateComments(interviewComments))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Comments added Successfully";
+                                TempData["SuccessErrorMessageInterviewComment"] = "Comments added Successfully";
                                 return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });
                             }
                             else
@@ -3739,6 +3740,7 @@ namespace Risebird.Web.Controllers
                     else if (profileName != null && (profileName == "Interviewer" ||
                                                      profileName == "Quality Controller"))
                     {
+                        model.IsInterviewer = true;
                         if (isQC)
                         {
                             return RedirectToAction("MyQualityControlledInterviews");
@@ -3748,14 +3750,10 @@ namespace Risebird.Web.Controllers
                         {
                             return RedirectToAction("MyInterview");
 
-                        }
+                        }                        
                     }
                 }
-                if (profileName != null && (profileName == "Interviewer" ||
-                                            profileName == "Quality Controller"))
-                {
-                    model.IsInterviewer = true;
-                }
+                
 
                 if (model.QuestionsCollection == null)
                 {
@@ -3810,23 +3808,23 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        if (model.FeedbackAudioFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(model.FeedbackAudioFile.FileName, "audios", model.FeedbackAudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.FeedbackAudioFile.FileName);
-                            string uploadedfbaudioFileURL = blob.Uri.ToString();
-                            if (uploadedfbaudioFileURL == null)
-                            {
-                                ModelState.AddModelError(string.Empty, "Feedback audio upload has failed.");
-                                GetStatusList(model);
-                                return View("AddReport", model);
-                            }
-                            else
-                            {
-                                model.FeedbackAudioLink = uploadedfbaudioFileURL;
-                            }
-                        }
+                        //if (model.FeedbackAudioFile != null)
+                        //{
+                        //    await _azureStorageHelper.InsertBlob(model.FeedbackAudioFile.FileName, "audios", model.FeedbackAudioFile);
+                        //    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                        //    var blob = containerRef.GetBlockBlobReference(model.FeedbackAudioFile.FileName);
+                        //    string uploadedfbaudioFileURL = blob.Uri.ToString();
+                        //    if (uploadedfbaudioFileURL == null)
+                        //    {
+                        //        ModelState.AddModelError(string.Empty, "Feedback audio upload has failed.");
+                        //        GetStatusList(model);
+                        //        return View("AddReport", model);
+                        //    }
+                        //    else
+                        //    {
+                        //        model.FeedbackAudioLink = uploadedfbaudioFileURL;
+                        //    }
+                        //}
 
                         if (model.AudioFile != null)
                         {
@@ -5865,6 +5863,66 @@ namespace Risebird.Web.Controllers
                 else
                     return RedirectToAction("MultipleCandidateInvites", controllerName);
 
+            }
+        }
+
+        [HttpPost]
+        public async Task<string> UploadAudio()
+        {
+            var file = Request.Form.Files;
+
+            var fileName = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
+            var interviewId = fileName.Split("_")[2];
+            string uploadedfbaudioFileURL = string.Empty;
+            if (file != null)
+            {
+                await _azureStorageHelper.InsertBlob(fileName, "audios", file[0]);
+                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                var blob = containerRef.GetBlockBlobReference(fileName);
+                uploadedfbaudioFileURL = blob.Uri.ToString();
+            }
+            _meetingService.SaveFeedbackAudio(Convert.ToInt32(interviewId), uploadedfbaudioFileURL);
+            return uploadedfbaudioFileURL;
+        }
+
+        [Authorize]
+        //[HttpPost]
+        public IActionResult Broadcast(string message, string subject, string receiver)
+        {
+
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
+                    {
+                        var model = new BroadcastModel();
+                        model.BroadcastReciever = receiver;
+                        model.Message = message;
+                        model.Subject = subject;
+                        var result = _meetingService.Broadcast(model);
+                        TempData["SuccessErrorMessageInterview"] = result.Result;
+                        return Json(result.Result);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Broadcast failed.";
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }

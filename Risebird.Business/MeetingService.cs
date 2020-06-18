@@ -10,7 +10,6 @@ using Risebird.Entities.ViewModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.CommonHelper;
-
 namespace Risebird.Business
 {
     public class MeetingService : IMeetingService
@@ -23,7 +22,8 @@ namespace Risebird.Business
         private IUserService _userService;
         private IEvaluatorRepository _evaluatorRespository;
         private IVoiceItRepository _voiceItRepository;
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository)
+        private ISupportRepository _supportRespository;
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -33,6 +33,7 @@ namespace Risebird.Business
             _userService = userService;
             _evaluatorRespository = evaluatorRespository;
             _voiceItRepository = voiceItRepository;
+            _supportRespository = supportRespository;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -1259,6 +1260,40 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink)
+        {
+            try
+            {
+                return _meetingRespository.SaveFeedbackAudio(interviewId, feedbackAudioLink);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<string> Broadcast(BroadcastModel model)
+        {
+            try
+            {
+                //check the receiver and get all their emails from the db
+                var receiverEmails = _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever).Result;
+                var supportEmails = _supportRespository.GetAllSupportHREmails();
+                var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                return result;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Broadcast failed.";
+            }
+
+        }
+
     }
 
 }

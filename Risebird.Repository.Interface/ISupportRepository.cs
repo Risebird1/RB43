@@ -13,5 +13,6 @@ namespace Risebird.Repository.Interface
         bool UpdateSupportHR(Support hrDetails);
         Support GetSupportHR(int id);
         bool DeleteSupportHR(int id);
+        IEnumerable<string> GetAllSupportHREmails();
     }
 }
