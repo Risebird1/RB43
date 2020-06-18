@@ -1455,25 +1455,25 @@
         //time should be in seconds
     }
     function CalculateOverAll(id, value) {
-
+        var num = id.match(/(\d+)/);
+        var index = num[0];
         value = parseInt(value);
-        var index;
         var skillName;
         if (id.includes("Tech")) {
-            index = id.charAt(26);
+            //index = id.charAt(26);
             skillName = "TechSkillReportCollection";
         }
 
         else if (id.includes("General")) {
-            index = id.charAt(29);
+            //index = id.charAt(29);
             skillName = "SkillGeneralReportCollection";
         }
         else if (id.includes("Joinability")) {
-            index = id.charAt(30);
+            //index = id.charAt(30);
             skillName = "JoinabilityHRReportCollection";
         }
         else {
-            index = id.charAt(39);
+            //index = id.charAt(39);
             skillName = "SelectabilityEvaluatorReportCollection";
         }
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
@@ -1619,7 +1619,7 @@
 
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
-                    return dy + 25;
+                    return dy;
                 }
                 return dy;
             });
@@ -2138,7 +2138,7 @@
 
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
-                    return dy + 25;
+                    return dy;
                 }
                 return dy;
             });
