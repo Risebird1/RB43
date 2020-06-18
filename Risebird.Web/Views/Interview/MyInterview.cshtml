@@ -2,6 +2,7 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using System.Text.RegularExpressions
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "My Interviews";
@@ -271,7 +272,6 @@
                                                 <th>Job Level</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
-                                              
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Company Detail</th>
@@ -290,7 +290,6 @@
                                                 <th>Job Level</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
-                                            
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Company Detail</th>
@@ -316,16 +315,16 @@
                                                     @if (item.IsOnilne == 1)
                                                     {
                                                         <td>
-                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
+                                                            <a onclick="directopenChat('@item.candidateEmail')"> @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")   <span class="dot" style="background-color:green"></span></a>
                                                         </td>
                                                     }
                                                     else
                                                     {
                                                         <td>
-                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                            <a onclick="">@Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")<span class="dot"></span></a>
                                                         </td>
                                                     }
-                                                    <td> @item.candidateEmail</td>
+                                                    <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
 
                                                     @if (item.resumeLink != null && item.resumeLink != "")
                                                     {
