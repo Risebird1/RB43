@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.Web", "Risebird.We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Risebird.WebAPI", "Risebird.WebApi\Risebird.WebAPI.csproj", "{56A55964-5707-4ECE-A32C-C1F4C6A0B62D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureMediaServiceMVC", "..\..\..\OneDrive - NCR Corporation\Desktop\AzureMediaServicesMvc-master\AzureMediaServicesMvc-master\AzureMediaServiceMVC\AzureMediaServiceMVC.csproj", "{27381807-87E5-4406-BC37-90C56263B9DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{56A55964-5707-4ECE-A32C-C1F4C6A0B62D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56A55964-5707-4ECE-A32C-C1F4C6A0B62D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56A55964-5707-4ECE-A32C-C1F4C6A0B62D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27381807-87E5-4406-BC37-90C56263B9DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27381807-87E5-4406-BC37-90C56263B9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27381807-87E5-4406-BC37-90C56263B9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27381807-87E5-4406-BC37-90C56263B9DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +109,7 @@ Global
 		{BD856040-E3D4-4990-A5F5-06FB23444074} = {2E930A06-3B57-499C-BE0D-FF8841F09B39}
 		{AFD4F211-4BF0-44F9-BFA6-4D25BFCBE784} = {B9ACA841-8923-4FDC-B87B-194493613C7B}
 		{56A55964-5707-4ECE-A32C-C1F4C6A0B62D} = {B9ACA841-8923-4FDC-B87B-194493613C7B}
+		{27381807-87E5-4406-BC37-90C56263B9DA} = {B9ACA841-8923-4FDC-B87B-194493613C7B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {62765146-A49B-4F26-BCEC-BB65111A4789}
