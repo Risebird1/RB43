@@ -90,8 +90,8 @@
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
 
-                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px; display:none">
-                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">Broadcast</font></span>
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px; ">
+                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
                                                 </button>
 
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
@@ -405,7 +405,19 @@
                                                         }
                                                         <td> @item.candidateEmail</td>
                                                         <td> @item.JDTiltle.Split("|")[0] </td>
-                                                        <td> @item.interviewer</td>
+                                                        @if (item.IsInterviewerOnline == 1)
+                                                        {
+                                                            <td>
+                                                                <a onclick="directopenChat('@item.interviewer')"><span class="dot" style="background-color:green"></span>    @item.interviewer </a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <a onclick=""><span class="dot"></span> @item.interviewer </a>
+                                                            </td>
+                                                        }
+
                                                         @if (item.confirmationStatus.Trim() == "Cancelled")
                                                         {
                                                             <td class="text-center">
@@ -615,9 +627,11 @@
                 <span class="close" id="broadcastPopUp" style="cursor:pointer;">&times;</span>
             </div>
             <div class="modal-body">
-                <p>Please select from the following:</p>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 border-rv">
+                        <p>Please select from the following:</p>
 
-                <input type="radio" id="radOne" name="receivers" value="Interviewer">
+                <input type="radio"  id="radOne" name="receivers" value="Interviewer">
                 <label for="radOne">All Interviewers</label><br>
                 <input type="radio" id="radTwo" name="receivers" value="Candidate">
                 <label for="radTwo">All Candidates</label><br>
@@ -628,28 +642,34 @@
                 <div class="row">
                     <div class="form-group">
                         <label for="Subject">Subject</label>
-                        <input type="text" id="bcSubject" />
+                        <input type="text" id="bcSubject"/>
                     </div>
 
-                </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Message">Message</label>
+                            <div>
+                                <div class="text-areadiv1">
+                                    <textarea class="scrollbar" style="width:100%;"  id="bcMessage"></textarea>
+                                </div>
+                            </div>
 
                 <br />
 
                 <div class="row">
                     <div class="form-group">
                         <label for="Message">Message</label>
-                        <input type="text" id="bcMessage" />
+                        <input type="text" id="bcMessage"/>
                     </div>
 
-                </div>
+                    </div>
 
                 <br />
                 <div class="modal-footer" style="padding: 2px 16px;background-color: #fff;color: white;">
                     <button type="button" onclick="SendBroadcast()" class="btn btn-primary">Send</button>
                 </div>
-
+                
             </div>
-
+            
         </div>
 
     </div>
@@ -822,7 +842,9 @@
 
 <script>
     $(document).ready(function () {
-        // FilterInterviews("Today");// on page load default dropdownlist value set
+
+
+
 
         $('#meeting').DataTable({
             "pagingType": "full_numbers",
@@ -830,16 +852,52 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-
+            responsive: true,
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
-
+            },
+            "fnInitComplete": function () {
+                  $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").hide();
+                       
+                    }
+                    else { $("#x").show(); }
+                });
             }
 
         });
+
+
         var table = $('#meeting').DataTable();
+
+
     });
+
+
+
+
+
+
+
+    $(document).ready(function () {
+
+
+        //oTable = $('#example').dataTable();
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
 
     (function () {
         var searchForm = document.getElementById('meeting'),

@@ -179,6 +179,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? SharedOn { get; set; }
         public int IsOnline { get; set; }
         public int IsHrOnline { get; set; }
+        public int IsInterviewerOnline { get; set; }
         public string QCInterviewer { get; set; }
         public List<VideoCountdetail> VideoCountDetail { get; set; }
         public string FeedbackAudioLink { get; set; }

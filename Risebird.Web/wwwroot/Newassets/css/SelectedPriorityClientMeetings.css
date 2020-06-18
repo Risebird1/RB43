@@ -328,7 +328,7 @@ table {
     border-bottom-right-radius: 13px;
 }
 
-#meeting_length, #meeting_filter {
+/*#meeting_length, #meeting_filter {
     margin: 10px 0px
 }
 
@@ -344,9 +344,9 @@ table {
         border-color: #4a93de;
     }
 
-    #meeting_filter input {
-        outline: none;
-    }
+.dataTables_filter input{
+    outline: none;
+}
 
 #meeting input[type=search] {
     -webkit-appearance: textfield;
@@ -393,7 +393,7 @@ table {
 
 #meeting_filter input::-webkit-input-placeholder {
     color: #999;
-}
+}*/
 
 .multiple_row > h2 {
     font-size: 16px;
