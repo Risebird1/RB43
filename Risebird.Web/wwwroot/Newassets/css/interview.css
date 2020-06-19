@@ -1260,6 +1260,10 @@ select:-moz-focusring {
     padding-right: 10px;
     float:left;
 }
+.broadcast-icon {
+position:relative;
+top:-2px;
+}
 .text-areadiv1 {
     height: auto;
     padding: 0px ;
