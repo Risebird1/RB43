@@ -180,6 +180,7 @@ table {
 [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
+    padding:10px!important;
 }
 
     [type="date"]::-webkit-inner-spin-button {
@@ -572,73 +573,7 @@ table {
 .mc-button-area {
     text-align: right;
 }
-/*#meeting_length, #meeting_filter {
-    margin: 10px 0px
-}
 
-    #meeting_length label {
-        font-size: 14px;
-    }
-
-    #meeting_length select.form-control {
-        padding: 8px 8px;
-    }
-
-    #meeting_length select:focus {
-        border-color: #4a93de;
-    }
-
-.dataTables_filter input {
-    outline: none;
-}
-
-#meeting input[type=search] {
-    -webkit-appearance: textfield;
-    -webkit-box-sizing: content-box;
-    font-family: inherit;
-    font-size: 100%;
-}
-
-#meeting input::-webkit-search-decoration,
-#meeting input::-webkit-search-cancel-button {
-    display: none;
-}
-
-
-#meeting_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-    border: solid 1px #ccc;
-    padding: 9px 10px 9px 32px;
-    width: 135px;
-    font-family: arial;
-    -webkit-border-radius: 10em;
-    -moz-border-radius: 10em;
-    border-radius: 10em;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    transition: all .5s;
-}
-
-    #meeting_filter input[type=search]:focus {
-        width: 200px;
-        background-color: #fff;
-        border-color: #4a93de;
-        font-family: arial;
-        margin: 3px;
-        -webkit-box-shadow: 0 0 5px #4a93de;
-        -moz-box-shadow: 0 0 5px #4a93de;
-        box-shadow: 0 0 5px #4a93de;
-    }
-
-
-#meeting_filter input:-moz-placeholder {
-    color: #999;
-}
-
-#meeting_filter input::-webkit-input-placeholder {
-    color: #999;
-}
-*/
 #resumeId, #zoomlinkId {
     background: #e2f0ff;
     color: #1d3b5e;

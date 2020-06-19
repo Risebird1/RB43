@@ -128,6 +128,7 @@
 <script type="text/javascript">
     $.ajax({
         url: '/IRF/NewChart',
+        async: true,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -179,6 +180,7 @@
 
     $.ajax({
         url: '/IRF/NewChartSelected',
+        async: true,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -228,6 +230,7 @@
 
     $.ajax({
         url: '/IRF/NewChartClientMeetingData',
+        async: true,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -299,6 +302,7 @@
 
     $.ajax({
         url: '/IRF/NewChartClientFeedbackData',
+        async: true,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -371,6 +375,7 @@
 
     $.ajax({
         url: '/IRF/BudgetConsumedChart',
+        async: true,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -432,6 +437,7 @@
     });
     $.ajax({
         url: '/IRF/FunnelChart',
+        async: true,
 
         success: function (chData) {
             am4core.ready(function () {
@@ -468,18 +474,25 @@
                 }, {
                     "name": "Total Candidates",
                     "value": chData.totalCandidates
-                }];
+                    }];
+
+
                 chart.logo.disabled = true;
                 let series = chart.series.push(new am4charts.FunnelSeries());
                 series.dataFields.value = "value";
                 series.dataFields.category = "name";
-
+                series.labels.template.disabled = false;
+             
+                series.colors.step = 16;
                 var fillModifier = new am4core.LinearGradientModifier();
-                fillModifier.brightnesses = [-0.5, 1, -0.5];
+                fillModifier.brightnesses = [-0.1, -0.1, -0.1];
                 fillModifier.offsets = [0, 0.5, 1];
+
+
                 series.slices.template.fillModifier = fillModifier;
                 series.alignLabels = true;
-
+              
+                chart.fontSize = 13;
                 series.labels.template.text = "{category}: [bold]{value}[/]";
 
             });

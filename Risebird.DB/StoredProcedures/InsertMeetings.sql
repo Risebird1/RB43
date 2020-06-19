@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[InsertMeetings]
+Create PROCEDURE [dbo].[InsertMeetings]
 @IRFId varchar(200),
 @interviewDate varchar(200),
 @slot varchar(100),
@@ -25,7 +25,9 @@ CREATE PROCEDURE [dbo].[InsertMeetings]
 @expectedPerHourRate varchar(200),
 @joiningTime varchar(200),
 @staffingAgenecy varchar(200),
-@interviewOnDevice varchar(500)
+@interviewOnDevice varchar(500),
+@currentEmployerName varchar(200),
+@textreminder nvarchar(200)
 AS
 Begin
 
@@ -40,16 +42,18 @@ INSERT INTO [dbo].[InterviewMeetings]
            ,[candidateEmail]
            ,[ClientHrContact]
            ,[resumeLink]
-           ,[comfirmationStatus]
+           ,[confirmationStatus]
            ,[zoomLink]
            ,[risebirdHR]
+		   ,[currentEmployerName]
 		   ,[PreferredLocation]
 		   ,[ExpectedPerHourRate]
 		   ,[joiningTime]
-		   ,[staffingAgenecy]
+		   ,[staffingAgency]
 		   ,[IntervIewOnDevice]
            ,[sCreatedBy]
            ,[dtCreatedOn]
+		   ,[MobileNumber]
            )
      VALUES
            (@IRFId,
@@ -63,13 +67,15 @@ INSERT INTO [dbo].[InterviewMeetings]
 @comfirmationStatus,
 @zoomLink,
 @hrRiseBirdAssinged,
+@currentEmployerName,
 @prefferedLocation,
 @expectedPerHourRate,
 @joiningTime,
 @staffingAgenecy,
 @interviewOnDevice,
 'Clendly',
-GETUTCDATE()  
+GETUTCDATE(),
+@textreminder  
 )
 End
 ELSE
@@ -77,12 +83,37 @@ ELSE
 Begin
  UPDATE [dbo].[InterviewMeetings]
    SET [interviewDate] = @interviewDate
-      ,[comfirmationStatus] = @comfirmationStatus
+	  ,[ClientHrContact]=@ClientHrContact
+      ,[confirmationStatus] = @comfirmationStatus
+	  ,[resumeLink] = @resumeLink
+	  ,[zoomLink]=@zoomLink
+           ,[risebirdHR]=@hrRiseBirdAssinged
+		   ,[currentEmployerName]=@currentEmployerName
+		   ,[PreferredLocation]=@prefferedLocation
+		   ,[ExpectedPerHourRate]=@expectedPerHourRate
+		   ,[joiningTime]=@joiningTime
+		   ,[staffingAgency]=@staffingAgenecy
  WHERE     candidateEmail = @candidateEmail and interviewDate=@interviewDate
  
  
 End
+
+IF NOT EXISTS (SELECT 1  FROM  CandidatesMaster  WHERE  EmailId = @candidateEmail)
+Begin
+	declare
+	@profileId int = (select id from [Profile] where [Name]='Candidate')
+
+    Insert into UserList values (@profileId, @candidateName, null, @candidateEmail, null, null, 1,null, null, 0)
+
+	Insert into CandidatesMaster (UserId, [Name], EmailId, ResumeLink, [Location]) values((select id from UserList where EmailId=@candidateEmail and idProfile=@profileId),@candidateName,
+										 @candidateEmail,@resumeLink, @prefferedLocation)
+
+	Insert into Candidate (IRFId, [Name], EmailId, ResumeLink, [Location]) values((select id from IRF where IRFId=@IRFId),@candidateName,
+										 @candidateEmail,@resumeLink, @prefferedLocation)
+End
+
 END
+
 GO
 
 
