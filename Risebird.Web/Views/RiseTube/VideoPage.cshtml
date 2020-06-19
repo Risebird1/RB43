@@ -2026,6 +2026,7 @@
             categoryAxis.renderer.labels.template.valign = "top";
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
+            chart.fontSize =13;
 
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
@@ -2048,7 +2049,7 @@
             series.columns.template.fillOpacity = .8;
 
             var columnTemplate = series.columns.template;
-            columnTemplate.strokeWidth = 1;
+            columnTemplate.strokeWidth = 0;
             columnTemplate.strokeOpacity = 1;
             chart.colors.list = [
                 am4core.color("#07BEF3"),

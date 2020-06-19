@@ -57,7 +57,7 @@
                             <div style="width: 100%;">&nbsp;</div>
 
                             <div class="col-md-10 mr-auto" style="margin-left: auto">
-                                <div class="mdc-card card card-chart" style="border-top:0px;">
+                                <div class=" card card-chart" style="border-top:0px;">
                                     <div class="card-header">
                                         <h4 class="card-title">Interview Analysis</h4>
                                     </div>
@@ -385,12 +385,13 @@
                 series.dataFields.value = "value";
                 series.dataFields.category = "name";
 
+                series.colors.step = 16;
                 var fillModifier = new am4core.LinearGradientModifier();
-                fillModifier.brightnesses = [-0.5, 1, -0.5];
+                fillModifier.brightnesses = [-0.1, -0.1, -0.1];
                 fillModifier.offsets = [0, 0.5, 1];
                 series.slices.template.fillModifier = fillModifier;
                 series.alignLabels = true;
-
+                chart.fontSize = 13;
                 series.labels.template.text = "{category}: [bold]{value}[/]";
 
             });
