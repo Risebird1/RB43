@@ -124,7 +124,15 @@ var encodeFile = function (assetId) {
             console.log("Encrypted content or not: " + state.encrypted);
             console.log("Token: " + state.token);
             $("#videourl").text(state.locator);
+            $.ajax({
+                type: "GET",
+                async: false,
+                url: "/Video/URLIndex",
+            }).done(function (state) {
+
+            });
             getJobState(state.jobId, state.assetId);
+
         }
     }).fail(function (state) {
         if (state.error) {

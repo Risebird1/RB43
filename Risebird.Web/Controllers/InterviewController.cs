@@ -3857,7 +3857,7 @@ namespace Risebird.Web.Controllers
 
                         else if (model.VideoFile != null)
                         {
-
+                           
                             //Start:Generate Thumbnail from Vedio
 
                             //string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);

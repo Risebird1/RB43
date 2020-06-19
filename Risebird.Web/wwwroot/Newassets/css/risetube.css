@@ -158,12 +158,26 @@ height: 55px;
     border-right: .6em solid transparent;
     border-left: .6em solid transparent;
 }
-
-.tooltip1 {
-    position: relative;
-    display: inline-block;
-   
+.audio-wrap {
+    margin: 15px 0px;
 }
+
+.audio-wrap h1 {
+        font-size: 17px;
+        float: left;
+        padding: 20px 4px 0px 4px;
+        margin: 0px;
+ }
+
+
+    .audio-wrap audio {
+        width: 285px;
+        float: right;
+    }
+.tooltip1 {
+        position: relative;
+        display: inline-block;
+    }
 
 
 .tooltip1:hover .tooltiptext {
@@ -221,9 +235,43 @@ height: 55px;
     }
 
 
-.show [class^="tooltip"] {
-    position: relative;
+        .tooltip1:hover .tooltiptext table {
+            border: 1px #555555e3 solid !important;
+            width: 100%;
+            z-index: 10000;
+            background: #555555e3;
+            color: #ffff;
+        }
+            .tooltip1:hover .tooltiptext table td {
+                border-bottom: 1px #ccc dotted;
+            }
+
+.tooltiphead {
+    background: #504e4e91;
 }
+                .tooltip1:hover .tooltiptext table td span.left-tooltext {
+                    color: #fff;
+                    float: left;
+                    display: block;
+                    border-right: 1px #CCC dotted;
+                    padding: 3px 5px;
+                    width: 78%;
+                    text-align: left;
+                    font-size: 13px;
+                }
+
+
+                .tooltip1:hover .tooltiptext table td span.right-tooltext {
+                    color: #fff;
+                    display: block;
+                    text-align: center;
+                    padding: 3px 0px;
+                    font-size: 13px;
+                }
+
+                .show [class^="tooltip"] {
+                    position: relative;
+                }
 
 .show [class^="tooltip"]:after {
     opacity: 0;
@@ -1466,23 +1514,46 @@ textarea::-webkit-scrollbar-thumb {
         margin-top: 0;
     }
 }
-
-@media screen and (max-width: 480px) {
-    .single-video-left .comment-area textarea {
-        width: 72%;
-    }
-    .comment-area .talk-bubble {
-        width: 83%;
-    }
-    .col-md-8.video-contop .mdc-button--outlined {
-        font-size: 13px;
-        font-size: 12px;
-        padding: 0px 6px;
+@media screen and (max-width: 540px) {
+    .audio-wrap {
+        margin: 0px 0px;
+        clear: both;
         width: 100%;
+        float: left;
+        text-align: center;
     }
+        .audio-wrap h1 {
+            font-size: 17px;
+            float: left;
+            padding: 20px 4px 10px 4px;
+            margin: 0px;
+            width: 100%;
+        }
+
+        .audio-wrap audio {
+            width: 285px;
+            float: none;
+        }
 }
-@media screen and (max-width: 375px) {
-    .comment-area .talk-bubble {
-        width: 78%;
+    @media screen and (max-width: 480px) {
+        .single-video-left .comment-area textarea {
+            width: 72%;
+        }
+
+        .comment-area .talk-bubble {
+            width: 83%;
+        }
+
+        .col-md-8.video-contop .mdc-button--outlined {
+            font-size: 13px;
+            font-size: 12px;
+            padding: 0px 6px;
+            width: 100%;
+        }
     }
-}
+
+    @media screen and (max-width: 375px) {
+        .comment-area .talk-bubble {
+            width: 78%;
+        }
+    }
