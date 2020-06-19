@@ -74,19 +74,13 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
-
-                        var modelList = _meetingService.GetMeetingList();
-                        modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
-
-                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
+                        List<MeetingVM> modelList = new List<MeetingVM>();
                         if (HttpContext.Session.GetString("Interviewfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
-                                modelList = _meetingService.GetMeetingList();
-                                modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                                modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value);                                
                             }
                             modelList = modelList.Select(x =>
                             {
@@ -113,6 +107,12 @@ namespace Risebird.Web.Controllers
                             && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
                             && ((filter.Interviewer != null && filter.Interviewer.Count() > 0 )? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
 
+                        }
+                        else
+                        {                            
+                            modelList = _meetingService.GetAllMeetingList(DateTime.Now, DateTime.Now.AddDays(1));
+                            modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                            modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         }
                         return View(modelList);
                     }
@@ -764,11 +764,11 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("Interviewfilters", JsonConvert.SerializeObject(filter));
                         }
-                        var modelList = _meetingService.GetMeetingList();
+                        List<MeetingVM> modelList = new List<MeetingVM>();
 
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                            modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value);
                         }
 
 

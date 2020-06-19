@@ -11,6 +11,7 @@ namespace Risebird.Business.Interface
     {
         List<MeetingVM> GetMeetingList();
         bool AddMeeting(MeetingVM meeting);
+        List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate);
         bool UpdateMeeting(MeetingVM meetingToUpdate);
         List<MeetingVM> MultipleCandidateInvites();
         MeetingVM GetMeeting(int id);

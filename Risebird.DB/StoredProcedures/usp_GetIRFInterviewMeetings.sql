@@ -23,10 +23,12 @@ im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewO
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, ic.*, irf.*, qcf.*,
-(Select distinct Isonline from userlist where EmailId=im.candidateEmail) as IsOnline, (Select distinct Isonline from userlist where EmailId=im.ClientHrContact) as IsHrOnline from InterviewMeetings im  
+ul.Isonline as IsOnline, ulh.Isonline as IsHrOnline from InterviewMeetings im  
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId left join irf on IRF.IRFId = im.IRFId  
 left join QCFeedbackReport QCF on im.id=QCF.InterviewId
 left join Candidate ca on im.candidateEmail = ca.EmailId and irf.id= ca.IRFId
+left join userlist ul on im.candidateEmail = ul.EmailId
+left join userlist ulh on im.ClientHrContact = ulh.EmailId
 where im.IRFId = @IRFId 
 End
 
