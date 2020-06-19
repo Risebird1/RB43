@@ -754,42 +754,15 @@
                                                                     @if (Model.FeedbackAudioLink != null)
                                                                     {
                                                                         <div class="row">
-                                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                                <h5>Uploaded Feedback Audio</h5>
-                                                                            </div><!--end of col-md-12-->
+                                                                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                                                                <h5>Audio Feedback</h5>
+                                                                            </div>
 
 
-                                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                                <div class="table-responsive-sm">
-                                                                                    <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
-                                                                                        <thead>
-                                                                                            <tr>
-                                                                                                <th width="30%">File</th>
-                                                                                                <th width="35%">Play</th>
-                                                                                            </tr>
-                                                                                        </thead>
-                                                                                        <tbody>
-                                                                                            <tr>
-
-                                                                                                <td>
-                                                                                                    <a href='@Model.FeedbackAudioLink' download>
-                                                                                                        @Model.FeedbackAudioLink.Split('/').Last()
-                                                                                                    </a>
-                                                                                                </td>
-
-
-                                                                                                <td>
-                                                                                                    <audio src='@Model.FeedbackAudioLink' controls></audio>
-                                                                                                </td>
-
-                                                                                            </tr>
-
-
-                                                                                        </tbody>
-                                                                                    </table>
-
-
-                                                                                </div>
+                                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                                                                
+                                                                              <audio src='@Model.FeedbackAudioLink' controls></audio>
+                                                                                                
                                                                             </div><!--end of col-md-12-->
 
                                                                         </div>
