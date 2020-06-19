@@ -686,13 +686,31 @@
                                                             {
                                                                 <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
                                                             }
-                                                            <span class="tooltiptext">
+                                                        <span class="tooltiptext">
+                                                            <table>
+                                                                <tr>
+                                                                    <td class="tooltiphead">
+                                                                        <span class="left-tooltext">Email</span>
+                                                                        <span class="right-tooltext">Counts</span>
+                                                                    </td>
+                                                                    
+
+                                                                </tr>
+
                                                                 @foreach (var item in Model.VideoCountDetail)
                                                                 {
-                                                                    <p>@item.UserName - @item.Count</p>
-                                                                }
+                                                                <tr>
+                                                                    <td>
 
-                                                            </span>
+                                                                        <span class="left-tooltext">@item.UserName</span>
+                                                                        <span class="right-tooltext">@item.Count</span>
+                                                                    </td>
+                                                                </tr>
+                                                                        }
+                                                                   
+                                                                </table>
+
+                                                        </span>
                                                         </div>
                                                     }
                                                 </div>
@@ -722,6 +740,22 @@
                                                                                 </div>
                                                                             </div>
 
+                                                                            @if (Model.FeedbackAudioLink != null)
+                                                                            {
+                                                                                <div class="audio-wrap">
+                                                                                
+                                                                                        <h1>Audio Feedback</h1>
+                                                                                        <audio src='@Model.FeedbackAudioLink' controls></audio>
+                                                                                 
+
+
+                                                                                   <!--end of col-md-12-->
+
+                                                                                </div>
+
+                                                                            }
+
+
                                                                         </div>
                                                                         <div class="interviewer-comment itemcomment">
 
@@ -733,7 +767,7 @@
                                                                                     <div class="talktext">
 
 
-                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:130px;width:100%", @readonly = "readonly" })
+                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;width:100%", @readonly = "readonly" })
 
                                                                                     </div>
                                                                                 </div>
@@ -751,24 +785,7 @@
 
                                                                         </div>
                                                                     </div>
-                                                                    @if (Model.FeedbackAudioLink != null)
-                                                                    {
-                                                                        <div class="row">
-                                                                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                                                                                <h5>Audio Feedback</h5>
-                                                                            </div>
-
-
-                                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                                                                
-                                                                              <audio src='@Model.FeedbackAudioLink' controls></audio>
-                                                                                                
-                                                                            </div><!--end of col-md-12-->
-
-                                                                        </div>
-
-                                                                    }
-
+                                                                
 
                                                                 </div>
                                                                 <!-- #tab1 -->
@@ -2038,6 +2055,8 @@
                 am4core.color("#00F96B"),
                 am4core.color("#F64042"),
                 am4core.color("#ffbc50")
+
+
 
             ];
             series.columns.template.events.once("inited", function (event) {
