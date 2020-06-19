@@ -7607,7 +7607,7 @@ input.theatre-btn:focus {
 .control-label, .control-labeled {
     color: #5f5c5c !important;
     font-weight: normal !important;
-    font-size: 13px !important;
+    font-size: 13.5px !important;
 }
 
 .card .card-footer {
@@ -11578,7 +11578,7 @@ table.dataTable > thead > tr > th {
 .dataTables_paginate a {
     outline: 0;
 }
-
+#x{display:none!important;}
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.child,
 table.dataTable.dtr-inline.collapsed > tbody > tr > th.child,
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dataTables_empty {

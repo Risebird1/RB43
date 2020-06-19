@@ -91,7 +91,7 @@
                                                 </button>
 
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px; ">
-                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
+                                                    <span  data-toggle="tooltip" data-placement="top" title="Click here to Broadcast Message" onclick="OpenBroadcastModal()" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;"> Broadcast</font></span>
                                                 </button>
 
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
@@ -405,19 +405,7 @@
                                                         }
                                                         <td> @item.candidateEmail</td>
                                                         <td> @item.JDTiltle.Split("|")[0] </td>
-                                                        @if (item.IsInterviewerOnline == 1)
-                                                        {
-                                                            <td>
-                                                                <a onclick="directopenChat('@item.interviewer')"><span class="dot" style="background-color:green"></span>    @item.interviewer </a>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>
-                                                                <a onclick=""><span class="dot"></span> @item.interviewer </a>
-                                                            </td>
-                                                        }
-
+                                                        <td> @item.interviewer</td>
                                                         @if (item.confirmationStatus.Trim() == "Cancelled")
                                                         {
                                                             <td class="text-center">
@@ -628,52 +616,63 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-6 col-sm-6 border-rv">
-                        <p>Please select from the following:</p>
+                    <div class="col-md-12 col-sm-12">
+                        <p class="control-label desp-label">Please select from the following:</p>
 
-                <input type="radio"  id="radOne" name="receivers" value="Interviewer">
-                <label for="radOne">All Interviewers</label><br>
-                <input type="radio" id="radTwo" name="receivers" value="Candidate">
-                <label for="radTwo">All Candidates</label><br>
-                <input type="radio" id="radThree" name="receivers" value="Client">
-                <label for="radThree">All Clients</label>
-                <br />
-
-                <div class="row">
-                    <div class="form-group">
-                        <label for="Subject">Subject</label>
-                        <input type="text" id="bcSubject"/>
+                        <div class="broad-ele">
+                            <input type="radio" id="radOne" name="receivers" value="Interviewer">
+                            <label for="radOne">All Interviewers</label>
+                        </div>
+                        <div class="broad-ele">
+                            <input type="radio" id="radTwo" name="receivers" value="Candidate">
+                            <label for="radTwo">All Candidates</label>
+                        </div>
+                        <div class="broad-ele">
+                            <input type="radio" id="radThree" name="receivers" value="Client">
+                            <label for="radThree">All Clients</label>
+                        </div>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label  desp-label" for="Subject">Subject</label>
+                            <input class="form-control w-full" type="text" id="bcSubject" />
+                        </div>
 
                         <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Message">Message</label>
+                            <label class="control-label  desp-label" for="Message">Message</label>
                             <div>
                                 <div class="text-areadiv1">
-                                    <textarea class="scrollbar" style="width:100%;"  id="bcMessage"></textarea>
+                                    <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
                                 </div>
                             </div>
 
-                <br />
+
+
+
+
+                        </div>
+
+
+                    </div>
+
+                </div>
 
                 <div class="row">
-                    <div class="form-group">
-                        <label for="Message">Message</label>
-                        <input type="text" id="bcMessage"/>
+
+                    <div class="col-md-12 col-sm-12 text-right">
+                        <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Send</button>
+<button type="button" id="broadcastPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
+                    </div>
                     </div>
 
-                    </div>
-
-                <br />
-                <div class="modal-footer" style="padding: 2px 16px;background-color: #fff;color: white;">
-                    <button type="button" onclick="SendBroadcast()" class="btn btn-primary">Send</button>
                 </div>
-                
-            </div>
-            
-        </div>
 
-    </div>
-</div>
+                
+                   
+                </div>
+            </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
@@ -1016,6 +1015,15 @@
         var modal = document.getElementById("broadcastModal");
         modal.style.display = "none";
     }
+
+    var spanbroadcast1 = document.getElementById("broadcastPopUpclose");
+    // When the user clicks on <span> (x), close the modal
+    spanbroadcast1.onclick = function () {
+        var modal = document.getElementById("broadcastModal");
+        modal.style.display = "none";
+    }
+
+
     function OpenBroadcastModal() {
         // Get the modal
         var modalBct = document.getElementById("broadcastModal");

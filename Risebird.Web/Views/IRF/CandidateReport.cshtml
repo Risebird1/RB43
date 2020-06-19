@@ -90,7 +90,7 @@
                 <div class="mdc-card card">
                     <div class="mdc-card-wrapper__text-section">
 
-                        <form action="/IRF/CandidateReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                        <form action="/IRF/CandidateReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="candidateForm">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -197,10 +197,9 @@
 
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                                <div id="scoreChart" style="height: 200px; width: 100%;"></div>
 
-                                                    <div id="scoreChart" style="height: 200px; width: 100%;"></div>
-                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -247,7 +246,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { ID = "droplevel", @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SelectabilityEvaluatorReportCollection')", onmouseover = "getOption(this)" })
+                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @*ID = "droplevel",*@ @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SelectabilityEvaluatorReportCollection')"@*, onmouseover = "getOption(this)"*@ })
 
                                                                 </td>
                                                                 <td>
@@ -325,7 +324,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.HRReport.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { ID = "droplevel", @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'HRReport_JoinabilityHRReportCollection')", onmouseover = "getOption(this)" })
+                                                                    @Html.DropDownListFor(m => m.HRReport.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @*ID = "droplevel",*@ @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'HRReport_JoinabilityHRReportCollection')"@*, onmouseover = "getOption(this)"*@ })
 
                                                                 </td>
                                                                 <td>
@@ -482,7 +481,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { ID = "droplevel", @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')", onmouseover = "getOption(this)" })
+                                                                    @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @*ID = "droplevel",*@ @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')"@*, onmouseover = "getOption(this)"*@ })
 
                                                                 </td>
                                                                 <td>
@@ -521,26 +520,26 @@
 
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Uploaded Audios</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
+                                @if (Model.CandidateAudioCollection != null && Model.CandidateAudioCollection.Count()!=0)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Uploaded Audios</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
 
 
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive-sm">
-                                            <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="30%">File</th>
-                                                        <th width="35%">Play</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.CandidateAudioCollection != null)
-                                                    {
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="30%">File</th>
+                                                            <th width="35%">Play</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
                                                         @for (int i = 0; i < Model.CandidateAudioCollection.Count(); i++)
                                                         {
                                                             <tr>
@@ -560,16 +559,19 @@
 
                                                         }
 
-                                                    }
 
-                                                </tbody>
-                                            </table>
+                                                    </tbody>
+                                                </table>
 
 
-                                        </div>
-                                    </div><!--end of col-md-12-->
+                                            </div>
+                                        </div><!--end of col-md-12-->
 
-                                </div>
+                                    </div>
+
+                                }
+
+
 
                                 @Html.HiddenFor(m => m.id)
                                 @Html.HiddenFor(m => m.IRFId)
@@ -588,11 +590,11 @@
                                             {
                                                 @if (Model.IsEdited)
                                                 {
-                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="submit()">Save</button>
                                                 }
                                                 else
                                                 {
-                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="submit()">Submit</button>
                                                 }
 
                                             }
@@ -661,29 +663,36 @@
         });
     };
 </script>
-
 <script>
-    $('form').submit(function () {
-        if ($(this).valid()) {
-            $(':submit', this).attr('disabled', 'disabled');
-        }
-    });
+    function submit() {
+        document.getElementById("candidateForm").submit();
+
+    }
+</script>
+<script>
+    //$('form').submit(function () {
+    //    if ($(this).valid()) {
+    //        $(':submit', this).attr('disabled', 'disabled');
+    //    }
+    //});
 
 
 
     function CalculateOverAll(id, value, skillName) {
+        var num = id.match(/(\d+)/);
+        var index = num[0];
         value = parseInt(value);
-        var index;
-        if (skillName == 'TechSkillEvaluatorReportCollection') {
-            index = id.charAt(35);
-        }
-        else if (skillName == 'SkillGeneralEvaluatorReportCollection') {
-            index = id.charAt(38);
-        }
-        else {
-            index = id.charAt(39);
+        //var index;
+        //if (skillName == 'TechSkillEvaluatorReportCollection') {
+        //    index = id.charAt(35);
+        //}
+        //else if (skillName == 'SkillGeneralEvaluatorReportCollection') {
+        //    index = id.charAt(38);
+        //}
+        //else {
+        //    index = id.charAt(39);
 
-        }
+        //}
         //var skillName = "SelectabilityEvaluatorReportCollection";
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
         var required = $("#" + reqLevelId).val();
@@ -861,7 +870,7 @@
 
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
-                    return dy + 25;
+                    return dy;
                 }
                 return dy;
             });

@@ -66,6 +66,10 @@ namespace Risebird.Web
             services.Configure<GzipCompressionProviderOptions>(options => {
                 options.Level = CompressionLevel.Fastest;
             });
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+            });
             services.AddMvc();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IConfiguration>(Configuration);
@@ -110,6 +114,7 @@ namespace Risebird.Web
 
             });
             app.UseAuthentication();
+            app.UseCors(options => options.AllowAnyOrigin());
             //Antiforgery token secure
             //app.UseAntiforgeryTokens();
             app.UseHttpsRedirection();
