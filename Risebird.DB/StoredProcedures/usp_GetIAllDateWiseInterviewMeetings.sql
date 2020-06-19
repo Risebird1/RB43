@@ -31,7 +31,7 @@ left join UserList uli on im.interviewer= uli.EmailId
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId    
 left join CandidatesMaster cm on im.candidateEmail = cm.EmailId) Meetings    
 left join Candidate ca on Meetings.candidateEmail = ca.EmailId and Meetings.irfIntId= ca.IRFId    
-where interviewDate BETWEEN @startDate AND @endDate  
+where interviewDate >= @startDate AND interviewDate <= @endDate  
  
   
      

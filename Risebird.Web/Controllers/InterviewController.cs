@@ -80,7 +80,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
-                                modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value);                                
+                                modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));                                
                             }
                             modelList = modelList.Select(x =>
                             {
@@ -768,7 +768,7 @@ namespace Risebird.Web.Controllers
 
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value);
+                            modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
                         }
 
 

@@ -31,7 +31,7 @@ left join QCFeedbackReport QCF on im.id=QCF.InterviewId
 left join CandidatesMaster cm on im.candidateEmail = cm.EmailId
 inner join TransClientUser tcu on IRF.id=tcu.IRFId
 inner join UserList ul on tcu.ClientUserId= ul.id
-inner join UserList ulc on im.candidateEmail= ulc.id
+inner join UserList ulc on im.candidateEmail= ulc.EmailId
 left join Candidate ca on im.candidateEmail = ca.EmailId and irf.id= ca.IRFId
 
 where ul.EmailId LIKE @EmailId AND ul.IsActive=1  and (ic.InterviewStatus=1 or ic.InterviewStatus=3 or (qcf.InterviewId is not null))       
