@@ -638,54 +638,62 @@
                     <div class="col-md-12 col-sm-12">
                         <p class="control-label desp-label">Please select from the following:</p>
 
-                        <input type="radio" id="radOne" name="receivers" value="Interviewer">
-                        <label for="radOne">All Interviewers</label><br>
-                        <input type="radio" id="radTwo" name="receivers" value="Candidate">
-                        <label for="radTwo">All Candidates</label><br>
-                        <input type="radio" id="radThree" name="receivers" value="Client">
-                        <label for="radThree">All Clients</label>
-                        <br />
+                        <div class="broad-ele">
+                            <input type="radio" id="radOne" name="receivers" value="Interviewer">
+                            <label for="radOne">All Interviewers</label>
+                        </div>
+                        <div class="broad-ele">
+                            <input type="radio" id="radTwo" name="receivers" value="Candidate">
+                            <label for="radTwo">All Candidates</label>
+                        </div>
+                        <div class="broad-ele">
+                            <input type="radio" id="radThree" name="receivers" value="Client">
+                            <label for="radThree">All Clients</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label  desp-label" for="Subject">Subject</label>
+                            <input class="form-control w-full" type="text" id="bcSubject" />
+                        </div>
 
-                        <div class="row">
-                            <div class="form-group">
-                                <label for="Subject">Subject</label>
-                                <input type="text" id="bcSubject" />
+                        <div class="form-group">
+                            <label class="control-label  desp-label" for="Message">Message</label>
+                            <div>
+                                <div class="text-areadiv1">
+                                    <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Message">Message</label>
-                                <div>
-                                    <div class="text-areadiv1">
-                                        <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
-                                    </div>
-                                </div>
 
-                                <br />
 
-                                <div class="row">
-                                    <div class="form-group">
-                                        <label for="Message">Message</label>
-                                        <input type="text" id="bcMessage" />
-                                    </div>
 
-                                </div>
-
-                                <br />
-                                <div class="modal-footer" style="padding: 2px 16px;background-color: #fff;color: white;">
-                                    <button type="button" onclick="SendBroadcast()" class="btn btn-primary">Send</button>
-                                </div>
-
-                            </div>
 
                         </div>
 
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-12 col-sm-12 text-right">
+                        <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Send</button>
+                        <button type="button" id="broadcastPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
                     </div>
                 </div>
+
             </div>
+
+
+
         </div>
     </div>
 </div>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
