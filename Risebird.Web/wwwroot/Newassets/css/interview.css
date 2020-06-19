@@ -1255,7 +1255,11 @@ select:-moz-focusring {
         padding: 5px 0px 0px 0px;
 
     }
-
+.broad-ele {
+    font-size:13.3px;
+    padding-right: 10px;
+    float:left;
+}
 .text-areadiv1 {
     height: auto;
     padding: 0px ;
