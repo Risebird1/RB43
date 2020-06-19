@@ -95,7 +95,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card">
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckInterviewerComments()">
+                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -624,8 +624,8 @@
                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
-                                                                    </button>*@
+                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
+                                </button>*@
 
 
 
@@ -699,6 +699,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
 
                                     </div><!--end of col-md-12-->
 
@@ -1856,6 +1857,10 @@
         }
     }
 
+    function CheckConditions() {
+        return (CheckInterviewerComments() && CheckQuestionsTiming());
+    }
+
     function CheckInterviewerComments() {
         var meetingStatusElem = document.getElementById("MeetingStatus");
         if (meetingStatusElem.value == 4) {
@@ -1870,6 +1875,28 @@
         }
         else
             return true;
+    }
+
+    function CheckQuestionsTiming() {
+        var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
+        var oldVal = $("#QuestionsCollection_0__Timing").val();
+        for (i = 0; i < questionItems.length; i++) {
+            var temp = $("#QuestionsCollection_" + i + "__Timing").val();
+            if (temp == null || temp == '') {
+                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill all the values under the time field in ascending order."
+                return false;
+            }
+            if (i > 0) {
+                if (parseInt(temp) < parseInt(oldVal)) {
+                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill all the values under the time field in ascending order.";
+                    return false;
+                }
+                else
+                    oldVal = temp;
+            }
+        }
+        document.getElementById('QuestionsCollection_TimingError').innerHTML = "";
+        return true;
     }
 
     $(document).ready(function () {
