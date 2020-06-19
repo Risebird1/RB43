@@ -19,6 +19,7 @@ using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
 using Microsoft.WindowsAzure.MediaServices.Client.ContentKeyAuthorization;
 using AzureMediaServiceMVC.Models.Azure;
+using System.Threading.Tasks;
 
 namespace AzureMediaServiceMVC.Controllers
 {
@@ -43,6 +44,8 @@ namespace AzureMediaServiceMVC.Controllers
         private static readonly AzureAdTokenCredentials azureAdTokenCredentials = new AzureAdTokenCredentials(mediaServiceADTenantDomain, new AzureAdClientSymmetricKey(mediaServiceADApplicationId, mediaServiceADApplicationSecret), AzureEnvironments.AzureCloudEnvironment);
         private static readonly AzureAdTokenProvider azureAdTokenProvider = new AzureAdTokenProvider(azureAdTokenCredentials);
         private static readonly CloudMediaContext context = new CloudMediaContext(new Uri(mediaServiceADRestApiEndpoint), azureAdTokenProvider);
+        public static string containername;
+        public static string publicvideourl;
 
         //public ActionResult Index()
         //{
@@ -197,19 +200,20 @@ namespace AzureMediaServiceMVC.Controllers
             CloudBlobClient cloudBlobClient = storageAccount.CreateCloudBlobClient();
             CloudBlobContainer mediaBlobContainer = cloudBlobClient.GetContainerReference(mediaServiceStorageContainerReference);
 
-            mediaBlobContainer.CreateIfNotExists();
+            mediaBlobContainer.CreateIfNotExists(BlobContainerPublicAccessType.Container);
 
             // Create a new asset.
             IAsset asset = context.Assets.Create("UploadedVideo-" + Guid.NewGuid().ToString().ToLower(), AssetCreationOptions.None);
             IAccessPolicy writePolicy = context.AccessPolicies.Create("writePolicy", TimeSpan.FromMinutes(120), AccessPermissions.Write);
-            ILocator destinationLocator = context.Locators.CreateLocator(LocatorType.Sas, asset, writePolicy);
+            ILocator destinationLocator = context.Locators.CreateSasLocator(asset, writePolicy);
 
             // Get the asset container URI and copy blobs from mediaContainer to assetContainer.
             Uri uploadUri = new Uri(destinationLocator.Path);
             string assetContainerName = uploadUri.Segments[1];
+            containername = assetContainerName;
             CloudBlobContainer assetContainer = cloudBlobClient.GetContainerReference(assetContainerName);
             string fileName = HttpUtility.UrlDecode(Path.GetFileName(model.BlockBlob.Uri.AbsoluteUri));
-
+            publicvideourl = model.BlockBlob.Uri.AbsoluteUri.Replace(mediaServiceStorageContainerReference, assetContainerName);
             var sourceCloudBlob = mediaBlobContainer.GetBlockBlobReference(fileName);
             sourceCloudBlob.FetchAttributes();
 
@@ -264,14 +268,14 @@ namespace AzureMediaServiceMVC.Controllers
             IJob job = context.Jobs.Create(inputAsset.Name);
             IMediaProcessor processor = GetLatestMediaProcessorByName("Media Encoder Standard");
             string configuration = System.IO.File.ReadAllText(HttpContext.Server.MapPath("~/MediaServicesCustomPreset.xml"));
-            ITask task = job.Tasks.AddNew(inputAsset.Name + "- encoding task", processor, configuration, TaskOptions.None);
+            ITask task = job.Tasks.AddNew(inputAsset.Name + "- encoding task", processor, "", TaskOptions.None);
             task.InputAssets.Add(inputAsset);
             task.OutputAssets.AddNew(inputAsset.Name + "-Adaptive-Bitrate-MP4", AssetCreationOptions.None);
             job.Submit();
             IAsset encodedAsset = job.OutputMediaAssets[0];
 
             // process policy & encryption
-            ProcessPolicyAndEncryption(encodedAsset);
+            // ProcessPolicyAndEncryption(encodedAsset);
 
             // Get file name
             string fileSession = "CurrentFile";
@@ -302,7 +306,6 @@ namespace AzureMediaServiceMVC.Controllers
 
             // Remove session
             Session.Remove("CurrentFile");
-
             // return success response
             return Json(new
             {
@@ -310,7 +313,7 @@ namespace AzureMediaServiceMVC.Controllers
                 message = "Congratulations! Video is uploaded and pipelined for encoding, check console log for after encoding playback details.",
                 assetId = assetId,
                 jobId = job.Id,
-                locator = smoothStreamingUri,
+                locator = publicvideourl,
                 encrypted = useAESRestriction,
                 token = token
             });
@@ -394,7 +397,7 @@ namespace AzureMediaServiceMVC.Controllers
             IAccessPolicy policy = context.AccessPolicies.Create("Streaming policy", daysForWhichStreamingUrlIsActive, AccessPermissions.Read);
 
             // Create a locator to the streaming content on an origin.
-            ILocator originLocator = context.Locators.CreateLocator(LocatorType.OnDemandOrigin, asset, policy, DateTime.UtcNow.AddMinutes(-5));
+            ILocator originLocator = context.Locators.CreateLocator(LocatorType.Sas, asset, policy, DateTime.UtcNow.AddMinutes(-5));
 
             // Create a URL to the manifest file.
 
@@ -521,7 +524,7 @@ namespace AzureMediaServiceMVC.Controllers
             // A locator expiry can be set to maximum 100 years, using 99 years below.
             TimeSpan daysForWhichStreamingUrlIsActive = DateTime.Now.AddYears(99) - DateTime.Now;
             IAccessPolicy videoWatchPolicy = context.AccessPolicies.Create("videoWatchPolicy", daysForWhichStreamingUrlIsActive, AccessPermissions.Read);
-            ILocator destinationLocator = context.Locators.CreateLocator(LocatorType.OnDemandOrigin, asset, videoWatchPolicy);
+            ILocator destinationLocator = context.Locators.CreateLocator(LocatorType.Sas, asset, videoWatchPolicy);
 
             // Get the asset container URI
             Uri uploadUri = new Uri(destinationLocator.Path);
@@ -629,6 +632,22 @@ namespace AzureMediaServiceMVC.Controllers
                 //db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public async Task<JsonResult> URLIndex()
+        {
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(mediaServiceStorageConnectionString);
+            CloudBlobClient cloudBlobClient = storageAccount.CreateCloudBlobClient();
+            CloudBlobContainer assetContainer = cloudBlobClient.GetContainerReference(containername);
+            await SetPublicContainerPermissions(assetContainer);
+            return Json("Success");
+        }
+        private static async Task SetPublicContainerPermissions(CloudBlobContainer container)
+        {
+            BlobContainerPermissions permissions = await container.GetPermissionsAsync();
+            permissions.PublicAccess = BlobContainerPublicAccessType.Container;
+            await container.SetPermissionsAsync(permissions);
+
         }
     }
 }
