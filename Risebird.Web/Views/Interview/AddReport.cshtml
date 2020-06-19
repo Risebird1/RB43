@@ -95,7 +95,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card">
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()">
+                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()" id="reportForm">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -111,8 +111,8 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @if (Model.IsInterviewer && Model.CandidateName != null)
-                                            {                                               
-                                               @Regex.Replace(@Model.CandidateName, "[a-zA-Z0-9]", "*")
+                                            {
+                                                @Regex.Replace(@Model.CandidateName, "[a-zA-Z0-9]", "*")
                                             }
                                             else
                                             {
@@ -257,6 +257,9 @@
                                                     @*@Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })*@
                                                 </div>
                                                 <div class="form-group">
+                                                    <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
+                                                <div class="form-group">
                                                     @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                     @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                     @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
@@ -295,14 +298,14 @@
 
 
 
-                                                    <div class="choose-file">
-                                                        <label class="file-lable"> Upload Feedback Audio File</label>
+                        <div class="choose-file">
+                            <label class="file-lable"> Upload Feedback Audio File</label>
 
-                                                        @Html.LabelFor(model => model.FeedbackAudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                        @Html.TextBoxFor(model => model.FeedbackAudioFile, new { type = "file", @class = "form-control", @accept = ".mp3, .wav, .m4a" })
+                            @Html.LabelFor(model => model.FeedbackAudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                            @Html.TextBoxFor(model => model.FeedbackAudioFile, new { type = "file", @class = "form-control", @accept = ".mp3, .wav, .m4a" })
 
-                                                    </div>
-                                                </div>*@
+                        </div>
+                    </div>*@
                                         </div>
 
 
@@ -569,7 +572,7 @@
                                         </p>
                                         @*<div class="col-md-6 col-sm-6">
 
-                                            </div>*@
+                </div>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -624,8 +627,8 @@
                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
-                                </button>*@
+                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
+                                        </button>*@
 
 
 
@@ -699,7 +702,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                        @*<label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -1292,6 +1295,7 @@
                                     </div><!--end of col-md-12-->
 
                                 </div>
+                                <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
 
 
                                 @Html.HiddenFor(m => m.id)
@@ -1327,11 +1331,13 @@
                                             {
                                                 if (Model.IsEdited)
                                                 {
-                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>*@
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="SubmitForm()">Save</button>
                                                 }
                                                 else
                                                 {
-                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>*@
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
                                                 }
                                             }
 
@@ -1391,6 +1397,15 @@
             pdf.save("Feedback_Interview.pdf");
         });
     };
+</script>
+<script>
+    function SubmitForm() {
+        if (CheckConditions()) {
+            document.getElementById("reportForm").submit();
+        }
+        else
+            return;
+    }
 </script>
 
 <script>
@@ -1858,6 +1873,7 @@
     }
 
     function CheckConditions() {
+        debugger;
         return (CheckInterviewerComments() && CheckQuestionsTiming());
     }
 
@@ -1866,10 +1882,13 @@
         if (meetingStatusElem.value == 4) {
             var comments = document.getElementById("InterviewerComment").value;
             if (comments.length >= 250) {
+                document.getElementById("interviewerComment_Error").innerHTML = "";
                 return true;
             }
             else {
+                //interviewerComment_Error
                 document.getElementById("InterviewerComment").focus();
+                document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
                 return false;
             }
         }
