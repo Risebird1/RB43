@@ -124,18 +124,7 @@ function createDownloadLink(blob) {
     //add the save to disk link to li
     li.appendChild(link);
 
-    //upload link
-
-    //var upload = document.createElement('a');
-    //upload.href = "#";
-    //upload.innerHTML = "Upload";
-
-    //var input = document.createElement('input');
-    //input.type = "file";
-    //input.value = blob;
-    //document.getElementById('audio_feedback').appendChild(input);
-
-  
+   
     document.getElementById('btnUpload').disabled = true;
 
     var fd = new FormData();
