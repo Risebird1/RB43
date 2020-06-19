@@ -102,7 +102,7 @@
         <script src="~/js/angular/InfiniteScroll.js"></script>*@
 
 </head>
-<body class=" sidebar-mini ">
+<body class=" sidebar-mini " onunload="closebrowser()">
 
     <audio id="chatAudio" controls="controls" hidden>
         <source src="~/audio/done-for-you.ogg" type="audio/ogg" />
@@ -565,6 +565,15 @@
                 data: { Userid: Id },
                 success: function (data) {
                     FetchUser(GroupId);
+                }
+            });
+        }
+        function closebrowser() {
+            $.ajax({
+                type: "GET",
+                url: "/Session/SignOut",
+                success: function (data) {
+
                 }
             });
         }
