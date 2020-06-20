@@ -618,7 +618,7 @@
                                                             </td>
 
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="60">
+                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="60" max="5000">
 
 
                                                             </td>
@@ -1884,12 +1884,12 @@
         for (i = 0; i < questionItems.length; i++) {
             var temp = $("#QuestionsCollection_" + i + "__Timing").val();
             if (temp == null || temp == '') {
-                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill all the values under the time field in ascending order."
+                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60)."
                 return false;
             }
             if (i > 0) {
                 if (parseInt(temp) < parseInt(oldVal)) {
-                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill all the values under the time field in ascending order.";
+                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60).";
                     return false;
                 }
                 else

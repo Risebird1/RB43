@@ -48,7 +48,18 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return _meetingRespository.GetAllInterviewMeetings(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public List<MeetingVM> GetRiseTubeMeetings(int clientId, string profile, string Emailid)
         {
             try
@@ -403,16 +414,9 @@ namespace Risebird.Business
         public List<Meeting> GetAllAssignedInterviews(string emailID)
         {
             try
-            {
-                //var finalList = new List<Meeting>();
+            {               
                 var assignedMeeting = _meetingRespository.GetAllAssignedInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
-                //foreach (var item in assignedMeeting)
-                //{
-                //    if(_meetingRespository.CheckCompletedInterviews(item.candidateEmail,item.ClientId, item.irfIntId).Result.ToList().Count()==0)
-                //    {
-                //        finalList.Add(item);
-                //    }
-                //}
+                
                 return assignedMeeting;
             }
             catch (Exception ex)
