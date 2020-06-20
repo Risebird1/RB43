@@ -122,7 +122,7 @@
                                                     </td>
                                                 }
 
-                                                @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
+                                                @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 &&item.QCStatus==1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                 {
                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
                                                 }
@@ -179,7 +179,7 @@
                                                 }
 
                                                 <td> @item.MeetingStatusStatusDesc </td>
-                                                @if (item.QCInterview > 0)
+                                                @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0&& item.QCStatus ==1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                 {
                                                     <td> @item.intervieweStatusStatDesc </td>
                                                 }

@@ -1,7 +1,7 @@
 /****** Object:  StoredProcedure [dbo].[usp_GetClientMeetings]    Script Date: 25-09-2019 7.40.51 PM ******/
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_GetClientMeetings'))
 BEGIN
-    DROP PROCEDURE dbo.usp_GetClientMeetings
+    DROP PROCEDURE dbo.usp_GetClientMeetings 
 END
 
 SET ANSI_NULLS ON
@@ -11,7 +11,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
  
-CREATE PROCEDURE [dbo].[usp_GetClientMeetings]     
+CREATE PROCEDURE [dbo].[usp_GetClientMeetings] 
 @EmailId varchar(300)        
 AS      
 BEGIN      
@@ -22,7 +22,7 @@ im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometrySc
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,
 ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,
-ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink, QCF.InterviewId as QCInterview,
+ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink, QCF.InterviewId as QCInterview, QCF.QCStatus,
 cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline
 from InterviewMeetings im 
 inner join IRF on im.IRFId = IRF.IRFId 
