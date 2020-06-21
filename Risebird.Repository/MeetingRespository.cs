@@ -986,7 +986,6 @@ namespace Risebird.Repository
                     paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
                     paramx.Add("@ProctoringCount", reportDetails.ProctoringCount);
-
                     parameters.Add("@interviewId", reportDetails.InterviewId);
                     parameters.Add("@interviewStatus", reportDetails.InterviewStatus);
                     parameters.Add("@MeetingStatus", reportDetails.MeetingStatus);
@@ -1102,7 +1101,7 @@ namespace Risebird.Repository
 
                     }
 
-                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewComments", parameters,
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
 
                     return true;

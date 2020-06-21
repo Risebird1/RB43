@@ -146,16 +146,14 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var modelList = _meetingService.GetMeetingList();
-                modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
+                List<MeetingVM> modelList = new List<MeetingVM>();
                 if (HttpContext.Session.GetString("Interviewfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        modelList = _meetingService.GetMeetingList();
-                        modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                        modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
+                       
                     }
                     modelList = modelList.Select(x =>
                     {
@@ -189,6 +187,13 @@ namespace Risebird.Web.Controllers
                         modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
                     }
+                }
+                else
+                {
+
+                    modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
+                    modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                    modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                 }
 
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
@@ -3796,24 +3801,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        //if (model.FeedbackAudioFile != null)
-                        //{
-                        //    await _azureStorageHelper.InsertBlob(model.FeedbackAudioFile.FileName, "audios", model.FeedbackAudioFile);
-                        //    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                        //    var blob = containerRef.GetBlockBlobReference(model.FeedbackAudioFile.FileName);
-                        //    string uploadedfbaudioFileURL = blob.Uri.ToString();
-                        //    if (uploadedfbaudioFileURL == null)
-                        //    {
-                        //        ModelState.AddModelError(string.Empty, "Feedback audio upload has failed.");
-                        //        GetStatusList(model);
-                        //        return View("AddReport", model);
-                        //    }
-                        //    else
-                        //    {
-                        //        model.FeedbackAudioLink = uploadedfbaudioFileURL;
-                        //    }
-                        //}
-
+                       
                         if (model.AudioFile != null)
                         {
                             await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
@@ -3834,7 +3822,7 @@ namespace Risebird.Web.Controllers
                         string uploadedvideoFileURL = string.Empty;
 
                         if (model.VideoFile != null)
-                        {                            
+                        {
                             AzureCall _call = new AzureCall(_configuration);
                             var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
                             resulttype = resulttype.Replace("\"", "");
