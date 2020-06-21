@@ -1879,6 +1879,9 @@
     }
 
     function CheckQuestionsTiming() {
+     var interviewStatusElem = document.getElementById("InterviewStatus");
+        if (interviewStatusElem.value == 2||interviewStatusElem.value == 3|| interviewStatusElem.value == 4)
+        {
         var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
         var oldVal = $("#QuestionsCollection_0__Timing").val();
         for (i = 0; i < questionItems.length; i++) {
@@ -1898,6 +1901,9 @@
         }
         document.getElementById('QuestionsCollection_TimingError').innerHTML = "";
         return true;
+       }
+      else
+            return true;
     }
 
     $(document).ready(function () {

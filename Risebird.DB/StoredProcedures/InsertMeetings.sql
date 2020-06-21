@@ -102,14 +102,17 @@ IF NOT EXISTS (SELECT 1  FROM  CandidatesMaster  WHERE  EmailId = @candidateEmai
 Begin
 	declare
 	@profileId int = (select id from [Profile] where [Name]='Candidate')
-
+	IF NOT EXISTS (SELECT 1  FROM  UserList  WHERE  EmailId = @candidateEmail)
+	Begin
     Insert into UserList values (@profileId, @candidateName, null, @candidateEmail, null, null, 1,null, null, 0)
-
+	End
 	Insert into CandidatesMaster (UserId, [Name], EmailId, ResumeLink, [Location]) values((select id from UserList where EmailId=@candidateEmail and idProfile=@profileId),@candidateName,
 										 @candidateEmail,@resumeLink, @prefferedLocation)
-
+	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  EmailId = @candidateEmail)
+	Begin
 	Insert into Candidate (IRFId, [Name], EmailId, ResumeLink, [Location]) values((select id from IRF where IRFId=@IRFId),@candidateName,
 										 @candidateEmail,@resumeLink, @prefferedLocation)
+	End
 End
 
 END

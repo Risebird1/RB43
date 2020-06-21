@@ -3796,24 +3796,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        //if (model.FeedbackAudioFile != null)
-                        //{
-                        //    await _azureStorageHelper.InsertBlob(model.FeedbackAudioFile.FileName, "audios", model.FeedbackAudioFile);
-                        //    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                        //    var blob = containerRef.GetBlockBlobReference(model.FeedbackAudioFile.FileName);
-                        //    string uploadedfbaudioFileURL = blob.Uri.ToString();
-                        //    if (uploadedfbaudioFileURL == null)
-                        //    {
-                        //        ModelState.AddModelError(string.Empty, "Feedback audio upload has failed.");
-                        //        GetStatusList(model);
-                        //        return View("AddReport", model);
-                        //    }
-                        //    else
-                        //    {
-                        //        model.FeedbackAudioLink = uploadedfbaudioFileURL;
-                        //    }
-                        //}
-
+                       
                         if (model.AudioFile != null)
                         {
                             await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
@@ -3834,7 +3817,7 @@ namespace Risebird.Web.Controllers
                         string uploadedvideoFileURL = string.Empty;
 
                         if (model.VideoFile != null)
-                        {                            
+                        {
                             AzureCall _call = new AzureCall(_configuration);
                             var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
                             resulttype = resulttype.Replace("\"", "");

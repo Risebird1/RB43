@@ -915,8 +915,7 @@ namespace Risebird.Business
         public async Task<bool> AddInterviewReport(InterviewReport reportModel)
         {
             try
-            {
-                
+            {                
                 var result = await _meetingRespository.AddInterviewReport(reportModel);
                 if (reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
                 {
