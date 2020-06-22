@@ -667,7 +667,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
                 ViewBag.QualityController = new SelectList(interviewers, "id", "EmailId");
                 ViewBag.EmergencyInterviewers = new SelectList(interviewers, "id", "EmailId");
-                ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
+                ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
@@ -1444,8 +1444,8 @@ namespace Risebird.Web.Controllers
                     }
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     string skills = string.Empty;
-                    skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
-                    var interviewers = _irfService.GetInterviewers(skills);
+                    skills = string.Join(",", from item in model.SkillCollection select item.SkillName);
+                    var interviewers = _irfService.GetInterviewersForIRF(skills);
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -1456,7 +1456,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
                     ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
                     ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
-                    ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
+                    //ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
+                    ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
                     ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
                     ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))

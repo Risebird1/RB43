@@ -385,7 +385,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select re.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from ResumeEvaluator re join UserList ul on re.UserId=ul.id";
+                var query = "select re.UserId, ul.EmailId from ResumeEvaluator re join UserList ul on re.UserId=ul.id";
                 //var dynamicParameters = new DynamicParameters();
                 //dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -444,7 +444,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select HR.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from HR join UserList ul on HR.UserId=ul.id";
+                var query = "select HR.UserId, ul.EmailId from HR join UserList ul on HR.UserId=ul.id";
                 //var dynamicParameters = new DynamicParameters();
                 //dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1007,7 +1007,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from TransTechSkill where IRFId = @IRFId";
+                var query = "Select tts.*, Skill.[Name] as SkillName from TransTechSkill tts join Skill on tts.SkillId=Skill.id  where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2137,7 +2137,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select Recruiter.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from Recruiter join UserList ul on Recruiter.UserId=ul.id";
+                var query = "select Recruiter.UserId, ul.EmailId from Recruiter join UserList ul on Recruiter.UserId=ul.id";
                 //var dynamicParameters = new DynamicParameters();
                 //dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2488,6 +2488,23 @@ namespace Risebird.Repository
 
         }
 
+        public IEnumerable<Users> GetAllHRs()
+        {
+            try
+            {
+                var query = "select id, EmailId from UserList where idProfile=2";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return con.Query<Users>(query);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }
