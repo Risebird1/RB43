@@ -451,14 +451,14 @@
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
                                                                     {
-                                                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                            <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered vjs-tech btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
                                                                 <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
 
                                                             </video>
                                                                     }
                                                                     else
                                                                     {
-                                                            <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink" allowfullscreen></iframe>
+                                                                    <iframe class="vjs-tech btnvideo"  width="100%" height="315" src="@Model.VideoLink" allowfullscreen></iframe>
                                                                     }
                                                                 }
                                                                 else
@@ -1648,8 +1648,9 @@
 
 
     function QuestionChanged(id , val ) {
+        var num = id.match(/(\d+)/);
 
-        var index = id.charAt(20);
+        var index = num[0];//id.charAt(20);
         var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
         $.ajax({
             type: "GET",
