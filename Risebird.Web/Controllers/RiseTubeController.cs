@@ -692,6 +692,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
+                        
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
                         NewModel.imid = model.imid;
