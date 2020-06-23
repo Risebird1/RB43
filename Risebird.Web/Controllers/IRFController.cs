@@ -647,26 +647,30 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null)
             {
                 var model = new IRFVm();
-                var interviewers = _irfRepository.GetInterviewers();
+                var skills = _irfRepository.GetSkills();
+                //SelectList(interviewers, "UserId", "EmailId");
+                var interviewers = _irfService.GetInterviewersForIRF(skills.FirstOrDefault().Name);
+                //var interviewers = _irfRepository.GetInterviewers();
                 model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                 model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
                 model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
                 var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
                                     select new { ID = (int)s, Name = s.GetDescription() };
                 model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
-
-                ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+                var clients = _irfRepository.GetClients();
+                ViewBag.Clients = new SelectList(clients, "id", "Name");
                 ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
-                ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+                ViewBag.Skill = new SelectList(skills, "id", "Name");
+                //ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+                ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                ViewBag.Interviewers = new SelectList(interviewers, "id", "EmailId");
+                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
                 ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
                 ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
-                ViewBag.QualityController = new SelectList(interviewers, "id", "EmailId");
-                ViewBag.EmergencyInterviewers = new SelectList(interviewers, "id", "EmailId");
+                ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+                ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -1553,12 +1557,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
                             {
-                                TempData["SuccessErrorMessage"] = "Sorry!Skills Channel with this name already exits!";
+                                TempData["SuccessErrorMessage"] = "Sorry! Skills Channel with this name already exits!";
                                 return RedirectToAction("Index");
                             }
                             if (_irfService.AddIRFDetails(model).Result)
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel saved Successfully";
+                                TempData["SuccessErrorMessage"] = "Skills Channel saved Successfully!";
                                 return RedirectToAction("Index");
                             }
                             else

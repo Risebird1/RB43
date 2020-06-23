@@ -1325,7 +1325,7 @@
     $(document).ready(function () {
 
         var inputs = document.getElementsByTagName("input");
-        for (i = 0; i <= inputs.length; i++) {
+        for (i = 0; i <= inputs.length-1; i++) {
             inputs[i].addEventListener("input", function () {
                 document.getElementById("btnUpload").disabled = false;
             });
@@ -1530,10 +1530,11 @@
 
                             $("#" + drpdownsEI[i].id).append(option);
 
-                            EmergencyInterviewerChanged(drpdownsEI[i].value, drpdownsEI[i].id);
 
                             //drpdwnId.append(option);
                         });
+                        EmergencyInterviewerChanged(drpdownsEI[i].value, drpdownsEI[i].id);
+
                     }
 
 
@@ -1554,10 +1555,11 @@
 
                             $("#" + drpdownsQC[i].id).append(option);
 
-                            QCChanged(drpdownsQC[i].value, drpdownsQC[i].id);
 
                             //drpdwnId.append(option);
                         });
+                        QCChanged(drpdownsQC[i].value, drpdownsQC[i].id);
+
                     }
 
                 }
