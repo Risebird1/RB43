@@ -1,7 +1,7 @@
 ﻿.dot {
     height: 10px;
     width: 10px;
-    margin: 0 2px;
+    margin: 0 2px 0 0;
     background-color: #bbb;
     border-radius: 50%;
     display: inline-block;
@@ -71,14 +71,58 @@ button:focus {
     opacity: 0.7 !important;
     right: 3px;
 }
+.f-w{width:100%;float:left}
+ .search {
+    padding: 15px;
+}
 
+.search input {
+    border-radius: 3px;
+    border: none;
+    padding: 8px;
+    color: white;
+    background: #6A6C75;
+    width: 90%;
+    font-size: 14px;
+}
+
+
+
+
+    .search input::-webkit-input-placeholder { /* Edge */
+        color: #ccc;
+    }
+
+    .search input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+        color: #ccc;
+    }
+
+    .search input::placeholder {
+        color: #ccc;
+    }
+
+
+
+
+
+
+
+
+    .search .fa-search {
+        position: relative;
+        left: -25px;
+        color: #fff;
+    }
 #msger-inputarea {
     display: flex;
     padding: 10px;
     border-top: 2px #ddd solid;
     background: #eee;
-    width: calc(100% - 6px);
+    width: 100%;
 }
+    #msger-inputarea input {
+        height: 60px;
+    }
 
     #msger-inputarea input.form-control:focus {
         border: 0 !important;
@@ -110,10 +154,10 @@ button:focus {
 
 .msger-send-btn {
     margin-left: 10px;
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(0, 196, 65)" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>') !important;
+    background-image: url(../../img/send.png) !important;
     background-repeat: no-repeat !important;
-    background-size: 70% !important;
-    background-position: 90% 70%;
+    background-size: 78% !important;
+    background-position: 70% 50%;
     color: #fff;
     font-weight: bold;
     cursor: pointer;
@@ -141,12 +185,21 @@ button:focus {
     padding: 0px 10px;
     height: 30px;
     margin: 10px 0px;
+    float: right;
+   
+    border:0;
 }
-
-#MyChatModel .modal .modal-header .close {
-    right: 10px;
-    top: 15px;
-}
+    #MyChatModel .mdc-button--outlined img {
+        border-radius: 0px;
+        border: 0px;
+        width: 30px;
+        height: 30px;
+        margin-right: 5px;
+    }
+    #MyChatModel .modal .modal-header .close {
+        right: 10px;
+        top: 15px;
+    }
 
 .input-box {
     display: block;
@@ -155,6 +208,7 @@ button:focus {
     font-size: 14px;
     line-height: 1.25;
     color: #464a4c;
+    margin-bottom:10px;
     background-color: #fff;
     background-image: none;
     -webkit-background-clip: padding-box;
@@ -209,8 +263,10 @@ button:focus {
     background: #dfdfdf;
     padding: 5px 10px 5px 10px;
     border-radius: 100px;
-    font-size:15px;
-    line-height:17px;
+    font-size: 15px;
+    line-height: 17px;
+    margin-bottom: 10px;
+    display: inline-block;
 }
 
 
@@ -279,33 +335,99 @@ button:focus {
     background: #9c9fa2;
     border-radius: 10px;
 }
-.nopad-7{padding:0;}
+.nopad{padding:0!important;}
+.container-chat {
+    border-bottom-left-radius: 5px;
+    background: #f2f5f8;
+    width: 100%;
+    float: left;
+}
+
+.chatlist {
+    background: #444753;
+}
+#MyChatModel .modal-content {
+    border-radius: 5px;
+}
 
 .scroll-box-list {
-    height: 280px;
+    height: 325px;
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
     padding: 0;
-    line-height:25px;
+    line-height: 25px;
 }
 
 .scroll-box-wrap {
-    padding: 10px 0px;
+    padding: 0px 15px;
     line-height: 40px;
-    background: #e8e7e7;
+    /*background: #e8e7e7;*/
 }
 
-.scroll-box-list::-webkit-scrollbar {
-    width: 5px;
+    .scroll-box-wrap img {
+        float: left;
+        width: 45px;
+        height: 45px;
+        margin-right: 10px;
+        border-radius: 200px;
+        margin-bottom: 10px;
+        border: 3px #666f74 solid;
+    }
+    .scroll-box-wrap .about {
+        float: left;
+        margin-top: 5px;
+        padding-left: 0px;
+        color: #d0cbcb;
+        margin-bottom: 10px;
+        text-transform: lowercase;
+    }
+
+.user-name{display:block; line-height:15px;}
+.scroll-box-wrap .about input {
+    margin-top: 10px;
 }
+        .scroll-box-list::-webkit-scrollbar {
+            width: 5px;
+        }
 
 /* Track */
 .scroll-box-list::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px grey;
     border-radius: 2px;
 }
+ .chat-header .chat-with {
+    font-weight: bold;
+    font-size: 16px;
+}
+.chat {
+    background: #F2F5F8;
 
+    color: #434651;
+}
+.chat-header {
+    padding: 10px;
+    border-bottom: 2px solid white;
+}
+    .chat-header img {
+        float: left;
+        width: 55px;
+        height: 55px;
+        border: 2px solid #5ebe6d;
+        border-radius: 200px;
+    }
+
+    .chat-header .chat-about {
+        float: left;
+        padding-left: 10px;
+        margin-top: 15px;
+    }
+.chat .chat-header .fa-star {
+    float: right;
+    color: #D8DADF;
+    font-size: 20px;
+    margin-top: 20px;
+}
 /* Handle */
 .scroll-box-list::-webkit-scrollbar-thumb {
     background: #888;
@@ -317,7 +439,7 @@ button:focus {
     height: 238px;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0px;
+    padding: 10px 0px;
     width: 100%;
 }
 

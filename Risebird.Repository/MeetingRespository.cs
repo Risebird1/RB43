@@ -51,6 +51,31 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("startDate", startDate);
+                    parameters.Add("endDate", endDate);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllDateWiseInterviewMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         /// <summary>
         /// Risetube meeting
         /// </summary>
@@ -961,7 +986,6 @@ namespace Risebird.Repository
                     paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
                     paramx.Add("@ProctoringCount", reportDetails.ProctoringCount);
-
                     parameters.Add("@interviewId", reportDetails.InterviewId);
                     parameters.Add("@interviewStatus", reportDetails.InterviewStatus);
                     parameters.Add("@MeetingStatus", reportDetails.MeetingStatus);
@@ -1077,7 +1101,7 @@ namespace Risebird.Repository
 
                     }
 
-                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewComments", parameters,
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
 
                     return true;

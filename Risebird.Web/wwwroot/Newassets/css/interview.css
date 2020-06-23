@@ -205,6 +205,7 @@ input[type=number] {
 [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
+    padding:10px!important;
 }
 
     [type="date"]::-webkit-inner-spin-button {
@@ -1260,6 +1261,10 @@ select:-moz-focusring {
     padding-right: 10px;
     float:left;
 }
+.broadcast-icon {
+position:relative;
+top:-2px;
+}
 .text-areadiv1 {
     height: auto;
     padding: 0px ;
@@ -1267,11 +1272,14 @@ select:-moz-focusring {
 
     .text-areadiv1 textarea {
         border: 0;
+        min-height:100px;
         background: #f5f5f5;
         padding: 5px 10px 5px 10px;
         border-bottom: 1px rgba(0, 0, 0, 0.29) solid
     }
-
+    .required{color:red;
+              padding:2px;
+    }
 .enjoyhint_disable_events {
     width: auto !important;
 }

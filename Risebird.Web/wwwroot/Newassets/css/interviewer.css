@@ -256,6 +256,7 @@ table {
 [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
+    padding:10px!important;
 }
 
     [type="date"]::-webkit-inner-spin-button {

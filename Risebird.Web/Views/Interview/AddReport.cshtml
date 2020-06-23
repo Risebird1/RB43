@@ -95,7 +95,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card">
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckInterviewerComments()">
+                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()" id="reportForm">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -111,8 +111,8 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @if (Model.IsInterviewer && Model.CandidateName != null)
-                                            {                                               
-                                               @Regex.Replace(@Model.CandidateName, "[a-zA-Z0-9]", "*")
+                                            {
+                                                @Regex.Replace(@Model.CandidateName, "[a-zA-Z0-9]", "*")
                                             }
                                             else
                                             {
@@ -238,7 +238,7 @@
                                                 <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
                                                 <div>
 
-                                                    <div id="scoreChart" style="height: 200px; width: 100%;"></div>
+                                                    <div id="scoreChart" style="height: 200px; width:100%;"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -255,6 +255,9 @@
                                                     </div>
                                                     @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
                                                     @*@Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
                                                 </div>
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -295,14 +298,14 @@
 
 
 
-                                                    <div class="choose-file">
-                                                        <label class="file-lable"> Upload Feedback Audio File</label>
+                        <div class="choose-file">
+                            <label class="file-lable"> Upload Feedback Audio File</label>
 
-                                                        @Html.LabelFor(model => model.FeedbackAudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                        @Html.TextBoxFor(model => model.FeedbackAudioFile, new { type = "file", @class = "form-control", @accept = ".mp3, .wav, .m4a" })
+                            @Html.LabelFor(model => model.FeedbackAudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                            @Html.TextBoxFor(model => model.FeedbackAudioFile, new { type = "file", @class = "form-control", @accept = ".mp3, .wav, .m4a" })
 
-                                                    </div>
-                                                </div>*@
+                        </div>
+                    </div>*@
                                         </div>
 
 
@@ -569,7 +572,7 @@
                                         </p>
                                         @*<div class="col-md-6 col-sm-6">
 
-                                            </div>*@
+                </div>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -615,7 +618,7 @@
                                                             </td>
 
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="60">
+                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="60" max="5000">
 
 
                                                             </td>
@@ -624,8 +627,8 @@
                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
-                                                                    </button>*@
+                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
+                                        </button>*@
 
 
 
@@ -699,6 +702,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        @*<label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -1291,6 +1295,7 @@
                                     </div><!--end of col-md-12-->
 
                                 </div>
+                                <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
 
 
                                 @Html.HiddenFor(m => m.id)
@@ -1326,11 +1331,13 @@
                                             {
                                                 if (Model.IsEdited)
                                                 {
-                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>*@
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="SubmitForm()">Save</button>
                                                 }
                                                 else
                                                 {
-                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>*@
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
                                                 }
                                             }
 
@@ -1391,27 +1398,18 @@
         });
     };
 </script>
+<script>
+    function SubmitForm() {
+        if (CheckConditions()) {
+            document.getElementById("reportForm").submit();
+        }
+        else
+            return;
+    }
+</script>
 
 <script>
-    //$('form').submit(function () {
-    //    if ($(this).valid()) {
-    //        $(':submit', this).attr('disabled', 'disabled');
-    //    }
-    //});
-    //$("#btnUpload").click(function () {
-    //    ShowProgress();
-    //});
-    // var loader;
-    //function ShowProgress() {
-    //    $(".dataloading").hide();
-    //    loader = document.getElementsByClassName("loader")[0];
-    //    loader.style.display = "block";
-    //    var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-    //    var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-    //    loader.style.top = top + "px";
-    //    loader.style.left = left + "px";
-    //    $(window).scrollTop();
-    //};
+ 
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -1622,7 +1620,7 @@
             categoryAxis.renderer.labels.template.valign = "top";
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
-
+            chart.fontSize = 13;
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -1642,7 +1640,7 @@
             series.columns.template.fillOpacity = .8;
 
             var columnTemplate = series.columns.template;
-            columnTemplate.strokeWidth = 1;
+            columnTemplate.strokeWidth = 0;
             columnTemplate.strokeOpacity = 1;//07BEF3
             chart.colors.list = [
                 am4core.color("#07BEF3"),
@@ -1856,19 +1854,55 @@
         }
     }
 
+    function CheckConditions() {
+      
+        return (CheckInterviewerComments() && CheckQuestionsTiming());
+    }
+
     function CheckInterviewerComments() {
-        var meetingStatusElem = document.getElementById("MeetingStatus");
-        if (meetingStatusElem.value == 4) {
+        var interviewStatusElem = document.getElementById("InterviewStatus");
+        if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
             var comments = document.getElementById("InterviewerComment").value;
             if (comments.length >= 250) {
+                document.getElementById("interviewerComment_Error").innerHTML = "";
                 return true;
             }
             else {
+                //interviewerComment_Error
                 document.getElementById("InterviewerComment").focus();
+                document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
                 return false;
             }
         }
         else
+            return true;
+    }
+
+    function CheckQuestionsTiming() {
+     var interviewStatusElem = document.getElementById("InterviewStatus");
+        if (interviewStatusElem.value == 2||interviewStatusElem.value == 3|| interviewStatusElem.value == 4)
+        {
+        var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
+        var oldVal = $("#QuestionsCollection_0__Timing").val();
+        for (i = 0; i < questionItems.length; i++) {
+            var temp = $("#QuestionsCollection_" + i + "__Timing").val();
+            if (temp == null || temp == '') {
+                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60)."
+                return false;
+            }
+            if (i > 0) {
+                if (parseInt(temp) < parseInt(oldVal)) {
+                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60).";
+                    return false;
+                }
+                else
+                    oldVal = temp;
+            }
+        }
+        document.getElementById('QuestionsCollection_TimingError').innerHTML = "";
+        return true;
+       }
+      else
             return true;
     }
 
