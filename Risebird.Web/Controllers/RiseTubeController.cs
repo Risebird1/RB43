@@ -1226,7 +1226,6 @@ namespace Risebird.Web.Controllers
         {
             var modelList = _meetingService.VedioShare(value, vedioid);
             return Json("Success");
-
         }
         [HttpPost]
         public JsonResult VedioComment(string comment, string vedioid)
