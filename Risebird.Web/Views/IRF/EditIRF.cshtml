@@ -1464,13 +1464,21 @@
             //arr.push(techSkills[i].value);
             skills = skills + ',' + techSkills[i].value;
         }
+        var interviewerSkills;
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewers",
             data: { 'skills': skills },
             success: function (data) {
-
-
+                $.ajax({
+                    type: "GET",
+                    async: false,
+                    url: "/IRF/GetInterviewerSkills",
+                    data: { 'id': data[0].value },
+                    success: function (result) {
+                        interviewerSkills = result;
+                    }
+                });
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {
                     $("#" + drpdowns[i].id + " option").remove();
@@ -1508,8 +1516,8 @@
 
                             //drpdwnId.append(option);
                         });
-
-                        InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
+                        //InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
+                        BindSkills(drpdowns[i].id, interviewerSkills);
 
                     }
 
@@ -1533,7 +1541,8 @@
 
                             //drpdwnId.append(option);
                         });
-                        EmergencyInterviewerChanged(drpdownsEI[i].value, drpdownsEI[i].id);
+                        //EmergencyInterviewerChanged(drpdownsEI[i].value, drpdownsEI[i].id);
+                        BindSkills(drpdownsEI[i].id, interviewerSkills);
 
                     }
 
@@ -1558,7 +1567,8 @@
 
                             //drpdwnId.append(option);
                         });
-                        QCChanged(drpdownsQC[i].value, drpdownsQC[i].id);
+                        //QCChanged(drpdownsQC[i].value, drpdownsQC[i].id);
+                        BindSkills(drpdownsQC[i].id, interviewerSkills);
 
                     }
 
@@ -2201,6 +2211,15 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
+
+    function BindSkills(id, data) {
+        var num = id.match(/(\d+)/);
+        var index = num[0];
+        var idArray = id.split('_');
+        var skillElementid = idArray[0] + '_' + index + '__PrimarySkill';
+        $("#" + skillElementid).val(data);
+    }
+
     function InterviewerChanged(val, id) {
 
         var index = id.charAt(22);
