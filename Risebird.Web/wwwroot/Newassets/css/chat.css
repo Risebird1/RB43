@@ -337,7 +337,7 @@ button:focus {
 }
 .nopad{padding:0!important;}
 .container-chat {
-    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
     background: #f2f5f8;
     width: 100%;
     float: left;
@@ -345,13 +345,38 @@ button:focus {
 
 .chatlist {
     background: #444753;
+    border-bottom-left-radius: 5px;
+}
+
+
+
+#MyChatModel.modal .modal-dialog {
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+    top: 0px;
+    opacity: 1;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+#MyChatModel.modal.min .modal-dialog {
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+    -webkit-transform: translate3d(0, -0px, 0);
+    transform: translate3d(0, -0px, 0);
+    opacity: 1;
 }
 #MyChatModel .modal-content {
     border-radius: 5px;
 }
 
 .scroll-box-list {
-    height: 325px;
+    height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
@@ -367,11 +392,11 @@ button:focus {
 
     .scroll-box-wrap img {
         float: left;
-        width: 45px;
-        height: 45px;
+        width: 35px;
+        height: 35px;
         margin-right: 10px;
         border-radius: 200px;
-        margin-bottom: 10px;
+       
         border: 3px #666f74 solid;
     }
     .scroll-box-wrap .about {
@@ -379,9 +404,10 @@ button:focus {
         margin-top: 5px;
         padding-left: 0px;
         color: #d0cbcb;
-        margin-bottom: 10px;
+  
         text-transform: lowercase;
     }
+    .mt-15{margin-top:15px;}
 
 .user-name{display:block; line-height:15px;}
 .scroll-box-wrap .about input {
@@ -411,8 +437,8 @@ button:focus {
 }
     .chat-header img {
         float: left;
-        width: 55px;
-        height: 55px;
+        width: 45px;
+        height: 45px;
         border: 2px solid #5ebe6d;
         border-radius: 200px;
     }
