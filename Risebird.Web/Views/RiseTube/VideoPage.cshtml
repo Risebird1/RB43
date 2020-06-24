@@ -654,6 +654,8 @@
                                                                             <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
+
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
                                                                                 <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
                                                                             </span>
@@ -663,7 +665,7 @@
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
                                                                                 <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
                                                                             </span>
-                                                                            <span class="tooltip--right" data-tooltip="To generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+
 
                                                                         </div>
                                                                     </div>
@@ -1399,7 +1401,7 @@
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="SendNotification()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Interested">
-                        <input style="background:#ff253a!important" type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -1438,7 +1440,7 @@
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -1470,7 +1472,7 @@
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -1502,7 +1504,7 @@
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="SharepublicVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="background:#ff253a!important" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background:#ff253a!important; line-height:13px;" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -1520,13 +1522,23 @@
                 <span onclick="closePublicUrlShareModel()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="row" style="padding:10px">
-                    Video Url:  <b id="txtvideoUrls"> </b><button onclick="copyToClipboard('#txtvideoUrls')">    Copy</button>
+                <div class="row" >
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Video Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+
+                        </button>
+                    </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12 text-right">
-                        <input style="background:#ff253a!important" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -2441,6 +2453,7 @@
         temp.val($(element).text()).select();
         document.execCommand("copy");
         temp.remove();
+        $('#special_text').text('Copied');
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")

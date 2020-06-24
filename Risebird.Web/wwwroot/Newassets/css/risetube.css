@@ -90,8 +90,8 @@ height: 55px;
 .private-share {
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
     background-repeat: no-repeat !important;
-    background-size: 12% !important;
-    background-position: 8% 50% !important;
+    background-size: 14% !important;
+    background-position: 6% 50% !important;
     border: none;
     background-color: white !important;
     font-weight: normal;
@@ -106,7 +106,7 @@ height: 55px;
     background-image: url('https://img.icons8.com/color/48/000000/share-3.png') !important;
     background-repeat: no-repeat !important;
     background-size: 14% !important;
-    background-position: 8% 50% !important;
+    background-position: 6% 50% !important;
     border: none;
     background-color: white !important;
     font-weight: normal;
@@ -119,8 +119,8 @@ height: 55px;
 .email-share {
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') !important;
     background-repeat: no-repeat !important;
-    background-size: 13% !important;
-    background-position: 8% 50% !important;
+    background-size: 14% !important;
+    background-position: 6% 50% !important;
     border: none;
     background-color: white !important;
     font-weight: normal;
@@ -129,10 +129,89 @@ height: 55px;
     height: 30px;
     border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
 }
+.publicurl-share {
+    background-image: url('../../img/link.png') !important;
+    background-repeat: no-repeat !important;
+    background-size: 14% !important;
+    background-position: 6% 50% !important;
+    border: none;
+    background-color: white !important;
+    font-weight: normal;
+    font-size: 13px !important;
+    padding: 0px 0px 0px 15px;
+    height: 30px;
+    border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
+}
+.copy-btn {
+    background: none;
+    border: 0;
+    margin: -10px 0px 0px 5px;
+}
+.special-text:hover .special-text__tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.special-text__tooltip {
+    font-size: 12px;
+    position: absolute;
+    width: 100px;
+    right: 15%;
+    bottom: 65%;
+    color: #fff;
+    text-align: center !important;
+    margin-bottom: 15px;
+    padding: 5px 10px;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
+    background: grey;
+    border-radius: 3px;
+    visibility: hidden;
+    opacity: 0;
+    /* Prettify */
+    text-align: left;
+    -webkit-transition-property: opacity;
+    -moz-transition-property: opacity;
+    transition-property: opacity;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+    -webkit-transition-timing-function: linear;
+    -moz-transition-timing-function: linear;
+    transition-timing-function: linear;
+    -webkit-transition-delay: initial;
+    -moz-transition-delay: initial;
+    transition-delay: initial;
+}
+
+    /* The bordered part of the triangle */
+    .special-text__tooltip::before,
+    .special-text__tooltip::after {
+        content: "";
+        position: absolute;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        top: 100%;
+        left: 15%;
+        margin-left: -10px;
+    }
+
+
+    .special-text__tooltip::after {
+        border-top: 10px solid grey;
+        margin-top: -2px;
+        z-index: 1;
+    }
+
+.video-url {
+    padding: 10px;
+    margin-top: 20px;
+}
 
 
 
-.showinter .btn{margin-top:0px;}
+.showinter .btn {
+    margin-top: 0px;
+}
 
 .share-btn {
     color: #32363a;
@@ -298,8 +377,8 @@ height: 55px;
         display: block;
         opacity: 1;
         visibility: visible;
-        -webkit-transform: translateX(45%) translateY(0);
-        transform: translateX(45%) translateY(0);
+        -webkit-transform: translateX(65%) translateY(0);
+        transform: translateX(65%) translateY(0);
     }
 
 
@@ -325,8 +404,8 @@ height: 55px;
 .show .tooltip--right:first-child:after {
     top: 5px;
     left: 100%;
-    -webkit-transform: translateX(65%) translateY(0)!important;
-    transform: translateX(65%) translateY(0)!important;
+    -webkit-transform: translateX(51%) translateY(0)!important;
+    transform: translateX(51%) translateY(0)!important;
 }
 
 .show .tooltip--right:last-child:after {
@@ -336,7 +415,12 @@ height: 55px;
     transform: translateX(50%) translateY(0) !important;
 }
 
-
+.show .tooltip--right:nth-child(3):after {
+    top: 5px;
+    left: 100%;
+    -webkit-transform: translateX(45%) translateY(0) !important;
+    transform: translateX(45%) translateY(0) !important;
+}
 
 .show .tooltip--triangle:before {
     content: '';
