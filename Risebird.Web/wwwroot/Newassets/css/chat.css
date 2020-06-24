@@ -348,8 +348,6 @@ button:focus {
     border-bottom-left-radius: 5px;
 }
 
-
-
 #MyChatModel.modal .modal-dialog {
     -webkit-transform: scale(1.1);
     -moz-transform: scale(1.1);
