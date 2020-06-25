@@ -515,7 +515,7 @@ namespace Risebird.Web.Controllers
                         var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus ==1);
                         if (filter.StartDate == null && filter.EndDate == null)
                         {
-                            meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                         }
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         //ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct().ToList();
@@ -2554,7 +2554,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
                             if (filter.StartDate == null && filter.EndDate == null)
                             {
-                                meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
+                                meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             }
                         }
                         else
@@ -2607,18 +2607,7 @@ namespace Risebird.Web.Controllers
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
                         }
-                        //                        var list = new SelectList(new[]
-                        //{
-                        //    new { ID = "All", Name = "All"},
-                        //    new { ID = "Today", Name = "Today"},
-                        //    new { ID = "Tomorrow", Name = "Tomorrow"  },
-                        //    new { ID = "Yesterday", Name = "Yesterday"  },
-                        //    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-
-                        //},
-                        //"ID", "Name", "All");
-
-                        //                        ViewData["list"] = list;
+                       
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
@@ -2748,7 +2737,7 @@ namespace Risebird.Web.Controllers
                         var meetings = _meetingService.GetClientMeetingList(emailid);
                         if (filter.StartDate == null && filter.EndDate == null)
                         {
-                            meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                         }
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -3045,7 +3034,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
                             if (filter.StartDate == null && filter.EndDate == null)
                             {
-                                meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
+                                meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             }
                         }
                         else

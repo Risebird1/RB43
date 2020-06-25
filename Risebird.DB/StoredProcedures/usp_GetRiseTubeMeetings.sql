@@ -30,7 +30,7 @@ else
 select im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,QCF.InterviewId as QCInterview
 from InterviewMeetings im  
 inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
-inner join CandidatesMaster cm on im.candidateEmail = cm.EmailId
+left join CandidatesMaster cm on im.candidateEmail = cm.EmailId
 inner join QCFeedbackReport QCF on im.id=QCF.InterviewId
 inner join IRF on im.IRFId = IRF.IRFId    
 inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id
