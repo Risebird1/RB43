@@ -22,7 +22,6 @@ namespace Risebird.Web.Controllers
     //[Authorize]
     public class RiseTubeController : Controller
     {
-
         private IMeetingService _meetingService;
         private IUserService _userService;
         private IApplicationErrorLogger _applicationErrorLogger;
