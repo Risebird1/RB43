@@ -107,10 +107,10 @@
                                             {
 
                                                 <tr id="@item.id">
-                                                    <td>
+                                                    <td width="30%">
                                                         @if (item.IsOnline == 1)
                                                         {
-                                                            <a onclick="directopenChat('@item.EmailId')"> @item.Name <span class="dot" style="background-color:green"></span></a>
+                                                        <span class="dot dot-p" style="background-color:green"></span><a onclick="directopenChat('@item.EmailId')"><span> @item.Name </span></a>
                                                         }
                                                         else
                                                         {

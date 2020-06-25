@@ -176,24 +176,24 @@
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate"> Start Date </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate"> Start Date </label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date"> End Date </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date"> End Date </label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6  border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateName"> Candidate Name </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateName"> Candidate Name </label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input type="text" id="txtVedioId" value="@Model.imid" hidden />
                                                             <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
 
@@ -211,8 +211,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateLocation"> Candidate Location </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation"> Candidate Location </label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
 
                                                                 @foreach (var item in Model.SubVideo_List.Select(x => x.preferredLocation).Distinct().ToList())
@@ -233,8 +233,8 @@
                                                 {
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus"> Selection Status </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus"> Selection Status </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
@@ -251,8 +251,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR"> Client HR </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR"> Client HR </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
@@ -271,8 +271,8 @@
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus"> Approval Status </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus"> Approval Status </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
@@ -289,8 +289,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus"> Joining Status </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus"> Joining Status </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
@@ -309,8 +309,8 @@
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus"> Offer Status </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="OfferStatus"> Offer Status </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
@@ -327,8 +327,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ClientName).Distinct().ToList())
@@ -350,8 +350,8 @@
                                                 {
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="IsShortListed"> Shortlisted </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsShortListed"> Shortlisted </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ShortListstatus).Distinct().ToList())
@@ -368,8 +368,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="IsIntrested"> Interested </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested"> Interested </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.IsIntrested).Distinct().ToList())
@@ -607,7 +607,7 @@
 
                                                                             </span>
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly ">   <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
-                                                                            <span class="tooltip--right" data-tooltip="To generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare3" value="Generate Public Url" Shortvalue="1" /></span>
+                                                                            <span class="tooltip--right" data-tooltip="To generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
                                                                         </div>
                                                                     </div>
 
@@ -654,6 +654,8 @@
                                                                             <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
                                                                                 <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
                                                                             </span>
@@ -663,7 +665,6 @@
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
                                                                                 <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
                                                                             </span>
-                                                                            <span class="tooltip--right" data-tooltip="To generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare3" value="Generate Public Url" Shortvalue="1" /></span>
 
                                                                         </div>
                                                                     </div>
