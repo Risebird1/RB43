@@ -321,10 +321,10 @@
                         html += ' <img src="/img/man.png" alt="avatar">';
                         html += '<div>';
                         if (data.result[i].isOnline == 1) {
-                            html += '<div class="about" ><a onclick="Details(' + i + ')" style="cursor:pointer"><span class="user-name"> ' + data.result[i].sender + '</span><span class="dot" style="background-color:green;"></span> Online</a></div> ';
+                            html += '<div class="about" ><a onclick="Details(' + i + ')" style="cursor:pointer"><span title=' + data.result[i].sender +' class="user-name"> ' + data.result[i].sender + '</span><span class="dot" style="background-color:green;"></span> Online</a></div> ';
                         }
                         else {
-                            html += '<div class="about" > <a onclick="Details(' + i + ')" style="cursor:pointer"><span class="user-name"> ' + data.result[i].sender + '</span><span class="dot"></span>Offline</a></div>';
+                            html += '<div class="about" > <a onclick="Details(' + i + ')" style="cursor:pointer"><span title=' + data.result[i].sender +' class="user-name"> ' + data.result[i].sender + '</span><span class="dot"></span>Offline</a></div>';
                         }
                         if (data.result[i].status == "Sent") {
                             html += '<svg class="bi bi-circle-fill bugger" width=".6em" height=".6em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">';
