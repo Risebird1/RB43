@@ -591,14 +591,14 @@
     });
 
     function ResetFilter() {
-
-             $.ajax({
-            type: "POST",
-            url: "/Interview/ClientMeetings",
-                 success: function (data) {
-                    window.location.href = "/Interview/ResetClientMeetingsFilter";
-                 }
-                });
+         window.location.href = "/Interview/ResetClientMeetingsFilter";
+            // $.ajax({
+            //type: "POST",
+            //url: "/Interview/ClientMeetings",
+            //     success: function (data) {
+            //        window.location.href = "/Interview/ResetClientMeetingsFilter";
+            //     }
+            //    });
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -631,13 +631,13 @@
             $("#OfferStatus").val(offerStatus);
             //$("#Interviewer").val(interviewer);
             var form = $("#form").serialize();
-             $.ajax({
-            type: "POST",
-            url: "/Interview/ClientMeetings",
-            data: form,
-                 success: function (data) {
-                 }
-                });
+            // $.ajax({
+            //type: "POST",
+            //url: "/Interview/ClientMeetings",
+            //data: form,
+            //     success: function (data) {
+            //     }
+            //    });
     }
 
 </script>
