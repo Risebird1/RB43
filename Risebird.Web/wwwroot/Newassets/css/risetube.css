@@ -740,7 +740,8 @@ textarea::-webkit-scrollbar-thumb {
     }
     .side-player {
         margin-left: auto !important;
-        margin-top: 10px
+        margin-top: 10px;
+
     }
 
 .video-contop{margin-top:425px;}
@@ -1423,6 +1424,8 @@ textarea::-webkit-scrollbar-thumb {
 .single-video-right {
     -ms-flex: 0 0 33.333333%;
     flex: 0 0 33.333333%;
+    height: 900px;
+    overflow: auto;
 }
 
 .counts-liks label {
@@ -1451,7 +1454,7 @@ textarea::-webkit-scrollbar-thumb {
     float: left;
 }
 .btnShortlist {
-    width: auto;
+    width: auto!important;
     float: left;
 }
 @media screen and (max-width: 991px) {
@@ -1583,9 +1586,11 @@ textarea::-webkit-scrollbar-thumb {
     .single-video-left .comment-area textarea {
         width: 87%
     }
-
+    .share {
+        width: 20%;
+    }
     .shortlist {
-        margin-left: -50%;
+        width: 25%;
     }
     .k {
         width: 50%;
@@ -1594,7 +1599,12 @@ textarea::-webkit-scrollbar-thumb {
         top: 35px;
     }
     .views {
-        padding: 0px 10px 0px 10px;
+        padding: 10px 10px 0px 10px;
+        width: 30%;
+    }
+    .showinter {
+        padding: 5px 0;
+        width: 25%;
     }
 }
 
@@ -1626,7 +1636,8 @@ textarea::-webkit-scrollbar-thumb {
         width: 50%;
         margin: 0;
         position: absolute;
-        top: 10px;
+        top: 25px;
+        right: 0;
     }
 
         .k .fa-thumbs-up {
@@ -1671,19 +1682,18 @@ textarea::-webkit-scrollbar-thumb {
     .counts-liks {
         position: relative
     }
-
-    .shortlist {
-        position: absolute;
-        top: 17px;
-        margin: 0;
-        padding-left: 20px;
+    .showinter {
+        padding: 5px 0;
+        width: 40%;
     }
-        .shortlist .fa-check {
-            line-height: 75px;
-            float: left;
-        }
-    .views {
+    .shortlist {
         margin: 0;
+        width: 50%;
+    }
+    .share{width:40%;}
+    .views {
+        margin: 5px 0px 0px 0px;
+        width: 60%;
     }
 
     .single-video-info-content hr {

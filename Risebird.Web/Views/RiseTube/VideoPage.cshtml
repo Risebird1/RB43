@@ -467,14 +467,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4  side-player" id="sd-player">
+                                                <div class="col-md-4  side-player scroll" id="sd-player">
                                                     @if (Model.SubVideo_List.Count > 0)
                                                     {
-                                                        <div class="single-video-right">
+                                                        <div id="style-2" class="single-video-right">
                                                             <div>
                                                                 <div>
                                                                     <div class="col-md-12">
-                                                                        <div id="style-2">
+                                                                       
                                                                             @foreach (var videolist in Model.SubVideo_List)
                                                                             {
                                                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
@@ -510,7 +510,7 @@
 </div>
 </div>
 }
-                                                                        </div>
+                                                                        
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -591,10 +591,10 @@
                                                         {
                                                             @if (ViewBag.ProfileName == "CuratedUser")
                                                             {
-                                                                <div class="col-md-3">
+                                                                <div class="col-md-3 share">
                                                                     <div class="btn-group">
                                                                         <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;"> Share
+                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;padding-left:4px;"> Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
@@ -651,7 +651,9 @@
                                                                 {
                                                                     <div class="btn-group">
                                                                         <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;">  Share
+                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style="        width: 28px;
+        padding-left: 4px;
+">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
                                                                             <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>

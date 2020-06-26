@@ -302,7 +302,7 @@
                             $('#chatAudio')[0].play();
                         }
                     }
-                    setTimeout(checkConversation(''), 5000);
+                   // setTimeout(checkConversation(''), 5000);
                 }
             });
         }
@@ -324,7 +324,7 @@
                             html += '<div class="about" ><a onclick="Details(' + i + ')" style="cursor:pointer"><span class="user-name"> ' + data.result[i].sender + '</span><span class="dot" style="background-color:green;"></span> Online</a></div> ';
                         }
                         else {
-                            html += '<div class="about" > <a onclick="Details(' + i + ')" style="cursor:pointer"><span class="user-name"> ' + data.result[i].sender + '</span><span class="dot">Offline</span></a></div>';
+                            html += '<div class="about" > <a onclick="Details(' + i + ')" style="cursor:pointer"><span class="user-name"> ' + data.result[i].sender + '</span><span class="dot"></span>Offline</a></div>';
                         }
                         if (data.result[i].status == "Sent") {
                             html += '<svg class="bi bi-circle-fill bugger" width=".6em" height=".6em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">';
@@ -346,7 +346,7 @@
                     //var msg = document.getElementById("msger-inputarea");
                     //msg.style.display = "none";
                     $("#divchatboxmenu").empty().html(html);
-                    setTimeout(OpenChatPopUp(), 5000);
+                   // setTimeout(OpenChatPopUp(), 5000);
                     //Details(0);
                     flag = true;
                 }
@@ -424,7 +424,7 @@
                         avtar.style.display = "block";
                         $('#divchatbox').scrollTop($('#divchatbox')[0].scrollHeight);
                         if (flag == true) {
-                            setTimeout(ChatConversation(''), 5000);
+                          //  setTimeout(ChatConversation(''), 5000);
                         }
                         else {
                             flag = true;
