@@ -3694,7 +3694,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        [EnableCors("AllowOrigin")]
+       
         public IActionResult AddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false)
         {
             try

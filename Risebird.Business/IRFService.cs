@@ -77,6 +77,20 @@ namespace Risebird.Business
             }
         }
 
+        public IEnumerable<Users> GetAllHRs()
+        {
+            try
+            {
+                return _irfRepository.GetAllHRs();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public SelectList GetQualityController()
         {
             try
@@ -167,6 +181,42 @@ namespace Risebird.Business
                 }
                 list = list.Distinct().ToList();
                 
+                return list;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
+        public IEnumerable<Interviewer> GetInterviewersForIRF(string skillNames)
+        {
+            try
+            {
+                //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
+                var interviewers = _irfRepository.GetIRFInterviewerSkills();
+                var skillNameList = skillNames.Split(",");
+                
+                //skillList.RemoveAt()
+                var list = new List<Interviewer>();
+
+
+                foreach (var item in interviewers)
+                {
+                    foreach (var skillName in skillNameList)
+                    {
+                        if (item.PrimarySkill.Contains(skillName))
+                        {
+                            list.Add(item);
+                            break;
+                        }
+                    }
+                }
+                list = list.Distinct().ToList();
+
                 return list;
             }
 
@@ -304,7 +354,7 @@ namespace Risebird.Business
             try
             {
                 int role =0;
-                var result= _irfRepository.GetIRFInterviewMeetings(id).OrderBy(x => x.interviewDate).ToList();
+                var result= _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.interviewDate).ToList();
                 
                 if(email != string.Empty && profileName == "Client")
                 {

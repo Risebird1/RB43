@@ -66,10 +66,13 @@ namespace Risebird.Web
             services.Configure<GzipCompressionProviderOptions>(options => {
                 options.Level = CompressionLevel.Fastest;
             });
-            services.AddCors(c =>
+            // Add Cors
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
-            });
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
             services.AddMvc();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IConfiguration>(Configuration);

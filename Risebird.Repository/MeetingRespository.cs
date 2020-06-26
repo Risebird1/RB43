@@ -1022,58 +1022,77 @@ namespace Risebird.Repository
 
                     }
 
-                    if (reportDetails.TechSkillReportCollection != null)
+                    DataTable techReportDt = new DataTable();
+                    techReportDt.Columns.Add("InterviewId", typeof(int));
+                    techReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    techReportDt.Columns.Add("SkillId", typeof(int));
+                    techReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    techReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    techReportDt.Columns.Add("WeightageActual", typeof(int));
+
+
+                    foreach (var item in reportDetails.TechSkillReportCollection)
                     {
-                        //update techskillreport table
-                        foreach (var item in reportDetails.TechSkillReportCollection)
-                        {
-                            string sqlTechReport = "INSERT INTO TechSkillReport (InterviewId, RequiredLevelId ,SkillId, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @SkillId, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                            var result1 = con.ExecuteAsync(sqlTechReport, new
-                            {
-                                InterviewId = reportDetails.InterviewId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                SkillId = item.SkillId,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            }).Result;
-                        }
+                        techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
                     }
 
-                    if (reportDetails.SkillGeneralReportCollection != null)
+                    SqlCommand cmdTechReport= new SqlCommand("usp_TechSkillReportBulkInsert", con);
+                    cmdTechReport.CommandType = CommandType.StoredProcedure;
+                    cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
+                    cmdTechReport.Parameters["@TechSkillReportBulkData"].Value = techReportDt;
+                    con.Open();
+                    if (cmdTechReport.ExecuteNonQuery() != 0)
                     {
-                        //update general skill report table
-                        foreach (var item in reportDetails.SkillGeneralReportCollection)
-                        {
-                            string sqlSkillGeneralReport = "INSERT INTO SkillGeneralReport (InterviewId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @Value,@ActualLevelId, @WeightageRequired, @WeightageActual);";
-                            var result2 = con.ExecuteAsync(sqlSkillGeneralReport, new
-                            {
-                                InterviewId = reportDetails.InterviewId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value = item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            }).Result;
-                        }
+                        con.Close();
                     }
 
-                    if (reportDetails.QuestionsCollection != null)
+                    DataTable skillGeneralReportDt = new DataTable();
+                    skillGeneralReportDt.Columns.Add("InterviewId", typeof(int));
+                    skillGeneralReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    skillGeneralReportDt.Columns.Add("Type", typeof(string));
+                    skillGeneralReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    skillGeneralReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    skillGeneralReportDt.Columns.Add("WeightageActual", typeof(int));
+                    skillGeneralReportDt.Columns.Add("Value", typeof(string));
+
+
+                    foreach (var item in reportDetails.SkillGeneralReportCollection)
                     {
-                        //update questions discussed table
-                        foreach (var item in reportDetails.QuestionsCollection)
-                        {
-                            string sqlJoinReport = "INSERT INTO QuestionsDiscussed (InterviewId, Comment,RatingId, Timing, SkillName) Values (@InterviewId, @Comment, @RatingId, @Timing, @SkillName);";
-                            var result3 = con.Execute(sqlJoinReport, new
-                            {
-                                InterviewId = reportDetails.InterviewId,
-                                Comment = item.Comment,
-                                RatingId = item.RatingId,
-                                Timing = item.Timing,
-                                SkillName = item.SkillName
-                            });
-                        }
+                        skillGeneralReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value);
+                    }
+
+                    SqlCommand cmdSkillGeneralReport = new SqlCommand("usp_SkillGeneralReportBulkInsert", con);
+                    cmdSkillGeneralReport.CommandType = CommandType.StoredProcedure;
+                    cmdSkillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralReportBulkData", SqlDbType.Structured));
+                    cmdSkillGeneralReport.Parameters["@SkillGeneralReportBulkData"].Value = skillGeneralReportDt;
+                    con.Open();
+                    if (cmdSkillGeneralReport.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+
+                    DataTable questionsDt = new DataTable();
+                    questionsDt.Columns.Add("InterviewId", typeof(int));
+                    questionsDt.Columns.Add("Comment", typeof(string));
+                    questionsDt.Columns.Add("RatingId", typeof(int));
+                    questionsDt.Columns.Add("Timing", typeof(int));
+                    questionsDt.Columns.Add("SkillName", typeof(string));
+
+
+                    foreach (var item in reportDetails.QuestionsCollection)
+                    {
+                        questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                    }
+
+                    SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con);
+                    cmdQuestions.CommandType = CommandType.StoredProcedure;
+                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
                     }
 
                     if (reportDetails.Proctoring != null)
