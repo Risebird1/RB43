@@ -655,15 +655,15 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
                         <div class="form-group">
-                            <label class="control-label  desp-label" for="Subject">Subject<span class="required">*</span></label>
-                            <input class="form-control w-full" type="text" id="bcSubject"  required/>
+                            <label class="control-label  desp-label"  for="Subject">Subject <span class="required">*</span></label>
+                            <input class="form-control w-full" type="text" name="textField" id="bcSubject"  required/>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label  desp-label" for="Message">Message</label>
+                            <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
                             <div>
                                 <div class="text-areadiv1">
-                                    <textarea class="scrollbar" style="width:100%;" id="bcMessage"></textarea>
+                                    <textarea class="scrollbar"  style="width:100%;" id="bcMessage"></textarea>
                                 </div>
                             </div>
 
@@ -681,7 +681,7 @@
                 <div class="row">
 
                     <div class="col-md-12 col-sm-12 text-right">
-                        <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Send</button>
+                        <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
                         <button type="button" id="broadcastPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
                     </div>
                 </div>
@@ -861,15 +861,13 @@
 <script>
     $(document).ready(function () {
 
-
-
-
         $('#meeting').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
+            order: [],
             responsive: true,
             language: {
                 search: "_INPUT_",
@@ -1054,6 +1052,7 @@
     }
 
     function SendBroadcast() {
+       
         var message = document.getElementById("bcMessage").value;
         var subject = document.getElementById("bcSubject").value;
 
@@ -1063,8 +1062,6 @@
                 var receiver = ele[i].value;
             }
         }
-
-
 
 
         $.ajax({
@@ -1083,4 +1080,18 @@
 
 </script>
 
-
+<script>
+    $(document).ready(function () {
+        $('.sendButton').attr('disabled', true);
+        $('input[type="text"],textarea').on('keyup', function () {
+            var textarea_value = $("#bcMessage").val();
+            var text_value = $('input[name="textField"]').val();
+            if (textarea_value != '' && text_value != '') {
+                $('.sendButton').attr('disabled', false);
+                
+            } else {
+                $('.sendButton').attr('disabled', true);
+            }
+        });
+    });
+</script>

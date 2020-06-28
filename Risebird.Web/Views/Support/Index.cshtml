@@ -41,7 +41,7 @@
                 <div class="mdc-card card">
 
                     <div class="mdc-card-wrapper__text-section">
-                        <div class="loader text-center">
+                        <div class="loader text-center" style="display:block;">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
@@ -107,15 +107,15 @@
                                             {
 
                                                 <tr id="@item.id">
-                                                    <td>
+                                                    <td width="30%">
                                                         @if (item.IsOnline == 1)
                                                         {
-                                                            <a onclick="directopenChat('@item.EmailId')"> @item.Name <span class="dot" style="background-color:green"></span></a>
+                                                        <span class="dot dot-p" style="background-color:green"></span><a onclick="directopenChat('@item.EmailId')"><span> @item.Name </span></a>
                                                         }
                                                         else
-                                                        {
+                                                        {<span class="dot  dot-p"></span>
                                                             @item.Name
-                                                            <span class="dot"></span>
+                                                            
                                                         }
                                                     </td>
                                                     @if (item.EmailId != null && item.EmailId != "")

@@ -415,21 +415,32 @@ namespace Risebird.Repository
                             IRFId = reportDetails.IRFId
                         });
 
+                        DataTable selectabilityReportDt = new DataTable();
+                        selectabilityReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        selectabilityReportDt.Columns.Add("Type", typeof(string));
+                        selectabilityReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        selectabilityReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        selectabilityReportDt.Columns.Add("WeightageActual", typeof(int));
+                        selectabilityReportDt.Columns.Add("Value", typeof(string));
+                        selectabilityReportDt.Columns.Add("CandidateId", typeof(int));
+                        selectabilityReportDt.Columns.Add("IRFId", typeof(int));
+
+
                         foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
                         {
-                            string sqlReport = "INSERT INTO SelectabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
-                            var result4 = con.Execute(sqlReport, new
-                            {
-                                CandidateId = reportDetails.CandidateId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value = item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual,
-                                IRFId = reportDetails.IRFId
-                            });
+                            selectabilityReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value, reportDetails.CandidateId, reportDetails.IRFId);
                         }
+
+                        SqlCommand cmdselectabilityReport = new SqlCommand("usp_SelectabilityReportBulkInsert", con);
+                        cmdselectabilityReport.CommandType = CommandType.StoredProcedure;
+                        cmdselectabilityReport.Parameters.Add(new SqlParameter("@SelectabilityReportBulkData", SqlDbType.Structured));
+                        cmdselectabilityReport.Parameters["@SelectabilityReportBulkData"].Value = selectabilityReportDt;
+                        con.Open();
+                        if (cmdselectabilityReport.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+
                         result = true;
                     }
                     
@@ -563,21 +574,32 @@ namespace Risebird.Repository
                             IRFId = reportDetails.IRFId
                         });
 
+                        DataTable joinabilityReportDt = new DataTable();
+                        joinabilityReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        joinabilityReportDt.Columns.Add("Type", typeof(string));
+                        joinabilityReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        joinabilityReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        joinabilityReportDt.Columns.Add("WeightageActual", typeof(int));
+                        joinabilityReportDt.Columns.Add("Value", typeof(string));
+                        joinabilityReportDt.Columns.Add("CandidateId", typeof(int));
+                        joinabilityReportDt.Columns.Add("IRFId", typeof(int));
+
+
                         foreach (var item in reportDetails.JoinabilityHRReportCollection)
                         {
-                            string sqlReport = "INSERT INTO JoinabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
-                            var result4 = con.Execute(sqlReport, new
-                            {
-                                CandidateId = reportDetails.CandidateId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value = item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual,
-                                IRFId = reportDetails.IRFId
-                            });
+                            joinabilityReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value, reportDetails.CandidateId, reportDetails.IRFId);
                         }
+
+                        SqlCommand cmdjoinabilityReport = new SqlCommand("usp_JoinabilityReportBulkInsert", con);
+                        cmdjoinabilityReport.CommandType = CommandType.StoredProcedure;
+                        cmdjoinabilityReport.Parameters.Add(new SqlParameter("@JoinabilityReportBulkData", SqlDbType.Structured));
+                        cmdjoinabilityReport.Parameters["@JoinabilityReportBulkData"].Value = joinabilityReportDt;
+                        con.Open();
+                        if (cmdjoinabilityReport.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+
                         result = true;
                     }
                    
@@ -633,21 +655,32 @@ namespace Risebird.Repository
                             CandidateId = candidateId,
                             IRFId = irfId
                         });
+                        
+                        DataTable techReportDt = new DataTable();
+                        techReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        techReportDt.Columns.Add("SkillId", typeof(int));
+                        techReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        techReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        techReportDt.Columns.Add("WeightageActual", typeof(int));
+                        techReportDt.Columns.Add("CandidateId", typeof(int));
+                        techReportDt.Columns.Add("IRFId", typeof(int));
+
 
                         foreach (var item in reportDetails)
                         {
-                            string sqlTechReport = "INSERT INTO TechSkillEvaluatorReport (RequiredLevelId ,SkillId, ActualLevelId, WeightageRequired,WeightageActual, CandidateId, IRFId) Values (@RequiredLevelId, @SkillId, @ActualLevelId, @WeightageRequired, @WeightageActual, @CandidateId, @IRFId);";
-                            var result1 = con.Execute(sqlTechReport, new
-                            {
-                                CandidateId = candidateId,
-                                IRFId = irfId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                SkillId = item.SkillId,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            });
+                            techReportDt.Rows.Add(item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, candidateId, irfId);
                         }
+
+                        SqlCommand cmdtechReport = new SqlCommand("usp_TechSkillEvaluatorReportBulkInsert", con);
+                        cmdtechReport.CommandType = CommandType.StoredProcedure;
+                        cmdtechReport.Parameters.Add(new SqlParameter("@TechSkillEvaluatorReportBulkData", SqlDbType.Structured));
+                        cmdtechReport.Parameters["@TechSkillEvaluatorReportBulkData"].Value = techReportDt;
+                        con.Open();
+                        if (cmdtechReport.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+
                         result = true;
                     }
 
@@ -687,20 +720,31 @@ namespace Risebird.Repository
                             IRFId = irfId
                         });
 
+                        
+                        DataTable skillGeneralReportDt = new DataTable();
+                        skillGeneralReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        skillGeneralReportDt.Columns.Add("Type", typeof(string));
+                        skillGeneralReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        skillGeneralReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        skillGeneralReportDt.Columns.Add("WeightageActual", typeof(int));
+                        skillGeneralReportDt.Columns.Add("Value", typeof(string));
+                        skillGeneralReportDt.Columns.Add("CandidateId", typeof(int));
+                        skillGeneralReportDt.Columns.Add("IRFId", typeof(int));
+
+
                         foreach (var item in reportDetails)
                         {
-                            string sqlTechReport = "INSERT INTO SkillGeneralEvaluatorReport (RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, CandidateId, IRFId) Values (@RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @CandidateId, @IRFId);";
-                            var result1 = con.Execute(sqlTechReport, new
-                            {
-                                CandidateId = candidateId,
-                                IRFId = irfId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value = item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            });
+                            skillGeneralReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value,candidateId, irfId);
+                        }
+
+                        SqlCommand cmdskillGeneralReport = new SqlCommand("usp_SkillGeneralEvaluatorReportBulkInsert", con);
+                        cmdskillGeneralReport.CommandType = CommandType.StoredProcedure;
+                        cmdskillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralEvaluatorReportBulkData", SqlDbType.Structured));
+                        cmdskillGeneralReport.Parameters["@SkillGeneralEvaluatorReportBulkData"].Value = skillGeneralReportDt;
+                        con.Open();
+                        if (cmdskillGeneralReport.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
                         }
                         result = true;
                     }
