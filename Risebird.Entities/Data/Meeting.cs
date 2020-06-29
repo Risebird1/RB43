@@ -13,7 +13,7 @@ namespace Risebird.Entities.Data
         public DateTime EndDate { get; set; }
         public string interviewSlot { get; set; }
         public string interviewDuration { get; set; }
-        public string primaryskill { get; set; }
+        public string PrimarySkill { get; set; }
         public string JDTiltle { get; set; }
         public string candidateEmail { get; set; }
         public string candidateName { get; set; }
@@ -81,7 +81,7 @@ namespace Risebird.Entities.Data
         public string CompanyDetails { get; set; }
         public string Status { get; set; }
         public string DateRequired { get; set; }
-
+        public int iscIntId { get; set; }
 
     }
 }

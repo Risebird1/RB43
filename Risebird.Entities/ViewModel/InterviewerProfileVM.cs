@@ -22,14 +22,14 @@ namespace Risebird.Entities.ViewModel
 
         [Required(ErrorMessage = "Please Enter Nick Name")]
         [Display(Name = "Nick Name")]
-        [Remote("IsNickNameExists", "User",AdditionalFields = "UserId", ErrorMessage = "Nick Name already in use")]
+        [Remote("IsNickNameExists", "Interviewer",AdditionalFields = "UserId", ErrorMessage = "Nick Name already in use")]
         public string NickName { get; set; }
 
         [Display(Name = "Email ID")]
         [Required(ErrorMessage = "Please Enter Email ID")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
-        [Remote("IsEmailIdExists", "User", AdditionalFields = "UserId", ErrorMessage = "EmailId already in use")]
+        [Remote("IsEmailIdExists", "Interviewer", AdditionalFields = "UserId", ErrorMessage = "EmailId already in use")]
         public string EmailId { get; set; }
 
         [Display(Name = "Alternate Email ID")]
@@ -37,6 +37,9 @@ namespace Risebird.Entities.ViewModel
         ErrorMessage = "Please Enter Correct Email Address")]
         public string AltEmailId { get; set; }
         [Display(Name = "Date Of Birth")]
+        [Required(ErrorMessage = "Please Enter Date Of Birth")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DOB { get; set; }
         [Display(Name = "Gender")]
         public string Gender { get; set; }
@@ -52,7 +55,6 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
 
         [Display(Name = "Altername Mobile Number")]
-        [Required(ErrorMessage = "Please enter Alternate Mobile Number")]
         public string AltMobileNumber { get; set; }
 
         [Display(Name = "Current Role")]
@@ -60,7 +62,6 @@ namespace Risebird.Entities.ViewModel
         public string CurrentRole { get; set; }
 
         [Display(Name = "Years of Experience")]
-        [Required(ErrorMessage = "Please enter Years of Experience")]
         public decimal Experience { get; set; }
 
         [Display(Name = "Preferred Domain")]
@@ -68,7 +69,6 @@ namespace Risebird.Entities.ViewModel
         public string PreferredDomain { get; set; }
 
         [Display(Name = "Resume Link")]
-        //[Required(ErrorMessage = "Please enter a link.")]
         public string ResumeLink { get; set; }
 
         [Display(Name = "Upload Resume")]
@@ -97,7 +97,7 @@ namespace Risebird.Entities.ViewModel
         // creating List items 
         public IList<TransInterviewerSkill> InterviewerSkill { get; set; }
         public IList<TransInterviewerEducation> InterviewerEducationDetails { get; set; }
-        public IList<InterviewerProfessional> InterviewerProfessionalDetails { get; set; }
+        //public IList<InterviewerProfessional> InterviewerProfessionalDetails { get; set; }
         public IList<TransInterviewerProjects> InterviewerProjectsDetails { get; set; }
         public IList<TransInterviewerAvailability> InterviewerAvailabilityDetails { get; set; }
         public IList<TransInterviewerAccDetails> InterviewerAccDetails { get; set; }
@@ -152,5 +152,8 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Day Slot")]
         public string DaySlot { get; set; }
+
+        [Display(Name = "Skills")]
+        public string PrimarySkill { get; set; }
     }
 }

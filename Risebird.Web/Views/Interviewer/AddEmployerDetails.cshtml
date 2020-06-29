@@ -40,7 +40,7 @@
                 <div class="card">
                     <div class="card-body">
 
-                        @using (Html.BeginForm("AddEmployerDetails", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("AddEmployerDetails", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             @Html.AntiForgeryToken()
@@ -79,18 +79,18 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.JobFunctionId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
-                                        @Html.DropDownList("JobFunctionId", (SelectList)ViewBag.JobFunction, new { @class = "form-control text-box single-line" })
+                                        @Html.DropDownListFor(model => model.JobFunctionId, (SelectList)ViewBag.JobFunction, new { @class = "form-control text-box single-line" })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IndustryId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
-                                        @Html.DropDownList("IndustryId", (SelectList)ViewBag.Industry, new { @class = "form-control text-box single-line" })
+                                        @Html.DropDownListFor(model => model.IndustryId, (SelectList)ViewBag.Industry, new { @class = "form-control text-box single-line" })
                                     </div>
 
 
                                     @*--company Head quarter*@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Headquarters, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
-                                        @Html.DropDownListFor(m => m.Headquarters, (SelectList)ViewBag.CompanySizeList, new { @class = "form-control text-box single-line" })
+                                        @Html.DropDownListFor(m => m.Headquarters, (SelectList)ViewBag.CountryList, new { @class = "form-control text-box single-line" })
                                     </div>
 
 
@@ -113,8 +113,8 @@
 
                                     <div class="form-group">
                                         @Html.LabelFor(m => m.ExperienceId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
-                                        @Html.DropDownList("ExperienceId", (SelectList)ViewBag.ExperienceRange, new { @class = "form-control text-box single-line" })
-                                            @Html.ValidationMessageFor(model => model.ExperienceId, "", new { @class = "text-danger" })
+                                        @Html.DropDownListFor(m => m.ExperienceId, (SelectList)ViewBag.ExperienceRange, new { @class = "form-control text-box single-line" })
+                                        @Html.ValidationMessageFor(model => model.ExperienceId, "", new { @class = "text-danger" })
 
                                     </div>
 
@@ -139,24 +139,25 @@
                                     </div>
 
                                 </div>
+                            </div>
 
-                                <div class="card-footer-button ">
-                                    <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class=" col-md-3">
+                            <div class="card-footer-button ">
+                                <div class="row">
+                                    <label class="col-md-2"></label>
+                                    <div class=" col-md-3">
 
-                                        </div>
-                                        <div class="col-md-6">
-                                            @Html.ActionLink("Cancel", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                    </div>
+                                    <div class="col-md-6">
+                                        @Html.ActionLink("Cancel", "IndexEmployer", "Interviewer", new { id = Model.InterviewerProfileId }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
-                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
-                                        </div>
-                                        <div class=" col-md-3">
+                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                    </div>
+                                    <div class=" col-md-3">
 
-                                        </div>
                                     </div>
                                 </div>
                             </div>
+
                         }
 
                     </div>
