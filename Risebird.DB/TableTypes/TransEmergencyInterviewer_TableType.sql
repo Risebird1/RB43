@@ -1,0 +1,15 @@
+/****** Object:  UserDefinedTableType [dbo].[TransEmergencyInterviewer_TableType]    Script Date: 24-06-2020 2.19.34 PM ******/
+
+IF Not EXISTS (SELECT * FROM sys.types WHERE is_table_type = 1 AND name = 'TransEmergencyInterviewer_TableType')
+BEGIN
+
+CREATE TYPE [dbo].[TransEmergencyInterviewer_TableType] AS TABLE(
+	[IRFId] [int] NOT NULL,
+	[UserId] [int] NULL
+)
+
+END
+
+GO
+
+

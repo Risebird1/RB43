@@ -109,9 +109,87 @@ table {
     table th {
         color: #000000e0;
     }
+
+
+.select-css {
+    display: block;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 100%;
+    max-width: 100%; /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: #fff;
+    /* note: bg image below uses 2 urls. The first is an svg data uri for the arrow icon, and the second is the gradient. 
+		for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
+		
+	*/
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat !important;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right .7em top 50%, 0 0 !important;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100% !important;
+}
+    /* Hide arrow icon in IE browsers */
+    .select-css::-ms-expand {
+        display: none;
+    }
+    /* Hover style */
+    .select-css:hover {
+        border-color: #888;
+    }
+    /* Focus style */
+    .select-css:focus {
+        color: #222;
+        outline: none;
+    }
+
+    /* Set options to normal weight */
+    .select-css option {
+        font-weight: normal;
+    }
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+    background-position: left .7em top 50%, 0 0;
+    padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+    color: graytext;
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat;
+}
+
+    .select-css:disabled:hover, .select-css[aria-disabled=true] {
+        border-color: #aaa;
+    }
 .selectedinterview .table > tbody > tr > td {
     padding: 0px 5px;
 }
+
+
+[type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+    padding:10px!important;
+}
+
+    [type="date"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
 .panel-header-sm {
     height: 85px;
     padding-top: 65px;
@@ -129,7 +207,9 @@ table {
     color: black;
     font-size: 11px;
 }
-
+.cmt-w {
+    width: 300px;
+}
 .desc {
     display: inline-block;
     width: 120px;
@@ -462,10 +542,14 @@ table {
     border-bottom: 1px #cccccc63 solid;
 }
 
-.trash-btn {
+
+.mdc-fab.trash-btn {
     background: #d20505 !important;
 }
 
+.unarchive-btn {
+    background: #848080eb !important;
+}
 
 .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
     border-color: #53a5f5 !important;
@@ -488,72 +572,6 @@ table {
 
 .mc-button-area {
     text-align: right;
-}
-#meeting_length, #meeting_filter {
-    margin: 10px 0px
-}
-
-    #meeting_length label {
-        font-size: 14px;
-    }
-
-    #meeting_length select.form-control {
-        padding: 8px 8px;
-    }
-
-    #meeting_length select:focus {
-        border-color: #4a93de;
-    }
-
-    #meeting_filter input {
-        outline: none;
-    }
-
-#meeting input[type=search] {
-    -webkit-appearance: textfield;
-    -webkit-box-sizing: content-box;
-    font-family: inherit;
-    font-size: 100%;
-}
-
-#meeting_filter input::-webkit-search-decoration,
-#meeting_filter input::-webkit-search-cancel-button {
-    display: none;
-}
-
-
-#meeting_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-    border: solid 1px #ccc;
-    padding: 9px 10px 9px 32px;
-    width: 135px;
-    font-family: arial;
-    -webkit-border-radius: 10em;
-    -moz-border-radius: 10em;
-    border-radius: 10em;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    transition: all .5s;
-}
-
-    #meeting_filter input[type=search]:focus {
-        width: 200px;
-        background-color: #fff;
-        border-color: #4a93de;
-        font-family: arial;
-        margin: 3px;
-        -webkit-box-shadow: 0 0 5px #4a93de;
-        -moz-box-shadow: 0 0 5px #4a93de;
-        box-shadow: 0 0 5px #4a93de;
-    }
-
-
-#meeting_filter input:-moz-placeholder {
-    color: #999;
-}
-
-#meeting_filter input::-webkit-input-placeholder {
-    color: #999;
 }
 
 #resumeId, #zoomlinkId {
@@ -593,7 +611,7 @@ table {
 .talk-bubble {
     display: inline-block;
     position: relative;
-    width: 200px;
+    width: 300px;
     height: auto;
     border-radius: 7px;
     margin: 5px 0px;
@@ -676,6 +694,9 @@ table {
         padding: 12px 5px !important;
     }
 
+    .selectedinterview .table > tbody > tr > td {
+        padding: 12px 5px !important;
+    }
     .card-header-buttons {
         text-align: center;
     }

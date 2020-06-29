@@ -44,11 +44,6 @@
 
 }
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-<link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -61,8 +56,8 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-               
-                
+
+
             </div>
 
         </div>
@@ -91,8 +86,11 @@
                                 <div class="row">
 
 
-                                    <div class="card-header ">
-                                        <div class="pull-left first"> <h4 class="card-title">All Interview Priority View</h4></div>
+                                    <div class="card-header">
+
+                                        <div class="pull-left first">
+                                            <h4 class="card-title">All Interview Priority View</h4>
+                                        </div>
 
                                         <div class="pull-right">
                                             <div>
@@ -450,13 +448,14 @@
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
                                                 <th>Client HR</th>
-                                                <th>Interview Link</th>
+                                                <th class="itemInterviewLink">Interview Link</th>
                                                 <th>End Client Name</th>
                                                 <th>Primary Skill</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
                                                 <th>Report Link</th>
+                                                <th>Aadhar Link</th>
                                                 <th>Video</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -476,6 +475,7 @@
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
                                                 <th>Report Link</th>
+                                                <th>Aadhar Link</th>
                                                 <th>Video</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -486,53 +486,97 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.imid>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.candidateName </td>
-                                                <td> @item.ClientHrContact </td>
-                                                @if (item.zoomLink != null && item.zoomLink != "")
-                                                {
-                                                    <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Interview Link</td>
-                                                }
-                                                <td> @item.ClientName </td>
-                                                <td> @item.JDTiltle.Split("|")[0] </td>
-                                                <td> @item.confirmationStatus</td>
-                                                <td> @item.MeetingStatusStatusDesc</td>
-                                                @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
-                                                {
-                                                    <td> @item.intervieweStatusStatDesc</td>
-                                                }
-                                                else
-                                                {
-                                                    <td></td>
-                                                }
-                                                @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
-                                                {
+                                                <tr id=@item.imid>
+                                                    <td> @item.interviewDate </td>
+                                                    @if (item.IsOnline == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                        </td>
+                                                    }
+                                                    @if (item.IsHrOnline == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                        </td>
+                                                    }
 
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Report</td>
-                                                }
+                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                    {
+                                                        <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Interview Link</td>
+                                                    }
+                                                    <td> @item.ClientName </td>
+                                                    <td> @item.JDTiltle.Split("|")[0] </td>
+                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                    {
+                                                        <td class="text-center">
 
-                                                @if (item.VideoLink != null && item.VideoLink != "" && item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
-                                                {
-                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Video</td>
-                                                }
-                                                <td>@item.NextLevelApprovalStat</td>
-                                                <td>@item.FinalSelectionStat</td>
-                                                <td>@item.OfferStatusStatDesc</td>
-                                                <td>@item.JoiningStatusStatDesc</td>
-                                            </tr>
+                                                            <a style="color:red"> @item.confirmationStatus</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-center"> @item.confirmationStatus</td>
+                                                    }
+
+                                                    <td> @item.MeetingStatusStatusDesc</td>
+                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                    {
+                                                        <td> @item.intervieweStatusStatDesc</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                    {
+
+                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Report</td>
+                                                    }
+                                                    @if (item.AadharFileLink != null && item.AadharFileLink != "")
+                                                    {
+                                                        <td>
+
+                                                            <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No document</td>
+                                                    }
+                                                    @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                    {
+                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Video</td>
+                                                    }
+                                                    <td>@item.NextLevelApprovalStat</td>
+                                                    <td>@item.FinalSelectionStat</td>
+                                                    <td>@item.OfferStatusStatDesc</td>
+                                                    <td>@item.JoiningStatusStatDesc</td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -642,25 +686,45 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
+            order: [],
             responsive: true,
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
             }
 
         });
         var table = $('#meeting').DataTable();
     });
 
-    function ResetFilter() {
+    $(document).ready(function () {
 
-             $.ajax({
-            type: "POST",
-                 url: "/Interview/AllPriorityClientMeetings",
-                 success: function (data) {
-                     window.location.href = "/Interview/ResetAllPriorityClientMeetingsFilter";
-                 }
-                });
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+
+    function ResetFilter() {
+       window.location.href = "/Interview/ResetAllPriorityClientMeetingsFilter";
+            // $.ajax({
+            //type: "POST",
+            //     url: "/Interview/AllPriorityClientMeetings",
+            //     success: function (data) {
+            //     }
+            //    });
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -693,13 +757,7 @@
             $("#OfferStatus").val(offerStatus);
             //$("#Interviewer").val(interviewer);
             var form = $("#form").serialize();
-             $.ajax({
-            type: "POST",
-                 url: "/Interview/AllPriorityClientMeetings",
-            data: form,
-                 success: function (data) {
-                 }
-                });
+            
     }
 
 </script>
@@ -813,41 +871,46 @@
 <!-- Keep the Page Content Here.-->
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
 {
-<script src="~/Newassets/js/enjoyhint.min.js"></script>
-<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-<script>
-    var enjoyhint_instance = new EnjoyHint({});
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+        var enjoyhint_instance = new EnjoyHint({});
 
-    var enjoyhint_script_steps = [
-        {
-            'next .first': 'All Interview Priority View and click on continue to know its features',
-            'nextButton': { className: "myNext", text: "Continue" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .second': 'By default last 30 days interview details will be available here, prior of that click on filter and select date range',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .three': 'Filter here based on available attributes or reset filter if applied earlier',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .exportfive': 'Export the Candidates Interview data over excel',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'click .four': "Click here to see detail grid view of the Candidate Interviews"
-        }
-    ];
-    setTimeout(function () {
-        enjoyhint_instance.set(enjoyhint_script_steps);
-        enjoyhint_instance.run();
-    }, 2000)
-</script>
+        var enjoyhint_script_steps = [
+            {
+                'next .first': 'All Interview Priority View and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .second': 'By default last 30 days interview details will be available here, prior of that click on filter and select date range',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .itemInterviewLink': 'By clicking this column link you can join meeting',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .three': 'Filter here based on available attributes or reset filter if applied earlier',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .exportfive': 'Export the Candidates Interview data over excel',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'click .four': "Click here to see All Interview Detail View of the Candidate Interviews"
+            }
+        ];
+        setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 2000)
+    </script>
 }
 <loading></loading>
 

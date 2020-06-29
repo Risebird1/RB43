@@ -2,6 +2,7 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using System.Text.RegularExpressions
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = " QC Open Interviews";
@@ -10,12 +11,7 @@
 
 <!-- Keep the Page Content Here.-->
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="~/Newassets/css/interview.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -96,7 +92,7 @@
                                                     <td> @item.interviewDate </td>
                                                     <td> @item.interviewSlot </td>
                                                     <td> @item.interviewDuration </td>
-                                                    <td> @item.candidateName</td>
+                                                    <td> @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")</td>
                                                     @if (item.resumeLink != null && item.resumeLink != "")
                                                     {
                                                         <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -201,7 +197,6 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        //FilterInterviews("All");// on page load default dropdownlist value set
 
         $('#OpeninterviewList').DataTable({
             "pagingType": "full_numbers",
@@ -213,10 +208,36 @@
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
             }
 
         });
+
+
         var table = $('#OpeninterviewList').DataTable();
+
+
+    });
+
+
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
     });
 </script>
 <script type="text/javascript">

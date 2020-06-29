@@ -61,32 +61,13 @@
                      
                         <li><a asp-area="" asp-controller="Session" asp-action="SignOut">Sign out</a></li>
                     </ul>
-                        @*<ul class="nav">
-                            <li>
-                                <a href="#">
-                                    <span class="sidebar-mini-icon">MP</span>
-                                    <span class="sidebar-normal">My Profile</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span class="sidebar-mini-icon">EP</span>
-                                    <span class="sidebar-normal">Edit Profile</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <span class="sidebar-mini-icon">S</span>
-                                    <span class="sidebar-normal">Settings</span>
-                                </a>
-                            </li>
-                        </ul>*@
+                        
                     </div>
             </div>
         </div>
 
 
-        <ul class="nav"  id="content">
+        <ul class="nav" id="content">
             @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
             {
                 var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
@@ -109,6 +90,15 @@
                         {
                             <li class="risetubemenu">
                                 <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/RiseTube/VideoPage")
+                        {
+                            <li class="disabled risetubemenu" style="cursor: not-allowed;">
+                                <a href="@m.sUrl" style="pointer-events: none;">
                                     <i class="now-ui-icons @m.sIcon"></i>
                                     <p>@m.functionName</p>
                                 </a>

@@ -33,7 +33,9 @@ DECLARE @tbl_TotalMeetings TABLE (
 );
 INSERT INTO @tbl_TotalMeetings
 select IRF.id as IRFId, count(im.id) as TotalMeetings
-from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId 
+from IRF inner join InterviewMeetings im on IRF.IRFId = im.IRFId  
+inner join InterviewComments ic on im.id= ic.InterviewId
+where im.confirmationStatus=1
 group by IRF.id
 
 DECLARE @tbl_SelectedMeetings TABLE (
@@ -42,8 +44,10 @@ DECLARE @tbl_SelectedMeetings TABLE (
 );
 INSERT INTO @tbl_SelectedMeetings
 select irf.id as IRFId, count(im.id) as SelectedMeetings
-from irf left join InterviewMeetings im on irf.IRFId= im.IRFId left join InterviewComments ic on im.id= ic.InterviewId
-where ic.InterviewStatus= 2 or ic.InterviewStatus=4 
+from irf left join InterviewMeetings im on irf.IRFId= im.IRFId 
+left join InterviewComments ic on im.id= ic.InterviewId
+left join QCFeedbackReport qcf on qcf.InterviewId = im.id
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.InterviewId is not null
 group by irf.id
 
 DECLARE @tbl_ScheduledMeetings TABLE (

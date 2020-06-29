@@ -4,12 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="~/Newassets/css/account.css" rel="stylesheet" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -46,7 +41,8 @@
 
                         @using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
                         {
-                            @*<div class="loader text-center">
+                            @*<div class="loader text-centerEdit Account
+
                 <img src="~/Newassets/img/lazyload.gif" />
             </div>*@
 
@@ -78,7 +74,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ClientId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control", @onchange = "ClientChanged(this.value)" })
+                                        @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control select-css", @onchange = "ClientChanged(this.value)" })
                                         @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
 
                                     </div>
@@ -105,7 +101,7 @@
                                     </div>
                                 </div>
                             </div>
-                         
+
                             @*<div class="row">
                 <div class="col-md-3 col-sm-3 px-1">
                     <div class="form-group">
@@ -114,74 +110,74 @@
                     </div>
                 </div>
             </div>*@
-                    <div id="tableID">
-                        <div class="table-responsive-sm">
-                            <table class="table table-bordered mbn" id="ProjectList">
-                                <thead>
-                                    <tr>
-                                        @*<th>IRF Id</th>*@
-                                        <th width="40%" class="text-center" style="font-size:15px!important;">Project Name</th>
-                                        <th width="30%" class="text-center" style="font-size:15px!important;">Client</th>
-                                        <th class="text-center" style="font-size:15px!important;">Add</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (int i = 0; i < Model.AccountProjectMappings.Count(); i++)
-                                    {
-                                        <tr>
-                                            @*<td>
-                                @Html.TextBoxFor(m => m.ProjectIRFMappings[i].IRFId, new { @class = "form-control", @readonly = "readonly"})
+                            <div id="tableID">
+                                <div class="table-responsive-sm">
+                                    <table class="table table-bordered mbn" id="ProjectList">
+                                        <thead>
+                                            <tr>
+                                                @*<th>IRF Id</th>*@
+                                                <th width="40%" class="text-center" style="font-size:15px!important;">Project Name</th>
+                                                <th width="30%" class="text-center" style="font-size:15px!important;">Client</th>
+                                                <th class="text-center" style="font-size:15px!important;">Add</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.AccountProjectMappings.Count(); i++)
+                                            {
+                                                <tr>
+                                                    @*<td>
+                                        @Html.TextBoxFor(m => m.ProjectIRFMappings[i].IRFId, new { @class = "form-control", @readonly = "readonly"})
 
-                            </td>*@
-                                            <td class="text-center"> <a style="color:#007bff;" id="@("irflink_"+i)" target="_blank" title="Project" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
-                                            @*<td>@Model.ProjectIRFMappings[i].PrimarySkills</td>*@
-                                            <td class="text-center">@Model.AccountProjectMappings[i].Client</td>
-                                            <td class="text-center">
+                                    </td>*@
+                                                    <td class="text-center"> <a style="color:#007bff;" id="@("irflink_"+i)" target="_blank" title="Project" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
+                                                    @*<td>@Model.ProjectIRFMappings[i].PrimarySkills</td>*@
+                                                    <td class="text-center">@Model.AccountProjectMappings[i].Client</td>
+                                                    <td class="text-center">
 
-                                                <div class="mdc-form-field" style="margin-bottom: 10px;">
-                                                    <div class="mdc-checkbox">
-                                                        @Html.CheckBoxFor(m => m.AccountProjectMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
+                                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                            <div class="mdc-checkbox">
+                                                                @Html.CheckBoxFor(m => m.AccountProjectMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
 
 
-                                                        <div class="mdc-checkbox__background">
-                                                            <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
-                                                                <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                            </svg>
-                                                            <div class="mdc-checkbox__mixedmark"></div>
+                                                                <div class="mdc-checkbox__background">
+                                                                    <svg class="mdc-checkbox__checkmark"
+                                                                         viewBox="0 0 24 24">
+                                                                        <path class="mdc-checkbox__checkmark-path"
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    </svg>
+                                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                                </div>
+                                                                <div class="mdc-checkbox__ripple"></div>
+
+
+                                                            </div>
                                                         </div>
-                                                        <div class="mdc-checkbox__ripple"></div>
-
-
-                                                    </div>
-                                                </div>
 
 
 
-                                            </td>
-                                            @Html.HiddenFor(m => m.AccountProjectMappings[i].ProjectId)
+                                                    </td>
+                                                    @Html.HiddenFor(m => m.AccountProjectMappings[i].ProjectId)
 
-                                        </tr>
-                                    }
+                                                </tr>
+                                            }
 
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                        @Html.HiddenFor(m => m.id)
-
-                        <div class="card-footer">
-                            <div class="row">
-
-                                <div class="col-md-12 mc-button-area">
-                                    @Html.ActionLink("Back to List", "Index", "Account", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </div>
+
+                            @Html.HiddenFor(m => m.id)
+
+                            <div class="card-footer">
+                                <div class="row">
+
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "Account", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
+                                    </div>
+                                </div>
+                            </div>
 
                         }
 

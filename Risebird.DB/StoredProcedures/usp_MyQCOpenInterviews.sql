@@ -1,7 +1,7 @@
 /****** Object:  StoredProcedure [dbo].[usp_MyQCOpenInterviews]    Script Date: 14-11-2019 7.03.24 PM ******/
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_MyQCOpenInterviews'))
 BEGIN
-    DROP PROCEDURE dbo.usp_MyQCOpenInterviews
+    DROP PROCEDURE dbo.usp_MyQCOpenInterviews 
 END
 
 SET ANSI_NULLS ON
@@ -14,11 +14,21 @@ CREATE PROCEDURE [dbo].[usp_MyQCOpenInterviews]
 @emailID varchar(200)
 AS
 BEGIN
-select InterviewMeetings.*, irf.id as irfIntId, irf.JDLink from InterviewMeetings
-inner join IRF irf on InterviewMeetings.IRFId=irf.IRFId left join InterviewComments ic on ic.InterviewId= InterviewMeetings.id
+select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
+im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
+im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
+irf.id as irfIntId, irf.JDLink from InterviewMeetings im
+inner join IRF irf on im.IRFId=irf.IRFId left join InterviewComments ic on ic.InterviewId= im.id
+left join Candidate ca on irf.id=ca.IRFId and im.candidateEmail = ca.EmailId
 where IRF.id in (select IRFId from TransQualityController tqc join UserList ul on tqc.UserId= ul.id where EmailId = @emailID)
-and InterviewMeetings.confirmationStatus=1 and ic.MeetingStatus=4 and InterviewMeetings.interviewer!=@emailID
+and im.confirmationStatus=1 and ic.MeetingStatus=4 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and im.interviewer!=@emailID
+
+
 END
 GO
+
+
 
 

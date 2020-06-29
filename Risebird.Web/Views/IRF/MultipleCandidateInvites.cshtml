@@ -1,0 +1,239 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@{
+    ViewData["Title"] = "Multiple Candidate Invites";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skill Channel</a>
+                <a class="navbar-brand"> /  &nbsp; Multiple Candidate Invites</a>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+
+
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                                <div class="row">
+
+
+                                    <div class="card-header">
+                                        <div class="pull-left"><h4 class="card-title">Multiple Candidate Invites</h4></div>
+
+                                        <div class="pull-right">
+
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-bottom: 20px;">
+                                                <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"> Back</span>
+                                            </button>
+
+                                        </div>
+                                    </div>
+
+
+
+
+
+
+
+                                </div>
+                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+
+                                    <div id="tableID">
+                                        <table id="dupmeeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Invite Count</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Primary Skill</th>
+                                                    <th>Confirmation Status</th>
+                                                    <th>Meeting Status</th>
+                                                    <th>Interview Status</th>
+                                                    <th>Client HR</th>
+                                                    <th>Candidate Contact</th>
+                                                    <th>Staffing Agenecy</th>
+                                                    <th>IRF ID</th>
+                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Invite Count</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Primary Skill</th>
+                                                    <th>Confirmation Status</th>
+                                                    <th>Meeting Status</th>
+                                                    <th>Interview Status</th>
+                                                    <th>Client HR</th>
+                                                    <th>Candidate Contact</th>
+                                                    <th>Staffing Agenecy</th>
+                                                    <th>IRF ID</th>
+                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+                                                <tr id=@item.imid>
+                                                    <td> @item.InviteCount </td>
+                                                    <td> @item.candidateName</td>
+                                                    <td> @item.candidateEmail</td>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.JDTiltle.Split("|")[0] </td>
+                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                    {
+                                                        <td class="text-center">
+
+                                                            <a style="color:red"> @item.confirmationStatus</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-center"> @item.confirmationStatus</td>
+                                                    }
+                                                    <td> @item.MeetingStatusStatusDesc</td>
+                                                    <td> @item.intervieweStatusStatDesc</td>
+                                                    <td> @item.ClientHrContact </td>
+                                                    <td>@item.MobileNumber</td>
+                                                    <td>@item.staffingAgency</td>
+                                                    <td> @item.IRFId</td>                                                   
+                                                    <td class="text-right action">
+                                                        @if (item.IsAdmin && item.MeetingStatusStatusDesc != "Completed")
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                <span onclick="location.href = '@Url.Action("DeleteInterview", "Interview", new { id = item.imid,controllerName="IRF",irfId= item.IRFId})'" title="Delete Interview" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                            </button>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+            <!-- end row -->
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('#dupmeeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+
+
+        var table = $('#dupmeeting').DataTable();
+
+
+    });
+
+
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#dupmeeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#dupmeeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#dupmeeting").show();
+        }, 500);
+    };
+                //// script for loader ends here
+</script>
+
+
+<!-- Keep the Page Content Here.-->
+
+
+<loading></loading>
+
+<!-- PAGE CONTENT WRAPPER -->

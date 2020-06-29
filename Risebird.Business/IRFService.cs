@@ -77,6 +77,20 @@ namespace Risebird.Business
             }
         }
 
+        public IEnumerable<Users> GetAllHRs()
+        {
+            try
+            {
+                return _irfRepository.GetAllHRs();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public SelectList GetQualityController()
         {
             try
@@ -167,6 +181,42 @@ namespace Risebird.Business
                 }
                 list = list.Distinct().ToList();
                 
+                return list;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
+        public IEnumerable<Interviewer> GetInterviewersForIRF(string skillNames)
+        {
+            try
+            {
+                //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
+                var interviewers = _irfRepository.GetIRFInterviewerSkills();
+                var skillNameList = skillNames.Split(",");
+                
+                //skillList.RemoveAt()
+                var list = new List<Interviewer>();
+
+
+                foreach (var item in interviewers)
+                {
+                    foreach (var skillName in skillNameList)
+                    {
+                        if (item.PrimarySkill.Contains(skillName))
+                        {
+                            list.Add(item);
+                            break;
+                        }
+                    }
+                }
+                list = list.Distinct().ToList();
+
                 return list;
             }
 
@@ -304,7 +354,7 @@ namespace Risebird.Business
             try
             {
                 int role =0;
-                var result= _irfRepository.GetIRFInterviewMeetings(id).OrderBy(x => x.interviewDate).ToList();
+                var result= _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.interviewDate).ToList();
                 
                 if(email != string.Empty && profileName == "Client")
                 {
@@ -323,12 +373,12 @@ namespace Risebird.Business
                     }
                     if (role == 1)
                     {
-                        result = result.Where(m => m.ClientHrContact?.Trim() == email).ToList();
+                        result = result.Where(m => m.ClientHrContact?.Trim().ToLower() == email.ToLower()).ToList();
                         return result;
                     }
                     else if (role == 4)
                     {
-                        result = result.Where(m => m.staffingAgency?.Trim() == email).ToList();
+                        result = result.Where(m => m.staffingAgency?.Trim().ToLower() == email.ToLower()).ToList();
                         return result;
                     }
                     else
@@ -657,12 +707,12 @@ namespace Risebird.Business
             try
             {
                 //check if the candidate email exists for the IRFId
-                var duplicate = _irfRepository.GetIRFCandidates(obj.IRFId).Where(x=> x.EmailId==obj.EmailId);
+                var duplicate = _irfRepository.GetIRFCandidates(obj.IRFId).Where(x=> x.EmailId.ToLower()==obj.EmailId?.Trim().ToLower());
                 if(duplicate != null && duplicate.Count()>0)
                 {
                     return "Sorry! Candidate already exists for the IRF.";
                 }
-                var userId = _irfRepository.GetUserId(emailId, profile);
+                var userId = _irfRepository.GetUserId(emailId?.Trim().ToLower(), profile);
                 obj.AddedByUserId = userId;
                 var result = _irfRepository.AddCandidate(obj).Result;
                 if (result.Contains("successfully"))
@@ -1054,5 +1104,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public bool SaveCandidateStatus(int candidateId, int status)
+        {
+            try
+            {
+                return _irfRepository.SaveCandidateStatus(candidateId, status);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

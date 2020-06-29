@@ -72,5 +72,17 @@ namespace Risebird.Entities.ViewModel
         public double SelectabilityScore { get; set; }
         public double JoinabilityScore { get; set; }
         public int AddedByUserId { get; set; }
+        public int? Status { get; set; }
+        public string StatusValue { get; set; }
+        public int imid { get; set; }
+        public int confirmationStatus { get; set; }
+        public int MeetingStatus { get; set; }
+        public int InterviewStatus { get; set; }
+        public string VideoLink { get; set; }
+        public DateTime? interviewDate { get; set; }
+        public string confirmationStatusDesc { get; set; }
+        public string InterviewStatusDesc { get; set; }
+        public string MeetingStatusDesc { get; set; }
+
     }
 }

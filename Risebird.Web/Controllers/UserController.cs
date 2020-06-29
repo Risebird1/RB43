@@ -316,7 +316,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
+                        clientUserVM.EmailId = clientUserVM.EmailId.Trim().ToLower();
                         if (_userService.AddClientUser(clientUserVM))
                         {
                             TempData["SuccessErrorMessageClientUser"] = "Client User is added Successfully";
@@ -556,7 +556,7 @@ namespace Risebird.Web.Controllers
                         interviewer.ResumeLink = uploadedFileURL;
                         List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
                         interviewer.PrimarySkill = String.Join(",", selectedSkill);
-                        interviewer.EmailId = interviewer.EmailId.ToLower();
+                        interviewer.EmailId = interviewer.EmailId.Trim().ToLower();                       
                         if (_userService.AddInterviewer(interviewer))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
@@ -568,24 +568,7 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Interviewers");
                         }
                     }
-
-
-                    //if (ModelState.IsValid)
-                    //{
-                        
-                    //}
-                    //else
-                    //{
-                    //    var model = new InterviewerVM();
-                    //    model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
-                    //    //ModelStateEntry i;
-                    //    //ModelState.TryGetValue("SelectedSkillIds", out i);
-                    //    //// = i.AttemptedValue.Split(",").Cast<Int64>().ToArray();
-                    //    //model.SelectedSkillIds = Array.ConvertAll(i.AttemptedValue.Split(","), s => int.Parse(s));
-
-                    //    return View("AddInterviewer", model);
-                    //}
+                                       
                 }
                 else
                 {

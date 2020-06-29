@@ -1,53 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 
-<style>
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-</style>
-
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
 <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
     <thead>
         <tr>
@@ -82,13 +35,35 @@
         {
         <tr id=@item.imid>
             <td> @item.interviewDate </td>
-            <td> @item.candidateName </td>
-            <td> @item.ClientHrContact </td>
+            @if (item.IsOnline == 1)
+            {
+                <td>
+                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
+                </td>
+            }
+            else
+            {
+                <td>
+                    <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                </td>
+            }
+            @if (item.IsHrOnline == 1)
+            {
+                <td>
+                    <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                </td>
+            }
+            else
+            {
+                <td>
+                    <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                </td>
+            }
             <td> @item.ClientName </td>
             <td> @item.JDTiltle.Split("|")[0] </td>
             <td> @item.confirmationStatus</td>
             <td> @item.MeetingStatusStatusDesc</td>
-            @if (item.QCInterview > 0)
+            @if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
             {
                 <td> @item.intervieweStatusStatDesc</td>
             }
@@ -96,7 +71,7 @@
             {
                 <td></td>
             }
-            @if (item.QCInterview > 0)
+            @if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
             {
                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
             }
@@ -104,7 +79,7 @@
             {
                 <td>No Report</td>
             }
-            @if (item.VideoLink != null && item.VideoLink != "" && item.QCInterview > 0)
+            @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.InterviewStatus == 4 || item.InterviewStatus == 2))
             {
                 <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
             }

@@ -66,7 +66,7 @@
                                                     <tr>
                                                         <td>
 
-                                                            @Html.DropDownList("SkillCollection[0].Skill", Model.Skills, new { @class = "form-control" })
+                                                            @Html.DropDownList("SkillCollection[0].Skill", Model.Skills, new { @class = "select-css form-control" })
 
 
                                                         </td>
@@ -74,12 +74,12 @@
 
 
                                                         <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                <div class="talktext">
+                                                         
+                                                                <div class="text-areadiv ">
                                                                     <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__Comment" name="SkillCollection[0].Comment" style="width:100%" class="valid" aria-invalid="false"></textarea>
 
 
-                                                                </div>
+                                                             
                                                             </div>
 
 
@@ -87,10 +87,11 @@
 
                                                         <td class="text-center action-area">
 
+                                                            <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>
+                                                            @*<button class="mdc-fab app-fab--absolute"  aria-label="Add">
+            <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+        </button>*@
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -112,16 +113,16 @@
                                                         <tr>
                                                             <td>
 
-                                                                @Html.DropDownListFor(m => m.SkillCollection[i].Skill, Model.Skills, new { @class = "form-control" })
+                                                                @Html.DropDownListFor(m => m.SkillCollection[i].Skill, Model.Skills, new { @class = "select-css form-control" })
                                                             </td>
 
                                                             <td>
 
-                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                    <div class="talktext">
+                                                           
+                                                                    <div class="text-areadiv">
                                                                         @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                                                     </div>
-                                                                </div>
+                                                                
 
                                                             </td>
 
@@ -129,9 +130,10 @@
 
                                                                 <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
+
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                    <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>*@
+            <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+        </button>*@
 
 
                                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -303,9 +305,11 @@
                     function () //confirm
                     {
                         //if Yes do this
-                        //window.location.href = '/Project/Index';
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
+                        //location.reload(true);
+
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                     }
                 )
 
@@ -320,9 +324,10 @@
                 },
                     function ()
                     {
-                        //window.location.href = '/Project/Index';
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
+                        //location.reload(true);
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                     }
                 )
             }

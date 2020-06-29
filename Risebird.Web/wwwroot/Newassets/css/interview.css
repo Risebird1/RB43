@@ -9,7 +9,44 @@ body {
     border-radius: 5px;
 }
 
+#startRecButton {
+    background: url(../../img/play-recrd.png) no-repeat;
+    text-indent: -999px;
 
+    background-size: 40px;
+    border: 0;
+    height: 60px;
+    cursor: pointer;
+    background-position: 50% 0%;
+}
+
+#stopRecButton {
+    background: url(../../img/stop-recording.png) no-repeat;
+    text-indent: -999px;
+    background-size: 40px;
+    border: 0;
+    height: 60px;
+    cursor: pointer;
+    background-position: 50% 0%;
+}
+
+#cancelRecButton {
+    background: url(../../img/cancel-record.png) no-repeat;
+    text-indent: -999px;
+    background-size: 40px;
+    border: 0;
+    cursor: pointer;
+    height: 60px;
+    background-position: 50% 0%;
+}
+.record-txt {
+    display: block;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 500;
+    line-height: 16px;
+    padding-bottom:10px;
+}
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
@@ -22,13 +59,362 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
+.interview .card-header .fa-file-excel-o:before{font-size:35px;}
+
+
+.select-css {
+    display: block;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 100%;
+    max-width: 100%; /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: #fff;
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat !important;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right .7em top 50%, 0 0 !important;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100% !important;
+}
+    /* Hide arrow icon in IE browsers */
+    .select-css::-ms-expand {
+        display: none;
+    }
+    /* Hover style */
+    .select-css:hover {
+        border-color: #888;
+    }
+    /* Focus style */
+    .select-css:focus {
+       
+        color: #222;
+        outline: none;
+    }
+
+    /* Set options to normal weight */
+    .select-css option {
+        font-weight: normal;
+      
+    }
+
+.select-css option:hover {
+    background: pink!important;
+}
+
+select * {
+    background-color: #fff;
+    border:0!important;
+    padding:5px;
+}
+
+select{
+    padding:10px;
+}
+
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+    background-position: left .7em top 50%, 0 0;
+    padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+    color: graytext;
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat;
+}
+
+    .select-css:disabled:hover, .select-css[aria-disabled=true] {
+        border-color: #aaa;
+    }
+
+
+
+.input{position:relative;}
+
+.spinner {
+    top: 30px;
+    width: 0.8rem;
+    position: absolute;
+    background: whitesmoke;
+    border-radius: 0;
+    display: none;
+    height: 2rem;
+    right: 10px;
+}
+
+.js .spinner {
+    display: block;
+}
+
+.container:hover .spinner {
+    right: 0;
+    top: 1px;
+}
+
+.spinner .button {
+    position: relative;
+    color: #8c8686;
+    background: transparent;
+    border: none;
+    font-size:1.5rem;
+    padding: 0;
+    display: block;
+}
+
+    .spinner .button:hover {
+        color: gray;
+    }
+
+    .spinner .button:active {
+        color: darkgray
+    }
+
+.up {
+    transform: rotate(-90deg);
+    top: -.5rem;
+}
+
+.down {
+    transform: rotate(-90deg);
+    top: -2rem;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+
+
+
+[type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+    padding:10px!important;
+}
+
+    [type="date"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
+
+
+[type="datetime-local"] {
+    background: #fff url(https://cdn.iconscout.com/icon/free/png-256/calender-date-day-time-clock-schedule-event-6-3126.png) 97% 50% no-repeat !important;
+    background-size: 5% !important;
+}
+
+    [type="datetime-local"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="datetime-local"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
+
+
+
+
+.interview .card-header .fa-file-excel-o:before {
+    font-size: 35px;
+}
+
+
+.select-css {
+    display: block;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 100%;
+    max-width: 100%; /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none !important;
+    background-color: #fff;
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat !important;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right .7em top 50%, 0 0 !important;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100% !important;
+}
+    /* Hide arrow icon in IE browsers */
+    .select-css::-ms-expand {
+        display: none;
+    }
+    /* Hover style */
+    .select-css:hover {
+        border-color: #888;
+    }
+    /* Focus style */
+    .select-css:focus {
+        color: #222;
+        outline: none;
+    }
+
+    /* Set options to normal weight */
+    .select-css option {
+        font-weight: normal;
+    }
+
+        .select-css option:hover {
+            background: pink !important;
+        }
+
+select * {
+    background-color: #fff;
+    border: 0 !important;
+    padding: 5px;
+}
+
+select {
+    padding: 10px;
+}
+
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+    background-position: left .7em top 50%, 0 0;
+    padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+    color: graytext;
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat;
+}
+
+    .select-css:disabled:hover, .select-css[aria-disabled=true] {
+        border-color: #aaa;
+    }
+
+
+
+.input {
+    position: relative;
+}
+
+.spinner {
+    top: 30px;
+    width: 0.8rem;
+    position: absolute;
+    background: whitesmoke;
+    border-radius: 0;
+    display: none;
+    height: 2rem;
+    right: 50px;
+}
+
+.js .spinner {
+    display: block;
+}
+
+.container:hover .spinner {
+    right: 0;
+    top: 1px;
+}
+
+.spinner .button {
+    position: relative;
+    color: #8c8686;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    padding: 0;
+    display: block;
+}
+
+    .spinner .button:hover {
+        color: gray;
+    }
+
+    .spinner .button:active {
+        color: darkgray
+    }
+
+.up {
+    transform: rotate(-90deg);
+    top: -.5rem;
+}
+
+.down {
+    transform: rotate(-90deg);
+    top: -2rem;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+
+
+
+[type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+}
+
+    [type="date"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
+
+
+[type="datetime-local"] {
+    background: #fff url(https://cdn.iconscout.com/icon/free/png-256/calender-date-day-time-clock-schedule-event-6-3126.png) 97% 50% no-repeat !important;
+    background-size: 5% !important;
+}
+
+    [type="datetime-local"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="datetime-local"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
+
+
+
 
 #QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
-    cursor: pointer!important;
+    cursor: pointer !important;
 }
 
     #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
-        background: url("https://i.ya-webdesign.com/images/play-button-png-6.png");
+        background: url("../../img/audio-button-set-4-transparent.png");
         background-size: 25px;
         background-repeat: no-repeat;
         background-position: 45%;
@@ -129,10 +515,11 @@ table {
     }
 
 .panel-header-sm {
-    height: 85px!important;
+    height: 85px !important;
     padding-top: 65px;
     background: none !important;
 }
+
 .excel-file {
     margin-right: 10px;
     float: right;
@@ -140,8 +527,9 @@ table {
     font-size: 35px;
     margin-top: 3px;
     margin-left: 3px;
-    border:0;
+    border: 0;
 }
+
 .btn-call {
     width: 30px !important;
     height: 30px;
@@ -179,25 +567,25 @@ table {
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
-
-#meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter{
-margin: 10px 0px
+/*
+#meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter {
+    margin: 10px 0px
 }
 
-    #meeting_length label, #OpeninterviewList_length label, #MyInterviewList_length label{
-    font-size: 14px;
+    #meeting_length label, #OpeninterviewList_length label, #MyInterviewList_length label {
+        font-size: 14px;
     }
 
-    #meeting_length select.form-control, #OpeninterviewList_length select.form-control, #MyInterviewList_length select.form-control{
-    padding: 8px 8px;
+    #meeting_length select.form-control, #OpeninterviewList_length select.form-control, #MyInterviewList_length select.form-control {
+        padding: 8px 8px;
     }
 
-    #meeting_length select:focus, #OpeninterviewList_length select:focus, #MyInterviewList_length select:focus{
-    border-color: #4a93de;
+    #meeting_length select:focus, #OpeninterviewList_length select:focus, #MyInterviewList_length select:focus {
+        border-color: #4a93de;
     }
 
-    #meeting_filter input, #OpeninterviewList_filter input, #MyInterviewList_filter input
-    outline: none;
+    .dataTables_filter input, #OpeninterviewList_filter input, #MyInterviewList_filter input {
+        outline: none;
     }
 
 #meeting input[type=search] {
@@ -207,49 +595,49 @@ margin: 10px 0px
     font-size: 100%;
 }
 
-#meeting_filter input::-webkit-search-decoration,
-#meeting_filter input::-webkit-search-cancel-button, #OpeninterviewList_filter input::-webkit-search-decoration,
+.dataTables_filter input::-webkit-search-decoration,
+.dataTables_filter input::-webkit-search-cancel-button, #OpeninterviewList_filter input::-webkit-search-decoration,
 #OpeninterviewList_filter input::-webkit-search-cancel-button, #MyInterviewList_filter input::-webkit-search-decoration,
-#MyInterviewList_filter input::-webkit-search-cancel-button{
-display: none;
+#MyInterviewList_filter input::-webkit-search-cancel-button {
+    display: none;
 }
 
 
-#meeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #MyInterviewList_filter input[type=search]{
-background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-border: solid 1px #ccc;
-padding: 9px 10px 9px 32px;
-width: 135px;
-font-family: arial;
--webkit-border-radius: 10em;
--moz-border-radius: 10em;
-border-radius: 10em;
--webkit-transition: all .5s;
--moz-transition: all .5s;
-transition: all .5s;
-}
-
-    #meeting_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search]:focus{
-    width: 200px;
-    background-color: #fff;
-    border-color: #4a93de;
+#meeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #MyInterviewList_filter input[type=search] {
+    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+    border: solid 1px #ccc;
+    padding: 9px 10px 9px 32px;
+    width: 135px;
     font-family: arial;
-    margin: 3px;
-    -webkit-box-shadow: 0 0 5px #4a93de;
-    -moz-box-shadow: 0 0 5px #4a93de;
-    box-shadow: 0 0 5px #4a93de;
+    -webkit-border-radius: 10em;
+    -moz-border-radius: 10em;
+    border-radius: 10em;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
+}
+
+    #meeting_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search]:focus {
+        width: 200px;
+        background-color: #fff;
+        border-color: #4a93de;
+        font-family: arial;
+        margin: 3px;
+        -webkit-box-shadow: 0 0 5px #4a93de;
+        -moz-box-shadow: 0 0 5px #4a93de;
+        box-shadow: 0 0 5px #4a93de;
     }
 
 
-#meeting_filter input:-moz-placeholder, #OpeninterviewList_filter input:-moz-placeholder, #MyInterviewList_filter input:-moz-placeholder{
-color: #999;
+.dataTables_filter input:-moz-placeholder:-moz-placeholder, #OpeninterviewList_filter input:-moz-placeholder, #MyInterviewList_filter input:-moz-placeholder {
+    color: #999;
 }
 
-#meeting_filter input::-webkit-input-placeholder, #OpeninterviewList_filter input::-webkit-input-placeholder, #MyInterviewList_filter input::-webkit-input-placeholder{
-color: #999;
+.dataTables_filter input:-moz-placeholder input::-webkit-input-placeholder, #OpeninterviewList_filter input::-webkit-input-placeholder, #MyInterviewList_filter input::-webkit-input-placeholder {
+    color: #999;
 }
 
-
+*/
 
 
 .multiselect-selected-text {
@@ -268,7 +656,7 @@ color: #999;
 }
 
 
-#resumeId,  #zoomlinkId {
+#resumeId, #zoomlinkId {
     background: #e2f0ff;
     color: #1d3b5e;
     padding: 5px 10px;
@@ -276,14 +664,14 @@ color: #999;
 }
 
 
- #reportId {
+#reportId {
     background: #b3d2f1;
     color: #1d3b5e;
     padding: 5px 10px;
     border-radius: 16px;
 }
 
- #jdlinkId {
+#jdlinkId {
     background: #fff;
     color: #1d3b5e;
     padding: 4px 10px;
@@ -373,7 +761,7 @@ color: #999;
 
 
 #AudioFile {
-    margin: 0px 0px 15px 0px;
+    margin: 0px 0px 10px 0px !important;
 }
 
 
@@ -384,8 +772,9 @@ color: #999;
 
 
 #VideoFile {
-    margin: 0px 0px 10px 0px;
+    margin: 0px 0px 10px 0px !important;
 }
+
 #Clienform textarea {
     min-height: 100px;
     width: 100%;
@@ -395,7 +784,7 @@ color: #999;
     height: auto;
     border-radius: 10px;
     margin: 5px 0px;
-    background-color: #eff7ff;
+    /* background-color: #eff7ff;*/
     border: 0;
     font-size: 13px;
     padding: 10px;
@@ -422,7 +811,6 @@ color: #999;
     background: #e8f5ff;
     padding: 8px 10px;
     border: 0;
-
 }
 
 .video-choose {
@@ -430,7 +818,7 @@ color: #999;
     top: -28px;
 }
 
-.trash-btn {
+.mdc-fab.trash-btn {
     background: #d20505 !important;
 }
 
@@ -438,6 +826,7 @@ color: #999;
     color: #53a5f5;
     text-decoration: underline;
 }
+
 .file-lable {
     color: #000 !important;
     font-size: 14px !important;
@@ -448,7 +837,7 @@ color: #999;
 }
 
 .mdc-card {
-    border-top: 3px #53a5f5 solid!important;
+    border-top: 3px #53a5f5 solid !important;
 }
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
@@ -468,31 +857,30 @@ color: #999;
     color: #53a5f5 !important;
 }
 
-.mdc-card .modal .form-control, .mdc-card .form-control, .modal .form-control{
+.mdc-card .modal .form-control, .mdc-card .form-control, .modal .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
     background: whitesmoke;
     height: 40px;
-    width:100%;
+    width: 100%;
     font-size: 0.8rem;
-
-    margin:0!important;
-  
+    margin: 0 !important;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
 }
 
-    .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus{
+    .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
         border-bottom: 2px rgb(80, 158, 235) solid;
     }
 
-.mtop-15{
+.mtop-15 {
     margin-top: 15px;
 }
 
-    /* Needed */
+/* Needed */
     .interview .table > tbody > tr > td {
-        padding: 0px 5px;
-    }
+    padding: 0px 5px!important;
+}
+
 .fa-spinner {
     font-size: 18px;
     position: relative;
@@ -521,7 +909,7 @@ color: #999;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
 }
 
- .dropdown-toggle::after {
+    .dropdown-toggle::after {
         color: rgba(0, 0, 0, 0.29);
         position: absolute;
         right: 30px;
@@ -539,6 +927,7 @@ color: #999;
     padding-bottom: 10px !important;
     color: #fff;
 }
+
 .modal-content .modal-body {
     padding-top: 10px;
 }
@@ -546,6 +935,7 @@ color: #999;
 .modal .form-group {
     margin-bottom: 10px;
 }
+
 .modal-bg {
     display: none;
     position: fixed;
@@ -559,9 +949,10 @@ color: #999;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
 }
-    .modal .form-group .btn {
-        margin: 0px;
-    }
+
+.modal .form-group .btn {
+    margin: 0px;
+}
 
 .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
     border-color: #53a5f5 !important;
@@ -625,7 +1016,9 @@ color: #999;
     text-align: center;
 }
 
-#btnPlus{top:-3px;}
+#btnPlus {
+    top: -3px;
+}
 
 .glyphicon {
     top: -1px;
@@ -633,7 +1026,13 @@ color: #999;
     vertical-align: middle;
     line-height: 0;
 }
-
+.dtr-inline.collapsed {
+    display: none!important;
+}
+.card-header .form-group select.form-control:focus, .card-header select.form-control:focus {
+    outline: 0;
+    border-bottom: 1px #E3E3E3 solid !important;
+}
 .multiple_row > h2 {
     font-size: 16px;
     background: #42a5f5 !important;
@@ -647,12 +1046,29 @@ color: #999;
 #dupmeeting_length, #dupmeeting_filter {
     margin: 10px 0px
 }
+
 .form-group .form-control, .input-group .form-control {
     padding: 10px 18px 10px 18px;
     margin: 0px 20px;
     width: calc(100% - 40px);
 }
+.form-group .input.form-control {
+    width: 100%;
+}
+.form-group .select-css.form-control {
+    width: 100%;
+}
 
+.form-group select.form-control {
+    width: 100%;
+}
+.form-group input.form-control.text-box.single-line {
+    width:100%
+}
+
+.interviewr-cmt .form-group .form-control, .interviewr-cmt .input-group .form-control {
+    width: 100%;
+}
 
 select.minimal {
     background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%), linear-gradient(to right, #ccc, #ccc);
@@ -674,15 +1090,16 @@ select.minimal {
     font-size: 12px;
     padding: 11px 8px;
 }
-    .modal .btn-danger {
-        padding: 10px 15px;
-    }
+
+.modal .btn-danger {
+    padding: 10px 15px;
+}
 
 
-    select:-moz-focusring {
-        color: transparent;
-        text-shadow: 0 0 0 #000;
-    }
+select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+}
 
 #divshortlist {
     text-align: center;
@@ -794,10 +1211,10 @@ select.minimal {
     padding: 8px 0px 8px 0px;
 }
 
- .card-blue .card-footer .stats-bttm-btn {
-      padding: 0px 25px 0px 0px;
-      text-align: right;
-  }
+    .card-blue .card-footer .stats-bttm-btn {
+        padding: 0px 25px 0px 0px;
+        text-align: right;
+    }
 
 .border-rv {
     border-right: 1px dotted #ccc;
@@ -826,6 +1243,7 @@ select.minimal {
 .mc-button-area {
     text-align: right;
 }
+
 .text-areadiv {
     height: auto;
     padding: 0px 10px !important;
@@ -836,54 +1254,98 @@ select.minimal {
         border: 0;
         background: #f5f5f5;
         padding: 5px 0px 0px 0px;
+
+    }
+.broad-ele {
+    font-size:13.3px;
+    padding-right: 10px;
+    float:left;
+}
+.broadcast-icon {
+position:relative;
+top:-2px;
+}
+.text-areadiv1 {
+    height: auto;
+    padding: 0px ;
+}
+
+    .text-areadiv1 textarea {
+        border: 0;
+        min-height:100px;
+        background: #f5f5f5;
+        padding: 5px 10px 5px 10px;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid
+    }
+    .required{color:red;
+              padding:2px;
     }
 .enjoyhint_disable_events {
     width: auto !important;
 }
 
+.cmt-w {
+    width: 300px;
+}
+
+.cmt-ht {
+    height: 120px !important;
+    max-height: 120px !important;
+}
+.table > tbody > tr > td {
+    padding: 12px 5px;
+}
+
+
 @media screen and (max-width:991px) {
     #ProctoringTable .label-type {
         white-space: normal;
     }
+
+    .mdc-radio {
+        padding: 15px 0px !important;
+        margin: 0px !important;
+    }
 }
-    @media screen and (max-width: 767px) {
-        .table > tbody > tr > td {
-            padding: 12px 5px !important;
-        }
 
-        .mdc-radio {
-            padding: 0px !important;
-            margin: 0px !important;
-        }
-
-        .form-group .form-control, .input-group .form-control {
-            padding: 10px 18px 10px 18px;
-            margin: 0px 20px;
-            width: 100%;
-        }
-        #ProctoringTable .label-type {
-            white-space: nowrap;
-        }
-   #meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter, #dupmeeting_length, #dupmeeting_filter {
-            margin: 7px 0 0 0px !important;
-        }
-
+@media screen and (max-width: 767px) {
+    .table > tbody > tr > td {
+        padding: 12px 5px!important;
+    }
+    .interview .table > tbody > tr > td {
+        padding: 12px 5px!important;
     }
 
-    @media (min-width: 576px) {
-        .modal-dialog {
-            max-width: 600px;
-            margin: 1.75rem auto;
-        }
+    .dtr-inline.collapsed{display:block!important; white-space:nowrap}
+
+    .form-group .form-control, .input-group .form-control {
+        padding: 10px 18px 10px 18px;
+        margin: 0px 20px;
+        width: 100%;
     }
 
-    @media screen and (max-width:480px) {
-        .client-cmt {
-            width: 25% !important;
-        }
-
-        .client-action {
-            width: 27% !important;
-        }
+    #ProctoringTable .label-type {
+        white-space: nowrap;
     }
 
+    #meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter, #dupmeeting_length, #dupmeeting_filter {
+        margin: 7px 0 0 0px !important;
+    }
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 600px;
+        margin: 1.75rem auto;
+    }
+}
+
+@media screen and (max-width:480px) {
+    .client-cmt {
+        width: 25% !important;
+    }
+
+    .client-action {
+        width: 27% !important;
+    }
+}

@@ -511,7 +511,7 @@ namespace Risebird.Repository
             parameters.Add("@slots", entity.Slots);   
             parameters.Add("@userFirstName", entity.FirstName);
             parameters.Add("@userLastName", entity.LastName);
-            parameters.Add("@userEmailId", entity.EmailId);
+            parameters.Add("@userEmailId", entity.EmailId.Trim().ToLower());
             parameters.Add("@userMobileNumber", entity.MobileNumber);
             parameters.Add("@isApproved", entity.IsApproved);
 
@@ -750,7 +750,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@FirstName", resumeEvaluator.FirstName);
                 parameters.Add("@LastName", resumeEvaluator.LastName);
-                parameters.Add("@EmailId", resumeEvaluator.EmailId);
+                parameters.Add("@EmailId", resumeEvaluator.EmailId.Trim().ToLower());
                 parameters.Add("@MobileNumber", resumeEvaluator.MobileNumber);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -873,7 +873,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@FirstName", recruiter.FirstName);
                 parameters.Add("@LastName", recruiter.LastName);
-                parameters.Add("@EmailId", recruiter.EmailId);
+                parameters.Add("@EmailId", recruiter.EmailId.Trim().ToLower());
                 parameters.Add("@MobileNumber", recruiter.MobileNumber);
                 parameters.Add("@Domain", recruiter.Domain);
                 using (SqlConnection con = new SqlConnection(connectionString))

@@ -51,6 +51,31 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("startDate", startDate);
+                    parameters.Add("endDate", endDate);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllDateWiseInterviewMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         /// <summary>
         /// Risetube meeting
         /// </summary>
@@ -90,7 +115,8 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("clientid", clientId);
+                        parameters.Add("@clientid", clientId);
+                        parameters.Add("@Emailid", Emailid);
                         var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
                             commandType: CommandType.StoredProcedure);
                         return result;
@@ -108,6 +134,55 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<MeetingVM>> IRFMultipleCandidateInvites(string IRFId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("IRFId", IRFId);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_IRFMultipleCandidateInvites", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> DeleteInterview(int imid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("imid", imid);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_DeleteInterview", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                    
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+           
+        }
         public async Task<IEnumerable<MeetingVM>> MultipleCandidateInvites()
         {
             try
@@ -883,7 +958,7 @@ namespace Risebird.Repository
                     parameters.Add("EmailId", emailID);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientMeetings", parameters,
                          commandType: CommandType.StoredProcedure);
-                } 
+                }
             }
             catch (SqlException ex)
             {
@@ -911,7 +986,6 @@ namespace Risebird.Repository
                     paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
                     paramx.Add("@ProctoringCount", reportDetails.ProctoringCount);
-
                     parameters.Add("@interviewId", reportDetails.InterviewId);
                     parameters.Add("@interviewStatus", reportDetails.InterviewStatus);
                     parameters.Add("@MeetingStatus", reportDetails.MeetingStatus);
@@ -919,6 +993,7 @@ namespace Risebird.Repository
                     parameters.Add("@audiolink", reportDetails.AudioLink);
                     parameters.Add("@videolink", reportDetails.VideoLink);
                     parameters.Add("@ThumbnailImage", reportDetails.ThumbnailImage);
+                    parameters.Add("@FeedbackAudioLink", reportDetails.FeedbackAudioLink);
                     if (reportDetails.IsEdited)
                     {
                         var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
@@ -947,58 +1022,77 @@ namespace Risebird.Repository
 
                     }
 
-                    if (reportDetails.TechSkillReportCollection != null)
+                    DataTable techReportDt = new DataTable();
+                    techReportDt.Columns.Add("InterviewId", typeof(int));
+                    techReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    techReportDt.Columns.Add("SkillId", typeof(int));
+                    techReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    techReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    techReportDt.Columns.Add("WeightageActual", typeof(int));
+
+
+                    foreach (var item in reportDetails.TechSkillReportCollection)
                     {
-                        //update techskillreport table
-                        foreach (var item in reportDetails.TechSkillReportCollection)
-                        {
-                            string sqlTechReport = "INSERT INTO TechSkillReport (InterviewId, RequiredLevelId ,SkillId, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @SkillId, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                            var result1 = con.ExecuteAsync(sqlTechReport, new
-                            {
-                                InterviewId = reportDetails.InterviewId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                SkillId = item.SkillId,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            }).Result;
-                        }
+                        techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
                     }
 
-                    if (reportDetails.SkillGeneralReportCollection != null)
+                    SqlCommand cmdTechReport= new SqlCommand("usp_TechSkillReportBulkInsert", con);
+                    cmdTechReport.CommandType = CommandType.StoredProcedure;
+                    cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
+                    cmdTechReport.Parameters["@TechSkillReportBulkData"].Value = techReportDt;
+                    con.Open();
+                    if (cmdTechReport.ExecuteNonQuery() != 0)
                     {
-                        //update general skill report table
-                        foreach (var item in reportDetails.SkillGeneralReportCollection)
-                        {
-                            string sqlSkillGeneralReport = "INSERT INTO SkillGeneralReport (InterviewId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @Value,@ActualLevelId, @WeightageRequired, @WeightageActual);";
-                            var result2 = con.ExecuteAsync(sqlSkillGeneralReport, new
-                            {
-                                InterviewId = reportDetails.InterviewId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value = item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            }).Result;
-                        }
+                        con.Close();
                     }
 
-                    if (reportDetails.QuestionsCollection != null)
+                    DataTable skillGeneralReportDt = new DataTable();
+                    skillGeneralReportDt.Columns.Add("InterviewId", typeof(int));
+                    skillGeneralReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    skillGeneralReportDt.Columns.Add("Type", typeof(string));
+                    skillGeneralReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    skillGeneralReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    skillGeneralReportDt.Columns.Add("WeightageActual", typeof(int));
+                    skillGeneralReportDt.Columns.Add("Value", typeof(string));
+
+
+                    foreach (var item in reportDetails.SkillGeneralReportCollection)
                     {
-                        //update questions discussed table
-                        foreach (var item in reportDetails.QuestionsCollection)
-                        {
-                            string sqlJoinReport = "INSERT INTO QuestionsDiscussed (InterviewId, Comment,RatingId, Timing, SkillName) Values (@InterviewId, @Comment, @RatingId, @Timing, @SkillName);";
-                            var result3 = con.Execute(sqlJoinReport, new
-                            {
-                                InterviewId = reportDetails.InterviewId,
-                                Comment = item.Comment,
-                                RatingId = item.RatingId,
-                                Timing = item.Timing,
-                                SkillName = item.SkillName
-                            });
-                        }
+                        skillGeneralReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value);
+                    }
+
+                    SqlCommand cmdSkillGeneralReport = new SqlCommand("usp_SkillGeneralReportBulkInsert", con);
+                    cmdSkillGeneralReport.CommandType = CommandType.StoredProcedure;
+                    cmdSkillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralReportBulkData", SqlDbType.Structured));
+                    cmdSkillGeneralReport.Parameters["@SkillGeneralReportBulkData"].Value = skillGeneralReportDt;
+                    con.Open();
+                    if (cmdSkillGeneralReport.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+
+                    DataTable questionsDt = new DataTable();
+                    questionsDt.Columns.Add("InterviewId", typeof(int));
+                    questionsDt.Columns.Add("Comment", typeof(string));
+                    questionsDt.Columns.Add("RatingId", typeof(int));
+                    questionsDt.Columns.Add("Timing", typeof(int));
+                    questionsDt.Columns.Add("SkillName", typeof(string));
+
+
+                    foreach (var item in reportDetails.QuestionsCollection)
+                    {
+                        questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                    }
+
+                    SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con);
+                    cmdQuestions.CommandType = CommandType.StoredProcedure;
+                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
                     }
 
                     if (reportDetails.Proctoring != null)
@@ -1026,7 +1120,7 @@ namespace Risebird.Repository
 
                     }
 
-                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewComments", parameters,
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
 
                     return true;
@@ -1156,9 +1250,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRFId, JDTiltle from IRF where IsDeleted = @IsDeleted and id = @id";
+                var query = "Select IRFId, JDTiltle from IRF where id = @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IsDeleted", 0);
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1440,8 +1533,8 @@ namespace Risebird.Repository
             parameters.Add("@fraudCheckStatus", entity.FraudCheckStatus);
             parameters.Add("@hrComment", entity.HRComment);
             parameters.Add("@ClientInterviewStatus", entity.FinalInterviewMeetingStatus);
-            parameters.Add("@qcStatus", entity.QCStatus);
-            parameters.Add("@qcComment", entity.QCComment);
+            parameters.Add("@QCStatus", entity.QCStatus);
+            parameters.Add("@QCComment", entity.QCComment);
             parameters.Add("@trainingStatus", entity.TrainingStatus);
             parameters.Add("@trainerComment", entity.TrainerComment);
             parameters.Add("@audiolink", entity.AudioLink);
@@ -1450,6 +1543,8 @@ namespace Risebird.Repository
             parameters.Add("@OfferStatus", entity.OfferStatus);
             parameters.Add("@PreparationStatus", entity.PreparationStatus);
             parameters.Add("@JoiningStatus", entity.JoiningStatus);
+            parameters.Add("@ThumbnailImage", entity.ThumbnailImage);
+            parameters.Add("@AadharFileLink", entity.AadharFileLink);
             return parameters;
         }
 
@@ -1566,17 +1661,18 @@ namespace Risebird.Repository
 
             return null;
         }
-        public string AddTotalViewCount(int id)
+        public string AddTotalViewCount(int id, string emailaddress)
         {
             try
             {
 
                 var parameters = new DynamicParameters();
                 parameters.Add("@Interviewid", id);
+                parameters.Add("@EmailId", emailaddress);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewView", parameters,
+                    var result = SqlMapper.Query<string>(con, "usp_AddinterviewView", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";
                 }
@@ -1861,14 +1957,14 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@Email", item);
                     parameters.Add("@VedioId", vedioid);
-                    parameters.Add("@@EmailAddress", Userid);
+                    parameters.Add("@EmailAddress", Userid);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewvedioSharedetails", parameters,
                             commandType: CommandType.StoredProcedure);
                         if (String.IsNullOrEmpty(emailidreturn))
                         {
-                            emailidreturn =  result;
+                            emailidreturn = result;
                         }
                         else
                         {
@@ -1886,5 +1982,74 @@ namespace Risebird.Repository
 
             return "";
         }
+        public List<VideoCountdetail> GetTotalViewCount(int id)
+        {
+            try
+            {
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@Interviewid", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<VideoCountdetail>(con, "usp_GetinterviewView", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return (List<VideoCountdetail>)result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@InterviewId", interviewId);//@IrfId
+                dynamicParameters.Add("@FeedbackAudioLink", feedbackAudioLink);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "usp_SaveFeedbackAudio", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
+        public async Task<IEnumerable<string>> GetEmailsforBroadcast(string profile)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Profile", profile);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.QueryAsync<string>(con, "usp_GetEmailsforBroadcast", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.Result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+
     }
 }

@@ -127,6 +127,7 @@ namespace WebApplication1.Models
         {
             model.IsUploadCompleted = true;
             bool errorInOperation = false;
+            string urlset = string.Empty;
             try
             {
                 var blockList = Enumerable.Range(1, (int)model.BlockCount).ToList<int>().ConvertAll(rangeElement => Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format(CultureInfo.InvariantCulture, "{0:D4}", rangeElement))));
@@ -136,19 +137,20 @@ namespace WebApplication1.Models
                 string fileSizeMessage = fileSizeInKb > 1024 ? string.Concat((fileSizeInKb / 1024).ToString(CultureInfo.CurrentCulture), " MB") : string.Concat(fileSizeInKb.ToString(CultureInfo.CurrentCulture), " KB");
                 model.UploadStatusMessage = string.Format(CultureInfo.CurrentCulture, "File of size {0} took {1} seconds to upload.", fileSizeMessage, duration.TotalSeconds);
 
-                IAsset mediaServiceAsset = CreateMediaAsset(model);
-                model.AssetId = mediaServiceAsset.Id;
+                urlset = CreateMediaAsset(model);
+                //model.AssetId = mediaServiceAsset.Id;
             }
             catch (StorageException e)
             {
                 model.UploadStatusMessage = "Failed to upload file. Exception - " + e.Message;
                 errorInOperation = true;
             }
-            var utlui = EncodeToAdaptiveBitrateMP4s(model.AssetId, fileToUpload);
-            return utlui;
+
+            //var utlui = EncodeToAdaptiveBitrateMP4s(model.AssetId, fileToUpload);
+            return urlset;
         }
 
-        private IAsset CreateMediaAsset(CloudFile model)
+        private string CreateMediaAsset(CloudFile model)
         {
 
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(mediaServiceStorageConnectionString);
@@ -194,10 +196,9 @@ namespace WebApplication1.Models
 
             model.UploadStatusMessage += " Media file uploaded successfully by id: " + asset.Id;
             model.AssetId = asset.Id;
+            var urlset = GetBlobSasUri(assetContainer, fileName);
 
-
-
-            return asset;
+            return urlset;
         }
 
 
@@ -451,6 +452,27 @@ namespace WebApplication1.Models
                                select a).FirstOrDefault();
             return theAsset;
         }
+        private static string GetBlobSasUri(CloudBlobContainer container, string blobName, string policyName = null)
+        {
+            string sasBlobToken;
+            CloudBlockBlob blob = container.GetBlockBlobReference(blobName);
+
+            if (policyName == null)
+            {
+                SharedAccessBlobPolicy adHocSAS = new SharedAccessBlobPolicy()
+                {
+                    SharedAccessExpiryTime = DateTime.UtcNow.AddMonths(6),
+                    Permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.Write
+                };
+                sasBlobToken = blob.GetSharedAccessSignature(adHocSAS);
+            }
+            else
+            {
+                sasBlobToken = blob.GetSharedAccessSignature(null, policyName);
+            }
+            return blob.Uri + sasBlobToken;
+        }
+
     }
 
     public class CloudFile

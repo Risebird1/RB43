@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -17,18 +21,19 @@ namespace Risebird.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private IAzureStorageHelper _azureStorageHelper;        
+        private IAzureStorageHelper _azureStorageHelper;
         private IApplicationErrorLogger _applicationErrorLogger;
         private IProjectService _projectService;
         private IAccountService _accountService;
+        private IConfiguration _configuration;
 
-        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService)
+        public AccountController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IAccountService accountService, IConfiguration configuration)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _projectService = projectService;
             _accountService = accountService;
-            
+            _configuration = configuration;
         }
 
         [Authorize]
@@ -46,7 +51,7 @@ namespace Risebird.Web.Controllers
                     var accountList = _accountService.GetAccounts(emailid, profileName).ToList();
                     accountList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
                     accountModel.AccountList = accountList;
-                    
+
                     if (TempData["SuccessErrorMessageAccount"] != null)
                     {
                         accountModel.Message = TempData["SuccessErrorMessageAccount"].ToString();
@@ -194,7 +199,7 @@ namespace Risebird.Web.Controllers
 
                 var accountModel = new Account();
                 accountModel = _accountService.GetAccount();
-                
+
                 return View(accountModel);
             }
             else
@@ -422,7 +427,7 @@ namespace Risebird.Web.Controllers
                         string projectList = string.Empty;
                         var accountModel = new Account();
                         var accountCluster = _accountService.GetAccountCluster(accountId);
-                        if(accountCluster!=null && accountCluster.Count()!=0)
+                        if (accountCluster != null && accountCluster.Count() != 0)
                         {
                             accountCluster = accountCluster.Where(x => x.ClientId == clientId);
                             projectList = string.Join(",", from item in accountCluster select item.ProjectId);
@@ -430,11 +435,11 @@ namespace Risebird.Web.Controllers
                         }
                         var remainingProjects = _accountService.GetProjectbyClientId(clientId, projectList);
 
-                        
+
                         var objList = new List<AccountProjectMapping>();
                         objList.AddRange(accountCluster);
                         objList.AddRange(remainingProjects);
-                        
+
                         accountModel.AccountProjectMappings = (IList<AccountProjectMapping>)(objList);
                         if (accountModel.AccountProjectMappings.Count() == 0)
                         {
@@ -460,6 +465,6 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
+       
     }
 }

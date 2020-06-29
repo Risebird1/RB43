@@ -38,37 +38,50 @@
     IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
     IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
 }
-<link href="//amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
-<script src="//amp.azure.net/libs/amp/latest/azuremediaplayer.min.js"></script>
-<script>
-    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/latest/techs/StrobeMediaPlayback.2.0.swf"
-    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/latest/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
-    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/latest/techs/SmoothStreamingPlayer.xap"
-</script>
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-<link href="~/Newassets/css/risetube.css" rel="stylesheet" />
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/tooltip.js"></script>
+<link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+<script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
+
+<script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
+    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
+</script>
+
+
+
 <script>
     function dropDwnToolTips(id) {
+
         if (id.value == 0) {
             id.title = "";
         }
         else {
-            id.title = id.value;
+            id.title = id.value
         }
     }
 
+
 </script>
 
+<script type="text/javascript">
 
+    function getOption(id) {
+        selectElement = document.querySelector('#droplevel');
+        output =
+            selectElement.options[selectElement.selectedIndex].text;
+
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = output
+        }
+
+
+    }
+</script>
 <script type="text/javascript">
 
     $(document).ready(function () {
@@ -91,98 +104,8 @@
     })
 
 </script>
-<script>
-
-    window.onload = function () {
-
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; {
-
-            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-        }
-            obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; {
-            var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-            objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen);
-
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; {
-
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        }
-            objJoin.y = parseInt(joinabilityTotal) / 4;
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-            objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
-
-        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        document.getElementById("totScore").innerHTML = totalScore;
 
 
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
-
-            }]
-        });
-        chart.render();
-
-
-
-    }
-</script>
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
@@ -216,19 +139,25 @@
                                 </div>
                                 <div class="pull-right">
                                     <div>
-                                        @if (ViewBag.actionstatus != "SkillChannel")
+                                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
+                                        @if (ViewBag.VideoStatus != "Public")
                                         {
-                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
-                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                                <div class="mdc-button__ripple"></div>
-                                            </button>
-                                        }
+                                            @if (ViewBag.actionstatus != "SkillChannel")
+                                            {
+                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                    <div class="mdc-button__ripple"></div>
+                                                </button>
+                                            }
 
-                                        @if (ViewBag.actionstatus == "SkillChannel")
-                                        {<a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a> }
-                                        else
-                                        {
-                                            @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                            @if (ViewBag.actionstatus == "SkillChannel")
+                                            {
+                                                <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                            }
                                         }
                                         <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
                                     </div>
@@ -247,24 +176,24 @@
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate"> Start Date </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate"> Start Date </label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date"> End Date </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date"> End Date </label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6  border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateName"> Candidate Name </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateName"> Candidate Name </label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input type="text" id="txtVedioId" value="@Model.imid" hidden />
                                                             <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
 
@@ -282,8 +211,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateLocation"> Candidate Location </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation"> Candidate Location </label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
 
                                                                 @foreach (var item in Model.SubVideo_List.Select(x => x.preferredLocation).Distinct().ToList())
@@ -304,8 +233,8 @@
                                                 {
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus"> Selection Status </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus"> Selection Status </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
@@ -322,8 +251,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR"> Client HR </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR"> Client HR </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
@@ -342,8 +271,8 @@
                                                     </div>
                                                     <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus"> Approval Status </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus"> Approval Status </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
@@ -360,8 +289,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus"> Joining Status </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus"> Joining Status </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
@@ -380,8 +309,8 @@
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus"> Offer Status </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="OfferStatus"> Offer Status </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
@@ -398,8 +327,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ClientName).Distinct().ToList())
@@ -421,8 +350,8 @@
                                                 {
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="IsShortListed"> Shortlisted </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsShortListed"> Shortlisted </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ShortListstatus).Distinct().ToList())
@@ -439,8 +368,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="IsIntrested"> Interested </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested"> Interested </label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.IsIntrested).Distinct().ToList())
@@ -513,21 +442,23 @@
                                                                 @if (Model.VideoLink != null && Model.VideoLink != "")
                                                                 {
 
-                                                                    @if (@Model.VideoLink.Contains(".mp4"))
+                                                                    @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
                                                                     {
-                                                                        <video controls class="vjs-tech video-width btnvideo" autoplay>
+                                                                        <video controls class="vjs-tech video-width btnvideo">
                                                                             <source src="@Model.VideoLink" type="video/mp4">
+                                                                            <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
                                                                         </video>
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
                                                                     {
                                                                         <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
+
                                                                         </video>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
+                                                                        <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink" allowfullscreen></iframe>
                                                                     }
                                                                 }
                                                                 else
@@ -536,14 +467,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4  side-player" id="sd-player">
+                                                <div class="col-md-4  side-player scroll" id="sd-player">
                                                     @if (Model.SubVideo_List.Count > 0)
                                                     {
-                                                        <div class="single-video-right">
+                                                        <div id="style-2" class="single-video-right">
                                                             <div>
                                                                 <div>
                                                                     <div class="col-md-12">
-                                                                        <div id="style-2">
+                                                                       
                                                                             @foreach (var videolist in Model.SubVideo_List)
                                                                             {
                                                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
@@ -579,19 +510,15 @@
 </div>
 </div>
 }
-                                                                        </div>
+                                                                        
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     }
-                                                    else if (ViewBag.ProfileName == "CuratedUser")
-                                                    {
-
-                                                    }
                                                     else
                                                     {
-                                                        <label id="lblErrorMsg" title="Record not fount...!" style="color:red;">Record not found...!</label>
+
                                                     }
                                                 </div>
                                             </div>
@@ -601,21 +528,36 @@
                                                 @if (Model.JDTiltle != null)
                                                 {
                                                     <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                        @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
-                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                        @if (ViewBag.VideoStatus != "Public")
+                                                        {
+                                                            @if (Model.IsOnline == 1)
+                                                            {
+                                                                <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a onclick="">   @Model.candidateName <span class="dot"></span></a>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            @Model.candidateName
+                                                        }
+                                                        <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
+                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                         <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                         <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
 
                                                     </h1>
                                                 }
                                                 <div class="row counts-liks">
-                                                    @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
                                                     {
                                                         <div class="k col-md-6">
                                                             @if (Model.IsLike == "Liked")
                                                             {
                                                                 <div class="btn2">
-                                                                    <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: blue;font-size: 24px;padding-right:10px">
+                                                                    <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="color: blue;font-size: 24px;padding-right:10px">
                                                                         &nbsp;
                                                                         <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                     </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px">
@@ -626,7 +568,7 @@
                                                             else if (Model.IsLike == "Disliked")
                                                             {
                                                                 <div class="btn3">
-                                                                    <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px;padding-right:10px">
+                                                                    <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px;padding-right:10px">
                                                                         &nbsp;
                                                                         <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                     </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:10px">
@@ -635,7 +577,7 @@
                                                                 </div>
                                                             }
                                                             else
-                                                            { <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px; padding-right: 30px">
+                                                            { <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 30px">
                                                                     &nbsp;
                                                                     <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                 </i> <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px">
@@ -645,12 +587,30 @@
                                                     }
                                                     @if (Model.VideoLink != null)
                                                     {
-                                                        @if (ViewBag.VedioStatus != "Public")
+                                                        @if (ViewBag.VideoStatus != "Public")
                                                         {
                                                             @if (ViewBag.ProfileName == "CuratedUser")
                                                             {
-                                                                <div class="col-md-3">
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                <div class="col-md-3 share">
+                                                                    <div class="btn-group">
+                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;padding-left:4px;"> Share
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                            </span>
+
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing  through email ">
+
+                                                                                <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+
+                                                                            </span>
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly ">   <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
+                                                                            <span class="tooltip--right" data-tooltip="To generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+                                                                        </div>
+                                                                    </div>
+
                                                                 </div>
                                                                 <div class="col-md-3 shortlist" style="text-align: end;">
                                                                     @if (Model.IsShortlisted > 0)
@@ -660,16 +620,17 @@
                                                                     else
                                                                     { <i class="fa fa-check"></i>
                                                                         <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+
                                                                     }
                                                                 </div>
                                                             }
 
                                                         }
                                                     }
-                                                    <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
+                                                    <div class="col-md-2 showinter" style="text-align: end;">
                                                         @if (Model.VideoLink != null)
                                                         {
-                                                            @if (ViewBag.VedioStatus != "Public")
+                                                            @if (ViewBag.VideoStatus != "Public")
                                                             {
                                                                 @if (ViewBag.ProfileName == "CuratedUser")
                                                                 {
@@ -688,19 +649,73 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    <div class="btn-group">
+                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style="        width: 28px;
+        padding-left: 4px;
+">  Share
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
+                                                                            </span>
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user through email ">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+                                                                            </span>
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                            </span>
+
+
+                                                                        </div>
+                                                                    </div>
+
 
                                                                 }
 
                                                             }
                                                         }
                                                     </div>
-                                                    <div class="col-md-4 views" style="text-align: end;">
-                                                        @if (Model.VideoLink != null)
-                                                        {
-                                                            <p style="text-align:end"><b>Total Views:</b> @Model.TotalView - View(s)</p>
-                                                        }
-                                                    </div>
+                                                    @if (ViewBag.VideoStatus == "Public")
+                                                    {
+                                                        <div class="col-md-6"></div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-md-4 views tooltip1" style="text-align: end;">
+                                                            @if (Model.VideoLink != null)
+                                                            {
+                                                                <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
+                                                            }
+                                                            <span class="tooltiptext">
+                                                                <table>
+                                                                    <tr>
+                                                                        <td class="tooltiphead">
+                                                                            <span class="left-tooltext">Email</span>
+                                                                            <span class="right-tooltext">Counts</span>
+                                                                        </td>
+
+
+                                                                    </tr>
+
+                                                                    @foreach (var item in Model.VideoCountDetail)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>
+
+                                                                                <span class="left-tooltext">@item.UserName</span>
+                                                                                <span class="right-tooltext">@item.Count</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    }
+
+                                                                </table>
+
+                                                            </span>
+                                                        </div>
+                                                    }
                                                 </div>
                                                 <div class="single-video-info-content ">
                                                     <div>
@@ -721,25 +736,41 @@
                                                                     <div class="row">
                                                                         <div class="left-chart">
 
-                                                                            <div class="chart-box">
+                                                                            <div class="chart-box itemchart">
                                                                                 <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
                                                                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                                                                     <div id="scoreChart" style="height: 200px; width: 100%;"></div>
                                                                                 </div>
                                                                             </div>
 
+                                                                            @if (Model.FeedbackAudioLink != null)
+                                                                            {
+                                                                                <div class="audio-wrap">
+
+                                                                                    <h1>Audio Feedback</h1>
+                                                                                    <audio src='@Model.FeedbackAudioLink' controls></audio>
+
+
+
+                                                                                    <!--end of col-md-12-->
+
+                                                                                </div>
+
+                                                                            }
+
+
                                                                         </div>
-                                                                        <div class="interviewer-comment">
+                                                                        <div class="interviewer-comment itemcomment">
 
                                                                             <div class="form-group" style="margin-bottom:0px; ">
                                                                                 @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
 
 
-                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
                                                                                     <div class="talktext">
 
 
-                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height:130px;width:100%", @readonly = "readonly" })
+                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;width:100%", @readonly = "readonly" })
 
                                                                                     </div>
                                                                                 </div>
@@ -757,6 +788,8 @@
 
                                                                         </div>
                                                                     </div>
+
+
                                                                 </div>
                                                                 <!-- #tab1 -->
                                                                 <h3 class="tab_drawer_heading" rel="link2">Candidate Details</h3>
@@ -782,7 +815,7 @@
                                                                                 @Html.LabelFor(model => model.IreportModel.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                                                                 @Html.TextBoxFor(m => m.IreportModel.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                @Html.ValidationMessageFor(model => model.IreportModel.OverallScore, "", new { @class = "text-danger" })
+                                                                                @Html.ValidationMessageFor(model => model.IreportModel.expectedPerHourRate, "", new { @class = "text-danger" })
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-md-6 col-sm-6">
@@ -809,75 +842,78 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    @if (ViewBag.ProfileName != "CuratedUser")
+                                                                    @if (ViewBag.VideoStatus != "Public")
                                                                     {
-                                                                        <div class="row">
-                                                                            <div class="col-md-6 col-sm-6">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-6 col-sm-6">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12 col-sm-12">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                    @{
-                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                    }
-                                                                                </div>
-                                                                            </div>
-                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                            {
+                                                                        @if (ViewBag.ProfileName != "CuratedUser")
+                                                                        {
+                                                                            <div class="row">
                                                                                 <div class="col-md-6 col-sm-6">
-                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
                                                                                 </div>
-                                                                            }
-                                                                        </div>
-                                                                    }
-                                                                    @if (Model.IsIntrested == "Interest Accepted" && ViewBag.ProfileName == "CuratedUser")
-                                                                    {
-                                                                        <div class="row">
-                                                                            <div class="col-md-6 col-sm-6">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-6 col-sm-6">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <div class="col-md-12 col-sm-12">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                    @{
-                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                    }
-                                                                                </div>
-                                                                            </div>
-                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                            {
                                                                                 <div class="col-md-6 col-sm-6">
-                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
                                                                                 </div>
-                                                                            }
-                                                                        </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12 col-sm-12">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                        @{
+                                                                                            if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                                {
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                    </div>
+                                                                                }
+                                                                            </div>
+                                                                        }
+                                                                        @if (Model.IsIntrested == "Interest Accepted" && ViewBag.ProfileName == "CuratedUser")
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="col-md-6 col-sm-6">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6 col-sm-6">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12 col-sm-12">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                        @{
+                                                                                            if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                                {
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                    </div>
+                                                                                }
+                                                                            </div>
+                                                                        }
                                                                     }
                                                                 </div>
 
@@ -888,9 +924,9 @@
                                                                             <table class="table table-bordered mbn" id="SkillTable">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th width="10%">Required Level</th>
-                                                                                        <th width="40%">Skill Name</th>
-                                                                                        <th width="20%">Actual Level</th>
+                                                                                        <th width="20%">Required Level</th>
+                                                                                        <th width="30%">Skill Name</th>
+                                                                                        <th width="25%">Actual Level</th>
                                                                                         <th width="15%">Required Weightage</th>
                                                                                         <th width="15%">Actual Weightage</th>
                                                                                     </tr>
@@ -905,15 +941,15 @@
                                                                                             <tr>
 
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { disabled = "disabled", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title" })
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -956,10 +992,10 @@
                                                                 <h3 class="tab_drawer_heading" rel="link4">  Questions Discussed</h3>
                                                                 <div id="link4" class="tab_content">
                                                                     <div>
-                                                                        <div class="table-responsive-sm">
+                                                                        <div class="table-responsive-sm ">
                                                                             @if (Model.IreportModel.QuestionsList != null)
                                                                             {
-                                                                                <table class="table table-bordered mbn" id="QuestionsTable">
+                                                                                <table class="table table-bordered mbn disQus" id="QuestionsTable">
                                                                                     <thead>
                                                                                         <tr>
                                                                                             <th width="40%">Questions</th>
@@ -992,13 +1028,7 @@
 
                                                                                                 </td>
 
-                                                                                                @*
-                                                                                                    <td>
 
-                                                                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-
-                                                                                                    </td>*@
                                                                                             </tr>
                                                                                         }
                                                                                         else
@@ -1011,10 +1041,10 @@
                                                                                                     <td>
                                                                                                         @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
-                                                                                                        <span class="show_only"></span>
+
                                                                                                     </td>
                                                                                                     <td>
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                     </td>
                                                                                                     <td>
 
@@ -1029,13 +1059,7 @@
 
                                                                                                     </td>
 
-                                                                                                    @*
-                                                                                                        <td>
 
-                                                                                                            <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-
-                                                                                                        </td>*@
                                                                                                 </tr>
 
 
@@ -1062,9 +1086,9 @@
                                                                                 <thead>
                                                                                     <tr>
 
-                                                                                        <th width="10%">Required Level</th>
-                                                                                        <th width="20%">Type</th>
-                                                                                        <th width="35%">Value</th>
+                                                                                        <th width="20%">Required Level</th>
+                                                                                        <th width="30%">Type</th>
+                                                                                        <th width="25%">Value</th>
                                                                                         <th width="15%">Actual Level</th>
                                                                                         <th width="10%">Required Weightage</th>
                                                                                         <th width="10%">Actual Weightage</th>
@@ -1078,17 +1102,17 @@
                                                                                             <tr>
 
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { disabled = "disabled", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "dropques form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1135,9 +1159,9 @@
                                                                             <table class="table table-bordered mbn" id="JoinabilityTable">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th width="10%">Required Level</th>
-                                                                                        <th width="20%">Type</th>
-                                                                                        <th width="35%">Value</th>
+                                                                                        <th width="20%">Required Level</th>
+                                                                                        <th width="30%">Type</th>
+                                                                                        <th width="25%">Value</th>
                                                                                         <th width="15%">Actual Level</th>
                                                                                         <th width="10%">Required Weightage</th>
                                                                                         <th width="10%">Actual Weightage</th>
@@ -1151,18 +1175,18 @@
                                                                                             <tr>
 
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { disabled = "disabled", @class = "form-control", @readonly = "readonly" })
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1207,9 +1231,9 @@
                                                                             <table class="table table-bordered mbn" id="SelectabilityTable">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th width="10%">Required Level</th>
-                                                                                        <th width="20%">Type</th>
-                                                                                        <th width="35%">Value</th>
+                                                                                        <th width="20%">Required Level</th>
+                                                                                        <th width="30%">Type</th>
+                                                                                        <th width="25%">Value</th>
                                                                                         <th width="15%">Actual Level</th>
                                                                                         <th width="10%">Required Weightage</th>
                                                                                         <th width="10%">Actual Weightage</th>
@@ -1223,18 +1247,18 @@
                                                                                             <tr>
 
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 </td>
                                                                                                 <td>
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { disabled = "disabled", @class = "form-control", @readonly = "readonly" })
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1279,7 +1303,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
                                                         {
                                                             <div>
                                                                 <form>
@@ -1379,52 +1403,195 @@
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="SendNotification()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Interested">
-                        <input style="background:#ff253a!important" type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
             <div class="modal-footer" style="padding: 5px;
         background-color: #fff;
-        color: white;"> </div>
+        color: white;"></div>
         </div>
     </div>
 </div>
+<div id="MyShareModel1" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Email Share</h5>
+                <span onclick="closeSharePopUp1()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="padding:10px">
+                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
 
+                    <div class="form-control text-areadiv">
+                        <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                    </div>
+
+                </div>
+                <div class="row" style="padding:10px">
+                    <label class="label-field desp-label" for="Comment">Interviewer Comment(Editable)</label>
+
+                    <div class="form-control text-areadiv">
+                        <textarea rows="2" id="comment" placeholder="Comment" style="width:100%"></textarea>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;
+        background-color: #fff;
+        color: white;"></div>
+        </div>
+    </div>
+</div>
 <div id="MyShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
         top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Share</h5>
+                <h5 class="modal-title" style="color:#fff">Private Share</h5>
                 <span onclick="closeSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 2px 16px;">
+            <div class="modal-body">
                 <div class="row" style="padding:10px">
-                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
-                        <div class="talktext">
-                            <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
-                        </div>
+                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
+
+                    <div class="form-control text-areadiv">
+                        <textarea rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                     </div>
+
                 </div>
+
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="background:#ff253a!important" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
             <div class="modal-footer" style="padding: 5px;
         background-color: #fff;
-        color: white;"> </div>
+        color: white;"></div>
         </div>
     </div>
 </div>
+
+<div id="PublicShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Public Share</h5>
+                <span onclick="closepublicSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="padding:10px">
+                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
+                    <div class="form-control text-areadiv">
+                        <textarea rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="SharepublicVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input style="background:#ff253a!important; line-height:13px;" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
+        </div>
+    </div>
+</div>
+<div id="PublicUrlShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Public Share Url</h5>
+                <span onclick="closePublicUrlShareModel()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="row" >
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Video Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
+        </div>
+    </div>
+</div>
+<div id="PublicShareVideo" class="modal" style="display: none;position: fixed;z-index: 10000000;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+
+
+    @if (ViewBag.VedioStatus == "Public")
+    {
+        <div class="blk-bg"></div>
+    }
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:#fff">Your Email Id</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="padding:10px">
+
+                    <label class="label-field desp-label" for="Please Enter Your Email"> Please Enter Email</label>
+                    <div class="form-control text-areadiv">
+                        <input type="text" id="txtvideoemailid" class="form-control" />
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 5px;
+        background-color: #fff;
+        color: white;"></div>
+        </div>
+
+    </div>
+</div>
+
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
-@*
-    <script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-*@
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 <!-- Core plugin JavaScript-->
 <script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
 <!-- Owl Carousel -->
@@ -1477,7 +1644,6 @@
 
 </script>
 <script>
-   
     jQuery(document).ready(function ($) {
 
 
@@ -1505,7 +1671,6 @@
         }
         $('.btn').addClass('disabled');
         $(document).ready(main)
-        }
 </script>
 <script>
             $('form').submit(function () {
@@ -1514,499 +1679,8 @@
                 }
             });
 
-            function CountProctoring(value) {
 
-                if (value == "" || value == null) {
-                    return;
-                }
 
-                var proctoringItems = $('[id^="Proctoring_"]');
-                var proctoringTotal = 0;
-                for (i = 0; i < proctoringItems.length; i++) {
-                    proctoringTotal += parseInt(proctoringItems[i].value);
-                }
-                $("#ProctoringCount").val(proctoringTotal);
-                if (parseInt(proctoringTotal) > 0) {
-                    $("#ProctoringCount").css("border-color", "red");
-                }
-                else {
-                    $("#ProctoringCount").css("border-color", "#E3E3E3");>
-                }
-            }
-
-            function CalculateOverAll(id, value) {
-
-                value = parseInt(value);
-                var index;
-                var skillName;
-                if (id.includes("Tech")) {
-                    index = id.charAt(26);
-                    skillName = "TechSkillReportCollection";
-                }
-
-                else if (id.includes("General")) {
-                    index = id.charAt(29);
-                    skillName = "SkillGeneralReportCollection";
-                }
-                else if (id.includes("Joinability")) {
-                    index = id.charAt(30);
-                    skillName = "JoinabilityHRReportCollection";
-                }
-                else {
-                    index = id.charAt(39);
-                    skillName = "SelectabilityEvaluatorReportCollection";
-                }
-                var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
-                var required = $("#" + reqLevelId).val();
-                if (required <= value) {
-                    var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-                    $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
-                    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
-
-                }
-                else {
-                    $("#" + skillName + "_" + index + "__WeightageActual").val("0");
-                    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
-                }
-
-                var items = $('[id$="WeightageActual"]');
-                //var length = item.length;
-                var totalCount = 0;
-
-                for (i = 0; i < items.length; i++) {
-                    totalCount += parseInt(items[i].value);
-                }
-                //items.forEach(function (item) {
-                //    totalCount = totalCount + item.val();
-                //});
-                var average = totalCount / 4;
-                $("#OverallScore").val(average);
-
-                var arr = [];
-                var obj = { y: "", legendText: "", label: "" }
-                //TechSkills actual weightage total
-                var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-                var techTotal = 0;
-                for (i = 0; i < techItems.length; i++) {
-
-                    techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-                }
-                obj.y = parseInt(techTotal) / 4;
-                obj.label = "Tech Skills Score";
-                obj.legendText = "Tech Skills Score";
-                arr.push(obj);
-
-                //SkillsGeneral actual weightage total
-                var objGen = { y: "", legendText: "", label: "" }
-                var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
-                var genTotal = 0;
-                for (i = 0; i < genSkillsItems.length; i++) {
-                    var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-                    genTotal = parseInt(genTotal) + parseInt(weightage);
-
-                }
-
-                objGen.y = parseInt(genTotal) / 4;
-                objGen.label = "General Skills Score";
-                objGen.legendText = "General Skills Score";
-                arr.push(objGen);
-
-                //Joinability actual weightage total
-                var objJoin = { y: "", legendText: "", label: "" }
-                var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-                var joinabilityTotal = 0;
-                for (i = 0; i < joinabilityItems.length; i++) {
-
-                    joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-                }
-                objJoin.y = parseInt(joinabilityTotal) / 4;
-                objJoin.label = "Joinability Score";
-                objJoin.legendText = "Joinability Score";
-                arr.push(objJoin);
-
-                //Selectability actual weightage total
-                var objSelect = { y: "", legendText: "", label: "" }
-                var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-                var selectabilityTotal = 0;
-                for (i = 0; i < selectabilityItems.length; i++) {
-
-                    selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-                }
-                objSelect.y = parseInt(selectabilityTotal) / 4;
-                objSelect.label = "Selectability Score";
-                objSelect.legendText = "Selectability Score";
-                arr.push(objSelect);
-
-                //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-                document.getElementById("totScore").innerHTML = average;
-
-                var chart = new CanvasJS.Chart("scoreChart", {
-                    theme: "light2", // "light1", "light2", "dark1", "dark2"
-                    width: 400,//in pixels
-                    height: 200,//in pixels
-                    animationEnabled: true,
-                    title: {
-                        text: "Score Chart"
-                    },
-                    data: [{
-                        type: "column",
-                        //startAngle: 60,
-                        //innerRadius: 55,
-                        indexLabelFontSize: 8,
-                        indexLabel: "{label}  {y}",
-                        toolTipContent: "<b>{label} </b>({y})",
-                        dataPoints: arr
-
-                    }]
-                });
-                chart.render();
-
-
-            }
-
-             $(document).ready(function () {
-
-        var proctoringItems = $('[id^="Proctoring_"]');
-        var proctoringTotal = 0;
-        for (i = 0; i < proctoringItems.length; i++) {
-            proctoringTotal += parseInt(proctoringItems[i].value);
-        }
-        $("#ProctoringCount").val(proctoringTotal);
-        if (parseInt(proctoringTotal) > 0) {
-            $("#ProctoringCount").css("border-color", "red");
-        }
-        else {
-            $("#ProctoringCount").css("border-color", "#E3E3E3");
-        }
-
-        //shorter/better attempt
-        var weightageItems = $('[id$="WeightageActual"]');
-        for (i = 0; i < weightageItems.length; i++) {
-            var id = weightageItems[i].id;
-            var match = id.match(/\d+/g);
-            var digit = match[0];
-
-            var index = weightageItems[i].id.indexOf(digit);
-            var skillName = weightageItems[i].id.substring(0, index);
-            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
-            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
-            if (reqLevel <= actLevel) {
-                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
-                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
-            }
-            else {
-                $("#" + skillName + digit + "__WeightageActual").val("0");
-                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
-
-            }
-
-        }
-
-
-        var items = $('[id$="WeightageActual"]');
-        var totalCount = 0;
-
-        for (i = 0; i < items.length; i++) {
-            totalCount += parseInt(items[i].value);
-        }
-        var average = totalCount / 4;
-        $("#OverallScore").val(average);
-
-
-
-
-
-
-    });
-
-    function AddRow() {
-
-
-        var $ttc = $("#QuestionsTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#QuestionsTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#QuestionsTable").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-
-    }
-    function AddSkillGeneralRow() {
-        var table = document.getElementById("SkillGeneralTable");
-        var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 General Skills.");
-            return;
-        }
-        var $ttc = $("#SkillGeneralTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#SkillGeneralTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#SkillGeneralTable").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-
-    }
-
-    function AddJoinabilityRow() {
-        var table = document.getElementById("JoinabilityTable");
-        var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Rows.");
-            return;
-        }
-
-
-        var $ttc = $("#JoinabilityTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#JoinabilityTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#JoinabilityTable").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-
-    }
-
-    function AddRowClient() {
-
-        var $ttc = $("#ClientTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#ClientTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#ClientTable").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-
-    }
-
-    function AddRowInterviewer() {
-        var table = document.getElementById("InterviewerTable");
-        var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Interviewers.");
-            return;
-        }
-
-        var $ttc = $("#InterviewerTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#InterviewerTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#InterviewerTable").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-
-    }
-
-    function AddRowQualityController() {
-
-        var $ttc = $("#QualityControllerTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#QualityControllerTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#QualityControllerTable").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-
-    }
-    function InterviewerChanged(val, id) {
-
-        var index = id.charAt(22);
-        var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
-        $.ajax({
-            type: "GET",
-            url: "/IRF/GetInterviewerSkills",
-            data: { 'id': val },
-            success: function (data) {
-                $("#" + skillElementid).val(data);
-            }
-        });
-
-
-    }
 
     function QuestionChanged(id , val ) {
 
@@ -2046,191 +1720,20 @@
 
     });
 
-    function AddRowController() {
 
-        var table = document.getElementById("ControllerTable");
-        var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Quality Controllers.");
-            return;
-        }
-
-        var $ttc = $("#ControllerTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#ControllerTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#AddRowController").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-
-    }
-    $(document).on('click', '.delete-row', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Skill');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-joinability', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-skillgeneral', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-client', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-interviewer', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Interviewers');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-qualityController', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Quality Controller');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-controller', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Quality Controller');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
 
 </script>
+
 <script>
 
     window.onload = function () {
-         if (localStorage.getItem('isTheaterMode') == "true") {
-             getThMode();
-              document.getElementById("1").value = "THEATER-MODE-OFF";
-            }
-            else {
-                closeThMode();
-            }
+        if (localStorage.getItem('isTheaterMode') == "true") {
+            getThMode();
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        }
+        else {
+            closeThMode();
+        }
         var totalScore = 0;
         var arr = [];
         var obj = { y: "", legendText: "", label: "" }
@@ -2245,7 +1748,7 @@
         obj.y = parseInt(techTotal) / 4;
         obj.label = "Tech Skills Score";
         obj.legendText = "Tech Skills Score";
-        arr.push(obj);
+        arr.push(obj.y);
 
         //SkillsGeneral actual weightage total
         var objGen = { y: "", legendText: "", label: "" }
@@ -2260,7 +1763,7 @@
         objGen.y = parseInt(genTotal) / 4;
         objGen.label = "General Skills Score";
         objGen.legendText = "General Skills Score";
-        arr.push(objGen);
+        arr.push(objGen.y);
 
         //Joinability actual weightage total
         var objJoin = { y: "", legendText: "", label: "" }
@@ -2274,7 +1777,7 @@
         objJoin.y = parseInt(joinabilityTotal) / 4;
         objJoin.label = "Joinability Score";
         objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
+        arr.push(objJoin.y);
 
         //Selectability actual weightage total
         var objSelect = { y: "", legendText: "", label: "" }
@@ -2288,47 +1791,120 @@
         objSelect.y = parseInt(selectabilityTotal) / 4;
         objSelect.label = "Selectability Score";
         objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
+        arr.push(objSelect.y);
 
         totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = totalScore;
 
 
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
+        //var chart = new CanvasJS.Chart("scoreChart", {
+        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
+        //    width: 400,//in pixels
+        //    height: 200,//in pixels
+        //    animationEnabled: true,
+        //    title: {
+        //        text: "Score Chart"
+        //    },
+        //    data: [{
+        //        type: "column",
+        //        //startAngle: 60,
+        //        //innerRadius: 55,
+        //        indexLabelFontSize: 8,
+        //        indexLabel: "{label}  {y}",
+        //        toolTipContent: "<b>{label} </b>({y})",
+        //        dataPoints: arr
 
-            }]
+        //    }]
+        //});
+        //chart.render();
+
+        am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("scoreChart", am4charts.XYChart);
+
+            // Add data
+            chart.data = [{
+                "country": "Tech",
+                "visits": arr[0]
+
+            }, {
+                "country": "General",
+                "visits": arr[1]
+            }, {
+                "country": "Joinability",
+                "visits": arr[2]
+            }, {
+                "country": "Selectability",
+                "visits": arr[3]
+            }];
+
+            // Create axes
+            chart.logo.disabled = true;
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "country";
+            categoryAxis.renderer.inside = true;
+            categoryAxis.renderer.labels.template.valign = "top";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+            chart.fontSize = 13;
+
+            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy;
+                }
+                return dy;
+            });
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            categoryAxis.renderer.grid.template.disabled = true;
+            valueAxis.renderer.grid.template.disabled = true;
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "visits";
+            series.dataFields.categoryX = "country";
+            series.name = "Visits";
+            series.colorField = "color";
+            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+            series.columns.template.fillOpacity = .8;
+
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 0;
+            columnTemplate.strokeOpacity = 1;
+            chart.colors.list = [
+                am4core.color("#07BEF3"),
+                am4core.color("#00F96B"),
+                am4core.color("#F64042"),
+                am4core.color("#ffbc50")
+
+
+
+            ];
+            series.columns.template.events.once("inited", function (event) {
+                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+            });
+
         });
-        chart.render();
-         if (isTheaterMode === true) {
+
+        if (isTheaterMode === true) {
             getThMode();
-            console.log("hai")
         }
-         checkAnotherMode();
+        checkAnotherMode();
         checktheatre();
         getThMode();
         closeThMode();
         checkMode();
 
-        }
-     function checktheatre() {
-        console.log("this");
+    }
+    function checktheatre() {
+
         var mode = localStorage.getItem('isTheaterMode');
-        console.log(mode);
+
         if (mode == true) {
             document.getElementById("1").value = "THEATER-MODE-OFF";
         } else {
@@ -2338,7 +1914,7 @@
 
     function getThMode() {
         var ele = document.getElementById('player');
-        console.log(ele);
+
         ele.classList.remove("col-8");
         ele.classList.add("col-12");
         document.getElementById("1").value = "THEATER-MODE-ON";
@@ -2347,7 +1923,7 @@
 
     function closeThMode() {
         var ele = document.getElementById('player');
-        console.log(ele);
+
         ele.classList.remove("col-12");
         ele.classList.add("col-8");
         localStorage.setItem('isTheaterMode', false);
@@ -2355,7 +1931,7 @@
 
     function checkMode() {
         var val = window.localStorage.getItem('isTheaterMode');
-        console.log(val);
+
         if (val == true) {
             getThMode();
         } else {
@@ -2364,18 +1940,17 @@
         }
     }
     if (localStorage.getItem('isTheaterMode') == true) {
-        console.log("hai123 ");
+
 
         var ele = document.getElementById('player');
-        console.log(ele);
+
         ele.classList.remove("col-8");
         ele.classList.add("col-12");
     }
-     if (localStorage.getItem('isTheaterMode') == false) {
-        console.log("hai123 ");
+    if (localStorage.getItem('isTheaterMode') == false) {
 
-          var ele = document.getElementById('player');
-        console.log(ele);
+        var ele = document.getElementById('player');
+
         ele.classList.remove("col-12");
         ele.classList.add("col-8");
     }
@@ -2394,7 +1969,7 @@
         }
     }
     function checkAnotherMode() {
-       @* alert(localStorage.getItem('isTheaterMode'));*@
+
         console.log(localStorage.getItem('isTheaterMode'));
         if (localStorage.getItem('isTheaterMode') == "true") {
 
@@ -2408,98 +1983,7 @@
         }
     }
 </script>
-<script>
 
-    window.onload = function () {
-
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; {
-
-            techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-        }
-    obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; {
-            var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-    objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen);
-
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; {
-
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        }
-    objJoin.y = parseInt(joinabilityTotal) / 4;
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-    objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
-
-        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        document.getElementById("totScore").innerHTML = totalScore;
-
-
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
-
-            }]
-        });
-        chart.render();
-
-
-
-    }
-</script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -2691,9 +2175,41 @@
 
     jQuery(document).ready(function ($) {
 
+        if ($("#txtVideostatus").val() == "Public") {
+
+
+            var modal = document.getElementById("PublicShareVideo");
+            modal.style.display = "block";
+        }
         $("#btnShare").on('click', function () {
             var modal = document.getElementById("MyShareModel");
+
             modal.style.display = "block";
+        });
+        $("#btnShare1").on('click', function () {
+            var modal = document.getElementById("MyShareModel1");
+            modal.style.display = "block";
+            var getComment = document.getElementById("IreportModel_InterviewerComment").value;
+            console.log(getComment);
+            document.getElementById("comment").innerHTML = getComment;
+
+        });
+        $("#btnShare2").on('click', function () {
+            var modal = document.getElementById("PublicShareModel");
+            modal.style.display = "block";
+        });
+        $("#btnShare3").on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/publicVedioShare",
+                data: { value: "Public", vedioid: $("#txtVedioId").val() },
+                success: function (data) {
+                    var modal = document.getElementById("PublicUrlShareModel");
+                    modal.style.display = "block";
+                    $("#txtvideoUrls").text(window.location.href);
+                }
+            });
+
         });
         $("#btnShortlist").on('click', function () {
             if ($(this).attr('Shortvalue') == 1) {
@@ -2848,16 +2364,48 @@
         var modal = document.getElementById("MyShareModel");
         modal.style.display = "none";
     }
-    function ShareVedioLink() {
+    function closeSharePopUp1() {
+        var modal = document.getElementById("MyShareModel1");
+        modal.style.display = "none";
+    }
+    function closepublicSharePopUp() {
+        var modal = document.getElementById("PublicShareModel");
+        modal.style.display = "none";
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+
+    function ShareVedioLinkToMail(resume) {
         $.ajax({
             type: "POST",
-            url: "/RiseTube/VedioShared",
-            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
+            url: "/RiseTube/ShareVedioLinkToMail",
+            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val(), resumeLink: resume },
             success: function (data) {
-                closeSharePopUp();
+                closeSharePopUp1();
             }
         });
     }
+    function ShareVedioLink() {
+
+        $.ajax({
+            type: "POST",
+            url: "/RiseTube/VedioShared",
+            data: { Emailids: $("#txtsharetext1").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
+            success: function (data) {
+                if (data == "Success") {
+                    alert("Interview shared successfully.");
+                    closeSharePopUp();
+
+                } else {
+                    alert("Fail to share Interview.");
+
+                }
+            }
+        });
+    }
+
     function switchtoquestionVedio(questiontime) {
 
         var time = 1;
@@ -2869,6 +2417,45 @@
         var vid = document.getElementsByClassName("vjs-tech");
         vid[0].currentTime = time;
         //time should be in seconds
+    }
+    function SharepublicVedioLink() {
+        if ($("#txtpublicsharing").val() != "") {
+            if (window.confirm('Are you sure, you want to share this video?')) {
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioShare",
+                    data: { value: "Public", vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), Emailids: $("#txtpublicsharing").val() },
+                    success: function (data) {
+                        closepublicSharePopUp();
+                    }
+                });
+            }
+        }
+    }
+    function SubmitEmail() {
+        if ($("#txtvideoemailid").val() != "") {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VedioShareEmail",
+                data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val() },
+                success: function (data) {
+                    closepublicSharePopUpvideo();
+                    $("#divbackground").removeClass("blk-bg");
+                }
+            });
+        }
+    }
+    function closepublicSharePopUpvideo() {
+        var modal = document.getElementById("PublicShareVideo");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
@@ -2910,8 +2497,27 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
+
+
+                {
+                    'next .sharebtn1': 'Share the video by clicking here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
                 {
                     'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemchart': 'Check candidate overall score here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemcomment': 'Check interviewer comments here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -2929,11 +2535,12 @@
 
                 },
                 {
-                    'next .item4': 'Questions Discussed during interview',
+                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
+
                 {
                     'next .item5': 'General Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -2953,7 +2560,7 @@
 
                 },
                 {
-                    'next .post': 'Write your comment and click on Post',
+                    'next .post': 'Collaborative decision making.Write your comment and click post',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
@@ -2999,12 +2606,24 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .sharebtn1': 'Click here to share Candidate Video',
+                    'next .sharebtn1': 'Share the video by clicking here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
-                },               
+                },
                 {
                     'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemchart': 'Check candidate overall score here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemcomment': 'Check interviewer comments here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3022,7 +2641,7 @@
 
                 },
                 {
-                    'next .item4': 'Questions discussed during interview',
+                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3045,8 +2664,8 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
-                 {
-                    'next .post': 'Write your comment and click on Post',
+                {
+                    'next .post': 'Collaborative decision making. Write your comment and click post',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
@@ -3086,6 +2705,7 @@
                     'nextButton': { className: "myNext", text: "Continue" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
+
                 {
                     'next .btnvideo': 'Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3101,8 +2721,22 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
+
+
                 {
                     'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemchart': 'Check candidate overall score here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemcomment': 'Check interviewer comments here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3120,11 +2754,12 @@
 
                 },
                 {
-                    'next .item4': 'Questions discussed during interview',
+                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
+
                 {
                     'next .item5': 'General Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3144,7 +2779,7 @@
 
                 },
                 {
-                    'next .videosidelist': 'Same skill Candidates Video ',
+                    'next .videosidelist': 'Similar skill Candidates Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
@@ -3159,4 +2794,4 @@
             }, 10000)
         </script>
     }
-} 
+}

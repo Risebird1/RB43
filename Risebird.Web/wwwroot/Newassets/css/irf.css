@@ -6,7 +6,18 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 5px;
 }
+textarea::-webkit-scrollbar {
+    width: 2px;
+    height: 6px;
+    background-color: var(--mdc-theme-primary, #018786) !important;
+}
 
+textarea::-webkit-scrollbar-thumb {
+    background-color: #56a9ff;
+    border: 1px solid #56a9ff;
+    margin: 2px;
+    border-radius: 2px;
+}
 .no-sort::after {
     display: none !important;
 }
@@ -57,7 +68,9 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
     padding: 7px;
     font-weight: normal !important;
 }
-
+.table > tbody > tr > td {
+    padding: 0px 5px;
+}
 table td {
     color: #504e4e;
 }
@@ -66,6 +79,21 @@ table th {
     color: #000000e0;
     background: #fff;
 }
+
+
+[type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+    padding:10px!important;
+}
+
+    [type="date"]::-webkit-inner-spin-button {
+        display: none;
+    }
+
+    [type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+    }
 .card .card-header .card-title, .card .card-header h4.card-title {
     margin: 0 0px 10px 0;
 }
@@ -89,10 +117,175 @@ table th {
     padding-top: 65px;
     background: none !important;
 }
+.invoice-box {
+    max-width: 800px;
+    margin: auto;
+    padding: 30px;
+    border: 1px solid #eee;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+    font-size: 16px;
+    line-height: 24px;
+    font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    color: #555;
+}
+.tableBill td, th {
+    border-right: 1px solid rgb(229,229,229);
+    border-bottom: 1px solid rgb(229,229,229);
+}
+.select-css {
+    display: block;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 100%;
+    max-width: 100%; /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+    -moz-appearance: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: #fff;
+    /* note: bg image below uses 2 urls. The first is an svg data uri for the arrow icon, and the second is the gradient. 
+		for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
+		
+	*/
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat !important;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right .7em top 50%, 0 0 !important;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100% !important;
+}
+    /* Hide arrow icon in IE browsers */
+    .select-css::-ms-expand {
+        display: none;
+    }
+    /* Hover style */
+    .select-css:hover {
+        border-color: #888;
+    }
+    /* Focus style */
+    .select-css:focus {
+        color: #222;
+        outline: none;
+    }
+
+    /* Set options to normal weight */
+    .select-css option {
+        font-weight: normal;
+    }
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+    background-position: left .7em top 50%, 0 0;
+    padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+    color: graytext;
+    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-repeat: no-repeat;
+}
+
+    .select-css:disabled:hover, .select-css[aria-disabled=true] {
+        border-color: #aaa;
+    }
+
+.input {
+    position: relative;
+}
+.joiningtime .spinner {
+    top: 15px;
+}
+    .spinner {
+    top: 30px;
+    width: 0.8rem;
+    position: absolute;
+    background: whitesmoke;
+    border-radius: 0;
+    display: none;
+    height: 2rem;
+    right: 10px;
+}
+
+.js .spinner {
+    display: block;
+}
+
+.container:hover .spinner {
+    right: 0;
+    top: 1px;
+}
+
+.spinner .button {
+    position: relative;
+    color: #8c8686;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    padding: 0;
+    display: block;
+}
+
+    .spinner .button:hover {
+        color: gray;
+    }
+
+    .spinner .button:active {
+        color: darkgray
+    }
+
+.up {
+    transform: rotate(-90deg);
+    top: -.5rem;
+}
+
+.down {
+    transform: rotate(-90deg);
+    top: -2rem;
+}
+.spinner-wrap{position:relative}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
 #AudioFile {
     margin: 0px 10px 10px 10px;
     width: calc(100% - 20px);
 }
+.text-areadiv {
+    height: auto;
+    padding: 0px 10px !important;
+}
+
+    .text-areadiv textarea {
+        width: 100%;
+        border: 0;
+        background: #f5f5f5;
+        padding: 5px 10px 5px 10px;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+
+
+ .text-areadiv textarea:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+
+
+
+
 
 #PageVideoLink {
     margin: 0px 10px 10px 10px;
@@ -169,7 +362,43 @@ table th {
 }
 
 
+.detail {
+    background: white;
+    padding: 15px 20px;
+    height: 200px;
+    margin-bottom: 25px;
+    border-radius: 0px;
+    overflow: auto;
+    color: rgb(83, 165, 245);
+    text-shadow: 0 0 #21252900;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    transition: color .3s ease;
+    border: 1px #6fb6ff59 solid !important;
+}
 
+
+    .detail:hover {
+        color: rgba(0, 0, 0, 0.3);
+        color: rgb(83, 165, 245);
+        box-shadow: 0 0 25px #134e8c45;
+    }
+
+
+    .detail p {
+        margin-bottom: 5px;
+        color: #2c2c2c;
+        font-family: Roboto, sans-serif;
+    }
+
+    .detail h6 {
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        line-height: 20px;
+        color: #0c2642;
+        padding: 0;
+        margin: 0;
+    }
 .mdc-card-wrapper__text-section {
     padding: 16px;
 }
@@ -209,7 +438,7 @@ table th {
     color: #807e7e;
     font-size: 12px;
 }
-#meeting_length, #meeting_filter {
+/*#meeting_length, #meeting_filter {
     margin: 10px 0px
 }
 
@@ -275,7 +504,7 @@ table th {
 #meeting_filter input::-webkit-input-placeholder {
     color: #999;
 }
-
+    */
 .spanclass {
     color: black;
     font-size: 11px;
@@ -288,15 +517,18 @@ table th {
     overflow: hidden !important;
     text-overflow: ellipsis;
 }
-
-.multiple_row > h2 {
-    font-size: 18px;
-    background-color: #5f95b1;
-    padding: 8px 10px;
-    text-align: left;
-    color: #ffffff;
-    margin-top: 35px;
-    margin-bottom: 35px;
+.modal-bg {
+    display: none;
+    position: fixed; 
+    z-index: 1;
+    padding-top: 100px; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    overflow: auto; 
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
 }
 
 .action-area {
@@ -305,7 +537,14 @@ table th {
 .thumbnail {
     border-top: 5px solid #443f3f;
 }
+.form-group select.form-control.select-box {
+    width: 200px;
+}
 
+   .card-header .form-group select.form-control:focus {
+        outline: 0;
+        border-bottom: 1px #E3E3E3 solid !important;
+    }
 .list-group-item-heading {
     font-size: 13px;
     font-weight: 700;
@@ -626,9 +865,13 @@ background-color: rgba(0,0,0,0.4);
 .border-bottom {
     border-bottom: 1px #cccccc63 solid;
 }
+.unarchive-btn {
+    background: #848080eb !important;
+}
 
-.trash-btn {
-    background:#d20505 !important;
+
+.mdc-fab.trash-btn {
+    background: #d20505 !important;
 }
 #btnPlus {
     top: -3px;
@@ -678,8 +921,8 @@ background-color: rgba(0,0,0,0.4);
     cursor: pointer !important;
 }
 
-    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover, {
-        background: url("https://i.ya-webdesign.com/images/play-button-png-6.png");
+    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+        background: url("../../img/audio-button-set-4-transparent.png");
         background-size: 25px;
         background-repeat: no-repeat;
         background-position: 45%;
@@ -754,6 +997,7 @@ background-color: rgba(0,0,0,0.4);
     color: #2f5d8e;
     font-weight: normal;
 }
+.upload{margin-top:10px;}
 #resumeId, #zoomlinkId {
     background: #e2f0ff;
     color: #1d3b5e;
@@ -783,11 +1027,14 @@ background-color: rgba(0,0,0,0.4);
     padding: 5px 10px;
     border-radius: 16px;
 }
+#uploadDiv #videoId{background:none; text-decoration:none;}
 
+.interviewr-cmt #videoId {
+    background: none;
+    text-decoration: none;
+}
 
-
-
-#meetingIRF_length, #meetingIRF_filter {
+/*#meetingIRF_length, #meetingIRF_filter {
     margin: 10px 0px
 }
 
@@ -803,9 +1050,9 @@ background-color: rgba(0,0,0,0.4);
         border-color: #4a93de;
     }
 
-    #meetingIRF_filter input {
-        outline: none;
-    }
+.dataTables_filter input {
+    outline: none;
+}
 
 #meeting input[type=search] {
     -webkit-appearance: textfield;
@@ -853,7 +1100,7 @@ background-color: rgba(0,0,0,0.4);
 #meetingIRF_filter input::-webkit-input-placeholder {
     color: #999;
 }
-
+    */
 
 
 .select-box {
@@ -891,6 +1138,9 @@ background-color: rgba(0,0,0,0.4);
         margin: 0;
         padding: 0;
     }
+.table-responsive-sm .table > tbody > tr > td {
+    padding: 12px 5px !important;
+}
 @media (min-width: 1200px) {
     .container {
         width: 1125px;

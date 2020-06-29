@@ -10,7 +10,6 @@ using Risebird.Entities.ViewModel;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.CommonHelper;
-
 namespace Risebird.Business
 {
     public class MeetingService : IMeetingService
@@ -23,7 +22,8 @@ namespace Risebird.Business
         private IUserService _userService;
         private IEvaluatorRepository _evaluatorRespository;
         private IVoiceItRepository _voiceItRepository;
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository)
+        private ISupportRepository _supportRespository;
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -33,13 +33,13 @@ namespace Risebird.Business
             _userService = userService;
             _evaluatorRespository = evaluatorRespository;
             _voiceItRepository = voiceItRepository;
+            _supportRespository = supportRespository;
         }
 
         public List<MeetingVM> GetMeetingList()
         {
             try
             {
-
                 return _meetingRespository.GetAllInterviewMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
@@ -48,7 +48,18 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                return _meetingRespository.GetAllInterviewMeetings(startDate, endDate).Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public List<MeetingVM> GetRiseTubeMeetings(int clientId, string profile, string Emailid)
         {
             try
@@ -63,6 +74,44 @@ namespace Risebird.Business
             }
         }
 
+        /// <summary>
+        /// FInd duplicate interview invite based on Skill Channel
+        /// </summary>
+        /// <param name="IRFId"></param>
+        /// <returns></returns>
+        public List<MeetingVM> IRFMultipleCandidateInvites(string IRFId)
+        {
+            try
+            {
+
+                return _meetingRespository.IRFMultipleCandidateInvites(IRFId).Result.ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Delete Interview Record
+        /// </summary>
+        /// <param name="imid"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteInterview(int imid)
+        {
+            try
+            {
+                await _meetingRespository.DeleteInterview(imid);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+               
+            }
+        }
 
         public List<MeetingVM> MultipleCandidateInvites()
         {
@@ -365,16 +414,9 @@ namespace Risebird.Business
         public List<Meeting> GetAllAssignedInterviews(string emailID)
         {
             try
-            {
-                //var finalList = new List<Meeting>();
+            {               
                 var assignedMeeting = _meetingRespository.GetAllAssignedInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
-                //foreach (var item in assignedMeeting)
-                //{
-                //    if(_meetingRespository.CheckCompletedInterviews(item.candidateEmail,item.ClientId, item.irfIntId).Result.ToList().Count()==0)
-                //    {
-                //        finalList.Add(item);
-                //    }
-                //}
+                
                 return assignedMeeting;
             }
             catch (Exception ex)
@@ -746,6 +788,7 @@ namespace Risebird.Business
 
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
+                reportModel.CandidateName = interviewDetails.candidateName;
                 reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = interviewDetails.candidateEmail;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
@@ -872,8 +915,7 @@ namespace Risebird.Business
         public async Task<bool> AddInterviewReport(InterviewReport reportModel)
         {
             try
-            {
-                
+            {                
                 var result = await _meetingRespository.AddInterviewReport(reportModel);
                 if (reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
                 {
@@ -1024,11 +1066,11 @@ namespace Risebird.Business
             }
 
         }
-        public string AddTotalViewCount(int id)
+        public string AddTotalViewCount(int id,string emailaddress)
         {
             try
             {
-                var meeting = _meetingRespository.AddTotalViewCount(id);
+                var meeting = _meetingRespository.AddTotalViewCount(id, emailaddress);
                 return "";
 
             }
@@ -1206,6 +1248,56 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<VideoCountdetail> GetTotalViewCount(int id)
+        {
+            try
+            {
+                var meeting = _meetingRespository.GetTotalViewCount(id);
+                return meeting;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return null;
+            }
+        }
+        public bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink)
+        {
+            try
+            {
+                return _meetingRespository.SaveFeedbackAudio(interviewId, feedbackAudioLink);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<string> Broadcast(BroadcastModel model)
+        {
+            try
+            {
+                //check the receiver and get all their emails from the db
+                var receiverEmails = _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever).Result;
+                var supportEmails = _supportRespository.GetAllSupportHREmails();
+                var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                return result;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Broadcast failed.";
+            }
+
+        }
+
     }
 
 }

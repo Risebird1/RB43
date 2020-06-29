@@ -21,6 +21,8 @@ CREATE TABLE [dbo].[QCFeedbackReport](
 	[MeaningfulAssessments] bit default 0,
 	[CorrectEnglishGrammar] bit default 0,
 	[ProctoringReportFilled] bit default 0,
+	[QCStatus] [int] NULL,
+	[QCComment] [varchar](max) NULL,
 	FOREIGN KEY([InterviewId]) REFERENCES [dbo].[InterviewMeetings] ([id]),
  CONSTRAINT [PK_QCFeedbackReport] PRIMARY KEY CLUSTERED 
 (
@@ -28,7 +30,31 @@ CREATE TABLE [dbo].[QCFeedbackReport](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
-End
+END
+
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'QCStatus')
+      AND Object_ID = Object_ID(N'QCFeedbackReport'))
+BEGIN
+    ALTER TABLE QCFeedbackReport
+    Add QCStatus int
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'QCComment')
+      AND Object_ID = Object_ID(N'QCFeedbackReport'))
+BEGIN
+    ALTER TABLE QCFeedbackReport
+    Add QCComment VARCHAR(max)
+END
+
+END
 GO
 
 

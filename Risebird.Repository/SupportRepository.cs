@@ -30,8 +30,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from Support";
-               
+                //var query = "Select * from Support";
+                var query = "Select distinct st.id,st.Name,st.EmailId,st.MobileNumber,st.WhatsappNumber,st.OnVoiceCall,st.OnWhatsapp,st.OnEmail,st.AvailabilityHours,ul.isonline as IsOnline from support st join userlist ul on ul.EmailId = st.EmailId";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<Support>(query);
@@ -154,6 +154,26 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+
+        public IEnumerable<string> GetAllSupportHREmails()
+        {
+            try
+            {
+                //var query = "Select * from Support";
+                var query = "Select EmailId from support";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
 
     }

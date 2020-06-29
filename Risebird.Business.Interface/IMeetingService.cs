@@ -11,6 +11,7 @@ namespace Risebird.Business.Interface
     {
         List<MeetingVM> GetMeetingList();
         bool AddMeeting(MeetingVM meeting);
+        List<MeetingVM> GetAllMeetingList(DateTime startDate, DateTime endDate);
         bool UpdateMeeting(MeetingVM meetingToUpdate);
         List<MeetingVM> MultipleCandidateInvites();
         MeetingVM GetMeeting(int id);
@@ -48,7 +49,7 @@ namespace Risebird.Business.Interface
         MeetingVM GetMeetingbyid(int id, string Email);
         List<MeetingVM> GetRiseTubeMeetings(int clientId, string profile, string Emailid);
         MeetingVM VedioLike(string value, string vedioid,string email);
-        string AddTotalViewCount(int id);
+        string AddTotalViewCount(int id,string emailaddress);
         //Task<string> VedioLikeAsync(string value, string vedioid, string email);
         string VedioShare(string value, string vedioid);
         string VedioShared(string value, string vedioid,string Userid);
@@ -61,7 +62,12 @@ namespace Risebird.Business.Interface
         List<Meeting> ShortListedClient(string emailid, string IRFID);
         List<Meeting> InterestListClient(string emailid, string IRFID);
         string Fetchusername(string emailid);
+        List<VideoCountdetail> GetTotalViewCount(int id);
 
+        List<MeetingVM> IRFMultipleCandidateInvites(string IRFId);
+        Task<bool> DeleteInterview(int imid);
+        bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink);
+        Task<string> Broadcast(BroadcastModel model);
 
     }
 }

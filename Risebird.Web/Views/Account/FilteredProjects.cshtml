@@ -1,71 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.Account
 
-<style>
-
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-    /*table.dataTable > thead > tr > th {
-        max-width: 200px !important;
-    }*/
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-</style>
 
 <table class="table table-bordered mbn" id="ProjectList">
     <thead>
@@ -86,8 +20,29 @@
                     </td>*@
                 <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
                 <td class="text-center">@Model.AccountProjectMappings[i].Client</td>
-                <td class="text-right">
-                    @Html.CheckBoxFor(m => m.AccountProjectMappings[i].IsAdded, new { @class = "form-control" @*, @style = "margin-left:25%"*@})
+                <td class="text-center">
+                 
+
+
+                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                        <div class="mdc-checkbox">
+                         
+
+                            @Html.CheckBoxFor(m => m.AccountProjectMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark"
+                                     viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path"
+                                          fill="none"
+                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
+                            <div class="mdc-checkbox__ripple"></div>
+
+
+                        </div>
+                    </div>
 
                 </td>
                 @Html.HiddenFor(m => m.AccountProjectMappings[i].ProjectId)

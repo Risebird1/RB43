@@ -15,10 +15,17 @@ CREATE PROCEDURE [dbo].[usp_GetIAllInterviewMeetings]
 AS    
 Begin    
     
-select im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId from InterviewMeetings im    
-inner join IRF on im.IRFId = IRF.IRFId  
-left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
-left join CandidatesMaster cm on im.candidateEmail = cm.EmailId
+select Meetings.*, ca.Phone as MobileNumber, ca.ResumeLink as resumeLink from (select im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,  
+im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice,   
+im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.candidateName, im.currentEmployerName,   
+im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,  
+IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId,  
+(Select distinct Isonline from UserList where Emailid=im.candidateEmail) as IsOnline,(Select distinct Isonline from UserList where Emailid=im.ClientHrContact) as IsHrOnline,(Select distinct Isonline from UserList where Emailid=im.interviewer) as IsInterviewerOnline from InterviewMeetings im      
+inner join IRF on im.IRFId = IRF.IRFId    
+left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId  
+left join CandidatesMaster cm on im.candidateEmail = cm.EmailId) Meetings  
+left join Candidate ca on Meetings.candidateEmail = ca.EmailId and Meetings.irfIntId= ca.IRFId  
+
    
 End    
    

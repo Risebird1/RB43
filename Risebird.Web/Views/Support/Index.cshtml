@@ -9,13 +9,7 @@
 
 <!-- Keep the Page Content Here.-->
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="~/Newassets/css/support.css" rel="stylesheet" />
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -47,7 +41,7 @@
                 <div class="mdc-card card">
 
                     <div class="mdc-card-wrapper__text-section">
-                        <div class="loader text-center">
+                        <div class="loader text-center" style="display:block;">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
@@ -64,7 +58,7 @@
                                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Support" onclick="location.href='@Url.Action("AddSupport", "Support")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Support</font></span>
                                                 </button>
 
-                                               
+
                                             }
                                             @if (Model.BackController != null && Model.BackMethod != null)
                                             {
@@ -112,96 +106,106 @@
                                             @foreach (var item in Model.Supports)
                                             {
 
-                                            <tr id="@item.id">
-                                                <td> @item.Name</td>
-                                                @if (item.EmailId != null && item.EmailId != "")
-                                                {
-                                                    <td>@item.EmailId</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>Not available</td>
-                                                }
-
-                                                @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
-                                                {
-                                                    <td>@item.WhatsappNumber</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>Not available</td>
-                                                }
-
-
-                                                @if (item.OnVoiceCall)
-                                                {
-                                                    <td>Yes</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No</td>
-                                                }
-                                                @if (item.OnWhatsapp)
-                                                {
-                                                    <td>Yes</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No</td>
-                                                }
-                                                @if (item.OnEmail)
-                                                {
-                                                    <td>Yes</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No</td>
-                                                }
-                                                @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
-                                                {
-                                                    <td>
-                                                        <span style="font-size:12px;">  @item.AvailabilityHours </span>
+                                                <tr id="@item.id">
+                                                    <td width="30%">
+                                                        @if (item.IsOnline == 1)
+                                                        {
+                                                        <span class="dot dot-p" style="background-color:green"></span><a onclick="directopenChat('@item.EmailId')"><span> @item.Name </span></a>
+                                                        }
+                                                        else
+                                                        {<span class="dot  dot-p"></span>
+                                                            @item.Name
+                                                            
+                                                        }
                                                     </td>
-                                                }
-                                                else
-                                                {
-                                                    <td> </td>
-                                                }
-
-                                                <td>
-
-                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
+                                                    @if (item.EmailId != null && item.EmailId != "")
                                                     {
-                                                        <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
-
-
-
-                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call HR</span></span>
-
-
+                                                        <td>@item.EmailId</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Not available</td>
                                                     }
 
-                                                </td>
-                                                <td class="text-right action">
-                                                    @if (ViewBag.Profile == "Admin")
+                                                    @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
                                                     {
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
-                                                            <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                        </button>
-
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">
-                                                            <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>
-
-
-                                                        
-
+                                                        <td>@item.WhatsappNumber</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Not available</td>
                                                     }
 
-                                                </td>
-                                            </tr>
+
+                                                    @if (item.OnVoiceCall)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.OnWhatsapp)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.OnEmail)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
+                                                    {
+                                                        <td>
+                                                            <span style="font-size:12px;">  @item.AvailabilityHours </span>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td> </td>
+                                                    }
+
+                                                    <td>
+
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
+                                                        {
+                                                            <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
+
+
+
+                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call HR</span></span>
+
+
+                                                        }
+
+                                                    </td>
+                                                    <td class="text-right action">
+                                                        @if (ViewBag.Profile == "Admin")
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
+                                                                <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            </button>
+
+
+
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">
+                                                                <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                            </button>
+
+
+
+
+                                                        }
+
+                                                    </td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -227,14 +231,14 @@
                         <span class="close" id="callPopUp" style="cursor:pointer;">&times;</span>
                     </div>
                     <div class="modal-body" style="padding: 2px 16px;">
-          
-                            <h5 class="modal-title text-center mt-20" id="callingLabel"><b>Calling...</b></h5>
-                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
+
+                        <h5 class="modal-title text-center mt-20" id="callingLabel"><b>Calling...</b></h5>
+                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
     display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-                      
+
 
                     </div>
-                   
+
                 </div>
             </div>
 
@@ -312,10 +316,36 @@
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
             }
 
         });
+
+
         var table = $('#supportList').DataTable();
+
+
+    });
+
+
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
     });
 </script>
 <script type="text/javascript">
