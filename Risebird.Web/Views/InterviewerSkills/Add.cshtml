@@ -548,7 +548,6 @@
 
     
     function SkillChanged() {
-        debugger;
         //var index = id.charAt(16);
         var Skills = $('[id$="PrimarySkill"]');
         //var arr = [];
@@ -587,10 +586,11 @@
 
                             $("#" + drpdowns[i].id).append(option);
 
-                            InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
 
                             //drpdwnId.append(option);
                         });
+                        InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
+
                     }
 
                 }
@@ -598,60 +598,7 @@
         });
 
     }
-
-
-    //function TechSkillChanged() {
-
-    //    //var index = id.charAt(16);
-    //    var techSkills = $('[id^="SkillCollection"][id$="SkillId"]');
-    //    //var arr = [];
-    //    var skills = "";
-    //    for (i = 0; i < techSkills.length; i++) {
-    //        //arr.push(techSkills[i].value);
-    //        skills = skills + ',' + techSkills[i].value;
-    //    }
-    //    $.ajax({
-    //        type: "GET",
-    //        url: "/InterviewerSkills/GetInterviewers",
-    //        data: { 'skills': skills },
-    //        success: function (data) {
-
-    //            var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
-    //            for (i = 0; i < drpdowns.length; i++) {
-    //                $("#" + drpdowns[i].id + " option").remove();
-    //            }
-
-    //            if (data.length > 0) {
-
-    //                for (i = 0; i < drpdowns.length; i++) {
-    //                    //$("#" + drpdowns[i].id).append(option);
-
-
-    //                    $(data).each(function () {
-    //                        var option = $("<option />");
-
-    //                        //Set Text part.
-    //                        option.html(this.text);
-
-    //                        //Set Value part.
-    //                        option.val(this.value);
-
-    //                        //Add the Option element to DropDownList.
-
-    //                        $("#" + drpdowns[i].id).append(option);
-
-    //                        InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
-
-    //                        //drpdwnId.append(option);
-    //                    });
-    //                }
-
-    //            }
-    //        }
-    //    });
-
-    //}
-
+    
     function checkStartDate(val) {
 
         if (val == "") {

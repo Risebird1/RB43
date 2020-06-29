@@ -529,12 +529,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_iInterviewerSkillsService.DeleteISCInterviewer(id).Result)
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer removed Successfully.";
+                            //TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer removed Successfully.";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageISCInterviewer"] = "Could not remove Interviewer.";
+                            //TempData["SuccessErrorMessageISCInterviewer"] = "Could not remove Interviewer.";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
                         }
                     }
