@@ -162,7 +162,9 @@ namespace Risebird.Web
             services.AddScoped<ISettingsService, SettingsService>();
             services.AddScoped<IInterviewerSkillsRepository, InterviewerSkillsRepository>();
             services.AddScoped<IInterviewerSkillsService, InterviewerSkillsService>();
-
+            services.AddScoped<IInterviewerService, InterviewerService>();
+            services.AddScoped<IInterviewerRepository, InterviewerRepository>();
+            //IInterviewerService
 
         }
     }

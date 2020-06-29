@@ -34,7 +34,6 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper = azureStorageHelper;
             _skillService = skillService;
             _profileService = profileService;
-            _userRepository = userRepository;
         }
 
         #region User Fucntions
