@@ -22,7 +22,6 @@ namespace Risebird.Web.Controllers
     //[Authorize]
     public class RiseTubeController : Controller
     {
-
         private IMeetingService _meetingService;
         private IUserService _userService;
         private IApplicationErrorLogger _applicationErrorLogger;
@@ -692,6 +691,7 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
+
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
                         NewModel.imid = model.imid;
@@ -840,7 +840,7 @@ namespace Risebird.Web.Controllers
                         var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                         if (menus != null)
                         {
-                            menus= menus.Where(x => x.functionName!= "Support").ToList();
+                            menus = menus.Where(x => x.functionName != "Support").ToList();
                             HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                         }
                         if (IRListModel != null)
@@ -1198,7 +1198,7 @@ namespace Risebird.Web.Controllers
             var modelList = _meetingService.VedioShare(value, vedioid);
             string Name = string.Empty;
             if (name != null && name.Length >= 2)
-                Name = Name +name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                Name = Name + name?.ToCharArray()[0] + name?.ToCharArray()[1];
             else if (name != null && name.Length == 1)
                 Name = Name + name?.ToCharArray()[0];
             //send a email
@@ -1219,6 +1219,12 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
 
+        }
+        [HttpPost]
+        public JsonResult publicVedioShare(string value, string vedioid)
+        {
+            var modelList = _meetingService.VedioShare(value, vedioid);
+            return Json("Success");
         }
         [HttpPost]
         public JsonResult VedioComment(string comment, string vedioid)
@@ -1314,7 +1320,7 @@ namespace Risebird.Web.Controllers
             email = email.Replace("\"", "");
 
             string currenturl = vedioid;
-            if(resumeLink==null)
+            if (resumeLink == null)
             {
                 resumeLink = string.Empty;
             }
