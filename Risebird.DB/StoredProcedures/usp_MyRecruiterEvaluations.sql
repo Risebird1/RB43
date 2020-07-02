@@ -17,7 +17,7 @@ BEGIN
 select IRF.IRFId as IRFName, IRF.JDLink,IRF.IsBiometricEnabled, ul.EmailId,
 cm.id as CandidateId, ca.IRFId, ulc.EmailId as CandidateEmailId,
 CASE WHEN ulc.LastName is not null THEN ulc.FirstName + ulc.LastName ELSE ulc.FirstName END as CandidateName,
-ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore,ca.Phone as Phone,
+ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore,ca.Phone,
 ca.AddedByUserId, ca.TechSkillScore, ca.SkillGeneralScore, ca.VoiceItUserId 
 from Candidate ca
 join UserList ul on ul.id = ca.AddedByUserId

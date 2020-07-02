@@ -38,7 +38,7 @@ select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, 
-ulc.MobileNumber, ca.ResumeLink as resumeLink, 
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, 
 IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,QCF.InterviewId as QCInterview
 from InterviewMeetings im  
 inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
