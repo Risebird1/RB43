@@ -17,12 +17,12 @@ CREATE PROCEDURE [dbo].[usp_GetIAllDateWiseInterviewMeetings]
 AS        
 Begin        
         
-select distinct Meetings.*,  ca.ResumeLink as resumeLink from (select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,      
+select distinct Meetings.*,  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber from (select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,      
 im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice,       
 im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.candidateName, im.currentEmployerName,       
 im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,      
 IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId     
-,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline, ulc.MobileNumber 
+,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline 
 from     
 InterviewMeetings im          
 inner join IRF on im.IRFId = IRF.IRFId      

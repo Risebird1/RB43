@@ -22,7 +22,7 @@ select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interview
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, 
-ul.MobileNumber, ca.ResumeLink as resumeLink,
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage   
 as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,(Select top 1 status from SuitableCandidate where InterviewId= ic.InterviewId  order by InterstedOn desc)  as IsIntrested ,(Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId  order by ShortListedOn desc)  as ShortListstatus  
@@ -43,7 +43,7 @@ select  im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.intervie
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, 
-ul.MobileNumber, ca.ResumeLink as resumeLink,
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage   
 as ThumbnailImage,QCF.InterviewId as QCInterview,

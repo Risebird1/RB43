@@ -19,7 +19,7 @@ select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,
-ulc.MobileNumber, ca.ResumeLink as resumeLink,
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel,irf.CalendlyLink, irf.EndDate, irf.JDTiltle, ul.MobileNumber as InterviewerPhone, irf.ClientName, Client.[Name] as ClientCompName,
 (Select Isonline from UserList where EmailId=im.interviewer) as IsOnilne
 from InterviewMeetings im  

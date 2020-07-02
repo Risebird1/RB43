@@ -1127,21 +1127,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    //if (irfDetails.Selectability != null)
-                    //{
-                    //    foreach (var item in irfDetails.Selectability)
-                    //    {
-                    //        string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                    //        var affectedRows = con.ExecuteAsync(sqlSelectability, new
-                    //        {
-                    //            IRFId = irfDetails.id,
-                    //            LevelId = item.LevelId,
-                    //            Type = item.Type,
-                    //            Value = item.Value,
-                    //            Weightage = item.Weightage
-                    //        }).Result;
-                    //    }
-                    //}
+                    
 
                     DataTable selectabilityDt = new DataTable();
                     selectabilityDt.Columns.Add("IRFId", typeof(int));
@@ -1332,23 +1318,27 @@ namespace Risebird.Repository
                     //    }
                     //}
 
-                    DataTable clientUserDt = new DataTable();
-                    clientUserDt.Columns.Add("IRFId", typeof(int));
-                    clientUserDt.Columns.Add("ClientUserId", typeof(int));
-
-                    foreach (var item in irfDetails.ClientCollection)
+                    if (irfDetails.ClientCollection != null)
                     {
-                        clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
-                    }
+                        DataTable clientUserDt = new DataTable();
+                        clientUserDt.Columns.Add("IRFId", typeof(int));
+                        clientUserDt.Columns.Add("ClientUserId", typeof(int));
 
-                    SqlCommand cmdClientUser = new SqlCommand("usp_ClientUserBulkInsert", con);
-                    cmdClientUser.CommandType = CommandType.StoredProcedure;
-                    cmdClientUser.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
-                    cmdClientUser.Parameters["@ClientUserBulkData"].Value = clientUserDt;
-                    con.Open();
-                    if (cmdClientUser.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
+                        foreach (var item in irfDetails.ClientCollection)
+                        {
+                            clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
+                        }
+
+
+                        SqlCommand cmdClientUser = new SqlCommand("usp_ClientUserBulkInsert", con);
+                        cmdClientUser.CommandType = CommandType.StoredProcedure;
+                        cmdClientUser.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
+                        cmdClientUser.Parameters["@ClientUserBulkData"].Value = clientUserDt;
+                        con.Open();
+                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
                     
 
