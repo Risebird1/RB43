@@ -12,7 +12,7 @@ GO
 CREATE PROCEDURE [dbo].[usp_UpdateInterviewReportComments](
 		@interviewId int, 
 		@interviewStatus int = null,
-		@interviewerComment varchar(500) = null, 
+		@interviewerComment varchar(MAX) = null, 
 		@audiolink varchar(max) = null,
 		@videolink varchar(max) = null, 
 		@MeetingStatus int = null,			
