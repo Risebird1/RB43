@@ -103,15 +103,15 @@ Begin
 	declare
 	@profileId int = (select id from [Profile] where [Name]='Candidate')
 	
-	Insert into UserList (idProfile, FirstName, EmailId, IsActive) values (@profileId, @candidateName, @candidateEmail, 1)
+	Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber) values (@profileId, @candidateName, @candidateEmail, 1,@textreminder)
 
 	declare 
 	@cndUserId int = (select id from UserList where EmailId=@candidateEmail and idProfile=@profileId)
 
 	Insert into CandidatesMaster (UserId) values(@cndUserId)
 
-	Insert into Candidate (IRFId, ResumeLink, [Location], CandidateMasterId) 
-	values((select id from IRF where IRFId=@IRFId), @resumeLink, @prefferedLocation, 
+	Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId) 
+	values((select id from IRF where IRFId=@IRFId), @resumeLink, @prefferedLocation, @textreminder,
 	(select id from CandidatesMaster  where UserId = @cndUserId))
 	
 End
@@ -132,8 +132,8 @@ Begin
 
 	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @candidateMasterId)
 		Begin
-			Insert into Candidate (IRFId, ResumeLink, [Location], CandidateMasterId) 
-			values((select id from IRF where IRFId=@IRFId), @resumeLink, @prefferedLocation, @candidateMasterId) 			
+			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId) 
+			values((select id from IRF where IRFId=@IRFId), @resumeLink, @prefferedLocation,@textreminder, @candidateMasterId) 			
 		End
 
 End

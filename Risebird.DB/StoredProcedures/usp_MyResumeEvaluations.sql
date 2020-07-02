@@ -16,7 +16,7 @@ AS
 BEGIN
 select IRF.IRFId as IRFName, IRF.JDLink,IRF.IsBiometricEnabled,tre.*,ul.EmailId, tim.id,tim.ResumeEvaluatorEmailId,
 tim.CandidateId,ulc.EmailId as CandidateEmailId, CASE WHEN ulc.LastName is not null THEN ulc.FirstName + ulc.LastName ELSE ul.FirstName END as CandidateName, ca.ResumeLink,
-ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore ,ulc.MobileNumber as Phone, ca.VoiceItUserId 
+ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore ,ca.Phone as Phone, ca.VoiceItUserId 
 from TransResumeEvaluator tre join ResumeEvaluator re on re.id=tre.ResumeEvaluatorId 
 join UserList ul on ul.id = re.UserId join TransHREvaluatorIRF tim on tim.IRFId = tre.IRFId 
 join CandidatesMaster cm on tim.CandidateId = cm.id 

@@ -18,7 +18,7 @@ select qcfr.*,im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewD
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,
-ul.MobileNumber, ca.ResumeLink as resumeLink,
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel, ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,
 ic.IsSelected, ic.MeetingStatus,ic.VideoLink from InterviewMeetings im 
 inner join IRF  irf on im.IRFId=irf.IRFId 

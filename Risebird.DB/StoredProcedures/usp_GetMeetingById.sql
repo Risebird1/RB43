@@ -38,7 +38,7 @@ SELECT [InterviewMeetings].id as imid
 	 ,candidateName
 	 ,joiningTime
 	 ,currentEmployerName
-	 ,ul.MobileNumber
+	 ,ca.Phone as MobileNumber
 	 ,JoiningBiometryScore
 	 ,InterviewBiometryScore
 	 ,InterviewComments.ApprovalComments

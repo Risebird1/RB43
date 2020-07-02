@@ -14,7 +14,7 @@ CREATE PROCEDURE [dbo].[usp_MyHREvaluations]
    @emailID varchar(200)     
 AS
 BEGIN
-select IRF.IRFId as IRFName, IRF.JDLink,thr.*,IRF.IsBiometricEnabled,ul.EmailId, tim.id,tim.HREmailId, tim.CandidateId,ulc.EmailId as CandidateEmailId, CASE WHEN ulc.LastName is not null THEN ulc.FirstName + ulc.LastName ELSE ulc.FirstName END as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore, ulc.MobileNumber as Phone, ca.VoiceItUserId    
+select IRF.IRFId as IRFName, IRF.JDLink,thr.*,IRF.IsBiometricEnabled,ul.EmailId, tim.id,tim.HREmailId, tim.CandidateId,ulc.EmailId as CandidateEmailId, CASE WHEN ulc.LastName is not null THEN ulc.FirstName + ulc.LastName ELSE ulc.FirstName END as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore, ca.Phone as Phone, ca.VoiceItUserId    
 from TransHR thr join HR  on HR.id=thr.HRId 
 join UserList ul on ul.id = HR.UserId join TransHREvaluatorIRF tim on tim.IRFId = thr.IRFId 
 join CandidatesMaster cm on tim.CandidateId = cm.id 
