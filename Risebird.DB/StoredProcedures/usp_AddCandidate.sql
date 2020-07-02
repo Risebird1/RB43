@@ -10,7 +10,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[usp_AddCandidate]
+CREATE PROCEDURE [dbo].[usp_AddCandidate]
 @IRFId int,
 @Name varchar(200),
 @EmailId varchar(200),
@@ -32,7 +32,7 @@ AS
 Begin
 declare
 @ProfileId int = (select id from [Profile] where [Name]='Candidate')
-IF NOT EXISTS (SELECT 1   FROM   CandidatesMaster    WHERE  EmailId = @EmailId)
+IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)
 Begin
 INSERT INTO [dbo].[UserList]
            (
@@ -55,50 +55,16 @@ null,
 null,
 1,
 null,
-null
+@Phone
 )
 
 declare
 @UserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)
 
-insert into CandidatesMaster
-([UserId],
-[Name],
-[EmailId],
-[ResumeLink],
-[Type],
-[Location],
-[Skill],
-[WorkAuth],
-[CurrentLocation],
-[CurrentEmployer],
-[Phone],
-[TotalExperience],
-[CurrentSalary],
-[ExpectedSalary],
-[Notice]
-)
-values(@UserId,
-@Name,
-@EmailId,
-@ResumeLink,
-@Type,
-@Location,
-@Skill,
-@WorkAuth,
-@CurrentLocation,
-@CurrentEmployer,
-@Phone,
-@TotalExperience,
-@CurrentSalary,
-@ExpectedSalary,
-@Notice
+insert into CandidatesMaster ([UserId]) values (@UserId)
 
-)
 insert into Candidate
 ([IRFId],
-[Name],
-[EmailId],
 [ResumeLink],
 [Type],
 [Location],
@@ -111,11 +77,10 @@ insert into Candidate
 [CurrentSalary],
 [ExpectedSalary],
 [Notice],
-[AddedByUserId]
+[AddedByUserId],
+[CandidateMasterId]
 )
 values(@IRFId,
-@Name,
-@EmailId,
 @ResumeLink,
 @Type,
 @Location,
@@ -128,37 +93,30 @@ values(@IRFId,
 @CurrentSalary,
 @ExpectedSalary,
 @Notice,
-@AddedByUserId
+@AddedByUserId,
+(select id from CandidatesMaster where UserId=@UserId)
 )
 
-insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where EmailId=@EmailId))
+insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))
 
 End
 
 Else
 
 Begin
+declare
 
-update CandidatesMaster set 
-ResumeLink=@ResumeLink,
-[Type]=@Type,
-[Location]=@Location,
-Skill=@Skill,
-WorkAuth=@WorkAuth,
-CurrentLocation=@CurrentLocation,
-CurrentEmployer=@CurrentEmployer,
-Phone=@Phone,
-TotalExperience =@TotalExperience,
-CurrentSalary=@CurrentSalary,
-ExpectedSalary=@ExpectedSalary,
-Notice=@Notice
-where EmailId=@EmailId
+@CandidateUserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)
+
+
+IF NOT EXISTS (SELECT 1   FROM   CandidatesMaster    WHERE  UserId = @CandidateUserId)
+Begin
+ insert into CandidatesMaster ([UserId]) values (@CandidateUserId)
+End
 
 
 insert into Candidate
 ([IRFId],
-[Name],
-[EmailId],
 [ResumeLink],
 [Type],
 [Location],
@@ -171,11 +129,10 @@ insert into Candidate
 [CurrentSalary],
 [ExpectedSalary],
 [Notice],
-[AddedByUserId]
+[AddedByUserId],
+[CandidateMasterId]
 )
 values(@IRFId,
-@Name,
-@EmailId,
 @ResumeLink,
 @Type,
 @Location,
@@ -188,15 +145,16 @@ values(@IRFId,
 @CurrentSalary,
 @ExpectedSalary,
 @Notice,
-@AddedByUserId
-
+@AddedByUserId,
+(select id from CandidatesMaster where UserId=@CandidateUserId)
 )
 
-insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where EmailId=@EmailId))
+insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))
 
 End
 
 END
+
 
 GO
 

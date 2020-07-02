@@ -28,12 +28,14 @@ where InterviewId=@interviewId and userId=@Id )  as IsShortlisted,(Select top 1 
 (Select count(*) from tblsharedvideo where userid=@id and VideoId=@interviewId) as shared,(Select Isonline from userlist where EmailId=im.candidateEmail) as IsOnline      
 from InterviewMeetings im                
 inner join IRF on im.IRFId = IRF.IRFId              
-left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId            
-left join CandidatesMaster cm on im.candidateEmail = cm.EmailId
-left join Candidate ca on im.candidateEmail = ca.EmailId and irf.id= ca.IRFId
+left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId     
+left join UserList ulc on im.candidateEmail=ulc.EmailId
+join CandidatesMaster cm on ulc.id = cm.UserId
+join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId
 where im.id = @interviewId          
            
 End 
+
 
 GO
 
