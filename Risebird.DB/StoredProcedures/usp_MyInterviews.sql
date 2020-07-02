@@ -19,10 +19,11 @@ select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,
-ca.Phone as MobileNumber, ca.ResumeLink as resumeLink ,irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel,irf.CompanyDetails, ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingStatus,ic.VideoLink, cm.id as CandidateMasterId from InterviewMeetings im   
+ul.MobileNumber, ca.ResumeLink as resumeLink ,irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel,irf.CompanyDetails, ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingStatus,ic.VideoLink, cm.id as CandidateMasterId from InterviewMeetings im   
 inner join IRF  irf on im.IRFId=irf.IRFId left join InterviewComments ic on im.id = ic.InterviewId    
-left join  CandidatesMaster cm on im.candidateEmail=cm.EmailId
-left join Candidate ca on irf.id=ca.IRFId and im.candidateEmail = ca.EmailId
+left join UserList ul on ul.EmailId = im.candidateEmail
+join  CandidatesMaster cm on ul.id=cm.UserId
+join Candidate ca on irf.id=ca.IRFId and cm.id = ca.CandidateMasterId
 where interviewer =@emailID and confirmationStatus = 1          
       
 END   

@@ -19,13 +19,17 @@ CREATE PROCEDURE [dbo].[usp_GetCandidateAudios]
 AS
 Begin
 
-select cau.*, ca.[Name] as CandidateName, ca.VoiceItUserId, irf.IRFId as IRFName
-  from CandidateAudio cau join CandidatesMaster cm on cau.CandidateId= cm.id join Candidate ca on cm.EmailId = ca.EmailId join irf on irf.id=cau.IRFId
-  where cau.CandidateId =@CandidateId and ca.IRFId =@IRFId
-  group by cau.id, cau.IRFId, cau.CandidateId,cau.UploadedByUserId, cau.PhraseDetail, cau.IsVoiceBiometric, cau.AudioFileLink,
-  cau.[Description], cau.IsEnrolled, cau.EnrollmentMessage,ca.[Name], ca.VoiceItUserId, irf.IRFId
+select cau.*, CASE WHEN ul.LastName is not null THEN ul.FirstName + ' ' + ul.LastName ELSE ul.FirstName END as CandidateName, ca.VoiceItUserId, irf.IRFId as IRFName
+from CandidateAudio cau join CandidatesMaster cm on cau.CandidateId= cm.id 
+join Candidate ca on cm.id = ca.CandidateMasterId  
+join UserList ul on cm.UserId = ul.id
+join irf on irf.id=cau.IRFId
+where cau.CandidateId =@CandidateId and ca.IRFId =@IRFId
+group by cau.id, cau.IRFId, cau.CandidateId,cau.UploadedByUserId, cau.PhraseDetail, cau.IsVoiceBiometric, cau.AudioFileLink,
+cau.[Description], cau.IsEnrolled, cau.EnrollmentMessage, ul.FirstName, ul.LastName, ca.VoiceItUserId, irf.IRFId
 
 End
+
 
 GO
 

@@ -14,14 +14,14 @@ CREATE PROCEDURE [dbo].[usp_MyHREvaluations]
    @emailID varchar(200)     
 AS
 BEGIN
-select IRF.IRFId as IRFName, IRF.JDLink,thr.*,IRF.IsBiometricEnabled,ul.EmailId, tim.id,tim.HREmailId, tim.CandidateId,cm.EmailId as CandidateEmailId, ca.[Name] as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore, ca.Phone, ca.VoiceItUserId    
+select IRF.IRFId as IRFName, IRF.JDLink,thr.*,IRF.IsBiometricEnabled,ul.EmailId, tim.id,tim.HREmailId, tim.CandidateId,ulc.EmailId as CandidateEmailId, CASE WHEN ulc.LastName is not null THEN ulc.FirstName + ulc.LastName ELSE ulc.FirstName END as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore, ulc.MobileNumber as Phone, ca.VoiceItUserId    
 from TransHR thr join HR  on HR.id=thr.HRId 
 join UserList ul on ul.id = HR.UserId join TransHREvaluatorIRF tim on tim.IRFId = thr.IRFId 
 join CandidatesMaster cm on tim.CandidateId = cm.id 
-join Candidate ca on thr.IRFId = ca.IRFId and ca.EmailId = cm.EmailId 
-join IRF 
+join Candidate ca on thr.IRFId = ca.IRFId and ca.CandidateMasterId = cm.id 
+join IRF on thr.IRFId =IRF.id
 join UserList ul2 on irf.RisebirdHr=ul2.id
-on thr.IRFId =IRF.id
+join UserList ulc on ulc.id = cm.UserId
 where ul.EmailId=@emailID and tim.HREmailId = @emailID
 END
 GO
