@@ -336,3 +336,7 @@ __pycache__/
 ## TealiumCSharp specifics
 tealiumcsharp/*/bin
 tealiumcsharp/*/obj
+/Risebird.Web/wwwroot/js/plugins/morris1/morris.min.js
+/Risebird.Web/wwwroot/js/plugins/morris1/raphael-min.js
+/Risebird.Web/wwwroot/js/plugins/dashboard-new.js
+/Risebird.Web/wwwroot/js/plugins/jquery/jquery_old.min.js
