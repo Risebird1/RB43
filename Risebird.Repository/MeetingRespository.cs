@@ -2050,6 +2050,76 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<IEnumerable<Meeting>> GetHROpenInterviews()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_HROpenInterviews",
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public string HRAssignYourself(int meetingid, string hrMailId)
+        {
+            try
+            {
+                var query = "update [dbo].[InterviewMeetings] set HRCoordinatorEmailId=@hrMailId where id = @meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@hrMailId", hrMailId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    return "Interview assigned successfully.";
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview!";
+            }
+
+        }
+
+        public async Task<IEnumerable<Meeting>> GetHRAssignedInterviews(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyHRInterviews", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
 
     }
 }
