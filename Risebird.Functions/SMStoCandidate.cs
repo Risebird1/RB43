@@ -22,7 +22,7 @@ namespace Risebird.Functions
             {      
                 var candidates = new List<SMSCandidate>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-                var query = "select IRF.IRFId,IRF.EndDate,IRF.JDTiltle,IRF.ClientName, Candidate.EmailId, Candidate.Phone from Candidate join IRF on Candidate.IRFId= IRF.id where Candidate.TotalInvites!=0";
+                var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client, ul.EmailId, Candidate.Phone, Candidate.InviteDate from Candidate join CandidatesMaster cm on Candidate.CandidateMasterId=cm.id join UserList ul on cm.UserId = ul.id join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0 and IRF.IsPaused!= 1";
                 //var dynamicParameters = new DynamicParameters();
                 //dynamicParameters.Add("@timeL", DateTime.Now);
                 //dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(35));
@@ -42,7 +42,7 @@ namespace Risebird.Functions
                         if(candidate.EndDate<DateTime.Now)
                         {
                             int checkScheduleCount=0;
-                            var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId and confirmationStatus!=2";
+                            var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId and confirmationStatus!=2 and interviewDate > dateadd(dd,-3,getdate())";
                             var dynamicParameters = new DynamicParameters();
                             dynamicParameters.Add("@IRFId", candidate.IRFId);
                             dynamicParameters.Add("@EmailId", candidate.EmailId);
