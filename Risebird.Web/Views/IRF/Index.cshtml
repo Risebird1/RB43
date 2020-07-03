@@ -245,7 +245,9 @@
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                             <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                         </button>
-
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
+                                                            <span onclick="javascript:CandidateCuratedScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41" /></svg></span>
+                                                        </button>
 
 
 
@@ -926,6 +928,11 @@
                         function EditIRF(id) {
 
                             var url = '/IRF/EditIRF?id=' + id;
+                            window.location.href = url;
+                        };
+                        function CandidateCuratedScore(id) {
+
+                            var url = '/IRF/CandidateCuratedScore?id=' + id;
                             window.location.href = url;
                         };
                         function stats(id, IRFid) {

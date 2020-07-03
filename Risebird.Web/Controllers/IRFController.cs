@@ -3595,7 +3595,7 @@ namespace Risebird.Web.Controllers
                 CandidateCuratedScoreVM model = new CandidateCuratedScoreVM();
                 var result = _irfService.GetCandidateCuratedScore(Convert.ToInt32(id));
                 model.CandidateCuratedScores = result;
-                model.IRFId = id;
+                model.IRFId = Convert.ToInt32(id);
                 return View(model);
             }
             else
@@ -3610,7 +3610,8 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                return null;
+                 _irfService.AddCandidateCuratedScore(model.IRFId,model.CandidateCuratedScores.ToList());
+                return RedirectToAction("Index", "IRF");
             }
             else
             {

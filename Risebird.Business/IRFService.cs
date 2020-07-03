@@ -308,11 +308,11 @@ namespace Risebird.Business
             }
         }
 
-        public bool AddCandidateCuratedScore(List<CandidateCuratedScore> candidateCuratedScore)
+        public bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
         {
             try
             {
-                return _irfRepository.AddCandidateCuratedScore(candidateCuratedScore);
+                return _irfRepository.AddCandidateCuratedScore(IrfId,candidateCuratedScore);
             }
 
             catch (Exception e)

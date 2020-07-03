@@ -32,10 +32,11 @@ left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
 left join UserList ul on ul.EmailId = im.candidateEmail
 join CandidatesMaster cm on cm.UserId = ul.id    
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
+join CandidateCuratedScore ccs on ul.EmailId= ccs.CandidateEmailId
 left join QCFeedbackReport QCF on im.id=QCF.InterviewId    
 inner join client cl on IRF.ClientID=cl.id    
 inner join Subscribers su on IRF.id=su.IRFId 
-where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and su.Userid=@id    
+where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and su.Userid=@id  and ccs.CuratedEmailId=@Emailid and ccs.Score>=30
 END    
 else    
  BEGIN      

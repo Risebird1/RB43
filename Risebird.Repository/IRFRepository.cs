@@ -1977,7 +1977,7 @@ namespace Risebird.Repository
 
         }
 
-        public bool AddCandidateCuratedScore(List<CandidateCuratedScore> candidateCuratedScore)
+        public bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
         {
             try
             {
@@ -1986,7 +1986,7 @@ namespace Risebird.Repository
                     string sqlDeletePrevious = "Delete from CandidateCuratedScore where IRFId =@IRFId;";
                     var deletedRows = con.Execute(sqlDeletePrevious, new
                     {
-                        IRFId = candidateCuratedScore?.FirstOrDefault().IRFId,
+                        IRFId = IrfId,
 
                     });
 
@@ -1996,7 +1996,7 @@ namespace Risebird.Repository
                         string sqlCuratedCandidate = "INSERT INTO CandidateCuratedScore (IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
                         var affectedRows = con.Execute(sqlCuratedCandidate, new
                         {
-                            IRFId = item.IRFId,
+                            IRFId = IrfId,
                             CandidateEmailId = item.CandidateEmailId,
                             CuratedEmailId = item.CuratedEmailId,
                             Score = item.Score

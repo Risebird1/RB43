@@ -8,6 +8,6 @@ namespace Risebird.Entities.ViewModel
     {
         public IList<CandidateCuratedScore> CandidateCuratedScores { get; set; }
         public string Message { get; set; }
-        public string IRFId { get; set; }
+        public int IRFId { get; set; }
     }
 }
