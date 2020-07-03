@@ -1312,6 +1312,37 @@ namespace Risebird.Business
             }
         }
 
+        public string HRAssignYourself(int meetingid, string hrMailId)
+        {
+            try
+            {
+                return _meetingRespository.HRAssignYourself(meetingid, hrMailId);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview!";
+            }
+
+        }
+
+        public IEnumerable<Meeting> GetHRAssignedInterviews(string emailID)
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.GetHRAssignedInterviews(emailID).Result.OrderByDescending(x => x.interviewDate);
+
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+
     }
 
 }

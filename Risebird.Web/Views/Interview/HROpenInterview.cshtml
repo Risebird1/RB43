@@ -79,6 +79,9 @@
                                                 <th>Candidate Name</th>
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
+                                                <th>ClientHR</th>
+                                                <th>Interviewer</th>
+                                                <th>Quality Controller</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                             </tr>
                                         </thead>
@@ -90,6 +93,9 @@
                                                 <th>Candidate Name</th>
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
+                                                <th>ClientHR</th>
+                                                <th>Interviewer</th>
+                                                <th>Quality Controller</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                             </tr>
                                         </tfoot>
@@ -100,7 +106,7 @@
                                                     <td> @item.interviewDate </td>
                                                     <td> @item.interviewSlot </td>
                                                     <td> @item.interviewDuration </td>
-                                                    <td> @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")</td>
+                                                    <td> @item.candidateName</td>
                                                     @if (item.resumeLink != null && item.resumeLink != "")
                                                     {
                                                         <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -118,9 +124,11 @@
                                                         <td>No JD</td>
                                                     }
 
-                                                    <td> @item.risebirdHR</td>
+                                                    <td> @item.ClientHrContact</td>
+                                                    <td> @item.interviewer</td>
+                                                    <td> @item.QCInterviewer</td>
                                                     <td class="text-right four">
-                                                        <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateName})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("HRAssignYourself", "Interview", new { id = item.id, InterviewDate=item.interviewDate})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                                     </td>
                                                 </tr>
                                             }
@@ -170,7 +178,7 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        window.location.href = '/Interview/OpenInterview';
+                        window.location.href = '/Interview/HROpenInterview';
                     }
                 )
 
@@ -185,7 +193,7 @@
                 },
                     function ()
                     {
-                        window.location.href = '/Interview/OpenInterview';
+                        window.location.href = '/Interview/HROpenInterview';
                     }
                 )
             }
@@ -208,6 +216,7 @@
                 [10, 25, 50, "All"]
             ],
             responsive: true,
+            order:[],
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
