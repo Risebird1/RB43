@@ -208,7 +208,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SelectabilityComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var query = "select SelectabilityComments from Candidate join CandidatesMaster cm on cm.id= Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId  where IRFId= @IRFId and Ul.EmailId=@EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@EmailId", emailId);
@@ -229,7 +229,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select JoinabilityComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var query = "select JoinabilityComments from Candidate join CandidatesMaster cm on cm.id= Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId  where IRFId= @IRFId and Ul.EmailId=@EmailId";
+               
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@EmailId", emailId);
@@ -249,8 +250,8 @@ namespace Risebird.Repository
         public string GetTechComments(int irfId, string emailId)
         {
             try
-            {
-                var query = "select TechSkillComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+            {                
+                var query = "select TechSkillComments from Candidate join CandidatesMaster cm on cm.id= Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId  where IRFId= @IRFId and Ul.EmailId=@EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@EmailId", emailId);
@@ -270,7 +271,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SkillGeneralComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var query = "select SkillGeneralComments from Candidate join CandidatesMaster cm on cm.id= Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId  where IRFId= @IRFId and Ul.EmailId=@EmailId";
+                
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@EmailId", emailId);
@@ -445,10 +447,10 @@ namespace Risebird.Repository
                     }
                     
                     
-                    var query = "Update Candidate set SelectabilityComments = @SelectabilityComments, SelectabilityScore =@SelectabilityScore, TechSkillComments = @TechSkillComments, TechSkillScore=@TechSkillScore, SkillGeneralComments=@SkillGeneralComments, SkillGeneralScore=@SkillGeneralScore where IRFId =@IRFId and EmailId=@EmailId ";
+                    var query = "Update Candidate set SelectabilityComments = @SelectabilityComments, SelectabilityScore =@SelectabilityScore, TechSkillComments = @TechSkillComments, TechSkillScore=@TechSkillScore, SkillGeneralComments=@SkillGeneralComments, SkillGeneralScore=@SkillGeneralScore where IRFId =@IRFId and id=@CandidateId ";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
-                    dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId);
+                    dynamicParameters.Add("@CandidateId", reportDetails.CandidateId);
                     dynamicParameters.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     dynamicParameters.Add("@SelectabilityScore", reportDetails.SelectabilityScore);
                     dynamicParameters.Add("@TechSkillComments", reportDetails.TechSkillComments);
@@ -604,10 +606,10 @@ namespace Risebird.Repository
                     }
                    
                     
-                    var query = "Update Candidate set JoinabilityComments = @JoinabilityComments, JoinabilityScore = @JoinabilityScore where IRFId =@IRFId and EmailId=@EmailId";
+                    var query = "Update Candidate set JoinabilityComments = @JoinabilityComments, JoinabilityScore = @JoinabilityScore where IRFId =@IRFId and id = @CandidateId";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
-                    dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId);
+                    dynamicParameters.Add("@CandidateId", reportDetails.CandidateId);
                     dynamicParameters.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
                     dynamicParameters.Add("@JoinabilityScore", reportDetails.JoinabilityScore);
 
@@ -825,7 +827,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select cm.id as CandidateId,cm.[Name] as CandidateName,IRF.IRFId as IRFName, IRF.id as IRFId from CandidatesMaster cm join Candidate ca on cm.EmailId=ca.EmailId join IRF on ca.IRFId=IRF.id where cm.id = @id and IRF.id=@IRFId";
+                var query = "select cm.id as CandidateId,ul.FirstName as CandidateName,IRF.IRFId as IRFName, IRF.id as IRFId from CandidatesMaster cm join Candidate ca on cm.id=ca.CandidateMasterId join IRF on ca.IRFId=IRF.id join UserList ul on ul.id=cm.UserId where cm.id = @id and IRF.id=@IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@id", id);

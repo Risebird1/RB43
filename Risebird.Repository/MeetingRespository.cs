@@ -1553,7 +1553,7 @@ namespace Risebird.Repository
             int result = 0;
             try
             {
-                var query = "select cm.id from InterviewMeetings im join CandidatesMaster cm on im.candidateEmail = cm.EmailId where im.IRFId = @irfName and im.id =@id";
+                var query = "select cm.id from InterviewMeetings im join UserList ul on im.candidateEmail = ul.EmailId join CandidatesMaster cm on cm.UserId=ul.id where im.IRFId = @irfName and im.id =@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 dynamicParameters.Add("@irfName", irfName);
