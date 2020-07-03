@@ -1977,7 +1977,48 @@ namespace Risebird.Repository
 
         }
 
+        public bool AddCandidateCuratedScore(List<CandidateCuratedScore> candidateCuratedScore)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlDeletePrevious = "Delete from CandidateCuratedScore where IRFId =@IRFId;";
+                    var deletedRows = con.Execute(sqlDeletePrevious, new
+                    {
+                        IRFId = candidateCuratedScore?.FirstOrDefault().IRFId,
 
+                    });
+
+                    foreach (var item in candidateCuratedScore)
+                    {
+
+                        string sqlCuratedCandidate = "INSERT INTO CandidateCuratedScore (IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
+                        var affectedRows = con.Execute(sqlCuratedCandidate, new
+                        {
+                            IRFId = item.IRFId,
+                            CandidateEmailId = item.CandidateEmailId,
+                            CuratedEmailId = item.CuratedEmailId,
+                            Score = item.Score
+
+                        });
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public bool AddSkillComments(TechSkillComments obj)
         {
             try
