@@ -68,6 +68,7 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteInterview(int imid);
         bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink);
         Task<string> Broadcast(BroadcastModel model);
+        IEnumerable<Meeting> GetHROpenInterviews();
 
     }
 }

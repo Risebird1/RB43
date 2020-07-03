@@ -5890,6 +5890,57 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        #region HR
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> HROpenInterview()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var meetings = _meetingService.GetHROpenInterviews();
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                        var list = new SelectList(new[]
+                                                {
+                                                    new { ID = "Today", Name = "Today"},
+                                                    new { ID = "Tomorrow", Name = "Tomorrow"  },
+                                                    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+                                                    new { ID = "All", Name = "All"},
+                                                },
+                                                "ID", "Name", "All");
+                        ViewData["list"] = list;
+                        if (TempData["SuccessErrorMessageHR"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageHR"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                        }
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        #endregion
     }
 
 }

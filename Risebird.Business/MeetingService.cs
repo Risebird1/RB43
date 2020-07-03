@@ -1298,6 +1298,20 @@ namespace Risebird.Business
 
         }
 
+        public IEnumerable<Meeting> GetHROpenInterviews()
+        {
+            try
+            {
+                var openMeeting = _meetingRespository.GetHROpenInterviews().Result.OrderByDescending(x => x.interviewDate);
+                return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 
 }
