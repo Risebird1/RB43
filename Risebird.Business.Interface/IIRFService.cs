@@ -59,5 +59,6 @@ namespace Risebird.Business.Interface
         IEnumerable<Interviewer> GetInterviewersForIRF(string skillNames);
         IEnumerable<Users> GetAllHRs();
         bool AddCandidateCuratedScore(List<CandidateCuratedScore> candidateCuratedScore);
+        IList<CandidateCuratedScore> GetCandidateCuratedScore(int id);
     }
 }

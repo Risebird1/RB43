@@ -93,5 +93,6 @@ namespace Risebird.Repository.Interface
         //bool UpdatePausedMeetingstoPlay(string meetingIds);
         //bool DeletePlayedMeetings(string meetingIds);
         bool AddCandidateCuratedScore(List<CandidateCuratedScore> candidateCuratedScore);
+        IEnumerable<CandidateCuratedScore> GetCandidateCuratedScore(int id);
     }
 }

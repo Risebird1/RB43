@@ -1,7 +1,7 @@
-﻿@model Risebird.Entities.ViewModel.TechSkillComments
+﻿@model Risebird.Entities.ViewModel.CandidateCuratedScoreVM
 
 @{
-    ViewData["Title"] = "Sample Questions";
+    ViewData["Title"] = "Candidate Curated Score";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -29,7 +29,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
-                   &nbsp;<a class="navbar-brand">Sample Questions</a>
+                   &nbsp;<a class="navbar-brand">Candidate Curated Score</a>
             </div>
 
         </div>
@@ -62,7 +62,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @if (Model.SkillCollection.Count() == 0)
+                                                @if (Model.CandidateCuratedScores.Count() == 0)
                                                 {
                                                 <tr>
                                                     <td>
@@ -96,13 +96,13 @@
                                                 }
                                                 else
                                                 {
-                                                    for (int i = 0; i < Model.SkillCollection.Count(); i++)
+                                                    for (int i = 0; i < Model.CandidateCuratedScores.Count(); i++)
                                                     {
                                                 <tr>
                                                     <td>
 
                                                         <div class="text-areadiv">
-                                                            @Html.EditorFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                            @Html.EditorFor(m => m.CandidateCuratedScores[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                                         </div>
                                                     </td>
 
@@ -155,7 +155,7 @@
                             </div>
 
 
-                            @Html.HiddenFor(m => m.IRFId)
+                            @Html.Hidden(Model.FirstOrDefault().IRFId)
                         </form>
 
                     </div>
@@ -294,10 +294,7 @@
                     {
                         //if Yes do this
                         window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
-                        //location.reload(true);
-
-                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        
                     }
                 )
 
@@ -313,9 +310,7 @@
                     function ()
                     {
                         window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
-                        //location.reload(true);
-                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                       
                     }
                 )
             }

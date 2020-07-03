@@ -2083,6 +2083,26 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<CandidateCuratedScore> GetCandidateCuratedScore(int id)
+        {
+            try
+            {
+                var query = "Select * from CandidateCuratedScore where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CandidateCuratedScore>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
         public async Task<bool> DeleteIRF(int IRFId)
         {

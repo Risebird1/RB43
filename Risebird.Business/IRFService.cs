@@ -505,6 +505,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IList<CandidateCuratedScore> GetCandidateCuratedScore(int id)
+        {
+            try
+            {
+                var result = (IList<CandidateCuratedScore>)_irfRepository.GetCandidateCuratedScore(id);
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
 
         public List<string> GetListOfInterviwerBasedOnIRFId(string irfId)

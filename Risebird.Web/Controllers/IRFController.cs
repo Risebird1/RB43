@@ -3587,17 +3587,13 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
-        public IActionResult Sample(string id)
+        public IActionResult CandidateCuratedScore(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {
-                TechSkillComments model = new TechSkillComments();
-                var result = _irfService.GetTechSkillComments(Convert.ToInt16(id));
-                //if (result.Count() > 0)
-                model.SkillCollection = result;
-                model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
-                model.IRFId = Convert.ToInt16(id);
-                return View(model);
+            {               
+                var result = _irfService.GetCandidateCuratedScore(Convert.ToInt32(id));
+                               
+                return View(result);
             }
             else
             {
