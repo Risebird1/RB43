@@ -3590,9 +3590,10 @@ namespace Risebird.Web.Controllers
         public IActionResult CandidateCuratedScore(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {               
+            {
+                CandidateCuratedScoreVM model = new CandidateCuratedScoreVM();
                 var result = _irfService.GetCandidateCuratedScore(Convert.ToInt32(id));
-                               
+                model.CandidateCuratedScores = result?.ToList();
                 return View(result);
             }
             else
