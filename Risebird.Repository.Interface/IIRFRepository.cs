@@ -92,5 +92,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<Users> GetAllHRs();
         //bool UpdatePausedMeetingstoPlay(string meetingIds);
         //bool DeletePlayedMeetings(string meetingIds);
+        bool AddCandidateCuratedScore(List<CandidateCuratedScore> candidateCuratedScore);
     }
 }

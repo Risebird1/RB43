@@ -308,6 +308,20 @@ namespace Risebird.Business
             }
         }
 
+        public bool AddCandidateCuratedScore(List<CandidateCuratedScore> candidateCuratedScore)
+        {
+            try
+            {
+                return _irfRepository.AddCandidateCuratedScore(candidateCuratedScore);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<bool> DeleteIRF(int id)
         {
             try
