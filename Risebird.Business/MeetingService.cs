@@ -1342,6 +1342,19 @@ namespace Risebird.Business
             }
         }
 
+        public bool HRUnassignYourself(int meetingid)
+        {
+            try
+            {
+                return _meetingRespository.HRUnassignYourself(meetingid);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
 
     }
 
