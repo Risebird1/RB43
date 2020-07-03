@@ -255,6 +255,16 @@ body {
     transition: all 200ms ease;
     z-index:1000;
 }
+.label-num {
+    background: #ccc;
+    width: 20px;
+    border-radius: 100%;
+    padding: 6px;
+    display: inline-table;
+    font-size: 12px;
+    line-height: 20px;
+    color: #423f3f;
+}
 .hour {
     font-family: Roboto, sans-serif;
 }
