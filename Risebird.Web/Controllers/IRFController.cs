@@ -3585,5 +3585,24 @@ namespace Risebird.Web.Controllers
 
         }
 
+
+        [Authorize]
+        public IActionResult Sample(string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                TechSkillComments model = new TechSkillComments();
+                var result = _irfService.GetTechSkillComments(Convert.ToInt16(id));
+                //if (result.Count() > 0)
+                model.SkillCollection = result;
+                model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
+                model.IRFId = Convert.ToInt16(id);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }
