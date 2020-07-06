@@ -185,6 +185,7 @@ namespace Risebird.Entities.ViewModel
         public string FeedbackAudioLink { get; set; }
         public string AadharFileLink { get; set; }
         public bool IsAdmin { get; set; }
+        public int Score { get; set; }
 
     }
     public class VedioComments

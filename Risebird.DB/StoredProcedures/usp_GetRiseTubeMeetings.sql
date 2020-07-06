@@ -16,25 +16,39 @@ AS
 Begin    
 if @clientid = 0
  BEGIN  
-select im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview
+select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
+im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
+im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, 
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, 
+IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview
 from InterviewMeetings im    
 inner join IRF on im.IRFId = IRF.IRFId  
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
-left join CandidatesMaster cm on im.candidateEmail = cm.EmailId
+left join UserList ul on ul.EmailId = im.candidateEmail
+join CandidatesMaster cm on ul.id = cm.UserId
+join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
 left join QCFeedbackReport QCF on im.id=QCF.InterviewId
 inner join client cl on IRF.ClientID=cl.id
 where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null
 END
 else
  BEGIN  
-select im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,QCF.InterviewId as QCInterview
+select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
+im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
+im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, 
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, 
+IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,QCF.InterviewId as QCInterview
 from InterviewMeetings im  
 inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
-inner join CandidatesMaster cm on im.candidateEmail = cm.EmailId
+inner join UserList ulc on ulc.EmailId = im.candidateEmail
+inner join CandidatesMaster cm on ulc.id = cm.UserId
 inner join QCFeedbackReport QCF on im.id=QCF.InterviewId
 inner join IRF on im.IRFId = IRF.IRFId    
 inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id
 inner join dbo.UserList ul on ul.id = tc.ClientUserId
+inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
 where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1
 END
    

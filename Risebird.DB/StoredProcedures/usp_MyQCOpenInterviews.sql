@@ -20,11 +20,13 @@ im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtC
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 irf.id as irfIntId, irf.JDLink from InterviewMeetings im
-inner join IRF irf on im.IRFId=irf.IRFId left join InterviewComments ic on ic.InterviewId= im.id
-left join Candidate ca on irf.id=ca.IRFId and im.candidateEmail = ca.EmailId
+inner join IRF irf on im.IRFId=irf.IRFId 
+left join InterviewComments ic on ic.InterviewId= im.id
+left join UserList ul on ul.EmailId  = im.candidateEmail
+join CandidatesMaster cm on cm.UserId = ul.id
+join Candidate ca on irf.id=ca.IRFId and cm.id = ca.CandidateMasterId
 where IRF.id in (select IRFId from TransQualityController tqc join UserList ul on tqc.UserId= ul.id where EmailId = @emailID)
 and im.confirmationStatus=1 and ic.MeetingStatus=4 and (ic.InterviewStatus=2 or ic.InterviewStatus=4) and im.interviewer!=@emailID
-
 
 END
 GO

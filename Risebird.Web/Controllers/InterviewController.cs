@@ -515,7 +515,7 @@ namespace Risebird.Web.Controllers
                         var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus ==1);
                         if (filter.StartDate == null && filter.EndDate == null)
                         {
-                            meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                         }
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         //ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct().ToList();
@@ -2554,7 +2554,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
                             if (filter.StartDate == null && filter.EndDate == null)
                             {
-                                meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
+                                meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             }
                         }
                         else
@@ -2607,18 +2607,7 @@ namespace Risebird.Web.Controllers
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
                         }
-                        //                        var list = new SelectList(new[]
-                        //{
-                        //    new { ID = "All", Name = "All"},
-                        //    new { ID = "Today", Name = "Today"},
-                        //    new { ID = "Tomorrow", Name = "Tomorrow"  },
-                        //    new { ID = "Yesterday", Name = "Yesterday"  },
-                        //    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-
-                        //},
-                        //"ID", "Name", "All");
-
-                        //                        ViewData["list"] = list;
+                       
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
@@ -2748,7 +2737,7 @@ namespace Risebird.Web.Controllers
                         var meetings = _meetingService.GetClientMeetingList(emailid);
                         if (filter.StartDate == null && filter.EndDate == null)
                         {
-                            meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                         }
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -3045,7 +3034,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
                             if (filter.StartDate == null && filter.EndDate == null)
                             {
-                                meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
+                                meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             }
                         }
                         else
@@ -3705,7 +3694,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        [EnableCors("AllowOrigin")]
+       
         public IActionResult AddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false)
         {
             try
@@ -5901,6 +5890,155 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        #region HR
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> HROpenInterview()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = "HR" ;//profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var meetings = _meetingService.GetHROpenInterviews();
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                        var list = new SelectList(new[]
+                                                {
+                                                    new { ID = "Today", Name = "Today"},
+                                                    new { ID = "Tomorrow", Name = "Tomorrow"  },
+                                                    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+                                                    new { ID = "All", Name = "All"},
+                                                },
+                                                "ID", "Name", "All");
+                        ViewData["list"] = list;
+                        if (TempData["SuccessErrorMessageHR"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageHR"].ToString();
+                            TempData.Remove("SuccessErrorMessageHR");
+                        }
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        public async Task<IActionResult> HRAssignYourself(int id, string InterviewDate)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = "HR";//HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = "prasad_srinivas@risebird.io";// HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var result = _meetingService.HRAssignYourself(id, emailid.ToLower());
+                        TempData["SuccessErrorMessageHR"] = result;
+                        ViewBag.Message = result;
+                        return RedirectToAction("HROpenInterview");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("HROpenInterview");
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> HRMyInterview()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        foreach (var item in myInterview)
+                        {
+                            if (!string.IsNullOrEmpty(item.resumeLink))
+                            {
+                                try
+                                {
+                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    item.resumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.resumeLink = "";
+                            }
+
+                        }
+                        if (TempData["SuccessErrorMessageHR"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageHR"].ToString();
+                            TempData.Remove("SuccessErrorMessageHR");
+                        }
+                        return View(myInterview);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        #endregion
     }
 
 }

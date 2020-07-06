@@ -33,29 +33,12 @@ CREATE PROCEDURE [dbo].[usp_UpdateCandidate]
 AS
 Begin
 declare
-@EmailIdOld varchar(200) = (select EmailId from Candidate where id=@id)
+@CandidateUserId int = (select ul.id from Candidate ca join CandidatesMaster cm on cm.id = ca.CandidateMasterId 
+join UserList ul on ul.id =cm.UserId where ca.id=@id)
 
-
-update CandidatesMaster set 
-[Name]=@Name,
-[EmailId] =@EmailId,
-ResumeLink=@ResumeLink,
-[Type]=@Type,
-[Location]=@Location,
-Skill=@Skill,
-WorkAuth=@WorkAuth,
-CurrentLocation=@CurrentLocation,
-CurrentEmployer=@CurrentEmployer,
-Phone=@Phone,
-TotalExperience =@TotalExperience,
-CurrentSalary=@CurrentSalary,
-ExpectedSalary=@ExpectedSalary,
-Notice=@Notice
-where EmailId=@EmailIdOld
+update UserList set EmailId = @EmailId, FirstName=@Name, MobileNumber =@Phone where id = @CandidateUserId
 
 update Candidate set 
-[Name]=@Name,
-[EmailId] =@EmailId,
 ResumeLink=@ResumeLink,
 [Type]=@Type,
 [Location]=@Location,
@@ -68,9 +51,10 @@ TotalExperience =@TotalExperience,
 CurrentSalary=@CurrentSalary,
 ExpectedSalary=@ExpectedSalary,
 Notice=@Notice
-where EmailId=@EmailIdOld
+where id=@id
 
 End
+
 
 GO
 

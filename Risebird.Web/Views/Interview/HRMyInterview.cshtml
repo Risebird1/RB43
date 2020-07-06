@@ -1,0 +1,864 @@
+﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using System.Text.RegularExpressions
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "My Interviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] InterviewSlot = new string[] { };
+    string[] CandidateName = new string[] { };
+    string[] RisebirdHR = new string[] { };
+    string[] InterviewDate = new string[] { };
+    string[] JobLevel = new string[] { };
+    //string[] InterviewDuration = new string[] { };
+}
+
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content ">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                <div class="row">
+
+
+                                    <div class="card-header">
+                                        <div class="pull-left"> <h4 class="card-title">My Interviews</h4></div>
+
+                                        <div class="pull-right">
+                                            <div>
+
+
+                                                @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+
+                                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                    <div class="mdc-button__ripple"></div>
+                                                </button>*@
+
+
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                    <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="HRMyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
+                                                </button>
+                                                @*<i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;margin-left:3px;margin-top:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>*@
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                </div>
+
+
+
+                            </div>
+                            
+                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                <div id="tableID" class="second">
+                                    <table id="MyInterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Slot</th>
+                                                <th>Duration</th>
+                                                <th>Candidate Name</th>
+                                                <th>Candidate Email</th>
+                                                <th>Resume</th>
+                                                <th>JD Link</th>
+                                                <th>Interviewer</th>
+                                                <th>ClientHR</th>
+                                                <th>Quality Controller</th>
+                                                <th class="disabled-sorting text-right">Actions</th>
+                                                <th style="text-align:center">Call Interviewer</th>
+                                                <th style="text-align:center">Call Candidate</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Slot</th>
+                                                <th>Duration</th>
+                                                <th>Candidate Name</th>
+                                                <th>Candidate Email</th>
+                                                <th>Resume</th>
+                                                <th>JD Link</th>
+                                                <th>Interviewer</th>
+                                                <th>ClientHR</th>
+                                                <th>Quality Controller</th>
+                                                <th class="disabled-sorting text-right">Actions</th>
+                                                <th style="text-align:center">Call Interviewer</th>
+                                                <th style="text-align:center">Call Candidate</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+
+
+                                            @foreach (var item in Model)
+                                            {
+                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                                <tr id=@item.id>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.interviewSlot </td>
+                                                    <td> @item.interviewDuration </td>
+                                                    <td> @item.JobLevelDesc </td>
+                                                    @if (item.IsOnilne == 1)
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.candidateEmail')"> @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")   <span class="dot" style="background-color:green"></span></a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick="">@Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")<span class="dot"></span></a>
+                                                        </td>
+                                                    }
+                                                    <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
+
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    @if (item.JDLink != null && item.JDLink != "")
+                                                    {
+                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No JD</td>
+                                                    }
+                                                    @if (item.CompanyDetails != null && item.CompanyDetails != "")
+                                                    {
+                                                        <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Company Instructions</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Company Instructions</td>
+                                                    }
+
+                                                    <td> @item.risebirdHR</td>
+                                                    <td>@item.MeetingStatusDesc</td>
+                                                    <td>@item.InterviewStatusDesc</td>
+                                                    <td class="text-right">
+                                                        @if (item.interviewDate.Date >= DateTime.Now.Date)
+                                                        {
+
+
+
+
+
+                                                            <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
+                                                                <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="UnAssigned Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                            </button>
+                                                        }
+
+                                                        <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
+                                                            <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
+                                                            <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
+                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                        </button>
+
+
+                                                    </td>
+                                                    <td class="callcandidatebtn">
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                        {
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
+                                                                <span onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                            </button>
+
+
+                                                        }
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+            <div id="myModal" class="modal modal-bg">
+                <!-- Modal content -->
+
+                <div class="modal-bg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Call Candidate!</h5>
+                            <span class="close" id="callPopUp">&times;</span>
+                        </div>
+                        <div class="modal-body" style="padding: 2px 16px;">
+                            <div class="row">
+                                <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+
+                            </div>
+
+                            <div class="">
+                                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+            <!-- end row -->
+        </div>
+
+    </div>
+</div>
+
+
+
+<script>
+    var interviewUnassignedMinutes;
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetInterviewUnassignedMinutes",
+            success: function (data) {
+                interviewUnassignedMinutes = data;
+            }
+        });
+
+
+        $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+        $("#InterviewSlot").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $("#CandidateName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $("#RisebirdHR").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $("#InterviewDate").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#JobLevel").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $('#MyInterviewList').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") { $("#x").hide(); }
+                    else { $("#x").show(); }
+                });
+            }
+
+        });
+        var table = $('#MyInterviewList').DataTable();
+    });
+
+    $(document).ready(function () {
+
+        $('#dataTables_filter').keyup(function () {
+            oTable.fnFilter($(this).val());
+        });
+
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+
+    });
+    function ResetFilter() {
+
+             $.ajax({
+            type: "POST",
+            url: "/Interview/MyInterview",
+                 success: function (data) {
+                    window.location.href = "/Interview/ResetMyInterviewFilter";
+                 }
+                });
+    }
+        function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var InterviewSlot = @Html.Raw(Json.Serialize(InterviewSlot));
+            var CandidateName =  @Html.Raw(Json.Serialize(CandidateName));
+            var RisebirdHR =  @Html.Raw(Json.Serialize(RisebirdHR));
+            var InterviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
+            var JobLevel =  @Html.Raw(Json.Serialize(JobLevel));
+            @*//var InterviewDuration =  @Html.Raw(Json.Serialize(InterviewDuration));*@
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#InterviewSlot").val(InterviewSlot);
+            $("#CandidateName").val(CandidateName);
+            $("#RisebirdHR").val(RisebirdHR);
+            $("#InterviewDate").val(InterviewDate);
+            $("#JobLevel").val(JobLevel);
+            //$("#InterviewDuration").val(InterviewDuration);
+            var form = $("#form").serialize();
+             $.ajax({
+            type: "POST",
+            url: "/Interview/MyInterview",
+            data: form,
+                 success: function (data) {
+                 }
+                });
+    }
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#MyInterviewList").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#MyInterviewList").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#MyInterviewList").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+
+    function ModalButtonClick(candidateObj) {
+        candidate = candidateObj.candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(candidateObj.MobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+
+
+
+<script type="text/javascript">
+
+
+    function CheckTimeDifference(meetingId, interviewDate) {
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetTimeDifference",
+            data: { 'interviewDate': interviewDate, 'interviewUnassignedMinutes': interviewUnassignedMinutes },
+            success: function (response) {
+                UnAssignInterviewer(meetingId, response)
+            }
+        });
+    }
+    function UnAssignInterviewer(meetingId, isPenalty) {
+
+        var textMsg;
+        if (isPenalty) {
+            textMsg = "Unassigning at this hour will lead to a penalty. Note: Update Risebird HR, before unassigning interview."
+        }
+        else {
+            textMsg = "The Interview will be unassigned! Note: Update Risebird HR, before unassigning interview.";
+        }
+
+
+        //var IdIRF = dataID;
+        swal.fire({
+            title: 'Are you sure?',
+            text: textMsg,
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Unassign Me!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    //var IdIRF = dataID;
+                    $.ajax({
+                        url: '/Interview/UnassignYourself?id=' + meetingId + '&isPenalty=' + isPenalty,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error unassigning!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Unassigned!',
+                    type: 'success',
+                    html: '<p>You have been unassigned.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/Interview/MyInterview";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Your were not unassigned.',
+                    'error'
+                )
+            }
+        })
+    }
+
+</script>
+
+<script>
+    function checkStartDate(val) {
+
+        if (val == "") {
+            document.getElementById("startDateCheck").style.display = "none";
+            document.getElementById("startDateCheck").innerHTML = "";
+            document.getElementById("submitFilter").disabled = false;
+            return;
+        }
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var StartDate = new Date(year, month, date);
+
+        var endDateValue = document.getElementById("EndDate").value;
+        var yearEnd = endDateValue.substring(0, 4);
+        var monthEnd = parseInt(endDateValue.substring(5, 7)) - 1;
+        var dateEnd = endDateValue.substring(8, 10);
+        var EndDate = new Date(yearEnd, monthEnd, dateEnd);
+
+
+        if (StartDate > EndDate) {
+            document.getElementById("submitFilter").disabled = true;
+            document.getElementById("startDateCheck").style.display = "block";
+            document.getElementById("startDateCheck").innerHTML = "Start Date should be less than or equal to End Date";
+            document.getElementById("StartDate").focus();
+            return;
+        }
+        else {
+            document.getElementById("startDateCheck").style.display = "none";
+            document.getElementById("startDateCheck").innerHTML = "";
+            document.getElementById("submitFilter").disabled = false;
+
+        }
+        //if (document.getElementById("EndDate").value != "") {
+        //    checkEndDate(document.getElementById("EndDate").value);
+        //}
+
+    }
+
+    function checkEndDate(val) {
+
+        if (val == "") {
+            document.getElementById("endDateCheck").style.display = "none";
+            document.getElementById("endDateCheck").innerHTML = "";
+            document.getElementById("submitFilter").disabled = false;
+            return;
+        }
+        var startDateValue = document.getElementById("StartDate").value;
+        if (startDateValue == null || startDateValue == "") {
+            return;
+        }
+
+        //end Date object creation
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var endDate = new Date(year, month, date);
+
+        //start Date object creation
+
+        //if (startDateValue == "") {
+        //    document.getElementById("endDateCheck").style.display = "block";
+        //    document.getElementById("endDateCheck").innerHTML = "Kindly fill the Start Date field.";
+        //    document.getElementById("StartDate").focus();
+        //    return;
+        //}
+        var yearStart = startDateValue.substring(0, 4);
+        var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
+        var dateStart = startDateValue.substring(8, 10);
+        var startDate = new Date(yearStart, monthStart, dateStart);
+
+
+        if (endDate <= startDate) {
+            document.getElementById("submitFilter").disabled = true;
+            document.getElementById("endDateCheck").style.display = "block";
+            document.getElementById("endDateCheck").innerHTML = "End Date should be greater than Start Date";
+            document.getElementById("EndDate").focus();
+            return;
+        }
+        else {
+            document.getElementById("endDateCheck").style.display = "none";
+            document.getElementById("endDateCheck").innerHTML = "";
+            document.getElementById("submitFilter").disabled = false;
+            return;
+        }
+
+    }
+</script>
+<script>
+    function FilterInterviews(filterValue) {
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetFilteredMyInterviews",
+            data: { 'filterValue': filterValue },
+            success: function (data) {
+                if (data == '' && filterValue == 'seven') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for the next seven days.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '' && filterValue == 'all') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for ' + filterValue + '.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                $('#tableID').css("margin-left", "");
+                $('#tableID').html('');
+                $('#tableID').html(data);
+
+                $('#MyInterviewList').DataTable({
+                    "pagingType": "full_numbers",
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search records",
+                    }
+
+                });
+                var table = $('#MyInterviewList').DataTable();
+
+
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.includes("Success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+                    //allowOutsideClick: true,
+                    //confirmButtonText: "Ok",
+                    //closeOnConfirm: true
+
+                    //confirmButtonText: 'Ok',
+                    //allowOutsideClick: true
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/Interview/MyInterview';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+                    //allowOutsideClick: true,
+                    //confirmButtonText: "Ok",
+                    //closeOnConfirm: true
+
+                    //confirmButtonText: 'Ok',
+                    //allowOutsideClick: true
+                },
+                    function ()
+                    {
+                        window.location.href = '/Interview/MyInterview';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+        var openInterview = localStorage.getItem('openinterview');
+
+        if (openInterview == "true") {
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Your assigned interviews and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+                {
+                    'next .first': 'Filter here based on available attributes or reset filter if applied earlier',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .second': 'Interview Details, scroll right or expand first column to see action buttons',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .unassignIntr': 'Click here to Unassign interview incase you will not able to take interview in case of emergency only',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .sampleQues': 'Click here to fill questions discussed during interview and each questions need to be filled in seperate row based on its skill',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+                {
+                    'next .voicebiobtn': 'Click here to upload voice biometric audio sample of candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .feedbackreportbtn': 'Click here to open and fill candidate interview feedback report, Upload Video, Interviewer Comment, Questions, Tech Skill Report and General Skill report. All these section are mandatory',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .callcandidatebtn': 'Click here to call candidate incase it is require',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .iqcomenu': 'Click on Open QC Interviews menu to see its features',
+
+                }
+
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 5000)
+        }
+        else {
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'click .inoi': 'Click here to navigate to Open Interview menu to see its features then return back to this menu again',
+
+                }
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 10000)
+
+        }
+
+    </script>
+}
+
+
+
+
+<!-- PAGE CONTENT WRAPPER -->

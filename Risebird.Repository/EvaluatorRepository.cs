@@ -189,7 +189,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select * from CandidatesMaster where id = @id";
+                var query = "select cm.id, CASE WHEN ul.LastName is not null THEN ul.FirstName + ' ' + ul.LastName ELSE ul.FirstName END as [Name], ca.ResumeLink, ul.EmailId, ca.CurrentEmployer, ca.[Location] from CandidatesMaster cm join UserList ul on ul.id = cm.UserId join Candidate ca on ca.CandidateMasterId = cm.id  where cm.id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -208,7 +208,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SelectabilityComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var query = "select SelectabilityComments from Candidate join CandidatesMaster cm on cm.id= Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId  where IRFId= @IRFId and Ul.EmailId=@EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@EmailId", emailId);
@@ -229,7 +229,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select JoinabilityComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var query = "select JoinabilityComments from Candidate join CandidatesMaster cm on cm.id= Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId  where IRFId= @IRFId and Ul.EmailId=@EmailId";
+               
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@EmailId", emailId);
@@ -246,14 +247,14 @@ namespace Risebird.Repository
             }
         }
 
-        public string GetTechComments(int irfId, string emailId)
+        public string GetTechComments(int irfId, int candidateId)
         {
             try
             {
-                var query = "select TechSkillComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var query = "select TechSkillComments from Candidate where IRFId= @IRFId and CandidateMasterId = @candidateId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
-                dynamicParameters.Add("@EmailId", emailId);
+                dynamicParameters.Add("@candidateId", candidateId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<string>(query, dynamicParameters);
@@ -266,14 +267,15 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public string GetGeneralSkillComments(int irfId, string emailId)
+        public string GetGeneralSkillComments(int irfId, int candidateId)
         {
             try
             {
-                var query = "select SkillGeneralComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var query = "select SkillGeneralComments from Candidate where IRFId= @IRFId and CandidateMasterId = @candidateId";
+                
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
-                dynamicParameters.Add("@EmailId", emailId);
+                dynamicParameters.Add("@candidateId", candidateId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<string>(query, dynamicParameters);
@@ -415,29 +417,40 @@ namespace Risebird.Repository
                             IRFId = reportDetails.IRFId
                         });
 
+                        DataTable selectabilityReportDt = new DataTable();
+                        selectabilityReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        selectabilityReportDt.Columns.Add("Type", typeof(string));
+                        selectabilityReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        selectabilityReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        selectabilityReportDt.Columns.Add("WeightageActual", typeof(int));
+                        selectabilityReportDt.Columns.Add("Value", typeof(string));
+                        selectabilityReportDt.Columns.Add("CandidateId", typeof(int));
+                        selectabilityReportDt.Columns.Add("IRFId", typeof(int));
+
+
                         foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
                         {
-                            string sqlReport = "INSERT INTO SelectabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
-                            var result4 = con.Execute(sqlReport, new
-                            {
-                                CandidateId = reportDetails.CandidateId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value = item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual,
-                                IRFId = reportDetails.IRFId
-                            });
+                            selectabilityReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value, reportDetails.CandidateId, reportDetails.IRFId);
                         }
+
+                        SqlCommand cmdselectabilityReport = new SqlCommand("usp_SelectabilityReportBulkInsert", con);
+                        cmdselectabilityReport.CommandType = CommandType.StoredProcedure;
+                        cmdselectabilityReport.Parameters.Add(new SqlParameter("@SelectabilityReportBulkData", SqlDbType.Structured));
+                        cmdselectabilityReport.Parameters["@SelectabilityReportBulkData"].Value = selectabilityReportDt;
+                        con.Open();
+                        if (cmdselectabilityReport.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+
                         result = true;
                     }
                     
                     
-                    var query = "Update Candidate set SelectabilityComments = @SelectabilityComments, SelectabilityScore =@SelectabilityScore, TechSkillComments = @TechSkillComments, TechSkillScore=@TechSkillScore, SkillGeneralComments=@SkillGeneralComments, SkillGeneralScore=@SkillGeneralScore where IRFId =@IRFId and EmailId=@EmailId ";
+                    var query = "Update Candidate set SelectabilityComments = @SelectabilityComments, SelectabilityScore =@SelectabilityScore, TechSkillComments = @TechSkillComments, TechSkillScore=@TechSkillScore, SkillGeneralComments=@SkillGeneralComments, SkillGeneralScore=@SkillGeneralScore where IRFId = @IRFId and CandidateMasterId = @CandidateId";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
-                    dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId);
+                    dynamicParameters.Add("@CandidateId", reportDetails.CandidateId);
                     dynamicParameters.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     dynamicParameters.Add("@SelectabilityScore", reportDetails.SelectabilityScore);
                     dynamicParameters.Add("@TechSkillComments", reportDetails.TechSkillComments);
@@ -563,29 +576,40 @@ namespace Risebird.Repository
                             IRFId = reportDetails.IRFId
                         });
 
+                        DataTable joinabilityReportDt = new DataTable();
+                        joinabilityReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        joinabilityReportDt.Columns.Add("Type", typeof(string));
+                        joinabilityReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        joinabilityReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        joinabilityReportDt.Columns.Add("WeightageActual", typeof(int));
+                        joinabilityReportDt.Columns.Add("Value", typeof(string));
+                        joinabilityReportDt.Columns.Add("CandidateId", typeof(int));
+                        joinabilityReportDt.Columns.Add("IRFId", typeof(int));
+
+
                         foreach (var item in reportDetails.JoinabilityHRReportCollection)
                         {
-                            string sqlReport = "INSERT INTO JoinabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
-                            var result4 = con.Execute(sqlReport, new
-                            {
-                                CandidateId = reportDetails.CandidateId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value = item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual,
-                                IRFId = reportDetails.IRFId
-                            });
+                            joinabilityReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value, reportDetails.CandidateId, reportDetails.IRFId);
                         }
+
+                        SqlCommand cmdjoinabilityReport = new SqlCommand("usp_JoinabilityReportBulkInsert", con);
+                        cmdjoinabilityReport.CommandType = CommandType.StoredProcedure;
+                        cmdjoinabilityReport.Parameters.Add(new SqlParameter("@JoinabilityReportBulkData", SqlDbType.Structured));
+                        cmdjoinabilityReport.Parameters["@JoinabilityReportBulkData"].Value = joinabilityReportDt;
+                        con.Open();
+                        if (cmdjoinabilityReport.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+
                         result = true;
                     }
                    
                     
-                    var query = "Update Candidate set JoinabilityComments = @JoinabilityComments, JoinabilityScore = @JoinabilityScore where IRFId =@IRFId and EmailId=@EmailId";
+                    var query = "Update Candidate set JoinabilityComments = @JoinabilityComments, JoinabilityScore = @JoinabilityScore where IRFId = @IRFId and CandidateMasterId = @CandidateId";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
-                    dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId);
+                    dynamicParameters.Add("@CandidateId", reportDetails.CandidateId);
                     dynamicParameters.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
                     dynamicParameters.Add("@JoinabilityScore", reportDetails.JoinabilityScore);
 
@@ -633,21 +657,32 @@ namespace Risebird.Repository
                             CandidateId = candidateId,
                             IRFId = irfId
                         });
+                        
+                        DataTable techReportDt = new DataTable();
+                        techReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        techReportDt.Columns.Add("SkillId", typeof(int));
+                        techReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        techReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        techReportDt.Columns.Add("WeightageActual", typeof(int));
+                        techReportDt.Columns.Add("CandidateId", typeof(int));
+                        techReportDt.Columns.Add("IRFId", typeof(int));
+
 
                         foreach (var item in reportDetails)
                         {
-                            string sqlTechReport = "INSERT INTO TechSkillEvaluatorReport (RequiredLevelId ,SkillId, ActualLevelId, WeightageRequired,WeightageActual, CandidateId, IRFId) Values (@RequiredLevelId, @SkillId, @ActualLevelId, @WeightageRequired, @WeightageActual, @CandidateId, @IRFId);";
-                            var result1 = con.Execute(sqlTechReport, new
-                            {
-                                CandidateId = candidateId,
-                                IRFId = irfId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                SkillId = item.SkillId,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            });
+                            techReportDt.Rows.Add(item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, candidateId, irfId);
                         }
+
+                        SqlCommand cmdtechReport = new SqlCommand("usp_TechSkillEvaluatorReportBulkInsert", con);
+                        cmdtechReport.CommandType = CommandType.StoredProcedure;
+                        cmdtechReport.Parameters.Add(new SqlParameter("@TechSkillEvaluatorReportBulkData", SqlDbType.Structured));
+                        cmdtechReport.Parameters["@TechSkillEvaluatorReportBulkData"].Value = techReportDt;
+                        con.Open();
+                        if (cmdtechReport.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+
                         result = true;
                     }
 
@@ -687,20 +722,31 @@ namespace Risebird.Repository
                             IRFId = irfId
                         });
 
+                        
+                        DataTable skillGeneralReportDt = new DataTable();
+                        skillGeneralReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                        skillGeneralReportDt.Columns.Add("Type", typeof(string));
+                        skillGeneralReportDt.Columns.Add("ActualLevelId", typeof(int));
+                        skillGeneralReportDt.Columns.Add("WeightageRequired", typeof(int));
+                        skillGeneralReportDt.Columns.Add("WeightageActual", typeof(int));
+                        skillGeneralReportDt.Columns.Add("Value", typeof(string));
+                        skillGeneralReportDt.Columns.Add("CandidateId", typeof(int));
+                        skillGeneralReportDt.Columns.Add("IRFId", typeof(int));
+
+
                         foreach (var item in reportDetails)
                         {
-                            string sqlTechReport = "INSERT INTO SkillGeneralEvaluatorReport (RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, CandidateId, IRFId) Values (@RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @CandidateId, @IRFId);";
-                            var result1 = con.Execute(sqlTechReport, new
-                            {
-                                CandidateId = candidateId,
-                                IRFId = irfId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value = item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            });
+                            skillGeneralReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value,candidateId, irfId);
+                        }
+
+                        SqlCommand cmdskillGeneralReport = new SqlCommand("usp_SkillGeneralEvaluatorReportBulkInsert", con);
+                        cmdskillGeneralReport.CommandType = CommandType.StoredProcedure;
+                        cmdskillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralEvaluatorReportBulkData", SqlDbType.Structured));
+                        cmdskillGeneralReport.Parameters["@SkillGeneralEvaluatorReportBulkData"].Value = skillGeneralReportDt;
+                        con.Open();
+                        if (cmdskillGeneralReport.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
                         }
                         result = true;
                     }
@@ -781,7 +827,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select cm.id as CandidateId,cm.[Name] as CandidateName,IRF.IRFId as IRFName, IRF.id as IRFId from CandidatesMaster cm join Candidate ca on cm.EmailId=ca.EmailId join IRF on ca.IRFId=IRF.id where cm.id = @id and IRF.id=@IRFId";
+                var query = "select cm.id as CandidateId,ul.FirstName as CandidateName,IRF.IRFId as IRFName, IRF.id as IRFId from CandidatesMaster cm join Candidate ca on cm.id=ca.CandidateMasterId join IRF on ca.IRFId=IRF.id join UserList ul on ul.id=cm.UserId where cm.id = @id and IRF.id=@IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@id", id);

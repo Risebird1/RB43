@@ -385,7 +385,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select re.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from ResumeEvaluator re join UserList ul on re.UserId=ul.id";
+                var query = "select re.UserId, ul.EmailId from ResumeEvaluator re join UserList ul on re.UserId=ul.id";
                 //var dynamicParameters = new DynamicParameters();
                 //dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -444,7 +444,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select HR.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from HR join UserList ul on HR.UserId=ul.id";
+                var query = "select HR.UserId, ul.EmailId from HR join UserList ul on HR.UserId=ul.id";
                 //var dynamicParameters = new DynamicParameters();
                 //dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -634,6 +634,172 @@ namespace Risebird.Repository
             return null;
         }
 
+        //public async Task<bool> AddIRFDetails(IRFVm irfDetails)
+        //{
+        //    try
+        //    {
+
+        //        DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
+        //        parameters.Add("@CreatedOn", irfDetails.CreatedOn);
+        //        //parameters.Add("@id", irfDetails.id);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            await SqlMapper.QueryAsync<int>(con, "usp_AddIRFDetails", parameters,
+        //               commandType: CommandType.StoredProcedure);
+
+        //            var irfList = SqlMapper.QueryAsync<IRFVm>(
+        //                con, "select * from IRF orderby ", null, commandType: Text).Result.AsList();
+        //            var irfID = irfList.Where(x => x.IRFId == irfDetails.IRFId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+
+        //            foreach (var item in irfDetails.Joinability)
+        //            {
+        //                string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+        //                var affectedRows = con.ExecuteAsync(sqlJoinability, new
+        //                {
+        //                    IRFId = irfID,
+        //                    LevelId = item.LevelId,
+        //                    Type = item.Type,
+        //                    Value = item.Value,
+        //                    Weightage = item.Weightage
+        //                }).Result;
+        //            }
+
+        //            foreach (var item in irfDetails.Selectability)
+        //            {
+        //                string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+        //                var affectedRows = con.ExecuteAsync(sqlSelectability, new
+        //                {
+        //                    IRFId = irfID,
+        //                    LevelId = item.LevelId,
+        //                    Type = item.Type,
+        //                    Value = item.Value,
+        //                    Weightage = item.Weightage
+        //                }).Result;
+        //            }
+
+
+        //            //update general skill table
+        //            foreach (var item in irfDetails.SkillGeneral)
+        //            {
+
+        //                string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+        //                var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
+        //                {
+        //                    IRFId = irfID,
+        //                    LevelId = item.LevelId,
+        //                    Type = item.Type,
+        //                    Value = item.Value,
+        //                    Weightage = item.Weightage
+        //                }).Result;
+        //            }
+
+        //            //update tech skill table
+        //            foreach (var item in irfDetails.SkillCollection)
+        //            {
+
+        //                string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
+        //                var affectedRows = con.Execute(sqlSkillTech, new
+        //                {
+        //                    IRFId = irfID,
+        //                    LevelId = item.LevelId,
+        //                    SkillId = item.SkillId,
+        //                    Weightage = item.Weightage
+        //                });
+        //            }
+
+        //            //update trans interviewer table
+        //            foreach (var item in irfDetails.InterviewerCollection)
+        //            {
+        //                DynamicParameters param = new DynamicParameters();
+        //                param.Add("@irfIntId", irfID);
+        //                param.Add("@InterviewerUserId", item.UserId);
+        //                var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
+        //                        commandType: CommandType.StoredProcedure);
+
+        //            }
+        //            //update trans emergency interviewer table
+        //            foreach (var item in irfDetails.EmergencyInterviewerCollection)
+        //            {
+        //                DynamicParameters param = new DynamicParameters();
+        //                param.Add("@irfIntId", irfID);
+        //                param.Add("@InterviewerUserId", item.UserId);
+        //                var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransEmergencyInterviewer", param,
+        //                        commandType: CommandType.StoredProcedure);
+
+        //            }
+        //            //update trans Client table
+
+        //            foreach (var item in irfDetails.ClientCollection)
+        //            {
+        //                DynamicParameters param1 = new DynamicParameters();
+        //                param1.Add("@irfIntId", irfID);
+        //                param1.Add("@ClientUserId", item.ClientUserId);
+        //                //param1.Add("@ClientRoleId", item.ClientRoleId);
+        //                var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
+        //                        commandType: CommandType.StoredProcedure);
+
+        //            }
+
+        //            //update trans QC table
+
+        //            foreach (var item in irfDetails.QualityController)
+        //            {
+        //                DynamicParameters param2 = new DynamicParameters();
+        //                param2.Add("@irfIntId", irfID);
+        //                param2.Add("@InterviewerUserId", item.UserId);
+        //                var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
+        //                        commandType: CommandType.StoredProcedure);
+
+        //            }
+
+        //            foreach (var item in irfDetails.ResumeEvaluatorCollection)
+        //            {
+        //                DynamicParameters param2 = new DynamicParameters();
+        //                param2.Add("@irfId", irfID);
+        //                param2.Add("@ResumeEvaluatorUserId", item.UserId);
+        //                var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransResumeEvaluator", param2,
+        //                        commandType: CommandType.StoredProcedure);
+
+        //            }
+
+        //            foreach (var item in irfDetails.HRCollection)
+        //            {
+        //                DynamicParameters param2 = new DynamicParameters();
+        //                param2.Add("@irfId", irfID);
+        //                param2.Add("@HRUserId", item.UserId);
+        //                var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransHR", param2,
+        //                        commandType: CommandType.StoredProcedure);
+
+        //            }
+        //            foreach (var item in irfDetails.RecruiterCollection)
+        //            {
+        //                DynamicParameters param2 = new DynamicParameters();
+        //                param2.Add("@IRFId", irfID);
+        //                param2.Add("@UserId", item.UserId);
+        //                var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransRecruiter", param2,
+        //                        commandType: CommandType.StoredProcedure);
+
+        //            }
+
+
+        //            return true;
+        //        }
+
+        //    }
+
+        //    catch (SqlException e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+
         public async Task<bool> AddIRFDetails(IRFVm irfDetails)
         {
             try
@@ -641,7 +807,6 @@ namespace Risebird.Repository
 
                 DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
                 parameters.Add("@CreatedOn", irfDetails.CreatedOn);
-                //parameters.Add("@id", irfDetails.id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddIRFDetails", parameters,
@@ -651,136 +816,246 @@ namespace Risebird.Repository
                         con, "select * from IRF orderby ", null, commandType: Text).Result.AsList();
                     var irfID = irfList.Where(x => x.IRFId == irfDetails.IRFId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
 
+                    
+                    DataTable joinabilityDt = new DataTable();
+                    joinabilityDt.Columns.Add("IRFId", typeof(int));
+                    joinabilityDt.Columns.Add("LevelId", typeof(int));
+                    joinabilityDt.Columns.Add("Type", typeof(string));
+                    joinabilityDt.Columns.Add("Value", typeof(string));
+                    joinabilityDt.Columns.Add("Weightage", typeof(int));
+
+
                     foreach (var item in irfDetails.Joinability)
                     {
-                        string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                        var affectedRows = con.ExecuteAsync(sqlJoinability, new
-                        {
-                            IRFId = irfID,
-                            LevelId = item.LevelId,
-                            Type = item.Type,
-                            Value = item.Value,
-                            Weightage = item.Weightage
-                        }).Result;
+                        joinabilityDt.Rows.Add(irfID, item.LevelId, item.Type, item.Value, item.Weightage);
                     }
+
+                    SqlCommand cmdJoinability = new SqlCommand("usp_JoinabilityBulkInsert", con);
+                    cmdJoinability.CommandType = CommandType.StoredProcedure;
+                    cmdJoinability.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
+                    cmdJoinability.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
+                    con.Open();
+                    if (cmdJoinability.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    
+                    DataTable selectabilityDt = new DataTable();
+                    selectabilityDt.Columns.Add("IRFId", typeof(int));
+                    selectabilityDt.Columns.Add("LevelId", typeof(int));
+                    selectabilityDt.Columns.Add("Type", typeof(string));
+                    selectabilityDt.Columns.Add("Value", typeof(string));
+                    selectabilityDt.Columns.Add("Weightage", typeof(int));
+
 
                     foreach (var item in irfDetails.Selectability)
                     {
-                        string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                        var affectedRows = con.ExecuteAsync(sqlSelectability, new
-                        {
-                            IRFId = irfID,
-                            LevelId = item.LevelId,
-                            Type = item.Type,
-                            Value = item.Value,
-                            Weightage = item.Weightage
-                        }).Result;
+                        selectabilityDt.Rows.Add(irfID, item.LevelId, item.Type, item.Value, item.Weightage);
+                    }
+
+                    SqlCommand cmdSelectability = new SqlCommand("usp_SelectabilityBulkInsert", con);
+                    cmdSelectability.CommandType = CommandType.StoredProcedure;
+                    cmdSelectability.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
+                    cmdSelectability.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
+                    con.Open();
+                    if (cmdSelectability.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
                     }
 
 
                     //update general skill table
+                    
+                    DataTable skillGeneralDt = new DataTable();
+                    skillGeneralDt.Columns.Add("IRFId", typeof(int));
+                    skillGeneralDt.Columns.Add("LevelId", typeof(int));
+                    skillGeneralDt.Columns.Add("Type", typeof(string));
+                    skillGeneralDt.Columns.Add("Value", typeof(string));
+                    skillGeneralDt.Columns.Add("Weightage", typeof(int));
+
+
                     foreach (var item in irfDetails.SkillGeneral)
                     {
+                        skillGeneralDt.Rows.Add(irfID, item.LevelId, item.Type, item.Value, item.Weightage);
+                    }
 
-                        string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                        var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
-                        {
-                            IRFId = irfID,
-                            LevelId = item.LevelId,
-                            Type = item.Type,
-                            Value = item.Value,
-                            Weightage = item.Weightage
-                        }).Result;
+                    SqlCommand cmdSkillGeneral = new SqlCommand("usp_SkillGeneralBulkInsert", con);
+                    cmdSkillGeneral.CommandType = CommandType.StoredProcedure;
+                    cmdSkillGeneral.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
+                    cmdSkillGeneral.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
+                    con.Open();
+                    if (cmdSkillGeneral.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
                     }
 
                     //update tech skill table
+
+                    DataTable techSkillDt = new DataTable();
+                    techSkillDt.Columns.Add("IRFId", typeof(int));
+                    techSkillDt.Columns.Add("LevelId", typeof(int));
+                    techSkillDt.Columns.Add("SkillId", typeof(int));
+                    techSkillDt.Columns.Add("Weightage", typeof(int));
+
+
                     foreach (var item in irfDetails.SkillCollection)
                     {
-
-                        string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
-                        var affectedRows = con.Execute(sqlSkillTech, new
-                        {
-                            IRFId = irfID,
-                            LevelId = item.LevelId,
-                            SkillId = item.SkillId,
-                            Weightage = item.Weightage
-                        });
+                        techSkillDt.Rows.Add(irfID, item.LevelId, item.SkillId, item.Weightage);
                     }
+
+                    SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
+                    cmdTechSkill.CommandType = CommandType.StoredProcedure;
+                    cmdTechSkill.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                    cmdTechSkill.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                    con.Open();
+                    if (cmdTechSkill.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
 
                     //update trans interviewer table
+
+                    DataTable interviewerDt = new DataTable();
+                    interviewerDt.Columns.Add("IRFId", typeof(int));
+                    interviewerDt.Columns.Add("UserId", typeof(int));
+
                     foreach (var item in irfDetails.InterviewerCollection)
                     {
-                        DynamicParameters param = new DynamicParameters();
-                        param.Add("@irfIntId", irfID);
-                        param.Add("@InterviewerUserId", item.UserId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
-                                commandType: CommandType.StoredProcedure);
-
+                        interviewerDt.Rows.Add(irfID, item.UserId);
                     }
+
+                    SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
+                    cmdInterviewer.CommandType = CommandType.StoredProcedure;
+                    cmdInterviewer.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                    cmdInterviewer.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                    con.Open();
+                    if (cmdInterviewer.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
                     //update trans emergency interviewer table
+
+                    DataTable emergencyInterviewerDt = new DataTable();
+                    emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
+                    emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
+
                     foreach (var item in irfDetails.EmergencyInterviewerCollection)
                     {
-                        DynamicParameters param = new DynamicParameters();
-                        param.Add("@irfIntId", irfID);
-                        param.Add("@InterviewerUserId", item.UserId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransEmergencyInterviewer", param,
-                                commandType: CommandType.StoredProcedure);
-
+                        emergencyInterviewerDt.Rows.Add(irfID, item.UserId);
                     }
+
+                    SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
+                    cmdEmergencyInterviewer.CommandType = CommandType.StoredProcedure;
+                    cmdEmergencyInterviewer.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
+                    cmdEmergencyInterviewer.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
+                    con.Open();
+                    if (cmdEmergencyInterviewer.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
                     //update trans Client table
+
+                    
+                    DataTable clientUserDt = new DataTable();
+                    clientUserDt.Columns.Add("IRFId", typeof(int));
+                    clientUserDt.Columns.Add("ClientUserId", typeof(int));
 
                     foreach (var item in irfDetails.ClientCollection)
                     {
-                        DynamicParameters param1 = new DynamicParameters();
-                        param1.Add("@irfIntId", irfID);
-                        param1.Add("@ClientUserId", item.ClientUserId);
-                        //param1.Add("@ClientRoleId", item.ClientRoleId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
-                                commandType: CommandType.StoredProcedure);
+                        clientUserDt.Rows.Add(irfID, item.ClientUserId);
+                    }
 
+                    SqlCommand cmdClientUser = new SqlCommand("usp_ClientUserBulkInsert", con);
+                    cmdClientUser.CommandType = CommandType.StoredProcedure;
+                    cmdClientUser.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
+                    cmdClientUser.Parameters["@ClientUserBulkData"].Value = clientUserDt;
+                    con.Open();
+                    if (cmdClientUser.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
                     }
 
                     //update trans QC table
+                    
+                    DataTable qualityControllerDt = new DataTable();
+                    qualityControllerDt.Columns.Add("IRFId", typeof(int));
+                    qualityControllerDt.Columns.Add("UserId", typeof(int));
 
                     foreach (var item in irfDetails.QualityController)
                     {
-                        DynamicParameters param2 = new DynamicParameters();
-                        param2.Add("@irfIntId", irfID);
-                        param2.Add("@InterviewerUserId", item.UserId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
-                                commandType: CommandType.StoredProcedure);
-
+                        qualityControllerDt.Rows.Add(irfID, item.UserId);
                     }
+
+                    SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
+                    cmdQualityController.CommandType = CommandType.StoredProcedure;
+                    cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
+                    cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
+                    con.Open();
+                    if (cmdQualityController.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    
+                    DataTable resumeEvaluatorDt = new DataTable();
+                    resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
+                    resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
 
                     foreach (var item in irfDetails.ResumeEvaluatorCollection)
                     {
-                        DynamicParameters param2 = new DynamicParameters();
-                        param2.Add("@irfId", irfID);
-                        param2.Add("@ResumeEvaluatorUserId", item.UserId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransResumeEvaluator", param2,
-                                commandType: CommandType.StoredProcedure);
-
+                        resumeEvaluatorDt.Rows.Add(irfID, item.UserId);
                     }
+
+                    SqlCommand cmdResumeEvaluator = new SqlCommand("usp_ResumeEvaluatorBulkInsert", con);
+                    cmdResumeEvaluator.CommandType = CommandType.StoredProcedure;
+                    cmdResumeEvaluator.Parameters.Add(new SqlParameter("@ResumeEvaluatorBulkData", SqlDbType.Structured));
+                    cmdResumeEvaluator.Parameters["@ResumeEvaluatorBulkData"].Value = resumeEvaluatorDt;
+                    con.Open();
+                    if (cmdResumeEvaluator.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    
+                    DataTable hRDt = new DataTable();
+                    hRDt.Columns.Add("IRFId", typeof(int));
+                    hRDt.Columns.Add("UserId", typeof(int));
 
                     foreach (var item in irfDetails.HRCollection)
                     {
-                        DynamicParameters param2 = new DynamicParameters();
-                        param2.Add("@irfId", irfID);
-                        param2.Add("@HRUserId", item.UserId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransHR", param2,
-                                commandType: CommandType.StoredProcedure);
-
+                        hRDt.Rows.Add(irfID, item.UserId);
                     }
+
+                    SqlCommand cmdHR = new SqlCommand("usp_HRBulkInsert", con);
+                    cmdHR.CommandType = CommandType.StoredProcedure;
+                    cmdHR.Parameters.Add(new SqlParameter("@HRBulkData", SqlDbType.Structured));
+                    cmdHR.Parameters["@HRBulkData"].Value = hRDt;
+                    con.Open();
+                    if (cmdHR.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    DataTable recruiterDt = new DataTable();
+                    recruiterDt.Columns.Add("IRFId", typeof(int));
+                    recruiterDt.Columns.Add("UserId", typeof(int));
+
                     foreach (var item in irfDetails.RecruiterCollection)
                     {
-                        DynamicParameters param2 = new DynamicParameters();
-                        param2.Add("@IRFId", irfID);
-                        param2.Add("@UserId", item.UserId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransRecruiter", param2,
-                                commandType: CommandType.StoredProcedure);
-
+                        recruiterDt.Rows.Add(irfID, item.UserId);
                     }
 
+                    SqlCommand cmdRecruiter = new SqlCommand("usp_RecruiterBulkInsert", con);
+                    cmdRecruiter.CommandType = CommandType.StoredProcedure;
+                    cmdRecruiter.Parameters.Add(new SqlParameter("@RecruiterBulkData", SqlDbType.Structured));
+                    cmdRecruiter.Parameters["@RecruiterBulkData"].Value = recruiterDt;
+                    con.Open();
+                    if (cmdRecruiter.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
 
                     return true;
                 }
@@ -813,176 +1088,388 @@ namespace Risebird.Repository
                        commandType: CommandType.StoredProcedure);
 
 
+                    //if (irfDetails.Joinability != null)
+                    //{
+                    //    foreach (var item in irfDetails.Joinability)
+                    //    {
+                    //        string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                    //        var affectedRows = con.ExecuteAsync(sqlJoinability, new
+                    //        {
+                    //            IRFId = irfDetails.id,
+                    //            LevelId = item.LevelId,
+                    //            Type = item.Type,
+                    //            Value = item.Value,
+                    //            Weightage = item.Weightage
+                    //        }).Result;
+                    //    }
+                    //}
 
-                    if (irfDetails.Joinability != null)
+                    DataTable joinabilityDt = new DataTable();
+                    joinabilityDt.Columns.Add("IRFId", typeof(int));
+                    joinabilityDt.Columns.Add("LevelId", typeof(int));
+                    joinabilityDt.Columns.Add("Type", typeof(string));
+                    joinabilityDt.Columns.Add("Value", typeof(string));
+                    joinabilityDt.Columns.Add("Weightage", typeof(int));
+
+
+                    foreach (var item in irfDetails.Joinability)
                     {
-                        foreach (var item in irfDetails.Joinability)
-                        {
-                            string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                            var affectedRows = con.ExecuteAsync(sqlJoinability, new
-                            {
-                                IRFId = irfDetails.id,
-                                LevelId = item.LevelId,
-                                Type = item.Type,
-                                Value = item.Value,
-                                Weightage = item.Weightage
-                            }).Result;
-                        }
+                        joinabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
                     }
 
-                    if (irfDetails.Selectability != null)
+                    SqlCommand cmdJoinability = new SqlCommand("usp_JoinabilityBulkInsert", con);
+                    cmdJoinability.CommandType = CommandType.StoredProcedure;
+                    cmdJoinability.Parameters.Add(new SqlParameter("@JoinabilityBulkData", SqlDbType.Structured));
+                    cmdJoinability.Parameters["@JoinabilityBulkData"].Value = joinabilityDt;
+                    con.Open();
+                    if (cmdJoinability.ExecuteNonQuery() != 0)
                     {
-                        foreach (var item in irfDetails.Selectability)
-                        {
-                            string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                            var affectedRows = con.ExecuteAsync(sqlSelectability, new
-                            {
-                                IRFId = irfDetails.id,
-                                LevelId = item.LevelId,
-                                Type = item.Type,
-                                Value = item.Value,
-                                Weightage = item.Weightage
-                            }).Result;
-                        }
+                        con.Close();
+                    }
+
+                    
+
+                    DataTable selectabilityDt = new DataTable();
+                    selectabilityDt.Columns.Add("IRFId", typeof(int));
+                    selectabilityDt.Columns.Add("LevelId", typeof(int));
+                    selectabilityDt.Columns.Add("Type", typeof(string));
+                    selectabilityDt.Columns.Add("Value", typeof(string));
+                    selectabilityDt.Columns.Add("Weightage", typeof(int));
+
+
+                    foreach (var item in irfDetails.Selectability)
+                    {
+                        selectabilityDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
+                    }
+
+                    SqlCommand cmdSelectability = new SqlCommand("usp_SelectabilityBulkInsert", con);
+                    cmdSelectability.CommandType = CommandType.StoredProcedure;
+                    cmdSelectability.Parameters.Add(new SqlParameter("@SelectabilityBulkData", SqlDbType.Structured));
+                    cmdSelectability.Parameters["@SelectabilityBulkData"].Value = selectabilityDt;
+                    con.Open();
+                    if (cmdSelectability.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
                     }
                     //update general skill table
 
-                    if (irfDetails.SkillGeneral != null)
-                    {
-                        foreach (var item in irfDetails.SkillGeneral)
-                        {
+                    //if (irfDetails.SkillGeneral != null)
+                    //{
+                    //    foreach (var item in irfDetails.SkillGeneral)
+                    //    {
 
-                            string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                            var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
-                            {
-                                IRFId = irfDetails.id,
-                                LevelId = item.LevelId,
-                                Type = item.Type,
-                                Value = item.Value,
-                                Weightage = item.Weightage
-                            }).Result;
-                        }
+                    //        string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                    //        var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
+                    //        {
+                    //            IRFId = irfDetails.id,
+                    //            LevelId = item.LevelId,
+                    //            Type = item.Type,
+                    //            Value = item.Value,
+                    //            Weightage = item.Weightage
+                    //        }).Result;
+                    //    }
+                    //}
+
+                    DataTable skillGeneralDt = new DataTable();
+                    skillGeneralDt.Columns.Add("IRFId", typeof(int));
+                    skillGeneralDt.Columns.Add("LevelId", typeof(int));
+                    skillGeneralDt.Columns.Add("Type", typeof(string));
+                    skillGeneralDt.Columns.Add("Value", typeof(string));
+                    skillGeneralDt.Columns.Add("Weightage", typeof(int));
+
+
+                    foreach (var item in irfDetails.SkillGeneral)
+                    {
+                        skillGeneralDt.Rows.Add(irfDetails.id, item.LevelId, item.Type, item.Value, item.Weightage);
                     }
 
+                    SqlCommand cmdSkillGeneral = new SqlCommand("usp_SkillGeneralBulkInsert", con);
+                    cmdSkillGeneral.CommandType = CommandType.StoredProcedure;
+                    cmdSkillGeneral.Parameters.Add(new SqlParameter("@SkillGeneralBulkData", SqlDbType.Structured));
+                    cmdSkillGeneral.Parameters["@SkillGeneralBulkData"].Value = skillGeneralDt;
+                    con.Open();
+                    if (cmdSkillGeneral.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
 
 
                     //update tech skill table
-                    if (irfDetails.SkillCollection != null)
-                    {
-                        foreach (var item in irfDetails.SkillCollection)
-                        {
+                    //if (irfDetails.SkillCollection != null)
+                    //{
+                    //    foreach (var item in irfDetails.SkillCollection)
+                    //    {
 
-                            string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
-                            var affectedRows = con.Execute(sqlSkillTech, new
-                            {
-                                IRFId = irfDetails.id,
-                                LevelId = item.LevelId,
-                                SkillId = item.SkillId,
-                                Weightage = item.Weightage
-                            });
-                        }
+                    //        string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
+                    //        var affectedRows = con.Execute(sqlSkillTech, new
+                    //        {
+                    //            IRFId = irfDetails.id,
+                    //            LevelId = item.LevelId,
+                    //            SkillId = item.SkillId,
+                    //            Weightage = item.Weightage
+                    //        });
+                    //    }
+                    //}
+
+                    DataTable techSkillDt = new DataTable();
+                    techSkillDt.Columns.Add("IRFId", typeof(int));
+                    techSkillDt.Columns.Add("LevelId", typeof(int));
+                    techSkillDt.Columns.Add("SkillId", typeof(int));
+                    techSkillDt.Columns.Add("Weightage", typeof(int));
+
+
+                    foreach (var item in irfDetails.SkillCollection)
+                    {
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage);
                     }
 
+                    SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
+                    cmdTechSkill.CommandType = CommandType.StoredProcedure;
+                    cmdTechSkill.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                    cmdTechSkill.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                    con.Open();
+                    if (cmdTechSkill.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
 
 
                     //update trans interviewer table
 
-                    if (irfDetails.InterviewerCollection != null)
-                    {
-                        foreach (var item in irfDetails.InterviewerCollection)
-                        {
-                            DynamicParameters param = new DynamicParameters();
-                            param.Add("@irfIntId", irfDetails.id);
-                            param.Add("@InterviewerUserId", item.UserId);
-                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
-                                    commandType: CommandType.StoredProcedure);
+                    //if (irfDetails.InterviewerCollection != null)
+                    //{
+                    //    foreach (var item in irfDetails.InterviewerCollection)
+                    //    {
+                    //        DynamicParameters param = new DynamicParameters();
+                    //        param.Add("@irfIntId", irfDetails.id);
+                    //        param.Add("@InterviewerUserId", item.UserId);
+                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
+                    //                commandType: CommandType.StoredProcedure);
 
-                        }
+                    //    }
+                    //}
+
+                    DataTable interviewerDt = new DataTable();
+                    interviewerDt.Columns.Add("IRFId", typeof(int));
+                    interviewerDt.Columns.Add("UserId", typeof(int));
+
+                    foreach (var item in irfDetails.InterviewerCollection)
+                    {
+                        interviewerDt.Rows.Add(irfDetails.id, item.UserId);
                     }
 
-                    // update trans emergency interviewers table
-                    if (irfDetails.EmergencyInterviewerCollection != null)
+                    SqlCommand cmdInterviewer = new SqlCommand("usp_InterviewerBulkInsert", con);
+                    cmdInterviewer.CommandType = CommandType.StoredProcedure;
+                    cmdInterviewer.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                    cmdInterviewer.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                    con.Open();
+                    if (cmdInterviewer.ExecuteNonQuery() != 0)
                     {
-                        foreach (var item in irfDetails.EmergencyInterviewerCollection)
-                        {
-                            DynamicParameters param = new DynamicParameters();
-                            param.Add("@irfIntId", irfDetails.id);
-                            param.Add("@InterviewerUserId", item.UserId);
-                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransEmergencyInterviewer", param,
-                                    commandType: CommandType.StoredProcedure);
+                        con.Close();
+                    }
 
-                        }
+                    
+                    // update trans emergency interviewers table
+                    //if (irfDetails.EmergencyInterviewerCollection != null)
+                    //{
+                    //    foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                    //    {
+                    //        DynamicParameters param = new DynamicParameters();
+                    //        param.Add("@irfIntId", irfDetails.id);
+                    //        param.Add("@InterviewerUserId", item.UserId);
+                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransEmergencyInterviewer", param,
+                    //                commandType: CommandType.StoredProcedure);
+
+                    //    }
+                    //}
+
+                    DataTable emergencyInterviewerDt = new DataTable();
+                    emergencyInterviewerDt.Columns.Add("IRFId", typeof(int));
+                    emergencyInterviewerDt.Columns.Add("UserId", typeof(int));
+
+                    foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                    {
+                        emergencyInterviewerDt.Rows.Add(irfDetails.id, item.UserId);
+                    }
+
+                    SqlCommand cmdEmergencyInterviewer = new SqlCommand("usp_EmergencyInterviewerBulkInsert", con);
+                    cmdEmergencyInterviewer.CommandType = CommandType.StoredProcedure;
+                    cmdEmergencyInterviewer.Parameters.Add(new SqlParameter("@EmergencyInterviewerBulkData", SqlDbType.Structured));
+                    cmdEmergencyInterviewer.Parameters["@EmergencyInterviewerBulkData"].Value = emergencyInterviewerDt;
+                    con.Open();
+                    if (cmdEmergencyInterviewer.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
                     }
 
                     //update trans Client table
 
+                    //if (irfDetails.ClientCollection != null)
+                    //{
+                    //    foreach (var item in irfDetails.ClientCollection)
+                    //    {
+                    //        DynamicParameters param1 = new DynamicParameters();
+                    //        param1.Add("@irfIntId", irfDetails.id);
+                    //        param1.Add("@ClientUserId", item.ClientUserId);
+                    //        //param1.Add("@ClientRoleId", item.ClientRoleId);
+                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
+                    //                commandType: CommandType.StoredProcedure);
+
+                    //    }
+                    //}
+
                     if (irfDetails.ClientCollection != null)
                     {
+                        DataTable clientUserDt = new DataTable();
+                        clientUserDt.Columns.Add("IRFId", typeof(int));
+                        clientUserDt.Columns.Add("ClientUserId", typeof(int));
+
                         foreach (var item in irfDetails.ClientCollection)
                         {
-                            DynamicParameters param1 = new DynamicParameters();
-                            param1.Add("@irfIntId", irfDetails.id);
-                            param1.Add("@ClientUserId", item.ClientUserId);
-                            //param1.Add("@ClientRoleId", item.ClientRoleId);
-                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
-                                    commandType: CommandType.StoredProcedure);
+                            clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
+                        }
 
+
+                        SqlCommand cmdClientUser = new SqlCommand("usp_ClientUserBulkInsert", con);
+                        cmdClientUser.CommandType = CommandType.StoredProcedure;
+                        cmdClientUser.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
+                        cmdClientUser.Parameters["@ClientUserBulkData"].Value = clientUserDt;
+                        con.Open();
+                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
                         }
                     }
-
-
+                    
 
                     //update trans QC table
 
-                    if (irfDetails.QualityController != null)
-                    {
-                        foreach (var item in irfDetails.QualityController)
-                        {
-                            DynamicParameters param2 = new DynamicParameters();
-                            param2.Add("@irfIntId", irfDetails.id);
-                            param2.Add("@InterviewerUserId", item.UserId);
-                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
-                                    commandType: CommandType.StoredProcedure);
+                    //if (irfDetails.QualityController != null)
+                    //{
+                    //    foreach (var item in irfDetails.QualityController)
+                    //    {
+                    //        DynamicParameters param2 = new DynamicParameters();
+                    //        param2.Add("@irfIntId", irfDetails.id);
+                    //        param2.Add("@InterviewerUserId", item.UserId);
+                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
+                    //                commandType: CommandType.StoredProcedure);
 
-                        }
+                    //    }
+                    //}
+
+                    DataTable qualityControllerDt = new DataTable();
+                    qualityControllerDt.Columns.Add("IRFId", typeof(int));
+                    qualityControllerDt.Columns.Add("UserId", typeof(int));
+
+                    foreach (var item in irfDetails.QualityController)
+                    {
+                        qualityControllerDt.Rows.Add(irfDetails.id, item.UserId);
                     }
 
-                    if (irfDetails.ResumeEvaluatorCollection != null)
+                    SqlCommand cmdQualityController = new SqlCommand("usp_QCBulkInsert", con);
+                    cmdQualityController.CommandType = CommandType.StoredProcedure;
+                    cmdQualityController.Parameters.Add(new SqlParameter("@QCBulkData", SqlDbType.Structured));
+                    cmdQualityController.Parameters["@QCBulkData"].Value = qualityControllerDt;
+                    con.Open();
+                    if (cmdQualityController.ExecuteNonQuery() != 0)
                     {
-                        foreach (var item in irfDetails.ResumeEvaluatorCollection)
-                        {
-                            DynamicParameters param2 = new DynamicParameters();
-                            param2.Add("@irfId", irfDetails.id);
-                            param2.Add("@ResumeEvaluatorUserId", item.UserId);
-                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransResumeEvaluator", param2,
-                                    commandType: CommandType.StoredProcedure);
-
-                        }
-                    }
-                    if (irfDetails.HRCollection != null)
-                    {
-                        foreach (var item in irfDetails.HRCollection)
-                        {
-                            DynamicParameters param2 = new DynamicParameters();
-                            param2.Add("@irfId", irfDetails.id);
-                            param2.Add("@HRUserId", item.UserId);
-                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransHR", param2,
-                                    commandType: CommandType.StoredProcedure);
-
-                        }
+                        con.Close();
                     }
 
-                    if (irfDetails.RecruiterCollection != null)
-                    {
-                        foreach (var item in irfDetails.RecruiterCollection)
-                        {
-                            DynamicParameters param2 = new DynamicParameters();
-                            param2.Add("@IRFId", irfDetails.id);
-                            param2.Add("@UserId", item.UserId);
-                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransRecruiter", param2,
-                                    commandType: CommandType.StoredProcedure);
+                    //if (irfDetails.ResumeEvaluatorCollection != null)
+                    //{
+                    //    foreach (var item in irfDetails.ResumeEvaluatorCollection)
+                    //    {
+                    //        DynamicParameters param2 = new DynamicParameters();
+                    //        param2.Add("@irfId", irfDetails.id);
+                    //        param2.Add("@ResumeEvaluatorUserId", item.UserId);
+                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransResumeEvaluator", param2,
+                    //                commandType: CommandType.StoredProcedure);
 
-                        }
+                    //    }
+                    //}
+
+                    DataTable resumeEvaluatorDt = new DataTable();
+                    resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
+                    resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
+
+                    foreach (var item in irfDetails.ResumeEvaluatorCollection)
+                    {
+                        resumeEvaluatorDt.Rows.Add(irfDetails.id, item.UserId);
+                    }
+
+                    SqlCommand cmdResumeEvaluator = new SqlCommand("usp_ResumeEvaluatorBulkInsert", con);
+                    cmdResumeEvaluator.CommandType = CommandType.StoredProcedure;
+                    cmdResumeEvaluator.Parameters.Add(new SqlParameter("@ResumeEvaluatorBulkData", SqlDbType.Structured));
+                    cmdResumeEvaluator.Parameters["@ResumeEvaluatorBulkData"].Value = resumeEvaluatorDt;
+                    con.Open();
+                    if (cmdResumeEvaluator.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    
+                    //if (irfDetails.HRCollection != null)
+                    //{
+                    //    foreach (var item in irfDetails.HRCollection)
+                    //    {
+                    //        DynamicParameters param2 = new DynamicParameters();
+                    //        param2.Add("@irfId", irfDetails.id);
+                    //        param2.Add("@HRUserId", item.UserId);
+                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransHR", param2,
+                    //                commandType: CommandType.StoredProcedure);
+
+                    //    }
+                    //}
+
+                    DataTable hRDt = new DataTable();
+                    hRDt.Columns.Add("IRFId", typeof(int));
+                    hRDt.Columns.Add("UserId", typeof(int));
+
+                    foreach (var item in irfDetails.HRCollection)
+                    {
+                        hRDt.Rows.Add(irfDetails.id, item.UserId);
+                    }
+
+                    SqlCommand cmdHR = new SqlCommand("usp_HRBulkInsert", con);
+                    cmdHR.CommandType = CommandType.StoredProcedure;
+                    cmdHR.Parameters.Add(new SqlParameter("@HRBulkData", SqlDbType.Structured));
+                    cmdHR.Parameters["@HRBulkData"].Value = hRDt;
+                    con.Open();
+                    if (cmdHR.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    //if (irfDetails.RecruiterCollection != null)
+                    //{
+                    //    foreach (var item in irfDetails.RecruiterCollection)
+                    //    {
+                    //        DynamicParameters param2 = new DynamicParameters();
+                    //        param2.Add("@IRFId", irfDetails.id);
+                    //        param2.Add("@UserId", item.UserId);
+                    //        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransRecruiter", param2,
+                    //                commandType: CommandType.StoredProcedure);
+
+                    //    }
+                    //}
+
+                    DataTable recruiterDt = new DataTable();
+                    recruiterDt.Columns.Add("IRFId", typeof(int));
+                    recruiterDt.Columns.Add("UserId", typeof(int));
+
+                    foreach (var item in irfDetails.RecruiterCollection)
+                    {
+                        recruiterDt.Rows.Add(irfDetails.id, item.UserId);
+                    }
+
+                    SqlCommand cmdRecruiter = new SqlCommand("usp_RecruiterBulkInsert", con);
+                    cmdRecruiter.CommandType = CommandType.StoredProcedure;
+                    cmdRecruiter.Parameters.Add(new SqlParameter("@RecruiterBulkData", SqlDbType.Structured));
+                    cmdRecruiter.Parameters["@RecruiterBulkData"].Value = recruiterDt;
+                    con.Open();
+                    if (cmdRecruiter.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
                     }
 
                     return true;
@@ -1003,11 +1490,216 @@ namespace Risebird.Repository
             }
         }
 
+        //public async Task<bool> UpdateIRFDetails(IRFVm irfDetails)
+        //{
+        //    try
+        //    {
+
+        //        DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
+        //        parameters.Add("@id", irfDetails.id);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            await SqlMapper.QueryAsync<int>(con, "usp_UpdateIRFDetails", parameters,
+        //               commandType: CommandType.StoredProcedure);
+
+
+
+        //            if (irfDetails.Joinability != null)
+        //            {
+        //                foreach (var item in irfDetails.Joinability)
+        //                {
+        //                    string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+        //                    var affectedRows = con.ExecuteAsync(sqlJoinability, new
+        //                    {
+        //                        IRFId = irfDetails.id,
+        //                        LevelId = item.LevelId,
+        //                        Type = item.Type,
+        //                        Value = item.Value,
+        //                        Weightage = item.Weightage
+        //                    }).Result;
+        //                }
+        //            }
+
+        //            if (irfDetails.Selectability != null)
+        //            {
+        //                foreach (var item in irfDetails.Selectability)
+        //                {
+        //                    string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+        //                    var affectedRows = con.ExecuteAsync(sqlSelectability, new
+        //                    {
+        //                        IRFId = irfDetails.id,
+        //                        LevelId = item.LevelId,
+        //                        Type = item.Type,
+        //                        Value = item.Value,
+        //                        Weightage = item.Weightage
+        //                    }).Result;
+        //                }
+        //            }
+        //            //update general skill table
+
+        //            if (irfDetails.SkillGeneral != null)
+        //            {
+        //                foreach (var item in irfDetails.SkillGeneral)
+        //                {
+
+        //                    string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+        //                    var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
+        //                    {
+        //                        IRFId = irfDetails.id,
+        //                        LevelId = item.LevelId,
+        //                        Type = item.Type,
+        //                        Value = item.Value,
+        //                        Weightage = item.Weightage
+        //                    }).Result;
+        //                }
+        //            }
+
+
+
+        //            //update tech skill table
+        //            if (irfDetails.SkillCollection != null)
+        //            {
+        //                foreach (var item in irfDetails.SkillCollection)
+        //                {
+
+        //                    string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
+        //                    var affectedRows = con.Execute(sqlSkillTech, new
+        //                    {
+        //                        IRFId = irfDetails.id,
+        //                        LevelId = item.LevelId,
+        //                        SkillId = item.SkillId,
+        //                        Weightage = item.Weightage
+        //                    });
+        //                }
+        //            }
+
+
+
+        //            //update trans interviewer table
+
+        //            if (irfDetails.InterviewerCollection != null)
+        //            {
+        //                foreach (var item in irfDetails.InterviewerCollection)
+        //                {
+        //                    DynamicParameters param = new DynamicParameters();
+        //                    param.Add("@irfIntId", irfDetails.id);
+        //                    param.Add("@InterviewerUserId", item.UserId);
+        //                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
+        //                            commandType: CommandType.StoredProcedure);
+
+        //                }
+        //            }
+
+        //            // update trans emergency interviewers table
+        //            if (irfDetails.EmergencyInterviewerCollection != null)
+        //            {
+        //                foreach (var item in irfDetails.EmergencyInterviewerCollection)
+        //                {
+        //                    DynamicParameters param = new DynamicParameters();
+        //                    param.Add("@irfIntId", irfDetails.id);
+        //                    param.Add("@InterviewerUserId", item.UserId);
+        //                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransEmergencyInterviewer", param,
+        //                            commandType: CommandType.StoredProcedure);
+
+        //                }
+        //            }
+
+        //            //update trans Client table
+
+        //            if (irfDetails.ClientCollection != null)
+        //            {
+        //                foreach (var item in irfDetails.ClientCollection)
+        //                {
+        //                    DynamicParameters param1 = new DynamicParameters();
+        //                    param1.Add("@irfIntId", irfDetails.id);
+        //                    param1.Add("@ClientUserId", item.ClientUserId);
+        //                    //param1.Add("@ClientRoleId", item.ClientRoleId);
+        //                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
+        //                            commandType: CommandType.StoredProcedure);
+
+        //                }
+        //            }
+
+
+
+        //            //update trans QC table
+
+        //            if (irfDetails.QualityController != null)
+        //            {
+        //                foreach (var item in irfDetails.QualityController)
+        //                {
+        //                    DynamicParameters param2 = new DynamicParameters();
+        //                    param2.Add("@irfIntId", irfDetails.id);
+        //                    param2.Add("@InterviewerUserId", item.UserId);
+        //                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
+        //                            commandType: CommandType.StoredProcedure);
+
+        //                }
+        //            }
+
+        //            if (irfDetails.ResumeEvaluatorCollection != null)
+        //            {
+        //                foreach (var item in irfDetails.ResumeEvaluatorCollection)
+        //                {
+        //                    DynamicParameters param2 = new DynamicParameters();
+        //                    param2.Add("@irfId", irfDetails.id);
+        //                    param2.Add("@ResumeEvaluatorUserId", item.UserId);
+        //                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransResumeEvaluator", param2,
+        //                            commandType: CommandType.StoredProcedure);
+
+        //                }
+        //            }
+        //            if (irfDetails.HRCollection != null)
+        //            {
+        //                foreach (var item in irfDetails.HRCollection)
+        //                {
+        //                    DynamicParameters param2 = new DynamicParameters();
+        //                    param2.Add("@irfId", irfDetails.id);
+        //                    param2.Add("@HRUserId", item.UserId);
+        //                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransHR", param2,
+        //                            commandType: CommandType.StoredProcedure);
+
+        //                }
+        //            }
+
+        //            if (irfDetails.RecruiterCollection != null)
+        //            {
+        //                foreach (var item in irfDetails.RecruiterCollection)
+        //                {
+        //                    DynamicParameters param2 = new DynamicParameters();
+        //                    param2.Add("@IRFId", irfDetails.id);
+        //                    param2.Add("@UserId", item.UserId);
+        //                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransRecruiter", param2,
+        //                            commandType: CommandType.StoredProcedure);
+
+        //                }
+        //            }
+
+        //            return true;
+        //        }
+
+        //    }
+
+        //    catch (SqlException e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+
+
+
         public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
         {
             try
             {
-                var query = "Select * from TransTechSkill where IRFId = @IRFId";
+                var query = "Select tts.*, Skill.[Name] as SkillName from TransTechSkill tts join Skill on tts.SkillId=Skill.id  where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1285,7 +1977,48 @@ namespace Risebird.Repository
 
         }
 
+        public bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlDeletePrevious = "Delete from CandidateCuratedScore where IRFId =@IRFId;";
+                    var deletedRows = con.Execute(sqlDeletePrevious, new
+                    {
+                        IRFId = IrfId,
 
+                    });
+
+                    foreach (var item in candidateCuratedScore)
+                    {
+
+                        string sqlCuratedCandidate = "INSERT INTO CandidateCuratedScore (IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
+                        var affectedRows = con.Execute(sqlCuratedCandidate, new
+                        {
+                            IRFId = IrfId,
+                            CandidateEmailId = item.CandidateEmailId,
+                            CuratedEmailId = item.CuratedEmailId,
+                            Score = item.Score
+
+                        });
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public bool AddSkillComments(TechSkillComments obj)
         {
             try
@@ -1340,6 +2073,26 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<SkillComment>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<CandidateCuratedScore> GetCandidateCuratedScore(int id)
+        {
+            try
+            {
+                var query = "Select * from CandidateCuratedScore where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CandidateCuratedScore>(query, dynamicParameters);
                     return results;
                 }
 
@@ -1721,7 +2474,7 @@ namespace Risebird.Repository
             try
             {
                
-                var query = "select Candidate.*,IRF.EndDate, IRF.StartDate, IRF.ClientName,IRF.JDTiltle, IRF.JDLink, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id where Candidate.EmailId = @EmailId";
+                var query = "select Candidate.*,ul.EmailId, IRF.EndDate, IRF.StartDate, IRF.ClientName,IRF.JDTiltle, IRF.JDLink, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id join CandidatesMaster cm on cm.id = Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId where ul.EmailId = @EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2137,7 +2890,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select Recruiter.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from Recruiter join UserList ul on Recruiter.UserId=ul.id";
+                var query = "select Recruiter.UserId, ul.EmailId from Recruiter join UserList ul on Recruiter.UserId=ul.id";
                 //var dynamicParameters = new DynamicParameters();
                 //dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2488,6 +3241,23 @@ namespace Risebird.Repository
 
         }
 
+        public IEnumerable<Users> GetAllHRs()
+        {
+            try
+            {
+                var query = "select id, EmailId from UserList where idProfile=2";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return con.Query<Users>(query);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }

@@ -113,6 +113,16 @@ BEGIN
     ALTER TABLE InterviewMeetings
     Add JoiningBiometryScore DECIMAL (10,2)
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'HRCoordinatorEmailId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add HRCoordinatorEmailId VARCHAR(100)
+END
 END
 GO
 
