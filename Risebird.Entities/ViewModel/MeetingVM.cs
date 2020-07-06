@@ -184,6 +184,8 @@ namespace Risebird.Entities.ViewModel
         public string FeedbackAudioLink { get; set; }
         public string AadharFileLink { get; set; }
         public bool IsAdmin { get; set; }
+        public int Score { get; set; }
+
         public string HRCoordinatorEmailId { get; set; }
         public string HRMobileNumber { get; set; }
         public string HRComment { get; set; }

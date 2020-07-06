@@ -1977,7 +1977,48 @@ namespace Risebird.Repository
 
         }
 
+        public bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlDeletePrevious = "Delete from CandidateCuratedScore where IRFId =@IRFId;";
+                    var deletedRows = con.Execute(sqlDeletePrevious, new
+                    {
+                        IRFId = IrfId,
 
+                    });
+
+                    foreach (var item in candidateCuratedScore)
+                    {
+
+                        string sqlCuratedCandidate = "INSERT INTO CandidateCuratedScore (IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
+                        var affectedRows = con.Execute(sqlCuratedCandidate, new
+                        {
+                            IRFId = IrfId,
+                            CandidateEmailId = item.CandidateEmailId,
+                            CuratedEmailId = item.CuratedEmailId,
+                            Score = item.Score
+
+                        });
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public bool AddSkillComments(TechSkillComments obj)
         {
             try
@@ -2032,6 +2073,26 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<SkillComment>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<CandidateCuratedScore> GetCandidateCuratedScore(int id)
+        {
+            try
+            {
+                var query = "Select * from CandidateCuratedScore where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CandidateCuratedScore>(query, dynamicParameters);
                     return results;
                 }
 
