@@ -82,7 +82,7 @@ namespace Risebird.Entities.Data
         public string Status { get; set; }
         public string DateRequired { get; set; }
         public int IsOnilne { get; set; }
-
+        public string HRCoordinatorEmailId { get; set; }
 
     }
 }
