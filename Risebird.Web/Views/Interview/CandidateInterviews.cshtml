@@ -98,6 +98,9 @@
                                                                 <div class="can-details seven">
                                                                     <b>Resume:</b> <span><a href="@item.resumeLink" target="_blank">Resume</a>   </span>
                                                                 </div>
+                                                                <div class="can-details eight">
+                                                                    <b>Co-ordinating HR:</b> <span> @item.HRCoordinatorEmailId </span>
+                                                                </div>
 
                                                             </div>
                                                         </div>
@@ -142,29 +145,27 @@
 
                                                 @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                 {
-                                                    <!--   <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
-                                                        <i class="now-ui-icons fa fa-phone"></i>
-                                                    </button>-->
+                                                   
+                                                    <button class="mdc-fab app-fab--absolute eleven" aria-label="Call Interviewer">
+                                                        <span onclick="ModalButtonClick(@jsonObject)" title="Call Interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                    </button>
+                                                    
+                                                }
+                                                
+                                                <button class="mdc-fab app-fab--absolute eleven" aria-label="Call Interviewer">
+                                                    <span onclick="ModalButtonClick('@item.interviewer','@item.InterviewerPhone')" title="Call Interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                </button>
+                                                @if (item.HRMobileNumber != null && item.HRMobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                {
 
-
-
-
-                                                    <button class="mdc-fab app-fab--absolute trash-btn twelve" aria-label="Call Interviewer">
-                                                        <span onclick="ModalButtonClick(@jsonObject)" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                    <button class="mdc-fab app-fab--absolute eleven" aria-label="Call HR">
+                                                        <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber')" title="Call HR" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                     </button>
 
-
-
-
-
-
-
-
-
-
                                                 }
-
-
+                                                <button class="mdc-fab app-fab--absolute eleven" aria-label="Call HR">
+                                                    <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber')" title="Call HR" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                </button>
 
                                                 <button class="mdc-fab app-fab--absolute trash-btn twelve" aria-label="Cancel interview request">
                                                     <span onclick="javascript:CancelInterview(@jsonObject);" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
@@ -191,7 +192,7 @@
             <!-- Modal content -->
             <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
                 <div class="modal-header">
-                    <h5 class="modal-title">Call Interviewer!</h5>
+                    <h5 class="modal-title">Call!</h5>
                     <span class="close" id="callPopUp">&times;</span>
                 </div>
                 <div class="modal-body" style="padding: 2px 16px;">
@@ -324,7 +325,7 @@
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 <script>
-    var interviewerMail = "";
+    var receiver = "";
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -344,7 +345,7 @@
 
     });
 
-    function callInterviewer(phoneNumber) {
+    function call(phoneNumber) {
         var params = { "phoneNumber": phoneNumber };
         Twilio.Device.connect(params);
     }
@@ -353,7 +354,7 @@
     }
 
     Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + interviewerMail + "</b>";
+        var appendText = "In call with " + "<b>" + receiver + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
     });
 
@@ -369,18 +370,18 @@
 
     });
 
-    function ModalButtonClick(obj) {
-
+    function ModalButtonClick(name, phone) {
         //candidate = candidateObj.candidateName;
-        interviewerMail = obj.interviewer;
+        receiver = name;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal
         modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + interviewerMail + "</b>";
+        var appendText = "Calling... " + "<b>" + receiver + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
-        callInterviewer(obj.InterviewerPhone);
+        call(phone);
     }
+
     function closeCallPopUp() {
         hangUp();
         var modal = document.getElementById("myModal");

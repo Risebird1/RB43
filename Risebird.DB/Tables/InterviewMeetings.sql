@@ -123,6 +123,16 @@ BEGIN
     ALTER TABLE InterviewMeetings
     Add HRCoordinatorEmailId VARCHAR(100)
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'HRComment')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add HRComment VARCHAR(max)
+END
+
 END
 GO
 

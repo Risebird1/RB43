@@ -1355,6 +1355,20 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public bool SaveHRComment(int id, string comment)
+        {
+            try
+            {
+                return _meetingRespository.SaveHRComment(id, comment);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
     }
 

@@ -2143,5 +2143,29 @@ namespace Risebird.Repository
 
         }
 
+        public bool SaveHRComment(int id, string comment)
+        {
+            try
+            {
+                var query = "update InterviewMeetings set HRComment = @comment where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@comment", comment);
+                dynamicParameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
     }
 }
