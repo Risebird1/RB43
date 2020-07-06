@@ -323,12 +323,12 @@
                                                             }
                                                         }
 
-
-                                                        <div class="row five">
-                                                            <span>Selected Interviews: @(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</span>
-                                                        </div> <br />
                                                         @if (Model.Profile != "CuratedUser")
                                                         {
+                                                            <div class="row five">
+                                                                <span>Selected Interviews: @(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</span>
+                                                            </div> <br />
+
                                                             if (@item.CompanyDetails != null && @item.CompanyDetails != "None")
                                                             {
                                                                 <div class="row">
