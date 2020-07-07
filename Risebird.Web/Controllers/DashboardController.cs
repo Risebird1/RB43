@@ -66,5 +66,27 @@ namespace Risebird.Web.Controllers
 
             }
         }
+
+
+        public IActionResult Index1()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

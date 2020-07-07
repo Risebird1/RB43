@@ -31,7 +31,7 @@ namespace Risebird.Functions
                 var candidates = new List<NotScheduledCandidate>(); // will contain the candidates whose interviews arent scheduled.
                 var unfilteredCandidates = new List<NotScheduledCandidate>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-                var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client, Candidate.EmailId, Candidate.Phone, Candidate.InviteDate from Candidate join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0";
+                var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client, ul.EmailId, Candidate.Phone, Candidate.InviteDate from Candidate join CandidatesMaster cm on Candidate.CandidateMasterId=cm.id join UserList ul on cm.UserId = ul.id join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0 and IRF.IsPaused!= 1";
 
                 using (SqlConnection con = new SqlConnection(str))
                 {
@@ -41,7 +41,7 @@ namespace Risebird.Functions
                 foreach (var item in unfilteredCandidates)
                 {
                     int checkScheduleCount = 0;
-                    var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId";
+                    var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId and interviewDate > dateadd(dd,-3,getdate())";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", item.IRFId);
                     dynamicParameters.Add("@EmailId", item.EmailId);

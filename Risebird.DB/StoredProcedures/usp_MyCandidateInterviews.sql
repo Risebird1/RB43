@@ -25,7 +25,9 @@ irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel,irf.CalendlyLink, irf.E
 from InterviewMeetings im  
 inner join IRF  irf on im.IRFId=irf.IRFId   
 left join UserList ul on im.interviewer = ul.EmailId join Client on Client.id=irf.ClientId  
-left join Candidate ca on im.candidateEmail = ca.EmailId and irf.id= ca.IRFId
+left join UserList ulc on ulc.EmailId = im.candidateEmail
+join CandidatesMaster cm on cm.UserId = ulc.id
+join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId
 where im.candidateEmail =@emailID and confirmationStatus = 1 
       
 END   

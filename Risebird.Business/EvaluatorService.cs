@@ -156,8 +156,8 @@ namespace Risebird.Business
                 model.PreferredLocation = candidateDetails.Location;
                 model.CandidateEmailId = candidateDetails.EmailId;
                 model.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, candidateDetails.EmailId);
-                model.TechSkillComments = _evaluatorRespository.GetTechComments(irfId, candidateDetails.EmailId);
-                model.SkillGeneralComments = _evaluatorRespository.GetGeneralSkillComments(irfId, candidateDetails.EmailId);
+                model.TechSkillComments = _evaluatorRespository.GetTechComments(irfId, candidateId);
+                model.SkillGeneralComments = _evaluatorRespository.GetGeneralSkillComments(irfId, candidateId);
                 model.Level = new SelectList(levels, "id", "Name");
                 model.LevelTech = new SelectList(_evaluatorRespository.GetLevelTech(), "id", "Name");
                 return model;
@@ -388,8 +388,8 @@ namespace Risebird.Business
                 model.PreferredLocation = candidateDetails.Location;
                 model.CandidateEmailId = candidateDetails.EmailId;
                 model.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, candidateDetails.EmailId);
-                model.TechSkillComments = _evaluatorRespository.GetTechComments(irfId, candidateDetails.EmailId);
-                model.SkillGeneralComments = _evaluatorRespository.GetGeneralSkillComments(irfId, candidateDetails.EmailId);
+                model.TechSkillComments = _evaluatorRespository.GetTechComments(irfId, candidateId);
+                model.SkillGeneralComments = _evaluatorRespository.GetGeneralSkillComments(irfId, candidateId);
                 model.Level = new SelectList(levels, "id", "Name");
                 model.LevelTech = new SelectList(_evaluatorRespository.GetLevelTech(), "id", "Name");
 

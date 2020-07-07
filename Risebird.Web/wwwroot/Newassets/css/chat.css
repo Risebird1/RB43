@@ -500,6 +500,8 @@ button:focus {
 
 #MyChatModel h5.modal-title {
     margin: 0px;
+    font-family: Roboto, sans-serif !important;
+
 }
 
 #MyChatModel h5 {
@@ -509,6 +511,8 @@ button:focus {
 #MyChatModel .modal-content .modal-header {
     padding-left: 20px;
     padding-right: 20px;
+    font-family: Roboto, sans-serif !important;
+    font-size: 14px !important;
 }
 #MyChatModel .modal-lg{max-width:690px!important;}
 .modal-bg {
