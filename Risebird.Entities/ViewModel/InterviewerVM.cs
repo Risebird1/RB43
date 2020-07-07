@@ -9,6 +9,12 @@ namespace Risebird.Entities.ViewModel
 {
     public class InterviewerVM
     {
+        public InterviewerVM()
+        {
+            SubVideo_List = new List<InterviewerVM>();
+        }
+        public List<InterviewerVM> SubVideo_List { get; set; }
+
         public int id { get; set; }
        
         [Required(ErrorMessage = "Please enter First Name")]
@@ -51,5 +57,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Skills")]
         public SelectList PrimarySkills { get; set; }
+        public string VideoLink { get; set; }
+        public int imid { get; set; }
     }
 }

@@ -16,6 +16,7 @@ using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using OfficeOpenXml;
 using Newtonsoft.Json;
+using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
@@ -974,12 +975,12 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid).Where(x => x.QCInterview > 0 && x.QCStatus ==1);
-                        
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1);
+
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
-                       
+
                         foreach (var m in meetings)
                         {
                             if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
@@ -1074,7 +1075,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid).Where(x => x.QCInterview > 0 && x.QCStatus ==1);
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1);
 
                         if (filterValue == "Today")
                         {
@@ -1202,7 +1203,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                       
+
                         var modelList = _meetingService.IRFMultipleCandidateInvites(irfId);
                         if (profileName == "Admin")
                         {
@@ -1229,7 +1230,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-            [Authorize]
+        [Authorize]
         [HttpGet]
         [ActionName("InterviewMeetings")]
         public IActionResult InterviewMeetings(string id, string irfId)
@@ -1245,11 +1246,11 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
-                       
+
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
-                       
+
                         foreach (var m in meetings)
                         {
                             if (m.InterviewStatus.HasValue)
@@ -2206,7 +2207,7 @@ namespace Risebird.Web.Controllers
                         {
 
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
-                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription() );
+                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription());
                             candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); });
                         }
 
@@ -2346,7 +2347,7 @@ namespace Risebird.Web.Controllers
 
                                 Sheet.Cells[i, 15].Value = item.TotalInvites;
                                 Sheet.Cells[i, 16].Value = item.InviteConfirmation;
-                                Sheet.Cells[i, 17].Value = item.InviteConfirmation > 0 ? "Scheduled" : item.StatusValue; 
+                                Sheet.Cells[i, 17].Value = item.InviteConfirmation > 0 ? "Scheduled" : item.StatusValue;
                                 Sheet.Cells[i, 18].Value = item.confirmationStatusDesc != "0" ? item.confirmationStatusDesc : "NA";
                                 Sheet.Cells[i, 19].Value = item.MeetingStatusDesc != "0" ? item.MeetingStatusDesc : "NA";
                                 Sheet.Cells[i, 20].Value = item.InterviewStatusDesc != "0" ? item.InterviewStatusDesc : "NA";
@@ -3151,17 +3152,17 @@ namespace Risebird.Web.Controllers
                 {
                     var model = _evaluatorService.GetCandidate(candidateId, irfId);
                     model.CandidateAudios = /*(IList<CandidateAudio>)*/_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
-                    
-                    if(model.CandidateAudios.Where(x=>x.IsVoiceBiometric).Count()>0)
+
+                    if (model.CandidateAudios.Where(x => x.IsVoiceBiometric).Count() > 0)
                     {
                         model.HasVoiceBiometricAudio = true;
-                        model.PhraseList = new SelectList(_evaluatorService.GetPhrases(), "text", "text",model.CandidateAudios.Where(x=>x.IsVoiceBiometric).FirstOrDefault().PhraseDetail);
+                        model.PhraseList = new SelectList(_evaluatorService.GetPhrases(), "text", "text", model.CandidateAudios.Where(x => x.IsVoiceBiometric).FirstOrDefault().PhraseDetail);
                     }
                     else
                     {
                         model.PhraseList = new SelectList(_evaluatorService.GetPhrases(), "text", "text");
                     }
-                    if(model.CandidateAudios.Where(x => x.IsVoiceBiometric && !x.IsEnrolled).Count()>0)
+                    if (model.CandidateAudios.Where(x => x.IsVoiceBiometric && !x.IsEnrolled).Count() > 0)
                     {
                         model.ContainsUnEnrolled = true;
                     }
@@ -3227,7 +3228,7 @@ namespace Risebird.Web.Controllers
                         if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
                         {
                             TempData["SuccessErrorMessageUploadAudio"] = "Audio uploaded successfully";
-                            return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName=model.IRFName });
+                            return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
                         }
                         else
                         {
@@ -3481,7 +3482,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        public async Task<IActionResult> InterviewerDetail()
+        public async Task<IActionResult> InterviewerDetail(int? Page, string Searchvalue)
         {
             try
             {
@@ -3493,8 +3494,40 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessageInterviewer");
 
                     }
+                    var model = _userService.GetInterviewers();
+                    if (!String.IsNullOrEmpty(Searchvalue))
+                    {
+                        model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper())).ToList();
+                        ViewBag.searchvalue = Searchvalue;
+                    }
+                    else
+                    {
+                        ViewBag.searchvalue = "";
+                    }
+                    foreach (var item in model)
+                    {
+                        var PrimarySkillSet = item.PrimarySkill.Split(',');
+                        string PrimaryTopSkill = String.Empty;
+                        int ForLoopCount = 5;
+                        if (PrimarySkillSet.Count() < 5)
+                        {
+                            ForLoopCount = PrimarySkillSet.Count();
+                        }
+                        for (int i = 0; i < ForLoopCount; i++)
+                        {
+                            if (String.IsNullOrEmpty(PrimaryTopSkill))
+                            {
+                                PrimaryTopSkill = PrimarySkillSet[i];
+                            }
+                            else
+                            {
+                                PrimaryTopSkill = PrimaryTopSkill + "," + PrimarySkillSet[i];
+                            }
+                        }
+                        item.PrimarySkill = PrimaryTopSkill;
+                    }
 
-                    return View(_userService.GetInterviewers());
+                    return View(model.ToPagedList(Page ?? 1, 12));
                 }
                 else
                 {
@@ -3507,8 +3540,6 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
-
-
         }
         public async Task<IActionResult> InterviewerDetailById(string Id)
         {
@@ -3516,7 +3547,9 @@ namespace Risebird.Web.Controllers
             //var model=_userService.GetInterviewers();
             //model = model.Where(x => x.id == ID).ToList();
             // code for fetch data or any thing else
-            return View();
+            InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
+            return View(interviewerVM);
+         //   return View();
         }
 
         [Authorize]

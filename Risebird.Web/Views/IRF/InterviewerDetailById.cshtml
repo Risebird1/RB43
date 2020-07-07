@@ -3,3 +3,215 @@
     ViewData["Title"] = "Interviewers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@model Risebird.Entities.ViewModel.InterviewerVM
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+
+
+<link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+<script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
+
+<script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
+    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
+</script>
+
+
+
+<script>
+    function dropDwnToolTips(id) {
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+    function getOption(id) {
+        selectElement = document.querySelector('#droplevel');
+        output =
+            selectElement.options[selectElement.selectedIndex].text;
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = output
+        }
+    }
+</script>
+
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+<!-- Custom styles for this template-->
+<link href="~/RiseTube/css/osahan.css" rel="stylesheet">
+<!-- Owl Carousel -->
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
+                </div>
+                <a class="navbar-brand"></a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm"> </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="row">
+                            <div class="card-header">
+                                <div class="pull-left">
+                                    <h4 class="card-title">Interviewer</h4>
+                                </div>
+                                <div class="pull-right">
+                                    <div>
+                                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
+                                        @if (ViewBag.actionstatus == "SkillChannel")
+                                        {
+                                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*@if (ViewBag.ResultStatus == "VideoPresent")
+                        {*@
+                            <div id="wrapper">
+                                <!-- Sidebar -->
+                                <div id="content-wrapper">
+                                    <div class="container-wrap pb-0">
+                                        <div class="video-block section-padding">
+                                            <div class="row mn-section">
+                                                <div class=" col-8 player-main" id="player">
+                                                    <div class="single-video-left">
+                                                        <div>
+                                                            <div class="single-video">
+                                                                @if (Model.VideoLink != null && Model.VideoLink != "")
+                                                                {
+
+                                                                    @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
+                                                                    {
+                                                                        <video controls class="vjs-tech video-width btnvideo">
+                                                                            <source src="@Model.VideoLink" type="video/mp4">
+                                                                            <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
+                                                                        </video>
+                                                                    }
+                                                                    else if (Model.VideoLink.Contains("/manifest"))
+                                                                    {
+                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                                            <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
+
+                                                                        </video>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink" allowfullscreen></iframe>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    //Interviewer detials
+                                                                    <p>@Model.FirstName</p>
+                                                                    <p>@Model.LastName</p>
+                                                                    <p>@Model.EmailId</p>
+                                                                    <p>@Model.PrimarySkill</p>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4  side-player scroll" id="sd-player">
+                                                    @if (Model.SubVideo_List.Count > 0)
+                                                    {
+                                                        <div id="style-2" class="single-video-right">
+                                                            <div>
+                                                                <div>
+                                                                    <div class="col-md-12">
+
+                                                                        @foreach (var videolist in Model.SubVideo_List)
+                                                                        {
+                                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                            <div class="video-card video-card-list videosidelist">
+                                                                                <div class="video-card-image">
+                                                                                    @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                    {
+                                                                                        @*@if (videolist.ThumbnailImage != null)
+                                                                                            {<img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />}*@
+                                                                                        <video controls style=" background:black!important;width:100%; height:100% ">
+                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                        </video>
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a> }
+                                                                                    else
+                                                                                    {
+                                                                                        <img src="~/RiseTube/img/video-icon.png" /> <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                    }
+
+
+                                                                                    @*}
+                                                                                        <div class="time">3:50</div>
+                                                                                    *@
+                                                                                </div>
+                                                                                @*<div class="video-card-body">
+                                                                                    <div class="video-title"> <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a> <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span> </div>
+                                                                                    <div class="video-page text-success">
+                                                                                    &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
+                                                                                         font-weight: 500;
+                                                                                         font-size: 12px;">@videolist.interviewDate</span>
+                                                                                     </div>
+                                                                                     </div>*@
+                                                                            </div>
+                                                                        }
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!-- /.container-fluid -->
+                            </div>
+                            <!-- /.content-wrapper -->
+                        @*}
+                        else
+                        {
+                            <div>No Selected Candidate Yet on this Channel.</div>
+                        }*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
