@@ -18,13 +18,14 @@ CREATE PROCEDURE [dbo].[usp_UpdateCandidateVoiceUserId]
 AS
 Begin
 declare
-@transCandidateId int = (select ca.id from CandidatesMaster cm join Candidate ca on cm.EmailId=ca.EmailId where ca.IRFId=@IRFId and cm.id=@CandidateId)
+@transCandidateId int = (select ca.id from CandidatesMaster cm join Candidate ca on cm.id=ca.CandidateMasterId where ca.IRFId=@IRFId and cm.id=@CandidateId)
 
 update Candidate set 
 VoiceItUserId=@VoiceItUserId
 where id =@transCandidateId
 
 END
+
 
 GO
 

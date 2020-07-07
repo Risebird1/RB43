@@ -128,7 +128,7 @@
 <script type="text/javascript">
     $.ajax({
         url: '/IRF/NewChart',
-        async: true,
+        async: false,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -180,7 +180,7 @@
 
     $.ajax({
         url: '/IRF/NewChartSelected',
-        async: true,
+        async: false,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -230,7 +230,7 @@
 
     $.ajax({
         url: '/IRF/NewChartClientMeetingData',
-        async: true,
+        async: false,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -302,7 +302,7 @@
 
     $.ajax({
         url: '/IRF/NewChartClientFeedbackData',
-        async: true,
+        async: false,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -375,7 +375,7 @@
 
     $.ajax({
         url: '/IRF/BudgetConsumedChart',
-        async: true,
+        async: false,
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -437,7 +437,7 @@
     });
     $.ajax({
         url: '/IRF/FunnelChart',
-        async: true,
+        async: false,
 
         success: function (chData) {
             am4core.ready(function () {

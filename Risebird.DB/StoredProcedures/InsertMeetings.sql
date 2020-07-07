@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[InsertMeetings]
+CREATE PROCEDURE [dbo].[InsertMeetings]
 @IRFId varchar(200),
 @interviewDate varchar(200),
 @slot varchar(100),
@@ -98,24 +98,48 @@ Begin
  
 End
 
-IF NOT EXISTS (SELECT 1  FROM  CandidatesMaster  WHERE  EmailId = @candidateEmail)
+IF NOT EXISTS (SELECT 1  FROM  UserList  WHERE  EmailId = @candidateEmail)
 Begin
 	declare
 	@profileId int = (select id from [Profile] where [Name]='Candidate')
-	IF NOT EXISTS (SELECT 1  FROM  UserList  WHERE  EmailId = @candidateEmail)
-	Begin
-    Insert into UserList values (@profileId, @candidateName, null, @candidateEmail, null, null, 1,null, null, 0)
-	End
-	Insert into CandidatesMaster (UserId, [Name], EmailId, ResumeLink, [Location]) values((select id from UserList where EmailId=@candidateEmail and idProfile=@profileId),@candidateName,
-										 @candidateEmail,@resumeLink, @prefferedLocation)
-	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  EmailId = @candidateEmail)
-	Begin
-	Insert into Candidate (IRFId, [Name], EmailId, ResumeLink, [Location]) values((select id from IRF where IRFId=@IRFId),@candidateName,
-										 @candidateEmail,@resumeLink, @prefferedLocation)
-	End
+	
+	Insert into UserList (idProfile, FirstName, EmailId, IsActive,MobileNumber) values (@profileId, @candidateName, @candidateEmail, 1,@textreminder)
+
+	declare 
+	@cndUserId int = (select id from UserList where EmailId=@candidateEmail and idProfile=@profileId)
+
+	Insert into CandidatesMaster (UserId) values(@cndUserId)
+
+	Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId) 
+	values((select id from IRF where IRFId=@IRFId), @resumeLink, @prefferedLocation, @textreminder,
+	(select id from CandidatesMaster  where UserId = @cndUserId))
+	
+End
+
+Else
+
+Begin
+	declare
+	@candidateUserId int = (select id from UserList where EmailId = @candidateEmail)
+
+	IF NOT EXISTS (SELECT 1  FROM  CandidatesMaster  WHERE  UserId = @candidateUserId)
+		begin
+			Insert into CandidatesMaster (UserId) values(@candidateUserId)
+		end
+
+	declare
+	@candidateMasterId int = (select id from CandidatesMaster where UserId=@candidateUserId)
+
+	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @candidateMasterId)
+		Begin
+			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId) 
+			values((select id from IRF where IRFId=@IRFId), @resumeLink, @prefferedLocation,@textreminder, @candidateMasterId) 			
+		End
+
 End
 
 END
+
 
 GO
 

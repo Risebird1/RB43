@@ -308,6 +308,20 @@ namespace Risebird.Business
             }
         }
 
+        public bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        {
+            try
+            {
+                return _irfRepository.AddCandidateCuratedScore(IrfId,candidateCuratedScore);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<bool> DeleteIRF(int id)
         {
             try
@@ -482,6 +496,20 @@ namespace Risebird.Business
             try
             {
                 var result = (IList<SkillComment>)_irfRepository.GetTechSkillComments(id);
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IList<CandidateCuratedScore> GetCandidateCuratedScore(int id)
+        {
+            try
+            {
+                var result = (IList<CandidateCuratedScore>)_irfRepository.GetCandidateCuratedScore(id);
                 return result;
             }
 

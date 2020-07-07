@@ -1127,21 +1127,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    //if (irfDetails.Selectability != null)
-                    //{
-                    //    foreach (var item in irfDetails.Selectability)
-                    //    {
-                    //        string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                    //        var affectedRows = con.ExecuteAsync(sqlSelectability, new
-                    //        {
-                    //            IRFId = irfDetails.id,
-                    //            LevelId = item.LevelId,
-                    //            Type = item.Type,
-                    //            Value = item.Value,
-                    //            Weightage = item.Weightage
-                    //        }).Result;
-                    //    }
-                    //}
+                    
 
                     DataTable selectabilityDt = new DataTable();
                     selectabilityDt.Columns.Add("IRFId", typeof(int));
@@ -1332,23 +1318,27 @@ namespace Risebird.Repository
                     //    }
                     //}
 
-                    DataTable clientUserDt = new DataTable();
-                    clientUserDt.Columns.Add("IRFId", typeof(int));
-                    clientUserDt.Columns.Add("ClientUserId", typeof(int));
-
-                    foreach (var item in irfDetails.ClientCollection)
+                    if (irfDetails.ClientCollection != null)
                     {
-                        clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
-                    }
+                        DataTable clientUserDt = new DataTable();
+                        clientUserDt.Columns.Add("IRFId", typeof(int));
+                        clientUserDt.Columns.Add("ClientUserId", typeof(int));
 
-                    SqlCommand cmdClientUser = new SqlCommand("usp_ClientUserBulkInsert", con);
-                    cmdClientUser.CommandType = CommandType.StoredProcedure;
-                    cmdClientUser.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
-                    cmdClientUser.Parameters["@ClientUserBulkData"].Value = clientUserDt;
-                    con.Open();
-                    if (cmdClientUser.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
+                        foreach (var item in irfDetails.ClientCollection)
+                        {
+                            clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
+                        }
+
+
+                        SqlCommand cmdClientUser = new SqlCommand("usp_ClientUserBulkInsert", con);
+                        cmdClientUser.CommandType = CommandType.StoredProcedure;
+                        cmdClientUser.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
+                        cmdClientUser.Parameters["@ClientUserBulkData"].Value = clientUserDt;
+                        con.Open();
+                        if (cmdClientUser.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
                     
 
@@ -1987,7 +1977,48 @@ namespace Risebird.Repository
 
         }
 
+        public bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlDeletePrevious = "Delete from CandidateCuratedScore where IRFId =@IRFId;";
+                    var deletedRows = con.Execute(sqlDeletePrevious, new
+                    {
+                        IRFId = IrfId,
 
+                    });
+
+                    foreach (var item in candidateCuratedScore)
+                    {
+
+                        string sqlCuratedCandidate = "INSERT INTO CandidateCuratedScore (IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
+                        var affectedRows = con.Execute(sqlCuratedCandidate, new
+                        {
+                            IRFId = IrfId,
+                            CandidateEmailId = item.CandidateEmailId,
+                            CuratedEmailId = item.CuratedEmailId,
+                            Score = item.Score
+
+                        });
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public bool AddSkillComments(TechSkillComments obj)
         {
             try
@@ -2042,6 +2073,26 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<SkillComment>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<CandidateCuratedScore> GetCandidateCuratedScore(int id)
+        {
+            try
+            {
+                var query = "Select * from CandidateCuratedScore where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CandidateCuratedScore>(query, dynamicParameters);
                     return results;
                 }
 
@@ -2423,7 +2474,7 @@ namespace Risebird.Repository
             try
             {
                
-                var query = "select Candidate.*,IRF.EndDate, IRF.StartDate, IRF.ClientName,IRF.JDTiltle, IRF.JDLink, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id where Candidate.EmailId = @EmailId";
+                var query = "select Candidate.*,ul.EmailId, IRF.EndDate, IRF.StartDate, IRF.ClientName,IRF.JDTiltle, IRF.JDLink, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id join CandidatesMaster cm on cm.id = Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId where ul.EmailId = @EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
