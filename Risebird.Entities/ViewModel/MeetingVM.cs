@@ -186,6 +186,9 @@ namespace Risebird.Entities.ViewModel
         public bool IsAdmin { get; set; }
         public int Score { get; set; }
 
+        [Display(Name = "Co-ordinating HR")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
         public string HRCoordinatorEmailId { get; set; }
         public string HRMobileNumber { get; set; }
         public string HRComment { get; set; }

@@ -456,6 +456,11 @@ namespace Risebird.Repository
             parameters.Add("@staffingAgency", entity.staffingAgency);
             parameters.Add("@currentEmployerName", entity.currentEmployerName);
             parameters.Add("@MobileNumber", entity.MobileNumber);
+            if(entity.HRCoordinatorEmailId != null)
+            {
+                parameters.Add("@HRCoordinatorEmailId", entity.HRCoordinatorEmailId);
+
+            }
             return parameters;
         }
         public async Task<bool> AddMeeting(MeetingVM meeting)
