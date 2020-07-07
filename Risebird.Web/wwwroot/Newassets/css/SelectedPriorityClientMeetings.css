@@ -154,12 +154,12 @@ textarea::-webkit-scrollbar-thumb {
         color: darkgray
     }
 
-.up {
+.up, .up-1, .up-2, .up-3 {
     transform: rotate(-90deg);
     top: -.5rem;
 }
 
-.down {
+.down, .down-1, .down-2, .down-3, .down-4 {
     transform: rotate(-90deg);
     top: -2rem;
 }

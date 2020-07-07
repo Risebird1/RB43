@@ -57,7 +57,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Skills")]
         public SelectList PrimarySkills { get; set; }
-        public string VideoLink { get; set; }
-        public int imid { get; set; }
+
+        public string InterviewerSkillId { get; set; }
     }
 }

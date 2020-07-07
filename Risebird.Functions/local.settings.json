@@ -6,7 +6,7 @@
     "PortalBaseUri": "https://risebirdportal.azurewebsites.net"
   },
   "ConnectionStrings": {
-    "sqldb_connection": "Server=tcp:risebirdprod.database.windows.net,1433;Initial Catalog=productProdDB;Persist Security Info=False;User ID=risebirdadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+    "sqldb_connection": "Server=tcp:risebirdportal.database.windows.net,1433;Initial Catalog=productDB;Persist Security Info=False;User ID=talent;Password=rise_123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   },
   "TwilioSettings": {
     "SmsSENDER": "+12055768041",

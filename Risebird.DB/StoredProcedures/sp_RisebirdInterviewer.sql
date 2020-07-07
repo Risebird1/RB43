@@ -13,9 +13,12 @@ CREATE PROCEDURE [dbo].[sp_RisebirdInterviewer]
   
 AS
 BEGIN
-select inter.id, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber,ul.idProfile, inter.PrimarySkill,inter.ResumeLink,inter.Slots, inter.NoOfInterview,inter.SuccessRate,inter.IsApproved from [Interviewer] inter
+select inter.id, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber,ul.idProfile, inter.PrimarySkill,inter.ResumeLink,inter.Slots, 
+inter.NoOfInterview,inter.SuccessRate,inter.IsApproved , inter.UserId
+from [Interviewer] inter
 inner join [dbo].[UserList] ul on inter.UserId = ul.id
 where ul.IsActive =1
+
 
 END
 GO 
