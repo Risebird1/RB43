@@ -4,72 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
 
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-                height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-    /*table.dataTable > thead > tr > th {
-            max-width: 200px !important;
-        }*/
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-</style>
 
 
 <div class="main-panel" id="main-panel">
@@ -85,7 +20,7 @@
                     </button>
                 </div>
                 @Html.ActionLink("GetISCInterviewers", "InterviewerSkills", new { id = @ViewBag.ISCId, InterviewerSkillidName = @ViewBag.ISCName }, htmlAttributes: new { @class = "navbar-brand breadcrumscolor" })
-                <a class="navbar-brand">UnApproved Interviewer</a>
+            <a class="navbar-brand"> / &nbsp; UnApproved Interviewer</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -101,28 +36,26 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Select interviewers for <strong>'@Model.ISCName'</strong></h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+                    
+                    <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
 
                             <div class="toolbar">
-
+                            
                                 <div class="row">
-
-                                    <div class="col-md-6 ml-md-auto">
-                                        @Html.ActionLink("Back to List", "GetISCInterviewers", "InterviewerSkills", new { id = Model.ISCId, InterviewerSkillidName = Model.ISCName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button", @style = "margin-top:2px; float:right" })
+                                    <div class="card-header">
+                                        <h4 class="card-title">Select interviewers for <strong>'@Model.ISCName'</strong></h4>
                                     </div>
-
+                                
 
                                 </div>
 
                             </div>
+                            <div style="width:100%;">&nbsp;</div>
                             <div class="scrollbar" id="style-2">
                                 <div id="tableID">
                                     @if (Model.UnApprovedInterviewersCollection == null || Model.UnApprovedInterviewersCollection.Count() == 0)
@@ -180,8 +113,21 @@
                                             </table>
                                             @Html.HiddenFor(m => m.ISCId)
                                             @Html.HiddenFor(m => m.ISCName)
-                                            <div class="">
-                                                <input type="submit" class="btn btn-fill btn-primary" id="btnSubmit" value="Submit">
+
+
+
+                                            <div class="card-footer ">
+                                                <div class="row">
+
+                                                    <div class="col-md-12 mc-button-area">
+
+
+                                                        @Html.ActionLink("Back to List", "GetISCInterviewers", "InterviewerSkills", new { id = Model.ISCId, InterviewerSkillidName = Model.ISCName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
+                                                        <input type="submit" value="Submit" id="btnSubmit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+
+                                                    </div>
+                                                </div>
                                             </div>
 
                                         }

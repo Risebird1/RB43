@@ -4,44 +4,9 @@
     ViewData["Title"] = "Add Interviewer Skills";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #013855;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 45px;
-    }
 
-    #btnPlus, #btnMinus {
-        padding: 2px;
-    }
 
-    #btnMinus {
-        position: absolute;
-        margin-left: 12px;
-    }
 
-    #btnPlus {
-        background-color: #4a89dc;
-    }
-
-    .glyphicon {
-        top: -1px;
-        right: -2px;
-        vertical-align: middle;
-        line-height: 0;
-    }
-
-    .table-responsive {
-        overflow: hidden;
-    }
-</style>
-
-<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -56,7 +21,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/InterviewerSkills/Index">Interviewer Skills Channel</a>
-                <a class="navbar-brand">Add Interviewer Skills</a>
+                <a class="navbar-brand">/ &nbsp; Add Interviewer Skills</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -71,18 +36,19 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Add Interviewer Skills</h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+                  
+                    <div class="mdc-card-wrapper__text-section">
                         @*<form action="/IRF/AddIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">*@
                         @*<input type="hidden" id="LoginMailId" value="@ViewBag.LoginMailId" />*@
                         @using (Html.BeginForm("AddInterviewerSkills", "InterviewerSkills", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "InterviewerSkillsForm", @onsubmit = "return CheckTotalWeightage()" }))
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <div class="row">
-
+                                <div class="card-header">
+                                    <h4 class="card-title">Add Interviewer Skills</h4>
+                                </div>
+                                <div style="width:100%;">&nbsp;</div>
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.InterviewerSkillId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -109,7 +75,7 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
-                                        <h2>Job Details</h2>
+                                        <h2 style="margin-top:0px;">Job Details</h2>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 pr-1">
@@ -120,7 +86,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("PrimarySkill", (SelectList)ViewBag.Skill, new { @class = "form-control", @onchange = "SkillChanged()" })
+                                        @Html.DropDownList("PrimarySkill", (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "SkillChanged()" })
                                         @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
@@ -142,31 +108,35 @@
 
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { ID = "drp_RiseBirdHR", @class = "form-control" })
+                                        @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { ID = "drp_RiseBirdHR", @class = "select-css form-control" })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
                                     </div>
 
 
                                     @*<div class="form-group">
-                                            Upload JD
-                                            <input id="JD" name="JD" value="Upload" type="radio" onclick="RadioChanged(this.value)">
-                                            Provide JD Link
-                                            <input id="JD" name="JD" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                        </div>
-                                        <div class="form-group" style="display:none" id="linkDiv">
-                                            @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                            @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
-                                        </div>
-                                        <div class="" style="display:none" id="uploadDiv">
-                                            @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                        </div>*@
+                        Upload JD
+                        <input id="JD" name="JD" value="Upload" type="radio" onclick="RadioChanged(this.value)">
+                        Provide JD Link
+                        <input id="JD" name="JD" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                    </div>
+                    <div class="form-group" style="display:none" id="linkDiv">
+                        @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                        @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                        @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="" style="display:none" id="uploadDiv">
+                        @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                        @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                    </div>*@
                                 </div>
                             </div>
 
@@ -177,7 +147,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="SkillTable">
                                             <thead>
                                                 <tr>
@@ -185,27 +155,27 @@
                                                     <th width="15%" class="table_heading">Level</th>
                                                     <th width="65%" class="table_heading">Skill Name</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "form-control" })
+                                                        @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control" })
 
                                                     </td>
                                                     <td>
-                                                        @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+                                                        @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                     </td>
-                                                    <td>
+                                                    <td class="action text-center">
 
 
-                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
 
                                                     </td>
                                                 </tr>
@@ -221,7 +191,7 @@
 
 
 
-                            
+
 
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -230,7 +200,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="SelectabilityTable">
                                             <thead>
                                                 <tr>
@@ -239,18 +209,18 @@
                                                     <th width="25%" class="table_heading">Type</th>
                                                     <th width="40%" class="table_heading">Value</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("Selectability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                        @Html.DropDownList("Selectability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control" })
 
                                                     </td>
                                                     <td>
-                                                        @Html.DropDownList("Selectability[0].Type", (SelectList)Model.SelectabilityTypeList, new { @class = "form-control" })
+                                                        @Html.DropDownList("Selectability[0].Type", (SelectList)Model.SelectabilityTypeList, new { @class = "select-css form-control" })
 
                                                     </td>
                                                     <td>
@@ -260,10 +230,10 @@
                                                         <input class="form-control text-box single-line" id="Selectability_0__Weightage" name="Selectability[0].Weightage" type="number" max="100" min="1" value="100">
                                                     </td>
 
-                                                    <td>
+                                                    <td class="action text-center">
 
-                                                        <span id="btnPlus" onclick="AddSelectabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-selectability"><i class="far fa  fa-trash"></i></span>
+                                                        <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
 
                                                     </td>
                                                 </tr>
@@ -285,7 +255,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="SkillGeneralTable">
                                             <thead>
                                                 <tr>
@@ -293,18 +263,18 @@
                                                     <th width="25%" class="table_heading">Type</th>
                                                     <th width="40%" class="table_heading">Value</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                        @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control" })
 
                                                     </td>
                                                     <td>
-                                                        @Html.DropDownList("SkillGeneral[0].Type", (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control" })
+                                                        @Html.DropDownList("SkillGeneral[0].Type", (SelectList)Model.SkillGeneralTypeList, new { @class = "select-css form-control" })
 
                                                     </td>
                                                     <td>
@@ -315,10 +285,10 @@
                                                         <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" max="100" min="1" value="100">
                                                     </td>
 
-                                                    <td>
+                                                    <td class="action text-center">
 
-                                                        <span id="btnPlus" onclick="AddSkillGeneralRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-skillgeneral"><i class="far fa  fa-trash"></i></span>
+                                                        <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
 
                                                     </td>
                                                 </tr>
@@ -330,7 +300,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
@@ -338,29 +308,29 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="InterviewerTable">
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="70%" class="table_heading">Skills</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownListFor(m=>m.InterviewerCollection[0].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                        @Html.DropDownListFor(m => m.InterviewerCollection[0].UserId, (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                     </td>
 
                                                     <td>
                                                         @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
-                                                        @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
+                                                        @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "select-css form-control", @readonly = "readonly" })
                                                     </td>
 
-                                                    <td>
-                                                        <span id="btnPlus" onclick="AddRowInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+                                                    <td class="action text-center">
+                                                        <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class="mdc-fab app-fab--absolute trash-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -371,22 +341,29 @@
                             </div>
 
 
-                            
+
                             <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="SkillGeneral_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="noInterviewerDown" style="color:red; margin-left:415px"></label>
 
 
+
                             <div class="card-footer ">
                                 <div class="row">
-                                    <label class="col-md-2"></label>
-                                    <div class="col-md-9">
-                                        @Html.ActionLink("Back to List", "Index", "InterviewerSkills", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+
+                                    <div class="col-md-12 mc-button-area">
+                                        <input type="submit" value="Submit" id="btnUpload" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+
+                                        @Html.ActionLink("Back to List", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                     </div>
                                 </div>
                             </div>
+
+
+
+
+                        
                         }
                         @*</form>*@
 
@@ -1039,5 +1016,29 @@
     }
 
 
+
+</script>
+
+<script>
+
+    document.body.className += "js";
+
+    var spinner = document.querySelector('.input');
+    var buttonUp = document.querySelector('.up');
+    var buttonDown = document.querySelector('.down');
+
+    buttonUp.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        spinner.value = value;
+    };
+
+    buttonDown.onclick = function () {
+        var value = parseInt(spinner.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value--;
+        spinner.value = value;
+    };
 
 </script>

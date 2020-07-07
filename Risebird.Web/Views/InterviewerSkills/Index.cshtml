@@ -20,146 +20,7 @@
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
 }
-<style>
-    .spanclass {
-        color: black;
-        font-size: 11px;
-    }
 
-    .desc {
-        display: inline-block;
-        width: 120px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #5f95b1;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 35px;
-        margin-bottom: 35px;
-    }
-
-    @@media (min-width: 1200px) {
-        .container {
-            width: 1125px;
-        }
-    }
-
-    .thumbnail {
-        border-top: 5px solid #443f3f;
-    }
-
-    .list-group-item-heading {
-        font-size: 13px;
-        font-weight: 700;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 15px;
-    }
-
-
-
-    /*.list-group-item-text span {
-        float: left;
-        font-weight: 700;
-        padding-right: 5px;
-    }*/
-
-    .icon span {
-        padding-top: 15px;
-        font-size: 19px;
-        color: #5f95b1;
-        padding-left: 5px;
-    }
-
-    .list-group {
-        margin-bottom: 150px;
-    }
-</style>
-<style>
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-    .dropdown-toggle {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
-    }
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-</style>
-
-<!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
-<style>
-
-    .card-footer {
-        text-align: center;
-        padding: 0px;
-    }
-
-    .card-body {
-        margin: 0px;
-        padding: 5px;
-    }
-
-    #irf-card-footer {
-        padding-left: 20px;
-        padding-top: 15px;
-    }
-
-    .card-header-buttons {
-        margin: -15px;
-        margin-left: 15px;
-    }
-
-    .card-content-holder {
-        background-color: white;
-    }
-
-    .list-group-item-text {
-        line-height: 80%;
-    }
-
-        .list-group-item-text span {
-            font-weight: bold;
-            padding-right: 7px;
-        }
-
-    .pskill {
-        display: inline-block;
-        width: 120px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .clientName {
-        display: inline-block;
-        width: 240px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-</style>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -185,125 +46,286 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Interviewer Skills Channel</h4>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 ml-md-auto">
-                            <div class="form-group">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="row">
+
+                            <div class="card-header">
+                                <div class="pull-left">
+                                    <h4 class="card-title">Interviewer Skills Channel</h4>
+                                </div>
+                                <div class="pull-right">
+
+                                    <button style="display: none;margin-top: 2px;" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
+                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                        <div class="mdc-button__ripple"></div>
+                                    </button>
+
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "InterviewerSkills" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Interviewer Skills </font></span></button>
+
+
+
+                                </div>
+
 
                             </div>
-                        </div>
-                        <div class="col-auto">
-                            <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "InterviewerSkills" )'" data-original-title="Tooltip on top"> Add Interviewer Skills</span></button>
 
-                            <button style="display:none" type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
-                        </div>
-                    </div>
-                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                    <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <form action="@Url.Action("Index","InterviewerSkills")" method="post" id="form">
 
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
-                                                        Start Date
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                    </div>
+                        </div>
+
+                        <div class="row">
+                            @foreach (var item in Model.InterviewerSkillsChannelModelList)
+                            {
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                    <div class="card-content-holder border card-blue">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class=" col-md-6 col-sm-6 first">
+                                                    <h6> @item.InterviewerSkillId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
-                                                        End Date
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @*<div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.InterviewerSkillId).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    @if (!Model.IsClientUser)
+
+                                                <div class="col-md-6 col-sm-6 card-header-buttons action">
+
+
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                        <span onclick="javascript:EditInterviewerSkills('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
+
+
+
+
+
+
+                                                    @if (!item.IsDeleted)
+
                                                     {
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">JD Tiltle</label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.JDTiltle).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
+                                                            <span onclick="javascript:DeleteInterviewerSkills('@item.id','@item.InterviewerSkillId');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                        </button>
+
                                                     }
-                                                </div>*@
+                                                    else
+                                                    {
+                                                       
 
+                                                        <button class="mdc-fab app-fab--absolute unarchive-btn" aria-label="UnArchive">
+                                                            <span onclick="javascript:UnArchiveISC('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
+                                                        </button>
+
+
+
+                                                    }
+
+
+
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- interviewerSkills body-->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-lg-2  col-sm-2">
+                                                    <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                </div>
+                                                <div class="col-lg-10col-sm-10">
+                                                    <div class="group inner list-group-item-text">
+
+                                                        <div class="row">
+                                                            <span>JD Tiltle:</span> <div class="clientName" title="@item.JDTiltle">@item.JDTiltle</div>
+                                                        </div> <br />
+
+                                                        <div class="row"> <span>End Date:</span>@item.EndDate</div> <br />
+                                                        <div class="row">
+                                                            <span>Primary Skill:</span> @(item.SkillName!= null ? item.SkillName : "")
+                                                        </div> <br />
+                                                        <div class="row">
+                                                            <span>Risebird Hr:</span> @(item.HREmailId!= null ? item.HREmailId : "")
+                                                        </div> <br />
+                                                        @if (Model.Profile != "Recruiter")
+                                                        {
+                                                            <div class="row">
+                                                                <span>Per Interviewer Rate:</span> @item.PerMintuteRate
+                                                            </div> <br />
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-footer">
+                                            <div class="row">
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" id="irf-card-footer">
+
+                                                    @if (item.InterviewerSkillStatus == "Active")
+                                                    {
+                                                        <h6 style="color: green;"> @item.InterviewerSkillStatus</h6>
+                                                    }
+                                                    else if (item.InterviewerSkillStatus == "Paused")
+                                                    {
+                                                        <h6 style="color: grey;"> @item.InterviewerSkillStatus</h6>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h6 style="color: black;"> @item.InterviewerSkillStatus</h6>
+                                                    }
+                                                </div>
+                                                <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
+
+
+                                                    <button class="mdc-fab app-fab--absolute item1" aria-label="InterviewerList">
+                                                        <span onclick="javascript:InterviewerList('@item.id', '@item.InterviewerSkillId');" title="InterviewerList" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                    </button>
+
+
+
+                                                    <button class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
+                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "InterviewerSkills" , new
+                                         {InterviewerSkillName=item.InterviewerSkillId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
+                                                    </button>
+
+
+
+                                                    @if (item.IsPaused)
+                                                    {
+
+
+                                                        <button class="mdc-fab app-fab--absolute item6" aria-label="PlayInterviewerSkills">
+                                                            <span onclick="PlayInterviewerSkills('@item.id', '@item.InterviewerSkillId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                        </button>
+
+
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <button class="mdc-fab app-fab--absolute item6" aria-label="Pause">
+                                                            <span onclick="PauseInterviewerSkills('@item.id', '@item.InterviewerSkillId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                        </button>
+
+
+
+
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+
+
+                        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                        <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="@Url.Action("Index","InterviewerSkills")" method="post" id="form">
+
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                            Start Date
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                            End Date
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @*<div class="col-md-6 col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
+                                        <div class="col-md-6 col-sm-6">
+                                            <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.InterviewerSkillId).Distinct().ToList())
+                                                {
+                                                    @if (item != null && item != "")
+                                                    {
+                                                        <option value="@item">@item</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    @if (!Model.IsClientUser)
+                                    {
+                                        <div class="form-group">
+                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">JD Tiltle</label>
                                             <div class="col-md-6 col-sm-6">
+                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                    @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                    {
+                                                        @if (item != null && item != "")
+                                                        {
+                                                            <option value="@item">@item</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>*@
 
-                                                @*<div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.ArchiveStatus).Distinct().ToList())
-                                                                {
-                                                                @if (item != null && item != "")
-                                                                    {
-                                                                <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>*@
-                                                <div class="form-group col-md-12">
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                <div class="col-md-6 col-sm-6">
+
+                                                    @*<div class="form-group">
+                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
+                                        <div class="col-md-6 col-sm-6">
+                                            <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                {
+                                                @if (item != null && item != "")
+                                                    {
+                                                <option value="@item">@item</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>*@
+                                                    <div class="form-group col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
+
                         </div>
 
+                        <!-- end content-->
                     </div>
-
-                    <!-- end content-->
                 </div>
                 <!--  end card  -->
             </div>
@@ -312,124 +334,7 @@
 
         <!-- Start Card -->
 
-        <div class="row">
-            @foreach (var item in Model.InterviewerSkillsChannelModelList)
-            {
-                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" style="margin-top: 15px;">
-                    <div class="card-content-holder border border-dark">
-                        <div class="card-header">
-                            <div class="row">
-                                <div class=" col-md-7 col-sm-7">
-                                    <h6> @item.InterviewerSkillId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
-                                </div>
-
-                                <div class="col-md-5 col-sm-5 card-header-buttons">
-                                    <button type="button" onclick="javascript:EditInterviewerSkills('@item.id');" title="Edit" class="btn btn-info btn-icon btn-sm">
-                                        <i class="now-ui-icons fa fa-edit"></i>
-                                    </button>
-
-                                    @if (!item.IsDeleted)
-                                    {
-                                        <button type="button" onclick="javascript:DeleteInterviewerSkills('@item.id','@item.InterviewerSkillId');" class="btn btn-danger btn-icon btn-sm" title="Archive">
-                                            <i class="now-ui-icons fa fa-archive"></i>
-                                        </button>
-
-                                    }
-                                    else
-                                    {
-                                        <button type="button" onclick="javascript:UnArchiveISC('@item.id');" class="btn btn-info btn-icon btn-sm" title="UnArchive">
-                                            <i class="now-ui-icons fa fa-undo"></i>
-                                        </button>
-                                    }
-
-
-
-
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- interviewerSkills body-->
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-2  col-sm-2">
-                                    <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
-                                </div>
-                                <div class="col-lg-10col-sm-10">
-                                    <div class="group inner list-group-item-text">
-
-                                        <div class="row">
-                                            <span>JD Tiltle:</span> <div class="clientName" title="@item.JDTiltle">@item.JDTiltle</div>
-                                        </div> <br />
-
-                                        <div class="row"> <span>End Date:</span>@item.EndDate</div> <br />
-                                        <div class="row">
-                                            <span>Primary Skill:</span> @(item.SkillName!= null ? item.SkillName : "")
-                                        </div> <br />
-                                        <div class="row">
-                                            <span>Risebird Hr:</span> @(item.HREmailId!= null ? item.HREmailId : "")
-                                        </div> <br />
-                                        @if (Model.Profile != "Recruiter")
-                                        {
-                                            <div class="row">
-                                                <span>Per Interviewer Rate:</span> @item.PerMintuteRate
-                                            </div> <br />
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="card-footer">
-                            <div class="row">
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 " id="irf-card-footer">
-
-                                    @if (item.InterviewerSkillStatus == "Active")
-                                    {
-                                        <h6 style="color: green;"> @item.InterviewerSkillStatus</h6>
-                                    }
-                                    else if (item.InterviewerSkillStatus == "Paused")
-                                    {
-                                        <h6 style="color: grey;"> @item.InterviewerSkillStatus</h6>
-                                    }
-                                    else
-                                    {
-                                        <h6 style="color: black;"> @item.InterviewerSkillStatus</h6>
-                                    }
-                                </div>
-                                <div class="stats text-center col-lg-8 col-md-8 col-sm-8 col-xs-8 ">
-                                    <button type="button" onclick="javascript:InterviewerList('@item.id', '@item.InterviewerSkillId');" class="btn btn-info btn-icon btn-sm" title="Interviewer List">
-                                        <i class="now-ui-icons fa fa-list"></i>
-                                    </button>
-                                    <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "InterviewerSkills" , new
-                                         {InterviewerSkillName=item.InterviewerSkillId, calendlyLink=item.CalendlyLink})'"
-                                            class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
-                                        <i class="now-ui-icons  fa fa-calendar"></i>
-                                    </button>
-                                    @if (item.IsPaused)
-                                    {
-                                    <button type="button" onclick="PlayInterviewerSkills('@item.id', '@item.InterviewerSkillId');"
-                                            class="btn btn-info btn-icon btn-sm" title="Play">
-                                        <i class="now-ui-icons fa fa-play"></i>
-                                    </button>
-                                    }
-                                    else
-                                    {
-                                    <button type="button" onclick="PauseInterviewerSkills('@item.id', '@item.InterviewerSkillId');"
-                                            class="btn btn-info btn-icon btn-sm" title="Pause">
-                                        <i class="now-ui-icons fa fa-pause"></i>
-                                    </button>
-
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
+        
 
         <!-- End Card-->
         

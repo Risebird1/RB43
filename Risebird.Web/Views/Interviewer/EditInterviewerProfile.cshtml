@@ -5,9 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+
 
 
 @*<script src="sweetalert2.all.min.js"></script>
@@ -266,7 +264,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="table-responsive">
+                                                <div class="table-responsive-sm">
                                                     <table class="table table-bordered mbn" id="skillTable">
                                                         <thead class="tableHeaderClass">
                                                             <tr>
@@ -353,7 +351,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="table-responsive">
+                                                <div class="table-responsive-sm">
                                                     <table class="table table-bordered mbn" id="certificateTable">
                                                         <thead class="tableHeaderClass">
                                                             <tr>
@@ -430,7 +428,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="table-responsive">
+                                                <div class="table-responsive-sm">
                                                     <table class="table table-bordered mbn" id="educationTable">
                                                         <thead class="tableHeaderClass">
                                                             <tr>
@@ -634,7 +632,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="table-responsive">
+                                                <div class="table-responsive-sm">
                                                     <table class="table table-bordered mbn" id="projectTable">
                                                         <thead>
                                                             <tr class="tableHeaderClass">
@@ -771,7 +769,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="table-responsive">
+                                                <div class="table-responsive-sm">
                                                     <table class="table table-bordered mbn" id="availabilityDetailsTable">
                                                         <thead class="tableHeaderClass">
                                                             <tr>
@@ -1741,20 +1739,20 @@
             //}
 
 
-            //function RadioChanged(val) {
-            //    if (val == 'Upload') {
-            //        document.getElementById("uploadDiv").style.display = "block";
-            //        document.getElementById("linkDiv").style.display = "none";
-            //        document.getElementById("ResumeLink").value = '';
+          function RadioChanged(val) {
+              if (val == 'Upload') {
+                    document.getElementById("uploadDiv").style.display = "block";
+                    document.getElementById("linkDiv").style.display = "none";
+                   document.getElementById("ResumeLink").value = '';
 
-            //    }
-            //    else {
-            //        document.getElementById("uploadDiv").style.display = "none";
-            //        document.getElementById("linkDiv").style.display = "block";
-            //        document.getElementById("File").value = '';
+                }
+               else {
+                   document.getElementById("uploadDiv").style.display = "none";
+                   document.getElementById("linkDiv").style.display = "block";
+                 document.getElementById("File").value = '';
 
-            //    }
+            }
 
-            //}
+          }
     </script>
 
