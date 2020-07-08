@@ -71,6 +71,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Meeting> GetHROpenInterviews();
         string HRAssignYourself(int meetingid, string hrMailId);
         IEnumerable<Meeting> GetHRAssignedInterviews(string emailID);
-
+        bool HRUnassignYourself(int meetingid);
+        bool SaveHRComment(int id, string comment);
     }
 }

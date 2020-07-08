@@ -5902,7 +5902,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "HR" ;//profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     if (profileName == "HR")
                     {
                         var meetings = _meetingService.GetHROpenInterviews();
@@ -5948,9 +5948,9 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = "HR";//HttpContext.Session.GetString("profileName")?.Trim();
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailid = "prasad_srinivas@risebird.io";// HttpContext.Session.GetString("email")?.Trim();
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "HR")
                     {
@@ -6038,7 +6038,65 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> HRUnassignYourself(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        if (_meetingService.HRUnassignYourself(id))
+                        {
+                            return Json(new { url = Url.Action("HRMyInterview", "Interview") });
+
+                        }
+                        else
+                        {
+                            return Json(new { url = Url.Action("HRMyInterview", "Interview") });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { url = Url.Action("HRMyInterview", "Interview") });
+            }
+        }
         #endregion
+
+        public bool SaveHRComment(int id, string comment)
+        {
+            var result = _meetingService.SaveHRComment(id, comment);
+            if (result)
+            {
+                TempData["SuccessErrorMessageInterview"] = "HR comments saved Successfully!";
+
+            }
+            else
+                TempData["SuccessErrorMessageInterview"] = "Failed to save HR comments!";
+
+            return result;
+
+        }
+
     }
 
 }
