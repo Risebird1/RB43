@@ -214,11 +214,11 @@
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="noofintterview">no of interviews to be conducted</label>*@
 
-                                        @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
                                         <div class="spinner">
-                                            <button type="button" class="up button">&rsaquo;</button>
-                                            <button type="button" class="down button">&lsaquo;</button>
+                                            <button type="button" class="up-1 button">&rsaquo;</button>
+                                            <button type="button" class="down-1 button">&lsaquo;</button>
                                         </div>
                                         @*<input class="form-control text-box single-line" id="NoOfIntterview" name="NoOfIntterview" type="number" value="">*@
 
@@ -250,11 +250,11 @@
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>*@
 
-                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1" } })
+                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
                                         <div class="spinner">
-                                            <button type="button" class="up button">&rsaquo;</button>
-                                            <button type="button" class="down button">&lsaquo;</button>
+                                            <button type="button" class="up-2 button">&rsaquo;</button>
+                                            <button type="button" class="down-2 button">&lsaquo;</button>
                                         </div>
                                         @*<input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="number" step="0.01" value="">*@
 
@@ -264,11 +264,11 @@
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>*@
 
-                                        @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input form-control text-box single-line", @type = "number", @min = "1" } })
+                                        @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @class = "text-danger" })
                                         <div class="spinner">
-                                            <button type="button" class="up button">&rsaquo;</button>
-                                            <button type="button" class="down button">&lsaquo;</button>
+                                            <button type="button" class="up-3 button">&rsaquo;</button>
+                                            <button type="button" class="down-3 button">&lsaquo;</button>
                                         </div>
                                         @*<input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="number" step="0.01" value="">*@
 
@@ -2239,5 +2239,70 @@
         value--;
         spinner.value = value;
     };
+
+
+
+
+    var spinner1 = document.querySelector('.input-1');
+    var buttonUp1 = document.querySelector('.up-1');
+    var buttonDown1 = document.querySelector('.down-1');
+
+    buttonUp1.onclick = function () {
+        var value = parseInt(spinner1.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        spinner1.value = value;
+    };
+
+    buttonDown1.onclick = function () {
+        var value = parseInt(spinner1.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value--;
+        spinner1.value = value;
+    };
+
+
+
+    var spinner2 = document.querySelector('.input-2');
+    var buttonUp2 = document.querySelector('.up-2');
+    var buttonDown2 = document.querySelector('.down-2');
+
+    buttonUp2.onclick = function () {
+        var value = parseInt(spinner2.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        spinner2.value = value;
+    };
+
+    buttonDown2.onclick = function () {
+        var value = parseInt(spinner2.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value--;
+        spinner2.value = value;
+    };
+
+
+
+
+    var spinner3 = document.querySelector('.input-3');
+    var buttonUp3 = document.querySelector('.up-3');
+    var buttonDown3 = document.querySelector('.down-3');
+
+    buttonUp3.onclick = function () {
+        var value = parseInt(spinner3.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        spinner3.value = value;
+    };
+
+    buttonDown3.onclick = function () {
+        var value = parseInt(spinner3.value, 10);
+        value = isNaN(value) ? 0 : value;
+        value--;
+        spinner3.value = value;
+    };
+
+
+
 
 </script>

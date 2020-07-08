@@ -324,6 +324,8 @@
                                                     <th>Video Link</th>
                                                     <th>Interview Slot</th>
                                                     <th>QC Interviewer</th>
+                                                    <th>Co-ordinating HR</th>
+                                                    <th>HR Comments</th>
                                                     <th>Staffing Agenecy</th>
                                                     <th>Interview Duration</th>
                                                     <th>Expected Joining Time</th>
@@ -338,7 +340,7 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
                                                     <th class="no-sort"></th>
-
+                                                    @*<th>Interview Device Details</th>*@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
                                                 </tr>
@@ -364,6 +366,8 @@
                                                     <th>Video Link</th>
                                                     <th>Interview Slot</th>
                                                     <th>QC Interviewer</th>
+                                                    <th>Co-ordinating HR</th>
+                                                    <th>HR Comments</th>
                                                     <th>Staffing Agenecy</th>
                                                     <th>Interview Duration</th>
                                                     <th>Expected Joining Time</th>
@@ -493,6 +497,8 @@
                                                         }
                                                         <td>@item.interviewSlot</td>
                                                         <td>@item.QCInterviewer</td>
+                                                        <td>@item.HRCoordinatorEmailId</td>
+                                                        <td>@item.HRComment</td>
                                                         <td>@item.staffingAgency</td>
                                                         <td> @item.interviewDuration </td>
                                                         <td> @item.joiningTime</td>
@@ -551,7 +557,10 @@
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                 <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                             </button>
-
+                                                            
+                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Co-ordinating HR Comments">
+                                                                <span onclick="OpenCommentModal('@item.imid','@item.interviewDate', '@item.HRComment')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                            </button>
                                                             @if (item.IsBiometricEnabled)
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Report">
@@ -693,6 +702,42 @@
         </div>
     </div>
 </div>
+
+
+<div id="hrCommentModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                <h5 class="modal-title" id="hrCommentHeading"></h5>
+                <span class="close" id="hrCommentPopUp" style="cursor:pointer;">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 ">
+                        <div class="form-group">
+                            <label class="control-label  desp-label">Comment</label>
+                            <div>
+                                <div class="text-areadiv1">
+                                    <textarea class="scrollbar" style="width:100%;" id="hrCommentValue"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="text-center" style="margin:0px 0px 10px 0px;">
+                    <input type="button" onclick="SaveHRCommentPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
@@ -826,8 +871,9 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        location.reload();
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                         //window.location.href = '/Interview/Index';
                     }
                 )
@@ -843,8 +889,9 @@
                 },
                     function ()
                     {
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        location.reload();
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                         //window.location.href = '/Interview/Index';
                     }
                 )
@@ -1071,7 +1118,6 @@
                 'message': message, 'subject': subject, 'receiver': receiver
             },
             success: function (data) {
-                debugger;
                 location.reload(true);
 
             }
@@ -1080,6 +1126,46 @@
 
 </script>
 
+<script>
+    var meetingId;
+
+    var spanComment = document.getElementById("hrCommentPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanComment.onclick = function () {
+        var modal = document.getElementById("hrCommentModal");
+        modal.style.display = "none";
+    }
+
+    function OpenCommentModal(id, date, commentVal) {
+        meetingId = id;
+        // Get the modal
+        var modal = document.getElementById("hrCommentModal");
+
+        document.getElementById("hrCommentHeading").innerHTML = "Add comment for interview dated: " + date;
+
+        if (commentVal != null && commentVal != "") {
+            $("#hrCommentValue").val(commentVal);
+        }
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+
+    }
+    function SaveHRCommentPopUp() {
+        var comment = document.getElementById("hrCommentValue").value;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/SaveHRComment",
+            data: { id: meetingId, 'comment': comment },
+            success: function (data) {
+
+                location.reload(true);
+
+            }
+        });
+    }
+</script>
 <script>
     $(document).ready(function () {
         $('.sendButton').attr('disabled', true);

@@ -684,7 +684,7 @@ input[type=number] {
 }
 
 .card-blue .card-header {
-    padding: .5rem 0rem 0.3rem 0rem;
+    padding: .5rem 0rem 0.3rem 0rem!important;
 }
 
     .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
