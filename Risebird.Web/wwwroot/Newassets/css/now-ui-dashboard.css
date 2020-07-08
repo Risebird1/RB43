@@ -238,7 +238,7 @@
     }
 
 .btn-primary {
-    background-color: #42a5f5;
+    background-color: #42a5f5!important;
     color: #FFFFFF;
 }
 
@@ -260,10 +260,10 @@
     .show > .btn-primary.dropdown-toggle,
     .show > .btn-primary.dropdown-toggle:focus,
     .show > .btn-primary.dropdown-toggle:hover {
-        background-color: #fa7a50;
+        background-color: #42a5f5!important;
         color: #FFFFFF;
         box-shadow: none;
-        border-color: #fa7a50;
+        border-color: #42a5f5!important;
     }
 
     .btn-primary:not([data-action]):not([class*="btn-outline-"]):hover {
@@ -306,7 +306,7 @@
         .btn-primary.btn-link:focus,
         .btn-primary.btn-link:active {
             background-color: transparent;
-            color: #fa7a50;
+            color: #42a5f5!important;
             text-decoration: none;
             box-shadow: none;
         }
@@ -703,13 +703,13 @@
     .show > .btn-neutral.dropdown-toggle:focus,
     .show > .btn-neutral.dropdown-toggle:hover {
         background-color: #FFFFFF;
-        color: #fa7a50 !important;
+        color: #42a5f5 !important;
         box-shadow: none;
     }
 
     .btn-neutral:hover,
     .btn-neutral:focus {
-        color: #fa7a50;
+        color: #42a5f5;
     }
 
         .btn-neutral:hover:not(.nav-link),
@@ -747,9 +747,8 @@
     .show > .btn-outline-primary.dropdown-toggle:focus,
     .show > .btn-outline-primary.dropdown-toggle:hover {
         background-color: transparent;
-        color: #fa7a50;
-        border-color: #fa7a50;
-        box-shadow: none;
+        color: #42a5f5;
+        border-color: #42a5f5; box-shadow: none;
     }
 
 .btn-outline-success {
@@ -11946,9 +11945,10 @@ body .fc {
     font-size: 1em;
 }
 
+body.stop-scrolling {  overflow:visible!important;
+}
 /* Colors
 --------------------------------------------------------------------------------------------------*/
-
 .fc-unthemed th,
 .fc-unthemed td,
 .fc-unthemed thead,
@@ -12131,10 +12131,10 @@ NOTE: use percentage font sizes or else old IE chokes
         .show > .fc button.btn-primary.dropdown-toggle,
         .show > .fc button.btn-primary.dropdown-toggle:focus,
         .show > .fc button.btn-primary.dropdown-toggle:hover {
-            background-color: #fa7a50;
+            background-color: #42a5f5;
             color: #FFFFFF;
             box-shadow: none;
-            border-color: #fa7a50;
+            border-color: #42a5f5;
         }
 
         .fc button:not([data-action]):not([class*="btn-outline-"]):hover,
@@ -12206,8 +12206,7 @@ NOTE: use percentage font sizes or else old IE chokes
             .fc button.btn-primary.btn-link:focus,
             .fc button.btn-primary.btn-link:active {
                 background-color: transparent;
-                color: #fa7a50;
-                text-decoration: none;
+                color: #42a5f5; text-decoration: none;
                 box-shadow: none;
             }
 
