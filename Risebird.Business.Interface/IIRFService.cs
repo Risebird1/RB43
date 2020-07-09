@@ -61,5 +61,7 @@ namespace Risebird.Business.Interface
         bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore);
         IList<CandidateCuratedScore> GetCandidateCuratedScore(int id);
         IEnumerable<CuratedGroup> GetAllCuratedGroups();
+        IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping();
+        Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails);
     }
 }

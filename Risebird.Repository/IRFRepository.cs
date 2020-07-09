@@ -3279,6 +3279,79 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<CuratedIRFMapping>(con, "usp_GetIRFListForCuratedMapping",
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DynamicParameters parameters = new DynamicParameters();
+                    parameters.Add("@Name", curatedGroupDetails.Name);
+                    parameters.Add("@CreatedOn", DateTime.Now);
+                    var obj = SqlMapper.Query<int>(con, "usp_AddCuratedGroup", parameters,
+                         commandType: CommandType.StoredProcedure);
+
+                    var curatedGroupId = obj.FirstOrDefault();
+
+                    DataTable curatedIRFDt = new DataTable();
+                    curatedIRFDt.Columns.Add("CuratedGroupId", typeof(int));
+                    curatedIRFDt.Columns.Add("IRFId", typeof(int));
+                    curatedIRFDt.Columns.Add("IsAdded", typeof(bool));
+
+                    foreach (var item in curatedGroupDetails.CuratedIRFMappings)
+                    {
+                        curatedIRFDt.Rows.Add(curatedGroupId, item.IRFId, item.IsAdded);
+                    }
+
+                    SqlCommand cmdCuratedIRF = new SqlCommand("usp_CuratedIRFBulkInsert", con);
+                    cmdCuratedIRF.CommandType = CommandType.StoredProcedure;
+                    cmdCuratedIRF.Parameters.Add(new SqlParameter("@CuratedIRFBulkData", SqlDbType.Structured));
+                    cmdCuratedIRF.Parameters["@CuratedIRFBulkData"].Value = curatedIRFDt;
+                    con.Open();
+                    if (cmdCuratedIRF.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
     }
 }

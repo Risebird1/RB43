@@ -3633,6 +3633,11 @@ namespace Risebird.Web.Controllers
                     {
 
                         var curatedGroups = _irfService.GetAllCuratedGroups();
+                        if (TempData["SuccessErrorMessageCG"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageCG"].ToString();
+                            TempData.Remove("SuccessErrorMessageCG");
+                        }
                         return View(curatedGroups);
 
                     }
@@ -3652,6 +3657,58 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AddCuratedGroup()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var curatedGroupModel = new CuratedGroup();
+                curatedGroupModel.CuratedIRFMappings = (IList<CuratedIRFMapping>)(_irfService.GetIRFListForCuratedMapping());
+                return View(curatedGroupModel);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddCuratedGroup(CuratedGroup model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    //profileName = profileName.Replace("\"", "");
+                    if (_irfService.AddCuratedGroup(model).Result)
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Curated Group added Successfully";
+                        return RedirectToAction("CuratedGroups");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Adding Curated Group has Failed";
+                        return RedirectToAction("CuratedGroups");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCG"] = "Adding Curated Group has failed";
+                return RedirectToAction("CuratedGroups");
+            }
         }
     }
 }

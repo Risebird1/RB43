@@ -95,5 +95,7 @@ namespace Risebird.Repository.Interface
         bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore);
         IEnumerable<CandidateCuratedScore> GetCandidateCuratedScore(int id);
         Task<IEnumerable<CuratedGroup>> GetAllCuratedGroups();
+        IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping();
+        Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails);
     }
 }
