@@ -185,7 +185,7 @@
 
                                                     </td>
                                                     <td style="text-align: center">
-                                                        @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                        @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty )
                                                         {
 
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the interviewer">
@@ -198,7 +198,7 @@
                                                         
                                                     </td>
                                                     <td style="text-align: center">
-                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty )
                                                         {
 
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate">
