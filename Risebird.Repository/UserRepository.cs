@@ -474,7 +474,29 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public IEnumerable<InterviewerVM> GetInterviewerVideos(string Emailid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Emailid", Emailid);
 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[usp_GetInterviewerVideos]", parameters,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<bool> UpdateInterviewer(InterviewerVM Interviewer)
         {
             try

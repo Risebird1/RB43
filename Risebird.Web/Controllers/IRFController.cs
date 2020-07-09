@@ -3549,6 +3549,7 @@ namespace Risebird.Web.Controllers
             //model = model.Where(x => x.id == ID).ToList();
             // code for fetch data or any thing else
             InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
+            interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
             return View(interviewerVM);
          //   return View();
         }

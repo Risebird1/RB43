@@ -27,6 +27,8 @@ namespace Risebird.Repository.Interface
         Task<bool> AddQCInterviewer(QCInterviewerVM interviewer);
         Task<bool> DeleteInterviewer(int id);
         Task<InterviewerVM> GetInterviewer(int id);
+        IEnumerable<InterviewerVM> GetInterviewerVideos(string Emailid);
+
         Task<bool> UpdateInterviewer(InterviewerVM Interviewer);
 
         Task<QCInterviewerVM> GetQCInterviewer(int id);
