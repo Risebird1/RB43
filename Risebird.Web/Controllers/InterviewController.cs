@@ -6087,11 +6087,11 @@ namespace Risebird.Web.Controllers
             var result = _meetingService.SaveHRComment(id, comment);
             if (result)
             {
-                TempData["SuccessErrorMessageInterview"] = "HR comments saved Successfully!";
+                TempData["SuccessErrorMessageHR"] = "HR comments saved Successfully!";
 
             }
             else
-                TempData["SuccessErrorMessageInterview"] = "Failed to save HR comments!";
+                TempData["SuccessErrorMessageHR"] = "Failed to save HR comments!";
 
             return result;
 

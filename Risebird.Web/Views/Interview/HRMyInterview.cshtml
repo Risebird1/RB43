@@ -105,11 +105,13 @@
                                                 <th>Duration</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>Primary Skill</th>
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Interviewer</th>
                                                 <th>ClientHR</th>
                                                 <th>Quality Controller</th>
+                                                <th>HR Comments</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                                 <th style="text-align:center">Call Interviewer</th>
                                                 <th style="text-align:center">Call Candidate</th>
@@ -122,11 +124,13 @@
                                                 <th>Duration</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>Primary Skill</th>
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Interviewer</th>
                                                 <th>ClientHR</th>
                                                 <th>Quality Controller</th>
+                                                <th>HR Comments</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                                 <th style="text-align:center">Call Interviewer</th>
                                                 <th style="text-align:center">Call Candidate</th>
@@ -156,6 +160,7 @@
                                                         </td>
                                                     }
                                                     <td> @item.candidateEmail</td>
+                                                    <td> @item.JDTiltle.Split('|')[0]</td>
 
                                                     @if (item.resumeLink != null && item.resumeLink != "")
                                                     {
@@ -177,12 +182,15 @@
                                                     <td>@item.interviewer</td>
                                                     <td>@item.ClientHrContact</td>
                                                     <td>@item.QCInterviewer</td>
+                                                    <td>@item.HRComment</td>
                                                     <td class="text-right">
 
                                                         <button class="mdc-fab app-fab--absolute sampleQues" aria-label="UnAssign Yourself">
                                                             <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
                                                         </button>
-
+                                                        <button class="mdc-fab app-fab--absolute itemques" aria-label="Co-ordinating HR Comments">
+                                                            <span onclick="OpenCommentModal('@item.id','@item.interviewDate', '@item.HRComment')" title="Co-ordinating HR Comments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                        </button>
                                                     </td>
                                                     <td style="text-align: center">
                                                         @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty )
@@ -195,7 +203,7 @@
 
                                                         }
 
-                                                        
+
                                                     </td>
                                                     <td style="text-align: center">
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty )
@@ -207,7 +215,7 @@
 
 
                                                         }
-                                                        
+
                                                     </td>
                                                 </tr>
                                             }
@@ -224,7 +232,7 @@
                 </div>
                 <!-- end col-md-12 -->
             </div>
-            
+
 
             <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
                 <!-- Modal content -->
@@ -249,6 +257,42 @@
         color: white;">
 
                         </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div id="hrCommentModal" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                            <h5 class="modal-title" id="hrCommentHeading"></h5>
+                            <span class="close" id="hrCommentPopUp" style="cursor:pointer;">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 ">
+                                    <div class="form-group">
+                                        <label class="control-label  desp-label">Comment</label>
+                                        <div>
+                                            <div class="text-areadiv1">
+                                                <textarea class="scrollbar" style="width:100%;" id="hrCommentValue"></textarea>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="text-center" style="margin:0px 0px 10px 0px;">
+                                <input type="button" onclick="SaveHRCommentPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -526,6 +570,46 @@
     </script>
 
 }
+    <script>
+        var meetingId;
+
+        var spanComment = document.getElementById("hrCommentPopUp");
+        // When the user clicks on <span> (x), close the modal
+        spanComment.onclick = function () {
+            var modal = document.getElementById("hrCommentModal");
+            modal.style.display = "none";
+        }
+
+        function OpenCommentModal(id, date, commentVal) {
+            meetingId = id;
+            // Get the modal
+            var modal = document.getElementById("hrCommentModal");
+
+            document.getElementById("hrCommentHeading").innerHTML = "Add comment for interview dated: " + date;
+
+            if (commentVal != null && commentVal != "") {
+                $("#hrCommentValue").val(commentVal);
+            }
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+
+        }
+        function SaveHRCommentPopUp() {
+            var comment = document.getElementById("hrCommentValue").value;
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/SaveHRComment",
+                data: { id: meetingId, 'comment': comment },
+                success: function (data) {
+
+                    location.reload(true);
+
+                }
+            });
+        }
+    </script>
 @*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     <script src="~/Newassets/js/enjoyhint.min.js"></script>
