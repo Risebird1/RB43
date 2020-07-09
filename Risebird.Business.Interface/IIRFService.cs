@@ -60,5 +60,6 @@ namespace Risebird.Business.Interface
         IEnumerable<Users> GetAllHRs();
         bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore);
         IList<CandidateCuratedScore> GetCandidateCuratedScore(int id);
+        IEnumerable<CuratedGroup> GetAllCuratedGroups();
     }
 }

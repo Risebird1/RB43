@@ -1145,6 +1145,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public IEnumerable<CuratedGroup> GetAllCuratedGroups()
+        {
+            try
+            {
+                return _irfRepository.GetAllCuratedGroups().Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
     }
 }

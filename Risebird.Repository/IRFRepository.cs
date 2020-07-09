@@ -3258,6 +3258,27 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<CuratedGroup>> GetAllCuratedGroups()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CuratedGroup>(con, "usp_GetAllCuratedGroups",
+                        commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }
