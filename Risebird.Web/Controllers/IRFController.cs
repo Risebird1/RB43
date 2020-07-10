@@ -3710,5 +3710,21 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("CuratedGroups");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult EditCuratedGroup(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var cgModel = _irfService.GetCuratedGroupMappingsById(id);
+                return View(cgModel);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

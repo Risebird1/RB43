@@ -1186,6 +1186,27 @@ namespace Risebird.Business
             }
         }
 
+        public CuratedGroup GetCuratedGroupMappingsById(int curatedGroupId)
+        {
+            try
+            {
+                var cgModel = new CuratedGroup();
+                var list = _irfRepository.GetCuratedGroupMappingsById(curatedGroupId).Result;
+                var mappings = list.Where(x => x.IsAdded).ToList();
+                mappings.AddRange(list.Where(x => !x.IsAdded));
+                cgModel.CuratedIRFMappings= (IList<CuratedIRFMapping>)(mappings);
+                cgModel.Name = cgModel.CuratedIRFMappings.FirstOrDefault().CuratedGroupName;
+                cgModel.id = curatedGroupId;
+                return cgModel;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
     }
 }

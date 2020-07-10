@@ -12,5 +12,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsAdded { get; set; }
         public string IRFName { get; set; }
         public string PrimarySkills { get; set; }
+        public string CuratedGroupName { get; set; }
     }
 }
