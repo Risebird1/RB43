@@ -1207,6 +1207,53 @@ namespace Risebird.Business
             }
         }
 
+        public bool UpdateCuratedGroup(CuratedGroup model)
+        {
+            try
+            {
+                model.CuratedIRFMappings = model.CuratedIRFMappings.Where(x => x.IsAdded == true).ToList();
+                return _irfRepository.UpdateCuratedGroup(model).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public CuratedGroupUsersVM GetCuratedGroupUsers(int curatedGroupId)
+        {
+            try
+            {
+                var model = new CuratedGroupUsersVM();
+                model.CuratedGroupUserList = (IList<CuratedGroupUsers>)_irfRepository.GetCuratedGroupUsers(curatedGroupId).Result;
+                model.CuratedGroupName = model.CuratedGroupUserList.FirstOrDefault().CuratedGroupName;
+                model.CuratedGroupId = model.CuratedGroupUserList.FirstOrDefault().CuratedGroupId;
+                return model;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model)
+        {
+            try
+            {
+                model.CuratedGroupUserList = model.CuratedGroupUserList.Where(x => x.IsAdded == true).ToList();
+                return _irfRepository.AddUpdateCuratedGroupUsers(model).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
 
     }
 }

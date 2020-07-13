@@ -3726,5 +3726,87 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditCuratedGroup(CuratedGroup model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_irfService.UpdateCuratedGroup(model))
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Curated Group edited successfully!";
+                        return RedirectToAction("CuratedGroups");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Saving changes for Curated Group failed!";
+                        return RedirectToAction("CuratedGroups");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCG"] = "Saving changes for Curated Group failed!";
+                return RedirectToAction("CuratedGroups");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AddUpdateCuratedGroupUsers(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var model = _irfService.GetCuratedGroupUsers(id);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_irfService.AddUpdateCuratedGroupUsers(model))
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Users updated successfully to the Curated Group!";
+                        return RedirectToAction("CuratedGroups");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Sorry! Could not update users to the Curated Group.";
+                        return RedirectToAction("CuratedGroups");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCG"] = "Sorry! Could not update users to the Curated Group.";
+                return RedirectToAction("CuratedGroups");
+            }
+        }
     }
 }

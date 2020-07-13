@@ -98,5 +98,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping();
         Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails);
         Task<IEnumerable<CuratedIRFMapping>> GetCuratedGroupMappingsById(int curatedGroupId);
+        Task<bool> UpdateCuratedGroup(CuratedGroup curatedGroupDetails);
+        Task<IEnumerable<CuratedGroupUsers>> GetCuratedGroupUsers(int curatedGroupId);
+        Task<bool> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM curatedUsers);
     }
 }

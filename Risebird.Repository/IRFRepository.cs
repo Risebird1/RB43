@@ -3376,5 +3376,140 @@ namespace Risebird.Repository
             return null;
         }
 
+
+        public async Task<bool> UpdateCuratedGroup(CuratedGroup curatedGroupDetails)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", curatedGroupDetails.id);
+                parameters.Add("@Name", curatedGroupDetails.Name);
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateCuratedGroup", parameters,
+                       commandType: CommandType.StoredProcedure);
+
+
+
+                    if (curatedGroupDetails.CuratedIRFMappings != null)
+                    {
+                        DataTable curatedIRFDt = new DataTable();
+                        curatedIRFDt.Columns.Add("CuratedGroupId", typeof(int));
+                        curatedIRFDt.Columns.Add("IRFId", typeof(int));
+                        curatedIRFDt.Columns.Add("IsAdded", typeof(bool));
+
+                        foreach (var item in curatedGroupDetails.CuratedIRFMappings)
+                        {
+                            curatedIRFDt.Rows.Add(curatedGroupDetails.id, item.IRFId, item.IsAdded);
+                        }
+
+                        SqlCommand cmdCuratedIRF = new SqlCommand("usp_CuratedIRFBulkInsert", con);
+                        cmdCuratedIRF.CommandType = CommandType.StoredProcedure;
+                        cmdCuratedIRF.Parameters.Add(new SqlParameter("@CuratedIRFBulkData", SqlDbType.Structured));
+                        cmdCuratedIRF.Parameters["@CuratedIRFBulkData"].Value = curatedIRFDt;
+                        con.Open();
+                        if (cmdCuratedIRF.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+
+
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<CuratedGroupUsers>> GetCuratedGroupUsers(int curatedGroupId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CuratedGroupId", curatedGroupId);
+                    return await SqlMapper.QueryAsync<CuratedGroupUsers>(con, "usp_GetCuratedGroupUsers", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
+        public async Task<bool> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM curatedUsers)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "delete from CuratedGroupUsers where CuratedGroupId=@CuratedGroupId";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@CuratedGroupId", curatedUsers.CuratedGroupId);
+                    con.Query(query, dynamicParameters);
+
+                    if (curatedUsers.CuratedGroupUserList != null )
+                    {
+                        DataTable curatedUsersDt = new DataTable();
+                        curatedUsersDt.Columns.Add("UserId", typeof(int));
+                        curatedUsersDt.Columns.Add("CuratedGroupId", typeof(int));
+                        curatedUsersDt.Columns.Add("IsAdded", typeof(bool));
+
+                        foreach (var item in curatedUsers.CuratedGroupUserList)
+                        {
+                            curatedUsersDt.Rows.Add(item.UserId, item.CuratedGroupId, item.IsAdded);
+                        }
+
+                        SqlCommand cmdCuratedUsers = new SqlCommand("usp_CuratedGroupUsersBulkInsert", con);
+                        cmdCuratedUsers.CommandType = CommandType.StoredProcedure;
+                        cmdCuratedUsers.Parameters.Add(new SqlParameter("@CuratedGroupUsersBulkData", SqlDbType.Structured));
+                        cmdCuratedUsers.Parameters["@CuratedGroupUsersBulkData"].Value = curatedUsersDt;
+                        con.Open();
+                        if (cmdCuratedUsers.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+                    
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

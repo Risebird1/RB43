@@ -64,5 +64,8 @@ namespace Risebird.Business.Interface
         IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping();
         Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails);
         CuratedGroup GetCuratedGroupMappingsById(int curatedGroupId);
+        bool UpdateCuratedGroup(CuratedGroup model);
+        CuratedGroupUsersVM GetCuratedGroupUsers(int curatedGroupId);
+        bool AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model);
     }
 }
