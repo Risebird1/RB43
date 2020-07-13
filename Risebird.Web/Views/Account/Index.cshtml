@@ -182,14 +182,25 @@
                         <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
-                                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                        <h5 class="modal-title" id="filterModalLabel">Filter</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
+                                    <!---  <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+        <h5 class="modal-title" id="filterModalLabel">Filter</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>-->
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="fa fa-filter"></span>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                     </div>
-                                    <form action="@Url.Action("Index","Account")" method="post" id="form">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
 
+
+                                    <form action="@Url.Action("Index","Account")" method="post" id="form">
+                                       
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
@@ -247,7 +258,7 @@
                                                 </div>
 
 
-                                           
+
                                                 <div class="col-md-6 col-sm-6">
 
                                                     @if (!Model.IsClientUser)
@@ -283,8 +294,8 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group col-md-12">
-                                                        <div class="row">
+                                                    <div class="form-group">
+                                                        <div>
                                                             <div class="col-md-12 col-sm-12">
 
                                                                 <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
@@ -307,11 +318,11 @@
                                         </div>
                                     </form>
                                 </div>
-                            </div>
+        </div>
 
-                        </div>
-                        <!-- end content-->
-                    </div>
+    </div>
+    <!-- end content-->
+                                </div>
                 </div>
 
                 <!--  end card  -->

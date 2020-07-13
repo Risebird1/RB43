@@ -309,11 +309,11 @@ table {
 .mdc-fab {
     width: 30px !important;
     height: 30px !important;
-    background-color: #53a5f5 !important;
+    background-color: #53a5f5;
 }
 
 .sidebar:after, .off-canvas-sidebar:after {
-    background: #42a5f5 !important;
+    background: #42a5f5;
 }
 
 
@@ -322,15 +322,15 @@ table {
 }
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-    background: #42a5f5 !important;
+    background: #42a5f5;
     font-family: Roboto, sans-serif;
     font-size: 12px;
     text-decoration: none;
 }
 
 .mdc-button--outlined:not(:disabled) {
-    border-color: #42a5f5 !important;
-    color: #42a5f5 !important;
+    border-color: #42a5f5;
+    color: #42a5f5;
 }
 
 .mdc-fab-secondary {
@@ -473,7 +473,7 @@ table {
 .mdc-card .modal .form-control, .modal .form-control, .mdc-card .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke;
+    background: white;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -484,13 +484,13 @@ table {
     }
 
 .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
-    background: #42a5f5 !important;
+    background: #42a5f5;
     padding-top: 10px !important;
     padding-bottom: 10px !important;
     color: #fff;
 }
 
-
+.modal .modal-header .close{color:#FFF}
 
 .modal-content .modal-body {
     padding-top: 10px;
@@ -509,7 +509,7 @@ table {
 .dropdown-toggle {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke !important;
+    background: white!important;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -636,7 +636,7 @@ table {
 }
 
 .modal-lg {
-    max-width: 690px !important;
+    max-width: 630px !important;
 }
 
 

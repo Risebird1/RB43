@@ -114,14 +114,17 @@
                                 <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                         <div class="modal-content">
-                                            <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                                <h5 class="modal-title" id="filterModalLabel">Filter</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="fa fa-filter"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                             </div>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
                                             <form action="@Url.Action("Index","Interview")" method="post" id="form">
-
+                                                
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col-md-6 col-sm-6 border-rv">
@@ -269,8 +272,8 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="form-group col-md-12">
-                                                                <div class="row">
+                                                            <div class="form-group">
+                                                                <div>
                                                                     <div class="col-md-12 col-sm-12">
 
 
@@ -629,41 +632,51 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                <h5 class="modal-title" id="broadcastHeading">Broadcast</h5>
-                <span class="close" id="broadcastPopUp" style="cursor:pointer;">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12 col-sm-12">
-                        <p class="control-label desp-label">Please select from the following:</p>
+         
 
+
+             <div class="filheader">
+                <div class="filavatar">
+                    <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z"></path></svg>
+                </div>
+                <h5 class="modal-title pull-left" id="filterModalLabel"> Broadcast</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="broadcastPopUp">&times;</span>
+            </button>
+
+            <div class="modal-body">
+                
+                <div class="col-md-12 col-sm-12">
+                    <p class="desp-label fx-17">Please select from the following:</p>
+                    <div class="form-group clearfix">
                         <div class="broad-ele">
                             <input type="radio" id="radOne" name="receivers" value="Interviewer">
-                            <label for="radOne">All Interviewers</label>
+                            <label for="radOne" class="control-label desp-label">All Interviewers</label>
                         </div>
                         <div class="broad-ele">
                             <input type="radio" id="radTwo" name="receivers" value="Candidate">
-                            <label for="radTwo">All Candidates</label>
+                            <label for="radTwo" class="control-label desp-label">All Candidates</label>
                         </div>
                         <div class="broad-ele">
                             <input type="radio" id="radThree" name="receivers" value="Client">
-                            <label for="radThree">All Clients</label>
+                            <label for="radThree" class="control-label desp-label">All Clients</label>
                         </div>
                     </div>
-                </div>
-                <div class="row">
+                    </div>
+
+
                     <div class="col-md-12 col-sm-12">
                         <div class="form-group">
-                            <label class="control-label  desp-label"  for="Subject">Subject <span class="required">*</span></label>
-                            <input class="form-control w-full" type="text" name="textField" id="bcSubject"  required/>
+                            <label class="control-label  desp-label" for="Subject">Subject <span class="required">*</span></label>
+                            <input class="form-control w-full" type="text" name="textField" id="bcSubject" required />
                         </div>
 
                         <div class="form-group">
                             <label class="control-label  desp-label" for="Message">Message <span class="required">*</span></label>
                             <div>
                                 <div class="text-areadiv1">
-                                    <textarea class="scrollbar"  style="width:100%;" id="bcMessage"></textarea>
+                                    <textarea class="scrollbar" style="width:100%;background:#fff" id="bcMessage"></textarea>
                                 </div>
                             </div>
 
@@ -676,17 +689,17 @@
 
                     </div>
 
-                </div>
 
-                <div class="row">
+
+
 
                     <div class="col-md-12 col-sm-12 text-right">
                         <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
                         <button type="button" id="broadcastPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
                     </div>
-                </div>
 
-            </div>
+
+                </div>
 
 
 

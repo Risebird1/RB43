@@ -59,6 +59,35 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
+.filheader{padding:10px;}
+
+.filavatar {
+    width: 45px;
+    float: left;
+    border-radius: 50%;
+    margin: 0;
+    background: #42a5f5;
+    text-align: center;
+    height: 45px;
+}
+
+    .filavatar .fa-filter {
+        font-size: 25px;
+        color: #fff;
+        padding: 13px 30px 0px 13px;
+    }
+
+.broadcastfilter-icon {
+    top: 20px;
+    position: relative;
+}
+
+
+.mdc-card .modal .modal-content .modal-body {
+    padding: 10px 0px;
+    margin: 0px 10px 10px 10px;
+    background: #edf4f9b5;
+}
 .interview .card-header .fa-file-excel-o:before{font-size:35px;}
 
 
@@ -1272,7 +1301,7 @@ top:-2px;
 
     .text-areadiv1 textarea {
         border: 0;
-        min-height:100px;
+        min-height:80px;
         background: #f5f5f5;
         padding: 5px 10px 5px 10px;
         border-bottom: 1px rgba(0, 0, 0, 0.29) solid
@@ -1280,6 +1309,20 @@ top:-2px;
     .required{color:red;
               padding:2px;
     }
+.text-danger {
+    color: #E04B4A !important;
+    position: absolute;
+    top: -6px;
+}
+.cheklabel {
+    font-size: 13.5px;
+    color: #5f5c5c;
+    padding-top:10px;
+    float:left;
+}
+.fx-17 {
+    font-size: 17px;
+}
 .enjoyhint_disable_events {
     width: auto !important;
 }

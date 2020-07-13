@@ -1,0 +1,58 @@
+.navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
+    background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
+}
+
+.navbar.navbar-transparent {
+    background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
+}
+    .btn-primary {
+    background: red
+}
+
+    .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
+        background: #9c9c9c !important;
+    }
+
+
+    .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
+        background: #47484a !important;
+    }
+.filavatar {
+    background: #929292 !important;
+}
+
+#IRFList a, #ProjectList a {
+    color: #47484a !important;
+}
+#myForm .searchbox .input-group-btn .btn {
+    background: #929292 !important;
+    border-color: #929292 !important;
+}
+    .mdc-button--outlined:not(:disabled) {
+    border-color: #929292 !important;
+    color: #929292 !important;
+}
+
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    background: #929292 !important;
+}
+.mdc-fab {
+    background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
+}
+
+.mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
+    background: #929292 !important;
+}
+
+.mdc-card {
+    border-top: 3px #b5b5b5 solid !important;
+}
+
+ .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
+        background: #ecececb5 !important;
+ }
+
+
+[type="date"] {
+    background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
+}

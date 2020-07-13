@@ -1,0 +1,19 @@
+.navbar.navbar-transparent {
+    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
+}
+
+
+.sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
+  background: #2CA8FF; 
+}
+
+.filavatar {
+
+    background: #42a5f5!important;
+}
+
+
+
+.mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
+    background: #edf4f9b5 !important;
+}

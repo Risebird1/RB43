@@ -904,15 +904,15 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-    background: #42a5f5 !important;
+   
     font-family: Roboto, sans-serif;
     font-size: 12px;
     text-decoration: none;
 }
 
 .mdc-button--outlined:not(:disabled) {
-    border-color: #42a5f5 !important;
-    color: #42a5f5 !important;
+    border-color: #42a5f5;
+    color: #42a5f5;
 }
 
 .mdc-fab-secondary {
@@ -949,10 +949,14 @@ textarea::-webkit-scrollbar-thumb {
 .dropdown-toggle {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke !important;
+    background: white!important;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+}
+.modal-content {
+    border-radius: 10px;
+    position: relative;
 }
 
     /*.dropdown-toggle::after {
