@@ -17,7 +17,7 @@ AS
 BEGIN      
 select im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
 im.confirmationStatus, im.interviewer, im.candidateName, im.QCInterviewer, ca.Phone as MobileNumber,
-ca.ResumeLink as resumeLink ,irf.JDLink, ca.CandidateMasterId, uli.MobileNumber as InterviewerPhone from InterviewMeetings im   
+ca.ResumeLink as resumeLink ,irf.JDLink, ca.CandidateMasterId, uli.MobileNumber as InterviewerPhone, im.HRComment, IRF.JDTiltle from InterviewMeetings im   
 inner join IRF  irf on im.IRFId=irf.IRFId
 left join UserList ul on ul.EmailId = im.candidateEmail
 join  CandidatesMaster cm on ul.id=cm.UserId

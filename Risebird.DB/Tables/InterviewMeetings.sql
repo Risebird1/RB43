@@ -22,6 +22,8 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[QCInterviewer][varchar](200) null,
 	[joiningTime][varchar](200) null,
 	[IsEmergency] [bit] NOT NULL,
+    HRCoordinatorEmailId VARCHAR(100),
+    HRComment VARCHAR(max),
 	[InterviewBiometryScore] [decimal](10, 2) NULL,
 	[JoiningBiometryScore] [decimal](10, 2) NULL,
 	[sCreatedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sCreatedBy]  DEFAULT ('NA'),	

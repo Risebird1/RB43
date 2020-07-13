@@ -129,11 +129,11 @@ Begin
 
 	declare
 	@candidateMasterId int = (select id from CandidatesMaster where UserId=@candidateUserId)
-
-	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @candidateMasterId)
+	declare @irfintid int = (select id from IRF where IRFId=@IRFId)
+	IF NOT EXISTS (SELECT 1  FROM  Candidate  WHERE  CandidateMasterId = @candidateMasterId and IRFID= @irfintid)
 		Begin
 			Insert into Candidate (IRFId, ResumeLink, [Location],Phone, CandidateMasterId) 
-			values((select id from IRF where IRFId=@IRFId), @resumeLink, @prefferedLocation,@textreminder, @candidateMasterId) 			
+			values(@irfintid, @resumeLink, @prefferedLocation,@textreminder, @candidateMasterId) 			
 		End
 
 End
