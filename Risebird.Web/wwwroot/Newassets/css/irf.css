@@ -873,9 +873,7 @@ background-color: rgba(0,0,0,0.4);
 .mdc-fab.trash-btn {
     background: #d20505 !important;
 }
-#btnPlus {
-    top: -3px;
-}
+
 
 .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
     border-color: #53a5f5 !important;

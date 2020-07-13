@@ -5,7 +5,7 @@ var site_settings = '<div class="ts-button">'
 	    +'<div class="ts-title">Themes</div>'
         +'<div class="ts-themes">'
     +'<a href="#"  data-theme="~/Newassets/css/blue-theme.css"><img  src="../Newassets/img/default.jpg"/></a>'            
-    +'<a href="#" data-theme="../Newassets/css/grey-theme.css"><img  src="http://themifycloud.com/demos/templates/joli/img/themes/brown.jpg"/></a>'
+    +'<a href="#" data-theme="../Newassets/css/grey-theme.css"><input id="grey" type="checkbox" /><label for="grey"><img  src="http://themifycloud.com/demos/templates/joli/img/themes/brown.jpg"/></label></a>'
     +'<a href="#" data-theme="~/Newassets/css/account.css"><img src="http://themifycloud.com/demos/templates/joli/img/themes/blue.jpg"/></a>'                        
     +'<a href="#" data-theme="~/Newassets/css/interview.css"><img src="http://themifycloud.com/demos/templates/joli/img/themes/light.jpg"/></a>'            
     +'<a href="#" data-theme="~/Newassets/css/interviewer.css"><img src="http://themifycloud.com/demos/templates/joli/img/themes/black.jpg"/></a>'
@@ -13,7 +13,9 @@ var site_settings = '<div class="ts-button">'
 	
         
         
-    +'</div>';
+    + '</div>';
+
+
     
 var settings_block = document.createElement('div');
     settings_block.className = "theme-settings";
