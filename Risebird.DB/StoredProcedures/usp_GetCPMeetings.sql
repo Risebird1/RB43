@@ -1,0 +1,36 @@
+/****** Object:  StoredProcedure [dbo].[usp_GetRiseTubeMeetings]    Script Date: 4/12/2020 5:28:28 PM ******/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_GetCPMeetings'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetCPMeetings
+END
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_GetCPMeetings]    
+     @clientid int  
+AS    
+Begin    
+  
+select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
+im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
+im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, 
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, 
+IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,QCF.InterviewId as QCInterview
+from InterviewMeetings im  
+inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
+inner join UserList ulc on ulc.EmailId = im.candidateEmail
+inner join CandidatesMaster cm on ulc.id = cm.UserId
+inner join QCFeedbackReport QCF on im.id=QCF.InterviewId
+inner join IRF on im.IRFId = IRF.IRFId    
+inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id
+inner join dbo.UserList ul on ul.id = tc.ClientUserId
+inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
+where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and QCF.QCStatus=1 and ic.MoveToCP=1
+
+   
+End   
+GO

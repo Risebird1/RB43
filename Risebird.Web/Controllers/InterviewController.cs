@@ -1,31 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Risebird.Business.Interface;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Risebird.Entities.Data;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Risebird.Repository.Interface;
 using Microsoft.AspNetCore.Http;
-using Risebird.CommonHelper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using System.IO;
-using MediaToolkit.Model;
-using MediaToolkit;
-using MediaToolkit.Options;
-using Microsoft.AspNetCore.Http.Internal;
-using System.Text;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Cors;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -4118,9 +4111,9 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public bool SaveClientFeedback(string imid, string isApproved, string approvalComment, string isSelected, string selectionComment, string joiningStatus, string joiningComment, string offerStatus, string offerComment)
+        public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP)
         {
-            var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment);
+            var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment, movetoCP);
             if (result)
             {
                 TempData["SuccessErrorMessage"] = "Saved Successfully";

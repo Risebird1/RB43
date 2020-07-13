@@ -32,7 +32,7 @@ namespace Risebird.Business.Interface
         List<MeetingVM> GetClientMeetingList(string emailId);
         bool PostApproval(string imid, string value, string comment);
         bool PostSelectionStatus(string imid, string value, string comment);
-        bool SaveClientFeedback(string imid, string isApproved, string approvalComment, string isSelected, string selectionComment, string joiningStatus, string joiningComment, string offerStatus, string offerComment);
+        bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP);
         List<Meeting> GetQualityControlInterviews(string emailID);
         bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled);
         List<Meeting> GetQCOpenInterviews(string emailId);
@@ -73,5 +73,6 @@ namespace Risebird.Business.Interface
         IEnumerable<Meeting> GetHRAssignedInterviews(string emailID);
         bool HRUnassignYourself(int meetingid);
         bool SaveHRComment(int id, string comment);
+        List<MeetingVM> GetCPMeetings(int clientId, string profile, string Emailid);
     }
 }
