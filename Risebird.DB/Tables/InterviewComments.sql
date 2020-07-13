@@ -33,6 +33,7 @@ CREATE TABLE [dbo].[InterviewComments](
 	[IsShared] [varchar](10) NULL,
 	[FeedbackAudioLink] [nvarchar](max) NULL,
 	[AadharFileLink] [nvarchar](max) NULL,
+	[MoveToCP] [bit] NULL,
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
  CONSTRAINT [PK_InterviewComments] PRIMARY KEY CLUSTERED 
@@ -96,6 +97,16 @@ BEGIN
     ALTER TABLE InterviewComments
     Add IsShared varchar(10)
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'MoveToCP')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add MoveToCP bit null
+END
+
 End
 GO
 
