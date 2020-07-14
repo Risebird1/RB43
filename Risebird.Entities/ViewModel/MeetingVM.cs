@@ -97,7 +97,6 @@ namespace Risebird.Entities.ViewModel
 
         public string reportLink { get; set; }
         public string fraudSyncComment { get; set; }
-        public string hrCoordinatorComment { get; set; }
         public string trainableComment { get; set; }
         [Display(Name = "Mobile Number")]
         // [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
@@ -187,6 +186,13 @@ namespace Risebird.Entities.ViewModel
         public bool IsAdmin { get; set; }
         public int Score { get; set; }
 
+        [Display(Name = "Co-ordinating HR")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
+        public string HRCoordinatorEmailId { get; set; }
+        public string HRMobileNumber { get; set; }
+        public string HRComment { get; set; }
+        public bool MoveToCP { get; set; }
     }
     public class VedioComments
     {

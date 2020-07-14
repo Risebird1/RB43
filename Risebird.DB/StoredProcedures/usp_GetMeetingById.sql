@@ -47,6 +47,7 @@ SELECT [InterviewMeetings].id as imid
 	 ,InterviewComments.IsSelected
 	 ,IRF.id as irfIntId
 	 ,IRF.IsBiometricEnabled
+	 ,HRCoordinatorEmailId
 FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId
@@ -57,7 +58,7 @@ join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
 WHERE
       [InterviewMeetings].id = @interviewId
 
-	  End
+End
 
 
 GO

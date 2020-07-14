@@ -21,7 +21,8 @@ CREATE PROCEDURE [dbo].[usp_AddUpdateClientFeedback]
 @ApprovalComments varchar(max),
 @FinalComments varchar(max),
 @JoiningComments varchar(max),
-@OfferComments varchar(max)
+@OfferComments varchar(max),
+@movetoCP bit
 
 
 AS
@@ -39,6 +40,7 @@ INSERT INTO [dbo].[InterviewComments]
            ,[FinalComments]
            ,[JoiningComments]
            ,[OfferComments]
+            ,[MoveToCP]
            )
      VALUES
            (@id,
@@ -49,8 +51,8 @@ INSERT INTO [dbo].[InterviewComments]
 @ApprovalComments,
 @FinalComments,
 @JoiningComments,
-@OfferComments
-
+@OfferComments,
+@movetoCP
 )
 
 End
@@ -66,8 +68,8 @@ OfferStatus=@OfferStatus,
 ApprovalComments =@ApprovalComments,
 FinalComments =@FinalComments,
 OfferComments =@OfferComments,
-JoiningComments =@JoiningComments
-
+JoiningComments =@JoiningComments,
+MoveToCP = @movetoCP
 where InterviewId =@id
 
 

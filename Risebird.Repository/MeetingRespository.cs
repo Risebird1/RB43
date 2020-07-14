@@ -1,6 +1,4 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -118,6 +116,45 @@ namespace Risebird.Repository
                         parameters.Add("@clientid", clientId);
                         parameters.Add("@Emailid", Emailid);
                         var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
+                            commandType: CommandType.StoredProcedure);
+                        return result;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid)
+        {
+            try
+            {
+                if (profile == "ExternalUser")
+                {
+                    Emailid = Emailid.Replace("\"", "");
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("clientid", clientId);
+                        parameters.Add("Emailid", Emailid);
+                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters,//create sp
+                                commandType: CommandType.StoredProcedure);
+                        return result;
+                    }
+                }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@clientid", clientId);                       
+                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetCPMeetings", parameters,
                             commandType: CommandType.StoredProcedure);
                         return result;
                     }
@@ -456,6 +493,11 @@ namespace Risebird.Repository
             parameters.Add("@staffingAgency", entity.staffingAgency);
             parameters.Add("@currentEmployerName", entity.currentEmployerName);
             parameters.Add("@MobileNumber", entity.MobileNumber);
+            if(entity.HRCoordinatorEmailId != null)
+            {
+                parameters.Add("@HRCoordinatorEmailId", entity.HRCoordinatorEmailId);
+
+            }
             return parameters;
         }
         public async Task<bool> AddMeeting(MeetingVM meeting)
@@ -1405,7 +1447,7 @@ namespace Risebird.Repository
 
         }
 
-        public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment)
+        public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP)
         {
             try
             {
@@ -1421,7 +1463,8 @@ namespace Risebird.Repository
 
                 dynamicParameters.Add("@OfferStatus", offerStatus);
                 dynamicParameters.Add("@OfferComments", offerComment);
-
+                dynamicParameters.Add("@OfferComments", offerComment);
+                dynamicParameters.Add("@movetoCP", movetoCP);
                 dynamicParameters.Add("@id", imid);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2118,6 +2161,52 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+
+        }
+
+        public bool HRUnassignYourself(int meetingid)
+        {
+            try
+            {
+                var query = "update [dbo].[InterviewMeetings] set HRCoordinatorEmailId = null where id = @meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
+        public bool SaveHRComment(int id, string comment)
+        {
+            try
+            {
+                var query = "update InterviewMeetings set HRComment = @comment where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@comment", comment);
+                dynamicParameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
 
         }
 
