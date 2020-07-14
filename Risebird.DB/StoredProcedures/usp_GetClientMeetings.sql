@@ -22,7 +22,7 @@ im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometrySc
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,
 ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,
-ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink, QCF.InterviewId as QCInterview, QCF.QCStatus,
+ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,
 cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline
 from InterviewMeetings im 
 inner join IRF on im.IRFId = IRF.IRFId 
