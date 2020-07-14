@@ -1106,11 +1106,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SubscribeIRF(int id, string emailId, string profile)
+        public async Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile)
         {
             try
             {
-                return _irfRepository.SubscribeIRF(id, emailId, profile).Result;
+                return _irfRepository.SubscribeCuratedGroup(id, emailId, profile).Result;
             }
 
             catch (Exception e)
@@ -1119,11 +1119,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> UnSubscribeIRF(int id, string emailId, string profile)
+        public async Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile)
         {
             try
             {
-                return _irfRepository.UnSubscribeIRF(id, emailId, profile).Result;
+                return _irfRepository.UnSubscribeCuratedGroup(id, emailId, profile).Result;
             }
 
             catch (Exception e)
@@ -1254,6 +1254,19 @@ namespace Risebird.Business
             }
         }
 
+        public IEnumerable<CuratedUserGroupData> GetCuratedGroupsForCuratedUser(string emailId)
+        {
+            try
+            {
+                return _irfRepository.GetCuratedGroupsForCuratedUser(emailId).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
     }
 }

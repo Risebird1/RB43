@@ -85,8 +85,8 @@ namespace Risebird.Repository.Interface
         Skill GetSkillById(int id);
         IEnumerable<TransClientUser> GetTransClientUserRole();
         Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName);
-        Task<bool> SubscribeIRF(int id, string emailId, string profile);
-        Task<bool> UnSubscribeIRF(int id, string emailId, string profile);
+        Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile);
+        Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile);
         IEnumerable<string> GetCuratedUserMailId(int irfId);
         bool SaveCandidateStatus(int id, int status);
         IEnumerable<Users> GetAllHRs();
@@ -101,5 +101,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateCuratedGroup(CuratedGroup curatedGroupDetails);
         Task<IEnumerable<CuratedGroupUsers>> GetCuratedGroupUsers(int curatedGroupId);
         Task<bool> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM curatedUsers);
+        Task<IEnumerable<CuratedUserGroupData>> GetCuratedGroupsForCuratedUser(string emailId);
     }
 }

@@ -3528,7 +3528,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                return _irfService.SubscribeIRF(id, emailid, profileName).Result;
+                return _irfService.SubscribeCuratedGroup(id, emailid, profileName).Result;
 
             }
             catch (Exception ex)
@@ -3548,7 +3548,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                return _irfService.UnSubscribeIRF(id, emailid, profileName).Result;
+                return _irfService.UnSubscribeCuratedGroup(id, emailid, profileName).Result;
 
             }
             catch (Exception ex)
@@ -3786,12 +3786,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_irfService.AddUpdateCuratedGroupUsers(model))
                     {
-                        TempData["SuccessErrorMessageCG"] = "Users updated successfully to the Curated Group!";
+                        TempData["SuccessErrorMessageCG"] = "Curated Group users updated successfully!";
                         return RedirectToAction("CuratedGroups");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageCG"] = "Sorry! Could not update users to the Curated Group.";
+                        TempData["SuccessErrorMessageCG"] = "Sorry! Curated Group users could not be updated.";
                         return RedirectToAction("CuratedGroups");
                     }
 
@@ -3804,9 +3804,64 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageCG"] = "Sorry! Could not update users to the Curated Group.";
+                TempData["SuccessErrorMessageCG"] = "Sorry! Curated Group users could not be updated.";
                 return RedirectToAction("CuratedGroups");
             }
         }
+
+        public IActionResult CuratedIndex()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "CuratedUser")
+                {
+                    var model = new CuratedIndexVM();
+                    model.CuratedData = _irfService.GetCuratedGroupsForCuratedUser(emailid);
+                    foreach (var item in model.CuratedData)
+                    {
+                        if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.Status = "Archived";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            item.Status = "Active";
+                        }
+                        if(item.SubId != null)
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.Subscribed.GetDescription();
+                        }
+                        else
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.UnSubscribed.GetDescription();
+                        }
+                    }
+                    
+                    if (TempData["SuccessErrorMessageCuratedIndex"] != null)
+                    {
+                        model.Message = TempData["SuccessErrorMessageCuratedIndex"].ToString();
+                        TempData.Remove("SuccessErrorMessageCuratedIndex");
+                    }
+
+                    return View(model);
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
     }
 }

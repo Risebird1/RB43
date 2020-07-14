@@ -35,18 +35,15 @@ Else
 
 Begin
 
-select ul.id as UserId, ul.EmailId,@CuratedGroupId as CuratedGroupId, 
-(select [Name] from CuratedGroup where id =@CuratedGroupId) as CuratedGroupName,
-cgu.IsAdded  from UserList ul 
-left join CuratedGroupUsers cgu on cgu.UserId = ul.id
-where ul.idProfile=@ProfileId
-
-
+	select ul.id as UserId, ul.EmailId, @CuratedGroupId as CuratedGroupId, 
+	(select [Name] from CuratedGroup where id =@CuratedGroupId) as CuratedGroupName,
+	cgu.IsAdded from UserList ul 
+	left join (select * from CuratedGroupUsers where CuratedGroupId = @CuratedGroupId) cgu on cgu.UserId=ul.id
+	where ul.idProfile=@ProfileId
 
 End
 
 END
-
 GO
 
 

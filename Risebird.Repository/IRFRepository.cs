@@ -3132,18 +3132,18 @@ namespace Risebird.Repository
         //    return false;
         //}
 
-        public async Task<bool> SubscribeIRF(int id, string emailId, string profile)
+        public async Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile)
         {
             try
             {
 
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@IRFId", id);
+                parameters.Add("@CuratedGroupId", id);
                 parameters.Add("@EmailId", emailId);
                 parameters.Add("@Profile", profile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<int>(con, "usp_SubscribeIRF", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_SubscribeCuratedGroup", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
 
@@ -3164,18 +3164,18 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UnSubscribeIRF(int id, string emailId, string profile)
+        public async Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile)
         {
             try
             {
 
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@IRFId", id);
+                parameters.Add("@CuratedGroupId", id);
                 parameters.Add("@EmailId", emailId);
                 parameters.Add("@Profile", profile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<int>(con, "[usp_UnSubscribeIRF]", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "[usp_UnSubscribeCuratedGroup]", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
 
@@ -3509,6 +3509,31 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
+        }
+
+        public async Task<IEnumerable<CuratedUserGroupData>> GetCuratedGroupsForCuratedUser(string emailId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", emailId);
+                    //parameters.Add("@timeNow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<CuratedUserGroupData>(con, "usp_GetCuratedGroupsForCuratedUser", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
 
     }
