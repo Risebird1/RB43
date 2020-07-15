@@ -74,5 +74,6 @@ namespace Risebird.Business.Interface
         bool HRUnassignYourself(int meetingid);
         bool SaveHRComment(int id, string comment);
         List<MeetingVM> GetCPMeetings(int clientId, string profile, string Emailid);
+        IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId);
     }
 }

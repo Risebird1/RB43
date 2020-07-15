@@ -2209,6 +2209,27 @@ namespace Risebird.Repository
             }
 
         }
+        public IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId)
+        {
+            try
+            {
+                var query = "select IRFId from CuratedIRFMapping where CuratedGroupId = @CuratedGroupId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CuratedGroupId", curatedGroupId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return con.Query<int>(query, dynamicParameters);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
 
     }
 }

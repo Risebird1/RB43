@@ -94,5 +94,6 @@ namespace Risebird.Repository.Interface
         bool HRUnassignYourself(int meetingid);
         bool SaveHRComment(int id, string comment);
         Task<IEnumerable<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid);
+        IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId);
     }
 }

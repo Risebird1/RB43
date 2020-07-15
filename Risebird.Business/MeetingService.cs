@@ -1379,6 +1379,19 @@ namespace Risebird.Business
             }
         }
 
+        public IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId)
+        {
+            try
+            {
+                return _meetingRespository.GetCuratedGroupIRFs(curatedGroupId);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
     }
 
