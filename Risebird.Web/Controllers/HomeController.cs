@@ -7,6 +7,7 @@ using Risebird.Business.Interface;
 using System.Security.Claims;
 using Risebird.Web.Hepler;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace Risebird.Web.Controllers
 {
@@ -35,6 +36,13 @@ namespace Risebird.Web.Controllers
                
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
+                var currenttheme = _userService.GetCurrenttheme(emailId);
+                if (String.IsNullOrEmpty(currenttheme))
+                {
+                    HttpContext.Session.SetString("Currenttheme", "");
+                }
+                else 
+                HttpContext.Session.SetString("Currenttheme", currenttheme);
                 if (settings != null)
                 {
                     HttpContext.Session.SetString("settings", JsonConvert.SerializeObject(settings));

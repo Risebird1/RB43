@@ -505,14 +505,6 @@ table {
 
 
 
-.pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-    background-color: #4e9bea !important;
-    border-color: #4e9bea;
-    color: #FFFFFF;
-}
-
-
-
 .card .card-header .card-title, .card .card-header h4.card-title {
     margin: 0 0px 10px 0;
 }
@@ -652,9 +644,7 @@ modal-content .modal-body {
         top: 14px;
     }
 
-.mdc-card button.dropdown-toggle:focus {
-    border-bottom: 2px rgb(80, 158, 235) solid !important;
-}
+
 
 
 .modal-content .modal-body {
@@ -709,7 +699,7 @@ modal-content .modal-body {
     }
 
 .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
-    border-color: #53a5f5 !important;
+    border-color: #53a5f5;
 }
 
 @media screen and (max-width:991px) {

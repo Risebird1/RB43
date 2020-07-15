@@ -407,15 +407,6 @@ div.dataTables_wrapper div.dataTables_filter label{position:relative;}
 }
 
 
-
-
-
-.pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-    background-color: #4e9bea !important;
-    border-color: #4e9bea;
-    color: #FFFFFF;
-}
-
 .fa-spinner {
     font-size: 18px;
     position: relative;
@@ -454,7 +445,7 @@ div.dataTables_wrapper div.dataTables_filter label{position:relative;}
 }
 
 .sidebar:after, .off-canvas-sidebar:after {
-    background: #42a5f5 !important;
+    background: #42a5f5;
 }
 
 
@@ -464,15 +455,15 @@ div.dataTables_wrapper div.dataTables_filter label{position:relative;}
 }
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-    background: #42a5f5 !important;
+    background: #42a5f5;
     font-family: Roboto, sans-serif;
     font-size: 12px;
     text-decoration: none;
 }
 
 .mdc-button--outlined:not(:disabled) {
-    border-color: #42a5f5 !important;
-    color: #42a5f5 !important;
+    border-color: #42a5f5;
+    color: #42a5f5;
 }
 .mc-button-area {
     text-align: right

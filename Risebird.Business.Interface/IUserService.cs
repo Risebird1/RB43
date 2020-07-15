@@ -42,5 +42,7 @@ namespace Risebird.Business.Interface
         Recruiter GetRecruiter(int id);
         bool DeleteRecruiter(int userId);
         void UpdateUserSigInDetails(string emailId);
+
+        string GetCurrenttheme(string emailId);
     }
 }

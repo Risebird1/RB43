@@ -32,7 +32,6 @@ body {
   min-height: 100%;
   padding: 0px;
   margin: 0px;
-  background: #f5f5f5;
   position: relative;
   color: #22262e;
   overflow-x: hidden;
@@ -4465,7 +4464,7 @@ background: #1caf9a !important;
  
     .theme-settings {
         position: fixed;
-        right: -200px;
+        right: -165px;
         top: -1px;
         -webkit-transition: all 400ms ease;
         -moz-transition: all 400ms ease;
@@ -4491,7 +4490,7 @@ background: #1caf9a !important;
   cursor: pointer;
 }
 .theme-settings .ts-body {
-  width: 200px;
+  width: 165px;
   background: rgba(28,175,154,0.9);
   -moz-border-radius: 5px 0px 0px 5px;
   -webkit-border-radius: 5px 0px 0px 5px;

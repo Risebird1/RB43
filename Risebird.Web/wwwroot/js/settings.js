@@ -4,11 +4,11 @@ var site_settings = '<div class="ts-button">'
     +'<div class="ts-body">'
 	    +'<div class="ts-title">Themes</div>'
         +'<div class="ts-themes">'
-    +'<a href="#"  data-theme="~/Newassets/css/blue-theme.css"><img  src="../Newassets/img/default.jpg"/></a>'            
-    +'<a href="#" data-theme="../Newassets/css/grey-theme.css"><img  src="http://themifycloud.com/demos/templates/joli/img/themes/brown.jpg"/></a>'
-    +'<a href="#" data-theme="~/Newassets/css/account.css"><img src="http://themifycloud.com/demos/templates/joli/img/themes/blue.jpg"/></a>'                        
-    +'<a href="#" data-theme="~/Newassets/css/interview.css"><img src="http://themifycloud.com/demos/templates/joli/img/themes/light.jpg"/></a>'            
-    +'<a href="#" data-theme="~/Newassets/css/interviewer.css"><img src="http://themifycloud.com/demos/templates/joli/img/themes/black.jpg"/></a>'
+    +'<a href="#"  data-theme="../../Newassets/css/blue-theme.css"><img  src="../../Newassets/img/default.jpg"/></a>'            
+    +'<a href="#" data-theme="../../Newassets/css/grey-theme.css"><img  src="../../Newassets/img/grey.png"/></a>'
+    +'<a href="#" data-theme="../../Newassets/css/red-theme.css"><img src="../../Newassets/img/red.png"/></a>'                        
+           
+    +'<a href="#" data-theme="../../Newassets/css/dark-theme.css"><img src="../../Newassets/img/dark.png"/></a>'
         +'</div>'
 	
         
@@ -96,8 +96,20 @@ $(document).ready(function(){
     /* Change Theme */
     $(".ts-themes a").click(function(){
         $(".ts-themes a").removeClass("active");
-        $(this).addClass("active");
-        $("#theme").attr("href",$(this).data("theme"));
+      //  $(this).addClass("active");
+        $("#theme").attr("href", $(this).data("theme"));
+        /*implement the ajax call*/
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: "/Chat/Savetheme",
+            data: { theme: $(this).data("theme"),  },
+            success: function (data) {
+               
+             
+            }
+        });
+
         return false;
     });
 

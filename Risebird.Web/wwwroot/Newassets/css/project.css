@@ -178,7 +178,7 @@ table {
 
 
 [type="date"] {
-    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat;
     background-size: 7% !important;
     padding:10px!important;
 }
@@ -280,12 +280,6 @@ table {
 }
 
 
-
-.pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-    background-color: #4e9bea !important;
-    border-color: #4e9bea;
-    color: #FFFFFF;
-}
 
 .card .card-header .card-title, .card .card-header h4.card-title {
     margin: 0 0px 10px 0;
@@ -414,7 +408,7 @@ table {
 
 
 .card-blue {
-    border: 1px #6fb6ff59 solid !important;
+    border: 1px #6fb6ff59 solid;
     border-radius: 4px;
     background-color: #fff;
     background-color: var(--mdc-theme-surface, #fff);
@@ -523,7 +517,7 @@ table {
     }
 
 .mdc-card button.dropdown-toggle:focus {
-    border-bottom: 2px rgb(80, 158, 235) solid !important;
+    border-bottom: 2px rgb(80, 158, 235) solid;
 }
 
 
@@ -551,10 +545,7 @@ table {
     background: #848080eb !important;
 }
 
-.mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
-    border-color: #53a5f5 !important;
-    background-color: #53a5f5 !important;
-}
+
 
 .mdc-checkbox {
     display: inline-block;

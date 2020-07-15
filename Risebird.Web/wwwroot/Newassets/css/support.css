@@ -329,7 +329,7 @@ table {
 
 
 .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-    background-color: #4e9bea !important;
+    background-color: #4e9bea;
     border-color: #4e9bea;
     color: #FFFFFF;
 }
@@ -429,8 +429,8 @@ table {
         border-bottom: 2px rgb(80, 158, 235) solid;
     }
 .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
-    border-color: #53a5f5 !important;
-    background-color: #53a5f5 !important;
+    border-color: #53a5f5;
+    background-color: #53a5f5;
 }
 
 .mdc-checkbox {

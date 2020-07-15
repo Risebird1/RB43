@@ -1,4 +1,7 @@
-.navbar.navbar-transparent {
+body {
+    background: #ebecf1;
+}
+    .navbar.navbar-transparent {
     background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
 }
 
@@ -12,8 +15,15 @@
     background: #42a5f5!important;
 }
 
+.mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+    border-color: #53a5f5!important;
+    background-color: #53a5f5!important;
+}
+ 
 
-
-.mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
-    background: #edf4f9b5 !important;
+    .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
+        background: #edf4f9b5 !important;
+    }
+.mdc-card button.dropdown-toggle:focus {
+    border-bottom: 2px #42a5f5 solid!important;
 }

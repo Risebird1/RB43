@@ -516,10 +516,20 @@
                                 <!-- Modal content -->
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
-                                        <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title"> Client Feedback</h5>
-                                            <span class="close" id="feedbackPopUp" style="cursor:pointer;">&times;</span>
+                                     
+
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <svg class="broadcastfilter-icon"  fill="rgb(255, 255, 255)" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel">  Client Feedback</h5>
                                         </div>
+                                        <button type="button" class="close" id="feedbackPopUp" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
@@ -527,7 +537,9 @@
                                                         <label class="control-labeled" for="approveDropdown">
                                                             Approved For Next Round
                                                         </label>
-                                                        <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -537,12 +549,13 @@
 
                                                             <label class="control-labeled">Approval Comments</label>
 
-                                                            <div class="form-control text-areadiv"><textarea name="appComments" class="text-box single-line" id="appComments"></textarea></div>
+                                                            <div class="col-md-12 col-sm-12">
+                                                             <textarea name="appComments" class="form-control text-areadiv text-box single-line" id="appComments"></textarea></div>
 
 
-                                                           
+
+                                                            </div>
                                                         </div>
-                                                    </div>
 
                                                 </div>
 
@@ -552,22 +565,25 @@
                                                 <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
                                                         <label class="control-labeled" for="selectionDropdown">Final Selection</label>
-                                                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div id="selectionComments">
                                                         <div class="form-group">
                                                             <label class="control-labeled">Final Comments</label>
-
-                                                            <div class="form-control text-areadiv">
-                                                                <textarea name="selecComments" class="text-box single-line" id="selecComments"></textarea>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                
+                                                                    <textarea name="selecComments" class="form-control text-areadiv text-box single-line" id="selecComments"></textarea>
+                                                                
                                                             </div>
 
 
-                                                            
+
+                                                            </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -576,23 +592,26 @@
                                                     <div class="form-group">
 
                                                         <label class="control-labeled" for="offerDropdown">Offer Status</label>
-                                                        <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div id="offerComments">
                                                         <div class="form-group">
                                                             <label class="control-labeled">Offer Comments</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                               
+                                                                    <textarea name="offComments" class="form-control text-areadiv text-box single-line" id="offComments"></textarea>
+                                                                
+                                                            </div>
 
-                                                            <div class="form-control text-areadiv">
-                                                                <textarea name="offComments" class="text-box single-line" id="offComments"></textarea>
+
                                                             </div>
 
 
                                                         </div>
-
-                                                       
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -600,36 +619,52 @@
                                                 <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
 
-                                                        <label class="control-labeled" for="joiningDropdown"><b>Joining Status</b></label>
-                                                        <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                                                        <label class="control-labeled" for="joiningDropdown">Joining Status</label>
+                                                        <div class="col-md-12 col-sm-12"> <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select></div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div id="joiningComments">
                                                         <div class="form-group">
                                                             <label class="control-labeled">Joining Comments</label>
-
-                                                            <div class="form-control text-areadiv">
-                                                                <textarea name="joinComments" class="text-box single-line" id="joinComments"></textarea>
-                                                            </div>                                                           
+                                                            <div class="col-md-12 col-sm-12">
+                                                                
+                                                                    <textarea name="joinComments" class="form-control text-areadiv text-box single-line" id="joinComments"></textarea>
+                                                                
+                                                            </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
 
-                                                        <label class="control-labeled" for="joiningDropdown"><b>Move To CommonPool</b></label>
-                                                        <input id="MoveToCP" type="checkbox" checked="checked" value="false" name="Move To CommonPool" />
+                                                        <label class="control-labeled pull-left" for="joiningDropdown">Move To CommonPool</label>
+
+                                                        <div class="switch-btn">
+                                                            <span class="on-off">Off</span>
+                                                            <div class="material-toggle">
+
+                                                                <input class="switch" id="MoveToCP" type="checkbox" checked="checked" value="false" name="Move To CommonPool">
+                                                                <label for="MoveToCP" class=""></label>
+
+                                                            </div>
+                                                            <span class="on-off">On</span>
+                                                        </div>
+
+
                                                     </div>
                                                 </div>
-                                               
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-12 col-sm-12">
+                                                        <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save"></div>
+                                                    </div>
+
                                             </div>
-                                            <div class="text-center" style="margin:0px 0px 10px 0px;">
-                                                <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                                         
                                             </div>
-                                        </div>
 
                                     </div>
 
