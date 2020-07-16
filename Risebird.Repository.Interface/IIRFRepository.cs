@@ -94,5 +94,23 @@ namespace Risebird.Repository.Interface
         //bool DeletePlayedMeetings(string meetingIds);
         bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore);
         IEnumerable<CandidateCuratedScore> GetCandidateCuratedScore(int id);
+        IEnumerable<FetchInterviewerDetails> GetSkillQuality();
+        IEnumerable<FetchInterviewerDetails> GetCertificationQuality();
+        IEnumerable<FetchInterviewerDetails> GetEducationQuality();
+        IEnumerable<FetchInterviewerDetails> GetCareerProgression();
+        IEnumerable<FetchInterviewerDetails> GetBehavioralScore();
+        IEnumerable<FetchInterviewerDetails> GetCompanyStage();
+        IEnumerable<FetchInterviewerDetails> GetSkillCategory();
+        IEnumerable<FetchInterviewerDetails> GetInterviewerExprienceYear();
+        IEnumerable<FetchInterviewerDetails> GetSenioritylevel();
+        IEnumerable<FetchInterviewerDetails> GetSkillNature();
+        IEnumerable<FetchInterviewerDetails> GetEmployersQuality();
+        IEnumerable<FetchInterviewerDetails> GetProjectsQuality();
+        IEnumerable<FetchInterviewerDetails> GetOnlinePresence();
+        IEnumerable<FetchInterviewerDetails> GetInterviwerCommunication();
+        IEnumerable<FetchInterviewerDetails> GetInterviewexperience();
+
+
+
     }
 }

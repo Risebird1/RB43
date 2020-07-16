@@ -120,7 +120,7 @@ namespace Risebird.Business
             }
         }
 
-        
+
         // Added to retrieve the Nick names
         public IEnumerable<string> GetNickNames(int UserId)
         {
@@ -246,7 +246,7 @@ namespace Risebird.Business
 
                 // Assign the Lists to model
 
-                
+
                 ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
                 ProfileModel.InterviewerAccDetails = AccDetailsList;
 
@@ -421,7 +421,7 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
-            
+
         }
 
         public bool UnassignYourself(int meetingid, string email)
@@ -430,7 +430,7 @@ namespace Risebird.Business
             {
                 var meeting = _interviewerRepository.GetMeetingById(meetingid);
 
-                if(_interviewerRepository.UnassignYourself(meetingid).Result)
+                if (_interviewerRepository.UnassignYourself(meetingid).Result)
                 {
                     var hrs = _userService.GetAllHrsEmailld()?.ToList();
                     _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.interviewDate.ToString(), meeting.candidateEmail, email);
@@ -456,6 +456,210 @@ namespace Risebird.Business
 
 
         #endregion
+        //public async Task<InterviewReport> GetAssignedInterviewerAssessment(int interviewId, int irfId)
+        //{
+        //    try
+        //    {
+        //        var reportModel = new InterviewReport();
+        //        var irfDetails = _interviewerRepository.GetInterviewerSkillChannelDetails(irfId);
+        //        var levels = _meetingRespository.GetLevels();
+        //        //check whether an IRF exists for the given IRFId
+        //        var check = _meetingRespository.GetIRFbyId(irfId);// what is need of this method
+        //        var interviewDetails = _interviewerRepository.GetInterviewerMeetingById(interviewId).Result;
 
+        //        if (!check)
+        //        {
+        //            return null;
+        //        }
+        //        var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);//need to create table for report
+        //        if (interviewReport != null && interviewReport.Count() > 0)
+        //        {
+        //            //call Edit Feedbackform method
+        //            reportModel = interviewReport.FirstOrDefault();
+        //            //EditInterviewReport(reportModel);
+        //        }
+        //        else
+        //        {
+        //            var model = interviewReport.Count() > 0 ? interviewReport.FirstOrDefault() : new InterviewReport();
+        //            model.IsEdited = model.InterviewId > 0;
+        //            //get all values from database
+        //            var levelTech = _meetingRespository.GetLevelTech();// replacement
+        //            var skills = _meetingRespository.GetSkills();// use transskill table
+        //            //var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
+        //            var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);//use
+        //            var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);//use
+        //            //var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
+        //            //var selectabilityDetails = _meetingRespository.GetTransSelectability(irfId);
+        //            var techSkillList = new List<TechSkillReport>();
+        //            //assign values to model
+        //            foreach (var item in techSkillsDetails)
+        //            {
+        //                TechSkillReport obj = new TechSkillReport();
+        //                obj.InterviewId = interviewId;
+        //                obj.RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+        //                obj.RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+        //                obj.SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name;
+        //                obj.SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id;
+        //                obj.WeightageRequired = item.Weightage;
+
+        //                techSkillList.Add(obj);
+        //            }
+        //            model.TechSkillReportCollection = (IList<TechSkillReport>)techSkillList;
+
+        //            var genSkillList = new List<SkillGeneralReport>();
+
+        //            foreach (var item in skillGeneralDetails)
+        //            {
+        //                SkillGeneralReport obj = new SkillGeneralReport();
+        //                obj.InterviewId = interviewId;
+        //                obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+        //                obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+        //                obj.Type = item.Type;
+        //                obj.Name = item.Name;
+        //                obj.Value = item.Value;
+        //                obj.WeightageRequired = item.Weightage;
+        //                genSkillList.Add(obj);
+        //            }
+
+        //            model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)genSkillList;
+
+        //            model.InterviewId = interviewId;
+        //            model.CandidateName = interviewDetails.candidateName;
+        //            model.interviewDate = interviewDetails.interviewDate.ToString();
+        //            model.resumeLink = interviewDetails.resumeLink;
+        //            model.IRFId = irfId;
+
+        //            model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
+        //            model.currentEmployerName = interviewDetails.currentEmployerName;
+        //            model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
+        //            model.PreferredLocation = interviewDetails.preferredLocation;
+        //            model.IsEdited = false;
+        //            model.IsApproved = interviewDetails.IsApproved;
+        //            model.IsSelected = interviewDetails.IsSelected;
+        //            model.FinalComments = interviewDetails.FinalComments;
+        //            model.ApprovalComments = interviewDetails.ApprovalComments;
+        //            model.IsBiometricEnabled = interviewDetails.IsBiometricEnabled;
+        //            model.JoiningBiometryScore = interviewDetails.JoiningBiometryScore;
+        //            model.InterviewBiometryScore = interviewDetails.InterviewBiometryScore;
+        //            reportModel = model;
+        //        }
+        //        //get candidateId
+        //        reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);//use
+        //        reportModel.CandidateName = interviewDetails.candidateName;
+        //        reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
+        //        reportModel.CandidateEmail = interviewDetails.candidateEmail;
+        //        reportModel.CandidateVisa = interviewDetails.CandidateVisa;
+        //        reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
+        //        var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
+        //        if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+        //        {
+        //            reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
+
+        //        }
+        //        else
+        //        {
+        //            var selectabilityDetails = _evaluatorRespository.GetTransSelectability(irfId);
+        //            var selectabilityList = new List<SelectabilityEvaluatorReport>();
+        //            foreach (var item in selectabilityDetails)
+        //            {
+        //                SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport();
+        //                obj.CandidateId = reportModel.CandidateId;
+        //                obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+        //                obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+        //                obj.Type = item.Type;
+        //                obj.Name = item.Name;
+        //                obj.Value = item.Value;
+        //                obj.WeightageRequired = item.Weightage;
+        //                selectabilityList.Add(obj);
+        //            }
+
+        //            reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityList;
+        //        }
+
+        //        reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
+        //        var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
+        //        if (joinabilityReport != null && joinabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+        //        {
+        //            reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;
+
+        //        }
+        //        else
+        //        {
+        //            var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);//replace
+        //            var joinabilityList = new List<JoinabilityHRReport>();
+        //            foreach (var item in joinabilityDetails)
+        //            {
+        //                JoinabilityHRReport obj = new JoinabilityHRReport();
+        //                obj.CandidateId = reportModel.CandidateId;
+        //                obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+        //                obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+        //                obj.Type = item.Type;
+        //                obj.Name = item.Name;
+        //                obj.Value = item.Value;
+        //                obj.WeightageRequired = item.Weightage;
+        //                joinabilityList.Add(obj);
+        //            }
+
+        //            reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityList;
+        //        }
+
+        //        reportModel.IRFName = irfDetails.IRFId;
+        //        reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
+        //        return reportModel;
+        //    }
+
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
+        public async Task<bool> AddInterviewerReport(InterviewReport reportModel)
+        {
+            try
+            {
+                var result = await _interviewerRepository.AddInterviewerReport(reportModel);
+                //if (reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
+                //{
+                //    if (reportModel.InterviewStatus.Value == 2 || reportModel.InterviewStatus.Value == 4)
+                //    {
+
+                //        var irfQualityControllers = _irfRepository.GetTransQualityController(reportModel.IRFId);
+                //        var mailIds = new List<string>();
+                //        foreach (var item in irfQualityControllers)
+                //        {
+                //            if (item.EmailId != null)
+                //            {
+                //                mailIds.Add(item.EmailId);
+                //            }
+                //        }
+                //        _notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
+
+                //        if (reportModel.InterviewStatus.Value == 2)
+                //        {
+                //            var namemodel = String.Empty;
+
+                //            if (reportModel.CandidateName != null && reportModel.CandidateName.Length >= 2)
+                //                namemodel = namemodel + reportModel.CandidateName?.ToCharArray()[0] + reportModel.CandidateName?.ToCharArray()[1];
+                //            else if (reportModel.CandidateName != null && reportModel.CandidateName.Length == 1)
+                //                namemodel = namemodel + reportModel.CandidateName?.ToCharArray()[0];
+                //            //get curated users
+                //            var curatedMailIds = _irfRepository.GetCuratedUserMailId(reportModel.IRFId);
+                //            _notificationHelper.SendCuratedUserMail(curatedMailIds.ToList(), reportModel.interviewDate, reportModel.IRFName, reportModel.PrimarySkill, namemodel);
+                //        }
+
+                //    }
+                //}
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        
     }
 }

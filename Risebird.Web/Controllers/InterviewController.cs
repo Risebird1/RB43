@@ -1415,6 +1415,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return RedirectToAction("Index");
+                return RedirectToAction("Index");
             }
         }
 

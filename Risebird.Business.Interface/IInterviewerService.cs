@@ -34,5 +34,7 @@ namespace Risebird.Business.Interface
         List<Meeting> GetAssignedInterviewerAssessment(string emailID);
         string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate);
         bool UnassignYourself(int meetingid, string email);
+        // Task<InterviewReport> GetInterviewerinteviewReport(int interviewId, int irfId);
+        Task<bool> AddInterviewerReport(InterviewReport reportModel);
     }
 }

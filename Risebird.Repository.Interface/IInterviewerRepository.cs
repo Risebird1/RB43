@@ -39,5 +39,9 @@ namespace Risebird.Repository.Interface
         string AssignYourself(int meetingid, string interviewerMail);
         Task<bool> UnassignYourself(int meetingid);
         MeetingVM GetMeetingById(int meetingid);
+       // IRFDetails GetInterviewerSkillChannelDetails(int id);
+        Task<MeetingVM> GetInterviewerMeetingById(int id);
+        Task<bool> AddInterviewerReport(InterviewReport reportDetails);
+
     }
 }

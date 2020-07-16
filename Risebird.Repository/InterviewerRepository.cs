@@ -921,7 +921,7 @@ namespace Risebird.Repository
 
                     }
                 }
-                    return true;
+                return true;
             }
 
             catch (SqlException e)
@@ -1127,5 +1127,189 @@ namespace Risebird.Repository
         }
 
         #endregion
+        public IRFDetails GetInterviewerSkillChannelDetails(int id)
+        {
+            try
+            {
+                var query = "Select InterviewerSkillId as IRFId, JDTiltle from InterviewerSkillsChannel where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<IRFDetails>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<MeetingVM> GetInterviewerMeetingById(int id)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@interviewId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewerMeetingById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> AddInterviewerReport(InterviewReport reportDetails)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //check if the data is edited
+                    InterviewComments interviewComments = new InterviewComments();
+                    DynamicParameters parameters = new DynamicParameters();
+                    DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@InterviewId", reportDetails.InterviewId);
+                    paramx.Add("@SkillQuality", reportDetails.SkillQuality);
+                    paramx.Add("@OverallScore", reportDetails.OverallScore);
+                    paramx.Add("@Rating", reportDetails.Rating);
+                    paramx.Add("@TechSkillComments", reportDetails.TechSkillComments);
+                    paramx.Add("@CertificationQuality", reportDetails.CertificationQuality);
+                    paramx.Add("@EducationQuality", reportDetails.EducationQuality);
+                    paramx.Add("@EmployersQuality", reportDetails.EmployersQuality);
+                    paramx.Add("@CareerProgression", reportDetails.CareerProgression);
+                    paramx.Add("@ProjectsQuality", reportDetails.ProjectsQuality);
+                    paramx.Add("@BehavioralScore", reportDetails.BehavioralScore);
+                    paramx.Add("@InterviwerCommunication", reportDetails.InterviwerCommunication);
+                    paramx.Add("@InterviewExperience", reportDetails.Interviewexperience);
+                    paramx.Add("@OnlinePresence", reportDetails.OnlinePresence);
+
+                    parameters.Add("@interviewId", reportDetails.InterviewId);
+                    parameters.Add("@interviewStatus", reportDetails.InterviewStatus);
+                    parameters.Add("@MeetingStatus", reportDetails.MeetingStatus);
+                    parameters.Add("@interviewerComment", reportDetails.InterviewerComment);
+                    parameters.Add("@audiolink", reportDetails.AudioLink);
+                    parameters.Add("@videolink", reportDetails.VideoLink);
+                    parameters.Add("@ThumbnailImage", reportDetails.ThumbnailImage);
+                    parameters.Add("@FeedbackAudioLink", reportDetails.FeedbackAudioLink);
+                    parameters.Add("@DecisionMaking", reportDetails.Decision);
+                    parameters.Add("@Articulation", reportDetails.Communication);
+                    parameters.Add("@ReadymadeAssessment", reportDetails.ReadymadeAssessment);
+                    parameters.Add("@ReadinessOnlineInterviews", reportDetails.ReadymadeAssessment);
+                    parameters.Add("@Teamwork", reportDetails.Teamwork);
+                    parameters.Add("@RelationshipManagement", reportDetails.RelationshipManagement);
+                    parameters.Add("@ConflictResolution", reportDetails.ConflictResolution);
+                    parameters.Add("@Adaptability", reportDetails.Adaptability);
+                    parameters.Add("@ModeInterviews", reportDetails.MfInterview);
+                    parameters.Add("@WorkUnderPressure", reportDetails.AbilityofWork);
+                    parameters.Add("@TimeManagement", reportDetails.TManagement);
+                    parameters.Add("@Interviewscompleted", reportDetails.InterviewCompleted);
+                    parameters.Add("@Creativity", reportDetails.Creativity);
+
+                    if (reportDetails.IsEdited)
+                    {
+                        var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewerReport", paramx,
+                                            commandType: CommandType.StoredProcedure);
+
+                    }
+                    else
+                    {
+                        //add to interviewReport table
+                        string sqlInsertReport = "INSERT INTO InterviewerReport (InterviewerSkillId, InterviewId, CandidateName,OverallScore, Rating, TechSkillComments,SkillQuality,CertificationQuality, EducationQuality, EmployersQuality,CareerProgression,ProjectsQuality,OnlinePresence,BehavioralScore,InterviwerCommunication,InterviewExperience ) Values   (@InterviewerSkillId, @InterviewId, @CandidateName,@OverallScore, @Rating, @TechSkillComments, @SkillQuality,   @CertificationQuality, @EducationQuality, @EmployersQuality,@CareerProgression,@ProjectsQuality,@OnlinePresence,@BehavioralScore,@InterviwerCommunication,@InterviewExperience);";
+                        var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                        {
+                            InterviewerSkillId = reportDetails.IRFId,
+                            InterviewId = reportDetails.InterviewId,
+                            CandidateName = reportDetails.CandidateName,
+                            EducationQuality = reportDetails.EducationQuality,
+                            OverallScore = reportDetails.OverallScore,
+                            Rating = reportDetails.Rating,
+                            TechSkillComments = reportDetails.TechSkillComments,
+                            SkillQuality = reportDetails.SkillQuality,
+                            CertificationQuality = reportDetails.CertificationQuality,
+                            EmployersQuality = reportDetails.EmployersQuality,
+                            CareerProgression = reportDetails.CareerProgression,
+                            ProjectsQuality = reportDetails.ProjectsQuality,
+                            OnlinePresence = reportDetails.OnlinePresence,
+                            BehavioralScore = reportDetails.BehavioralScore,
+                            InterviwerCommunication = reportDetails.InterviwerCommunication,
+                            InterviewExperience = reportDetails.Interviewexperience,
+                        }).Result;
+
+                    }
+
+                    DataTable techReportDt = new DataTable();
+                    techReportDt.Columns.Add("InterviewId", typeof(int));
+                    techReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    techReportDt.Columns.Add("SkillId", typeof(int));
+                    techReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    techReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    techReportDt.Columns.Add("WeightageActual", typeof(int));
+
+
+                    foreach (var item in reportDetails.TechSkillReportCollection)
+                    {
+                        techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
+                    }
+
+                    SqlCommand cmdTechReport = new SqlCommand("usp_TechSkillReportBulkInsert", con);
+                    cmdTechReport.CommandType = CommandType.StoredProcedure;
+                    cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
+                    cmdTechReport.Parameters["@TechSkillReportBulkData"].Value = techReportDt;
+                    con.Open();
+                    if (cmdTechReport.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    DataTable questionsDt = new DataTable();
+                    questionsDt.Columns.Add("InterviewId", typeof(int));
+                    questionsDt.Columns.Add("Comment", typeof(string));
+                    questionsDt.Columns.Add("RatingId", typeof(int));
+                    questionsDt.Columns.Add("Timing", typeof(int));
+                    questionsDt.Columns.Add("SkillName", typeof(string));
+                    foreach (var item in reportDetails.QuestionsCollection)
+                    {
+                        questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                    }
+
+                    SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con);
+                    cmdQuestions.CommandType = CommandType.StoredProcedure;
+                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportComments", parameters,
+                            commandType: CommandType.StoredProcedure);
+
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
