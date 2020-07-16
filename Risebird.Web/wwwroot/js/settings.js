@@ -99,7 +99,7 @@ $(document).ready(function(){
       //  $(this).addClass("active");
         $("#theme").attr("href", $(this).data("theme"));
         /*implement the ajax call*/
-        debugger;
+        
         $.ajax({
             type: "POST",
             url: "/Chat/Savetheme",
