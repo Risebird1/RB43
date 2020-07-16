@@ -175,6 +175,7 @@ namespace Risebird.Web
             services.AddScoped<IInterviewerSkillsService, InterviewerSkillsService>();
             services.AddScoped<IInterviewerService, InterviewerService>();
             services.AddScoped<IInterviewerRepository, InterviewerRepository>();
+            services.AddScoped<IAzureFaceApi, AzureFaceApi>();
             //IInterviewerService
 
         }

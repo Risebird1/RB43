@@ -61,6 +61,9 @@ namespace Risebird.Business
             try
             {
                 //Edit Method
+                interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();
+                interviewerProfile.InterviewerProjectsDetails = interviewerProfile.InterviewerProjectsDetails.Where(x => x.NatureOfProject != null).ToList();
+                interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
             }
             catch (Exception e)
