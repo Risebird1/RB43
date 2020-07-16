@@ -47,14 +47,19 @@ SELECT [InterviewMeetings].id as imid
 	 ,InterviewComments.IsSelected
 	 ,IRF.id as irfIntId
 	 ,IRF.IsBiometricEnabled
+	 ,HRCoordinatorEmailId
 FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId
 left join InterviewComments on InterviewMeetings.id=InterviewComments.InterviewId
-left join Candidate ca on ca.EmailId = InterviewMeetings.candidateEmail and ca.IRFId = irf.id
+left join UserList ul on ul.EmailId = InterviewMeetings.candidateEmail
+join CandidatesMaster cm on cm.UserId = ul.id
+join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
 WHERE
       [InterviewMeetings].id = @interviewId
+
 End
+
 
 GO
 

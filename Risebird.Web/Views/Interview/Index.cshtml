@@ -324,6 +324,8 @@
                                                     <th>Video Link</th>
                                                     <th>Interview Slot</th>
                                                     <th>QC Interviewer</th>
+                                                    <th>Co-ordinating HR</th>
+                                                    <th>HR Comments</th>
                                                     <th>Staffing Agenecy</th>
                                                     <th>Interview Duration</th>
                                                     <th>Expected Joining Time</th>
@@ -338,7 +340,7 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
                                                     <th class="no-sort"></th>
-
+                                                    @*<th>Interview Device Details</th>*@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
                                                     <th style="text-align:center">Zoom Call</th>
@@ -365,6 +367,8 @@
                                                     <th>Video Link</th>
                                                     <th>Interview Slot</th>
                                                     <th>QC Interviewer</th>
+                                                    <th>Co-ordinating HR</th>
+                                                    <th>HR Comments</th>
                                                     <th>Staffing Agenecy</th>
                                                     <th>Interview Duration</th>
                                                     <th>Expected Joining Time</th>
@@ -402,7 +406,7 @@
                                                         else
                                                         {
                                                             <td>
-                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                 @item.candidateName 
                                                             </td>
                                                         }
                                                         <td> @item.candidateEmail</td>
@@ -418,7 +422,7 @@
                                                             else
                                                             {
                                                                 <td>
-                                                                    <a onclick=""><span class="dot"></span> @item.interviewer </a>
+                                                                     @item.interviewer 
                                                                 </td>
                                                             }
                                                         }
@@ -480,7 +484,7 @@
                                                         else
                                                         {
                                                             <td>
-                                                                <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                               @item.ClientHrContact
                                                             </td>
                                                         }
                                                         <td> @item.ClientName </td>
@@ -495,6 +499,8 @@
                                                         }
                                                         <td>@item.interviewSlot</td>
                                                         <td>@item.QCInterviewer</td>
+                                                        <td>@item.HRCoordinatorEmailId</td>
+                                                        <td>@item.HRComment</td>
                                                         <td>@item.staffingAgency</td>
                                                         <td> @item.interviewDuration </td>
                                                         <td> @item.joiningTime</td>
@@ -553,7 +559,7 @@
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                 <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                             </button>
-
+                                                            
                                                             @if (item.IsBiometricEnabled)
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Report">
@@ -695,6 +701,9 @@
         </div>
     </div>
 </div>
+
+
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
@@ -828,8 +837,9 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        location.reload();
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                         //window.location.href = '/Interview/Index';
                     }
                 )
@@ -845,8 +855,9 @@
                 },
                     function ()
                     {
-                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        location.reload();
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                         //window.location.href = '/Interview/Index';
                     }
                 )
@@ -1073,7 +1084,6 @@
                 'message': message, 'subject': subject, 'receiver': receiver
             },
             success: function (data) {
-                debugger;
                 location.reload(true);
 
             }

@@ -11,7 +11,6 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,7 +83,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailid).ToList().Where(x => x.CuratedLink).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailid).ToList().Where(x => x.CuratedLink).OrderByDescending(y=> y.Score).ToList();
                         }
                         else
                         {
@@ -273,7 +272,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailid).ToList().Where(x => x.CuratedLink).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailid).ToList().Where(x => x.CuratedLink).OrderByDescending(y => y.Score).ToList(); 
                         }
                         else
                         {
@@ -463,7 +462,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList().Where(x => x.CuratedLink).ToList();
+                            modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList().Where(x => x.CuratedLink).OrderByDescending(y => y.Score).ToList();
                             if (!String.IsNullOrEmpty(irfid))
                             {
                                 int irf = Convert.ToInt32(irfid);
@@ -952,7 +951,7 @@ namespace Risebird.Web.Controllers
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList().Where(x => x.CuratedLink).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList().Where(x => x.CuratedLink).OrderByDescending(y => y.Score).ToList();
                         }
                         else
                         {

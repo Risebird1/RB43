@@ -164,7 +164,7 @@ textarea::-webkit-scrollbar-thumb {
     top: -.5rem;
 }
 
-.down, .down-1, .down-2, .down-3, .down-4 {
+.down, .down-1, .down-2, .down-3 {
     transform: rotate(-90deg);
     top: -2rem;
 }

@@ -22,6 +22,8 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[QCInterviewer][varchar](200) null,
 	[joiningTime][varchar](200) null,
 	[IsEmergency] [bit] NOT NULL,
+    HRCoordinatorEmailId VARCHAR(100),
+    HRComment VARCHAR(max),
 	[InterviewBiometryScore] [decimal](10, 2) NULL,
 	[JoiningBiometryScore] [decimal](10, 2) NULL,
 	[sCreatedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sCreatedBy]  DEFAULT ('NA'),	
@@ -113,6 +115,26 @@ BEGIN
     ALTER TABLE InterviewMeetings
     Add JoiningBiometryScore DECIMAL (10,2)
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'HRCoordinatorEmailId')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add HRCoordinatorEmailId VARCHAR(100)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'HRComment')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add HRComment VARCHAR(max)
+END
+
 END
 GO
 

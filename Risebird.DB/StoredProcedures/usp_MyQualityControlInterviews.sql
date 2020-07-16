@@ -10,7 +10,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Create PROCEDURE [dbo].[usp_MyQualityControlInterviews]     
+CREATE PROCEDURE [dbo].[usp_MyQualityControlInterviews]     
 @emailID varchar(200)        
 AS      
 BEGIN      
@@ -23,8 +23,10 @@ irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel, ic.ApprovalComments, i
 ic.IsSelected, ic.MeetingStatus,ic.VideoLink from InterviewMeetings im 
 inner join IRF  irf on im.IRFId=irf.IRFId 
 left join InterviewComments ic on im.id = ic.InterviewId
-left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id    
-left join Candidate ca on ca.EmailId = im.candidateEmail and ca.IRFId=irf.id
+left join QCFeedbackReport qcfr on qcfr.InterviewId = im.id   
+left join UserList ul on ul.EmailId = im.candidateEmail
+join CandidatesMaster cm on cm.UserId = ul.id
+join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id
 where QCInterviewer = @emailID
 END   
 GO

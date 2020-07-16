@@ -50,8 +50,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetClientInterviewMeetings();
         bool PostApproval(int imid, int value, string comment);
         bool PostSelectionStatus(int imid, int value, string comment);
-        bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment);
-        //Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
+        bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP);
+        
         Task<IEnumerable<int>> CheckCompletedInterviews(string emailID, int clientId, int irfId);
         Task<IEnumerable<Meeting>> GetQualityControlInterview(string emailID);
         bool SaveQCFeedback(int imid, int qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled);
@@ -88,5 +88,11 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteInterview(int imid);
         bool SaveFeedbackAudio(int interviewId, string feedbackAudioLink);
         Task<IEnumerable<string>> GetEmailsforBroadcast(string profile);
+        Task<IEnumerable<Meeting>> GetHROpenInterviews();
+        string HRAssignYourself(int meetingid, string hrMailId);
+        Task<IEnumerable<Meeting>> GetHRAssignedInterviews(string emailID);
+        bool HRUnassignYourself(int meetingid);
+        bool SaveHRComment(int id, string comment);
+        Task<IEnumerable<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid);
     }
 }

@@ -15,26 +15,28 @@ CREATE PROCEDURE [dbo].[usp_GetClientMeetings]
 @EmailId varchar(300)        
 AS      
 BEGIN      
-select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
+select im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, ulc.EmailId as candidateEmail, im.ClientHrContact,
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
-im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, ulc.FirstName as candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, 
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink,
 ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,
-ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink, QCF.InterviewId as QCInterview, QCF.QCStatus,
+ic.ApprovalComments,ic.FinalComments,ic.AadharFileLink,ic.MoveToCP, QCF.InterviewId as QCInterview, QCF.QCStatus,
 cm.id as CandidateId,ulc.Isonline as IsOnline,ul.Isonline as IsHrOnline
 from InterviewMeetings im 
 inner join IRF on im.IRFId = IRF.IRFId 
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
 left join QCFeedbackReport QCF on im.id=QCF.InterviewId 
-left join CandidatesMaster cm on im.candidateEmail = cm.EmailId
+left join UserList ulc on im.candidateEmail= ulc.EmailId
+join CandidatesMaster cm on ulc.id= cm.UserId
+join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId
 inner join TransClientUser tcu on IRF.id=tcu.IRFId
 left join UserList ul on tcu.ClientUserId= ul.id
-left join UserList ulc on im.candidateEmail= ulc.EmailId
-left join Candidate ca on im.candidateEmail = ca.EmailId and irf.id= ca.IRFId
 
-where ul.EmailId LIKE @EmailId AND ul.IsActive=1         
+where ul.EmailId LIKE @EmailId AND ul.IsActive=1        
+
+
       
 END   
 GO

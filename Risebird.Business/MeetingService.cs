@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using Risebird.Repository.Interface;
-using System.Collections.Generic;
-using System.Linq;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Risebird.CommonHelper;
 namespace Risebird.Business
 {
     public class MeetingService : IMeetingService
@@ -66,6 +65,18 @@ namespace Risebird.Business
             {
 
                 return _meetingRespository.GetRiseTubeMeetings(clientId, profile, Emailid).Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<MeetingVM> GetCPMeetings(int clientId, string profile, string Emailid)
+        {
+            try
+            {
+                return _meetingRespository.GetCPMeetings(clientId, profile, Emailid).Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
@@ -298,12 +309,11 @@ namespace Risebird.Business
             return false;
         }
 
-        public bool SaveClientFeedback(string imid, string isApproved, string approvalComment, string isSelected, string selectionComment, string joiningStatus, string joiningComment, string offerStatus, string offerComment)
+        public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP)
         {
-            if (!string.IsNullOrEmpty(isApproved) && !string.IsNullOrEmpty(isSelected) && !string.IsNullOrEmpty(offerStatus) && !string.IsNullOrEmpty(joiningStatus) && !string.IsNullOrEmpty(imid))
+            if (imid != 0)
             {
-                //var val = Convert.ToInt32(value);
-                var result = _meetingRespository.SaveClientFeedback(Convert.ToInt32(imid), Convert.ToInt32(isApproved), approvalComment, Convert.ToInt32(isSelected), selectionComment, Convert.ToInt32(joiningStatus), joiningComment, Convert.ToInt32(offerStatus), offerComment);
+                var result = _meetingRespository.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment, movetoCP);
                 return result;
             }
             return false;
@@ -1297,6 +1307,78 @@ namespace Risebird.Business
             }
 
         }
+
+        public IEnumerable<Meeting> GetHROpenInterviews()
+        {
+            try
+            {
+                var openMeeting = _meetingRespository.GetHROpenInterviews().Result.OrderByDescending(x => x.interviewDate);
+                return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public string HRAssignYourself(int meetingid, string hrMailId)
+        {
+            try
+            {
+                return _meetingRespository.HRAssignYourself(meetingid, hrMailId);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview!";
+            }
+
+        }
+
+        public IEnumerable<Meeting> GetHRAssignedInterviews(string emailID)
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.GetHRAssignedInterviews(emailID).Result.OrderByDescending(x => x.interviewDate);
+
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public bool HRUnassignYourself(int meetingid)
+        {
+            try
+            {
+                return _meetingRespository.HRUnassignYourself(meetingid);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public bool SaveHRComment(int id, string comment)
+        {
+            try
+            {
+                return _meetingRespository.SaveHRComment(id, comment);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
     }
 

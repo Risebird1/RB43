@@ -3586,5 +3586,38 @@ namespace Risebird.Web.Controllers
 
         }
 
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult CandidateCuratedScore(string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                CandidateCuratedScoreVM model = new CandidateCuratedScoreVM();
+                var result = _irfService.GetCandidateCuratedScore(Convert.ToInt32(id));
+                model.CandidateCuratedScores = result;
+                model.IRFId = Convert.ToInt32(id);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult CandidateCuratedScore(CandidateCuratedScoreVM model)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                 _irfService.AddCandidateCuratedScore(model.IRFId,model.CandidateCuratedScores.ToList());
+                return RedirectToAction("Index", "IRF");
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }
