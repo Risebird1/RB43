@@ -456,6 +456,11 @@ namespace Risebird.Repository
             parameters.Add("@staffingAgency", entity.staffingAgency);
             parameters.Add("@currentEmployerName", entity.currentEmployerName);
             parameters.Add("@MobileNumber", entity.MobileNumber);
+            if(entity.HRCoordinatorEmailId != null)
+            {
+                parameters.Add("@HRCoordinatorEmailId", entity.HRCoordinatorEmailId);
+
+            }
             return parameters;
         }
         public async Task<bool> AddMeeting(MeetingVM meeting)
@@ -2118,6 +2123,52 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+
+        }
+
+        public bool HRUnassignYourself(int meetingid)
+        {
+            try
+            {
+                var query = "update [dbo].[InterviewMeetings] set HRCoordinatorEmailId = null where id = @meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
+        public bool SaveHRComment(int id, string comment)
+        {
+            try
+            {
+                var query = "update InterviewMeetings set HRComment = @comment where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@comment", comment);
+                dynamicParameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
 
         }
 
