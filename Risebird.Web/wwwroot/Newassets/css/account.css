@@ -35,7 +35,7 @@ body {
 		for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
 		
 	*/
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat !important;
     /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
     background-position: right .7em top 50%, 0 0 !important;
@@ -70,7 +70,7 @@ body {
 /* Disabled styles */
 .select-css:disabled, .select-css[aria-disabled=true] {
     color: graytext;
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat;
 }
 
@@ -161,14 +161,6 @@ body {
 
 
 
-
-
-
-.pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-    background-color: #4e9bea !important;
-    border-color: #4e9bea;
-    color: #FFFFFF;
-}
 
 
 
@@ -400,10 +392,6 @@ body {
         top: 14px;
     }
 
-.mdc-card button.dropdown-toggle:focus {
-    border-bottom: 2px rgb(80, 158, 235) solid !important;
-}
-
 
 
 .border-rv {
@@ -418,14 +406,11 @@ body {
 }
 
 .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
-    border-color: #53a5f5 !important;
+    border-color: #53a5f5;
 }
 
 
-.mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
-    border-color: #53a5f5 !important;
-    background-color: #53a5f5 !important;
-}
+
 
 .upload a {
     text-decoration: none;

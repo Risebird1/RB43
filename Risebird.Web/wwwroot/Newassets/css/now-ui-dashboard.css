@@ -1474,8 +1474,8 @@
 
 
 .card-header select.form-control {
-    background-color: transparent !important;
-    border: 1px solid #E3E3E3 !important;
+    background-color: transparent;
+    border: 1px solid #E3E3E3;
     border-radius: 30px !important;
     color: #2c2c2c;
     line-height: normal;
@@ -7609,11 +7609,7 @@ input.theatre-btn:focus {
     font-size: 13.5px !important;
 }
 
-.card .card-footer {
-    background-color: #56a9ff0a;
-    border: 0;
-    border-top: 1px #eeeeee73 solid;
-}
+
 
     .card .card-footer .stats i {
         margin-right: 5px;
@@ -10940,7 +10936,7 @@ svg {
 }
 
 .click {
-    color: #53a5f5 !important;
+    color: #53a5f5;
     text-decoration: underline !important;
 }
 
@@ -14288,6 +14284,7 @@ be a descendant of the grid when it is being dragged.
         top: 68%;
         right: 12%;
     }
+
 
 [data-background-color="gray"] {
     background-color: #eeeeee;
