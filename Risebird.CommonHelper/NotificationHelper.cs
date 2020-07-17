@@ -623,5 +623,39 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public string SendCommonPoolMail(List<string> clientUsers, string clientEmailId, Candidate candidateDetails)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                foreach (var email in clientUsers)
+                {
+                    mailMessage.To.Add(new MailAddress(email, null));
+                }
+
+                mailMessage.CC.Add(new MailAddress(clientEmailId, null));
+
+              
+                object[] parameters = new object[] { candidateDetails.Name, (candidateDetails.Skill!=null ? candidateDetails.Skill:string.Empty)};
+                mailMessage.Subject = "New Candidate added to Common Pool";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CommonPoolTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent Successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Broadcast failed.";
+            }
+        }
+
     }
 }

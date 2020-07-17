@@ -53,12 +53,20 @@ namespace Risebird.Business.Interface
         bool PauseIRF(int irfId, string irfName);
         bool PlayIRF(int irfId, string irfName);
         IEnumerable<IRF> GetAllIRFs(string emailId, string profileName);
-        Task<bool> SubscribeIRF(int id, string emailId, string profile);
-        Task<bool> UnSubscribeIRF(int id, string emailId, string profile);
+        Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile);
+        Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile);
         bool SaveCandidateStatus(int candidateId, int status);
         IEnumerable<Interviewer> GetInterviewersForIRF(string skillNames);
         IEnumerable<Users> GetAllHRs();
         bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore);
         IList<CandidateCuratedScore> GetCandidateCuratedScore(int id);
+        IEnumerable<CuratedGroup> GetAllCuratedGroups();
+        IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping();
+        Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails);
+        CuratedGroup GetCuratedGroupMappingsById(int curatedGroupId);
+        bool UpdateCuratedGroup(CuratedGroup model);
+        CuratedGroupUsersVM GetCuratedGroupUsers(int curatedGroupId);
+        bool AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model);
+        IEnumerable<CuratedUserGroupData> GetCuratedGroupsForCuratedUser(string emailId);
     }
 }

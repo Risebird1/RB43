@@ -3528,7 +3528,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                return _irfService.SubscribeIRF(id, emailid, profileName).Result;
+                return _irfService.SubscribeCuratedGroup(id, emailid, profileName).Result;
 
             }
             catch (Exception ex)
@@ -3548,7 +3548,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                return _irfService.UnSubscribeIRF(id, emailid, profileName).Result;
+                return _irfService.UnSubscribeCuratedGroup(id, emailid, profileName).Result;
 
             }
             catch (Exception ex)
@@ -3617,6 +3617,351 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult CuratedGroups()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
+                    {
+
+                        var curatedGroups = _irfService.GetAllCuratedGroups();
+                        if (TempData["SuccessErrorMessageCG"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageCG"].ToString();
+                            TempData.Remove("SuccessErrorMessageCG");
+                        }
+                        return View(curatedGroups);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AddCuratedGroup()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var curatedGroupModel = new CuratedGroup();
+                curatedGroupModel.CuratedIRFMappings = (IList<CuratedIRFMapping>)(_irfService.GetIRFListForCuratedMapping());
+                return View(curatedGroupModel);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddCuratedGroup(CuratedGroup model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    //profileName = profileName.Replace("\"", "");
+                    if (_irfService.AddCuratedGroup(model).Result)
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Curated Group added Successfully";
+                        return RedirectToAction("CuratedGroups");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Adding Curated Group has Failed";
+                        return RedirectToAction("CuratedGroups");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCG"] = "Adding Curated Group has failed";
+                return RedirectToAction("CuratedGroups");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult EditCuratedGroup(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var cgModel = _irfService.GetCuratedGroupMappingsById(id);
+                return View(cgModel);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditCuratedGroup(CuratedGroup model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_irfService.UpdateCuratedGroup(model))
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Curated Group edited successfully!";
+                        return RedirectToAction("CuratedGroups");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Saving changes for Curated Group failed!";
+                        return RedirectToAction("CuratedGroups");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCG"] = "Saving changes for Curated Group failed!";
+                return RedirectToAction("CuratedGroups");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AddUpdateCuratedGroupUsers(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var model = _irfService.GetCuratedGroupUsers(id);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_irfService.AddUpdateCuratedGroupUsers(model))
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Curated Group users updated successfully!";
+                        return RedirectToAction("CuratedGroups");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Sorry! Curated Group users could not be updated.";
+                        return RedirectToAction("CuratedGroups");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCG"] = "Sorry! Curated Group users could not be updated.";
+                return RedirectToAction("CuratedGroups");
+            }
+        }
+
+        public IActionResult CuratedIndex()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "CuratedUser")
+                {
+                    var model = new CuratedIndexVM();
+                    model.CuratedData = _irfService.GetCuratedGroupsForCuratedUser(emailid);
+                    foreach (var item in model.CuratedData)
+                    {
+                        if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.Status = "Archived";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            item.Status = "Active";
+                        }
+                        if (item.SubId != null)
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.Subscribed.GetDescription();
+                        }
+                        else
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.UnSubscribed.GetDescription();
+                        }
+                    }
+
+
+                    if (TempData["SuccessErrorMessageCuratedIndex"] != null)
+                    {
+                        model.Message = TempData["SuccessErrorMessageCuratedIndex"].ToString();
+                        TempData.Remove("SuccessErrorMessageCuratedIndex");
+                    }
+
+                    if (HttpContext.Session.GetString("CuratedIndexFilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<CuratedIndexFilter>(HttpContext.Session.GetString("CuratedIndexFilters"));
+                        
+                        filter.SubscriptionStatus = filter.SubscriptionStatus == null ? filter.SubscriptionStatus = model.CuratedData.Select(x => x.SubscriptionStatus).ToArray() : filter.SubscriptionStatus;
+                        filter.CuratedGroupName = filter.CuratedGroupName == null ? filter.CuratedGroupName = model.CuratedData.Select(x => x.CuratedGroupName).ToArray() : filter.CuratedGroupName = filter.CuratedGroupName;
+
+                        model.CuratedData = model.CuratedData.Where(c => (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
+                        && (filter.CuratedGroupName.Count() > 0 ? filter.CuratedGroupName.Contains(c.CuratedGroupName) : c.CuratedGroupName == null)).ToList();
+                        
+                    }
+
+
+                    return View(model);
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult CuratedIndex(CuratedIndexFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("CuratedIndexFilters", JsonConvert.SerializeObject(filter));
+
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "CuratedUser")
+                {
+
+                    var model = new CuratedIndexVM();
+                    model.CuratedData = _irfService.GetCuratedGroupsForCuratedUser(emailid);
+                    foreach (var item in model.CuratedData)
+                    {
+                        if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.Status = "Archived";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            item.Status = "Active";
+                        }
+                        if (item.SubId != null)
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.Subscribed.GetDescription();
+                        }
+                        else
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.UnSubscribed.GetDescription();
+                        }
+                    }
+
+                    filter.SubscriptionStatus = filter.SubscriptionStatus == null ? filter.SubscriptionStatus = model.CuratedData.Select(x => x.SubscriptionStatus).ToArray() : filter.SubscriptionStatus;
+                    filter.CuratedGroupName = filter.CuratedGroupName == null ? filter.CuratedGroupName = model.CuratedData.Select(x => x.CuratedGroupName).ToArray() : filter.CuratedGroupName = filter.CuratedGroupName;
+
+                    model.CuratedData = model.CuratedData.Where(c => (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
+                    && (filter.CuratedGroupName.Count() > 0 ? filter.CuratedGroupName.Contains(c.CuratedGroupName) : c.CuratedGroupName == null)).ToList();
+
+
+
+
+                    return View(model);
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public async Task<IActionResult> ResetCuratedIndexFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("CuratedIndexFilters");
+                    return RedirectToAction("CuratedIndex");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
     }
 }

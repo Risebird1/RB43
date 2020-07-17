@@ -309,11 +309,19 @@ namespace Risebird.Business
             return false;
         }
 
-        public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP)
+        public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP, string clientEmailId)
         {
             if (imid != 0)
             {
                 var result = _meetingRespository.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment, movetoCP);
+                if(movetoCP)
+                {
+                    //send mail to other client users of the same client
+                    var clientUsers = _meetingRespository.GetClientUsers(clientEmailId);
+                    clientUsers = clientUsers.Where(x => x != clientEmailId);
+                    var candidateDetails = _meetingRespository.GetCandidateDetails(imid);
+                    _notificationHelper.SendCommonPoolMail(clientUsers.ToList(), clientEmailId, candidateDetails);
+                }
                 return result;
             }
             return false;
@@ -1379,6 +1387,19 @@ namespace Risebird.Business
             }
         }
 
+        public IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId)
+        {
+            try
+            {
+                return _meetingRespository.GetCuratedGroupIRFs(curatedGroupId);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
     }
 
