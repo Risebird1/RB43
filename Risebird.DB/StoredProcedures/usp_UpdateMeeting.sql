@@ -10,7 +10,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-Alter PROCEDURE [dbo].[usp_UpdateMeeting]    
+Create PROCEDURE [dbo].[usp_UpdateMeeting]    
 @interviewId int,
 @IRFId varchar(200),
 @interviewDate varchar(200),

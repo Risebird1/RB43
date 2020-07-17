@@ -1,31 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Risebird.Business.Interface;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Risebird.Entities.Data;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Risebird.Repository.Interface;
 using Microsoft.AspNetCore.Http;
-using Risebird.CommonHelper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using System.IO;
-using MediaToolkit.Model;
-using MediaToolkit;
-using MediaToolkit.Options;
-using Microsoft.AspNetCore.Http.Internal;
-using System.Text;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Cors;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -840,7 +833,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return RedirectToAction("Index");
             }
 
         }
@@ -862,7 +855,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return RedirectToAction("MyInterview");
             }
 
         }
@@ -884,7 +877,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return RedirectToAction("SelectedPriorityClientMeetings");
             }
 
         }
@@ -905,7 +898,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return RedirectToAction("ClientSelectedMeetings");
             }
 
         }
@@ -926,7 +919,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return RedirectToAction("ClientMeetings");
             }
 
         }
@@ -947,7 +940,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return RedirectToAction("AllPriorityClientMeetings");
             }
 
         }
@@ -1548,7 +1541,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return View();
             }
         }
 
@@ -1692,7 +1685,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                     item.resumeLink = "";
                                 }
@@ -4284,9 +4277,9 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public bool SaveClientFeedback(string imid, string isApproved, string approvalComment, string isSelected, string selectionComment, string joiningStatus, string joiningComment, string offerStatus, string offerComment)
+        public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP)
         {
-            var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment);
+            var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment, movetoCP);
             if (result)
             {
                 TempData["SuccessErrorMessage"] = "Saved Successfully";
@@ -5066,7 +5059,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 6].Style.Font.UnderLine = true;
                                 Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 Sheet.Cells[i, 6].Value = "No Video";
                             }
@@ -5270,7 +5263,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 7].Style.Font.UnderLine = true;
                                 Sheet.Cells[i, 7].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 Sheet.Cells[i, 7].Value = "No Resume";
                             }
@@ -5288,7 +5281,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 8].Style.Font.UnderLine = true;
                                 Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 Sheet.Cells[i, 8].Value = "No Link";
                             }
@@ -5366,7 +5359,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                     item.resumeLink = "";
                                 }
@@ -5496,7 +5489,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                     item.resumeLink = "";
                                 }
@@ -6158,7 +6151,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
+                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid).Where(x=> x.interviewDate >= DateTime.Now);
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
@@ -6169,7 +6162,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                     item.resumeLink = "";
                                 }
@@ -6253,11 +6246,11 @@ namespace Risebird.Web.Controllers
             var result = _meetingService.SaveHRComment(id, comment);
             if (result)
             {
-                TempData["SuccessErrorMessageInterview"] = "HR comments saved Successfully!";
+                TempData["SuccessErrorMessageHR"] = "HR comments saved Successfully!";
 
             }
             else
-                TempData["SuccessErrorMessageInterview"] = "Failed to save HR comments!";
+                TempData["SuccessErrorMessageHR"] = "Failed to save HR comments!";
 
             return result;
 
