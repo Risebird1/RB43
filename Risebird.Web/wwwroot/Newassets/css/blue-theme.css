@@ -63,3 +63,15 @@ body {
 .public-share {
     background-image: url('../../img/share-3b.png') !important;
 }
+.select-css, .select-css:disabled, .select-css[aria-disabled=true] {
+    background-image: url('../../img/drop.png') !important;
+}
+
+.msger-send-btn {
+    background-image: url(../../img/send.png)!important;
+}
+.dropdown-toggle {
+    background: #fff !important;
+}
+
+.dropdown-menu{border:none!important}

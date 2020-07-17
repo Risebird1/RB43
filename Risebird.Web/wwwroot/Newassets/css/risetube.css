@@ -748,7 +748,7 @@ textarea::-webkit-scrollbar-thumb {
     }
     .comment-area textarea {
         min-height: 50px;
-        background: #fff!important;
+        background: #fff;
         width: 100%!important;
         border: 0!important;
         padding: 7px 0px;

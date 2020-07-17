@@ -176,7 +176,7 @@ textarea::-webkit-scrollbar-thumb {
     -webkit-appearance: none !important;
     appearance: none !important;
     background-color: #fff;
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat !important;
     /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
     background-position: right .7em top 50%, 0 0 !important;
@@ -228,7 +228,7 @@ select{
 /* Disabled styles */
 .select-css:disabled, .select-css[aria-disabled=true] {
     color: graytext;
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat;
 }
 
@@ -402,7 +402,7 @@ select {
 /* Disabled styles */
 .select-css:disabled, .select-css[aria-disabled=true] {
     color: graytext;
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat;
 }
 
@@ -1356,7 +1356,7 @@ top:3px;
 
 .publicsharing-icon {
     position: relative;
-    top: 10px;
+    top: 10px;color:#fff;
 }
 .text-areadiv1 {
     height: auto;

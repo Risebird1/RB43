@@ -69,7 +69,7 @@ textarea::-webkit-scrollbar-thumb {
 		for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
 		
 	*/
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat !important;
     /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
     background-position: right .7em top 50%, 0 0 !important;
@@ -104,7 +104,7 @@ textarea::-webkit-scrollbar-thumb {
 /* Disabled styles */
 .select-css:disabled, .select-css[aria-disabled=true] {
     color: graytext;
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat;
 }
 
@@ -419,22 +419,20 @@ table {
 
 
 .client #resumeId, .client #zoomlinkId {
-    background: #e2f0ff;
-    color: #1d3b5e;
+
     padding: 5px 10px;
     border-radius: 16px;
 }
 
 
 .client #reportId {
-    background: #b3d2f1;
-    color: #1d3b5e;
+
     padding: 5px 10px;
     border-radius: 16px;
 }
 
 .client #jdlinkId {
-    background: #fff;
+
     color: #1d3b5e;
     padding: 4px 10px;
     border-radius: 16px;
@@ -442,8 +440,7 @@ table {
 }
 
 .client #videoId {
-    background: #53a5f53d;
-    color: #1d3b5e;
+
     padding: 5px 10px;
     border-radius: 16px;
 }

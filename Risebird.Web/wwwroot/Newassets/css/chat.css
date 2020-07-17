@@ -172,7 +172,7 @@ button:focus {
 
 .msger-send-btn {
     margin-left: 10px;
-    background-image: url(../../img/send.png) !important;
+    background-image: url(../../img/send.png);
     background-repeat: no-repeat !important;
     background-size: 78% !important;
     background-position: 70% 50%;

@@ -133,8 +133,8 @@ table {
  }
 
 
-[type="date"] {
-    background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
+[type="date"].form-control {
+    background: #181818 url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
 }
 
@@ -154,9 +154,18 @@ table {
     border-bottom: 2px #121212 solid !important;
 }
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: #181818!important;
+    background: #181818;
     color: #9A9A9A;
 }
+
+.select-css, .select-css[aria-disabled=true] {
+    background-image: url(../../img/dark-drop.png) !important;
+}
+.form-group .select-css.form-control {
+    background: #181818;
+    color: #9A9A9A!important;
+}
+
 .card-blue .card-header h6 {
     color: #a9a5a5 !important;
     font-weight: normal !important;
@@ -194,6 +203,15 @@ table {
 .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
     border-color: #929292!important;
 }
+select * {
+    background-color: #181818;
+    border: 0 !important;
+    padding: 5px;
+}
+
+.text-areadiv textarea {
+    background: #181818;
+}
 #resumeId, #zoomlinkId {
     background: #000000;
     color: #47484a;
@@ -205,9 +223,9 @@ table {
 }
 
 #jdlinkId {
-    background: #fff;
+    background: #000;
     color: #929292;
-    border: 1px #929292 solid;
+    border: 1px #92929273 solid;
 }
 
     .mdc-fab__icon {
@@ -288,10 +306,7 @@ div.dataTables_wrapper div.dataTables_info {
 .special-text svg {
     fill: rgb(119, 115, 115) !important;
 }
-.chat {
-    background: #000000!important;
-    color: #434651;
-}
+
 .public-share {
     background-image: url('../../img/share-3g.png') !important;
     color: #a9a5a5 !important;
@@ -323,3 +338,43 @@ div.dataTables_wrapper div.dataTables_info {
 .dropdown-menu {
     border-color: #181818 !important;
 }
+.comment-area textarea {
+    min-height: 50px;
+    background: #1a1a1a !important;
+}
+
+.dropdown-toggle {
+  
+    background: #1a1a1a !important;
+}
+    .dropdown-toggle::after {
+        color: #9a9a9a !important;
+    }
+
+.dropdown-menu {
+    border: none !important
+}
+.btn-default {
+    border-color: #1a1a1a !important;
+}
+
+.msg-bubble-right {
+    background: #9a9a9a !important;
+}
+
+.chat {
+    background: #000000!important;
+}
+    .msger-send-btn {
+    background-image: url(../../img/grey-send.png) !important;
+}
+
+.info .info-title{color:#9a9a9a!important}
+
+@media screen and (max-width: 768px) {
+    .d_active {
+            background-color: #1a1a1a !important;
+            color: #fff;
+            border: none !important;
+        }
+    }

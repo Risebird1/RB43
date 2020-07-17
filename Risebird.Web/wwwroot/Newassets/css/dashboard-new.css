@@ -4498,15 +4498,18 @@ background: #1caf9a !important;
   padding: 10px 10px 10px;
   color: #FFF;
 }
-.theme-settings .ts-body .ts-title {
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 20px;
-  margin-bottom: 5px;
-  margin-top: 10px;
-}
+    .theme-settings .ts-body .ts-title {
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 20px;
+        margin-bottom: 5px;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+.ts-title-label{font-weight:normal;}
 .theme-settings .ts-body .ts-title:first-child {
-  margin-top: 0px;
+    margin-top: 0px;
 }
 .theme-settings .ts-body .ts-row {
   margin-bottom: 5px;
@@ -4521,7 +4524,7 @@ background: #1caf9a !important;
 .theme-settings .ts-themes a {
   width: 30px;
   height: 30px;
-  margin-right: 6px;
+  margin-left: 6px;
   margin-bottom: 5px;
   display: inline-block;
 }
