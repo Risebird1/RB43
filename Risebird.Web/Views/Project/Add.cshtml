@@ -80,7 +80,7 @@
 
 
                             </div>
-                            <div class="row">
+                            <div class="row mt-15">
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -109,6 +109,7 @@
                     </div>
                 </div>
             </div>*@
+                            <div style="width:100%">&nbsp;</div>
                             <div id="tableID">
                                 <table class="table table-bordered mbn" id="IRFList">
                                     <thead>
@@ -124,7 +125,7 @@
                                         {
                                             <tr>
 
-                                                <td class="text-center"> <a style="color:#007bff;" id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
+                                                <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
                                                 <td class="text-center" width="30%">@Model.ProjectIRFMappings[i].PrimarySkills</td>
                                                 <td class="text-center" width="20%">@Model.ProjectIRFMappings[i].Client</td>
                                                 <td class="text-center" width="20%">

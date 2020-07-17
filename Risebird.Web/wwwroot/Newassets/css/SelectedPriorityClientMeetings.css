@@ -69,7 +69,7 @@ textarea::-webkit-scrollbar-thumb {
 		for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
 		
 	*/
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat !important;
     /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
     background-position: right .7em top 50%, 0 0 !important;
@@ -104,7 +104,7 @@ textarea::-webkit-scrollbar-thumb {
 /* Disabled styles */
 .select-css:disabled, .select-css[aria-disabled=true] {
     color: graytext;
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat;
 }
 
@@ -154,12 +154,12 @@ textarea::-webkit-scrollbar-thumb {
         color: darkgray
     }
 
-.up, .up-1, .up-2, .up-3 {
+.up, .up-1, .up-2, .up-3, .up-4, .up-5, .up-6, .up-7, .up-8 {
     transform: rotate(-90deg);
     top: -.5rem;
 }
 
-.down, .down-1, .down-2, .down-3 {
+.down, .down-1, .down-2, .down-3, .down-4, .down-5, .down-6, .down-7, .down-8 {
     transform: rotate(-90deg);
     top: -2rem;
 }
@@ -286,9 +286,7 @@ table {
 }
 
 
-#btnPlus {
-    top: -3px;
-}
+
 
 
 .btn-call {
@@ -421,22 +419,20 @@ table {
 
 
 .client #resumeId, .client #zoomlinkId {
-    background: #e2f0ff;
-    color: #1d3b5e;
+
     padding: 5px 10px;
     border-radius: 16px;
 }
 
 
 .client #reportId {
-    background: #b3d2f1;
-    color: #1d3b5e;
+
     padding: 5px 10px;
     border-radius: 16px;
 }
 
 .client #jdlinkId {
-    background: #fff;
+
     color: #1d3b5e;
     padding: 4px 10px;
     border-radius: 16px;
@@ -444,8 +440,7 @@ table {
 }
 
 .client #videoId {
-    background: #53a5f53d;
-    color: #1d3b5e;
+
     padding: 5px 10px;
     border-radius: 16px;
 }
@@ -471,7 +466,7 @@ table {
 }
 
 .file-lable {
-    color: #000 !important;
+    color: #000;
     font-size: 14px !important;
 }
 
@@ -503,14 +498,6 @@ table {
     padding: 8px 8px 4px 8px;
     text-align: left;
     line-height: 1.5em;
-}
-
-
-
-.pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-    background-color: #4e9bea !important;
-    border-color: #4e9bea;
-    color: #FFFFFF;
 }
 
 
@@ -654,9 +641,7 @@ modal-content .modal-body {
         top: 14px;
     }
 
-.mdc-card button.dropdown-toggle:focus {
-    border-bottom: 2px rgb(80, 158, 235) solid !important;
-}
+
 
 
 .modal-content .modal-body {
@@ -711,7 +696,7 @@ modal-content .modal-body {
     }
 
 .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
-    border-color: #53a5f5 !important;
+    border-color: #53a5f5;
 }
 
 @media screen and (max-width:991px) {

@@ -121,7 +121,7 @@
                                         <div class="form-group second">
                                             <label>    <b>SUBJECT</b></label>
                                             @Html.TextBoxFor(model => model.Subject,
-                                         htmlAttributes: new { @class = "form-control", maxlength = 100, placeholder = "Mail Subject", required = "required" })
+                                         htmlAttributes: new { @class = "form-control", maxlength = 100, style = "width:100%", placeholder = "Mail Subject", required = "required" })
                                         </div>
 
                                     </div>
@@ -132,7 +132,7 @@
                                         <div class="form-group three" style="margin-bottom:10px;">
                                             <label>   <b>BODY</b></label>
                                             @Html.TextAreaFor(model => model.Body,
-                                            htmlAttributes: new { @class = "form-control", maxlength = 5000, style = "height: 200px", placeholder = "Mail Body", required = "required" })
+                                            htmlAttributes: new { @class = "form-control", maxlength = 5000, style = "height: 200px;width:100%", placeholder = "Mail Body", required = "required" })
                                         </div>
                                     </div>
                                 </div>

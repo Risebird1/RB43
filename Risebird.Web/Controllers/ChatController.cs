@@ -338,5 +338,42 @@ namespace Risebird.Web.Controllers
             }
         }
 
-    }
+        /* Store theme in database user table     */
+
+
+
+        public JsonResult Savetheme(string theme)
+        {
+            try
+            {
+                string connectionString = _configuration["ConnectionString:DBConnectionString"];
+                if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
+                {
+                    var userid = HttpContext.Session.GetString("email")?.Trim();
+                    userid = userid.Replace("\"", "");
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var query = "Update  UserList SET Usertheme = @Usertheme where EmailId = @id";
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@id", userid);
+                        parameters.Add("@Usertheme", theme);
+                        var results = con.Query(query, parameters);
+                       
+                        HttpContext.Session.SetString("Currenttheme", theme);
+                        // return result;
+                        return Json(results);
+                    }
+                }
+                return Json("");
+            }
+            catch (Exception)
+            {
+                return Json("");
+            }
+
+
+           
+        }
+
+ }
 }
