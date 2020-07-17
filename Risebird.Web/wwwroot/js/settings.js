@@ -56,7 +56,15 @@ $(document).ready(function(){
     $(".ts-button").on("click", function () {
        
         $(".theme-settings").toggleClass("active");
+
+      
     });
+
+
+    $(".ts-themes a").on("click", function () {
+        $(".theme-settings").removeClass("active");
+    })
+
     /* End open/hide settings */
 });
 
