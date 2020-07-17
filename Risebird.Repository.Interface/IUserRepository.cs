@@ -10,6 +10,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId);
         IEnumerable<UserList> GetRisebirdUsers();
         IEnumerable<InterviewerVM> GetInterviewers();
+        IEnumerable<InterviewerVM> GetInterviewersDetails();
+
         IEnumerable<ClientUserVM> GetClientUsers();
         ClientUserVM GetClientUserDetails(string emailID);
         IEnumerable<QCInterviewerVM> GetQCInterviewers();

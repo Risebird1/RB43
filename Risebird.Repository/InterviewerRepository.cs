@@ -1165,6 +1165,7 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
+
             return null;
         }
         public IEnumerable<SkillComment> GetTechSkillComments(int id)
@@ -1257,6 +1258,26 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<InterviewReport> GetInterviewerRecommendationbyinterviewid(int id)
+        {
+            try
+            {
+                var query = "Select * from InterviewerRecommendation where Interviewid= @Interviewid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Interviewid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<InterviewReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<bool> AddInterviewerReport(InterviewReport reportDetails)
         {
             try
@@ -1294,7 +1315,7 @@ namespace Risebird.Repository
                     parameters.Add("@DecisionMaking", reportDetails.DecisionMaking);
                     parameters.Add("@Articulation", reportDetails.Articulation);
                     parameters.Add("@ReadymadeAssessment", reportDetails.ReadymadeAssessment);
-                    parameters.Add("@ReadinessOnlineInterviews", reportDetails.ReadymadeAssessment);
+                    parameters.Add("@ReadinessOnlineInterviews", reportDetails.ReadinessOnlineInterviews);
                     parameters.Add("@Teamwork", reportDetails.Teamwork);
                     parameters.Add("@RelationshipManagement", reportDetails.RelationshipManagement);
                     parameters.Add("@ConflictResolution", reportDetails.ConflictResolution);
@@ -1376,26 +1397,26 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    DataTable questionsDt = new DataTable();
-                    questionsDt.Columns.Add("InterviewId", typeof(int));
-                    questionsDt.Columns.Add("Comment", typeof(string));
-                    questionsDt.Columns.Add("RatingId", typeof(int));
-                    questionsDt.Columns.Add("Timing", typeof(int));
-                    questionsDt.Columns.Add("SkillName", typeof(string));
-                    foreach (var item in reportDetails.QuestionsCollection)
-                    {
-                        questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
-                    }
+                    //DataTable questionsDt = new DataTable();
+                    //questionsDt.Columns.Add("InterviewId", typeof(int));
+                    //questionsDt.Columns.Add("Comment", typeof(string));
+                    //questionsDt.Columns.Add("RatingId", typeof(int));
+                    //questionsDt.Columns.Add("Timing", typeof(int));
+                    //questionsDt.Columns.Add("SkillName", typeof(string));
+                    //foreach (var item in reportDetails.QuestionsCollection)
+                    //{
+                    //    questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                    //}
 
-                    SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con);
-                    cmdQuestions.CommandType = CommandType.StoredProcedure;
-                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
-                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
-                    con.Open();
-                    if (cmdQuestions.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
+                    //SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con);
+                    //cmdQuestions.CommandType = CommandType.StoredProcedure;
+                    //cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                    //cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                    //con.Open();
+                    //if (cmdQuestions.ExecuteNonQuery() != 0)
+                    //{
+                    //    con.Close();
+                    //}
 
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportComments", parameters,
                             commandType: CommandType.StoredProcedure);

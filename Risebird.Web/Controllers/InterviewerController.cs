@@ -1079,14 +1079,14 @@ namespace Risebird.Web.Controllers
                         }
                     }
                 }
-                if (model.QuestionsCollection == null)
-                {
-                    ViewBag.QuestionsDiscussedCount = 0;
-                }
-                else
-                {
-                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
-                }
+                //if (model.QuestionsCollection == null)
+                //{
+                //    ViewBag.QuestionsDiscussedCount = 0;
+                //}
+                //else
+                //{
+                //    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                //}
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -1246,11 +1246,11 @@ namespace Risebird.Web.Controllers
 
             model.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
             model.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
-            var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-            model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
+            //var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
+            //                     select new { ID = (int)s, Name = s.GetDescription() };
+            //model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList(_interviewerService.GetTechSkillComments(irfId), "Comment", "Comment");
+            //model.QuestionsList = new SelectList(_interviewerService.GetTechSkillComments(irfId), "Comment", "Comment");
 
             model.SkillQualityList = new SelectList(_iRFRepository.GetSkillQuality(), "Id", "Name");
             model.CertificationQualityList = new SelectList(_iRFRepository.GetCertificationQuality(), "Id", "Name");

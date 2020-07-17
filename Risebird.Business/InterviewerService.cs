@@ -479,7 +479,7 @@ namespace Risebird.Business
                 {
                     //call Edit Feedbackform method
                     reportModel = interviewReport.FirstOrDefault();
-                    EditInterviewReport(reportModel);
+                    EditInterviewReport(reportModel,irfId);
                 }
                 else
                 {
@@ -528,6 +528,23 @@ namespace Risebird.Business
                     model.InterviewBiometryScore = interviewDetails.InterviewBiometryScore;
                     reportModel = model;
                 }
+                var techInterviewerRecommendation = _interviewerRepository.GetInterviewerRecommendationbyinterviewid(interviewId);
+                foreach (var item in techInterviewerRecommendation)
+                {
+                    reportModel.CompanySize = item.CompanySize;
+                    reportModel.JobFunction = item.JobFunction;
+                    reportModel.Industry = item.Industry;
+                    reportModel.CompanyHeadquarters = item.CompanyHeadquarters;
+                    reportModel.CompanyType = item.CompanyType;
+                    reportModel.CompanyStage = item.CompanyStage;
+                    reportModel.SkillCategory = item.SkillCategory;
+                    reportModel.Yearsofexperience = item.Yearsofexperience;
+                    reportModel.Senioritylevel = item.Senioritylevel;
+                    reportModel.SkillNature = item.SkillNature;
+                    reportModel.Domain = item.Domain;
+                    reportModel.SkillIP = item.SkillIP;
+                    reportModel.PerHourRateIndia = item.PerHourRateIndia;
+                }
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
                 reportModel.CandidateName = interviewDetails.candidateName;
@@ -546,13 +563,13 @@ namespace Risebird.Business
                 return null;
             }
         }
-        private InterviewReport EditInterviewReport(InterviewReport model)
+        private InterviewReport EditInterviewReport(InterviewReport model,int irfid)
         {
             var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
 
             if (techReportCollection.Count() == 0)
             {
-                var techSkillsDetails = _interviewerRepository.GetSkillsbyIRFid(model.IRFId);
+                var techSkillsDetails = _interviewerRepository.GetSkillsbyIRFid(irfid);
                 var techSkillList = new List<TechSkillReport>();
                 var levelTech = _meetingRespository.GetLevelTech();
                 var skills = _meetingRespository.GetSkills();
@@ -577,7 +594,7 @@ namespace Risebird.Business
                 model.TechSkillReportCollection = techReportCollection;
             }
             //Recommonded
-            model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
+            //model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
             model.IsEdited = true;
             model.JobLevelName = Enum.GetName(typeof(JobLevels), model.JobLevel);
             var interviewMeetingsDetails = _interviewerRepository.GetInterviewerMeetingById(model.InterviewId).Result;

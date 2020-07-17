@@ -45,7 +45,7 @@
                         <span class="navbar-toggler-bar bar2"></span>
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
-                </div>               
+                </div>
             </div>
         </div>
     </nav>
@@ -77,6 +77,9 @@
 
                                             @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                             {
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                    <span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interviewer Search</font></span>
+                                                </button>
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                                     <span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span>
                                                 </button>
@@ -375,52 +378,52 @@
 
                                                     @if (Model.Profile != "CuratedUser")
                                                     {
-                                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                                        @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                                         {
 
 
-                                                    <button class="mdc-fab app-fab--absolute itemques" aria-label="Questions">
-                                                        <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
-                                                    </button>
+                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Questions">
+                                                                <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                            </button>
 
 
                                                         }
 
 
 
-                                                    <button class="mdc-fab app-fab--absolute item1" aria-label="Questions">
-                                                        <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
-                                                    </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Questions">
+                                                            <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                        </button>
 
 
 
-                                                    @if (Model.Profile != "Recruiter")
+                                                        @if (Model.Profile != "Recruiter")
                                                         {
 
-                                                    <button class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
-                                                        <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
-                                                    </button>
+                                                            <button class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
+                                                                <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
+                                                            </button>
 
 
 
-                                                    <button class="mdc-fab app-fab--absolute item3" aria-label="Selected Candidates">
-                                                        <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
-                                                    </button>
+                                                            <button class="mdc-fab app-fab--absolute item3" aria-label="Selected Candidates">
+                                                                <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
+                                                            </button>
 
-                                                    <button class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
-                                                        <span onclick="javascript:MultipleCandidateInvites('@item.IRFId');" title="Multiple Candidate Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 18 18"><path d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg></span>
-                                                    </button>
+                                                            <button class="mdc-fab app-fab--absolute item2" aria-label="Meetings">
+                                                                <span onclick="javascript:MultipleCandidateInvites('@item.IRFId');" title="Multiple Candidate Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 18 18"><path d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg></span>
+                                                            </button>
 
-                                                    <button class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
-                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
+                                                            <button class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
+                                                                <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
                                                  {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
-                                                    </button>
+                                                            </button>
 
 
 
-                                                    <button class="mdc-fab app-fab--absolute item5" aria-label="Stats">
-                                                        <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
-                                                    </button>
+                                                            <button class="mdc-fab app-fab--absolute item5" aria-label="Stats">
+                                                                <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
+                                                            </button>
 
                                                             if (item.IsPaused)
                                                             {
@@ -428,9 +431,9 @@
 
 
 
-                                                    <button class="mdc-fab app-fab--absolute item6" aria-label="Play">
-                                                        <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
-                                                    </button>
+                                                                <button class="mdc-fab app-fab--absolute item6" aria-label="Play">
+                                                                    <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                                </button>
 
 
 
@@ -443,9 +446,9 @@
 
 
 
-                                                    <button class="mdc-fab app-fab--absolute item6" aria-label="Pause">
-                                                        <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
-                                                    </button>
+                                                                <button class="mdc-fab app-fab--absolute item6" aria-label="Pause">
+                                                                    <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                </button>
 
 
                                                             }
@@ -455,42 +458,42 @@
                                                     }
                                                     @if (Model.Profile == "CuratedUser")
                                                     {
-                                                    @if (item.SubId != null)
+                                                        @if (item.SubId != null)
                                                         {
-                                                    <button class="mdc-fab app-fab--absolute allcur" aria-label="All">
-                                                        <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ALL"})'" title="All Selected Candidates" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
-                                                        </span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
-                                                        <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
+                                                            <button class="mdc-fab app-fab--absolute allcur" aria-label="All">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ALL"})'" title="All Selected Candidates" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
 
 
 
-                                                        </span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute allintsent" aria-label="Interest-Sent">
-                                                        <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Intrested"})'" title="Interest-Sent Candidates" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                        </span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute allintac" aria-label="Interest-Accept">
-                                                        <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Accept"})'" title="Interest-Accept Candidates" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
-                                                        </span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute subc" aria-label="Unsubscribe">
-                                                        <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId','@item.JDTiltle.Split("|")[0]');" title="Unsubscribe" class="mdc-fab__icon material-icons">
-                                                            <i style="font-size:16px;" class="far fa-bell-slash"></i>
-                                                        </span>
-                                                    </button>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute allintsent" aria-label="Interest-Sent">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Intrested"})'" title="Interest-Sent Candidates" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute allintac" aria-label="Interest-Accept">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Accept"})'" title="Interest-Accept Candidates" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute subc" aria-label="Unsubscribe">
+                                                                <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId','@item.JDTiltle.Split("|")[0]');" title="Unsubscribe" class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size:16px;" class="far fa-bell-slash"></i>
+                                                                </span>
+                                                            </button>
                                                         }
                                                         else
                                                         {
-                                                    <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
-                                                        <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');setNav()" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
-                                                    </button>
+                                                            <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
+                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');setNav()" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
+                                                            </button>
                                                         }
 
                                                     }
@@ -680,19 +683,20 @@
 
                 </div>
             </div>
-            </div></div>
+        </div>
     </div>
+</div>
 
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
 
 
-                    @if (Model.Message != null)
-                    {
-                        <script type="text/javascript">
+@if (Model.Message != null)
+{
+    <script type="text/javascript">
 
         function my_code() {
             var msg = '@Model.Message';
@@ -732,326 +736,326 @@
         }
 
         window.onload = my_code();
-                        </script>
+    </script>
 
-                    }
-
-
-                    <script type="text/javascript">
-
-                        function DeleteIRF(dataID) {
-
-                            var IdIRF = dataID;
-                            swal.fire({
-                                title: 'Are you sure?',
-                                text: "It will be archived!",
-                                type: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Yes, archive it!',
-                                preConfirm: function () {
-                                    return new Promise(function (resolve, reject) {
-                                        var IdIRF = dataID;
-                                        $.ajax({
-                                            url: '/IRF/DeleteIRF?id=' + IdIRF,
-                                            success: function (result) {
-                                                resolve(result)
-
-                                            },
-                                            error: function () {
-                                                //reject("error message")
-                                                swal.fire("Error archiving!", "Please try again", "error");
-                                            }
-                                        })
-                                    })
-                                },
-                                allowOutsideClick: false
-                            }).then(function (result) {
-                                if (result.dismiss !== 'cancel') {
-                                    swal.fire({
-                                        title: 'Archived!',
-                                        type: 'success',
-                                        html: '<p>IRF has been archived.</p>',
-                                        showCancelButton: false,
-                                        confirmButtonColor: '#3085d6',
-                                        confirmButtonText: 'Close!',
-                                        allowOutsideClick: false
-                                    }).then(function () {
-                                        window.location = "/IRF/Index";
-                                    })
-                                }
-                                else if (result.dismiss === 'cancel') {
-                                    swal.fire(
-                                        'Cancelled',
-                                        'IRF has not been archived! :)',
-                                        'error'
-                                    )
-                                }
-                            })
+}
 
 
+<script type="text/javascript">
+
+    function DeleteIRF(dataID) {
+
+        var IdIRF = dataID;
+        swal.fire({
+            title: 'Are you sure?',
+            text: "It will be archived!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, archive it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    var IdIRF = dataID;
+                    $.ajax({
+                        url: '/IRF/DeleteIRF?id=' + IdIRF,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error archiving!", "Please try again", "error");
                         }
-                        function Subscribe(irfId, irfName, primarySkill) {
-
-                            swal.fire({
-                                title: 'Subscribe!',
-                                text: "Subscribe to " + irfName + '(' + primarySkill+')',
-                                type: 'primary',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Yes',
-                                preConfirm: function () {
-                                    return new Promise(function (resolve, reject) {
-                                        $.ajax({
-                                            url: '/IRF/Subscribe?id=' + irfId,
-                                            success: function (result) {
-                                                resolve(result)
-
-                                            },
-                                            error: function () {
-                                                //reject("error message")
-                                                swal.fire("Error subscribing!", "Please try again.", "error");
-                                            }
-                                        })
-                                    })
-                                },
-                                allowOutsideClick: false
-                            }).then(function (result) {
-                                if (result.dismiss !== 'cancel') {
-                                    swal.fire({
-                                        title: 'Subscribed!',
-                                        type: 'success',
-                                        html: '<p>Subscribed to ' + irfName + '(' + primarySkill + ')' + '.</p>',
-                                        showCancelButton: false,
-                                        confirmButtonColor: '#3085d6',
-                                        confirmButtonText: 'Close!',
-                                        allowOutsideClick: false
-                                    }).then(function () {
-                                        window.location = "/IRF/Index";
-                                    })
-                                }
-                                else if (result.dismiss === 'cancel') {
-                                    swal.fire(
-                                        'Cancelled',
-                                        '',
-                                        'error'
-                                    )
-                                }
-                            })
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Archived!',
+                    type: 'success',
+                    html: '<p>IRF has been archived.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been archived! :)',
+                    'error'
+                )
+            }
+        })
 
 
+    }
+    function Subscribe(irfId, irfName, primarySkill) {
+
+        swal.fire({
+            title: 'Subscribe!',
+            text: "Subscribe to " + irfName + '(' + primarySkill + ')',
+            type: 'primary',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/Subscribe?id=' + irfId,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error subscribing!", "Please try again.", "error");
                         }
-                        function setNav() {
-                            localStorage.setItem('subscribe', true)
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Subscribed!',
+                    type: 'success',
+                    html: '<p>Subscribed to ' + irfName + '(' + primarySkill + ')' + '.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    '',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+    function setNav() {
+        localStorage.setItem('subscribe', true)
+    }
+    function UnSubscribe(irfId, irfName, primarySkill) {
+
+        swal.fire({
+            title: 'Unsubscribe!',
+            text: "Are you sure you want to unsubscribe " + irfName + '(' + primarySkill + ')',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/UnSubscribe?id=' + irfId,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error unsubscribing!", "Please try again.", "error");
                         }
-                        function UnSubscribe(irfId, irfName, primarySkill) {
-
-                            swal.fire({
-                                title: 'Unsubscribe!',
-                                text: "Are you sure you want to unsubscribe " + irfName + '(' + primarySkill + ')',
-                                type: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Yes',
-                                preConfirm: function () {
-                                    return new Promise(function (resolve, reject) {
-                                        $.ajax({
-                                            url: '/IRF/UnSubscribe?id=' + irfId,
-                                            success: function (result) {
-                                                resolve(result)
-
-                                            },
-                                            error: function () {
-                                                //reject("error message")
-                                                swal.fire("Error unsubscribing!", "Please try again.", "error");
-                                            }
-                                        })
-                                    })
-                                },
-                                allowOutsideClick: false
-                            }).then(function (result) {
-                                if (result.dismiss !== 'cancel') {
-                                    swal.fire({
-                                        title: 'Unsubscribed!',
-                                        type: 'success',
-                                        html: '<p>Unsubscribed ' + irfName + '(' + primarySkill + ')' + '.</p>',
-                                        showCancelButton: false,
-                                        confirmButtonColor: '#3085d6',
-                                        confirmButtonText: 'Close!',
-                                        allowOutsideClick: false
-                                    }).then(function () {
-                                        window.location = "/IRF/Index";
-                                    })
-                                }
-                                else if (result.dismiss === 'cancel') {
-                                    swal.fire(
-                                        'Cancelled',
-                                        '',
-                                        'error'
-                                    )
-                                }
-                            })
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Unsubscribed!',
+                    type: 'success',
+                    html: '<p>Unsubscribed ' + irfName + '(' + primarySkill + ')' + '.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    '',
+                    'error'
+                )
+            }
+        })
 
 
+    }
+
+
+    function AddComments(id) {
+
+        var url = '/IRF/SampleQuestions?id=' + id;
+        window.location.href = url;
+    };
+    function SelectedInterviewMeetings(id, IRFid) {
+
+        var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+    function InterviewMeetings(id, IRFid) {
+
+        var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+    function MultipleCandidateInvites(IRFid) {
+
+        var url = '/IRF/MultipleCandidateInvites?irfId=' + IRFid;
+        window.location.href = url;
+    };
+    //Candidates
+    function Candidates(id, IRFid) {
+
+        var url = '/IRF/Candidates?id=' + id + '&irfName=' + IRFid;
+        window.location.href = url;
+    };
+    function EditIRF(id) {
+
+        var url = '/IRF/EditIRF?id=' + id;
+        window.location.href = url;
+    };
+    function CandidateCuratedScore(id) {
+
+        var url = '/IRF/CandidateCuratedScore?id=' + id;
+        window.location.href = url;
+    };
+    function stats(id, IRFid) {
+
+        var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+    function UnArchiveIRF(id) {
+
+        var url = '/IRF/UnArchiveIRF?id=' + id;
+        window.location.href = url;
+    };
+
+    function PauseIRF(irfId, irfName) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The IRF will be paused!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, pause it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error pausing!", "Please try again", "error");
                         }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Paused!',
+                    type: 'success',
+                    html: '<p>IRF has been paused.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been paused!',
+                    'error'
+                )
+            }
+        })
 
+        changeColor('red');
+    }
 
-                        function AddComments(id) {
+    function PlayIRF(irfId, irfName) {
 
-                            var url = '/IRF/SampleQuestions?id=' + id;
-                            window.location.href = url;
-                        };
-                        function SelectedInterviewMeetings(id, IRFid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The IRF will be enabled!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, play it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
 
-                            var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
-                            window.location.href = url;
-                        };
-                        function InterviewMeetings(id, IRFid) {
-
-                            var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
-                            window.location.href = url;
-                        };
-                        function MultipleCandidateInvites(IRFid) {
-
-                            var url = '/IRF/MultipleCandidateInvites?irfId=' + IRFid;
-                            window.location.href = url;
-                        };
-                        //Candidates
-                        function Candidates(id, IRFid) {
-
-                            var url = '/IRF/Candidates?id=' + id + '&irfName=' + IRFid;
-                            window.location.href = url;
-                        };
-                        function EditIRF(id) {
-
-                            var url = '/IRF/EditIRF?id=' + id;
-                            window.location.href = url;
-                        };
-                        function CandidateCuratedScore(id) {
-
-                            var url = '/IRF/CandidateCuratedScore?id=' + id;
-                            window.location.href = url;
-                        };
-                        function stats(id, IRFid) {
-
-                            var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
-                            window.location.href = url;
-                        };
-                        function UnArchiveIRF(id) {
-
-                            var url = '/IRF/UnArchiveIRF?id=' + id;
-                            window.location.href = url;
-                        };
-
-                        function PauseIRF(irfId, irfName) {
-
-                            swal.fire({
-                                title: 'Are you sure?',
-                                text: "The IRF will be paused!",
-                                type: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Yes, pause it!',
-                                preConfirm: function () {
-                                    return new Promise(function (resolve, reject) {
-                                        $.ajax({
-                                            url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
-                                            success: function (result) {
-                                                resolve(result)
-
-                                            },
-                                            error: function () {
-                                                //reject("error message")
-                                                swal.fire("Error pausing!", "Please try again", "error");
-                                            }
-                                        })
-                                    })
-                                },
-                                allowOutsideClick: false
-                            }).then(function (result) {
-                                if (result.dismiss !== 'cancel') {
-                                    swal.fire({
-                                        title: 'Paused!',
-                                        type: 'success',
-                                        html: '<p>IRF has been paused.</p>',
-                                        showCancelButton: false,
-                                        confirmButtonColor: '#3085d6',
-                                        confirmButtonText: 'Close!',
-                                        allowOutsideClick: false
-                                    }).then(function () {
-                                        window.location = "/IRF/Index";
-                                    })
-                                }
-                                else if (result.dismiss === 'cancel') {
-                                    swal.fire(
-                                        'Cancelled',
-                                        'IRF has not been paused!',
-                                        'error'
-                                    )
-                                }
-                            })
-
-                            changeColor('red');
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error playing!", "Please try again", "error");
                         }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Played!',
+                    type: 'success',
+                    html: '<p>IRF has been enabled.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been enabled! :)',
+                    'error'
+                )
+            }
+        })
+        changeColor("yellow");
+    }
 
-                        function PlayIRF(irfId, irfName) {
-
-                            swal.fire({
-                                title: 'Are you sure?',
-                                text: "The IRF will be enabled!",
-                                type: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Yes, play it!',
-                                preConfirm: function () {
-                                    return new Promise(function (resolve, reject) {
-                                        $.ajax({
-                                            url: '/IRF/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
-                                            success: function (result) {
-                                                resolve(result)
-
-                                            },
-                                            error: function () {
-                                                //reject("error message")
-                                                swal.fire("Error playing!", "Please try again", "error");
-                                            }
-                                        })
-                                    })
-                                },
-                                allowOutsideClick: false
-                            }).then(function (result) {
-                                if (result.dismiss !== 'cancel') {
-                                    swal.fire({
-                                        title: 'Played!',
-                                        type: 'success',
-                                        html: '<p>IRF has been enabled.</p>',
-                                        showCancelButton: false,
-                                        confirmButtonColor: '#3085d6',
-                                        confirmButtonText: 'Close!',
-                                        allowOutsideClick: false
-                                    }).then(function () {
-                                        window.location = "/IRF/Index";
-                                    })
-                                }
-                                else if (result.dismiss === 'cancel') {
-                                    swal.fire(
-                                        'Cancelled',
-                                        'IRF has not been enabled! :)',
-                                        'error'
-                                    )
-                                }
-                            })
-                            changeColor("yellow");
-                        }
-
-                        //UnArchiveIRF
-                    </script>
-                    <script>
+    //UnArchiveIRF
+</script>
+<script>
         $(document).ready(function () {
             $("#stDateInvoice").val("");
             $("#EndDateInvoice").val("");
@@ -1147,271 +1151,271 @@
             });
         }
 
-                    </script>
-                    <script>
-                        var irfId = "";
-                        var irfName = "";
-                        var span = document.getElementById("invoicePopUp");
-                        // When the user clicks on <span> (x), close the modal
-                        span.onclick = function () {
-                            var modal = document.getElementById("myModal");
-                            modal.style.display = "none";
-                        }
+</script>
+<script>
+    var irfId = "";
+    var irfName = "";
+    var span = document.getElementById("invoicePopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
 
 
-                    </script>
-                    <script>
-                        function InvoicePopUp(id, irfName) {
+</script>
+<script>
+    function InvoicePopUp(id, irfName) {
 
-                            irfId = id;
-                            irfName = irfName;
-
-
-                            // Get the modal
-                            var modal = document.getElementById("myModal");
+        irfId = id;
+        irfName = irfName;
 
 
-                            // When the user clicks the button, open the modal
-                            modal.style.display = "block";
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
 
 
 
-                        }
+    }
 
 
-                        function SavePopUp() {
-                            var sDate = $("#stDateInvoice").val();
-                            //var stDate = document.getElementById("stDateInvoice").value;
-                            var endDate = document.getElementById("EndDateInvoice").value;
+    function SavePopUp() {
+        var sDate = $("#stDateInvoice").val();
+        //var stDate = document.getElementById("stDateInvoice").value;
+        var endDate = document.getElementById("EndDateInvoice").value;
 
-                            var srNumber = $("#srNumberId").val();
-                            var poNumber = $("#poNumberId").val();
-                            var reqNumber = $("#requestNumberId").val();
-                            var currencyCode = $("#currencyCodeId").val();
-                            var projectCode = $("#projectCodeId").val();
-                            var discount = $("#discountId").val();
-                            var clientAddress = $("#clientAddressId").val();
-                            var isGST = document.getElementById("gstCheckId").checked
-                            if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "" || discount == "" || clientAddress == "") {
-                                document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
-                                return;
-                            }
-                            else {
-                                document.getElementById("popUp_Error").innerHTML = "";
+        var srNumber = $("#srNumberId").val();
+        var poNumber = $("#poNumberId").val();
+        var reqNumber = $("#requestNumberId").val();
+        var currencyCode = $("#currencyCodeId").val();
+        var projectCode = $("#projectCodeId").val();
+        var discount = $("#discountId").val();
+        var clientAddress = $("#clientAddressId").val();
+        var isGST = document.getElementById("gstCheckId").checked
+        if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "" || discount == "" || clientAddress == "") {
+            document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
+            return;
+        }
+        else {
+            document.getElementById("popUp_Error").innerHTML = "";
 
-                            }
+        }
 
 
-                            var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
-                            window.location.href = url;
-                        }
+        var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
+        window.location.href = url;
+    }
 
-                        function changeColor(tileColor) {
-                            localStorage.removeItem("localStorageforColorName");
-                            localStorage.setItem('localStorageforColorName', 'localStorageforColor');
-                            let value = localStorage.getItem('localStorageforColorName');
-                            if (value) {
-                                
-                                $(document).ready(function () {
-                                    $("#divTile").css({ "backgroundColor": tileColor });
+    function changeColor(tileColor) {
+        localStorage.removeItem("localStorageforColorName");
+        localStorage.setItem('localStorageforColorName', 'localStorageforColor');
+        let value = localStorage.getItem('localStorageforColorName');
+        if (value) {
 
-                                });
-                            }
+            $(document).ready(function () {
+                $("#divTile").css({ "backgroundColor": tileColor });
 
-                           
-                        }
-                    </script>
-                    <script>
+            });
+        }
 
-                    </script>
-                    @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+
+    }
+</script>
+<script>
+
+</script>
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "CuratedUser")
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
+            var risetubeClicked = localStorage.getItem('risetube');
+
+            if (risetubeClicked == "true") {
+
+                var enjoyhint_instance = new EnjoyHint({});
+
+                var enjoyhint_script_steps = [
                     {
-                        var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-                        pfName = pfName.Replace("\"", "");
-                        @if (pfName == "CuratedUser")
-                        {
-                            <script src="~/Newassets/js/enjoyhint.min.js"></script>
-                            <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-                            <script>
-                                var risetubeClicked = localStorage.getItem('risetube');
-                                
-                                 if (risetubeClicked == "true") {
-                                   
-                                    var enjoyhint_instance = new EnjoyHint({});
-
-                                    var enjoyhint_script_steps = [                                                                              
-                                        {
-                                            'next .allshort': 'Shortlisted Candidates Video',
-                                            'nextbutton': { classname: "mynext", text: "Next" },
-                                            'skipbutton': { classname: "myskip", text: "Skip" }
-                                        },
-                                        {
-                                            'next .allintsent': 'Interest Sent Candidates Video',
-                                            'nextbutton': { classname: "mynext", text: "Next" },
-                                            'skipbutton': { classname: "myskip", text: "Skip" }
-                                        },
-                                        {
-                                            'next .allintac': 'Interest Accepted Candidates Video',
-                                            'nextbutton': { classname: "mynext", text: "Next" },
-                                            'skipbutton': { classname: "myskip", text: "Skip" }
-                                        },
-                                        {
-                                            'click .risetubemenu': 'Click on Risetube menu to see its remaining feature'
-                                        }
-
-
-                                     ];
-                                        setTimeout(function () {
-                                        enjoyhint_instance.set(enjoyhint_script_steps);
-                                        enjoyhint_instance.run();
-                                    }, 5000)
-                                }
-
-                                var getData = localStorage.getItem('subscribe');
-                                
-                                if (getData == "true") {
-                                   
-                                    var enjoyhint_instance = new EnjoyHint({});
-
-                                    var enjoyhint_script_steps = [                                                                               
-                                        {
-                                            'click .allcur': 'Click here to see the Selected Candidates Video and navigate over Risetube menu',
-                                           
-                                        } 
-                                    ];
-                                    setTimeout(function () {
-                                        enjoyhint_instance.set(enjoyhint_script_steps);
-                                        enjoyhint_instance.run();
-                                    }, 5000)
-                                }
-
-                                 if (getData == null) {
-                                  
-                                    var enjoyhint_instance = new EnjoyHint({});
-
-                                    var enjoyhint_script_steps = [
-                                        {
-                                            'next .card-title': 'List of Skill Based Channel',
-                                            'nextButton': { className: "myNext", text: "Next" },
-                                            'skipButton': { className: "mySkip", text: "Skip" }
-                                        },
-                                        {
-                                            'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
-                                            'nextButton': { className: "myNext", text: "Next" },
-                                            'skipButton': { className: "mySkip", text: "Skip" }
-                                        },
-                                        {
-                                            'next .first': 'Skill Channel Name and Primary Skill',
-                                            'nextButton': { className: "myNext", text: "Next" },
-                                            'skipButton': { className: "mySkip", text: "Skip" }
-                                        },
-                                        {
-                                            'click .subc': 'Click here to Subscribe/Unsubscribe Skill Channel',
-
-                                        }
-                                     ];
-                                      setTimeout(function () {
-                                        enjoyhint_instance.set(enjoyhint_script_steps);
-                                        enjoyhint_instance.run();
-                                    }, 5000)
-                                }
-                        
-                              
-                              
-
-                            </script>
-                        }
+                        'next .allshort': 'Shortlisted Candidates Video',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+                    {
+                        'next .allintsent': 'Interest Sent Candidates Video',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+                    {
+                        'next .allintac': 'Interest Accepted Candidates Video',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+                    {
+                        'click .risetubemenu': 'Click on Risetube menu to see its remaining feature'
                     }
 
-                    @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+
+                ];
+                setTimeout(function () {
+                    enjoyhint_instance.set(enjoyhint_script_steps);
+                    enjoyhint_instance.run();
+                }, 5000)
+            }
+
+            var getData = localStorage.getItem('subscribe');
+
+            if (getData == "true") {
+
+                var enjoyhint_instance = new EnjoyHint({});
+
+                var enjoyhint_script_steps = [
                     {
-                        var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-                        pfName = pfName.Replace("\"", "");
-                        @if (pfName == "Client")
-                        {
-                            <script src="~/Newassets/js/enjoyhint.min.js"></script>
-                            <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-                            <script>
-                                
-                                var enjoyhint_instance = new EnjoyHint({});
+                        'click .allcur': 'Click here to see the Selected Candidates Video and navigate over Risetube menu',
 
-                                var enjoyhint_script_steps = [
-                                    {
-                                        'next .card-title': 'List of Skill Based Channel',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .first': 'Skill Channel Name and Primary Skill',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .second': 'Client Name',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .three': 'Skill Channel End Date',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .four': 'Total interviews',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .five': 'Selected Candidate Count',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .item1': 'List of Candidates',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },                                      
-                                    {
-                                        'next .item2': 'Grid View of All Interviews',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .item3': 'Grid View of Selected Candidate Interviews',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .item4': 'Link to Schedule meeting over this Skill Channel',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .item5': 'Interview Stats',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .item6': 'Click here to pause this Skill Channel and by clicking, it will cancel all upcoming interviews',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'click .iacm': 'Click on All Priority View menu and see its feartures'
-                                    }
-                                ];
-
-                             setTimeout(function () {
-                                enjoyhint_instance.set(enjoyhint_script_steps);
-                                enjoyhint_instance.run();
-                            }, 5000)
-
-                            </script>
-                        }
                     }
+                ];
+                setTimeout(function () {
+                    enjoyhint_instance.set(enjoyhint_script_steps);
+                    enjoyhint_instance.run();
+                }, 5000)
+            }
+
+            if (getData == null) {
+
+                var enjoyhint_instance = new EnjoyHint({});
+
+                var enjoyhint_script_steps = [
+                    {
+                        'next .card-title': 'List of Skill Based Channel',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'next .first': 'Skill Channel Name and Primary Skill',
+                        'nextButton': { className: "myNext", text: "Next" },
+                        'skipButton': { className: "mySkip", text: "Skip" }
+                    },
+                    {
+                        'click .subc': 'Click here to Subscribe/Unsubscribe Skill Channel',
+
+                    }
+                ];
+                setTimeout(function () {
+                    enjoyhint_instance.set(enjoyhint_script_steps);
+                    enjoyhint_instance.run();
+                }, 5000)
+            }
+
+
+
+
+        </script>
+    }
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "Client")
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
+
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'List of Skill Based Channel',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .first': 'Skill Channel Name and Primary Skill',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .second': 'Client Name',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .three': 'Skill Channel End Date',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .four': 'Total interviews',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .five': 'Selected Candidate Count',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item1': 'List of Candidates',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item2': 'Grid View of All Interviews',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item3': 'Grid View of Selected Candidate Interviews',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item4': 'Link to Schedule meeting over this Skill Channel',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item5': 'Interview Stats',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item6': 'Click here to pause this Skill Channel and by clicking, it will cancel all upcoming interviews',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .iacm': 'Click on All Priority View menu and see its feartures'
+                }
+            ];
+
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 5000)
+
+        </script>
+    }
+}
 

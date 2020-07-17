@@ -3495,7 +3495,7 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessageInterviewer");
 
                     }
-                    var model = _userService.GetInterviewers();
+                    var model = _userService.GetInterviewersDetails();
                     if (!String.IsNullOrEmpty(Searchvalue))
                     {
                         model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper())).ToList();
@@ -3550,7 +3550,11 @@ namespace Risebird.Web.Controllers
             // code for fetch data or any thing else
             InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
             interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
-            return View(interviewerVM);
+            if (interviewerVM.SubVideo_List==null || interviewerVM.SubVideo_List.Count==0)
+            {
+                interviewerVM.SubVideo_List = new List<InterviewerVM>();
+            }
+                return View(interviewerVM);
          //   return View();
         }
 

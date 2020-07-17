@@ -200,6 +200,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<InterviewerVM> GetInterviewersDetails()
+        {
+            try
+            {
+                return _userRepository.GetInterviewersDetails().ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
 
         public bool AddInterviewer(InterviewerVM interviewer)
         {

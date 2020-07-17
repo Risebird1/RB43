@@ -10,7 +10,9 @@ namespace Risebird.Business.Interface
        List<UserList> GetRisebirdUsers();
        List<ClientUserVM> GetClientUsers();
        List<InterviewerVM> GetInterviewers();
-       List<QCInterviewerVM> GetQCInterviewers();
+        List<InterviewerVM> GetInterviewersDetails();
+
+        List<QCInterviewerVM> GetQCInterviewers();
         IEnumerable<string> GetAllHrsEmailld();
       
         bool AddUser(UserList clientUser);

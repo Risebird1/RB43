@@ -62,5 +62,9 @@ namespace Risebird.Entities.ViewModel
 
         public string VideoLink { get; set; }
         public int imid { get; set; }
+        public string GitHubLink { get; set; }
+        public string LinkedinLink { get; set; }
+        public string StackOverflowLink { get; set; }
+       
     }
 }

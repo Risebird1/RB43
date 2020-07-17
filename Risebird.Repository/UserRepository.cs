@@ -391,7 +391,26 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public IEnumerable<InterviewerVM> GetInterviewersDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[usp_RisebirdInterviewerDetails]", null,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<bool> AddInterviewer(InterviewerVM interviewer)
         {
             try

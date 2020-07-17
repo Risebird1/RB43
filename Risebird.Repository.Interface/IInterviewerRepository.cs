@@ -46,6 +46,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<InterviewReport> GetInterviewerReportById(int id, int irfId = 0);
         IEnumerable<TransSkill> GetSkillsbyIRFid(int id);
         IEnumerable<SkillComment> GetTechSkillComments(int id);
+        IEnumerable<InterviewReport> GetInterviewerRecommendationbyinterviewid(int id);
 
 
     }
