@@ -1176,6 +1176,7 @@ namespace Risebird.Repository
                     //check if the data is edited
                     InterviewComments interviewComments = new InterviewComments();
                     DynamicParameters parameters = new DynamicParameters();
+                    DynamicParameters parametersRecomm = new DynamicParameters();
                     DynamicParameters paramx = new DynamicParameters();
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
                     paramx.Add("@SkillQuality", reportDetails.SkillQuality);
@@ -1213,6 +1214,8 @@ namespace Risebird.Repository
                     parameters.Add("@TimeManagement", reportDetails.TManagement);
                     parameters.Add("@Interviewscompleted", reportDetails.InterviewCompleted);
                     parameters.Add("@Creativity", reportDetails.Creativity);
+
+                    parametersRecomm.Add("@interviewId", reportDetails.InterviewId);
 
                     if (reportDetails.IsEdited)
                     {
@@ -1293,7 +1296,8 @@ namespace Risebird.Repository
 
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
-
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportRecommendation", parametersRecomm,
+                           commandType: CommandType.StoredProcedure);
                     return true;
                 }
 
