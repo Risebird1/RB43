@@ -1167,6 +1167,96 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<SkillComment> GetTechSkillComments(int id)
+        {
+            try
+            {
+                var query = "Select * from TransTechSkillComments where InterviewerSkillId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<SkillComment>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<InterviewReport> GetInterviewerReportById(int id, int irfId = 0)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@InterviewId", id);//@IrfId
+                dynamicParameters.Add("@IrfId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<InterviewReport>(con, "usp_GetInterviewerReportById", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public bool GetInterviewerSkillChannelbyId(int irfId)
+        {
+            try
+            {
+                var query = "Select * from InterviewerSkillsChannel where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<IRF>(query, dynamicParameters);
+                    if (result.Count() > 0)
+                    {
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
+        {
+            try
+            {
+                var query = "Select * from TransInterviewerSkillsTechSkills where InterviewerSkillId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransSkill>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<bool> AddInterviewerReport(InterviewReport reportDetails)
         {
             try
@@ -1201,21 +1291,34 @@ namespace Risebird.Repository
                     parameters.Add("@videolink", reportDetails.VideoLink);
                     parameters.Add("@ThumbnailImage", reportDetails.ThumbnailImage);
                     parameters.Add("@FeedbackAudioLink", reportDetails.FeedbackAudioLink);
-                    parameters.Add("@DecisionMaking", reportDetails.Decision);
-                    parameters.Add("@Articulation", reportDetails.Communication);
+                    parameters.Add("@DecisionMaking", reportDetails.DecisionMaking);
+                    parameters.Add("@Articulation", reportDetails.Articulation);
                     parameters.Add("@ReadymadeAssessment", reportDetails.ReadymadeAssessment);
                     parameters.Add("@ReadinessOnlineInterviews", reportDetails.ReadymadeAssessment);
                     parameters.Add("@Teamwork", reportDetails.Teamwork);
                     parameters.Add("@RelationshipManagement", reportDetails.RelationshipManagement);
                     parameters.Add("@ConflictResolution", reportDetails.ConflictResolution);
                     parameters.Add("@Adaptability", reportDetails.Adaptability);
-                    parameters.Add("@ModeInterviews", reportDetails.MfInterview);
-                    parameters.Add("@WorkUnderPressure", reportDetails.AbilityofWork);
-                    parameters.Add("@TimeManagement", reportDetails.TManagement);
-                    parameters.Add("@Interviewscompleted", reportDetails.InterviewCompleted);
+                    parameters.Add("@ModeInterviews", reportDetails.ModeInterviews);
+                    parameters.Add("@WorkUnderPressure", reportDetails.WorkUnderPressure);
+                    parameters.Add("@TimeManagement", reportDetails.TimeManagement);
+                    parameters.Add("@Interviewscompleted", reportDetails.Interviewscompleted);
                     parameters.Add("@Creativity", reportDetails.Creativity);
 
                     parametersRecomm.Add("@interviewId", reportDetails.InterviewId);
+                    parametersRecomm.Add("@CompanySize", reportDetails.CompanySize);
+                    parametersRecomm.Add("@JobFunction", reportDetails.JobFunction);
+                    parametersRecomm.Add("@Industry", reportDetails.Industry);
+                    parametersRecomm.Add("@CompanyHeadquarters", reportDetails.CompanyHeadquarters);
+                    parametersRecomm.Add("@CompanyType", reportDetails.CompanyType);
+                    parametersRecomm.Add("@CompanyStage", reportDetails.CompanyStage);
+                    parametersRecomm.Add("@SkillCategory", reportDetails.SkillCategory);
+                    parametersRecomm.Add("@Yearsofexperience", reportDetails.Yearsofexperience);
+                    parametersRecomm.Add("@Senioritylevel", reportDetails.Senioritylevel);
+                    parametersRecomm.Add("@SkillNature", reportDetails.SkillNature);
+                    parametersRecomm.Add("@Domain", reportDetails.Domain);
+                    parametersRecomm.Add("@SkillIP", reportDetails.SkillIP);
+                    parametersRecomm.Add("@PerHourRateIndia", reportDetails.PerHourRateIndia);
 
                     if (reportDetails.IsEdited)
                     {

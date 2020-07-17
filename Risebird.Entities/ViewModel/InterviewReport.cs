@@ -182,7 +182,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList InterviewexperienceList { get; set; }
 
         [Display(Name = "Number of interviews completed")]
-        public string InterviewCompleted { get; set; }
+        public string Interviewscompleted { get; set; }
         [Display(Name = "Readymade Assessment")]
         public string ReadymadeAssessment { get; set; }
         public string Creativity { get; set; }
@@ -220,16 +220,16 @@ namespace Risebird.Entities.ViewModel
         public string SkillIP { get; set; }
         [Display(Name = "PerHour Rate -India")]
         public string PerHourRateIndia { get; set; }
-        public string Decision { get; set; }
-        public string Communication { get; set; }
-        public string ReadinessOnline { get; set; }
+        public string DecisionMaking { get; set; }
+        public string Articulation { get; set; }
+        public string ReadinessOnlineInterviews { get; set; }
         public string Teamwork { get; set; }
         public string RelationshipManagement { get; set; }
         public string ConflictResolution { get; set; }
         public string Adaptability { get; set; }
-        public string MfInterview { get; set; }
-        public string AbilityofWork { get; set; }
-        public string TManagement { get; set; }
+        public string ModeInterviews { get; set; }
+        public string WorkUnderPressure { get; set; }
+        public string TimeManagement { get; set; }
 
 
 

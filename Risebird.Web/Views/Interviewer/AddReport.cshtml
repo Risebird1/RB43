@@ -832,8 +832,8 @@
                                                         <div class="choose-file ">
                                                             <label class="file-lable"> Bias free Decision Making</label>
                                                             <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.Decision, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.Decision, "No")No
+                                                                @Html.RadioButtonFor(m => m.DecisionMaking, "Yes")Yes
+                                                                @Html.RadioButtonFor(m => m.DecisionMaking, "No")No
 
                                                             </div>
                                                         </div>
@@ -847,8 +847,8 @@
                                                         <div class="choose-file ">
                                                             <label class="file-lable"> Articulation/ Communication</label>
                                                             <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.Communication, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.Communication, "No")No
+                                                                @Html.RadioButtonFor(m => m.Articulation, "Yes")Yes
+                                                                @Html.RadioButtonFor(m => m.Articulation, "No")No
 
                                                             </div>
                                                         </div>
@@ -865,8 +865,8 @@
                                                         <div class="choose-file ">
                                                             <label class="file-lable"> Readiness for Online Interviews </label>
                                                             <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.ReadinessOnline, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.ReadinessOnline, "No")No
+                                                                @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "Yes")Yes
+                                                                @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "No")No
                                                             </div>
                                                         </div>
                                                     </div>
@@ -945,8 +945,8 @@
                                                         <div class="choose-file ">
                                                             <label class="file-lable"> Mode of Interviews</label>
                                                             <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.MfInterview, "Telephonic")Telephonic
-                                                                @Html.RadioButtonFor(m => m.MfInterview, "Video")Video
+                                                                @Html.RadioButtonFor(m => m.ModeInterviews, "Telephonic")Telephonic
+                                                                @Html.RadioButtonFor(m => m.ModeInterviews, "Video")Video
 
                                                             </div>
                                                         </div>
@@ -963,8 +963,8 @@
                                                         <div class="choose-file ">
                                                             <label class="file-lable"> Ability to Work Under Pressure</label>
                                                             <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.AbilityofWork, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.AbilityofWork, "No")No
+                                                                @Html.RadioButtonFor(m => m.WorkUnderPressure, "Yes")Yes
+                                                                @Html.RadioButtonFor(m => m.WorkUnderPressure, "No")No
 
 
                                                             </div>
@@ -979,8 +979,8 @@
                                                         <div class="choose-file ">
                                                             <label class="file-lable"> Time Management</label>
                                                             <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.TManagement, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.TManagement, "No")No
+                                                                @Html.RadioButtonFor(m => m.TimeManagement, "Yes")Yes
+                                                                @Html.RadioButtonFor(m => m.TimeManagement, "No")No
                                                             </div>
                                                         </div>
                                                     </div>
@@ -991,15 +991,15 @@
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.InterviewCompleted, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.InterviewCompleted, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.LabelFor(model => model.Interviewscompleted, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.Interviewscompleted, new { @class = "form-control text-box single-line" })
 
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.ReadymadeAssessment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.ReadymadeAssessment, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(m => m.ReadymadeAssessment, new { @class = "form-control text-box single-line" })
                                                 </div>
                                             </div>
 
@@ -1008,7 +1008,7 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.Creativity, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.Creativity, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(m => m.Creativity, new { @class = "form-control text-box single-line" })
 
                                                 </div>
                                             </div>
@@ -1026,14 +1026,14 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.CompanySize, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(m => m.CompanySize, new { @class = "form-control text-box single-line"})
 
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.JobFunction, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.JobFunction, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(m => m.JobFunction, new { @class = "form-control text-box single-line" })
                                                 </div>
                                             </div>
                                         </div>
@@ -1041,14 +1041,14 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.Industry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.Industry, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(m => m.Industry, new { @class = "form-control text-box single-line" })
 
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.CompanyHeadquarters, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.CompanyHeadquarters, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(m => m.CompanyHeadquarters, new { @class = "form-control text-box single-line"})
                                                 </div>
                                             </div>
 
@@ -1123,14 +1123,14 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
 
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.SkillIP, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.SkillIP, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(m => m.SkillIP, new { @class = "form-control text-box single-line" })
                                                 </div>
                                             </div>
 
@@ -1139,7 +1139,7 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.PerHourRateIndia, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.TextBoxFor(m => m.PerHourRateIndia, new { @class = "form-control text-box single-line" })
 
                                                 </div>
                                             </div>

@@ -899,10 +899,12 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    profileName = "Interviewer";
                     if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
+                        emailid = "Prashantindoliya@gmail.com";
                         var myInterview = _interviewerService.GetAssignedInterviewerAssessment(emailid);
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
@@ -1050,14 +1052,16 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("Index", "Home", new { url = "AddReport/Interviewer/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected });
                 }
                 string profileName = HttpContext.Session.GetString("profileName");
+                profileName = "Interviewer";
                 if (profileName != null)
                 {
                     profileName = profileName.Replace("\"", "");
                 }
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
-                //var model = _interviewerService.GetInterviewerinteviewReport(interviewId, irfId).Result; 
+               // var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = _interviewerService.GetInterviewerinteviewReport(interviewId, irfId).Result; 
                 if (model == null)
                 {
+                    model = new InterviewReport();
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         return RedirectToAction("Index");
@@ -1071,7 +1075,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            return RedirectToAction("MyInterview");
+                            return RedirectToAction("MyInterviewerAssessment");
                         }
                     }
                 }
@@ -1106,7 +1110,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("MyInterview");
+                    return RedirectToAction("MyInterviewerAssessment");
                 }
             }
         }
@@ -1183,7 +1187,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                return RedirectToAction("MyInterview");
+                                return RedirectToAction("MyInterviewerAssessment");
 
                             }
 
@@ -1202,7 +1206,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                return RedirectToAction("MyInterview");
+                                return RedirectToAction("MyInterviewerAssessment");
 
                             }
                         }
@@ -1246,7 +1250,7 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+            model.QuestionsList = new SelectList(_interviewerService.GetTechSkillComments(irfId), "Comment", "Comment");
 
             model.SkillQualityList = new SelectList(_iRFRepository.GetSkillQuality(), "Id", "Name");
             model.CertificationQualityList = new SelectList(_iRFRepository.GetCertificationQuality(), "Id", "Name");
