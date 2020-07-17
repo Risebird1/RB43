@@ -1,0 +1,148 @@
+﻿@model Risebird.Entities.ViewModel.CuratedGroupUsersVM
+@{
+    ViewData["Title"] = "Curated Group Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Curated Group Users</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+
+
+                    <div class="mdc-card-wrapper__text-section">
+
+                        @using (Html.BeginForm("AddUpdateCuratedGroupUsers", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+                        {
+
+
+                            <div class="row">
+                                <div class="card-header">
+                                    <h4 class="card-title">Curated Group Users</h4>
+                                </div>
+
+                                <div style="width: 100%;">&nbsp;</div>
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CuratedGroupName, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.CuratedGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly= "readonly" } })
+                                        @Html.ValidationMessageFor(model => model.CuratedGroupName, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div id="tableID">
+                                <div class="table-responsive-sm">
+                                    <table class="table table-bordered mbn" id="IRFList">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" style="font-size:15px!important;">EmailId</th>
+                                                <th class="text-center" style="font-size:15px!important;">Add</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.CuratedGroupUserList.Count(); i++)
+                                            {
+                                                <tr>
+
+                                                    <td class="text-center" width="60%">@Model.CuratedGroupUserList[i].EmailId</td>
+                                                    <td class="text-center" width="40%">
+
+
+                                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                            <div class="mdc-checkbox">
+                                                                @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control"})
+
+
+                                                                <div class="mdc-checkbox__background">
+                                                                    <svg class="mdc-checkbox__checkmark"
+                                                                         viewBox="0 0 24 24">
+                                                                        <path class="mdc-checkbox__checkmark-path"
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    </svg>
+                                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                                </div>
+                                                                <div class="mdc-checkbox__ripple"></div>
+
+
+                                                            </div>
+                                                        </div>
+
+
+
+                                                    </td>
+                                                    @Html.HiddenFor(m => m.CuratedGroupUserList[i].UserId)
+                                                    @Html.HiddenFor(m => m.CuratedGroupUserList[i].CuratedGroupId)
+
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                    </table>
+
+                                    @Html.HiddenFor(m=>m.CuratedGroupId)
+                                </div>
+                            </div>
+
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "CuratedGroups", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                        }
+
+
+
+                    </div>
+
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+
+

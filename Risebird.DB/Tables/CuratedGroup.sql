@@ -1,0 +1,24 @@
+/****** Object:  Table [dbo].[CuratedGroup]    Script Date: 13-07-2020 8.13.18 PM ******/
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'CuratedGroup')
+BEGIN 
+
+CREATE TABLE [dbo].[CuratedGroup](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](100) NULL,
+	[IsDeleted] [bit] NOT NULL DEFAULT 0,
+	[CreatedOn] [date] NULL,
+ CONSTRAINT [PK_CuratedGroup] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+END
+GO
+
+

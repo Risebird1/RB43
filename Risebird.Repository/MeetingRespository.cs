@@ -2209,6 +2209,67 @@ namespace Risebird.Repository
             }
 
         }
+        public IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId)
+        {
+            try
+            {
+                var query = "select IRFId from CuratedIRFMapping where CuratedGroupId = @CuratedGroupId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CuratedGroupId", curatedGroupId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return con.Query<int>(query, dynamicParameters);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        public IEnumerable<string> GetClientUsers(string clientEmailId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ClientEmailId", clientEmailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<string>(con, "usp_GetClientUsers", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public Candidate GetCandidateDetails(int imid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@imid", imid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Candidate>(con, "usp_GetCandidateDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }
