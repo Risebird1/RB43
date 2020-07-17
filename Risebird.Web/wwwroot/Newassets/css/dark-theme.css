@@ -361,7 +361,13 @@ div.dataTables_wrapper div.dataTables_info {
 .msg-bubble-right {
     background: #9a9a9a !important;
 }
+.theme-settings .ts-button {
+    background: #1a1a1a;
+}
 
+.theme-settings .ts-body {
+    background: #1a1a1a;
+}
 .chat {
     background: #000000!important;
 }
