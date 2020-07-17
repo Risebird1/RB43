@@ -30,10 +30,9 @@ namespace Risebird.Web.Controllers
                 var userClaims = User.Identity as ClaimsIdentity;
                 //You get the user’s first and last name below:
                 string name = userClaims?.FindFirst("name")?.Value;
-                // The 'Name' claim can be used for showing the username                
+                // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-                //emailId = "premprakash64@gmail.com";
-                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+               var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 if (settings != null)
                 {
