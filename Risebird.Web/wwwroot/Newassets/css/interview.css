@@ -317,7 +317,7 @@ input[type=number] {
 
 
 [type="datetime-local"] {
-    background: #fff url(https://cdn.iconscout.com/icon/free/png-256/calender-date-day-time-clock-schedule-event-6-3126.png) 97% 50% no-repeat !important;
+    background: #f5f5f5 url(../img/blue-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
 }
 
@@ -493,7 +493,8 @@ input[type=number] {
 
 
 [type="datetime-local"] {
-    background: #fff url(https://cdn.iconscout.com/icon/free/png-256/calender-date-day-time-clock-schedule-event-6-3126.png) 97% 50% no-repeat !important;
+    background: url(../../img/blue-timdate.png) 97% 50% no-repeat !important;
+    
     background-size: 5% !important;
 }
 
@@ -1345,8 +1346,17 @@ select:-moz-focusring {
     float:left;
 }
 .broadcast-icon {
+    position: relative;
+    top: -2px;
+}
+.sharing-icon {
 position:relative;
-top:-2px;
+top:3px;
+}
+
+.publicsharing-icon {
+    position: relative;
+    top: 10px;
 }
 .text-areadiv1 {
     height: auto;
@@ -1414,8 +1424,12 @@ top:-2px;
 }
 
 @media screen and (max-width: 767px) {
+    #txtvideoUrls {
+        word-break: break-word;
+    }
+
     .table > tbody > tr > td {
-        padding: 12px 5px!important;
+        padding: 12px 5px !important;
     }
     .interview .table > tbody > tr > td {
         padding: 12px 5px!important;
