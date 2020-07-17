@@ -89,7 +89,7 @@
                                         }
                                         else
                                         {
-                                            @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                            @Html.ActionLink("Back to List", "InterviewerDetail", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                         }
                                     </div>
                                 </div>
@@ -102,7 +102,8 @@
                             <div id="content-wrapper">
                                 <div class="container-wrap pb-0">
                                     <div class="video-block section-padding">
-                                        <div class="row mn-section">
+                                        @*<div class="row mn-section">*@
+                                        <div>
                                             <div class=" col-8 player-main" id="player">
                                                 <div class="single-video-left">
                                                     <div>
@@ -131,10 +132,22 @@
                                                             else
                                                             {
                                                                 //Interviewer detials
-                                                                <p>@Model.FirstName @Model.LastName</p>
+                                                                <p>Name: @Model.FirstName @Model.LastName</p>
 
-                                                                <p>@Model.EmailId</p>
-                                                                <p>@Model.PrimarySkill</p>
+                                                                <p>Email Address: @Model.EmailId</p>
+                                                                <p>Primary Skills: @Model.PrimarySkill</p>
+                                                                @if (Model.GitHubLink != null && Model.GitHubLink != "")
+                                                                {
+                                                                    <p>GitHubLink: @Model.GitHubLink</p>
+                                                                }
+                                                                @if (Model.StackOverflowLink != null && Model.StackOverflowLink != "")
+                                                                {
+                                                                    <p>StackOverflowLink: @Model.StackOverflowLink</p>
+                                                                }
+                                                                @if (Model.LinkedinLink != null && Model.LinkedinLink != "")
+                                                                {
+                                                                    <p>LinkedinLink: @Model.LinkedinLink</p>
+                                                                }
                                                             }
                                                         </div>
                                                     </div>
