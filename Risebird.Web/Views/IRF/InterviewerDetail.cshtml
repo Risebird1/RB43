@@ -1,8 +1,55 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerVM>
+﻿@*@model IEnumerable<Risebird.Entities.ViewModel.InterviewerVM>*@
+@model X.PagedList.IPagedList<Risebird.Entities.ViewModel.InterviewerVM>
 @{
     ViewData["Title"] = "Interviewers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@using X.PagedList.Mvc.Core;
+
+
+<style>
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+
+    #searchinput {
+        width: 100%;
+    }
+
+    #searchGo {
+        position: absolute;
+        right: 0px;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        font-size: 14px;
+        cursor: pointer;
+        color: #ccc;
+    }
+
+    .pagination-container > ul > li {
+        padding: 5px 12px !important;
+        border-radius: 21px !important;
+        border: 1px solid blanchedalmond !important;
+        background: antiquewhite !important;
+        margin: 2px 4px !important;
+    }
+
+    .pagination-container {
+        float: right !important;
+    }
+</style>
+
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -26,54 +73,196 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="mdc-card card">
-                    <div class="mdc-card-wrapper__text-section">
-                       
-
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Interviewers</h4>
+                    </div>
+                    <div class="card-body">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
-                        <div class="dataloading">
+                        <div class="dataloading" style="padding-right:2%;padding-left:2%">
                             <div class="toolbar">
                                 @*<div class="text-right">
-                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddInterviewer","User")'" data-original-title="Tooltip on top"> Add Interviewer</span></button>
-            </div>*@
-                            </div>
-                            <div class="row">
-                                <div class="card-header">
-                                    <h4 class="card-title">Interviewers</h4>
+                                        <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddInterviewer","User")'" data-original-title="Tooltip on top"> Add Interviewer</span></button>
+                                    </div>*@
+                                <div class="btn-group col-md-9 col-lg-9" style="padding-left:15%">
+                                    <input id="searchinput" type="text" style="height:40px" placeholder="Please enter interviewer name or Skill" value="@ViewBag.searchvalue">
+                                    <span id="searchGo"><input type="button" id="btnSearch" value="Search" style="background-color:blue;height:40px;color:white" /></span>
                                 </div>
 
-                                <div style="width: 100%;">&nbsp;</div>
-                                @foreach (var item in Model)
-                                {<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
-
-
-                                        <div class="detail" Onclick="callingfunction('@item.id')">
-                                            <h6>@item.FirstName @item.LastName</h6>
-                                            <p>@item.EmailId</p>
-                                            <p>Primary Skills:- @item.PrimarySkill</p>
-
-                                        </div>
-                                    </div>
-                                }
 
                             </div>
+                            <hr />
+                            <div style="clear:both;padding:10px"></div>
+
+                            @foreach (var item in Model)
+                            {
+                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                <div style="clear:both"></div>
+                                <div class="card" style="padding:2%">
+
+                                    <div class="row">
+                                        <div class="col-md-1 col-lg-1"><input type="checkbox" class="chkInterviewer" id="chk_@item.userId" name="chkinterviewer" value="@item.userId" /></div>
+                                        <div class="col-md-9 col-lg-9" Onclick="callingfunction('@item.id')" style="cursor:pointer;">
+                                            <p><strong>@item.FirstName @item.LastName</strong></p>
+                                            <p>@item.EmailId (@item.MobileNumber)</p>
+                                            <p><a class="callatag" target="_blank" title="Download Resume" href=@item.ResumeLink onclick="callatag()">Resume</a> || @item.Slots | Success rate: @item.SuccessRate | Selected: @item.SelectedSkillIds | No Of Interviews: @item.NoOfInterview</p>
+                                            <p>Primary Skills:- @item.PrimarySkill</p>
+                                        </div>
+                                        <div class="col-md-2 col-lg-2" style="margin-top:-2%">
+                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                            {
+                                                <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                            }
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            }
+                            <div style="clear:both"></div>
+                            <div class="row" style="padding-left:90%">
+                                <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="AddIRF()" data-original-title="Tooltip on top"> Add IRF</span></button>
+
+                            </div>
+                            <hr />
+                            @Html.PagedListPager(Model, Page => Url.Action("InterviewerDetail", new { Page = Page }))
                         </div>
 
 
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
 </div>
+<div id="myModal" class="modal" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+            <h5 style="margin-left:40%;font-size:20px">Call Interviewer!</h5>
+            <span class="close" id="callPopUp">&times;</span>
+        </div>
+        <div class="modal-body" style="padding: 2px 16px;">
+            <div class="row">
+                <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+
+            </div>
+
+            <div class="">
+                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+            </div>
+        </div>
+        <div class="modal-footer" style="padding: 2px 16px;
+        background-color: #14406e;
+        color: white;">
+
+        </div>
+    </div>
+
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 <script type="text/javascript">
     //// script for loader starts here
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+        $("#btnSearch").on('click', function () {
+            var value = $("#searchinput").val();
+            window.location.href = "/IRF/InterviewerDetail?Searchvalue=" + value;
+        });
+    });
+    var flag = true;
     function callingfunction(value) {
-        window.location.href = "/IRF/InterviewerDetailById?Id=" + value;
+        if (flag == true) {
+            window.location.href = "/IRF/InterviewerDetailById?Id=" + value;
+        } else {
+            flag = true;
+        }
+    }
+    function callatag() {
+        flag = false;
+    }
+    Twilio.Device.ready(function (device) {
 
+    });
 
+    function callCandidate(phoneNumber) {
+        //  phoneNumber = '+918126991790';
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+    function ModalButtonClick(candidateObj) {
+        //flag = false;
+        candidate = candidateObj.candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(candidateObj.MobileNumber);
+    }
+
+    function AddIRF() {
+        var array = [];
+        debugger;
+        $("input:checkbox[name=chkinterviewer]:checked").each(function () {
+            array.push($(this).val());
+        });
+        if (array.length > 0) {
+            window.location.href = "/IRF/Add?IntrviewerId=" + array.toString();
+
+        }
+        else {
+            alert("Please Select atleast one Interviewer.");
+        }
     }
 </script>
