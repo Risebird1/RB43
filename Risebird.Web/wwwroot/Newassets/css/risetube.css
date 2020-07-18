@@ -310,7 +310,7 @@ height: 55px;
     font-weight: 500;
     text-transform: uppercase;
     background:none;
-    border:0;margin:7px 0px;
+    border:0;margin:8px 0px;
 }
 .show .dropdown-menu:before {
     display: inline-block;
@@ -1440,6 +1440,7 @@ textarea::-webkit-scrollbar-thumb {
 
 .shortlist {
     margin-top: 0px;
+    height:40px;
 }
 
 .showinter{padding:5px 0;}
@@ -1685,14 +1686,15 @@ textarea::-webkit-scrollbar-thumb {
         position: relative
     }
     .showinter {
-        padding: 5px 0;
-        width: 40%;
+        width: 35%;
+        float: left;
+        padding: 0px !important;
     }
     .shortlist {
         margin: 0;
-        width: 50%;
+        width: 40%;
     }
-    .share{width:40%;}
+    .share{width:50%;}
     .views {
         margin: 5px 0px 0px 0px;
         width: 60%;
