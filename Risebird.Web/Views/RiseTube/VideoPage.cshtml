@@ -149,15 +149,10 @@
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
                                             }
-                                            @if (ViewBag.actionstatus == "SkillChannel" && ViewBag.CuratedGroupId != null)
+                                            @if (ViewBag.actionstatus == "SkillChannel")
                                             {
                                                 <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
                                             }
-                                            else if (ViewBag.actionstatus == "SkillChannel")
-                                            {
-                                                <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
-                                            }
-
                                             else
                                             {
                                                 @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
