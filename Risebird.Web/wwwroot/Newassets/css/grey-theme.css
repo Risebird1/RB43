@@ -1,0 +1,185 @@
+.navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
+    background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
+}
+
+.navbar.navbar-transparent {
+    background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
+}
+
+
+ .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
+        background: #9c9c9c!important;
+}
+
+
+ .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
+        background: #47484a!important;
+}
+.toscore {
+    color: #000 !important;
+}
+.mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+    border-color: #929292 !important;
+    background-color: #929292 !important;
+}
+.multiple_row > h2 {
+    background-color: #929292 !important;
+}
+.card .card-header .card-title b, .card .card-header .card-title strong {
+   color: #47484a!important;
+}
+#MyChatModel .modal-content .modal-header {
+    background-color: #929292 !important;
+}
+.now-ui-icons.design_bullet-list-67:before {
+    color: #47484a !important;
+}
+.filavatar {
+    background: #929292 !important;
+}
+
+#IRFList a, #ProjectList a {
+    color: #47484a !important;
+}
+#myForm .searchbox .input-group-btn .btn {
+    background: #929292 !important;
+    border-color: #929292 !important;
+}
+    .mdc-button--outlined:not(:disabled) {
+    border-color: #929292 !important;
+    color: #929292 !important;
+}
+[type="datetime-local"] {
+    background: #f5f5f5 url(../img/grey-timdate.png) 97% 50% no-repeat !important;
+    background-size: 5% !important;
+}
+.pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+    background-color: #929292 !important;
+    border-color: #929292;
+}
+.date-time {
+    background: #f5f5f5;
+}
+
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    background: #929292 !important;
+}
+.mdc-fab {
+    background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
+}
+
+.mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
+    background: #929292 !important;
+}
+
+.mdc-card {
+    border-top: 3px #b5b5b5 solid !important;
+}
+
+ .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
+        background: #ecececb5 !important;
+ }
+
+
+[type="date"] {
+    background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 7% !important;
+}
+
+
+.mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
+    border-bottom: 2px #929292 solid !important;
+}
+.dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
+    border-color:#ccc!important;
+}
+    .btn-call {
+    background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
+}
+.call-txt {
+    border: 1px #929293 solid;
+    color: #47484a;
+}
+.card-blue .card-header h6 {
+    color: #47484a !important;
+}
+.click {
+    color: #47484a !important;
+    text-decoration: underline !important;
+}
+#ProctoringTable .label-type {
+    background: #ecececb5 !important;
+}
+
+.mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+    border-color: #929292!important;
+}
+#resumeId, #zoomlinkId {
+    background: #ecececb5;
+    color: #47484a;
+}
+#reportId, #videoId {
+    background: #92929266;
+    color: #47484a;
+}
+.theme-settings .ts-button {
+    background: #9a9a9a
+}
+.theme-settings .ts-body {
+    background: #9a9a9a
+}
+#jdlinkId {
+    background: #fff;
+    color: #929292;
+    border: 1px #929292 solid;
+}
+
+    .mdc-fab__icon {
+    fill: rgb(255, 255, 255) !important;
+}
+
+.card .card-footer {
+    background-color: #ecececb5;
+    border: 0;
+    border-top: 1px #ecececb5 solid;
+}
+
+.special-text svg {
+    fill: rgb(119, 115, 115) !important;
+}
+.tabs.nav-pills li.nav-link.active {
+    color: #fff;
+    background-color: #929292 !important;
+}
+.private-share {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
+}
+.publicurl-share {
+    background-image: url('../../img/grey-link.png')!important;
+}
+.public-share {
+    background-image: url('../../img/share-3g.png') !important;
+}
+.email-share {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>')!important;
+}
+
+
+.msger-send-btn {
+    background-image: url(../../img/grey-send.png) !important;
+}
+
+.msg-bubble-right {
+    background: #9a9a9a !important;
+}
+
+.dropdown-toggle {
+    background: #fff !important;
+}
+
+.dropdown-menu {
+    border: none !important
+}
+.card-blue .card-body .client-field {
+    color: #9a9a9a !important;
+}

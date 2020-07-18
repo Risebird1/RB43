@@ -1661,6 +1661,8 @@ namespace Risebird.Repository
         {
             try
             {
+               if (id == 0)
+                    return null;
                 var parameters = new DynamicParameters();
                 parameters.Add("@interviewId", id);
                 parameters.Add("@Email", Email);
@@ -1676,6 +1678,11 @@ namespace Risebird.Repository
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               
             }
             return null;
         }

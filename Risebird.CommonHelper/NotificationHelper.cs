@@ -638,7 +638,7 @@ namespace Risebird.CommonHelper
 
               
                 object[] parameters = new object[] { candidateDetails.Name, (candidateDetails.Skill!=null ? candidateDetails.Skill:string.Empty)};
-                mailMessage.Subject = "New meeting added to Common Pool";
+                mailMessage.Subject = "New Candidate added to Common Pool";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CommonPoolTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -649,7 +649,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Credentials = credentials;
 
                 smtpClient.Send(mailMessage);
-                return "Broadcast mail sent Successfully.";
+                return "Mail sent Successfully.";
             }
             catch (Exception e)
             {

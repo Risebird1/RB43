@@ -171,10 +171,23 @@
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
-                                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                        <h5 class="modal-title" id="filterModalLabel" style="color:#fff">Filter</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                  
+
+
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="fa fa-filter"></span>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                     </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+
+
+
+
+
                                     <form action="@Url.Action("VideoPage", "risetube", new { id = Model.imid })" method="post" id="form">
                                         <div class="modal-body">
                                             <div class="row">
@@ -392,39 +405,39 @@
                                                     </div>
                                                 }
                                                 @*
-                                                    <div class="col-md-6 col-sm-6">
-                                                          <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR"> Client
-                                                            HR </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                              <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                    <div class="col-md-6 col-sm-6">
+                          <div class="form-group">
+                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR"> Client
+                            HR </label>
+                        <div class="col-md-6 col-sm-6">
+                              <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
 
-                                                                                                  @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
-                                                                                                  {
-                                                                                                  @if (item != null && item != "")
-                                                                                                  {
+                                                                  @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                  {
+                                                                  @if (item != null && item != "")
+                                                                  {
 
-                                                            <option value="@item">@item</option>
+                            <option value="@item">@item</option>
 
-                                                                                                  }
-                                                                                                  }
+                                                                  }
+                                                                  }
 
-                                                          </select>
-                                                            </div>
-                                                      </div>
-                                                        </div>
+                          </select>
+                            </div>
+                      </div>
+                        </div>
                                                 *@
-                                                <div class="col-md-12 col-sm-12 text-right">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-md-12 col-sm-12">
+                                               
+                                                    <div class="form-group col-md-12 col-sm-12 ">
+                                                        <div>
+                                                            <div class="col-md-12 col-sm-12 ">
                                                                 <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
                                                                 <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
 
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                               
                                             </div>
                                         </div>
                                     </form>
@@ -598,16 +611,16 @@
                                                                 <div class="col-md-3 share">
                                                                     <div class="btn-group">
                                                                         <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style=" width: 28px;padding-left:4px;"> Share
+                                                                            <img src="../../img/share-tweet-icon.png" style=" width: 28px;padding-left:4px;"> Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
-                                                                                <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                                <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
                                                                             </span>
 
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing  through email ">
 
-                                                                                <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+                                                                                <input type="button" class="share-wrap btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
 
                                                                             </span>
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly ">   <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
@@ -619,11 +632,11 @@
                                                                 <div class="col-md-3 shortlist" style="text-align: end;">
                                                                     @if (Model.IsShortlisted > 0)
                                                                     {<i class="fa fa-check"></i>
-                                                                        <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
+                                                                        <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
                                                                     }
                                                                     else
                                                                     { <i class="fa fa-check"></i>
-                                                                        <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                        <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
 
                                                                     }
                                                                 </div>
@@ -640,36 +653,36 @@
                                                                 {
                                                                     @if (Model.IsIntrested == "Interest Sent")
                                                                     {
-                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
+                                                                        <input type="button" class="share-wrap btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
                                                                     }
                                                                     else if (Model.IsIntrested == "Interest Accepted")
                                                                     {
-                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 0px;height: 30px;" />
+                                                                        <input type="button" class="share-wrap btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 0px;height: 30px;" />
                                                                     }
                                                                     else
                                                                     {
-                                                                        <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        <input type="button" class="share-wrap btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
                                                                     }
                                                                 }
                                                                 else
                                                                 {
                                                                     <div class="btn-group">
                                                                         <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style="        width: 28px;
+                                                                            <img src="../../img/share-tweet-icon.png" style="        width: 28px;
         padding-left: 4px;
 ">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
-                                                                            <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="share-wrap btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
 
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
-                                                                                <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
+                                                                                <input type="button" class="share-wrap btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
                                                                             </span>
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user through email ">
-                                                                                <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+                                                                                <input type="button" class="share-wrap btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
                                                                             </span>
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
-                                                                                <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                                <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
                                                                             </span>
 
 
@@ -741,7 +754,7 @@
                                                                         <div class="left-chart">
 
                                                                             <div class="chart-box itemchart">
-                                                                                <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
+                                                                                <p class="card-text">Overall Score: <span class="toscore"  id="totScore"></span></p>
                                                                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                                                                     <div id="scoreChart" style="height: 200px; width: 100%;"></div>
                                                                                 </div>
@@ -878,7 +891,7 @@
                                                                                 @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
                                                                                 {
                                                                                     <div class="col-md-6 col-sm-6">
-                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Call Candidate</font></span></button>
                                                                                     </div>
                                                                                 }
                                                                             </div>
@@ -1371,18 +1384,32 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Call Candidate!</h5>
-                <span class="close" id="callPopUp">&times;</span>
-            </div>
-            <div class="modal-body" style="padding: 2px 16px;">
-                <div class="row">
-                    <label id="callingLabel text-center mt-20"><b>Calling...</b></label>
+           
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                    </span>
                 </div>
-                <div class="">
+                <h5 class="modal-title pull-left">Call Candidate !</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+
+
+            <div class="modal-body">
+                
+                    <h5 class="modal-title text-center mt-20" id="callingLabel text-center mt-20">Calling...</h5>
+                
+               
                     <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
     display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-                </div>
+             
             </div>
 
         </div>
@@ -1396,6 +1423,27 @@
                 <h5 class="modal-title" style="color:#fff">Interested</h5>
                 <span onclick="closeCommentPopUp()" style="cursor:pointer;" class="close" id="CommentPopUp">&times;</span>
             </div>
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Interested </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeCommentPopUp()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+
+
+
+
+
             <div class="modal-body" style="padding: 2px 16px;">
                 <div class="row" style="padding:10px">
                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
@@ -1422,37 +1470,44 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Email Share</h5>
-                <span onclick="closeSharePopUp1()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+            
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Email Share</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeSharePopUp1()" id="SharePopUp" style="cursor:pointer;"  aria-hidden="true">&times;</span>
+            </button>
+
+
             <div class="modal-body">
-                <div class="row" style="padding:10px">
+                <div class="col-md-12">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
 
-                    <div class="form-control text-areadiv">
-                        <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                    <div class="sharing">
+                        <textarea class="form-control "  rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                     </div>
 
                 </div>
-                <div class="row" style="padding:10px">
+                <div class="col-md-12">
                     <label class="label-field desp-label" for="Comment">Interviewer Comment(Editable)</label>
 
-                    <div class="form-control text-areadiv">
-                        <textarea rows="2" id="comment" placeholder="Comment" style="width:100%"></textarea>
+                    <div class="sharing">
+                        <textarea class="form-control" rows="2" id="comment" placeholder="Comment" style="width:100%; "></textarea>
                     </div>
 
                 </div>
-                <div class="row">
-                    <div class="col-md-12 text-right">
+                <div class="col-md-12 ">
+                    <div class="text-right">
                         <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;
-        background-color: #fff;
-        color: white;"></div>
+
         </div>
     </div>
 </div>
@@ -1461,30 +1516,39 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Private Share</h5>
-                <span onclick="closeSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+         
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 26"><path fill="rgb(255,255,255)" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Private Share</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeSharePopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+
+
             <div class="modal-body">
-                <div class="row" style="padding:10px">
+           
+                <div class="col-md-12">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
 
-                    <div class="form-control text-areadiv">
-                        <textarea rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
-                    </div>
-
+                    <div class="sharing">
+                    <textarea class="form-control" rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                 </div>
+                    </div>
+             
 
-                <div class="row">
-                    <div class="col-md-12 text-right">
+                <div class="col-md-12">
+                    <div class=" text-right">
                         <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;
-        background-color: #fff;
-        color: white;"></div>
+       
         </div>
     </div>
 </div>
@@ -1494,27 +1558,39 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Public Share</h5>
-                <span onclick="closepublicSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="row" style="padding:10px">
-                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
-                    <div class="form-control text-areadiv">
-                        <textarea rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+           
 
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="sharing-icon" src="~/Newassets/img/share-3w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Public Share</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closepublicSharePopUp()" id="SharePopUp" style="cursor:pointer;"  aria-hidden="true">&times;</span>
+            </button>
+
+
+            <div class="modal-body">
+               
+                    <div class="col-md-12">
+                        <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
+                        <div class="sharing">
+                            <textarea class="form-control" rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated"></textarea>
+
+                       
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12 text-right">
+                <div class="col-md-12">
+                    <div class=" text-right">
                         <input type="button" onclick="SharepublicVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
                         <input style="background:#ff253a!important; line-height:13px;" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
+           
         </div>
     </div>
 </div>
@@ -1523,16 +1599,25 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Public Share Url</h5>
-                <span onclick="closePublicUrlShareModel()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+        
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Public Share Url</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+
+
+
             <div class="modal-body">
-                <div class="row" >
+                <div class="col-md-12">
                     <div class="video-url">
                         <label class="label-field desp-label"> Video Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
                             <p class="special-text">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
                                 <span id="special_text" class="special-text__tooltip">
                                     Copy Link
                                 </span>
@@ -1542,13 +1627,13 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12 text-right">
+                <div class="col-md-12 ">
+                    <div class="text-right">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
+            
         </div>
     </div>
 </div>
@@ -1583,9 +1668,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;
-        background-color: #fff;
-        color: white;"></div>
+           
         </div>
 
     </div>
@@ -2007,64 +2090,64 @@
         $("#ClientHR").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
 
             $("#CandidateName").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
 
         $("#InterviewStatus").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+            buttonWidth: '100%',
                     maxHeight: 200
                 });
 
             $("#ClientName").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#ApprovalStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#JoiningStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#OfferStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#CandidateLocation").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
              $("#IsShortListed").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                 buttonWidth: '100%',
                     maxHeight: 200
          });
           $("#IsIntrested").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+              buttonWidth: '100%',
                     maxHeight: 200
                 });
 

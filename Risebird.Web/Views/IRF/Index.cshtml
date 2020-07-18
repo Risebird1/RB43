@@ -103,12 +103,18 @@
                         <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
-                                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                        <h5 class="modal-title" id="filterModalLabel">Filter</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="fa fa-filter"></span>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                     </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+
+
+                                    
                                     <form action="@Url.Action("Index","IRF")" method="post" id="form">
 
                                         <div class="modal-body">
@@ -188,32 +194,33 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="form-group col-md-12">
+                                                    <div class="form-group">
 
-                                                    <div class="row">
-                                                        <div class="col-md-12 col-sm-12">
-
-
-                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                <font style="font-size:12px;"> Reset Filter</font>
-                                                            </button>
+                                                        <div>
+                                                            <div class="col-md-12 col-sm-12">
 
 
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                    <font style="font-size:12px;"> Reset Filter</font>
+                                                                </button>
 
-                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                <font style="font-size:12px;"> Apply Filter</font>
-                                                            </button>
 
 
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                    <font style="font-size:12px;"> Apply Filter</font>
+                                                                </button>
+
+
+
+                                                            </div>
 
                                                         </div>
 
+
+
                                                     </div>
-
-
-
                                                 </div>
+                                                
 
 
 
@@ -512,10 +519,21 @@
                             <!-- Modal content -->
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
-                                    <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                                        <h5 class="modal-title" style="font-size:20px;">Invoice</h5>
-                                        <span class="close" id="invoicePopUp" style="cursor:pointer;">&times;</span>
+
+
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(250, 250, 250)" d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"></path></svg>
+                                        </div>
+                                        <h5 class="modal-title pull-left" > Invoice</h5>
                                     </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" id="invoicePopUp">&times;</span>
+                                    </button>
+
+
+                                   
+
                                     <div class="modal-body">
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6 border-rv">
@@ -634,7 +652,7 @@
                                                     <div>
 
 
-                                                        <div class="mdc-form-field">
+                                                        <div class="mdc-form-field pull-left">
                                                             <div class="mdc-checkbox">
 
                                                                 <input id="gstCheckId" name="gstCheckId" type="checkbox" class="mdc-checkbox__native-control" style="">
@@ -654,11 +672,11 @@
                                                         </div>
 
 
-                                                        <label class="control-label  desp-label" for="gstCheck">
+                                                        <div class="cheklabel" for="gstCheck">
                                                             Apply GST
-                                                        </label>
+                                                        </div>
 
-                                                        <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
+                                                        <label class="text-danger " id="gstCheck_Error" style="color:red"></label>
                                                     </div>
                                                 </div>
                                             </div>
