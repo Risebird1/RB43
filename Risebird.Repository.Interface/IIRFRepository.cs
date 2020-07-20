@@ -85,8 +85,8 @@ namespace Risebird.Repository.Interface
         Skill GetSkillById(int id);
         IEnumerable<TransClientUser> GetTransClientUserRole();
         Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName);
-        Task<bool> SubscribeIRF(int id, string emailId, string profile);
-        Task<bool> UnSubscribeIRF(int id, string emailId, string profile);
+        Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile);
+        Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile);
         IEnumerable<string> GetCuratedUserMailId(int irfId);
         bool SaveCandidateStatus(int id, int status);
         IEnumerable<Users> GetAllHRs();
@@ -94,5 +94,31 @@ namespace Risebird.Repository.Interface
         //bool DeletePlayedMeetings(string meetingIds);
         bool AddCandidateCuratedScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore);
         IEnumerable<CandidateCuratedScore> GetCandidateCuratedScore(int id);
+        IEnumerable<FetchInterviewerDetails> GetSkillQuality();
+        IEnumerable<FetchInterviewerDetails> GetCertificationQuality();
+        IEnumerable<FetchInterviewerDetails> GetEducationQuality();
+        IEnumerable<FetchInterviewerDetails> GetCareerProgression();
+        IEnumerable<FetchInterviewerDetails> GetBehavioralScore();
+        IEnumerable<FetchInterviewerDetails> GetCompanyStage();
+        IEnumerable<FetchInterviewerDetails> GetSkillCategory();
+        IEnumerable<FetchInterviewerDetails> GetInterviewerExprienceYear();
+        IEnumerable<FetchInterviewerDetails> GetSenioritylevel();
+        IEnumerable<FetchInterviewerDetails> GetSkillNature();
+        IEnumerable<FetchInterviewerDetails> GetEmployersQuality();
+        IEnumerable<FetchInterviewerDetails> GetProjectsQuality();
+        IEnumerable<FetchInterviewerDetails> GetOnlinePresence();
+        IEnumerable<FetchInterviewerDetails> GetInterviwerCommunication();
+        IEnumerable<FetchInterviewerDetails> GetInterviewexperience();
+
+
+
+        Task<IEnumerable<CuratedGroup>> GetAllCuratedGroups();
+        IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping();
+        Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails);
+        Task<IEnumerable<CuratedIRFMapping>> GetCuratedGroupMappingsById(int curatedGroupId);
+        Task<bool> UpdateCuratedGroup(CuratedGroup curatedGroupDetails);
+        Task<IEnumerable<CuratedGroupUsers>> GetCuratedGroupUsers(int curatedGroupId);
+        Task<bool> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM curatedUsers);
+        Task<IEnumerable<CuratedUserGroupData>> GetCuratedGroupsForCuratedUser(string emailId);
     }
 }

@@ -507,7 +507,7 @@ table {
     outline: 0;
 }
 
-.upload #videoId {
+.upload #videoId, .upload #resumeId {
     background:none;
     padding:8px 0px;
     border-radius: 3px;
@@ -515,6 +515,11 @@ table {
 }
 .uploadfile-txt{
     padding:20px;
+}
+.dob [type="date"] {
+    /* background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important; */
+    background-size: 5%!important;
+    padding: 10px !important;
 }
 .table-responsive-sm .table > tbody > tr > td {
     padding: 12px 5px !important;

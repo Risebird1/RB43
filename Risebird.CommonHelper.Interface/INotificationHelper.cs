@@ -25,6 +25,9 @@ namespace Risebird.CommonHelper.Interface
         string SharedVideoNofiticationExternal(Mail model, string UrlDetails, string Url);
         string SharedVideoNofiticationExternal(Mail model, string name, string Url,string comment, string resumeLink);
         string SendBroadcastMail(List<string> receivers, List<string> supportEmails, BroadcastModel model);
+        string SendCommonPoolMail(List<string> clientUsers, string clientEmailId, Candidate candidateDetails);
 
+        string SendInviteToInterviewer(string iscName, string jdTitle, string primarySkill, string calendlyLink, string interviewerMailId, string hrEmailId);
+        string CancelInterviewerInvite(string iscName, string primarySkill, string interviewerMailId, string hrEmailId);
     }
 }

@@ -1,0 +1,249 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.CuratedGroup>
+@{
+    ViewData["Title"] = "Curated Groups";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Curated Groups</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                                <div class="row">
+
+                                    <div class="card-header">
+                                        <div class="pull-left">  <h4 class="card-title">Curated Groups</h4></div>
+
+                                        <div class="pull-right">
+                                            <div>
+
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Curated Group." onclick="location.href='@Url.Action("AddCuratedGroup", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Curated Group</font></span>
+                                                </button>
+
+                                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top:2px" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+                            </div>
+                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+
+                                <div id="tableID">
+                                    <table style="text-align:center" id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+
+                                                <th>Curated Group</th>
+                                                <th>Total Skills Channels</th>
+                                                <th> Actions </th>
+
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+
+                                                <th>Curated Group</th>
+                                                <th>Total Skills Channels</th>
+                                                <th> Actions </th>
+
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+                                                
+                                                <tr id=@item.id style="text-align:center">
+
+                                                    <td> @item.Name</td>
+                                                    <td> @item.TotalSkillsChannels</td>
+                                                    
+                                                    <td class="action" style="text-align:center">
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                            <span onclick="location.href = '@Url.Action("EditCuratedGroup", "IRF", new { id = item.id })'" title="Edit" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                            </span>
+                                                        </button>
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add/Update Curated Users">
+                                                            <span onclick="location.href = '@Url.Action("AddUpdateCuratedGroupUsers", "IRF", new { id = item.id})'" title="Add Curated Users" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg>
+                                                            </span>
+                                                        </button>
+
+                                                    </td>
+                                                    
+
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+
+            <!-- end col-md-12 -->
+        </div>
+
+        <!-- end row -->
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        //window.location.href = '/IRF/Index';
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        location.reload();
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        //window.location.href = '/IRF/Index';
+                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        location.reload();
+
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order:[],
+            responsive: false,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
+        });
+        var table = $('#meeting').DataTable();
+    });
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+

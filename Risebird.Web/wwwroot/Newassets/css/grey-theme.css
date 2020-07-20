@@ -122,7 +122,12 @@
     background: #92929266;
     color: #47484a;
 }
-
+.theme-settings .ts-button {
+    background: #9a9a9a
+}
+.theme-settings .ts-body {
+    background: #9a9a9a
+}
 #jdlinkId {
     background: #fff;
     color: #929292;

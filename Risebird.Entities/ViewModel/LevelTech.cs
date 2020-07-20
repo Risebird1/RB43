@@ -10,4 +10,19 @@ namespace Risebird.Entities.ViewModel
         public string Name { get; set; }
         public string Description { get; set; }
     }
+    public class ExperienceRange
+    {
+        public int id { get; set; }
+        public string Description { get; set; }
+    }
+    public class JobFunction
+    {
+        public int id { get; set; }
+        public string Description { get; set; }
+    }
+    public class Industry
+    {
+        public int id { get; set; }
+        public string Description { get; set; }
+    }
 }

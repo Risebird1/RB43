@@ -16,6 +16,7 @@ using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using OfficeOpenXml;
 using Newtonsoft.Json;
+using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
@@ -249,6 +250,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpGet]
         public IActionResult InterviewDashboard()
@@ -615,7 +617,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-
+        
 
         public async Task<IActionResult> ResetIRFFilter()
         {
@@ -653,7 +655,7 @@ namespace Risebird.Web.Controllers
                 //var interviewers = _irfRepository.GetInterviewers();
                 model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                 model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
-                model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+                model.SelectabilityTypeList =   new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
                 var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
                                     select new { ID = (int)s, Name = s.GetDescription() };
                 model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
@@ -974,12 +976,12 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid).Where(x => x.QCInterview > 0 && x.QCStatus ==1);
-                        
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1);
+
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
-                       
+
                         foreach (var m in meetings)
                         {
                             if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
@@ -1074,7 +1076,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid).Where(x => x.QCInterview > 0 && x.QCStatus ==1);
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1);
 
                         if (filterValue == "Today")
                         {
@@ -1202,7 +1204,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                       
+
                         var modelList = _meetingService.IRFMultipleCandidateInvites(irfId);
                         if (profileName == "Admin")
                         {
@@ -1229,7 +1231,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-            [Authorize]
+        [Authorize]
         [HttpGet]
         [ActionName("InterviewMeetings")]
         public IActionResult InterviewMeetings(string id, string irfId)
@@ -1245,11 +1247,11 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
-                       
+
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
-                       
+
                         foreach (var m in meetings)
                         {
                             if (m.InterviewStatus.HasValue)
@@ -2206,7 +2208,7 @@ namespace Risebird.Web.Controllers
                         {
 
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
-                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription() );
+                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription());
                             candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); });
                         }
 
@@ -2346,7 +2348,7 @@ namespace Risebird.Web.Controllers
 
                                 Sheet.Cells[i, 15].Value = item.TotalInvites;
                                 Sheet.Cells[i, 16].Value = item.InviteConfirmation;
-                                Sheet.Cells[i, 17].Value = item.InviteConfirmation > 0 ? "Scheduled" : item.StatusValue; 
+                                Sheet.Cells[i, 17].Value = item.InviteConfirmation > 0 ? "Scheduled" : item.StatusValue;
                                 Sheet.Cells[i, 18].Value = item.confirmationStatusDesc != "0" ? item.confirmationStatusDesc : "NA";
                                 Sheet.Cells[i, 19].Value = item.MeetingStatusDesc != "0" ? item.MeetingStatusDesc : "NA";
                                 Sheet.Cells[i, 20].Value = item.InterviewStatusDesc != "0" ? item.InterviewStatusDesc : "NA";
@@ -3151,17 +3153,17 @@ namespace Risebird.Web.Controllers
                 {
                     var model = _evaluatorService.GetCandidate(candidateId, irfId);
                     model.CandidateAudios = /*(IList<CandidateAudio>)*/_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
-                    
-                    if(model.CandidateAudios.Where(x=>x.IsVoiceBiometric).Count()>0)
+
+                    if (model.CandidateAudios.Where(x => x.IsVoiceBiometric).Count() > 0)
                     {
                         model.HasVoiceBiometricAudio = true;
-                        model.PhraseList = new SelectList(_evaluatorService.GetPhrases(), "text", "text",model.CandidateAudios.Where(x=>x.IsVoiceBiometric).FirstOrDefault().PhraseDetail);
+                        model.PhraseList = new SelectList(_evaluatorService.GetPhrases(), "text", "text", model.CandidateAudios.Where(x => x.IsVoiceBiometric).FirstOrDefault().PhraseDetail);
                     }
                     else
                     {
                         model.PhraseList = new SelectList(_evaluatorService.GetPhrases(), "text", "text");
                     }
-                    if(model.CandidateAudios.Where(x => x.IsVoiceBiometric && !x.IsEnrolled).Count()>0)
+                    if (model.CandidateAudios.Where(x => x.IsVoiceBiometric && !x.IsEnrolled).Count() > 0)
                     {
                         model.ContainsUnEnrolled = true;
                     }
@@ -3227,7 +3229,7 @@ namespace Risebird.Web.Controllers
                         if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
                         {
                             TempData["SuccessErrorMessageUploadAudio"] = "Audio uploaded successfully";
-                            return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName=model.IRFName });
+                            return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
                         }
                         else
                         {
@@ -3481,7 +3483,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        public async Task<IActionResult> InterviewerDetail()
+        public async Task<IActionResult> InterviewerDetail(int? Page, string Searchvalue)
         {
             try
             {
@@ -3493,8 +3495,40 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessageInterviewer");
 
                     }
+                    var model = _userService.GetInterviewersDetails();
+                    if (!String.IsNullOrEmpty(Searchvalue))
+                    {
+                        model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper())).ToList();
+                        ViewBag.searchvalue = Searchvalue;
+                    }
+                    else
+                    {
+                        ViewBag.searchvalue = "";
+                    }
+                    foreach (var item in model)
+                    {
+                        var PrimarySkillSet = item.PrimarySkill.Split(',');
+                        string PrimaryTopSkill = String.Empty;
+                        int ForLoopCount = 5;
+                        if (PrimarySkillSet.Count() < 5)
+                        {
+                            ForLoopCount = PrimarySkillSet.Count();
+                        }
+                        for (int i = 0; i < ForLoopCount; i++)
+                        {
+                            if (String.IsNullOrEmpty(PrimaryTopSkill))
+                            {
+                                PrimaryTopSkill = PrimarySkillSet[i];
+                            }
+                            else
+                            {
+                                PrimaryTopSkill = PrimaryTopSkill + "," + PrimarySkillSet[i];
+                            }
+                        }
+                        item.PrimarySkill = PrimaryTopSkill;
+                    }
 
-                    return View(_userService.GetInterviewers());
+                    return View(model.ToPagedList(Page ?? 1, 12));
                 }
                 else
                 {
@@ -3507,16 +3541,18 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
-
-
         }
         public async Task<IActionResult> InterviewerDetailById(string Id)
         {
-            //int ID = Convert.ToInt32(Id);
-            //var model=_userService.GetInterviewers();
-            //model = model.Where(x => x.id == ID).ToList();
             // code for fetch data or any thing else
-            return View();
+            InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
+            interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
+            if (interviewerVM.SubVideo_List==null || interviewerVM.SubVideo_List.Count==0)
+            {
+                interviewerVM.SubVideo_List = new List<InterviewerVM>();
+            }
+            return View(interviewerVM);
+       
         }
 
         [Authorize]
@@ -3528,7 +3564,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                return _irfService.SubscribeIRF(id, emailid, profileName).Result;
+                return _irfService.SubscribeCuratedGroup(id, emailid, profileName).Result;
 
             }
             catch (Exception ex)
@@ -3548,7 +3584,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                return _irfService.UnSubscribeIRF(id, emailid, profileName).Result;
+                return _irfService.UnSubscribeCuratedGroup(id, emailid, profileName).Result;
 
             }
             catch (Exception ex)
@@ -3617,6 +3653,351 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult CuratedGroups()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
+                    {
+
+                        var curatedGroups = _irfService.GetAllCuratedGroups();
+                        if (TempData["SuccessErrorMessageCG"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageCG"].ToString();
+                            TempData.Remove("SuccessErrorMessageCG");
+                        }
+                        return View(curatedGroups);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AddCuratedGroup()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var curatedGroupModel = new CuratedGroup();
+                curatedGroupModel.CuratedIRFMappings = (IList<CuratedIRFMapping>)(_irfService.GetIRFListForCuratedMapping());
+                return View(curatedGroupModel);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddCuratedGroup(CuratedGroup model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    //profileName = profileName.Replace("\"", "");
+                    if (_irfService.AddCuratedGroup(model).Result)
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Curated Group added Successfully";
+                        return RedirectToAction("CuratedGroups");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Adding Curated Group has Failed";
+                        return RedirectToAction("CuratedGroups");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCG"] = "Adding Curated Group has failed";
+                return RedirectToAction("CuratedGroups");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult EditCuratedGroup(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var cgModel = _irfService.GetCuratedGroupMappingsById(id);
+                return View(cgModel);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditCuratedGroup(CuratedGroup model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_irfService.UpdateCuratedGroup(model))
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Curated Group edited successfully!";
+                        return RedirectToAction("CuratedGroups");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Saving changes for Curated Group failed!";
+                        return RedirectToAction("CuratedGroups");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCG"] = "Saving changes for Curated Group failed!";
+                return RedirectToAction("CuratedGroups");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AddUpdateCuratedGroupUsers(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var model = _irfService.GetCuratedGroupUsers(id);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_irfService.AddUpdateCuratedGroupUsers(model))
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Curated Group users updated successfully!";
+                        return RedirectToAction("CuratedGroups");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCG"] = "Sorry! Curated Group users could not be updated.";
+                        return RedirectToAction("CuratedGroups");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCG"] = "Sorry! Curated Group users could not be updated.";
+                return RedirectToAction("CuratedGroups");
+            }
+        }
+
+        public IActionResult CuratedIndex()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "CuratedUser")
+                {
+                    var model = new CuratedIndexVM();
+                    model.CuratedData = _irfService.GetCuratedGroupsForCuratedUser(emailid);
+                    foreach (var item in model.CuratedData)
+                    {
+                        if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.Status = "Archived";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            item.Status = "Active";
+                        }
+                        if (item.SubId != null)
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.Subscribed.GetDescription();
+                        }
+                        else
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.UnSubscribed.GetDescription();
+                        }
+                    }
+
+
+                    if (TempData["SuccessErrorMessageCuratedIndex"] != null)
+                    {
+                        model.Message = TempData["SuccessErrorMessageCuratedIndex"].ToString();
+                        TempData.Remove("SuccessErrorMessageCuratedIndex");
+                    }
+
+                    if (HttpContext.Session.GetString("CuratedIndexFilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<CuratedIndexFilter>(HttpContext.Session.GetString("CuratedIndexFilters"));
+                        
+                        filter.SubscriptionStatus = filter.SubscriptionStatus == null ? filter.SubscriptionStatus = model.CuratedData.Select(x => x.SubscriptionStatus).ToArray() : filter.SubscriptionStatus;
+                        filter.CuratedGroupName = filter.CuratedGroupName == null ? filter.CuratedGroupName = model.CuratedData.Select(x => x.CuratedGroupName).ToArray() : filter.CuratedGroupName = filter.CuratedGroupName;
+
+                        model.CuratedData = model.CuratedData.Where(c => (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
+                        && (filter.CuratedGroupName.Count() > 0 ? filter.CuratedGroupName.Contains(c.CuratedGroupName) : c.CuratedGroupName == null)).ToList();
+                        
+                    }
+
+
+                    return View(model);
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult CuratedIndex(CuratedIndexFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("CuratedIndexFilters", JsonConvert.SerializeObject(filter));
+
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "CuratedUser")
+                {
+
+                    var model = new CuratedIndexVM();
+                    model.CuratedData = _irfService.GetCuratedGroupsForCuratedUser(emailid);
+                    foreach (var item in model.CuratedData)
+                    {
+                        if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.Status = "Archived";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            item.Status = "Active";
+                        }
+                        if (item.SubId != null)
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.Subscribed.GetDescription();
+                        }
+                        else
+                        {
+                            item.SubscriptionStatus = SubscriptionStatus.UnSubscribed.GetDescription();
+                        }
+                    }
+
+                    filter.SubscriptionStatus = filter.SubscriptionStatus == null ? filter.SubscriptionStatus = model.CuratedData.Select(x => x.SubscriptionStatus).ToArray() : filter.SubscriptionStatus;
+                    filter.CuratedGroupName = filter.CuratedGroupName == null ? filter.CuratedGroupName = model.CuratedData.Select(x => x.CuratedGroupName).ToArray() : filter.CuratedGroupName = filter.CuratedGroupName;
+
+                    model.CuratedData = model.CuratedData.Where(c => (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
+                    && (filter.CuratedGroupName.Count() > 0 ? filter.CuratedGroupName.Contains(c.CuratedGroupName) : c.CuratedGroupName == null)).ToList();
+
+
+
+
+                    return View(model);
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public async Task<IActionResult> ResetCuratedIndexFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("CuratedIndexFilters");
+                    return RedirectToAction("CuratedIndex");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
     }
 }
