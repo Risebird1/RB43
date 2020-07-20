@@ -1533,8 +1533,48 @@ textarea::-webkit-scrollbar-thumb {
     float: left;
 }
 
-@media screen and (max-width: 991px) {
-    .interviewer-comment .talk-bubble {
+.thumbnailimage {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: auto;
+}
+.interviewDate {
+    color: #606060;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+#toggle-click {
+    color: blue;
+    font-size: 24px;
+    padding-right: 10px
+}
+
+#toggle-click1 {
+    color: black;
+    font-size: 24px;
+    padding-right: 30px
+}
+.chat{background:#fff; position:relative;}
+
+.date-calendar {
+    color: #606060;
+    font-weight: 500;
+    padding-top: -50px;
+    font-size: 13px;
+}
+.job_title {
+    color: #606060;
+    font-weight: 500;
+    font-size: 16px;
+}
+.tweet-icon {
+    width: 28px;
+    padding-left: 4px;
+}
+    @media screen and (max-width: 991px) {
+        .interviewer-comment .talk-bubble {
         margin: 0px 10px 10px 10px;
         width: calc(100% - 10px) !important;
     }

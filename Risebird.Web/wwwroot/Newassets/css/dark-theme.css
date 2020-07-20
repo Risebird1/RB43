@@ -19,10 +19,10 @@ body {
 .tab_container {
     background: #000000 !important;
 }
-.counts-liks .fa-thumbs-down:before {
-    color: #9A9A9A !important
+#toggle-click1 {
+    color: #9A9A9A;
 }
-.counts-liks .fa-thumbs-up:before{color:#FFF!important}
+#toggle-click {color:#FFF;}
 
 .chart-box, .card {
     border: 1px #484444 solid !important;

@@ -2737,15 +2737,13 @@ label {
         width: 100%;
     }
 
-.form-control.valid,
-.bootstrap-select.valid > button {
-    border-color: #95b75d;
-}
 
 label.valid {
     color: #95b75d;
 }
-
+.border-db {
+    border-right: 1px #ddd solid !important
+}
 .control-label.text-left {
     text-align: left;
 }
