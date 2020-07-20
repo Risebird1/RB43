@@ -5,15 +5,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script src="~/assets/validations/jquery.unobtrusive-ajax.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
-
-@*
-    <script src="sweetalert2.all.min.js"></script>
-    <script src="sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="sweetalert2.min.css">*@
-
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -69,7 +60,7 @@
                                     </div>
                                     <div class="form-group dob">
                                         @Html.LabelFor(model => model.DOB, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @*@Html.EditorFor(model => model.DOB, null, new { htmlAttributes = new { id = "DOB", placeholder = "MM/dd/yyyy", @class = "form-control text-box single-line", type = "date" } })*@
+                                    
                                         @Html.TextBoxFor(m => m.DOB, null, new { id = "DOB", @class = "form-control text-box single-line", type = "date" })
                                         @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
                                     </div>
@@ -97,8 +88,7 @@
                                         @Html.EditorFor(model => model.Blog, new { htmlAttributes = new { id = "txt_Blog", @class = "form-control text-box single-line", @type = "text" } })
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @*@Html.EditorFor(model => model.IsLeadInterviewer, new { htmlAttributes = new { id = "txt_IsLeadInterviewer", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
+                                        @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })                                       
                                         @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]
                                                         {   new SelectListItem { Text = "No", Value = "false" },
                                                             new SelectListItem { Text = "Yes", Value = "true"} },
@@ -206,8 +196,7 @@
                                         |  Coded Resume
                                         <!--- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
 
-                                        <div class="mdc-touch-target-wrapper" style="top: 4px;
-    position: relative;">
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
                                             <div class="mdc-radio mdc-radio--touch">
                                                 <input class="mdc-radio__native-control" id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
                                                 <div class="mdc-radio__background">
@@ -227,22 +216,7 @@
                                         @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                     </div>
-                                    @*<div>
-                        @if (Model.ResumeLink != null)
-                        {
-                            <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Resume  </a>
-                        }
-                    </div>
-                    <div>
-                        @if (Model.CodedResumeLink != null)
-                        {
-                            <a id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink>Coded Resume</a>
-                        }
-                    </div>*@
-                                    @*@Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
-                    @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })*@
-                                    @*@Html.HiddenFor(m => m.ResumeLink, Model.ResumeLink)
-                    @Html.HiddenFor(m => m.CodedResumeLink, Model.CodedResumeLink)*@
+                                   
                                 </div>
                             </div>
                             <!-- INterviewer personal Details End-->
@@ -296,36 +270,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                                @*else
-                                {
-                                    for (int i = 0; i < Model.InterviewerSkill.Count(); i++)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillName, (SelectList)Model.SkillTypeList, new { id = "drp_SkillName", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerSkill[i].Category, (SelectList)Model.SkillCategoryList, new { id = "drp_Category", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerSkill[i].Ip, (SelectList)Model.SkillIPList, new { id = "drp_Ip", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerSkill[i].Level, (SelectList)Model.SkillExpertiseLevelList, new { id = "drp_Level", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillExperience, (SelectList)Model.SkillYearsOfExperienceList, new { id = "drp_SkillExperience", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerSkill[i].Nature, (SelectList)Model.SkillNatureList, new { id = "drp_Nature", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                            </td>
-                                        </tr>
-                                    }
-                                }*@
+                                               
                                             </tbody>
                                         </table>
                                         <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
@@ -374,31 +319,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                                @*else
-                                {
-                                    for (int i = 0; i < Model.InterviewerCertificateDetails.Count(); i++)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateID, null, new { id = "txt_CertificateID", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateName, null, new { id = "txt_CertificateName", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Version, null, new { id = "txt_Version", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Expirydate, null, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date" })
-                                            </td>
-                                            <td>
-                                                <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                            </td>
-                                        </tr>
-                                    }
-                                }*@
-
+                                               
                                             </tbody>
                                         </table>
                                         <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
@@ -473,44 +394,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                                @*else
-                                {
-                                    for (int i = 0; i < Model.InterviewerEducationDetails.Count(); i++)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationType, (SelectList)Model.GraduationTypeList, new { id = "drp_EducationType", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].Degree, (SelectList)Model.DegreeList, new { id = "drp_Degree", @class = "form-control text-box single-line" })
-                                            </td>
-
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationMode, (SelectList)Model.EducationModeList, new { id = "drp_EducationMode", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].CollegeType, (SelectList)Model.CollegeTypeList, new { id = "drp_CollegeType", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].UniversityName, null, new { id = "txt_UniversityName", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].PassOutYear, null, new { id = "txt_PassOutYear", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                <div class="checkbox checkbox-danger">
-                                                    @Html.CheckBoxFor(x => x.InterviewerEducationDetails[i].AnyGap, new { id = Html.NameFor(x => x.InterviewerEducationDetails[i].AnyGap) })
-                                                    <label for="@Html.NameFor(x => x.InterviewerEducationDetails[i].AnyGap)">Any Gap</label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-
-                                            </td>
-                                        </tr>
-                                    }
-                                }*@
+                                               
 
                                             </tbody>
                                         </table>
@@ -534,7 +418,7 @@
                                         <table class="table table-bordered mbn" id="projectTable">
                                             <thead>
                                                 <tr class="tableHeaderClass">
-                                                    @*<th width="15%" class="table_heading">TechnologyEnvironment</th>*@
+                                           
                                                     <th width="10%" class="table_heading">Is Primary Skill used In Recent Project</th>
                                                     <th width="50%" class="table_heading">Project Description</th>
                                                     <th width="10%" class="table_heading">Is Commercial Project</th>
@@ -546,9 +430,7 @@
                                                 @if (Model.InterviewerProjectsDetails == null || Model.InterviewerProjectsDetails.Count() == 0)
                                                 {
                                                     <tr>
-                                                        @*<td>
-                                            @Html.TextBox("InterviewerProjectsDetails[0].TechnologyEnvironment", null, new { @class = "form-control text-box single-line" })
-                                        </td>*@
+                                                       
                                                         <td>
                                                             <div class="mdc-checkbox">
                                                                 @Html.CheckBox(("InterviewerProjectsDetails[0].IsPrimarySkillUsed"), new { @class = "mdc-checkbox__native-control" })
@@ -562,9 +444,6 @@
                                                                     <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
                                                                 <div class="mdc-checkbox__ripple"></div>
-
-                                                                @*<label for="@Html.Name("InterviewerProjectsDetails[0].IsPrimarySkillUsed")">Is Primary Skill Used</label>*@
-
                                                             </div>
                                                         </td>
                                                         <td>
@@ -596,41 +475,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                                @*else
-                                {
-                                    for (int i = 0; i < Model.InterviewerProjectsDetails.Count(); i++)
-                                    {
-                                        <tr>*@
-                                                @*<td>
-                                    @Html.TextBoxFor(m => m.InterviewerProjectsDetails[i].TechnologyEnvironment, null, new { @class = "form-control text-box single-line" })
-                                </td>*@
-                                                @*<td>
-                                                <div class="checkbox checkbox-danger">
-                                                    @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed, new { id = Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed) })
-                                                    <label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed)">Is Primary Skill Used</label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].Description, new { id = "txt_Description", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                <div class="checkbox checkbox-danger">
-                                                    @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject, new { id = Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject) })
-                                                    <label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject)">Is Commercial Project</label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                @Html.DropDownListFor(M => M.InterviewerProjectsDetails[i].NatureOfProject, (SelectList)Model.NatureOfProjectList, new { id = "drp_NatureOfProjectList", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                <span id="btnMinus" onclick="deleteProjectTableRow(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-
-                                            </td>
-                                        </tr>
-                                    }
-                                }*@
-
+                                               
 
                                             </tbody>
                                         </table>
@@ -694,30 +539,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                                @*else
-                                {
-                                    for (int i = 0; i < Model.InterviewerAvailabilityDetails.Count(); i++)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, new { id = "drp_Weekday", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { id = "drp_Weekend", @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                <div class="checkbox checkbox-danger">
-                                                    @Html.CheckBoxFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays, new { id = Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays) })
-                                                    <label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                            </td>
-                                        </tr>
-                                    }
-                                }*@
+                                               
 
 
                                             </tbody>
@@ -769,44 +591,7 @@
                                         </div>
                                     </div>
                                 }
-                                @*else
-                {
-                    @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
-                    {
-                        <div class="col-md-2 col-sm-2 pr-1">
-                            <div class="form-group">
-                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountName, null, new { id = "txt_AccountName", @class = "form-control text-box single-line" })
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-2 px-1">
-                            <div class="form-group">
-                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { id = "txt_AccountNumber", @class = "form-control text-box single-line" })
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-2pr-1">
-                            <div class="form-group">
-                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].IFSCCode, null, new { id = "txt_IFSCCode", @class = "form-control text-box single-line" })
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-2 px-1">
-                            <div class="form-group">
-                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
-                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].UPIId, null, new { id = "txt_UPIId", @class = "form-control text-box single-line" })
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-2pr-1">
-                            <div class="form-group">
-                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
-                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].PAN, null, new { id = "txt_", @class = "form-control text-box single-line" })
-                                <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                            </div>
-                        </div>
-                    }
-
-                }*@
+                               
                                 <!-- Account Detilas End-->
                             </div>
                             <!-- Account Details End-->
@@ -828,9 +613,7 @@
 
 
                         }
-                        @*<div class=" col-md-3">
-            @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-        </div>*@
+                        
                     </div>
                 </div>
             </div>
@@ -930,20 +713,14 @@
         $form.data("validator", null);
 
         // Check document for changes
-        //$.validator.unobtrusive.parse(document);
+      
 
     }
 
        // For Certificate
 
         function addRowCertificateDetails() {
-        //var table = document.getElementById("certificateTable");
-        //var rowCount = table.rows.length;
-        //if (rowCount == 3) {
-        //    alert("Cannot add more than 2 Certificates");
-        //    return;
-        //}
-
+       
         var $ttc = $("#certificateTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#certificateTable tr").length - 1;
@@ -979,8 +756,6 @@
         $form.unbind();
         $form.data("validator", null);
 
-        // Check document for changes
-        //$.validator.unobtrusive.parse(document);
 
     }
 
@@ -1029,9 +804,7 @@
         $form.unbind();
         $form.data("validator", null);
 
-        // Check document for changes
-        //$.validator.unobtrusive.parse(document);
-
+        
     }
 
     // For Project 
@@ -1108,8 +881,6 @@
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
 
-
-
         // reset fields in the new row
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
@@ -1183,13 +954,6 @@
                         elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
                         elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
 
-                        //var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
-                        //elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
-                        //elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
-
-                        //var elem8 = document.getElementById(collectionName + "_" + i + "__" + tdEight);
-                        //elem8.id = collectionName + "_" + (i - 1) + "__" + tdEight;
-                        //elem8.name = collectionName + "[" + (i - 1) + "]." + tdEight;
                     }
 
                 }
@@ -1310,15 +1074,6 @@
             }
         }
 
-        
-
-
-        
-
-
-        
-
-
         function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
             if ($(element).parents('tbody').find('tr').length === 1) {
 
@@ -1362,180 +1117,6 @@
 
             }
         }
-
-        //function addProjectTableRow() {
-        //    var x = document.getElementById('projectTable');
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length:: " + rowLen);
-        //    if (rowLen > 3) {
-        //        alert("Cannot add more than 3 Projects Details.");
-        //        swal("Sweet Alert Called!!!!!!");
-        //        return;
-        //    }
-        //    else {
-        //        var new_row = x.rows[1].cloneNode(true);
-        //        x.appendChild(new_row);
-        //    }
-            
-
-        //}
-
-        //function deleteProjectTableRow(row) {
-        //    var x = document.getElementById('projectTable');
-        //    // get the total number of rows
-        //    var rowLen = x.rows.length;
-        //    //console.log("Row Length to delete:: " + rowLen);
-        //    if (rowLen == 2) {
-        //        alert('Must have atleast one Row');
-        //        return false;
-        //    }
-        //    else {
-        //        var i = row.parentNode.parentNode.rowIndex;
-        //        document.getElementById('projectTable').deleteRow(i);
-        //    }
-        //}
-
-        //function addRowProfessionalDetails() {
-        //    var x = document.getElementById('professionalDetailsTable');
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length:: " + rowLen);
-        //    if (rowLen > 3) {
-        //        swal("Cannot add row more than 3 Professional Details.");
-
-        //        return;
-        //    }
-        //    else {
-        //        var new_row = x.rows[1].cloneNode(true);
-        //        x.appendChild(new_row);
-        //    }
-        //}
-
-        //function deleteRowProfessionalDetails(row) {
-        //    var x = document.getElementById('professionalDetailsTable');
-        //    // get the total number of rows
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length to delete:: " + rowLen);
-        //    if (rowLen == 2) {
-        //        alert('Must have atleast one Row');
-        //        return false;
-        //    }
-        //    else {
-        //        var i = row.parentNode.parentNode.rowIndex;
-        //        document.getElementById('professionalDetailsTable').deleteRow(i);
-        //    }
-        //}
-
-        //function addRowEducationDetails() {
-        //    var x = document.getElementById('educationTable');
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length:: " + rowLen);
-        //    if (rowLen > 2) {
-        //        alert("Cannot add more than 2 Educational Detaiils.");
-        //        return;
-        //    }
-        //    else {
-        //        var new_row = x.rows[1].cloneNode(true);
-        //        x.appendChild(new_row);
-        //    }
-        //}
-
-        //function deleteRowEducationDetails(row) {
-        //    var x = document.getElementById('educationTable');
-        //    // get the total number of rows
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length to delete:: " + rowLen);
-        //    if (rowLen == 2) {
-        //        alert('Must have atleast one Row');
-        //        return false;
-        //    }
-        //    else {
-        //        var i = row.parentNode.parentNode.rowIndex;
-        //        document.getElementById('educationTable').deleteRow(i);
-        //    }
-        //}
-
-        //function addRowSkillDetails() {
-        //    var x = document.getElementById('skillTable');
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length:: " + rowLen);
-        //    if (rowLen > 14) {
-        //        alert("Cannot add more than 14 Skill Detaiils.");
-        //        return;
-        //    }
-        //    else {
-        //        var new_row = x.rows[1].cloneNode(true);
-        //        x.appendChild(new_row);
-        //    }
-        //}
-
-        //function deleteRowSkillDetails(row) {
-        //    var x = document.getElementById('skillTable');
-        //    // get the total number of rows
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length to delete:: " + rowLen);
-        //    if (rowLen == 2) {
-        //        alert('Must have atleast one Row');
-        //        return false;
-        //    }
-        //    else {
-        //        var i = row.parentNode.parentNode.rowIndex;
-        //        document.getElementById('skillTable').deleteRow(i);
-        //    }
-        //}
-
-
-        //function addAvailabilityDetails() {
-        //    var x = document.getElementById('availabilityDetailsTable');
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length:: " + rowLen);
-        //    if (rowLen > 14) {
-        //        alert("Cannot add more than 14 Availability Detaiils.");
-        //        return;
-        //    }
-        //    else {
-        //        var new_row = x.rows[1].cloneNode(true);
-        //        x.appendChild(new_row);
-        //    }
-        //}
-
-        //function deleteRowAvailabilityDetails(row) {
-        //    var x = document.getElementById('availabilityDetailsTable');
-        //    // get the total number of rows
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length to delete:: " + rowLen);
-        //    if (rowLen == 2) {
-        //        alert('Must have atleast one Row');
-        //        return false;
-        //    }
-        //    else {
-        //        var i = row.parentNode.parentNode.rowIndex;
-        //        document.getElementById('availabilityDetailsTable').deleteRow(i);
-        //    }
-        //}
-
-        //function addRowCertificateDetails() {
-        //    var x = document.getElementById('certificateTable');
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length:: " + rowLen);
-
-        //    var new_row = x.rows[1].cloneNode(true);
-        //    x.appendChild(new_row);
-        //}
-
-        //function deleteRowCertificateDetails(row) {
-        //    var x = document.getElementById('certificateTable');
-        //    var rowLen = x.rows.length;
-        //    console.log("Row Length to delete:: " + rowLen);
-        //    if (rowLen == 2) {
-        //        alert('Must have atleast one Row');
-        //        return false;
-        //    }
-        //    else {
-        //        var i = row.parentNode.parentNode.rowIndex;
-        //        document.getElementById('certificateTable').deleteRow(i);
-        //    }
-        //}
-
 
         function RadioChanged(val) {
             if (val == 'Upload') {
