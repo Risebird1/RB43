@@ -428,7 +428,7 @@
                         avtar.style.display = "block";
                         $('#divchatbox').scrollTop($('#divchatbox')[0].scrollHeight);
                         if (flag == true) {
-                        setTimeout(ChatConversation(''), 5000);
+                            setTimeout(ChatConversation(''), 5000);
                         }
                         else {
                             flag = true;
@@ -476,6 +476,7 @@
                 $(".modal-backdrop").addClass("display-none");
                 $($modal).toggleClass("min");
                 if ($($modal).hasClass("min")) {
+                    flag = false;
                     $(".minmaxCon").append($apnData);
                     $(this).find("i").toggleClass('fa-minus').toggleClass('fa-clone');
                 } else {
@@ -564,7 +565,6 @@
                     var html = '';
                     html += '<div class="row" style="padding: 10px 20px 10px 20px;" >';
                     html += '<div><div class="pull-left "><input placeholder="Enter name of user" type="text" id="txtgroupEmailid" class="input-box" /></div><div class="pull-left mdc-button mdc-button--raised mdc-ripple-upgraded add-btn-m "><input class="add-btn" type="button" value="Add User" onclick="AddUser(' + Id + ')" /></div></div>';
-
                     html += '</div>';
                     for (var i = 0; i < data.length; i++) {
 
@@ -572,15 +572,11 @@
                         html += '<div><div class="pull-left user-group">' + data[i].emailid + '</div><div class="pull-left"><input class="del-btn" type="button" value="Delete" onclick="DeleteUser(' + data[i].id + ',' + Id + ')" /></div></div>';
 
                         html += '</div>';
-
-
-
                     }
                     $("#divchatbox").empty().html(html);
                     $("#lblChatname").text('');
                     var avtar = document.getElementById("imgavtar");
                     avtar.style.display = "none";
-
                 }
             });
         }
