@@ -1,0 +1,238 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerProfessional
+@{
+    ViewData["Title"] = "Edit Employer Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Edit Interviewer Profile form</a>
+                <a class="navbar-brand">/ &nbsp; Edit Interviewer Profile </a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+        </div>
+    </nav>
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+
+                        @using (Html.BeginForm("EditEmployerDetails", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.AntiForgeryToken()
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2 style="margin-top:20px;">Employer Details</h2>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group" style="display:none">
+
+                                    @Html.Hidden("Id", Model.id)
+                                    @Html.Hidden("InterviewerProfileId", Model.InterviewerProfileId)
+                                    @*@{TempData["UserId"] = ViewBag.UserId;}*@
+                                </div>
+
+
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.CompanyName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-md-4 col-sm-4 px-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(m => m.Type, (SelectList)ViewBag.CompanyTypeList, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-md-4 col-sm-4 pl-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(m => m.CompanyStage, (SelectList)ViewBag.CompanyStageList, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Size, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(m => m.Size, (SelectList)ViewBag.CompanySizeList, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 col-sm-4 px-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.JobFunctionId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(model => model.JobFunctionId, (SelectList)ViewBag.JobFunction, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 col-sm-4 pl-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.IndustryId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(model => model.IndustryId, (SelectList)ViewBag.Industry, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    @*--company Head quarter*@
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Headquarters, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(m => m.Headquarters, (SelectList)ViewBag.CountryList, new { @class = "form-control text-box single-line" })
+                                    </div>
+
+
+                                </div>
+
+                                <div class="col-md-4 col-sm-4 px-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(m => m.Role, (SelectList)ViewBag.RoleList, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-md-4 col-sm-4 pl-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.EditorFor(model => model.Domain, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.SeniorityLevel, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(m => m.SeniorityLevel, (SelectList)ViewBag.SeniorityLevelList, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 col-sm-4 px-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.ExperienceId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(m => m.ExperienceId, (SelectList)ViewBag.ExperienceRange, new { @class = "form-control text-box single-line" })
+                                        @Html.ValidationMessageFor(model => model.ExperienceId, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-4 col-sm-4 pl-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.WorkNature, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(m => m.WorkNature, (SelectList)ViewBag.WorkNatureList, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-sm-4 pr-1">
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PrimaryResponsibility, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.DropDownListFor(m => m.PrimaryResponsibility, (SelectList)ViewBag.PrimaryResponsibilityList, new { @class = "form-control text-box single-line" })
+                                    </div>
+
+                                </div>
+                                <div class="col-md-4 col-sm-4 px-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CompanyLinkedinPage, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.EditorFor(model => model.CompanyLinkedinPage, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @*@Html.ValidationMessageFor(model => model.CompanyLinkedinPage, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-sm-4 pl-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CompanyWebsite, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.EditorFor(model => model.CompanyWebsite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @*@Html.ValidationMessageFor(model => model.CompanyWebsite, "", new { @class = "text-danger" })*@
+                                    </div>
+
+                                </div>
+                            </div>
+                  
+
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+       
+                                        @Html.ActionLink("Back to List", "IndexEmployer", "Interviewer", new { id = Model.InterviewerProfileId }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class=" container-fluid ">
+                <nav>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                Risebird
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                About Us
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Blog
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="copyright" id="copyright">
+                    &copy;
+                    <script>
+                        document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                    </script> Risebird All Rights Reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
