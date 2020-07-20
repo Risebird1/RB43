@@ -10,7 +10,9 @@ namespace Risebird.Business.Interface
        List<UserList> GetRisebirdUsers();
        List<ClientUserVM> GetClientUsers();
        List<InterviewerVM> GetInterviewers();
-       List<QCInterviewerVM> GetQCInterviewers();
+        List<InterviewerVM> GetInterviewersDetails();
+
+        List<QCInterviewerVM> GetQCInterviewers();
         IEnumerable<string> GetAllHrsEmailld();
       
         bool AddUser(UserList clientUser);
@@ -26,6 +28,9 @@ namespace Risebird.Business.Interface
         bool AddInterviewer(InterviewerVM interviewer);
         bool AddQCInterviewer(QCInterviewerVM qcinterviewer);
         InterviewerVM GetInterviewer(int id);
+        List<InterviewerVM> GetInterviewerVideos(string Emailid);
+
+
         bool DeleteInterviewer(int id);
         bool UpdateInterviewer(InterviewerVM interviewer);
         QCInterviewerVM GetQCInterviewer(int id);
