@@ -1050,7 +1050,7 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("Index", "Home", new { url = "AddReport/Interviewer/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected });
                 }
                 string profileName = HttpContext.Session.GetString("profileName");
-                profileName = "Interviewer";
+                
                 if (profileName != null)
                 {
                     profileName = profileName.Replace("\"", "");
