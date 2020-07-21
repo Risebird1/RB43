@@ -899,12 +899,10 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    profileName = "Interviewer";
                     if (profileName == "Interviewer")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        emailid = "Prashantindoliya@gmail.com";
                         var myInterview = _interviewerService.GetAssignedInterviewerAssessment(emailid);
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
@@ -1052,7 +1050,7 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("Index", "Home", new { url = "AddReport/Interviewer/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected });
                 }
                 string profileName = HttpContext.Session.GetString("profileName");
-                profileName = "Interviewer";
+                
                 if (profileName != null)
                 {
                     profileName = profileName.Replace("\"", "");
