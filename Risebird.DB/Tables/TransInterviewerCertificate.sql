@@ -5,9 +5,9 @@ BEGIN
 CREATE TABLE [dbo].[TransInterviewerCertificate](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[InterviewerProfileId] [int] NOT NULL,
-	[CertificateID] [nvarchar](200) NULL,
-	[CertificateName] [nvarchar](200) NULL,
-	[Version] [nvarchar](100) NULL,
+	[CertificateID] [varchar](200) NULL,
+	[CertificateName] [varchar](200) NULL,
+	[Version] [varchar](100) NULL,
 	[ExpiryDate] [datetime] NULL,
 	
 	CONSTRAINT [FK__IProfileID_Certificate] FOREIGN KEY (InterviewerProfileId) REFERENCES InterviewerProfile(id),

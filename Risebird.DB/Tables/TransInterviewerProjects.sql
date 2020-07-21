@@ -5,9 +5,9 @@ BEGIN
 CREATE TABLE [dbo].[TransInterviewerProjects](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[InterviewerProfileId] [int] NOT NULL,
-	[TechnologyEnvironment] [nvarchar](200) NULL,
+	[TechnologyEnvironment] [varchar](200) NULL,
 	[IsPrimarySkillUsed] [bit] NULL,
-	[Description] [nvarchar](max) NULL,
+	[Description] [varchar](2000) NULL,
 	[IsCommercialProject] [bit] NULL,
 	[NatureOfProject] [varchar](50) NULL,
 	

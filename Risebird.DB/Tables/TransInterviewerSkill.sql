@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[TransInterviewerSkill](
 	[Category] [varchar](150) NULL,
 	[Ip] [varchar](150) NULL,
 	[Level] [varchar](50) NULL,
-	[SkillExperience] [nvarchar](50) NULL,
+	[SkillExperience] [varchar](50) NULL,
 	[Nature] [varchar](50) NULL,
 	
 	CONSTRAINT [FK__IProfileID] FOREIGN KEY (InterviewerProfileId) REFERENCES InterviewerProfile(id),
@@ -23,48 +23,4 @@ CREATE TABLE [dbo].[TransInterviewerSkill](
 
 END
 
-ELSE
-BEGIN
-
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'Category')
-      AND Object_ID = Object_ID(N'TransInterviewerSkill'))
-BEGIN
-    ALTER TABLE TransInterviewerSkill
-    Add Category varchar(150) NULL
-END
-
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'Ip')
-      AND Object_ID = Object_ID(N'TransInterviewerSkill'))
-BEGIN
-    ALTER TABLE TransInterviewerSkill
-    Add Ip varchar (150) NULL,
-END
-
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'SkillExperience')
-      AND Object_ID = Object_ID(N'TransInterviewerSkill'))
-BEGIN
-    ALTER TABLE TransInterviewerSkill
-    Add SkillExperience nvarchar (50) NULL,
-END
-
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'Nature')
-      AND Object_ID = Object_ID(N'TransInterviewerSkill'))
-BEGIN
-    ALTER TABLE TransInterviewerSkill
-    Add Nature varchar (50) NULL
-END
-
-
-End
+GO

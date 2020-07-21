@@ -398,7 +398,7 @@
 
                         @using (Html.BeginForm("ImportCandidates", "IRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
-                            <div class="form-group">
+                        <div class="form-group">
 
                                 <!--   <label class="uploadfile" for="UploadedFile">
                                     <b>
@@ -408,32 +408,32 @@
                                 </label>-->
 
 
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" for="UploadedFile" style="margin:0px auto; display:block;">
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" for="UploadedFile" style="margin:0px auto; display:block;">
 
-                                    <span class="mdc-button__label"><span class="fa fa-file"><font style=" font-family: Roboto, sans-serif; font-size:12px;">   Click here to choose file</font></span></span>
-                                    <div class="mdc-button__ripple"></div>
-                                </button>
-
-
+                                <span class="mdc-button__label"><span class="fa fa-file"><font style=" font-family: Roboto, sans-serif; font-size:12px;">   Click here to choose file</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
 
 
 
 
 
-                                <input type="file" accept=".xls, .xlsx" name="UploadedFile" />
-                            </div>
-                            <div class="">
-                                <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;
+
+
+                            <input type="file" accept=".xls, .xlsx" name="UploadedFile" />
+                        </div>
+                        <div class="">
+                            <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;
     display: block;" id="btnImport" value="Import">
-                            </div>
-                            <input type="hidden" id="IRFId" name="IRFId" value='@ViewBag.IRFId'>
-                            <input type="hidden" id="IRFName" name="IRFName" value='@ViewBag.IRFName'>
+                        </div>
+                        <input type="hidden" id="IRFId" name="IRFId" value='@ViewBag.IRFId'>
+                        <input type="hidden" id="IRFName" name="IRFName" value='@ViewBag.IRFName'>
 
-                        }
+                    }
 
 
-                    </div>
-                    <div class="modal-footer" style="background:#fff;"></div>
+                </div>
+                <div class="modal-footer" style="background:#fff;"></div>
                 </div>
 
             </div>

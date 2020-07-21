@@ -8,7 +8,7 @@ CREATE TABLE [dbo].[TransInterviewerSkillsGeneralSkills](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[InterviewerSkillId] [int] NOT NULL,
 	[Type] [varchar](50) NULL,
-	[Value] [varchar](max) NULL,
+	[Value] [varchar](2000) NULL,
 	[LevelId] [int] NULL,
 	[Weightage] [int] NULL,
  CONSTRAINT [PK_TransInterviewerSkillsGeneralSkills] PRIMARY KEY CLUSTERED 

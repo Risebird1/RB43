@@ -5,7 +5,7 @@ WHERE TABLE_NAME = N'InterviewerSkillsChannel')
 BEGIN 
 CREATE TABLE [dbo].[InterviewerSkillsChannel](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[InterviewerSkillId] [nvarchar](max) NULL,
+	[InterviewerSkillId] [varchar](200) NULL,
 	[JDTiltle] [nvarchar](500) NULL,
 	[StartDate] [datetime] NOT NULL,
 	[EndDate] [datetime] NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[InterviewerSkillsChannel](
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+) ON [PRIMARY] 
 
 
 END
