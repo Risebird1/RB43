@@ -54,4 +54,5 @@ join Userlist ul on ul.EmailId=InterviewMeetings.candidateEmail
 left join InterviewerProfile ca on ca.UserId =ul.id      
 WHERE        
       [InterviewMeetings].id = @interviewId        
-End        
+End       
+go
