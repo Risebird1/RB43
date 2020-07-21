@@ -110,12 +110,18 @@
                             <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
-                                        <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title" id="filterModalLabel"> Filter</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                                       
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+
                                         <form action="@Url.Action("MyInterview","Interview")" method="post" id="form">
 
                                             <div class="modal-body">
@@ -232,8 +238,8 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="form-group col-md-12">
-                                                            <div class="row">
+                                                        <div class="form-group">
+                                                            <div>
                                                                 <div class="col-md-12 col-sm-12">
 
 
@@ -278,9 +284,12 @@
                                                 <th>Zoom ID</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
+                                                <th>Co-ordinating HR</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
-                                                <th style="text-align:center">Call</th>
+                                                <th style="text-align:center">Call Candidate</th>
+                                                <th style="text-align:center">Call Co-ordinating HR</th>
                                             </tr>
+
                                         </thead>
                                         <tfoot>
                                             <tr>
@@ -296,8 +305,10 @@
                                                 <th>Zoom ID</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
+                                                <th>Co-ordinating HR</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
-                                                <th style="text-align:center">Call</th>
+                                                <th style="text-align:center">Call Candidate</th>
+                                                <th style="text-align:center">Call Co-ordinating HR</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -354,6 +365,7 @@
                                                     <td> @item.risebirdHR</td>
                                                     <td>@item.MeetingStatusDesc</td>
                                                     <td>@item.InterviewStatusDesc</td>
+                                                    <td>@item.HRCoordinatorEmailId</td>
                                                     <td class="text-right">
                                                         @if (item.interviewDate.Date >= DateTime.Now.Date)
                                                         {
@@ -374,18 +386,31 @@
 
 
                                                     </td>
-                                                    <td class="callcandidatebtn">
+                                                    <td class="callcandidatebtn" style="text-align:center">
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                         {
 
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
-                                                                <span onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                <span onclick="ModalButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                             </button>
 
 
                                                         }
-
+                                                        
                                                     </td>
+                                                    <td style="text-align:center">
+                                                        @if (item.HRMobileNumber != null && item.HRMobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                        {
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to call the candidate.">
+                                                                <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber')" data-original-title="Tooltip on top" title="Click here to call the candidate." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                            </button>
+
+
+                                                        }
+                                                        
+                                                    </td>
+
                                                 </tr>
                                             }
                                         </tbody>
@@ -401,14 +426,13 @@
                 </div>
                 <!-- end col-md-12 -->
             </div>
-            <div id="myModal" class="modal modal-bg">
+            <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
                 <!-- Modal content -->
-
-                <div class="modal-bg">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Call Candidate!</h5>
-                            <span class="close" id="callPopUp">&times;</span>
+                        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                            <h5 class="modal-title" style="font-size:20px;">Call!</h5>
+                            <span style="cursor:pointer;" class="close" id="callPopUp">&times;</span>
                         </div>
                         <div class="modal-body" style="padding: 2px 16px;">
                             <div class="row">
@@ -420,14 +444,17 @@
                                 <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
                             </div>
                         </div>
+                        <div class="modal-footer" style="padding: 2px 16px;
+        background-color: #fff;
+        color: white;">
 
+                        </div>
                     </div>
 
-
                 </div>
-
-
             </div>
+
+            
             <!-- end row -->
         </div>
 
@@ -588,7 +615,7 @@
     //// script for loader ends here
 </script>
 <script>
-    var candidate = "";
+    var receiver = "";
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -608,7 +635,7 @@
 
     });
 
-    function callCandidate(phoneNumber) {
+    function call(phoneNumber) {
         var params = { "phoneNumber": phoneNumber };
         Twilio.Device.connect(params);
     }
@@ -617,7 +644,7 @@
     }
 
     Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        var appendText = "In call with " + "<b>" + receiver + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
     });
 
@@ -632,17 +659,18 @@
         setTimeout(afterTimeOut, 2000);
 
     });
-
-    function ModalButtonClick(candidateObj) {
-        candidate = candidateObj.candidateName;
+    
+    function ModalButtonClick(name, phone) {
+        receiver = name;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal
         modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        var appendText = "Calling... " + "<b>" + receiver + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
-        callCandidate(candidateObj.MobileNumber);
+        call(phone);
     }
+
     function closeCallPopUp() {
         hangUp();
         var modal = document.getElementById("myModal");

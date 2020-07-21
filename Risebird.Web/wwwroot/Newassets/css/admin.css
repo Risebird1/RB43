@@ -48,7 +48,7 @@ textarea::-webkit-scrollbar-thumb {
     -webkit-appearance: none !important;
     appearance: none !important;
     background-color: #fff;
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat !important;
     /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
     background-position: right .7em top 50%, 0 0 !important;
@@ -98,7 +98,7 @@ select {
 /* Disabled styles */
 .select-css:disabled, .select-css[aria-disabled=true] {
     color: graytext;
-    background-image: url('https://static.thenounproject.com/png/3012911-200.png') !important;
+    background-image: url('../../img/drop.png');
     background-repeat: no-repeat;
 }
 
@@ -407,15 +407,6 @@ div.dataTables_wrapper div.dataTables_filter label{position:relative;}
 }
 
 
-
-
-
-.pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-    background-color: #4e9bea !important;
-    border-color: #4e9bea;
-    color: #FFFFFF;
-}
-
 .fa-spinner {
     font-size: 18px;
     position: relative;
@@ -454,7 +445,7 @@ div.dataTables_wrapper div.dataTables_filter label{position:relative;}
 }
 
 .sidebar:after, .off-canvas-sidebar:after {
-    background: #42a5f5 !important;
+    background: #42a5f5;
 }
 
 
@@ -464,15 +455,15 @@ div.dataTables_wrapper div.dataTables_filter label{position:relative;}
 }
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-    background: #42a5f5 !important;
+    background: #42a5f5;
     font-family: Roboto, sans-serif;
     font-size: 12px;
     text-decoration: none;
 }
 
 .mdc-button--outlined:not(:disabled) {
-    border-color: #42a5f5 !important;
-    color: #42a5f5 !important;
+    border-color: #42a5f5;
+    color: #42a5f5;
 }
 .mc-button-area {
     text-align: right
@@ -482,14 +473,6 @@ div.dataTables_wrapper div.dataTables_filter label{position:relative;}
     color: #53a5f5 !important;
 }
 
-.mdc-card .modal .form-control, .mdc-card .form-control {
-    border: 0;
-    border-radius: 4px 4px 0 0;
-    background: whitesmoke;
-    height: 40px;
-    font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-}
 
     .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
         border-bottom: 2px rgb(80, 158, 235) solid;

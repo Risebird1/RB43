@@ -770,7 +770,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        //TODO need to check
         public int GetUserId(string emailId, string profile)
         {
             int result = 0;
@@ -799,6 +799,7 @@ namespace Risebird.Repository
                 return result;
             }
         }
+        //TODO need to check
         public bool AddUnApprovedInterviewer(IEnumerable<UnApprovedInterviewer> model, int iscId)
         {
             try
@@ -827,6 +828,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        //TODO Need to check
         public bool AddInterviewer(InterviewerSkillsVM Model)
         {
             try

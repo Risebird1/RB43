@@ -1,0 +1,538 @@
+﻿@model Risebird.Entities.ViewModel.CuratedIndexVM
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Curated Groups Channel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string[] CuratedGroupName = new string[] { };
+    string[] SubscriptionStatus = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("CuratedIndexFilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<CuratedIndexFilter>(HttpContextAccessor.HttpContext.Session.GetString("CuratedIndexFilters"));
+    CuratedGroupName = filter.CuratedGroupName != null ? filter.CuratedGroupName : new string[] { };
+    SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
+   
+}
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+
+                        <div class="row">
+
+
+                            <div class="card-header">
+                                <div class="pull-left"> <h4 class="card-title"> Curated Groups Channel</h4></div>
+
+                                <div class="pull-right">
+                                    <div>
+
+                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+
+                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                <div class="mdc-button__ripple"></div>
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                       
+
+
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true"  style="cursor:pointer;">&times;</span>
+                                        </button>
+
+
+
+
+
+
+                                        <form action="@Url.Action("CuratedIndex","IRF")" method="post" id="form">
+
+                                            <div class="modal-body">
+                                                <div class="row">
+
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CuratedGroupName">Skills</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CuratedGroupName" name="CuratedGroupName" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.CuratedData.Select(x => x.CuratedGroupName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.CuratedData.Select(x => x.SubscriptionStatus).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12">
+
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+
+
+
+                                                                </div>
+
+                                                            </div>
+
+
+
+                                                        </div>
+                                                    </div>
+                                                    
+
+
+
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        <!-- end content-->
+                        <!--  end card  -->
+                        <!-- end col-md-12 -->
+                        <!-- Start Card -->
+
+                        <div class="row">
+                            @foreach (var item in Model.CuratedData)
+                            {
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                    <div class="card-content-holder border card-blue">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class=" col-md-6 col-sm-6 first">
+                                                    <h6> @item.CuratedGroupName <span class="pskill" title="@item.CuratedGroupName"></span></h6>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- irf body-->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="statusImg">
+                                                    <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                </div>
+                                                <div class="statusInfo">
+                                                    <div class="group inner list-group-item-text">
+                                                        <div class="row ">
+                                                            <span>Total Skills Channel:</span> @item.TotalIRFs
+                                                        </div> <br />
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-footer action">
+                                            <div class="row">
+
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 " id="irf-card-footer">
+
+                                                    @if (@item.Status == "Active")
+                                                    {
+                                                        <h6 style="color: green;"> @item.Status</h6>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h6 style="color: black;"> @item.Status</h6>
+                                                    }
+                                                </div>
+
+                                                <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
+
+                                                    @if (item.SubId != null)
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute allcur" aria-label="All">
+                                                                <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="ALL"})'" title="All Selected Candidates" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
+                                                                <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
+
+
+
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute allintsent" aria-label="Interest-Sent">
+                                                                <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="Intrested"})'" title="Interest-Sent Candidates" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute allintac" aria-label="Interest-Accept">
+                                                                <span onclick="location.href='@Url.Action("VideoPageCurated", "RiseTube",new { curatedGroupId = item.CuratedGroupId, actionstatus="Accept"})'" title="Interest-Accept Candidates" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                        <button class="mdc-fab app-fab--absolute subc" aria-label="Unsubscribe">
+                                                            <span onclick="javascript:UnSubscribe('@item.CuratedGroupId', '@item.CuratedGroupName');" title="Unsubscribe" class="mdc-fab__icon material-icons">
+                                                                <i style="font-size:16px;" class="far fa-bell-slash"></i>
+                                                            </span>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
+                                                            <span onclick="javascript:Subscribe('@item.CuratedGroupId', '@item.CuratedGroupName')" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
+                                                        </button>
+                                                    }
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- End Card-->
+                        <!-- end row -->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+@if (Model.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@Model.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@Model.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/IRF/Index';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@Model.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function () {
+                        window.location.href = '/IRF/Index';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+<script>
+    $(document).ready(function () {
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        });
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+        $("#CuratedGroupName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#SubscriptionStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+    });
+
+    function ResetFilter() {
+        window.location.href = "/IRF/ResetCuratedIndexFilter";
+
+    }
+
+    function ApplySessionFilter() {
+        var curatedGroupName =  @Html.Raw(Json.Serialize(CuratedGroupName));
+        var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
+        $("#CuratedGroupName").val(curatedGroupName);
+        $("#SubscriptionStatus").val(subscriptionStatus);
+        var form = $("#form").serialize();
+
+    }
+    
+</script>
+
+<script type="text/javascript">
+
+    function DeleteIRF(dataID) {
+
+        var IdIRF = dataID;
+        swal.fire({
+            title: 'Are you sure?',
+            text: "It will be archived!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, archive it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    var IdIRF = dataID;
+                    $.ajax({
+                        url: '/IRF/DeleteIRF?id=' + IdIRF,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error archiving!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Archived!',
+                    type: 'success',
+                    html: '<p>IRF has been archived.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been archived! :)',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+
+    function Subscribe(id, name) {
+
+        swal.fire({
+            title: 'Subscribe!',
+            text: "Subscribe to " + name + '?',
+            type: 'primary',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/Subscribe?id=' + id,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error subscribing!", "Please try again.", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Subscribed!',
+                    type: 'success',
+                    html: '<p>Subscribed to ' + name + '.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/CuratedIndex";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    '',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+
+    function UnSubscribe(id, name) {
+
+        swal.fire({
+            title: 'Unsubscribe!',
+            text: "Are you sure you want to unsubscribe " + name + '?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/UnSubscribe?id=' + id,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error unsubscribing!", "Please try again.", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Unsubscribed!',
+                    type: 'success',
+                    html: '<p>Unsubscribed ' + name + '.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/CuratedIndex";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    '',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+
+    function UnArchiveIRF(id) {
+
+        var url = '/IRF/UnArchiveIRF?id=' + id;
+        window.location.href = url;
+    };
+
+
+</script>

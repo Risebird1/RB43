@@ -119,7 +119,7 @@
                                     @Html.TextBoxFor(m => m.ProjectIRFMappings[i].IRFId, new { @class = "form-control", @readonly = "readonly"})
 
                                 </td>*@
-                                                <td class="text-center"> <a style="color:#007bff;" id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
+                                                <td class="text-center"> <a  id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
                                                 <td class="text-center" width="30%">@Model.AccountProjectMappings[i].Client</td>
                                                 <td class="text-center" width="20%">
                                                  <div class="mdc-form-field m10-b">

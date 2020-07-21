@@ -1408,7 +1408,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return RedirectToAction("Index");
-                return RedirectToAction("Index");
+              
             }
         }
 
@@ -4279,16 +4279,26 @@ namespace Risebird.Web.Controllers
 
         public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment, bool movetoCP)
         {
-            var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment, movetoCP);
-            if (result)
+            try
             {
-                TempData["SuccessErrorMessage"] = "Saved Successfully";
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment, movetoCP, emailid);
+                if (result)
+                {
+                    TempData["SuccessErrorMessage"] = "Saved Successfully";
 
+                }
+                else
+                    TempData["SuccessErrorMessage"] = "Failed";
+
+                return result;
             }
-            else
-                TempData["SuccessErrorMessage"] = "Failed";
-
-            return result;
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
 
         }
 

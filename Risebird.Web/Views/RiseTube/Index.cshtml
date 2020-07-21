@@ -120,14 +120,17 @@
                             <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
-                                        <div class="modal-header br-bm">
-                                            <h5 class="modal-title btn3 w-color" id="filterModalLabel"> Filter</h5>
-                                            <button type="button" class="close " data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                         <form action="@Url.Action("Index","risetube")" method="post" id="form">
-
+                                           
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -363,44 +366,22 @@
                                                         </div>
                                                     }
                                                     <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group col-md-12">
+                                                        <div class="form-group">
 
 
-                                                            <div class="row">
+                                                            <div>
                                                                 <div class="col-md-12 mc-button-area text-right">
 
                                                                     <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
-                                                                      Reset Filter
+                                                                        Reset Filter
                                                                     </button>
-
-
-                                                                    <!--<button type="button" id="ResetFilter" style="float:right;margin-top: 39px;" class="buttons button-2 button-2b">Reset Filter</button>-->
-
-
 
                                                                     <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
-                                                                      Apply Filter
+                                                                        Apply Filter
                                                                     </button>
-
-
-
-
-
-
-
-
-                                                                    <!--  <button type="submit" style="margin-top: 40px; float:right" class="buttons button-2 button-2b">Apply Filter</button>-->
                                                                 </div>
 
                                                             </div>
-
-
-
-
-
-
-
-
 
 
                                                         </div>
@@ -452,7 +433,7 @@
                                                 <div class="video-card-body">
                                                     <div class="video-title">
                                                         <a onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;">@item.candidateName </a>
-                                                        <span style="  color: #606060; font-weight: 500;font-size: 14px;">(@item.JDTiltle.Split("|")[0])</span>
+                                                        <span class="designation">(@item.JDTiltle.Split("|")[0])</span>
                                                     </div>
 
                                                     <div class="video-page text-success">

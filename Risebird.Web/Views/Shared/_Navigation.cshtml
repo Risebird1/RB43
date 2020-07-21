@@ -4,9 +4,23 @@
 @using Microsoft.AspNetCore.Http
 @using System.Security.Principal
 @inject IHttpContextAccessor HttpContextAccessor
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+@if (HttpContextAccessor.HttpContext.Session.GetString("Currenttheme") != null)
+{
 
+    @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")))
+    {
+
+        <link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/blue-theme.css" />
+    }
+    else
+    {
+     
+        <link rel="stylesheet" type="text/css" id="theme" href="@HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")" />
+
+    }
+
+}
 <div class="sidebar" data-color="blue">
     <!--
         Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"
@@ -15,7 +29,7 @@
         <a href="#" class="simple-text logo-mini">
             Rb
         </a>
-        <a href="#" class="simple-text logo-normal" >
+        <a href="#" class="simple-text logo-normal">
             Risebird
         </a>
         <div class="navbar-minimize">
@@ -38,11 +52,11 @@
                         {
                             var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
                             var email = emailid.Trim('"');
-                    <span>
-                        @email
+                            <span>
+                                @email
 
-                        <b class="caret"></b>
-                    </span>
+                                <b class="caret"></b>
+                            </span>
 
                         }
                         else
@@ -50,19 +64,19 @@
                             <span>
                                 "Logged In User";
                                 <b class="caret"></b>
-                            </span>                            
+                            </span>
                         }
                     }
-                    
+
                 </a>
                 <div class="clearfix"></div>
                 <div class="collapse" id="collapseExample">
                     <ul class="nav">
-                     
+
                         <li><a asp-area="" asp-controller="Session" asp-action="SignOut">Sign out</a></li>
                     </ul>
-                        
-                    </div>
+
+                </div>
             </div>
         </div>
 

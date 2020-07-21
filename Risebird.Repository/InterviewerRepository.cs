@@ -1397,27 +1397,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    //DataTable questionsDt = new DataTable();
-                    //questionsDt.Columns.Add("InterviewId", typeof(int));
-                    //questionsDt.Columns.Add("Comment", typeof(string));
-                    //questionsDt.Columns.Add("RatingId", typeof(int));
-                    //questionsDt.Columns.Add("Timing", typeof(int));
-                    //questionsDt.Columns.Add("SkillName", typeof(string));
-                    //foreach (var item in reportDetails.QuestionsCollection)
-                    //{
-                    //    questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
-                    //}
-
-                    //SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con);
-                    //cmdQuestions.CommandType = CommandType.StoredProcedure;
-                    //cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
-                    //cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
-                    //con.Open();
-                    //if (cmdQuestions.ExecuteNonQuery() != 0)
-                    //{
-                    //    con.Close();
-                    //}
-
+                  
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportRecommendation", parametersRecomm,

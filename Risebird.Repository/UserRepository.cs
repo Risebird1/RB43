@@ -1046,5 +1046,32 @@ namespace Risebird.Repository
         }
 
 
+        public string GetCurrenttheme(string emailid)
+        {
+
+            try
+            {
+                string connectionString = _configuration["ConnectionString:DBConnectionString"];
+            
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var query = "Select Usertheme  from UserList where EmailId = @id";
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@id", emailid);
+                        var results = con.Query<string>(query, parameters);
+                    // return result;
+                    return results.FirstOrDefault();
+                    }
+             
+             
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+
+            return "";
+        }
+
     }
 }

@@ -1106,11 +1106,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SubscribeIRF(int id, string emailId, string profile)
+        public async Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile)
         {
             try
             {
-                return _irfRepository.SubscribeIRF(id, emailId, profile).Result;
+                return _irfRepository.SubscribeCuratedGroup(id, emailId, profile).Result;
             }
 
             catch (Exception e)
@@ -1119,11 +1119,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> UnSubscribeIRF(int id, string emailId, string profile)
+        public async Task<bool> UnSubscribeCuratedGroup(int id, string emailId, string profile)
         {
             try
             {
-                return _irfRepository.UnSubscribeIRF(id, emailId, profile).Result;
+                return _irfRepository.UnSubscribeCuratedGroup(id, emailId, profile).Result;
             }
 
             catch (Exception e)
@@ -1143,6 +1143,128 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public IEnumerable<CuratedGroup> GetAllCuratedGroups()
+        {
+            try
+            {
+                return _irfRepository.GetAllCuratedGroups().Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping()
+        {
+            try
+            {
+                return _irfRepository.GetIRFListForCuratedMapping();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails)
+        {
+            try
+            {
+                curatedGroupDetails.CuratedIRFMappings = curatedGroupDetails.CuratedIRFMappings.Where(x => x.IsAdded == true).ToList();
+                return _irfRepository.AddCuratedGroup(curatedGroupDetails).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public CuratedGroup GetCuratedGroupMappingsById(int curatedGroupId)
+        {
+            try
+            {
+                var cgModel = new CuratedGroup();
+                var list = _irfRepository.GetCuratedGroupMappingsById(curatedGroupId).Result;
+                var mappings = list.Where(x => x.IsAdded).ToList();
+                mappings.AddRange(list.Where(x => !x.IsAdded));
+                cgModel.CuratedIRFMappings= (IList<CuratedIRFMapping>)(mappings);
+                cgModel.Name = cgModel.CuratedIRFMappings.FirstOrDefault().CuratedGroupName;
+                cgModel.id = curatedGroupId;
+                return cgModel;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool UpdateCuratedGroup(CuratedGroup model)
+        {
+            try
+            {
+                model.CuratedIRFMappings = model.CuratedIRFMappings.Where(x => x.IsAdded == true).ToList();
+                return _irfRepository.UpdateCuratedGroup(model).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public CuratedGroupUsersVM GetCuratedGroupUsers(int curatedGroupId)
+        {
+            try
+            {
+                var model = new CuratedGroupUsersVM();
+                model.CuratedGroupUserList = (IList<CuratedGroupUsers>)_irfRepository.GetCuratedGroupUsers(curatedGroupId).Result;
+                model.CuratedGroupName = model.CuratedGroupUserList.FirstOrDefault().CuratedGroupName;
+                model.CuratedGroupId = model.CuratedGroupUserList.FirstOrDefault().CuratedGroupId;
+                return model;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model)
+        {
+            try
+            {
+                model.CuratedGroupUserList = model.CuratedGroupUserList.Where(x => x.IsAdded == true).ToList();
+                return _irfRepository.AddUpdateCuratedGroupUsers(model).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public IEnumerable<CuratedUserGroupData> GetCuratedGroupsForCuratedUser(string emailId)
+        {
+            try
+            {
+                return _irfRepository.GetCuratedGroupsForCuratedUser(emailId).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
 

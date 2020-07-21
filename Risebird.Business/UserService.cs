@@ -536,7 +536,17 @@ namespace Risebird.Business
             }
         }
 
-
+        public string GetCurrenttheme(string emailId)
+        {
+            try
+            {
+                return _userRepository.GetCurrenttheme(emailId);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
 
     }
 }

@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[TransInterviewerSkillsSelectablity](
 	[InterviewerSkillId] [int] NOT NULL,
 	[LevelId] [int] NOT NULL,
 	[Type] [varchar](200) NULL,
-	[Value] [varchar](max) NULL,
+	[Value] [varchar](2000) NULL,
 	[Weightage] [int] NULL,
  CONSTRAINT [PK_TransInterviewerSkillsSelectablity] PRIMARY KEY CLUSTERED 
 (
