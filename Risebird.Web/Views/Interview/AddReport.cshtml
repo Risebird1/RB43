@@ -1,5 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewReport
-@using System.Text.RegularExpressionsbtn-minus
+@using System.Text.RegularExpressions
 
 @{
     ViewData["Title"] = "Interview Report";
@@ -251,7 +251,8 @@
                                                             @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line  scrollbar" }, @style = "height: 86px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters" })
                                                         </div>
                                                     </div>
-                                                  
+                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                    @*@Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })*@
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
@@ -278,7 +279,7 @@
                                                 <div class="choose-file">
                                                     <label class="file-lable"> Upload Thumbnail Image File</label>
 
-                                                    
+                                                    @*<div class="form-group">*@
                                                     @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                                     @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control", @accept = ".jpeg, .png" })
                                                     @{
@@ -287,12 +288,16 @@
                                                             <a id="audioId" target="_blank" title="Image" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Image</a>
                                                         }
                                                     }
-
+                                                   
                                                 </div>
                                             </div>
 
-
+                                        
                                         </div>
+
+
+
+
 
 
                                     </div>
@@ -319,6 +324,10 @@
 
                                                     Add a link
 
+
+
+
+
                                                     <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
                                                         <div class="mdc-radio mdc-radio--touch">
                                                             <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
@@ -329,6 +338,12 @@
                                                             <div class="mdc-radio__ripple"></div>
                                                         </div>
                                                     </div>
+
+
+
+
+
+
 
                                                     <div class="" style="display:none" id="linkDiv">
                                                         @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -386,7 +401,7 @@
                                                 </div>
                                                 <div class="row" id="recordingRow" style="display:none">
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
-                                                     
+                                                        @*<h3 style="background-color:antiquewhite">Recordings</h3>*@
                                                         <div id="recordingsList"></div>
                                                     </div>
 
@@ -396,6 +411,10 @@
                                                 </div>
 
                                             </div>
+
+
+
+
 
                                         </div>
 
@@ -538,7 +557,7 @@
                                                 }
                                             }
                                         </p>
-
+                                       
 
                                     </div><!--end of col-md-12-->
 
@@ -596,6 +615,13 @@
 
 
 
+
+                                                                <!-- <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+         <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+     </button>-->
+
+
+
                                                             </td>
                                                         </tr>
                                                     }
@@ -629,6 +655,9 @@
                                                                     <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                     <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
+                                                                  
+
+
 
 
 
@@ -646,7 +675,8 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                       
+                                        <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
+
                                     </div><!--end of col-md-12-->
 
                                 </div>
@@ -1225,7 +1255,7 @@
                                                         </td>
                                                         <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-
+                                                            @*<input class="form-control text-box single-line" id="Proctoring_LinkedInPhotoVerification" name="Proctoring.LinkedInPhotoVerification" type="number" min="0" value="0">*@
 
                                                         </td>
 
@@ -1274,12 +1304,12 @@
                                             {
                                                 if (Model.IsEdited)
                                                 {
-                                                  
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>*@
                                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="SubmitForm()">Save</button>
                                                 }
                                                 else
                                                 {
-                                                  
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>*@
                                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
                                                 }
                                             }
@@ -1512,6 +1542,7 @@
         //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = average;
 
+      
         am4core.ready(function () {
 
             // Themes begin
@@ -1805,7 +1836,7 @@
 
     function CheckQuestionsTiming() {
      var interviewStatusElem = document.getElementById("InterviewStatus");
-        if (interviewStatusElem.value == 2||interviewStatusElem.value == 3|| interviewStatusElem.value == 4)
+        if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4)
         {
         var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
         var oldVal = $("#QuestionsCollection_0__Timing").val();
@@ -2044,6 +2075,9 @@
 
         totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = totalScore;
+
+
+      
 
         am4core.ready(function () {
 
