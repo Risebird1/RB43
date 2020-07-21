@@ -74,7 +74,7 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                @*    @Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                               
                                                 @Html.TextAreaFor(model => model.InterviewerComment, new { @class = "form-control cmt-ht" })
 
                                                 @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
@@ -82,7 +82,6 @@
                                         </div>
                                         <div class="col-md-6 col-sm-6 pl-1">
 
-                                            @*<div class="form-group">*@
                                             @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                             @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control" })
                                             @{
@@ -92,8 +91,8 @@
                                                 }
                                             }
 
-                                            @*</div>*@
-                                            @*<div class="form-group">*@
+                                           
+                                            
                                             @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
                                             @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control " })
@@ -104,7 +103,7 @@
                                                 }
                                             }
 
-                                            @*</div>*@
+                                          
                                         </div>
                                     </div>
 
@@ -152,7 +151,7 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.HRComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                @* @Html.EditorFor(model => model.HRComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                               
 
                                                 @Html.TextAreaFor(model => model.HRComment, new { @class = "form-control cmt-ht" })
 
@@ -181,7 +180,7 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.QCComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                @*  @Html.EditorFor(model => model.QCComment, new { htmlAttributes = new { @class = "form-control cmt-ht" } })*@
+                                             
 
                                                 @Html.TextAreaFor(model => model.QCComment, new { @class = "form-control cmt-ht" })
 
@@ -297,7 +296,7 @@
 
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <!---  <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Update Comments">Update Comments</button>-->
+                                        
 
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Update Comments">
                                             Update Comments
@@ -316,10 +315,6 @@
     </div>
 
 </div>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 @if (ViewBag.Message != null)
 {
 
@@ -340,9 +335,6 @@
                 },
                     function (value) //confirm
                     {
-                        //if Yes do this
-                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                         location.reload(true);
                     }
                 )
@@ -358,8 +350,6 @@
                 },
                     function ()
                     {
-                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                         location.reload(true);
                     }
                 )

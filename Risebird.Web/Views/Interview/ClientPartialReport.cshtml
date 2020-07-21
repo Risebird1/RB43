@@ -94,10 +94,6 @@
                                     <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Select</font></span>
                                 </button>
 
-
-
-                                <!--  <button title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)" class="btn btn-success btn-icon btn-sm like fa fa-thumbs-up" style="width:145px"><font style="font-family:Arial;font-size:12px;"> Approve</font></button>
-                                <button title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)" class="btn btn-primary btn-icon btn-sm like fa fa-check-circle" style="width:145px"> <font style="font-family:Arial;font-size:12px;">Select</font></button>-->
                             </div>
                         }
 
@@ -318,9 +314,6 @@
 
 
 
-
-
-
                                         </div>
                                         <div class="col-md-7 col-sm-7">
                                             <div class="card">
@@ -335,7 +328,7 @@
 
                                                             </div>
                                                         </div>
-                                                        @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                 
                                                         @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                                     </div>
                                                     <div class="form-group">
@@ -438,7 +431,7 @@
                                                             {
                                                                 <tr>
                                                                     <td>
-                                                                        @*<input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">*@
+                                                                      
 
 
                                                                         @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "select-css form-control dropques text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
@@ -450,7 +443,7 @@
                                                                         @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                     </td>
                                                                     <td>
-                                                                        @*<input class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.Where(x=> x.Value == Model.QuestionsCollection[i].RatingId.ToString()).FirstOrDefault().Text">*@
+                                                                      
 
                                                                         @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control droprating" })
 
@@ -466,9 +459,7 @@
                                                                     <td class="action text-center">
                                                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                         <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                        <!--  <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-          <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-      </button>-->
+                                                                       
 
 
 
@@ -618,7 +609,7 @@
                                                                     </td>
 
                                                                     <td>
-                                                                        @*<input class="form-control" id="@("SkillGeneralReportCollection_"+i+"__ActualLevelId")" name="SkillGeneralReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.SkillGeneralReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
+
 
 
                                                                         @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
@@ -1021,7 +1012,7 @@
                                                             </td>
                                                             <td class="control-width">
                                                                 @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                                @*<input class="form-control text-box single-line" id="Proctoring_LinkedInPhotoVerification" name="Proctoring.LinkedInPhotoVerification" type="number" min="0" value="0">*@
+                                                        
 
                                                             </td>
 
@@ -1057,8 +1048,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="form-group">
-                                            @*<label>Approved</label>
-                                                <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
+                                     
                                             <label for="approveDropdown" class="control-label">Approved For Next Round</label>
                                             <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                                         </div>
@@ -1075,41 +1065,41 @@
 
                             </div>
 
-                            <div id="mySelectionModal" class="modal modal-wrap" tabindex="-1" role="dialog" aria-labelledby="mySelectionModalLabel" aria-hidden="true" style="display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
-                                <div class="modal-dialog modal-lg" role="document">
+                            <div id="mySelectionModal" class="modal modal-bg" tabindex="-1" role="dialog" aria-labelledby="mySelectionModalLabel" aria-hidden="true">
                                     <!-- Modal content -->
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" style="font-size:20px;">Final Selection Status</h5>
-                                            <span class="close" id="selectPopUp" style="cursor:pointer;">&times;</span>
+                                <div class="modal-content">
+                                  
+
+
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="reportbtn-icon fas fa-check"></span>
                                         </div>
-                                        <div class="modal-body">
-                                            <div class="form-group">
+                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Final Selection Status</h5>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" id="selectPopUp">&times;</span>
+                                    </button>
 
-                                                <label for="selectionDropdown" class="control-label">Final Selection</label>
-                                                <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                                            </div>
-                                            <div id="selectionComments" class="form-group">
-                                                <label class="control-label">Final Comments</label>
-                                                <input type="text" name="selecComments" class="form-control" id="selecComments">
-                                            </div>
-                                            <div class="">
-                                                <input type="button" onclick="SaveSelecPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSelectUpload" value="Save">
-                                            </div>
 
+
+                                    <div class="modal-body">
+                                        <div class="form-group">
+
+                                            <label for="selectionDropdown" class="control-label">Final Selection</label>
+                                            <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                        </div>
+                                        <div id="selectionComments" class="form-group">
+                                            <label class="control-label">Final Comments</label>
+                                            <input type="text" name="selecComments" class="form-control" id="selecComments">
+                                        </div>
+                                        <div class="">
+                                            <input type="button" onclick="SaveSelecPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSelectUpload" value="Save">
                                         </div>
 
                                     </div>
+
+                                </div>
 
                                 </div>
                             </div>
@@ -1218,13 +1208,6 @@
             modal.style.display = "none";
         }
 
-        // When the user clicks anywhere outside of the modal, close it
-        //window.onclick = function (event) {
-        //    var modal = document.getElementById("myModal");
-        //    if (event.target == modal) {
-        //        modal.style.display = "none";
-        //    }
-        //}
     </script>
 
     <script>
@@ -1467,26 +1450,6 @@
         //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = average;
 
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
         am4core.ready(function () {
 
             // Themes begin
@@ -2183,28 +2146,6 @@
 
             totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
             document.getElementById("totScore").innerHTML = totalScore;
-
-
-            //var chart = new CanvasJS.Chart("scoreChart", {
-            //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-            //    width: 400,//in pixels
-            //    height: 200,//in pixels
-            //    animationEnabled: true,
-            //    title: {
-            //        text: "Score Chart"
-            //    },
-            //    data: [{
-            //        type: "column",
-            //        //startAngle: 60,
-            //        //innerRadius: 55,
-            //        indexLabelFontSize: 8,
-            //        indexLabel: "{label}  {y}",
-            //        toolTipContent: "<b>{label} </b>({y})",
-            //        dataPoints: arr
-
-            //    }]
-            //});
-            //chart.render();
 
             am4core.ready(function () {
 

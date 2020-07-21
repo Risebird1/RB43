@@ -10,7 +10,9 @@
  .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
         background: #9c9c9c!important;
 }
-
+.mdc-card .modal .form-control, .modal .form-control {
+    background: #fff !important;
+}
 
  .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
         background: #47484a!important;

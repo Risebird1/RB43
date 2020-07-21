@@ -14,7 +14,9 @@ body {
 .filavatar {
     background: #42a5f5 !important;
 }
-
+.mdc-card .modal .form-control, .modal .form-control {
+    background: #fff !important;
+}
 .toscore {
     color: #000 !important;
 }
