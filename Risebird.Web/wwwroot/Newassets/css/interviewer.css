@@ -166,41 +166,36 @@ table {
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
-/*
-#interviewer_length, #interviewer_filter {
+
+
+#MyInterviewList_length, #MyInterviewList_filter {
     margin: 10px 0px
 }
 
-    #interviewer_length label {
+    #MyInterviewList_length label {
         font-size: 14px;
     }
 
-    #interviewer_length select.form-control {
+    #MyInterviewList_length select.form-control {
         padding: 8px 8px;
     }
 
-    #interviewer_length select:focus {
+    #MyInterviewList_length select:focus {
         border-color: #4a93de;
     }
 
-    #interviewer_filter input {
+    #MyInterviewList_filter input {
         outline: none;
     }
 
-#meeting input[type=search] {
-    -webkit-appearance: textfield;
-    -webkit-box-sizing: content-box;
-    font-family: inherit;
-    font-size: 100%;
-}
 
-#interviewer_filter input::-webkit-search-decoration,
-#interviewer_filter input::-webkit-search-cancel-button {
+#MyInterviewList_filter input::-webkit-search-decoration,
+#MyInterviewList_filter input::-webkit-search-cancel-button {
     display: none;
 }
 
 
-#interviewer_filter input[type=search] {
+#MyInterviewList_filter input[type=search] {
     background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
     border: solid 1px #ccc;
     padding: 9px 10px 9px 32px;
@@ -214,7 +209,7 @@ table {
     transition: all .5s;
 }
 
-    #interviewer_filter input[type=search]:focus {
+    #MyInterviewList_filter input[type=search]:focus {
         width: 200px;
         background-color: #fff;
         border-color: #4a93de;
@@ -226,16 +221,106 @@ table {
     }
 
 
-#interviewer_filter input:-moz-placeholder {
+#MyInterviewList_filter input:-moz-placeholder {
     color: #999;
 }
 
-#interviewer_filter input::-webkit-input-placeholder {
+#MyInterviewList_filter input::-webkit-input-placeholder {
     color: #999;
 }
+#divIntrestedShown table, #divshortlist table {
+    border: 1px #ccc solid;
+    margin: 20px;
+}
 
-    */
+#divIntrestedShown tr, #divshortlist tr {
+    border: 1px #ccc solid;
+}
 
+#divIntrestedShown td, #divshortlist td {
+    padding: 3px;
+    text-align: center;
+}
+
+
+#divIntrestedShown table tbody tr:nth-of-type(odd), #divshortlist table tbody tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,.05);
+}
+.client-nme {
+    width: 25%;
+}
+
+.client-date {
+    width: 15%;
+}
+
+.client-cmt {
+    width: 47%;
+}
+
+.client-action {
+    width: 25%;
+}
+#OpeninterviewList_length, #OpeninterviewList_filter {
+    margin: 10px 0px
+}
+
+    #OpeninterviewList_length label {
+        font-size: 14px;
+    }
+
+    #OpeninterviewList_length select.form-control {
+        padding: 8px 8px;
+    }
+
+    #OpeninterviewList_length select:focus {
+        border-color: #4a93de;
+    }
+
+    #OpeninterviewList_filter input {
+        outline: none;
+    }
+
+
+        #OpeninterviewList_filter input::-webkit-search-decoration,
+        #OpeninterviewList_filter input::-webkit-search-cancel-button {
+            display: none;
+        }
+
+
+        #OpeninterviewList_filter input[type=search] {
+            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+            border: solid 1px #ccc;
+            padding: 9px 10px 9px 32px;
+            width: 135px;
+            font-family: arial;
+            -webkit-border-radius: 10em;
+            -moz-border-radius: 10em;
+            border-radius: 10em;
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+        }
+
+            #OpeninterviewList_filter input[type=search]:focus {
+                width: 200px;
+                background-color: #fff;
+                border-color: #4a93de;
+                font-family: arial;
+                margin: 3px;
+                -webkit-box-shadow: 0 0 5px #4a93de;
+                -moz-box-shadow: 0 0 5px #4a93de;
+                box-shadow: 0 0 5px #4a93de;
+            }
+
+
+        #OpeninterviewList_filter input:-moz-placeholder {
+            color: #999;
+        }
+
+        #OpeninterviewList_filter input::-webkit-input-placeholder {
+            color: #999;
+        }
 .multiselect-selected-text {
     text-transform: capitalize;
     font-weight: normal;
@@ -474,6 +559,18 @@ table {
 .mc-button-area {
     text-align: right;
 }
+.can-details {
+    width: 100%;
+    float: left;
+    font-weight: normal !important;
+    padding: 0px 0px 10px 0px;
+    font-size: 14px;
+    line-height: 16px;
+}
+
+    .can-details span {
+        font-weight: normal;
+    }
 .upload {
     margin: 10px 0px 0px 0px;
 }
@@ -559,3 +656,12 @@ table {
             width: 100%;
         }
     }
+@media screen and (max-width:480px) {
+    .client-cmt {
+        width: 25% !important;
+    }
+
+    .client-action {
+        width: 27% !important;
+    }
+}
