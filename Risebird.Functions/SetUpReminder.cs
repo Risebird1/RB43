@@ -45,9 +45,11 @@ namespace Risebird.Functions
 
                         SendMail(item.candidateEmail, item.InteviewerEmailId, item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt"));
 
-                        var phoneNumbers = new List<string>();
-                        phoneNumbers.Add(item.CandidatePhone);
-                        phoneNumbers.Add(item.InteviewerPhone);
+                        var phoneNumbers = new List<string>
+                        {
+                            item.CandidatePhone,
+                            item.InteviewerPhone
+                        };
 
                         var msg = "You have received this communication as a reminder to set up your system prior to your meeting scheduled at " + item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt") + " to avoid any last minute hassles.";
                         if (phoneNumbers != null && phoneNumbers.Count() > 0)

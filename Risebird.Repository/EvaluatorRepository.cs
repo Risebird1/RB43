@@ -412,8 +412,8 @@ namespace Risebird.Repository
                         string sqlSelectableReport = "delete from SelectabilityReport where CandidateId = @CandidateId and IRFId =@IRFId";
                         var result3 = con.Execute(sqlSelectableReport, new
                         {
-                            CandidateId = reportDetails.CandidateId,
-                            IRFId = reportDetails.IRFId
+                            reportDetails.CandidateId,
+                            reportDetails.IRFId
                         });
 
                         DataTable selectabilityReportDt = new DataTable();
@@ -573,8 +573,8 @@ namespace Risebird.Repository
                         string sqlSelectableReport = "delete from JoinabilityReport where CandidateId = @CandidateId and IRFId = @IRFId";
                         var result3 = con.Execute(sqlSelectableReport, new
                         {
-                            CandidateId = reportDetails.CandidateId,
-                            IRFId = reportDetails.IRFId
+                            reportDetails.CandidateId,
+                            reportDetails.IRFId
                         });
 
                         DataTable joinabilityReportDt = new DataTable();

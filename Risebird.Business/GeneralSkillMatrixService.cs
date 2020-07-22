@@ -11,8 +11,8 @@ namespace Risebird.Business
 {
     public class GeneralSkillMatrixService : IGeneralSkillMatrixService
     {
-        private IGeneralSkillMatrixRepository _GeneralRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IGeneralSkillMatrixRepository _GeneralRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public GeneralSkillMatrixService(IGeneralSkillMatrixRepository GeneralRepository, IApplicationErrorLogger applicationErrorLogger)
         {

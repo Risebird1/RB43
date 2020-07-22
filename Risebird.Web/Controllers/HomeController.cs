@@ -13,15 +13,13 @@ namespace Risebird.Web.Controllers
 {
     [Authorize]
     public class HomeController : Controller
-    {
-        AzureAdB2COptions AzureAdB2COptions;
-        private IUserService _userService;
-        private ISettingsService _settingsService;
-        public HomeController(IUserService userService,
-            IOptions<AzureAdB2COptions> azureAdB2COptions, ISettingsService settingsService)
+    {        
+        private readonly IUserService _userService;
+        private readonly ISettingsService _settingsService;
+        public HomeController(IUserService userService,ISettingsService settingsService)
         {
             _userService = userService;
-            AzureAdB2COptions = azureAdB2COptions.Value;
+           
             _settingsService = settingsService;
         }
         public IActionResult Index(string url = null)
@@ -33,7 +31,7 @@ namespace Risebird.Web.Controllers
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-                
+
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 var currenttheme = _userService.GetCurrenttheme(emailId);
@@ -52,7 +50,7 @@ namespace Risebird.Web.Controllers
                 {
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject(menus.FirstOrDefault()?.profileName));
-                    HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null ? true : false));
+                    HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));
                     HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
                     HttpContext.Session.SetString("UserLogedIn", "Yes");
                     HttpContext.Session.SetString("UserLogedInVedioId", "");

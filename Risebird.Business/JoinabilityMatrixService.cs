@@ -11,8 +11,8 @@ namespace Risebird.Business
 {
     public class JoinabilityMatrixService : IJoinabilityMatrixService
     {
-        private IJoinabilityMatrixRepository _joinmatrixRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IJoinabilityMatrixRepository _joinmatrixRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public JoinabilityMatrixService(IJoinabilityMatrixRepository joinmatrixRepository, IApplicationErrorLogger applicationErrorLogger)
         {

@@ -209,7 +209,7 @@ namespace Risebird.CommonHelper
         /// <returns></returns>
         public async Task<bool> InsertEntity(string tableName, object obj)
         {
-            bool insertResult = false;
+            bool insertResult;
             try
             {
                 var table = GetTable(tableName);
@@ -223,7 +223,6 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
-                insertResult = false;
                 throw ex;
             }
         }

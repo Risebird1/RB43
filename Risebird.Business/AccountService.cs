@@ -13,11 +13,10 @@ namespace Risebird.Business
 {
     public class AccountService : IAccountService
     {
-        private IAccountRepository _accountRepository;
-        private IProjectRepository _projectRepository;
-        private IProjectService _projectService;
-
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IProjectRepository _projectRepository;
+        private readonly IProjectService _projectService;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public AccountService(IAccountRepository accountRepository, IApplicationErrorLogger applicationErrorLogger, IProjectRepository projectRepository, IProjectService projectService)
         {

@@ -11,8 +11,8 @@ namespace Risebird.Business
 {
     public class SkillService : ISkillService
     {
-        private ISkillRepository _skillRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ISkillRepository _skillRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public SkillService(ISkillRepository skillRepository, IApplicationErrorLogger applicationErrorLogger)
         {

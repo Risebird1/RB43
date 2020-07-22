@@ -18,7 +18,7 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public ProjectRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -180,12 +180,12 @@ namespace Risebird.Repository
                     string sqlInsertReport = "INSERT INTO Project (Name,ClientId, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn ) Values (@Name,@ClientId,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
-                        Name = projectDetails.Name,
-                        ClientId = projectDetails.ClientId,
-                        EndClient = projectDetails.EndClient,
-                        Location = projectDetails.Location,
-                        ProjectOwnerId = projectDetails.ProjectOwnerId,
-                        CreatedOn = projectDetails.CreatedOn,
+                        projectDetails.Name,
+                        projectDetails.ClientId,
+                        projectDetails.EndClient,
+                        projectDetails.Location,
+                        projectDetails.ProjectOwnerId,
+                        projectDetails.CreatedOn,
                         IsDeleted = false
 
                     });
@@ -201,8 +201,8 @@ namespace Risebird.Repository
                             var result1 = con.ExecuteAsync(sqlTechReport, new
                             {
                                 ProjectId = projectId,
-                                IRFId = item.IRFId,
-                                IsAdded = item.IsAdded
+                                item.IRFId,
+                                item.IsAdded
 
                             }).Result;
                         }
@@ -295,8 +295,8 @@ namespace Risebird.Repository
                             var affectedRows = con.ExecuteAsync(sqlQuery, new
                             {
                                 ProjectId = projectDetails.id,
-                                IRFId = item.IRFId,
-                                IsAdded = item.IsAdded
+                                item.IRFId,
+                                item.IsAdded
                             }).Result;
                         }
                     }

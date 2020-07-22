@@ -12,8 +12,8 @@ namespace Risebird.Business
 {
     public class UserService : IUserService
     {
-        private IUserRepository _userRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IUserRepository _userRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger)
         {

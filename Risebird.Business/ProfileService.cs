@@ -11,8 +11,8 @@ namespace Risebird.Business
 {
     public class ProfileService : IProfileService
     {
-        private IProfileRepository _profileRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IProfileRepository _profileRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public ProfileService(IProfileRepository profileRepository, IApplicationErrorLogger applicationErrorLogger)
         {

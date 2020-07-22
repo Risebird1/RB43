@@ -11,10 +11,9 @@ namespace Risebird.Business
 {
     public class SupportService : ISupportService
     {
-        private ISupportRepository _supportRespository;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        //private readonly INotificationHelper _notificationHelper;
-
+        private readonly ISupportRepository _supportRespository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+      
         public SupportService(ISupportRepository supportRespository, IApplicationErrorLogger applicationErrorLogger)
         {
             _supportRespository = supportRespository;

@@ -11,8 +11,8 @@ namespace Risebird.Business
 {
     public class SelectabilityMatrixService : ISelectabilityMatrixService
     {
-        private ISelectabilityMatrixRepository _selectmatrixRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ISelectabilityMatrixRepository _selectmatrixRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public SelectabilityMatrixService(ISelectabilityMatrixRepository selectmatrixRepository, IApplicationErrorLogger applicationErrorLogger)
         {

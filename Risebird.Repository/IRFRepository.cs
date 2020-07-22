@@ -19,7 +19,7 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public IRFRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -219,7 +219,7 @@ namespace Risebird.Repository
 
         public IEnumerable<Users> GetQualityController()
         {
-            IEnumerable<Entities.Data.QualityController> qualityControllers = new List<Entities.Data.QualityController>();
+            IEnumerable<QualityController> qualityControllers = new List<Entities.Data.QualityController>();
             IEnumerable<Users> users = new List<Users>();
             try
             {
@@ -1996,9 +1996,9 @@ namespace Risebird.Repository
                         var affectedRows = con.Execute(sqlCuratedCandidate, new
                         {
                             IRFId = IrfId,
-                            CandidateEmailId = item.CandidateEmailId,
-                            CuratedEmailId = item.CuratedEmailId,
-                            Score = item.Score
+                            item.CandidateEmailId,
+                            item.CuratedEmailId,
+                            item.Score
 
                         });
                     }
@@ -2027,7 +2027,7 @@ namespace Risebird.Repository
                     string sqlDeletePrevious = "Delete from TechSkillComments where IRFId =@IRFId;";
                     var deletedRows = con.Execute(sqlDeletePrevious, new
                     {
-                        IRFId = obj.IRFId,
+                        obj.IRFId,
 
                     });
 
@@ -2037,9 +2037,9 @@ namespace Risebird.Repository
                         string sqlJoinability = "INSERT INTO TechSkillComments (IRFId, Skill, Comment) Values (@IRFId, @Skill, @Comment);";
                         var affectedRows = con.Execute(sqlJoinability, new
                         {
-                            IRFId = obj.IRFId,
+                            obj.IRFId,
                             Skill = Convert.ToInt16(item.Skill),
-                            Comment = item.Comment
+                            item.Comment
 
                         });
                     }

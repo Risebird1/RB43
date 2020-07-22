@@ -9,10 +9,9 @@ namespace Risebird.Business
 {
     public class SettingsService : ISettingsService
     {
-        private ISettingsRepository _settingsRespository;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        //private readonly INotificationHelper _notificationHelper;
-
+        private readonly ISettingsRepository _settingsRespository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+       
         public SettingsService(ISettingsRepository settingsRespository, IApplicationErrorLogger applicationErrorLogger)
         {
             _settingsRespository = settingsRespository;

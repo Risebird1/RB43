@@ -14,8 +14,8 @@ namespace Risebird.Web.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
-        private IDashboardService _dashboardService;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IDashboardService _dashboardService;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger)
         {
             _dashboardService = dashboardService;
@@ -36,21 +36,27 @@ namespace Risebird.Web.Controllers
                     /* bind graph */
                     var pendinginterview = _dashboardService.GetDoughnutGraphDetails("A");
                     double acceptinterview = 100 - Convert.ToDouble(pendinginterview);
-                    List<DataPoint> dataPoints = new List<DataPoint>();
-                    dataPoints.Add(new DataPoint("Confirmed", Convert.ToDouble(pendinginterview), "#6db8bc"));
-                    dataPoints.Add(new DataPoint("Cancelled", acceptinterview, "#ccc"));
+                    List<DataPoint> dataPoints = new List<DataPoint>
+                    {
+                        new DataPoint("Confirmed", Convert.ToDouble(pendinginterview), "#6db8bc"),
+                        new DataPoint("Cancelled", acceptinterview, "#ccc")
+                    };
                     ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoints);
 
-                    List<DataPoint> dataPoints1 = new List<DataPoint>();
-                    dataPoints1.Add(new DataPoint("Accepted", acceptinterview, ""));
-                    dataPoints1.Add(new DataPoint("", Convert.ToDouble(pendinginterview), "#ccc"));
+                    List<DataPoint> dataPoints1 = new List<DataPoint>
+                    {
+                        new DataPoint("Accepted", acceptinterview, ""),
+                        new DataPoint("", Convert.ToDouble(pendinginterview), "#ccc")
+                    };
                     ViewBag.DataPoints1 = JsonConvert.SerializeObject(dataPoints1);
 
                     var complete = _dashboardService.GetDoughnutGraphDetails("C");
                     double schedule = 100 - Convert.ToDouble(complete);
-                    List<DataPoint> dataPoints2 = new List<DataPoint>();
-                    dataPoints2.Add(new DataPoint("Approved", Convert.ToDouble(complete), "#5184c1"));
-                    dataPoints2.Add(new DataPoint("Not Approved", Convert.ToDouble(schedule), ""));
+                    List<DataPoint> dataPoints2 = new List<DataPoint>
+                    {
+                        new DataPoint("Approved", Convert.ToDouble(complete), "#5184c1"),
+                        new DataPoint("Not Approved", Convert.ToDouble(schedule), "")
+                    };
                     ViewBag.DataPoints2 = JsonConvert.SerializeObject(dataPoints2);
                     return View();
                 }

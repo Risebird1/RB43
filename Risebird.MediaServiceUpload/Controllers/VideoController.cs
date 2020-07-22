@@ -310,11 +310,11 @@ namespace AzureMediaServiceMVC.Controllers
             {
                 error = false,
                 message = "Congratulations! Video is uploaded and pipelined for encoding, check console log for after encoding playback details.",
-                assetId = assetId,
+                assetId,
                 jobId = job.Id,
                 locator = publicvideourl,
                 encrypted = useAESRestriction,
-                token = token
+                token
             });
 
         }

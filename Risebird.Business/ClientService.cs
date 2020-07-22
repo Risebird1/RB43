@@ -11,8 +11,8 @@ namespace Risebird.Business
 {
     public class ClientService : IClientService
     {
-        private IClientRepository _clientRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IClientRepository _clientRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public ClientService(IClientRepository clientRepository)
         {

@@ -14,22 +14,17 @@ namespace Risebird.Business
 {
     public class InterviewerSkillsService : IInterviewerSkillsService
     {
-        private IInterviewerSkillsRepository _interviewerSkillsRepository;
+        private readonly IInterviewerSkillsRepository _interviewerSkillsRepository;
         private readonly INotificationHelper _notificationHelper;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        private readonly ITwilioHelper _twilioHelper;
-        private readonly IClientService _clientService;
-        private readonly IConfiguration _configuration;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+       
 
 
-        public InterviewerSkillsService(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper, INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration)
+        public InterviewerSkillsService(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
-            _applicationErrorLogger = applicationErrorLogger;
-            _twilioHelper = twilioHelper;
+            _applicationErrorLogger = applicationErrorLogger;            
             _notificationHelper = notificationHelper;
-            _clientService = clientService;
-            _configuration = configuration;
         }
         public IEnumerable<InterviewerSkillsChannelModel> GetAllInterviewerSkillsChannel(string profileName, string emailId)
         {

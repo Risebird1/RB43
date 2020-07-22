@@ -33,8 +33,8 @@ namespace Risebird.Web.Controllers
         private readonly IIRFService _iRFService;
         private readonly IIRFRepository _iRFRepository;
         private readonly INotificationHelper _notificationHelper;
-        private IAzureFaceApi _azureFaceApi;
-        private IConfiguration _configuration;
+        private readonly IAzureFaceApi _azureFaceApi;
+        private readonly IConfiguration _configuration;
         public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration)
         {
             _meetingService = meetingService;
@@ -5877,7 +5877,7 @@ namespace Risebird.Web.Controllers
 
 
                 }
-                var result1 = _notificationHelper.CuretatedNotification(_mail, "User", bulider.ToString());
+                _notificationHelper.CuretatedNotification(_mail, "User", bulider.ToString());
 
             }
             return Json("Success");
@@ -5927,7 +5927,7 @@ namespace Risebird.Web.Controllers
                     {
                         TempData["SuccessErrorMessageUser"] = "Interview is deleted Successfully";
                         if (controllerName == "IRF")
-                            return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
+                            return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                         else
                             return RedirectToAction("MultipleCandidateInvites", controllerName);
                     }
@@ -5935,7 +5935,7 @@ namespace Risebird.Web.Controllers
                     {
                         TempData["SuccessErrorMessageUser"] = "Deletion of Interview Failed";
                         if (controllerName == "IRF")
-                            return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
+                            return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                         else
                             return RedirectToAction("MultipleCandidateInvites", controllerName);
                     }
@@ -5944,7 +5944,7 @@ namespace Risebird.Web.Controllers
                 else
                 {
                     if (controllerName == "IRF")
-                        return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
+                        return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                     else
                         return RedirectToAction("MultipleCandidateInvites", controllerName);
                 }
@@ -5954,7 +5954,7 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageUser"] = "Deletion of Interview Failed";
                 if (controllerName == "IRF")
-                    return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
+                    return RedirectToAction("MultipleCandidateInvites", controllerName, new {irfId });
                 else
                     return RedirectToAction("MultipleCandidateInvites", controllerName);
 

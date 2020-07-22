@@ -11,8 +11,8 @@ namespace Risebird.Business
 {
     public class DashboardService : IDashboardService
     {
-        private IDashboarRepository _dashboardRespository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IDashboarRepository _dashboardRespository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
         public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger)
         {
             _dashboardRespository = dashboardRespository;

@@ -627,7 +627,7 @@ namespace Risebird.Web.Controllers
                                 if (name != null && name.Length >= 2)
                                     namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
                                 else if (name != null && name.Length == 1)
-                                    namemodel = namemodel + name?.ToCharArray()[0];
+                                    namemodel += name?.ToCharArray()[0];
                             }
                             IRListModel.CandidateName = namemodel;
                         }
@@ -644,7 +644,7 @@ namespace Risebird.Web.Controllers
                             if (name != null && name.Length >= 2)
                                 namemodel1 = namemodel1 + name?.ToCharArray()[0] + name?.ToCharArray()[1];
                             else if (name != null && name.Length == 1)
-                                namemodel1 = namemodel1 + name?.ToCharArray()[0];
+                                namemodel1 += name?.ToCharArray()[0];
                         }
                         NewModel.candidateName = namemodel1;
 
@@ -990,7 +990,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult VedioShare(string value, string vedioid, string name, string Emailids)
         {
-            var modelList = _meetingService.VedioShare(value, vedioid);
+            _meetingService.VedioShare(value, vedioid);
             string Name = string.Empty;
             if (name != null && name.Length >= 2)
                 Name = Name + name?.ToCharArray()[0] + name?.ToCharArray()[1];
@@ -1020,14 +1020,14 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult publicVedioShare(string value, string vedioid)
         {
-            var modelList = _meetingService.VedioShare(value, vedioid);
+            _meetingService.VedioShare(value, vedioid);
             return Json("Success");
         }
         [HttpPost]
         public JsonResult VedioComment(string comment, string vedioid)
         {
             var email = HttpContext.Session.GetString("email");
-            var modelList = _meetingService.VedioComment(comment, vedioid, email);
+            _meetingService.VedioComment(comment, vedioid, email);
             return Json("Success");
         }
         [HttpPost]
@@ -1056,7 +1056,7 @@ namespace Risebird.Web.Controllers
                 StringBuilder bulider = new StringBuilder();
 
                 bulider.Append("Client: " + email.ToUpper() + " has shortlisted your profile");
-                var result1 = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+                _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
 
             }
             return Json(result);
@@ -1079,7 +1079,7 @@ namespace Risebird.Web.Controllers
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
                 bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");
-                var result = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+                _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
         }
@@ -1115,7 +1115,7 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you"
                 };
-                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
+               _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
             }
             return Json("");
         }
@@ -1138,7 +1138,7 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "An interview of Candidate: " + Name + " video is shared with you"
                 };
-                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
+               _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
             }
             return Json("");
         }

@@ -17,7 +17,7 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public GeneralSkillMatrixRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
