@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[TransInterviewerAccDetails](
 	[IFSCCode] [nvarchar](200) NULL,
 	[UPIId] [nvarchar](250) NULL,
 	[PAN] [nvarchar](200) NULL,
-	CONSTRAINT [FK__IProfileID_Acc] FOREIGN KEY (TransInterviewerAccDetailsId) REFERENCES InterviewerProfile(id),
+	CONSTRAINT [FK__IProfileID_Acc] FOREIGN KEY (InterviewerProfileId) REFERENCES InterviewerProfile(id),
  CONSTRAINT [PK_TransInterviewerAccDetails] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
