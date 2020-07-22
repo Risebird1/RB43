@@ -1,0 +1,1684 @@
+﻿@model Risebird.Entities.ViewModel.InterviewReport
+@using System.Text.RegularExpressions
+
+@{
+    ViewData["Title"] = "Interview Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
+    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
+</script>
+
+
+
+
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
+<div class="main-panel" id="main-panel">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+
+            <div class="navbar-wrapper" style="width: 100%;
+        float: left;
+        display: block;
+">
+
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+
+                <div class="pull-left">
+                    <a class="navbar-brand">
+                        Interview Report
+                    </a>
+                </div>
+
+                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" style="" value="Generate PDF" onclick="getPDF()"></div>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="loader text-center">
+        <img src="~/Newassets/img/lazyload.gif" />
+    </div>
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content dataloading">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        <form action="/Interviewer/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckConditions()" id="reportForm">
+                            @Html.AntiForgeryToken()
+                            <div class="canvas_div_pdf">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Candidate Details</h2>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @if (Model.IsInterviewer && Model.CandidateName != null)
+                                            {
+                                                @Regex.Replace(@Model.CandidateName, "[a-zA-Z0-9]", "*")
+                                            }
+                                            else
+                                            {
+                                                @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @{
+                                                if (Model.resumeLink != null && Model.resumeLink != "")
+                                                {
+                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                }
+                                            }
+
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Interview Report</h2>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "select-css form-control" })
+                                            @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.SkillQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.SkillQuality, Model.SkillQualityList, "Select Skill Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.SkillQuality, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.CertificationQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.CertificationQuality, Model.CertificationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.CertificationQuality, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.EducationQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.EducationQuality, Model.EducationQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.EducationQuality, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.EmployersQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.EmployersQuality, Model.EmployersQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.EmployersQuality, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.CareerProgression, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.CareerProgression, Model.CareerProgressionList, "Select Career", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.CareerProgression, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.ProjectsQuality, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.ProjectsQuality, Model.ProjectsQualityList, "Select Quality", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.ProjectsQuality, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.OnlinePresence, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.OnlinePresence, Model.OnlinePresenceList, "Select Presence", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.OnlinePresence, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.BehavioralScore, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.BehavioralScore, Model.BehavioralScoreList, "Select Score", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.BehavioralScore, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.InterviwerCommunication, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.InterviwerCommunication, Model.InterviwerCommunicationList, "Select Communication Type", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.InterviwerCommunication, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Interviewexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.Interviewexperience, Model.InterviewexperienceList, "Select Exprience", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                            @Html.ValidationMessageFor(model => model.Interviewexperience, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Report Details</h2>
+                                        </div><!--end of multiple location-->
+                                    </div>
+
+
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 card-text-label" })
+                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                        <div class="talktext">
+                                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line  scrollbar" }, @style = "height: 86px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters" })
+                                                        </div>
+                                                    </div>
+                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                    @*@Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                        <p style="min-height:20px;border:1px #1d181817 solid">
+                                            @Html.HiddenFor(x => Model.VideoLink)
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                            {
+                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                {
+                                                    <video width="320" height="320" class="vjs-tech" controls style="width:100%">
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                }
+                                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                {
+                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                                    </video>
+                                                }
+                                                else
+                                                {
+                                                    <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                                }
+                                            }
+                                        </p>
+
+
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6 ">
+
+                                        <div class="card">
+
+                                            <div class="mdc-card-wrapper__text-section">
+
+
+
+                                                <div class="choose-file">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Upload Thumbnail Image File</label>
+
+                                                    @*<div class="form-group">*@
+                                                    @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control", @accept = ".jpeg, .png" })
+                                                    @{
+                                                        if (Model.AudioLink != null)
+                                                        {
+                                                            <a id="audioId" target="_blank" title="Image" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Image</a>
+                                                        }
+                                                    }
+                                                    @*</div>*@
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+
+
+
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 ">
+                                        <div class="card">
+
+                                            <div class="mdc-card-wrapper__text-section">
+                                                <div class="choose-file ">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Upload Video File</label>
+
+
+
+                                                    <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                        <div class="mdc-radio mdc-radio--touch">
+                                                            <input class="mdc-radio__native-control" id="Vid2" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                                                            <div class="mdc-radio__background">
+                                                                <div class="mdc-radio__outer-circle"></div>
+                                                                <div class="mdc-radio__inner-circle"></div>
+                                                            </div>
+                                                            <div class="mdc-radio__ripple"></div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    Add a link
+
+                                                    <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                        <div class="mdc-radio mdc-radio--touch">
+                                                            <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                            <div class="mdc-radio__background">
+                                                                <div class="mdc-radio__outer-circle"></div>
+                                                                <div class="mdc-radio__inner-circle"></div>
+                                                            </div>
+                                                            <div class="mdc-radio__ripple"></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="" style="display:none" id="linkDiv">
+                                                        @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                        @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="" id="uploadDiv">
+                                                        @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
+
+
+                                                        <div class="mtop-15">
+                                                            @{
+                                                                if (Model.VideoLink != null)
+                                                                {
+                                                                    <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Record Feedback Audio</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="row">
+
+
+                                            <div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">
+
+
+                                                <div class="pull-left"> <button id="startRecButton" type="button" onclick="startRecording()">Start Recording</button><span class="record-txt">Start<br /> Recording</span></div>
+                                                <div class="pull-left"> <button id="stopRecButton" type="button" onclick="stopRecording('@Model.InterviewId')" disabled="disabled">Stop Recording</button><span class="record-txt">Stop<br /> Recording</span></div>
+                                                <div class="pull-left">
+                                                    <div> <button id="cancelRecButton" type="button" onclick="cancelRecording()" disabled="disabled">Cancel Recording</button><span class="record-txt">Cancel<br /> Recording</span></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                        <p style="font-size:18px" id="recordingStatus"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="recordingRow" style="display:none">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">
+                                                        @*<h3 style="background-color:antiquewhite">Recordings</h3>*@
+                                                        <div id="recordingsList"></div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <input type="text" asp-for="FeedbackAudioLink" style="display:none">
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <!--end of col-md-12-->
+
+                                </div>
+
+                                <div id="playUploadedAudioOne">
+                                    @if (Model.FeedbackAudioLink != null)
+                                    {
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="multiple_row">
+                                                    <h2>Uploaded Feedback Audio</h2>
+                                                </div><!--end of multiple location-->
+                                            </div><!--end of col-md-12-->
+
+
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="table-responsive-sm">
+                                                    <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                                        <thead>
+                                                            <tr>
+                                                                <th width="30%">File</th>
+                                                                <th width="35%">Play</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+
+                                                                <td>
+                                                                    <a href='@Model.FeedbackAudioLink' asp-append-version="true" download>
+                                                                        @Model.FeedbackAudioLink.Split('/').Last()
+                                                                    </a>
+                                                                </td>
+
+
+                                                                <td>
+                                                                    <audio src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                                </td>
+
+                                                            </tr>
+
+
+                                                        </tbody>
+                                                    </table>
+
+
+                                                </div>
+                                            </div><!--end of col-md-12-->
+
+                                        </div>
+
+                                    }
+
+                                </div>
+
+                                <div id="playUploadedAudioTwo" style="display:none">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Uploaded Feedback Audio</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="30%">File</th>
+                                                            <th width="35%">Play</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+
+                                                            <td>
+                                                                <a id="anchorAudioId" asp-append-version="true" download>
+
+                                                                </a>
+                                                            </td>
+
+
+                                                            <td>
+                                                                <audio id="controlAudioId" asp-append-version="true" controls></audio>
+                                                            </td>
+
+                                                        </tr>
+
+
+                                                    </tbody>
+                                                </table>
+
+
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Tech Skill Report</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="table-responsive-sm">
+                                            <table class="table table-bordered mbn" id="SkillTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="10%">Required Level</th>
+                                                        <th width="40%">Skill Name</th>
+                                                        <th width="20%">Actual Level</th>
+                                                        <th width="15%">Required Weightage</th>
+                                                        <th width="15%">Actual Weightage</th>
+                                                    </tr>
+                                                </thead>
+
+
+                                                <tbody>
+                                                    @if (Model.TechSkillReportCollection != null)
+                                                    {
+                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
+                                                        {
+                                                            <tr>
+
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+
+                                                                <td>
+                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
+
+
+                                                            </tr>
+
+                                                        }
+                                                    }
+
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+
+                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                <div class="talktext">
+
+                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line scrollbar" }, @style = "width:100%" })
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+                                    </div><!--end of col-md-12-->
+
+                                </div>
+
+
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Interviewing Ability Score</h2>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Bias free Decision Making</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+
+                                                                    @Html.RadioButtonFor(m => m.DecisionMaking, "Yes") <span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.DecisionMaking, "No")<span class="radio-field">No</span>
+
+                                                                </div>
+                                                             </div>
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Articulation/ Communication</label>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.Articulation, "Yes") <span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.Articulation, "No")<span class="radio-field">No</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Readiness for Online Interviews </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "No")<span class="radio-field">No</span>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Interpersonal - Teamwork</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.Teamwork, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.Teamwork, "No")<span class="radio-field">No</span>
+
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Relationship Management</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.RelationshipManagement, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.RelationshipManagement, "No")<span class="radio-field">No</span>
+
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Conflict Resolution</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.ConflictResolution, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.ConflictResolution, "No")<span class="radio-field">No</span>
+
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Adaptability</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.Adaptability, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.Adaptability, "No")<span class="radio-field">No</span>
+
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Mode of Interviews</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.ModeInterviews, "Telephonic")<span class="radio-field">Telephonic</span>
+    @Html.RadioButtonFor(m => m.ModeInterviews, "Video")<span class="radio-field">Video</span>
+</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Ability to Work Under Pressure</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.WorkUnderPressure, "Yes")<span class="radio-field">
+    Yes</span>
+    @Html.RadioButtonFor(m => m.WorkUnderPressure, "No")<span class="radio-field">No</span>
+
+</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="card">
+
+                                                    <div class="mdc-card-wrapper__text-section">
+                                                        <div class="choose-file ">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Time Management</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.TimeManagement, "Yes")<span class="radio-field">
+    Yes</span>
+    @Html.RadioButtonFor(m => m.TimeManagement, "No")<span class="radio-field">No</span>
+</div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-12 col-sm-12">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Interviewscompleted, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.Interviewscompleted, new { @class = "form-control text-box single-line" })
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-12 col-sm-12">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.ReadymadeAssessment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.ReadymadeAssessment, new { @class = "form-control text-box single-line" })
+                                                    </div>
+                                                </div>
+                                                </div>
+
+                                            </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-12 col-sm-12">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Creativity, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.Creativity, new { @class = "form-control text-box single-line" })
+
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Recommendation</h2>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.CompanySize, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.CompanySize, new { @class = "form-control text-box single-line"})
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JobFunction, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.JobFunction, new { @class = "form-control text-box single-line" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.Industry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.Industry, new { @class = "form-control text-box single-line" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.CompanyHeadquarters, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.CompanyHeadquarters, new { @class = "form-control text-box single-line"})
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="mdc-card-wrapper__text-section">
+                                                    <div class="choose-file ">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> CompanyType</label>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                @Html.RadioButtonFor(m => m.CompanyType, "Product")<span class="radio-field">Product</span>
+                                                                @Html.RadioButtonFor(m => m.CompanyType, "Service")<span class="radio-field">Service</span>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.CompanyStage, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                    @Html.DropDownListFor(x => Model.CompanyStage, Model.CompanyStageList, "Select Company Stage", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    @Html.ValidationMessageFor(model => model.ProjectsQuality, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.SkillCategory, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                    @Html.DropDownListFor(x => Model.SkillCategory, Model.SkillCategoryList, "Select Category", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    @Html.ValidationMessageFor(model => model.CareerProgression, "", new { @class = "text-danger" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.Yearsofexperience, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                    @Html.DropDownListFor(x => Model.Yearsofexperience, Model.YearsofexperienceList, "Select Experience", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    @Html.ValidationMessageFor(model => model.Yearsofexperience, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.Senioritylevel, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                    @Html.DropDownListFor(x => Model.Senioritylevel, Model.SenioritylevelList, "Select Senioritylevel", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    @Html.ValidationMessageFor(model => model.Senioritylevel, "", new { @class = "text-danger" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.SkillNature, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                    @Html.DropDownListFor(x => Model.SkillNature, Model.SkillNatureList, "Select Skill Nature", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    @Html.ValidationMessageFor(model => model.SkillNature, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.Domain, new { @class = "form-control text-box single-line" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.SkillIP, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.SkillIP, new { @class = "form-control text-box single-line" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.PerHourRateIndia, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.PerHourRateIndia, new { @class = "form-control text-box single-line" })
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
+
+
+                                @Html.HiddenFor(m => m.id)
+                                @Html.HiddenFor(m => m.IRFId)
+                                @Html.HiddenFor(m => m.InterviewId)
+                                @Html.HiddenFor(m => m.IsEdited)
+                                @Html.HiddenFor(m => m.IsQC)
+                                @Html.HiddenFor(m => m.IRFName)
+                                @Html.HiddenFor(m => m.PrimarySkill)
+
+                                <div class="card-footer ">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area">
+                                            @if (Model.IsInterviewer)
+                                            {
+
+                                                @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            }
+                                            else if (ViewBag.IsClient)
+                                            {
+                                                //@Html.ActionLink("Back to List", "ClientMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            }
+                                            else if (ViewBag.IsClientSelected)
+                                            {
+                                                // @Html.ActionLink("Back to List", "ClientSelectedMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            }
+                                            @if (!(ViewBag.IsClient || ViewBag.IsClientSelected))
+                                            {
+                                                if (Model.IsEdited)
+                                                {
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>*@
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save" onclick="SubmitForm()">Save</button>
+                                                }
+                                                else
+                                                {
+                                                    @*<button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>*@
+                                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SubmitForm()">Submit</button>
+                                                }
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</div>
+
+
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+@*<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>*@
+
+<script>
+    function getPDF() {
+
+        var HTML_Width = $(".canvas_div_pdf").width();
+        var HTML_Height = $(".canvas_div_pdf").height();
+        var top_left_margin = 15;
+        var PDF_Width = HTML_Width + (top_left_margin * 2);
+        var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+        var canvas_image_width = HTML_Width;
+        var canvas_image_height = HTML_Height;
+
+        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+        html2canvas($(".canvas_div_pdf")[0], { allowTaint: false }).then(function (canvas) {
+            canvas.getContext('2d');
+
+            var imgData = canvas.toDataURL("image/png", 1.0);
+            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+            for (var i = 1; i <= totalPDFPages; i++) {
+                pdf.addPage(PDF_Width, PDF_Height);
+                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+            }
+            pdf.save("Feedback_Interview.pdf");
+
+        });
+
+    }
+</script>
+<script>
+    function SubmitForm() {
+        if (CheckConditions()) {
+            document.getElementById("reportForm").submit();
+        }
+        else
+            return;
+    }
+</script>
+
+<script>
+
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("PageVideoLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("VideoFile").value = '';
+
+        }
+
+    }
+
+    function CountProctoring(value) {
+
+        if (value == "" || value == null) {
+            return;
+        }
+
+        var proctoringItems = $('[id^="Proctoring_"]');
+        var proctoringTotal = 0;
+        for (i = 0; i < proctoringItems.length; i++) {
+            proctoringTotal += parseInt(proctoringItems[i].value);
+        }
+        $("#ProctoringCount").val(proctoringTotal);
+        if (parseInt(proctoringTotal) > 0) {
+            $("#ProctoringCount").css("border-color", "red");
+        }
+        else {
+            $("#ProctoringCount").css("border-color", "#E3E3E3");
+        }
+    }
+      function switchtoquestionVedio(questiontime) {
+
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+            time = questiontime;
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
+    function CalculateOverAll(id, value) {
+        var num = id.match(/(\d+)/);
+        var index = num[0];
+        value = parseInt(value);
+        var skillName;
+        if (id.includes("Tech")) {
+
+            skillName = "TechSkillReportCollection";
+        }
+
+        var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
+        var required = $("#" + reqLevelId).val();
+        if (required <= value) {
+            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+            $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
+            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
+
+        }
+        else {
+            $("#" + skillName + "_" + index + "__WeightageActual").val("0");
+            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+        }
+
+        var items = $('[id$="WeightageActual"]');
+        //var length = item.length;
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
+        }
+        //items.forEach(function (item) {
+        //    totalCount = totalCount + item.val();
+        //});
+        var average = totalCount / 4;
+        $("#OverallScore").val(average);
+
+        var arr = [];
+        var obj = { y: "", legendText: "", label: "" }
+        //TechSkills actual weightage total
+        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+        var techTotal = 0;
+        for (i = 0; i < techItems.length; i++) {
+
+            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
+
+        }
+        obj.y = parseInt(techTotal) / 4;
+        obj.label = "Tech Skills Score";
+        obj.legendText = "Tech Skills Score";
+        arr.push(obj.y);
+    }
+
+    $(document).ready(function () {
+
+        var proctoringItems = $('[id^="Proctoring_"]');
+        var proctoringTotal = 0;
+        for (i = 0; i < proctoringItems.length; i++) {
+            proctoringTotal += parseInt(proctoringItems[i].value);
+        }
+        $("#ProctoringCount").val(proctoringTotal);
+        if (parseInt(proctoringTotal) > 0) {
+            $("#ProctoringCount").css("border-color", "red");
+        }
+        else {
+            $("#ProctoringCount").css("border-color", "#E3E3E3");
+        }
+
+        //shorter/better attempt
+        var weightageItems = $('[id$="WeightageActual"]');
+        for (i = 0; i < weightageItems.length; i++) {
+            var id = weightageItems[i].id;
+            var match = id.match(/\d+/g);
+            var digit = match[0];
+
+            var index = weightageItems[i].id.indexOf(digit);
+            var skillName = weightageItems[i].id.substring(0, index);
+            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+            if (reqLevel <= actLevel) {
+                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+            }
+            else {
+                $("#" + skillName + digit + "__WeightageActual").val("0");
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+
+            }
+
+        }
+
+
+        var items = $('[id$="WeightageActual"]');
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
+        }
+        var average = totalCount / 4;
+        $("#OverallScore").val(average);
+
+
+
+
+
+
+    });
+
+    function AddRow() {
+
+
+        var $ttc = $("#QuestionsTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#QuestionsTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#QuestionsTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+
+    }
+
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+            document.getElementById("btnUpload").disabled = false;
+
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    //name="ClientCollection[3].ClientUserId"
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+
+
+
+                }
+
+            }
+
+        }
+
+
+
+
+    }
+
+
+    function InterviewerChanged(val, id) {
+
+        var index = id.charAt(22);
+        var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetInterviewerSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+
+
+    }
+
+    function QuestionChanged(id, val) {
+        var num = id.match(/(\d+)/);
+
+        var index = num[0];//id.charAt(20);
+        var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetQuestionSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+
+
+    }
+
+    function MeetingStatusChanged(value) {
+        if (value == 1 || value == 2 || value == 3) {
+            document.getElementById("InterviewStatus").value = '';
+            document.getElementById("InterviewStatus").disabled = true;
+        }
+        else {
+            document.getElementById("InterviewStatus").disabled = false;
+        }
+    }
+
+    function CheckConditions() {
+
+        return (CheckInterviewerComments() && CheckQuestionsTiming());
+    }
+
+    function CheckInterviewerComments() {
+        var interviewStatusElem = document.getElementById("InterviewStatus");
+        if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
+            var comments = document.getElementById("InterviewerComment").value;
+            if (comments.length >= 250) {
+                document.getElementById("interviewerComment_Error").innerHTML = "";
+                return true;
+            }
+            else {
+                //interviewerComment_Error
+                document.getElementById("InterviewerComment").focus();
+                document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
+                return false;
+            }
+        }
+        else
+            return true;
+    }
+
+    function CheckQuestionsTiming() {
+     var interviewStatusElem = document.getElementById("InterviewStatus");
+        if (interviewStatusElem.value == 2||interviewStatusElem.value == 3|| interviewStatusElem.value == 4)
+        {
+        var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
+        var oldVal = $("#QuestionsCollection_0__Timing").val();
+            for (i = 0; i < questionItems.length; i++) {
+
+            var temp = $("#QuestionsCollection_" + i + "__Timing").val();
+            if (temp == null || temp == '') {
+
+                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60)."
+                return false;
+            }
+            if (i > 0) {
+                if (parseInt(temp) < parseInt(oldVal)) {
+                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60).";
+                    return false;
+                }
+                else
+                    oldVal = temp;
+            }
+        }
+            document.getElementById('QuestionsCollection_TimingError').innerHTML = "";
+
+        return true;
+       }
+      else
+            return true;
+    }
+
+    $(document).ready(function () {
+        //Perform Ajax request.
+        var count = '@ViewBag.QuestionsDiscussedCount';
+        //Get Question Skills
+        if (count == null || parseInt(count) == 0) {
+            var val = $("#QuestionsCollection_0__Comment").val();
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetQuestionSkills",
+                data: { 'id': val },
+                success: function (data) {
+                    $("#QuestionsCollection_0__SkillName").val(data);
+                }
+            });
+
+        }
+
+
+    });
+
+    $(document).on('click', '.delete-row', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Skill');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-joinability', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-skillgeneral', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-client', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-interviewer', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Interviewers');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-qualityController', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Quality Controller');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-controller', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Quality Controller');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+</script>
+
+<script>
+
+    window.onload = function () {
+
+        var totalScore = 0;
+        var arr = [];
+        var obj = { y: "", legendText: "", label: "" }
+        //TechSkills actual weightage total
+        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+        var techTotal = 0;
+        for (i = 0; i < techItems.length; i++) {
+
+            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
+
+        }
+        obj.y = parseInt(techTotal) / 4;
+        obj.label = "Tech Skills Score";
+        obj.legendText = "Tech Skills Score";
+        arr.push(obj.y);
+
+    }
+</script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+
+<script src="~/js/FeedbackRecorder/Record.js"></script>

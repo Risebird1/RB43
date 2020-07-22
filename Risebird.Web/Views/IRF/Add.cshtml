@@ -58,12 +58,12 @@
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group" style="margin-bottom:0px;">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
+                                      
 
                                         @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
                                         <label class="text-danger" id="uniqueMsg" style="color:red"></label>
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
-                                        @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
+                                      
 
                                     </div>
                                 </div>
@@ -135,19 +135,19 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="name">jd title</label>*@
+                                      
 
                                         @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
 
-                                        @*<input class="form-control text-box single-line" id="JDTiltle" name="JDTiltle" type="text" value="">*@
+                                  
 
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="companytype">companytype</label>*@
+                                       
                                         @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, new { @class = "select-css form-control text-box single-line" })
 
 
@@ -163,12 +163,12 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="JobCountry">Job Country</label>*@
+                                        
                                         @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                                        @*<input class="form-control text-box single-line" id="JobCountry" name="JobCountry" type="text">*@
+                              
                                         @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
 
                                     </div>
@@ -181,7 +181,7 @@
                                         <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
                                         @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
 
-                                        @*<input class="form-control text-box single-line" id="StartDate" name="StartDate" type="date" value="">*@
+                                      
 
                                     </div>
                                     <div class="form-group">
@@ -192,13 +192,13 @@
                                         <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
                                         @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
 
-                                        @*<input class="form-control text-box single-line" id="EndDate" name="EndDate" type="date" value="">*@
+                                   
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfPosition">No of Open Positions </label>*@
+                                      
 
                                         @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
@@ -206,13 +206,12 @@
                                             <button type="button" class="up button">&rsaquo;</button>
                                             <button type="button" class="down button">&lsaquo;</button>
                                         </div>
-                                        @*<input class="form-control text-box single-line" id="NoOfPosition" name="NoOfPosition" type="number" value="">*@
+                                       
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="noofintterview">no of interviews to be conducted</label>*@
 
                                         @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
@@ -220,7 +219,7 @@
                                             <button type="button" class="up-1 button">&rsaquo;</button>
                                             <button type="button" class="down-1 button">&lsaquo;</button>
                                         </div>
-                                        @*<input class="form-control text-box single-line" id="NoOfIntterview" name="NoOfIntterview" type="number" value="">*@
+                                       
 
                                     </div>
                                     <div class="form-group">
@@ -248,7 +247,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>*@
+                                       
 
                                         @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
@@ -256,13 +255,13 @@
                                             <button type="button" class="up-2 button">&rsaquo;</button>
                                             <button type="button" class="down-2 button">&lsaquo;</button>
                                         </div>
-                                        @*<input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="number" step="0.01" value="">*@
+                                      
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>*@
+                                       
 
                                         @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @class = "text-danger" })
@@ -270,13 +269,13 @@
                                             <button type="button" class="up-3 button">&rsaquo;</button>
                                             <button type="button" class="down-3 button">&lsaquo;</button>
                                         </div>
-                                        @*<input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="number" step="0.01" value="">*@
+                                      
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird HR</label>*@
+                                        
 
                                         @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { @class = "select-css form-control" })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
@@ -285,8 +284,6 @@
 
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird HR</label>*@
 
                                         @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "select-css form-control" })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
@@ -307,11 +304,7 @@
                                                 <div class="mdc-radio__ripple"></div>
                                             </div>
                                         </div>
-
-
                                         Provide JD Link
-
-
 
                                         <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
                                             <div class="mdc-radio mdc-radio--touch">
@@ -380,15 +373,7 @@
 
                                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>*@
-
+                                                       
 
                                                     </td>
                                                 </tr>
@@ -447,15 +432,7 @@
                                                         <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>*@
-
+                                                        
 
                                                     </td>
                                                 </tr>
@@ -509,14 +486,7 @@
 
                                                         <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>*@
+                                                        
 
                                                     </td>
                                                 </tr>
@@ -571,18 +541,7 @@
                                                     <td class="action text-center">
                                                         <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>*@
-
-
-
-
+                                                        
                                                     </td>
                                                 </tr>
 
@@ -619,7 +578,7 @@
                                                         @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "select-css form-control", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                     </td>
                                                     <td>
-                                                        @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                        
                                                         @Html.TextBox("ClientCollection[0].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                     </td>
@@ -627,14 +586,7 @@
                                                     <td class="action text-center">
                                                         <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>*@
+                                                       
 
 
 
@@ -673,7 +625,7 @@
                                                     </td>
 
                                                     <td>
-                                                        @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                      
                                                         @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                     </td>
@@ -682,14 +634,6 @@
                                                         <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>*@
 
 
 
@@ -737,17 +681,6 @@
 
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'SkillId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'SkillId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>*@
-
-
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -789,19 +722,7 @@
 
                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-            </button>
-
-
-        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-        </button>*@
-
-
-
-
-
+                                                       
 
                                                     </td>
                                                 </tr>
@@ -839,17 +760,7 @@
 
                                                         <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>*@
-
-
-
+                                                       
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -885,18 +796,6 @@
                                                     <td class="action text-center">
                                                         <span id="btnPlus" onclick="AddRowHR()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddRowHR()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>
-
-
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>*@
-
-
-
 
                                                     </td>
                                                 </tr>
@@ -941,9 +840,7 @@
 
                                                         <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-            <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-        </button>*@
+                                                        
 
 
                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">

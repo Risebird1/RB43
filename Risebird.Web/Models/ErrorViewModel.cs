@@ -1,5 +1,3 @@
-using System;
-
 namespace Risebird.Web.Models
 {
     public class ErrorViewModel

@@ -5,15 +5,13 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 
 namespace Risebird.Repository
 {
-    public class SettingsRepository :ISettingsRepository
+    public class SettingsRepository : ISettingsRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
@@ -54,7 +52,7 @@ namespace Risebird.Repository
                 parameters.Add("@InterviewWindupReminderMinutes", settings.InterviewWindupReminderMinutes);
                 parameters.Add("@InterviewReportReminderMinutes", settings.InterviewReportReminderMinutes);
                 parameters.Add("@QCCommentReminderMinutes", settings.QCCommentReminderMinutes);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.QueryAsync(con, "usp_UpdateSettings", parameters,
@@ -91,7 +89,7 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
-            
+
         }
 
 

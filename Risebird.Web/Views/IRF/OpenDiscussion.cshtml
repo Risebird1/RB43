@@ -1,0 +1,138 @@
+﻿
+@model IEnumerable<Risebird.Entities.ViewModel.Candidate>
+@{
+    ViewData["Title"] = "Open Discussion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Open Interview Invites
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Open Interview Invites</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 ml-md-auto">
+                            <div class="form-group">
+
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary " style="margin-top: 2px;margin-right:10px"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "IRF", actMethod ="OpenDiscussion" } )'" data-original-title="Tooltip on top"> Support</span></button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-3 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+
+                            <div class="statistics statistics-horizontal">
+                                <div class="info info-horizontal">
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <h3 class="info-title" style="font-size:smaller;"> @item.IRFName</h3>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="row" style="font-size:smaller;">
+
+                                        <div class="col-12">
+                                            <div class="group inner list-group-item-text">
+                                                <span>Client Name:</span> <p>@item.ClientCompName (@item.ClientName)</p>
+                                                <span>Primary Skills:</span> <p>@item.JDTiltle.Split('|')[0]  </p>
+                                                <span>Job Ends on :</span> <p>@item.EndDate.ToString("dd MMM yyyy")  </p>
+                                                <span>Jd Link:</span><p><a href="@item.JDLink" target="_blank">Job Description</a></p>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer ">
+                            <div class="stats text-center">
+
+
+                                <button type="button" onclick="window.open('@item.CalendlyLink')" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                                    <i class="now-ui-icons fa fa-calendar"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+

@@ -53,7 +53,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CuratedGroupName, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.EditorFor(model => model.CuratedGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly= "readonly" } })
+                                        @Html.EditorFor(model => model.CuratedGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
                                         @Html.ValidationMessageFor(model => model.CuratedGroupName, "", new { @class = "text-danger" })
 
                                     </div>
@@ -81,7 +81,7 @@
 
                                                         <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                             <div class="mdc-checkbox">
-                                                                @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control"})
+                                                                @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control" })
 
 
                                                                 <div class="mdc-checkbox__background">
@@ -111,11 +111,11 @@
                                         </tbody>
                                     </table>
 
-                                    @Html.HiddenFor(m=>m.CuratedGroupId)
+                                    @Html.HiddenFor(m => m.CuratedGroupId)
                                 </div>
                             </div>
 
-                            <div class="card-footer ">
+                            <div class="card-footer">
                                 <div class="row">
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back to List", "CuratedGroups", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
@@ -146,3 +146,23 @@
 </div>
 
 
+<script>
+    $(document).ready(function () {
+
+        $('#IRFList').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order:[],
+            responsive: false,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
+        });
+        var table = $('#IRFList').DataTable();
+    });
+</script>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Risebird.Entities.Enum
 {
@@ -10,6 +7,6 @@ namespace Risebird.Entities.Enum
         [Description("Passed")]
         Passed = 1,
         [Description("Failed")]
-        Failed = 2        
+        Failed = 2
     }
 }

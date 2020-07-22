@@ -536,7 +536,7 @@
 ">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
-                                                                            <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act to generate    `sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
 
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
                                                                                 <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
@@ -1256,15 +1256,15 @@
 
 
             <div class="modal-body">
-                <div class="row" style="padding:10px">
+                <div class="col-md-12">
                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
                         <div class="talktext">
                             <textarea rows="2" id="txtintrestecomment" placeholder="Please enter comment" style="width:100%"></textarea>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12 text-right">
+                <div class="col-md-12">
+                    <div class="text-right">
                         <input type="button" onclick="SendNotification()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Interested">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
@@ -1274,56 +1274,74 @@
         </div>
     </div>
 </div>
-<div id="MyShareModel1" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="MyShareModel1" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Email Share</h5>
-                <span onclick="closeSharePopUp1()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+           
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Email Share</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeSharePopUp1()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+
             <div class="modal-body">
-                <div class="row" style="padding:10px">
+                
+
+                <div class="col-md-12">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
 
-                    <div class="form-control text-areadiv">
-                        <textarea rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                    <div class="sharing">
+                        <textarea class="form-control" rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                     </div>
-
                 </div>
-                <div class="row" style="padding:10px">
+
+
+
+                <div class="col-md-12">
                     <label class="label-field desp-label" for="Comment">Interviewer Comment(Editable)</label>
 
-                    <div class="form-control text-areadiv">
-                        <textarea rows="2" id="comment" placeholder="Comment" style="width:100%"></textarea>
+                    <div class="sharing">
+                        <textarea rows="2" id="comment" placeholder="Comment" class="form-control" style="width:100%"></textarea>
                     </div>
 
                 </div>
-                <div class="row">
-                    <div class="col-md-12 text-right">
+                <div class="col-md-12">
+                    <div class="text-right">
                         <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;
-        background-color: #fff;
-        color: white;"></div>
+      
         </div>
     </div>
 </div>
-<div id="MyShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="MyShareModel" class="modal mdoal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Private Share</h5>
-                <span onclick="closeSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+         
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 26"><path fill="rgb(255,255,255)" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Private Share</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeSharePopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+
+
+
             <div class="modal-body">
-                <div class="row" style="padding:10px">
+                <div class="col-md-12">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
 
                     <div class="form-control text-areadiv">
@@ -1332,31 +1350,36 @@
 
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
-                    </div>
+
+                <div class="col-md-12 text-right">
+                    <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                    <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                 </div>
+
             </div>
-            <div class="modal-footer" style="padding: 5px;
-        background-color: #fff;
-        color: white;"></div>
+        
         </div>
     </div>
 </div>
 
-<div id="PublicShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="PublicShareModel" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Public Share</h5>
-                <span onclick="closepublicSharePopUp()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+           
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="sharing-icon" src="~/Newassets/img/share-3w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Public Share</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closepublicSharePopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
             <div class="modal-body">
-                <div class="row" style="padding:10px">
+                <div class="col-md-12">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
                     <div class="form-control text-areadiv">
                         <textarea rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
@@ -1371,25 +1394,35 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
+           
         </div>
     </div>
 </div>
-<div id="PublicUrlShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="PublicUrlShareModel" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Public Share Url</h5>
-                <span onclick="closePublicUrlShareModel()" style="cursor:pointer;" class="close" id="SharePopUp">&times;</span>
+          
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Public Share Url</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+
+
+
+
             <div class="modal-body">
-                <div class="row" >
+               
                     <div class="video-url">
                         <label class="label-field desp-label"> Video Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
                             <p class="special-text">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(83, 165, 245)" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
                                 <span id="special_text" class="special-text__tooltip">
                                     Copy Link
                                 </span>
@@ -1397,15 +1430,15 @@
 
                         </button>
                     </div>
-                </div>
+              
 
-                <div class="row">
-                    <div class="col-md-12 text-right">
+                <div class="col-md-12 ">
+                    <div class="text-right">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;background-color: #fff;color: white;"> </div>
+           
         </div>
     </div>
 </div>
@@ -1424,6 +1457,10 @@
             <div class="modal-header">
                 <h5 class="modal-title" style="color:#fff">Your Email Id</h5>
             </div>
+
+
+
+
             <div class="modal-body">
                 <div class="row" style="padding:10px">
 

@@ -1,20 +1,18 @@
-﻿using System;
-using Risebird.Business.Interface;
+﻿using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
-using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
     public class DashboardService : IDashboardService
     {
-        private IDashboarRepository _dashboardRespository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IDashboarRepository _dashboardRespository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
         public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger)
         {
             _dashboardRespository = dashboardRespository;
@@ -63,8 +61,8 @@ namespace Risebird.Business
                 if (_dashboardRespository.GetDoughnutGraphDetails(flag) == null)
                     return null;
                 else
-                   
-                return _dashboardRespository.GetDoughnutGraphDetails(flag).Result;
+
+                    return _dashboardRespository.GetDoughnutGraphDetails(flag).Result;
 
             }
             catch (Exception ex)

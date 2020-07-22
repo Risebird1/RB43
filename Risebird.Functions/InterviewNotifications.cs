@@ -1,3 +1,9 @@
+using Dapper;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -7,19 +13,13 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Risebird.Functions
 {
     public static class InterviewNotifications
     {
         [FunctionName("InterviewNotifications")]
-        public static void Run([TimerTrigger("0 0 1 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 1 * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
 
@@ -89,7 +89,7 @@ namespace Risebird.Functions
                 }
                 if (meetingsSelected != null)
                 {
-                    var meetings1 = meetingsSelected.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date && x.interviewDate.Hour <=9).ToList();
+                    var meetings1 = meetingsSelected.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date && x.interviewDate.Hour <= 9).ToList();
                     var meetings2 = meetingsSelected.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-2).Date && x.interviewDate.Hour > 9).ToList();
                     meetings1.AddRange(meetings2);
                     meetingsSelected = meetings1;
@@ -176,7 +176,7 @@ namespace Risebird.Functions
                     {
                         hrMailList = con.Query<string>(checkQuery, dynamicParameters).ToList();
                     }
-                    if(hrMailList == null || hrMailList.Count()==0)
+                    if (hrMailList == null || hrMailList.Count() == 0)
                     {
                         continue;
                     }
@@ -199,7 +199,7 @@ namespace Risebird.Functions
         {
             try
             {
-                if(noScheduleCandidateEmails.Count()==0 && todayCandidateEmails.Count()==0 && completedCandidateEmails.Count()==0 && selectedCandidatesEmails.Count()==0)
+                if (noScheduleCandidateEmails.Count() == 0 && todayCandidateEmails.Count() == 0 && completedCandidateEmails.Count() == 0 && selectedCandidatesEmails.Count() == 0)
                 {
                     return;
                 }
@@ -217,7 +217,7 @@ namespace Risebird.Functions
                 //Not scheduled candidates
                 StringBuilder sbNotScheduled = new StringBuilder();
 
-                if(noScheduleCandidateEmails!=null && noScheduleCandidateEmails.Count()>0)
+                if (noScheduleCandidateEmails != null && noScheduleCandidateEmails.Count() > 0)
                 {
                     DataTable dtNotScheduled = new DataTable();
                     dtNotScheduled.Columns.AddRange(new DataColumn[2] { new DataColumn("Name", typeof(string)),
@@ -257,10 +257,10 @@ namespace Risebird.Functions
                 {
                     sbNotScheduled.Append("No candidates for this IRF who have not scheduled.");
                 }
-                
+
                 //scheduled today
                 StringBuilder sbToday = new StringBuilder();
-                if(todayCandidateEmails!=null && todayCandidateEmails.Count()>0)
+                if (todayCandidateEmails != null && todayCandidateEmails.Count() > 0)
                 {
                     DataTable dtToday = new DataTable();
                     dtToday.Columns.AddRange(new DataColumn[3] { new DataColumn("Name", typeof(string)),
@@ -306,7 +306,7 @@ namespace Risebird.Functions
 
                 //meetings completed
                 StringBuilder sbCompleted = new StringBuilder();
-                if(completedCandidateEmails!=null &&completedCandidateEmails.Count()>0)
+                if (completedCandidateEmails != null && completedCandidateEmails.Count() > 0)
                 {
                     DataTable dtCompleted = new DataTable();
                     dtCompleted.Columns.AddRange(new DataColumn[4] { new DataColumn("Name", typeof(string)),
@@ -352,7 +352,7 @@ namespace Risebird.Functions
 
                 //selected candidates table
                 StringBuilder sbSelected = new StringBuilder();
-                if(selectedCandidatesEmails!=null && selectedCandidatesEmails.Count()>0)
+                if (selectedCandidatesEmails != null && selectedCandidatesEmails.Count() > 0)
                 {
                     DataTable dtSelected = new DataTable();
                     dtSelected.Columns.AddRange(new DataColumn[4] { new DataColumn("Name", typeof(string)),
@@ -397,7 +397,7 @@ namespace Risebird.Functions
 
 
 
-                object[] parameters = new object[] { irfName, client, primarySkill, sbNotScheduled,sbToday,sbCompleted, sbSelected };
+                object[] parameters = new object[] { irfName, client, primarySkill, sbNotScheduled, sbToday, sbCompleted, sbSelected };
                 mailMessage.Subject = "Interview Meeting Status Update.";//+ DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy");
                 string rawEmail = GetBlobData("mailtemplate", "ConsolidatedInterviewNotifications.html");
                 string msgBody = string.Format(rawEmail, parameters);

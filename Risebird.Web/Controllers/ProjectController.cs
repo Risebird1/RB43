@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +9,11 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -33,7 +33,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _irfRepository = irfRepository;
         }
-   
+
         [Authorize]
         public IActionResult Index()
         {
@@ -50,7 +50,7 @@ namespace Risebird.Web.Controllers
                     projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
 
                     model.ProjectList = projectList;
-                    
+
                     if (TempData["SuccessErrorMessageProject"] != null)
                     {
                         model.Message = TempData["SuccessErrorMessageProject"].ToString();
@@ -79,11 +79,11 @@ namespace Risebird.Web.Controllers
                         {
                             model.ProjectList = projectList;
                             model.ProjectList = model.ProjectList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
-                            
+
                         }
 
                     }
-                    
+
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         model.IsClientUser = true;
@@ -121,7 +121,7 @@ namespace Risebird.Web.Controllers
                     var projectList = _projectService.GetProjects(emailid, profileName).ToList();
                     projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
                     model.ProjectList = projectList;
-                    
+
                     if (TempData["SuccessErrorMessage"] != null)
                     {
                         model.Message = TempData["SuccessErrorMessage"].ToString();
@@ -168,7 +168,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        
+
         public async Task<IActionResult> ResetProjectFilter()
         {
             try
@@ -190,20 +190,20 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+
         [Authorize]
         [HttpGet]
         public IActionResult Add()
         {
             if (HttpContext.Session.GetString("email") != null)
             {
-                
+
                 var projectModel = new Project();
                 var irfList = _projectService.GetAllIRF();
                 var objList = new List<ProjectIRFMapping>();
                 foreach (var item in irfList)
                 {
-                    
+
                     var obj = new ProjectIRFMapping();
                     obj.IRFId = item.id;
                     obj.IRFName = item.IRFId;
@@ -400,11 +400,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName=="Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var projectModel = new Project();
                         var irfList = _projectService.GetAllIRF();
-                        if(Convert.ToInt32(clientId) != 0)
+                        if (Convert.ToInt32(clientId) != 0)
                         {
                             irfList = irfList.Where(x => x.ClientId == Convert.ToInt32(clientId)).ToList();
                         }
@@ -428,7 +428,7 @@ namespace Risebird.Web.Controllers
                             objList.Add(obj);
                         }
                         projectModel.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
-                        if(projectModel.ProjectIRFMappings.Count()==0)
+                        if (projectModel.ProjectIRFMappings.Count() == 0)
                         {
                             return new EmptyResult();
                         }
@@ -466,14 +466,14 @@ namespace Risebird.Web.Controllers
                         var projectCluster = _projectService.GetProjectCluster(Convert.ToInt32(projectId));
                         var allIRFs = _projectService.GetAllIRF();
 
-                        if (projectCluster!=null && projectCluster.Count()>0)
+                        if (projectCluster != null && projectCluster.Count() > 0)
                         {
-                            if(Convert.ToInt32(clientId)!=0)
+                            if (Convert.ToInt32(clientId) != 0)
                             {
                                 projectCluster = projectCluster.Where(x => x.ClientId == Convert.ToInt32(clientId)).ToList();
 
                             }
-                            if (projectCluster!=null)
+                            if (projectCluster != null)
                             {
                                 foreach (var item in projectCluster)
                                 {
@@ -482,7 +482,7 @@ namespace Risebird.Web.Controllers
                                     allIRFs = allIRFs.Where(x => x.id != item.IRFId);
                                 }
                             }
-                            
+
                         }
                         if (Convert.ToInt32(clientId) != 0)
                         {
@@ -563,7 +563,7 @@ namespace Risebird.Web.Controllers
                     foreach (var irf in irfList)
                     {
                         var irfMeetings = _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
-                        if(irfMeetings !=null)
+                        if (irfMeetings != null)
                         {
                             foreach (var item in irfMeetings)
                             {
@@ -571,9 +571,9 @@ namespace Risebird.Web.Controllers
                                 meetings.Add(item);
                             }
                         }
-                       
+
                     }
-                    
+
                     //meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                     meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                     //ViewBag.IRF = irfId;
@@ -805,7 +805,7 @@ namespace Risebird.Web.Controllers
                         var ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1").Count();
                         var DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3).Count();
                         var CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4).Count();
-                       
+
 
                         List<object> iData = new List<object>();
 
@@ -868,7 +868,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-               
+
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -897,7 +897,7 @@ namespace Risebird.Web.Controllers
                         var SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2).Count();
                         var RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3).Count();
                         var BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4).Count();
-                        
+
                         List<object> iData = new List<object>();
                         //Creating sample data  
                         DataTable dt = new DataTable();
@@ -1003,11 +1003,11 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         //var clientUserList = _irfRepository.GetTransClientUser(Convert.ToInt16(id));
-                        
+
                         foreach (var item in clientList)
                         {
                             var obj = new ClientChartData();
-                            obj.Name = item.EmailId +"("  +item.IRFName + ")";
+                            obj.Name = item.EmailId + "(" + item.IRFName + ")";
                             obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && (x.ClientHrContact == item.EmailId || x.staffingAgency == item.EmailId) && x.irfIntId == item.IRFId).Count();
                             obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && (x.ClientHrContact == item.EmailId || x.staffingAgency == item.EmailId) && x.irfIntId == item.IRFId).Count();
                             obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && (x.ClientHrContact == item.EmailId || x.staffingAgency == item.EmailId) && x.irfIntId == item.IRFId).Count();
@@ -1105,7 +1105,7 @@ namespace Risebird.Web.Controllers
                             var obj = new ClientChartFeedbackData();
                             obj.Name = item.EmailId + "(" + item.IRFName + ")";
                             obj.ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1 && (x.ClientHrContact == item.EmailId || x.staffingAgency == item.EmailId) && x.irfIntId == item.IRFId).Count();
-                            obj.SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2 && (x.ClientHrContact ==item.EmailId || x.staffingAgency == item.EmailId) && x.irfIntId == item.IRFId).Count(); ;
+                            obj.SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2 && (x.ClientHrContact == item.EmailId || x.staffingAgency == item.EmailId) && x.irfIntId == item.IRFId).Count(); ;
                             obj.RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3 && (x.ClientHrContact == item.EmailId || x.staffingAgency == item.EmailId) && x.irfIntId == item.IRFId).Count();
                             obj.BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4 && (x.ClientHrContact == item.EmailId || x.staffingAgency == item.EmailId) && x.irfIntId == item.IRFId).Count();
                             chartData.Add(obj);

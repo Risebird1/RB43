@@ -10,8 +10,10 @@ namespace Risebird.Repository.Interface
         IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId);
         IEnumerable<UserList> GetRisebirdUsers();
         IEnumerable<InterviewerVM> GetInterviewers();
+        IEnumerable<InterviewerVM> GetInterviewersDetails();
+
         IEnumerable<ClientUserVM> GetClientUsers();
-        ClientUserVM GetClientUserDetails(string emailID);
+        Task<ClientUserVM> GetClientUserDetails(string emailID);
         IEnumerable<QCInterviewerVM> GetQCInterviewers();
         Task<bool> AddUser(UserList user);
         Task<bool> DeleteUser(int id);
@@ -27,6 +29,8 @@ namespace Risebird.Repository.Interface
         Task<bool> AddQCInterviewer(QCInterviewerVM interviewer);
         Task<bool> DeleteInterviewer(int id);
         Task<InterviewerVM> GetInterviewer(int id);
+        IEnumerable<InterviewerVM> GetInterviewerVideos(string Emailid);
+
         Task<bool> UpdateInterviewer(InterviewerVM Interviewer);
 
         Task<QCInterviewerVM> GetQCInterviewer(int id);
@@ -45,6 +49,6 @@ namespace Risebird.Repository.Interface
         Recruiter GetRecruiter(int id);
         Task<bool> DeleteRecruiter(int userId);
         Task UpdateUserSigInDetails(string emailId);
-        string GetCurrenttheme (string emailId);
+        string GetCurrenttheme(string emailId);
     }
 }

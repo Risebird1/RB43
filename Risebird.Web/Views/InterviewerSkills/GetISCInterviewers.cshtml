@@ -1,0 +1,342 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.ISCInterviewer>
+@{
+    ViewData["Title"] = "Interviewers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Interviewers</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+
+
+
+
+                                <div class="row">
+
+                                    <div class="card-header">
+                                        <div class="pull-left">  <h4 class="card-title">Interviewers for <b>'@ViewBag.ISCName'</b></h4></div>
+
+                                        <div class="pull-right">
+                                            <div>
+
+
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to select Interviewers." onclick="location.href='@Url.Action("SelectUnApprovedInterviewers", "InterviewerSkills", new { iscId = ViewBag.ISCId, iscName = ViewBag.ISCName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Select Interviewers</font></span>
+                                                </button>
+
+                                                @Html.ActionLink("Back to List", "Index", "InterviewerSkills", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top:2px" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+                            </div>
+                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+
+                                <div id="tableID">
+                                    <table id="interviewersTbl" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Resume</th>
+                                                <th>Actions</th>
+                                                <th>Current Location</th>
+                                                <th>Current Role</th>
+                                                <th>Preffered Domain</th>
+                                                <th>Total Experience</th>
+                                                <th>Mobile Number</th>
+                                                @*<th style="text-align:center">Call</th>*@
+
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Resume</th>
+                                                <th>Actions</th>
+                                                <th>Current Location</th>
+                                                <th>Current Role</th>
+                                                <th>Preffered Domain</th>
+                                                <th>Total Experience</th>
+                                                <th>Mobile Number</th>
+                                                @*<th style="text-align:center">Call</th>*@
+
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+
+                                                <tr>
+
+                                                    <td> @item.FirstName</td>
+                                                    <td> @item.EmailId</td>
+                                                    @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+
+                                                    <td class="action" style="align-items:center">
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">
+                                                            <span onclick="location.href = '@Url.Action("SendInvite", "InterviewerSkills", new { iscName = ViewBag.ISCName, iscId = ViewBag.ISCId, emailId = item.EmailId, endDate = item.EndDate, interviewerProfileId = item.InterviewerProfileId})'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                            </span>
+                                                        </button>
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Cancel Invite">
+                                                            <span onclick="location.href = '@Url.Action("CancelInvite", "InterviewerSkills", new { iscName = ViewBag.ISCName, iscId = ViewBag.ISCId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                                                            </span>
+                                                        </button>
+                                                        
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span onclick="javascript:DeleteISCInterviewer('@item.id', '@ViewBag.ISCId', '@ViewBag.ISCName');" title="Remove" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                            </span>
+                                                        </button>
+
+                                                    </td>
+
+                                                    <td>@item.City</td>
+                                                    <td>@item.CurrentRole</td>
+                                                    <td>@item.PreferredDomain</td>
+                                                    <td>@item.Experience</td>
+                                                    <td>@item.MobileNumber</td>
+
+
+
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+
+
+
+
+
+        <!-- end row -->
+    </div>
+
+</div>
+
+
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        //window.location.href = '/IRF/Index';
+                        location.reload(true);
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        //window.location.href = '/IRF/Index';
+                        location.reload(true);
+
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#interviewersTbl').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: false,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
+        });
+        var table = $('#interviewersTbl').DataTable();
+    });
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#interviewersTbl").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#interviewersTbl").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#interviewersTbl").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+
+    function DeleteISCInterviewer(id, iscId, iscName) {
+
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The interviewer will be removed from " + iscName,
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    //var IdIRF = dataID;
+                    $.ajax({
+                        url: '/InterviewerSkills/DeleteISCInterviewer?id=' + id + '&iscId=' + iscId + '&iscName=' + iscName,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error removing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Removed!',
+                    type: 'success',
+                    html: '<p>The interviewer has been removed.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'The interviewer could not be removed!',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+
+
+
+
+
+
+

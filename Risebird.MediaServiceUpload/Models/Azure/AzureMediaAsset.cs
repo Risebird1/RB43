@@ -1,8 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Configuration;
-using Microsoft.WindowsAzure.MediaServices.Client;
+﻿using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.MediaServices.Client.ContentKeyAuthorization;
+using System;
+using System.Configuration;
+using System.Linq;
 using System.Text;
 
 namespace AzureMediaServiceMVC.Models.Azure

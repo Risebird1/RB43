@@ -1,25 +1,25 @@
 ﻿using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Risebird.Entities.ViewModel;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 
 namespace Risebird.Business
 {
     public class UserService : IUserService
     {
-        private IUserRepository _userRepository;        
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IUserRepository _userRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
-    }
+        }
 
         public List<Menu> GetMenuBasedOnUserEmailld(string emailId)
         {
@@ -29,6 +29,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -43,6 +44,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -120,6 +122,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -136,7 +139,7 @@ namespace Risebird.Business
                     return clientUser.Result;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
@@ -150,7 +153,7 @@ namespace Risebird.Business
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
@@ -197,6 +200,19 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<InterviewerVM> GetInterviewersDetails()
+        {
+            try
+            {
+                return _userRepository.GetInterviewersDetails().ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -233,7 +249,25 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<InterviewerVM> GetInterviewerVideos(string Emailid)
+        {
+            try
+            {
+                var interviewer = _userRepository.GetInterviewerVideos(Emailid);
 
+                if (interviewer == null)
+                    return null;
+                else
+                    return interviewer.ToList();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
         public bool UpdateInterviewer(InterviewerVM interviewer)
         {
             try
@@ -274,6 +308,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -384,7 +419,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _userRepository.GetResumeEvaluator(id);               
+                return _userRepository.GetResumeEvaluator(id);
             }
 
             catch (Exception e)
@@ -429,7 +464,7 @@ namespace Risebird.Business
                 if (_userRepository.GetRecruiters() != null)
                     return _userRepository.GetRecruiters().ToList();
                 else
-                   return new List<Recruiter>(); 
+                    return new List<Recruiter>();
             }
             catch (Exception e)
             {
@@ -497,13 +532,13 @@ namespace Risebird.Business
         {
             try
             {
-                 _userRepository.UpdateUserSigInDetails(emailId);
+                _userRepository.UpdateUserSigInDetails(emailId);
             }
 
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-              
+
             }
         }
 
@@ -515,6 +550,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

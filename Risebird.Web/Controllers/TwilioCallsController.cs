@@ -1,27 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Risebird.Business.Interface;
+﻿using Microsoft.AspNetCore.Mvc;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
-using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
-using Risebird.Repository.Interface;
-using Risebird.CommonHelper;
-using System.Data;
-using Microsoft.AspNetCore.Authorization;
-using OfficeOpenXml;
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 //using Twilio.AspNetCore
-using Twilio.TwiML;
-using Twilio.AspNet.Core;
 using Twilio.Jwt;
 using Twilio.Jwt.Client;
-using System.Net.Http.Headers;
 
 namespace Risebird.Web.Controllers
 {
@@ -38,7 +22,7 @@ namespace Risebird.Web.Controllers
         public TwilioCallsController(IAzureStorageHelper azureStorageHelper)
         {
             _azureStorageHelper = azureStorageHelper;
-           
+
         }
 
         public IActionResult Index()
@@ -50,7 +34,7 @@ namespace Risebird.Web.Controllers
         {
             var token = GenerateToken();
             //return Json;
-            return Json(new {token});
+            return Json(new { token });
         }
 
         public string GenerateToken()
@@ -73,8 +57,8 @@ namespace Risebird.Web.Controllers
             var file = Request.Form.Files;
 
             var filename = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
-            
-            if (file!=null)
+
+            if (file != null)
             {
                 await _azureStorageHelper.InsertBlob(filename, "audios", file[0]);
 

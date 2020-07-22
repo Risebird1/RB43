@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
@@ -54,7 +53,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -85,7 +84,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -117,7 +116,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -148,7 +147,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -189,7 +188,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -217,7 +216,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -249,7 +248,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -282,7 +281,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -319,7 +318,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -352,7 +351,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -387,7 +386,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -424,7 +423,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -455,7 +454,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -486,13 +485,13 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
 
-        public string SharedVideoNofitication(Mail model, string UrlDetails,string skills)
+        public string SharedVideoNofitication(Mail model, string UrlDetails, string skills)
         {
             try
             {
@@ -519,7 +518,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -528,8 +527,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                var UserType = "Dear";
+                var mailMessage = new MailMessage();               
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
                 var toMails = model.TO.Split(";");
@@ -551,12 +549,12 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string SharedVideoNofiticationExternal(Mail model, string name, string url,string comment, string resumeLink)
+        public string SharedVideoNofiticationExternal(Mail model, string name, string url, string comment, string resumeLink)
         {
             try
             {
@@ -583,7 +581,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -603,7 +601,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(supportEmail, null));
                 }
-                object[] parameters = new object[] { model.BroadcastReciever,  model.Message};
+                object[] parameters = new object[] { model.BroadcastReciever, model.Message };
                 mailMessage.Subject = model.Subject;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -617,9 +615,68 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Broadcast mail sent Successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Broadcast failed.";
+            }
+        }
+        public string SendInviteToInterviewer(string iscName, string jdTitle, string primarySkill, string calendlyLink, string interviewerMailId, string hrEmailId)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Discussion Invite");
+                mailMessage.To.Add(new MailAddress(interviewerMailId, "Interviewer"));
+                mailMessage.CC.Add(new MailAddress(hrEmailId, null));
+
+
+                object[] parameters = new object[] { iscName, primarySkill, calendlyLink };
+                mailMessage.Subject = "Discussion invitation";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteInterviewerTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
+        public string CancelInterviewerInvite(string iscName, string primarySkill, string interviewerMailId, string hrEmailId)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Discussion cancelled!");
+                mailMessage.To.Add(new MailAddress(interviewerMailId, "Interviewer"));
+                mailMessage.CC.Add(new MailAddress(hrEmailId, null));
+
+
+                object[] parameters = new object[] { iscName, primarySkill };
+                mailMessage.Subject = "Discussion Cancelled";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteInterviewerTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
             }
         }
 
@@ -636,8 +693,8 @@ namespace Risebird.CommonHelper
 
                 mailMessage.CC.Add(new MailAddress(clientEmailId, null));
 
-              
-                object[] parameters = new object[] { candidateDetails.Name, (candidateDetails.Skill!=null ? candidateDetails.Skill:string.Empty)};
+
+                object[] parameters = new object[] { candidateDetails.Name, (candidateDetails.Skill != null ? candidateDetails.Skill : string.Empty) };
                 mailMessage.Subject = "New Candidate added to Common Pool";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CommonPoolTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -651,7 +708,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent Successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Broadcast failed.";
             }

@@ -10,16 +10,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
 {
-    public class EvaluatorRepository: IEvaluatorRepository
+    public class EvaluatorRepository : IEvaluatorRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
         public EvaluatorRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
@@ -147,7 +146,7 @@ namespace Risebird.Repository
                 var query = "update TransHREvaluatorIRF set ResumeEvaluatorEmailId=null where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
-                
+
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -230,7 +229,7 @@ namespace Risebird.Repository
             try
             {
                 var query = "select JoinabilityComments from Candidate join CandidatesMaster cm on cm.id= Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId  where IRFId= @IRFId and Ul.EmailId=@EmailId";
-               
+
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@EmailId", emailId);
@@ -272,7 +271,7 @@ namespace Risebird.Repository
             try
             {
                 var query = "select SkillGeneralComments from Candidate where IRFId= @IRFId and CandidateMasterId = @candidateId";
-                
+
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 dynamicParameters.Add("@candidateId", candidateId);
@@ -295,7 +294,7 @@ namespace Risebird.Repository
             try
             {
                 var query = "select * from LevelTech";
-               
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<LevelTech>(query);
@@ -405,16 +404,16 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //check if the data is edited
-                    
+
                     if (reportDetails.SelectabilityEvaluatorReportCollection != null)
                     {
-                        
+
 
                         string sqlSelectableReport = "delete from SelectabilityReport where CandidateId = @CandidateId and IRFId =@IRFId";
                         var result3 = con.Execute(sqlSelectableReport, new
                         {
-                            CandidateId = reportDetails.CandidateId,                            
-                            IRFId = reportDetails.IRFId
+                            reportDetails.CandidateId,
+                            reportDetails.IRFId
                         });
 
                         DataTable selectabilityReportDt = new DataTable();
@@ -433,8 +432,10 @@ namespace Risebird.Repository
                             selectabilityReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value, reportDetails.CandidateId, reportDetails.IRFId);
                         }
 
-                        SqlCommand cmdselectabilityReport = new SqlCommand("usp_SelectabilityReportBulkInsert", con);
-                        cmdselectabilityReport.CommandType = CommandType.StoredProcedure;
+                        SqlCommand cmdselectabilityReport = new SqlCommand("usp_SelectabilityReportBulkInsert", con)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
                         cmdselectabilityReport.Parameters.Add(new SqlParameter("@SelectabilityReportBulkData", SqlDbType.Structured));
                         cmdselectabilityReport.Parameters["@SelectabilityReportBulkData"].Value = selectabilityReportDt;
                         con.Open();
@@ -445,8 +446,8 @@ namespace Risebird.Repository
 
                         result = true;
                     }
-                    
-                    
+
+
                     var query = "Update Candidate set SelectabilityComments = @SelectabilityComments, SelectabilityScore =@SelectabilityScore, TechSkillComments = @TechSkillComments, TechSkillScore=@TechSkillScore, SkillGeneralComments=@SkillGeneralComments, SkillGeneralScore=@SkillGeneralScore where IRFId = @IRFId and CandidateMasterId = @CandidateId";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
@@ -563,17 +564,17 @@ namespace Risebird.Repository
                 bool result = false;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
 
                     if (reportDetails.JoinabilityHRReportCollection != null)
                     {
                         //update Selectability Report table
-                        
+
                         string sqlSelectableReport = "delete from JoinabilityReport where CandidateId = @CandidateId and IRFId = @IRFId";
                         var result3 = con.Execute(sqlSelectableReport, new
                         {
-                            CandidateId = reportDetails.CandidateId,
-                            IRFId = reportDetails.IRFId
+                            reportDetails.CandidateId,
+                            reportDetails.IRFId
                         });
 
                         DataTable joinabilityReportDt = new DataTable();
@@ -592,8 +593,10 @@ namespace Risebird.Repository
                             joinabilityReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value, reportDetails.CandidateId, reportDetails.IRFId);
                         }
 
-                        SqlCommand cmdjoinabilityReport = new SqlCommand("usp_JoinabilityReportBulkInsert", con);
-                        cmdjoinabilityReport.CommandType = CommandType.StoredProcedure;
+                        SqlCommand cmdjoinabilityReport = new SqlCommand("usp_JoinabilityReportBulkInsert", con)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
                         cmdjoinabilityReport.Parameters.Add(new SqlParameter("@JoinabilityReportBulkData", SqlDbType.Structured));
                         cmdjoinabilityReport.Parameters["@JoinabilityReportBulkData"].Value = joinabilityReportDt;
                         con.Open();
@@ -604,8 +607,8 @@ namespace Risebird.Repository
 
                         result = true;
                     }
-                   
-                    
+
+
                     var query = "Update Candidate set JoinabilityComments = @JoinabilityComments, JoinabilityScore = @JoinabilityScore where IRFId = @IRFId and CandidateMasterId = @CandidateId";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
@@ -646,18 +649,18 @@ namespace Risebird.Repository
                 bool result = false;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
 
                     if (reportDetails != null)
                     {
-                        
+
                         string sqlDelete = "delete from TechSkillEvaluatorReport where CandidateId = @CandidateId and IRFId = @IRFId";
                         var result3 = con.Execute(sqlDelete, new
                         {
                             CandidateId = candidateId,
                             IRFId = irfId
                         });
-                        
+
                         DataTable techReportDt = new DataTable();
                         techReportDt.Columns.Add("RequiredLevelId", typeof(int));
                         techReportDt.Columns.Add("SkillId", typeof(int));
@@ -673,8 +676,10 @@ namespace Risebird.Repository
                             techReportDt.Rows.Add(item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, candidateId, irfId);
                         }
 
-                        SqlCommand cmdtechReport = new SqlCommand("usp_TechSkillEvaluatorReportBulkInsert", con);
-                        cmdtechReport.CommandType = CommandType.StoredProcedure;
+                        SqlCommand cmdtechReport = new SqlCommand("usp_TechSkillEvaluatorReportBulkInsert", con)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
                         cmdtechReport.Parameters.Add(new SqlParameter("@TechSkillEvaluatorReportBulkData", SqlDbType.Structured));
                         cmdtechReport.Parameters["@TechSkillEvaluatorReportBulkData"].Value = techReportDt;
                         con.Open();
@@ -722,7 +727,7 @@ namespace Risebird.Repository
                             IRFId = irfId
                         });
 
-                        
+
                         DataTable skillGeneralReportDt = new DataTable();
                         skillGeneralReportDt.Columns.Add("RequiredLevelId", typeof(int));
                         skillGeneralReportDt.Columns.Add("Type", typeof(string));
@@ -736,11 +741,13 @@ namespace Risebird.Repository
 
                         foreach (var item in reportDetails)
                         {
-                            skillGeneralReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value,candidateId, irfId);
+                            skillGeneralReportDt.Rows.Add(item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value, candidateId, irfId);
                         }
 
-                        SqlCommand cmdskillGeneralReport = new SqlCommand("usp_SkillGeneralEvaluatorReportBulkInsert", con);
-                        cmdskillGeneralReport.CommandType = CommandType.StoredProcedure;
+                        SqlCommand cmdskillGeneralReport = new SqlCommand("usp_SkillGeneralEvaluatorReportBulkInsert", con)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
                         cmdskillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralEvaluatorReportBulkData", SqlDbType.Structured));
                         cmdskillGeneralReport.Parameters["@SkillGeneralEvaluatorReportBulkData"].Value = skillGeneralReportDt;
                         con.Open();
@@ -873,8 +880,8 @@ namespace Risebird.Repository
                         return true;
                     }
                 }
-                
-                
+
+
             }
             catch (SqlException ex)
             {
@@ -905,11 +912,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -924,7 +931,7 @@ namespace Risebird.Repository
                     parameters.Add("@IRFId", irfId);
                     parameters.Add("@CandidateId", candidateMasterId);
                     parameters.Add("@VoiceItUserId", userId);
-                    var result =  SqlMapper.Query(con, "usp_UpdateCandidateVoiceUserId", parameters,
+                    var result = SqlMapper.Query(con, "usp_UpdateCandidateVoiceUserId", parameters,
                          commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -936,7 +943,7 @@ namespace Risebird.Repository
             }
             catch (Exception ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false; ;
 
@@ -969,7 +976,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
                     return SqlMapper.Query<Phrase>(con, "usp_GetPhrases", commandType: CommandType.StoredProcedure);
 
                 }

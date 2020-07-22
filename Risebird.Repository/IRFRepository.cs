@@ -1,18 +1,17 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using Risebird.Entities.Data;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using static System.Data.CommandType;
-using System.Threading.Tasks;
-using System.Data;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -20,7 +19,7 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public IRFRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -51,7 +50,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -68,7 +67,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -87,7 +86,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -116,7 +115,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -145,7 +144,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -162,7 +161,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -179,7 +178,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -220,7 +219,7 @@ namespace Risebird.Repository
 
         public IEnumerable<Users> GetQualityController()
         {
-            IEnumerable<Entities.Data.QualityController> qualityControllers = new List<Entities.Data.QualityController>();
+            IEnumerable<QualityController> qualityControllers = new List<Entities.Data.QualityController>();
             IEnumerable<Users> users = new List<Users>();
             try
             {
@@ -240,7 +239,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return users;
         }
@@ -257,7 +256,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -629,7 +628,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -816,7 +815,7 @@ namespace Risebird.Repository
                         con, "select * from IRF orderby ", null, commandType: Text).Result.AsList();
                     var irfID = irfList.Where(x => x.IRFId == irfDetails.IRFId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
 
-                    
+
                     DataTable joinabilityDt = new DataTable();
                     joinabilityDt.Columns.Add("IRFId", typeof(int));
                     joinabilityDt.Columns.Add("LevelId", typeof(int));
@@ -839,7 +838,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-                    
+
                     DataTable selectabilityDt = new DataTable();
                     selectabilityDt.Columns.Add("IRFId", typeof(int));
                     selectabilityDt.Columns.Add("LevelId", typeof(int));
@@ -865,7 +864,7 @@ namespace Risebird.Repository
 
 
                     //update general skill table
-                    
+
                     DataTable skillGeneralDt = new DataTable();
                     skillGeneralDt.Columns.Add("IRFId", typeof(int));
                     skillGeneralDt.Columns.Add("LevelId", typeof(int));
@@ -958,7 +957,7 @@ namespace Risebird.Repository
 
                     //update trans Client table
 
-                    
+
                     DataTable clientUserDt = new DataTable();
                     clientUserDt.Columns.Add("IRFId", typeof(int));
                     clientUserDt.Columns.Add("ClientUserId", typeof(int));
@@ -979,7 +978,7 @@ namespace Risebird.Repository
                     }
 
                     //update trans QC table
-                    
+
                     DataTable qualityControllerDt = new DataTable();
                     qualityControllerDt.Columns.Add("IRFId", typeof(int));
                     qualityControllerDt.Columns.Add("UserId", typeof(int));
@@ -998,7 +997,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-                    
+
                     DataTable resumeEvaluatorDt = new DataTable();
                     resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
                     resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
@@ -1018,7 +1017,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    
+
                     DataTable hRDt = new DataTable();
                     hRDt.Columns.Add("IRFId", typeof(int));
                     hRDt.Columns.Add("UserId", typeof(int));
@@ -1127,7 +1126,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    
+
 
                     DataTable selectabilityDt = new DataTable();
                     selectabilityDt.Columns.Add("IRFId", typeof(int));
@@ -1268,7 +1267,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    
+
                     // update trans emergency interviewers table
                     //if (irfDetails.EmergencyInterviewerCollection != null)
                     //{
@@ -1340,7 +1339,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-                    
+
 
                     //update trans QC table
 
@@ -1407,7 +1406,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-                    
+
                     //if (irfDetails.HRCollection != null)
                     //{
                     //    foreach (var item in irfDetails.HRCollection)
@@ -1997,9 +1996,9 @@ namespace Risebird.Repository
                         var affectedRows = con.Execute(sqlCuratedCandidate, new
                         {
                             IRFId = IrfId,
-                            CandidateEmailId = item.CandidateEmailId,
-                            CuratedEmailId = item.CuratedEmailId,
-                            Score = item.Score
+                            item.CandidateEmailId,
+                            item.CuratedEmailId,
+                            item.Score
 
                         });
                     }
@@ -2028,7 +2027,7 @@ namespace Risebird.Repository
                     string sqlDeletePrevious = "Delete from TechSkillComments where IRFId =@IRFId;";
                     var deletedRows = con.Execute(sqlDeletePrevious, new
                     {
-                        IRFId = obj.IRFId,
+                        obj.IRFId,
 
                     });
 
@@ -2038,9 +2037,9 @@ namespace Risebird.Repository
                         string sqlJoinability = "INSERT INTO TechSkillComments (IRFId, Skill, Comment) Values (@IRFId, @Skill, @Comment);";
                         var affectedRows = con.Execute(sqlJoinability, new
                         {
-                            IRFId = obj.IRFId,
+                            obj.IRFId,
                             Skill = Convert.ToInt16(item.Skill),
-                            Comment = item.Comment
+                            item.Comment
 
                         });
                     }
@@ -2312,7 +2311,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -2329,7 +2328,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -2346,7 +2345,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -2381,7 +2380,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -2473,7 +2472,7 @@ namespace Risebird.Repository
         {
             try
             {
-               
+
                 var query = "select Candidate.*,ul.EmailId, IRF.EndDate, IRF.StartDate, IRF.ClientName,IRF.JDTiltle, IRF.JDLink, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id join CandidatesMaster cm on cm.id = Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId where ul.EmailId = @EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@EmailId", emailId);
@@ -2566,9 +2565,9 @@ namespace Risebird.Repository
                 parameters.Add("@IRFId", obj.IRFId);
                 parameters.Add("@Name", obj.Name?.Trim());
                 parameters.Add("@EmailId", obj.EmailId?.Trim().ToLower());
-                parameters.Add("@ResumeLink", obj.ResumeLink );
-                parameters.Add("@Type", obj.Type );
-                parameters.Add("@Location", obj.Location );
+                parameters.Add("@ResumeLink", obj.ResumeLink);
+                parameters.Add("@Type", obj.Type);
+                parameters.Add("@Location", obj.Location);
                 parameters.Add("@Skill", obj.Skill);
                 parameters.Add("@WorkAuth", obj.WorkAuth);
                 parameters.Add("@CurrentLocation", obj.CurrentLocation);
@@ -3334,7 +3333,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-                    
+
                     return true;
                 }
 
@@ -3385,7 +3384,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", curatedGroupDetails.id);
                 parameters.Add("@Name", curatedGroupDetails.Name);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateCuratedGroup", parameters,
@@ -3470,7 +3469,7 @@ namespace Risebird.Repository
                     dynamicParameters.Add("@CuratedGroupId", curatedUsers.CuratedGroupId);
                     con.Query(query, dynamicParameters);
 
-                    if (curatedUsers.CuratedGroupUserList != null )
+                    if (curatedUsers.CuratedGroupUserList != null)
                     {
                         DataTable curatedUsersDt = new DataTable();
                         curatedUsersDt.Columns.Add("UserId", typeof(int));
@@ -3492,7 +3491,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-                    
+
                     return true;
                 }
 
@@ -3536,5 +3535,246 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<FetchInterviewerDetails> GetSkillQuality()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransSkillQuality", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetCertificationQuality()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransCertificationQuality", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetEducationQuality()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransEducationQuality", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetEmployersQuality()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransEmployersQuality", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<FetchInterviewerDetails> GetCareerProgression()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransCareerProgression", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetProjectsQuality()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransProjectsQuality", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetOnlinePresence()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransOnlinePresence", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetBehavioralScore()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransBehavioralScore", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetInterviwerCommunication()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransInterviwerCommunication", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetInterviewexperience()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransInterviewexperience", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetCompanyStage()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransInterviewerCompanyStage", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetSkillCategory()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransInterviewerSkillCategory", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetInterviewerExprienceYear()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransInterviewerExprienceYears", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetSenioritylevel()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransInterviewerSeniorityLevel", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<FetchInterviewerDetails> GetSkillNature()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<FetchInterviewerDetails>(
+                        con, "select * from TransInterviewerSkillNature", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

@@ -1,12 +1,27 @@
 body {
     background: #ebecf1;
 }
+.can-details a, .callatag {
+    color: #007bff !important;
+}
 
+    .can-details a:hover,
+    .can-details a:focus {
+        color: #f96332 !important;
+    }
 .navbar.navbar-transparent {
     background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
 }
+input[type='radio']:checked:after {
+    background-color: #42a5f5!important;
+    top: 1px!important;
+}
 
 
+#broadcastModal input[type='radio']:checked:after {
+    background-color: #42a5f5 !important;
+    top: -1px !important;
+}
 .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
     background: #2CA8FF;
 }
@@ -14,14 +29,24 @@ body {
 .filavatar {
     background: #42a5f5 !important;
 }
-
+.mdc-card .modal .form-control, .modal .form-control {
+    background: #fff !important;
+}
 .toscore {
     color: #000 !important;
 }
+textarea::-webkit-scrollbar {
 
-.border-db {
-    border-right: 1px #ddd solid !important
+    background-color: var(#acacad, #565656)!important;
 }
+
+textarea::-webkit-scrollbar-thumb {
+    background-color: #acacad!important;
+    border: 1px solid #acacad!important;
+
+}
+
+
 
 .share-btn {
     color: #000 !important
@@ -93,9 +118,9 @@ body {
 }
 
 .theme-settings .ts-button {
-    background: #1091f9 !important;
+    background: #1091f9!important;
 }
 
 .theme-settings .ts-body {
-    background: #1091f9 !important;
+    background: #1091f9!important;
 }

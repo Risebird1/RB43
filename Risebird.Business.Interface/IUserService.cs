@@ -1,18 +1,20 @@
-﻿using System.Collections.Generic;
-using Risebird.Entities.Data;
+﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using System.Collections.Generic;
 
 namespace Risebird.Business.Interface
 {
     public interface IUserService
-   {
-       List<Menu> GetMenuBasedOnUserEmailld(string emailId);
-       List<UserList> GetRisebirdUsers();
-       List<ClientUserVM> GetClientUsers();
-       List<InterviewerVM> GetInterviewers();
-       List<QCInterviewerVM> GetQCInterviewers();
+    {
+        List<Menu> GetMenuBasedOnUserEmailld(string emailId);
+        List<UserList> GetRisebirdUsers();
+        List<ClientUserVM> GetClientUsers();
+        List<InterviewerVM> GetInterviewers();
+        List<InterviewerVM> GetInterviewersDetails();
+
+        List<QCInterviewerVM> GetQCInterviewers();
         IEnumerable<string> GetAllHrsEmailld();
-      
+
         bool AddUser(UserList clientUser);
         bool DeleteUser(int id);
         UserList GetUser(int id);
@@ -26,6 +28,9 @@ namespace Risebird.Business.Interface
         bool AddInterviewer(InterviewerVM interviewer);
         bool AddQCInterviewer(QCInterviewerVM qcinterviewer);
         InterviewerVM GetInterviewer(int id);
+        List<InterviewerVM> GetInterviewerVideos(string Emailid);
+
+
         bool DeleteInterviewer(int id);
         bool UpdateInterviewer(InterviewerVM interviewer);
         QCInterviewerVM GetQCInterviewer(int id);

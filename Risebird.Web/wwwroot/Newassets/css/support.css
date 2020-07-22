@@ -38,12 +38,11 @@
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
-    background-color: var(--mdc-theme-primary, #018786) !important;
+   
 }
 
 textarea::-webkit-scrollbar-thumb {
-    background-color: #56a9ff;
-    border: 1px solid #56a9ff;
+
     margin: 2px;
     border-radius: 2px;
 }
@@ -239,7 +238,7 @@ table {
     height: auto;
     border-radius: 7px;
     margin: 5px 0px;
-    background-color: #fff;
+    background-color: #f5f5f5;
 }
 
 
@@ -373,7 +372,7 @@ table {
 .modal-bg {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 2; /* Sit on top */
     padding-top: 100px; /* Location of the box */
     left: 0;
     top: 0;

@@ -1,0 +1,450 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
+
+@{
+    ViewData["Title"] = "Add Interviewer Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">My Profile form</a>
+                <a class="navbar-brand">/ &nbsp;My Profile </a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+
+                        @using (Html.BeginForm("MyProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <!-- Add Interviewer personal Details Start-->
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="multiple_row">
+                                    <h2>Personal Details</h2>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="form-group" style="display:none">
+                                    @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId" })
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
+                                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { id = "txt_FirstName", @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AltEmailId, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                    @Html.EditorFor(model => model.AltEmailId, new { htmlAttributes = new { id = "txt_AltEmailId", @class = "form-control text-box single-line", @type = "text" } })
+                                    @Html.ValidationMessageFor(model => model.AltEmailId, "", new { @class = "text-danger" })
+                                </div>
+                               
+                                <div>
+                                    @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                </div>
+                                <div style="margin-top:10px;">
+                                    @if (Model.ResumeLink != null)
+                                    {
+                                        <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Resume  </a>
+                                    }
+                                </div>
+                                @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
+                            </div>
+                            <div class="col-md-4 col-sm-4 px-1">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { id = "txt_LastName", @class = "form-control text-box single-line", @type = "text" } })
+                                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
+                                    @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text" } })
+                                    @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+                                </div>
+                              
+
+                            </div>
+
+                            <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
+                                    @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.AltMobileNumber, htmlAttributes: new { @class = "control-label col-md-8 col-sm-8 col-lg-8 desp-label" })
+                                    @Html.EditorFor(model => model.AltMobileNumber, new { htmlAttributes = new { id = "txt_AltMobileNumber", @class = "form-control text-box single-line", @type = "text" } })
+                                    @Html.ValidationMessageFor(model => model.AltMobileNumber, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            </div>
+                            <!-- INterviewer personal Details End-->
+                            <!-- Availability Details start-->
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Availability Details</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered mbn" id="availabilityDetailsTable">
+                                            <thead class="tableHeaderClass">
+                                                <tr>
+                                                    <th width="20%" class="table_heading">Week Day</th>
+                                                    <th width="20%" class="table_heading">Week End</th>
+                                                    <th width="5%" class="table_heading">Is Available On Public Holidays</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.InterviewerAvailabilityDetails == null || Model.InterviewerAvailabilityDetails.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList, new { @class = "select-css form-control text-box single-line" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
+                                                        </td>
+                                                        <td>
+                                                      <!--      <div class="checkbox checkbox-danger">
+                                                                @Html.CheckBox("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")
+                                                                @*<label for="@Html.Name("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")">Is Available On Public Holidays</label>*@
+                                                            </div>-->
+
+
+
+                                                            <div class="mdc-checkbox">
+
+                                                                @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
+                                                                <div class="mdc-checkbox__background">
+                                                                    <svg class="mdc-checkbox__checkmark"
+                                                                         viewBox="0 0 24 24">
+                                                                        <path class="mdc-checkbox__checkmark-path"
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    </svg>
+                                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                                </div>
+                                                                <div class="mdc-checkbox__ripple"></div>
+
+                                                            </div>
+
+                                                        </td>
+                                                        <td class="action text-center">
+                                                            <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday','Weekend','IsAvailableOnPublicHolidays')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.InterviewerAvailabilityDetails.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, new { @class = "select-css form-control text-box single-line" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { @class = "select-css form-control text-box single-line" })
+                                                            </td>
+                                                            <td>
+
+                                                                <div class="mdc-checkbox">
+
+
+                                                                    @Html.CheckBoxFor((x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays), new { @class = "mdc-checkbox__native-control" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark"
+                                                                             viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+
+                                                                </div>
+
+
+
+
+                                                                <!--   <div class="checkbox checkbox-danger">
+           @Html.CheckBoxFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)
+           @*<label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>*@
+       </div>-->
+
+
+                                                            </td>
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="addAvailabilityDetails()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday','Weekend','IsAvailableOnPublicHolidays')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                      
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- Availabality Details end-->
+                            <!-- Account Details start-->
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Account Details</h2>
+                                    </div>
+                                </div>
+                                @if (Model.InterviewerAccDetails == null || Model.InterviewerAccDetails.Count() == 0)
+                                {
+                                    <div class="col-md-4 col-sm-4 pr-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
+                                            @Html.TextBox("InterviewerAccDetails[0].AccountName", null, new { id = "txt_AccountName", @class = "form-control text-box single-line" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 px-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
+                                            @Html.TextBox("InterviewerAccDetails[0].AccountNumber", null, new { id = "txt_AccountNumber", @class = "form-control text-box single-line" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 pl-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
+                                            @Html.TextBox("InterviewerAccDetails[0].IFSCCode", null, new { id = "txt_IFSCCode", @class = "form-control text-box single-line" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 pr-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
+                                            @Html.TextBox("InterviewerAccDetails[0].UPIId", null, new { id = "txt_UPIId", @class = "form-control text-box single-line" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 px-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> PAN</label>
+                                            @Html.TextBox("InterviewerAccDetails[0].PAN", null, new { id = "txt_PAN", @class = "form-control text-box single-line" })
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
+                                    {
+                                        <div class="col-md-4 col-sm-4 pr-1">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountName, null, new { id = "txt_AccountName", @class = "form-control text-box single-line" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-4 px-1">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { id = "txt_AccountNumber", @class = "form-control text-box single-line" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-4 pl-1">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].IFSCCode, null, new { id = "txt_IFSCCode", @class = "form-control text-box single-line" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-4 pr-1">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].UPIId, null, new { id = "txt_UPIId", @class = "form-control text-box single-line" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-4 px-1">
+                                            <div class="form-group">
+                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].PAN, null, new { id = "txt_", @class = "form-control text-box single-line" })
+                                                <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                            </div>
+                                        </div>
+                                    }
+
+                                }
+
+
+                            </div>
+                            <!-- Account Details End-->
+                            <div class="card-footer-button ">
+                                <div class="row">
+
+                                    <div class="col-md-12 mc-button-area">
+                                        <input type="submit" id="btnUpload" value="Submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+                                        @*<button type="submit"  value="Submit">Submit</button>*@
+                                        @Html.ActionLink("Back to List", "Index", "Interviewers", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            }
+                           
+                        </div>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class=" container-fluid ">
+                    <nav>
+                        <ul>
+                            <li>
+                                <a href="#">
+                                    Risebird
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    About Us
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    Blog
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="copyright" id="copyright">
+                        &copy;
+                        <script>
+                            document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                        </script> Risebird All Rights Reserved.
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+  
+
+    <script>
+        
+        function addAvailabilityDetails() {
+
+        var table = document.getElementById("availabilityDetailsTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 13) {
+            alert("Cannot add more than 12 rows");
+            return;
+        }
+
+        var $ttc = $("#availabilityDetailsTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#availabilityDetailsTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+        // add cloned row as last row
+        $("#availabilityDetailsTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+   
+
+    }
+
+
+        function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
+            debugger;
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+            document.getElementById("btnUpload").disabled = false;
+            
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                }
+
+            }
+
+        }
+
+
+    }
+
+
+    </script>

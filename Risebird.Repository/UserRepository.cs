@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
@@ -8,10 +10,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using static System.Data.CommandType;
 using System.Threading.Tasks;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -112,7 +112,7 @@ namespace Risebird.Repository
         public async Task<bool> UpdateUser(UserList user)
         {
             try
-            {              
+            {
                 DynamicParameters parameters = SetStoredProcedureParameterForUser(user);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -170,7 +170,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", entity.Id);
             //if (entity.IdProfile.HasValue)
 
-            parameters.Add("@selectedProfileId", entity.IdProfile); 
+            parameters.Add("@selectedProfileId", entity.IdProfile);
             parameters.Add("@userFirstName", entity.FirstName);
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
@@ -208,7 +208,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public ClientUserVM GetClientUserDetails(string emailID)
+        public async Task<ClientUserVM> GetClientUserDetails(string emailID)
         {
             try
             {
@@ -216,18 +216,19 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("Email", emailID);
-                    return  SqlMapper.Query<ClientUserVM>(con, "sp_ClientUserDetail", parameters,
-                         commandType: CommandType.StoredProcedure).FirstOrDefault();
+                    var result= await  SqlMapper.QueryAsync<ClientUserVM>(con, "sp_ClientUserDetail", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
                 }
 
             }
             catch (SqlException ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -245,7 +246,7 @@ namespace Risebird.Repository
                         commandType: CommandType.StoredProcedure);
 
                     return true;
-                   
+
                 }
             }
 
@@ -281,7 +282,7 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-               return false;
+                return false;
             }
 
             catch (Exception e)
@@ -391,7 +392,26 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public IEnumerable<InterviewerVM> GetInterviewersDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[usp_RisebirdInterviewerDetails]", null,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<bool> AddInterviewer(InterviewerVM interviewer)
         {
             try
@@ -474,7 +494,29 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public IEnumerable<InterviewerVM> GetInterviewerVideos(string Emailid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Emailid", Emailid);
 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[usp_GetInterviewerVideos]", parameters,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<bool> UpdateInterviewer(InterviewerVM Interviewer)
         {
             try
@@ -507,8 +549,8 @@ namespace Risebird.Repository
                 parameters.Add("@id", entity.id);
 
             parameters.Add("@selectedSkills", entity.PrimarySkill);
-            parameters.Add("@resumeLink", entity.ResumeLink);           
-            parameters.Add("@slots", entity.Slots);   
+            parameters.Add("@resumeLink", entity.ResumeLink);
+            parameters.Add("@slots", entity.Slots);
             parameters.Add("@userFirstName", entity.FirstName);
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId.Trim().ToLower());
@@ -982,25 +1024,25 @@ namespace Risebird.Repository
                 var currentDate = DateTime.Now;
                 var query = "update UserList set LastLogin= @LastLogin where EmailId = @EmailId";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@LastLogin", currentDate);              
+                dynamicParameters.Add("@LastLogin", currentDate);
                 dynamicParameters.Add("@EmailId", emailId);
-               
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query<int>(query, dynamicParameters);                   
+                    var result = con.Query<int>(query, dynamicParameters);
                 }
             }
 
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                
+
             }
 
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-               
+
             }
         }
 
@@ -1011,18 +1053,18 @@ namespace Risebird.Repository
             try
             {
                 string connectionString = _configuration["ConnectionString:DBConnectionString"];
-            
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var query = "Select Usertheme  from UserList where EmailId = @id";
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@id", emailid);
-                        var results = con.Query<string>(query, parameters);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select Usertheme  from UserList where EmailId = @id";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", emailid);
+                    var results = con.Query<string>(query, parameters);
                     // return result;
                     return results.FirstOrDefault();
-                    }
-             
-             
+                }
+
+
             }
             catch (Exception)
             {

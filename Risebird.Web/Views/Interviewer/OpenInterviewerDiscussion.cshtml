@@ -1,0 +1,176 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerInvites>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Open Discussions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+
+
+<!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="row">
+                            <div class="card-header">
+                                <div class="pull-left">
+                                    <h4 class="card-title">Open Discussions</h4>
+                                </div>
+
+
+                                <div class="pull-right">
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                        <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "IRF", actMethod ="OpenCandidateInvites" } )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Support</font></span>
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-lg-4 col-sm-6" style="margin-top: 15px;">
+                                    <div class="card card-stats border card-blue">
+
+
+                                        <div class="statistics statistics-horizontal">
+                                            <div class="info info-horizontal">
+                                                <div class="card-header">
+                                                    <div class="row">
+
+
+                                                        <div class=" col-md-6 col-sm-6 first">
+                                                            <h6> @item.InterviewerSkillId </h6>
+                                                        </div>
+
+                                                        <div class="col-md-6 col-sm-6 card-header-buttons action">
+
+                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Edit">
+                                                                <span onclick="window.open('@item.CalendlyLink')" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="card-body ">
+                                                    <div class="row" style="font-size:smaller;">
+
+                                                        <div class="col-12">
+                                                            <div class="group inner list-group-item-text">
+                                                                <div class="can-details three">  <b>Primary Skill:</b> <span>@item.PrimarySkill  </span></div>
+                                                                <div class="can-details four">  <b>Job Ends on :</b> <span>@item.EndDate.ToString("dd MMM yyyy")  </span></div>
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- end row -->
+
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+
+    </div>
+
+</div>
+
+
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+
+        var enjoyhint_instance = new EnjoyHint({});
+
+        var enjoyhint_script_steps = [
+            {
+                'next .card-title': 'Open interview invites and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+
+            {
+                'next .first': 'Skill Channel ID',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .second': 'Client Name',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .three': 'Primary Skill',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .four': 'Job End Date',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .five': 'Job Description link',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .itemques': 'Click here to schedule your interview based on your availability',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'click .icimenu': 'Click on Scheduled Interview menu to see its features',
+
+            },
+
+        ];
+
+        enjoyhint_instance.set(enjoyhint_script_steps);
+        enjoyhint_instance.run();
+
+    </script>
+}

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Risebird.Entities.Enum
 {
@@ -192,7 +189,7 @@ namespace Risebird.Entities.Enum
         [Description("Architect")]
         Architect = 5,
         [Description("Admin")]
-        Admin = 6        
+        Admin = 6
     }
 
     public enum QuestionsLevel

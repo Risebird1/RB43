@@ -4,7 +4,7 @@
 <table class="table table-bordered mbn" id="ProjectList">
     <thead>
         <tr>
-            @*<th>IRF Id</th>*@
+           
             <th class="text-center" style="width:450px">Project Name</th>
             <th class="text-center">Client</th>
             <th class="text-center">Add</th>
@@ -14,10 +14,7 @@
         @for (int i = 0; i < Model.AccountProjectMappings.Count(); i++)
         {
             <tr>
-                @*<td>
-                        @Html.TextBoxFor(m => m.ProjectIRFMappings[i].IRFId, new { @class = "form-control", @readonly = "readonly"})
-
-                    </td>*@
+                @
                 <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
                 <td class="text-center">@Model.AccountProjectMappings[i].Client</td>
                 <td class="text-center">
