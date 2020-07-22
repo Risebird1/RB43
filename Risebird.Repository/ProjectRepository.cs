@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Repository
 {
@@ -19,7 +18,7 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public ProjectRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -109,7 +108,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
@@ -144,7 +143,7 @@ namespace Risebird.Repository
             try
             {
                 string query = string.Empty;
-                if(!string.IsNullOrEmpty(irfIdList))
+                if (!string.IsNullOrEmpty(irfIdList))
                 {
                     query = "Select IRF.id as IRFId,IRF.IRFId as IRFName, Client.[Name] as Client, irf.JDTiltle, IRF.ClientId from IRF inner join Client on IRF.ClientId = Client.id where irf.ClientId=@ClientId and IsDeleted = @IsDeleted and irf.id not in (" + irfIdList + ")";
                 }
@@ -176,17 +175,17 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
-                    
+
+
                     string sqlInsertReport = "INSERT INTO Project (Name,ClientId, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn ) Values (@Name,@ClientId,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
-                        Name = projectDetails.Name,
-                        ClientId = projectDetails.ClientId,
-                        EndClient = projectDetails.EndClient,
-                        Location = projectDetails.Location,
-                        ProjectOwnerId = projectDetails.ProjectOwnerId,
-                        CreatedOn =projectDetails.CreatedOn,
+                        projectDetails.Name,
+                        projectDetails.ClientId,
+                        projectDetails.EndClient,
+                        projectDetails.Location,
+                        projectDetails.ProjectOwnerId,
+                        projectDetails.CreatedOn,
                         IsDeleted = false
 
                     });
@@ -202,13 +201,13 @@ namespace Risebird.Repository
                             var result1 = con.ExecuteAsync(sqlTechReport, new
                             {
                                 ProjectId = projectId,
-                                IRFId = item.IRFId,
-                                IsAdded = item.IsAdded
-                                
+                                item.IRFId,
+                                item.IsAdded
+
                             }).Result;
                         }
                     }
-                    
+
                     return true;
                 }
 
@@ -245,7 +244,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        
+
         public async Task<bool> UnArchiveProject(int id)
         {
             try
@@ -296,13 +295,13 @@ namespace Risebird.Repository
                             var affectedRows = con.ExecuteAsync(sqlQuery, new
                             {
                                 ProjectId = projectDetails.id,
-                                IRFId = item.IRFId,
-                                IsAdded = item.IsAdded
+                                item.IRFId,
+                                item.IsAdded
                             }).Result;
                         }
                     }
 
-                   
+
                     return true;
                 }
 

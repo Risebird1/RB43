@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Risebird.Business.Interface;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.ViewModel;
 
 namespace Risebird.Web.Controllers.api
 {
@@ -29,7 +24,7 @@ namespace Risebird.Web.Controllers.api
         public async Task<HttpResponseMessage> IRFBasedInterviewerMail(string IRFID, string interviewDate)
         {
             var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(IRFID);
-            if(interviwers!= null)
+            if (interviwers != null)
             {
                 _notificationHelper.SendIRFBasedInterviewerMail(interviwers, interviewDate);
 

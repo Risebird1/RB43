@@ -1,19 +1,19 @@
 ﻿using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Risebird.Entities.ViewModel;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 
 namespace Risebird.Business
 {
     public class UserService : IUserService
     {
-        private IUserRepository _userRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IUserRepository _userRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -29,6 +29,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -43,6 +44,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -120,6 +122,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -197,6 +200,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -208,6 +212,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -303,6 +308,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -544,6 +550,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

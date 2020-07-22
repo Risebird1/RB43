@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -21,7 +19,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? EndDate { get; set; }
         public string[] ClientName { get; set; }
         public string[] CandidateName { get; set; }
-        public string [] CandidateLocation { get; set; }
+        public string[] CandidateLocation { get; set; }
 
         public string SearchFillter { get; set; }
         public string[] IsShortListed { get; set; }

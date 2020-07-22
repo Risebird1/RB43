@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using Dapper;
+﻿using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Risebird.Entities.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
 
 namespace Risebird.Web.Controllers
 {
@@ -358,7 +358,7 @@ namespace Risebird.Web.Controllers
                         parameters.Add("@id", userid);
                         parameters.Add("@Usertheme", theme);
                         var results = con.Query(query, parameters);
-                       
+
                         HttpContext.Session.SetString("Currenttheme", theme);
                         // return result;
                         return Json(results);
@@ -372,8 +372,8 @@ namespace Risebird.Web.Controllers
             }
 
 
-           
+
         }
 
- }
+    }
 }

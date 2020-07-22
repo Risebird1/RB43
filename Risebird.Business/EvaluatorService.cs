@@ -8,24 +8,21 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
     public class EvaluatorService : IEvaluatorService
     {
-        private IEvaluatorRepository _evaluatorRespository;
-        private IVoiceItRepository _voiceItRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        private readonly INotificationHelper _notificationHelper;
-        private IMeetingRespository _meetingRespository;
+        private readonly IEvaluatorRepository _evaluatorRespository;
+        private readonly IVoiceItRepository _voiceItRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IMeetingRespository _meetingRespository;
 
-        public EvaluatorService(IEvaluatorRepository evaluatorRespository, INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, IVoiceItRepository voiceItRepository)
+        public EvaluatorService(IEvaluatorRepository evaluatorRespository, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, IVoiceItRepository voiceItRepository)
         {
             _evaluatorRespository = evaluatorRespository;
             _applicationErrorLogger = applicationErrorLogger;
-            _notificationHelper = notificationHelper;
             _meetingRespository = meetingRespository;
             _voiceItRepository = voiceItRepository;
         }
@@ -76,7 +73,7 @@ namespace Risebird.Business
         {
             try
             {
-                var assignedEvaluations =_evaluatorRespository.GetAssignedSelectabilityEvaluations(emailID).Result.ToList();                
+                var assignedEvaluations = _evaluatorRespository.GetAssignedSelectabilityEvaluations(emailID).Result.ToList();
                 return assignedEvaluations;
             }
             catch (Exception ex)
@@ -128,14 +125,16 @@ namespace Risebird.Business
                     var selectabilityList = new List<SelectabilityEvaluatorReport>();
                     foreach (var item in selectabilityDetails)
                     {
-                        SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport();
-                        obj.CandidateId = candidateId;
-                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                        obj.Type = item.Type;
-                        obj.Name = item.Name;
-                        obj.Value = item.Value;
-                        obj.WeightageRequired = item.Weightage;
+                        SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport
+                        {
+                            CandidateId = candidateId,
+                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            Type = item.Type,
+                            Name = item.Name,
+                            Value = item.Value,
+                            WeightageRequired = item.Weightage
+                        };
                         selectabilityList.Add(obj);
                     }
 
@@ -143,10 +142,10 @@ namespace Risebird.Business
                 }
 
                 //get all values from database
-               
+
 
                 var candidateDetails = _evaluatorRespository.GetCandidate(candidateId);
-                
+
 
                 model.CandidateName = candidateDetails.Name;
                 model.ResumeLink = candidateDetails.ResumeLink;
@@ -161,7 +160,7 @@ namespace Risebird.Business
                 model.Level = new SelectList(levels, "id", "Name");
                 model.LevelTech = new SelectList(_evaluatorRespository.GetLevelTech(), "id", "Name");
                 return model;
-                
+
             }
 
             catch (Exception e)
@@ -175,7 +174,7 @@ namespace Risebird.Business
         {
             try
             {
-                
+
                 // check whether a feedback for the interviewId has already been submitted
                 var techReport = (IList<TechSkillEvaluatorReport>)_evaluatorRespository.GetTechReport(candidateId, irfId);
 
@@ -189,14 +188,16 @@ namespace Risebird.Business
                     //assign values to model
                     foreach (var item in techSkillsDetails)
                     {
-                        TechSkillEvaluatorReport obj = new TechSkillEvaluatorReport();
-                        obj.CandidateId = candidateId;
-                        obj.IRFId = irfId;
-                        obj.RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                        obj.RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                        obj.SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name;
-                        obj.SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id;
-                        obj.WeightageRequired = item.Weightage;
+                        TechSkillEvaluatorReport obj = new TechSkillEvaluatorReport
+                        {
+                            CandidateId = candidateId,
+                            IRFId = irfId,
+                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name,
+                            SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id,
+                            WeightageRequired = item.Weightage
+                        };
 
                         techSkillList.Add(obj);
                     }
@@ -205,7 +206,7 @@ namespace Risebird.Business
 
                 return techReport;
                 //get all values from database
-                
+
 
             }
 
@@ -219,10 +220,10 @@ namespace Risebird.Business
         {
             try
             {
-                
+
                 // check whether a feedback for the interviewId has already been submitted
                 var skillGeneralReport = (IList<SkillGeneralEvaluatorReport>)_evaluatorRespository.GetSkillGeneralReport(candidateId, irfId);
-                
+
                 if (skillGeneralReport == null || skillGeneralReport.Count() == 0)
                 {
                     var genSkillsDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
@@ -232,15 +233,17 @@ namespace Risebird.Business
                     //assign values to model
                     foreach (var item in genSkillsDetails)
                     {
-                        SkillGeneralEvaluatorReport obj = new SkillGeneralEvaluatorReport();
-                        obj.CandidateId = candidateId;
-                        obj.IRFId = irfId;
-                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                        obj.Type = item.Type;
-                        obj.Name = item.Name;
-                        obj.Value = item.Value;
-                        obj.WeightageRequired = item.Weightage;
+                        SkillGeneralEvaluatorReport obj = new SkillGeneralEvaluatorReport
+                        {
+                            CandidateId = candidateId,
+                            IRFId = irfId,
+                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            Type = item.Type,
+                            Name = item.Name,
+                            Value = item.Value,
+                            WeightageRequired = item.Weightage
+                        };
                         genSkillList.Add(obj);
                     }
                     skillGeneralReport = (IList<SkillGeneralEvaluatorReport>)genSkillList;
@@ -269,9 +272,9 @@ namespace Risebird.Business
                 reportModel.HRReport.CandidateEmailId = reportModel.CandidateEmailId;
                 reportModel.HRReport.CandidateId = reportModel.CandidateId;
                 reportModel.HRReport.IRFId = reportModel.IRFId;
-                
+
                 var joinResult = _evaluatorRespository.AddJoinabilityReport(reportModel.HRReport).Result;
-                
+
                 var selecResult = _evaluatorRespository.AddSelectabilityReport(reportModel).Result;
                 var techResult = _evaluatorRespository.AddTechReport(reportModel.TechSkillEvaluatorReportCollection, reportModel.CandidateId, reportModel.IRFId).Result;
                 var genSkillResult = _evaluatorRespository.AddSkillGeneralReport(reportModel.SkillGeneralEvaluatorReportCollection, reportModel.CandidateId, reportModel.IRFId).Result;
@@ -281,7 +284,7 @@ namespace Risebird.Business
                 }
                 else
 
-                    return false; 
+                    return false;
             }
 
             catch (Exception e)
@@ -362,14 +365,16 @@ namespace Risebird.Business
                     var joinabilityList = new List<JoinabilityHRReport>();
                     foreach (var item in joinabilityDetails)
                     {
-                        JoinabilityHRReport obj = new JoinabilityHRReport();
-                        obj.CandidateId = candidateId;
-                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                        obj.Type = item.Type;
-                        obj.Name = item.Name;
-                        obj.Value = item.Value;
-                        obj.WeightageRequired = item.Weightage;
+                        JoinabilityHRReport obj = new JoinabilityHRReport
+                        {
+                            CandidateId = candidateId,
+                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            Type = item.Type,
+                            Name = item.Name,
+                            Value = item.Value,
+                            WeightageRequired = item.Weightage
+                        };
                         joinabilityList.Add(obj);
                     }
 
@@ -377,9 +382,9 @@ namespace Risebird.Business
                 }
 
                 //get all values from database
-                
+
                 var candidateDetails = _evaluatorRespository.GetCandidate(candidateId);
-                
+
                 model.CandidateName = candidateDetails.Name;
                 model.ResumeLink = candidateDetails.ResumeLink;
                 model.IRFId = irfId;
@@ -416,7 +421,7 @@ namespace Risebird.Business
                 reportModel.EvaluatorReport.SkillGeneralComments = reportModel.SkillGeneralComments;
                 reportModel.EvaluatorReport.SkillGeneralScore = reportModel.SkillGeneralScore;
                 var selecResult = _evaluatorRespository.AddSelectabilityReport(reportModel.EvaluatorReport).Result;
-                var joinResult =  _evaluatorRespository.AddJoinabilityReport(reportModel).Result;
+                var joinResult = _evaluatorRespository.AddJoinabilityReport(reportModel).Result;
                 var techResult = _evaluatorRespository.AddTechReport(reportModel.TechSkillEvaluatorReportCollection, reportModel.CandidateId, reportModel.IRFId).Result;
                 var genSkillResult = _evaluatorRespository.AddSkillGeneralReport(reportModel.SkillGeneralEvaluatorReportCollection, reportModel.CandidateId, reportModel.IRFId).Result;
                 if (joinResult && selecResult && techResult && genSkillResult)
@@ -440,7 +445,7 @@ namespace Risebird.Business
             try
             {
                 var userId = _evaluatorRespository.GetUserId(emailId, profile);
-                return _evaluatorRespository.GetRecruiterCandidates(userId).Result.ToList();                
+                return _evaluatorRespository.GetRecruiterCandidates(userId).Result.ToList();
             }
             catch (Exception ex)
             {
@@ -478,7 +483,7 @@ namespace Risebird.Business
         {
             try
             {
-                if(obj.IsVoiceBiometric)
+                if (obj.IsVoiceBiometric)
                 {
                     obj.Description = obj.DropDescription;
                 }
@@ -515,11 +520,11 @@ namespace Risebird.Business
                 string voiceItUserId = string.Empty;
                 string finalStatus = "Successful!";
                 //check if the candidate is a  VoiceIt user already
-                if(candidateList != null && (candidateList.First().VoiceItUserId == null || candidateList.First().VoiceItUserId ==""))
+                if (candidateList != null && (candidateList.First().VoiceItUserId == null || candidateList.First().VoiceItUserId == ""))
                 {
                     //create user
                     var result = _voiceItRepository.CreateUser();
-                    if(result.responseCode.Contains("SUCC"))
+                    if (result.responseCode.Contains("SUCC"))
                     {
                         //save userID to database
                         voiceItUserId = result.userId;
@@ -539,7 +544,7 @@ namespace Risebird.Business
                     if (!item.IsEnrolled)
                     {
                         var enrollmentResult = _voiceItRepository.EnrollUser(voiceItUserId, item.AudioFileLink, item.PhraseDetail);
-                        
+
                         if (enrollmentResult.Contains("Success"))
                         {
                             item.IsEnrolled = true;
@@ -562,7 +567,7 @@ namespace Risebird.Business
 
             catch (Exception e)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

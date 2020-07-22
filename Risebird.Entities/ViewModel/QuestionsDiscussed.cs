@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.ViewModel
+﻿namespace Risebird.Entities.ViewModel
 {
     public class QuestionsDiscussed
     {
         public int id { get; set; }
-        public int InterviewId { get; set; } 
+        public int InterviewId { get; set; }
         public string Comment { get; set; }
         public string SkillName { get; set; }
         public int RatingId { get; set; }

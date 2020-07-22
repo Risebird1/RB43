@@ -1,3 +1,9 @@
+using Dapper;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -7,12 +13,6 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Twilio.Clients;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
@@ -22,7 +22,7 @@ namespace Risebird.Functions
     public static class UnassignedMeetingsReminder
     {
         [FunctionName("UnassignedMeetingsReminder")]
-        public static void Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 */12 * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -49,7 +49,7 @@ namespace Risebird.Functions
                     {
                         foreach (var meetingId in meetingIds)
                         {
-                            
+
                             var interviewerMailList = meetings.Where(x => x.imid == meetingId).Select(x => x.InterviewerEmailId);
                             if (interviewerMailList == null || interviewerMailList.Count() == 0)
                             {
@@ -61,12 +61,12 @@ namespace Risebird.Functions
                             var primarySkill = meetingDetails.JDTiltle.Split('|')[0];
                             var interviewDate = meetingDetails.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt");
 
-                            SendMailToInterviewer(interviewerMailList,irfName, candidateEmail, primarySkill, interviewDate);
+                            SendMailToInterviewer(interviewerMailList, irfName, candidateEmail, primarySkill, interviewDate);
 
                             var sb = new StringBuilder();
-                            sb.Append( "You have received this communication as a reminder to assign a meeting scheduled for the date " +interviewDate + ".");
+                            sb.Append("You have received this communication as a reminder to assign a meeting scheduled for the date " + interviewDate + ".");
                             sb.AppendLine();
-                            sb.Append("Skills Channel: " +irfName);
+                            sb.Append("Skills Channel: " + irfName);
                             sb.AppendLine();
                             sb.Append("Candidate EmailId: " + candidateEmail);
                             sb.AppendLine();
@@ -77,7 +77,7 @@ namespace Risebird.Functions
                             if (phoneNumbers != null && phoneNumbers.Count() > 0)
                             {
                                 //send an sms to all the interviewers with the message
-                                
+
                                 Parallel.ForEach(phoneNumbers, phoneNumber =>
                                 {
                                     if (!string.IsNullOrEmpty(phoneNumber))
@@ -115,9 +115,9 @@ namespace Risebird.Functions
                 {
                     mailMessage.Bcc.Add(new MailAddress(interviewerMailId, null));
                 }
-                
 
-                object[] parameters = new object[] { interviewDate, irfName, candidateEmail, primarySkill};
+
+                object[] parameters = new object[] { interviewDate, irfName, candidateEmail, primarySkill };
                 mailMessage.Subject = "Reminder to assign interview scheduled for " + interviewDate;
                 string rawEmail = GetBlobData("mailtemplate", "UnassignedMeetingReminderTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -130,7 +130,7 @@ namespace Risebird.Functions
 
                 smtpClient.Send(mailMessage);
             }
-            catch (Exception e)
+            catch (Exception )
             {
                 return;
 

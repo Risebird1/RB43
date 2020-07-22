@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -65,7 +63,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter First Name")]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
-     
+
         [Display(Name = "Resume Link")]
         [Required(ErrorMessage = "Please enter a link.")]
         public string ResumeLink { get; set; }

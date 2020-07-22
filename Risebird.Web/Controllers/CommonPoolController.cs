@@ -21,15 +21,15 @@ namespace Risebird.Web.Controllers
     [Authorize]
     public class CommonPoolController : Controller
     {
-        private IMeetingService _meetingService;
-        private IUserService _userService;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        private IAzureStorageHelper _azureStorageHelper;
-        private ISkillService _skillService;
-        private IIRFService _iRFService;
-        private IIRFRepository _iRFRepository;
-        private IUserRepository _userRepository;
-        private INotificationHelper _notificationHelper;
+        private readonly IMeetingService _meetingService;
+        private readonly IUserService _userService;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly ISkillService _skillService;
+        private readonly IIRFService _iRFService;
+        private readonly IIRFRepository _iRFRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly INotificationHelper _notificationHelper;
         public CommonPoolController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository, INotificationHelper notificationHelper, IUserService userService)
         {
             _meetingService = meetingService;
@@ -66,7 +66,8 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Client")
                         {
-                            ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
+                            var client = await _userRepository.GetClientUserDetails(emailid);
+                            ClientId = client.ClientId;
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -78,9 +79,9 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList = _meetingService.GetCPMeetings(ClientId, profileName, emailid).ToList();
+                            modelList = await _meetingService.GetCPMeetings(ClientId, profileName, emailid);
                         }
-                        
+
 
                         ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
                         ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
@@ -149,7 +150,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
 
                         }
-                       
+
 
                         ViewBag.ProfileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
@@ -224,7 +225,8 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Client")
                         {
-                            ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
+                            var client = await _userRepository.GetClientUserDetails(emailid);
+                            ClientId = client.ClientId;
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -240,9 +242,9 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList = _meetingService.GetCPMeetings(ClientId, profileName, emailid).ToList();
+                            modelList = await _meetingService.GetCPMeetings(ClientId, profileName, emailid);
                         }
-                       
+
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
@@ -289,7 +291,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
                         ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
 
-                       
+
                         ViewBag.ProfileName = profileName;
                         if (!String.IsNullOrEmpty(filter.SearchFillter))
                         {
@@ -390,7 +392,8 @@ namespace Risebird.Web.Controllers
                         emailId = emailId.Replace("\"", "");
                         if (profileName == "Client")
                         {
-                            ClientId = _userRepository.GetClientUserDetails(emailId).ClientId;
+                            var client = await _userRepository.GetClientUserDetails(emailId);
+                            ClientId = client.ClientId;                           
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -403,27 +406,27 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList1 = _meetingService.GetCPMeetings(ClientId, profileName, emailId).ToList();
-                        }                       
+                            modelList1 = await _meetingService.GetCPMeetings(ClientId, profileName, emailId);
+                        }
                         else if (profileName == "ExternalUser")
                         {
-                            modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList();
+                            modelList1 = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
                             if (id == 0)
                             {
                                 id = modelList1.OrderByDescending(x => x.SharedOn).Select(x => x.imid).FirstOrDefault();
                             }
                         }
-                       
+
                         //Start:Save View counts of vedio
                         if (HttpContext.Session.GetString("UserLogedIn") != null)
                         {
-                            string values = String.Empty;
+                            string values = string.Empty;
                             var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();
                             if (valuestatus == "Yes")
                             {
                                 var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                 emailaddress = emailaddress.Replace("\"", "");
-                                _meetingService.AddTotalViewCount(id, emailaddress);
+                                await _meetingService.AddTotalViewCount(id, emailaddress);
                                 //save into database to increase view count save into main table from where data is picked
                                 HttpContext.Session.SetString("UserLogedIn", "No");
                             }
@@ -525,7 +528,7 @@ namespace Risebird.Web.Controllers
                                 && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
                         && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
                         }
-                       
+
 
                         MeetingVM NewModel = new MeetingVM();
 
@@ -538,13 +541,13 @@ namespace Risebird.Web.Controllers
                             NewModel.SubVideo_List = modelList1.ToList().Where(x => x.imid != id).ToList();
                         }
 
-                      
-                            NewModel.candidateName = model.candidateName;
-                        
+
+                        NewModel.candidateName = model.candidateName;
+
 
 
                         ViewBag.ProfileName = profileName;
-                       
+
 
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
@@ -562,7 +565,7 @@ namespace Risebird.Web.Controllers
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
                         NewModel.zoomLink = model.zoomLink;
-                        NewModel.IreportModel = IRListModel == null ? new InterviewReport() : IRListModel;
+                        NewModel.IreportModel = IRListModel ?? new InterviewReport();
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
@@ -575,8 +578,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
                         // to get videocount details
-                        var videodetailscount = _meetingService.GetTotalViewCount(id);
-                        NewModel.VideoCountDetail = videodetailscount;
+                        var videodetailscount = await _meetingService.GetTotalViewCount(id);
+                        NewModel.VideoCountDetail = videodetailscount.ToList();
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
@@ -627,12 +630,14 @@ namespace Risebird.Web.Controllers
                                 if (name != null && name.Length >= 2)
                                     namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
                                 else if (name != null && name.Length == 1)
-                                    namemodel = namemodel + name?.ToCharArray()[0];
+                                    namemodel += name?.ToCharArray()[0];
                             }
                             IRListModel.CandidateName = namemodel;
                         }
-                        MeetingVM NewModel = new MeetingVM();
-                        NewModel.SubVideo_List = new List<MeetingVM>();
+                        MeetingVM NewModel = new MeetingVM
+                        {
+                            SubVideo_List = new List<MeetingVM>()
+                        };
                         //NewModel.candidateName = model.candidateName;
 
                         var usernames1 = model.candidateName.Trim().Split(" ");
@@ -642,7 +647,7 @@ namespace Risebird.Web.Controllers
                             if (name != null && name.Length >= 2)
                                 namemodel1 = namemodel1 + name?.ToCharArray()[0] + name?.ToCharArray()[1];
                             else if (name != null && name.Length == 1)
-                                namemodel1 = namemodel1 + name?.ToCharArray()[0];
+                                namemodel1 += name?.ToCharArray()[0];
                         }
                         NewModel.candidateName = namemodel1;
 
@@ -664,7 +669,8 @@ namespace Risebird.Web.Controllers
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
                         NewModel.zoomLink = model.zoomLink;
-                        NewModel.IreportModel = IRListModel == null ? new InterviewReport() : IRListModel;
+                        NewModel.IreportModel = IRListModel
+                            ?? new InterviewReport();
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
@@ -677,8 +683,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
-                        var videodetailscount = _meetingService.GetTotalViewCount(id);
-                        NewModel.VideoCountDetail = videodetailscount;
+                        var videodetailscount = await _meetingService.GetTotalViewCount(id);
+                        NewModel.VideoCountDetail = videodetailscount.ToList();
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -743,7 +749,7 @@ namespace Risebird.Web.Controllers
                         {
                             var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                             emailaddress = emailaddress.Replace("\"", "");
-                            _meetingService.AddTotalViewCount(id, emailaddress);
+                            await _meetingService.AddTotalViewCount(id, emailaddress);
                             //save into database to increase view count save into main table from where data is picked
                             HttpContext.Session.SetString("UserLogedIn", "No");
                         }
@@ -765,7 +771,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                     emailaddress = emailaddress.Replace("\"", "");
-                                    _meetingService.AddTotalViewCount(id, emailaddress);
+                                    await _meetingService.AddTotalViewCount(id, emailaddress);
                                     //save into database to increase view count save into main table from where data is picked
                                 }
                             }
@@ -779,13 +785,14 @@ namespace Risebird.Web.Controllers
                     int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if ( profileName == "Client"  || profileName == "ExternalUser")
+                    if (profileName == "Client" || profileName == "ExternalUser")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
                         if (profileName == "Client")
                         {
-                            ClientId = _userRepository.GetClientUserDetails(emailId).ClientId;
+                            var client = await _userRepository.GetClientUserDetails(emailId);
+                            ClientId = client.ClientId;
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -802,9 +809,9 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList = _meetingService.GetCPMeetings(ClientId, profileName, emailId).ToList();
+                            modelList = await _meetingService.GetCPMeetings(ClientId, profileName, emailId);
                         }
-                        
+
                         MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
                         //MeetingVM model = modelList.Where(a => a.imid == id).FirstOrDefault();
                         modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
@@ -849,15 +856,15 @@ namespace Risebird.Web.Controllers
                               && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
                                 && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
                         && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
-                        MeetingVM NewModel = new MeetingVM();
-                        
+                        MeetingVM NewModel = new MeetingVM
+                        {
+                            SubVideo_List = modelList.ToList(),
 
-                        NewModel.SubVideo_List = modelList.ToList();
-                        
-                            NewModel.candidateName = model.candidateName;
-                        
+                            candidateName = model.candidateName
+                        };
+
                         ViewBag.ProfileName = profileName;
-                       
+
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
                         NewModel.imid = model.imid;
@@ -886,8 +893,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsIntrested = model.IsIntrested;
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
-                        var videodetailscount = _meetingService.GetTotalViewCount(id);
-                        NewModel.VideoCountDetail = videodetailscount;
+                        var videodetailscount = await _meetingService.GetTotalViewCount(id);
+                        NewModel.VideoCountDetail = videodetailscount.ToList();
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
@@ -987,20 +994,22 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult VedioShare(string value, string vedioid, string name, string Emailids)
         {
-            var modelList = _meetingService.VedioShare(value, vedioid);
+            _meetingService.VedioShare(value, vedioid);
             string Name = string.Empty;
             if (name != null && name.Length >= 2)
                 Name = Name + name?.ToCharArray()[0] + name?.ToCharArray()[1];
             else if (name != null && name.Length == 1)
-                Name = Name + name?.ToCharArray()[0];
+                Name += name?.ToCharArray()[0];
             //send a email
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
             string currenturl = Request.Host.ToString() + "/CommonPool/VideoPage/" + vedioid;
-            Mail _mail = new Mail();
-            _mail.TO = Emailids;
-            _mail.CC = email;
-            _mail.Subject = "Risebird: Interview video is shared with you";
+            Mail _mail = new Mail
+            {
+                TO = Emailids,
+                CC = email,
+                Subject = "Risebird: Interview video is shared with you"
+            };
             var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
             if (result.Contains("Mail sent successfully"))
             {
@@ -1015,14 +1024,14 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult publicVedioShare(string value, string vedioid)
         {
-            var modelList = _meetingService.VedioShare(value, vedioid);
+            _meetingService.VedioShare(value, vedioid);
             return Json("Success");
         }
         [HttpPost]
         public JsonResult VedioComment(string comment, string vedioid)
         {
             var email = HttpContext.Session.GetString("email");
-            var modelList = _meetingService.VedioComment(comment, vedioid, email);
+            _meetingService.VedioComment(comment, vedioid, email);
             return Json("Success");
         }
         [HttpPost]
@@ -1041,15 +1050,17 @@ namespace Risebird.Web.Controllers
             if (Shortlistcount != null)
             {
                 result = Shortlistcount.totalcount;
-                Mail _mail = new Mail();
-                _mail.TO = Shortlistcount.Email;
-                _mail.Subject = "Your profile has been shortlisted";
+                Mail _mail = new Mail
+                {
+                    TO = Shortlistcount.Email,
+                    Subject = "Your profile has been shortlisted"
+                };
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
 
                 bulider.Append("Client: " + email.ToUpper() + " has shortlisted your profile");
-                var result1 = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+                _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
 
             }
             return Json(result);
@@ -1063,14 +1074,16 @@ namespace Risebird.Web.Controllers
             var Status = _meetingService.CandidateSuitable(id, email, Comment);
             if (Status != null)
             {
-                Mail _mail = new Mail();
-                _mail.TO = Status;
-                _mail.Subject = "Client has shown interest in your profile";
+                Mail _mail = new Mail
+                {
+                    TO = Status,
+                    Subject = "Client has shown interest in your profile"
+                };
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
                 bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");
-                var result = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+                _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
         }
@@ -1084,11 +1097,13 @@ namespace Risebird.Web.Controllers
 
             if (!String.IsNullOrEmpty(modelList))
             {
-                Mail _mail1 = new Mail();
-                _mail1.TO = Emailids;
-                _mail1.CC = email;
-                _mail1.Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you";
-                var result1 = _notificationHelper.SharedVideoNofitication(_mail1, Name, skills);
+                Mail _mail1 = new Mail
+                {
+                    TO = Emailids,
+                    CC = email,
+                    Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you"
+                };
+                _ = _notificationHelper.SharedVideoNofitication(_mail1, Name, skills);
             }
             var modelemail = modelList.Split(";");
             foreach (var item in modelemail)
@@ -1098,11 +1113,13 @@ namespace Risebird.Web.Controllers
             }
             if (Emailids != "" && Emailids != ";")
             {
-                Mail _mail = new Mail();
-                _mail.TO = Emailids;
-                _mail.CC = email;
-                _mail.Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you";
-                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
+                Mail _mail = new Mail
+                {
+                    TO = Emailids,
+                    CC = email,
+                    Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you"
+                };
+               _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
             }
             return Json("");
         }
@@ -1119,11 +1136,13 @@ namespace Risebird.Web.Controllers
 
             if (Emailids != "" && Emailids != ";")
             {
-                Mail _mail = new Mail();
-                _mail.TO = Emailids;
-                _mail.CC = email;
-                _mail.Subject = "An interview of Candidate: " + Name + " video is shared with you";
-                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
+                Mail _mail = new Mail
+                {
+                    TO = Emailids,
+                    CC = email,
+                    Subject = "An interview of Candidate: " + Name + " video is shared with you"
+                };
+               _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
             }
             return Json("");
         }

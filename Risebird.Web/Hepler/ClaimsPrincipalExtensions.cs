@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Risebird.Web.Hepler
 {
@@ -28,9 +25,9 @@ namespace Risebird.Web.Hepler
             return principal.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier, throwIfNotFound);
         }
 
-        
 
-       
+
+
 
         public static string GetDisplayNameValue(this ClaimsPrincipal principal)
         {

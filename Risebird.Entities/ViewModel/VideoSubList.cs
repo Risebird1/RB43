@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -71,9 +70,9 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Preffered Location.")]
         public string preferredLocation { get; set; }
         [Display(Name = "Staffing Agency")]
-       
+
         public string staffingAgency { get; set; }
-        [Display(Name = "Expected Salary")]       
+        [Display(Name = "Expected Salary")]
         public string expectedPerHourRate { get; set; }
         [Display(Name = "Expected Joining Time")]
         [Required(ErrorMessage = "Please enter Joining Time.")]
@@ -90,7 +89,7 @@ namespace Risebird.Entities.ViewModel
         public string hrCoordinatorComment { get; set; }
         public string trainableComment { get; set; }
         [Display(Name = "Mobile Number")]
-       // [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
+        // [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
         //[Required(ErrorMessage = "Please enter a valid Mobile Number.")]
         public string MobileNumber { get; set; }
         public DateTime dtCreatedOn { get; set; }

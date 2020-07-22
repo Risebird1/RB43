@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.Data
+﻿namespace Risebird.Entities.Data
 {
     public class Settings
     {
@@ -12,6 +8,6 @@ namespace Risebird.Entities.Data
         public int InterviewWindupReminderMinutes { get; set; }
         public int InterviewReportReminderMinutes { get; set; }
         public int QCCommentReminderMinutes { get; set; }
-        
+
     }
 }

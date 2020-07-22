@@ -19,7 +19,7 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
         public MeetingRespository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
@@ -90,9 +90,8 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("clientid", clientId);
                         parameters.Add("Emailid", Emailid);
-                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForCuratedUser", parameters,
-                                commandType: CommandType.StoredProcedure);
-                        return result;
+                       return await  SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForCuratedUser", parameters,
+                                commandType: CommandType.StoredProcedure);                        
                     }
                 }
                 else if (profile == "ExternalUser")
@@ -103,9 +102,8 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("clientid", clientId);
                         parameters.Add("Emailid", Emailid);
-                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters,//create sp
-                                commandType: CommandType.StoredProcedure);
-                        return result;
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters,//create sp
+                                commandType: CommandType.StoredProcedure);                       
                     }
                 }
                 else
@@ -115,9 +113,8 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("@clientid", clientId);
                         parameters.Add("@Emailid", Emailid);
-                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
-                            commandType: CommandType.StoredProcedure);
-                        return result;
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
+                            commandType: CommandType.StoredProcedure);                       
                     }
                 }
             }
@@ -131,6 +128,7 @@ namespace Risebird.Repository
             }
             return null;
         }
+
         public async Task<IEnumerable<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid)
         {
             try
@@ -143,9 +141,8 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("clientid", clientId);
                         parameters.Add("Emailid", Emailid);
-                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters,//create sp
-                                commandType: CommandType.StoredProcedure);
-                        return result;
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters,//create sp
+                                commandType: CommandType.StoredProcedure);                       
                     }
                 }
                 else
@@ -153,10 +150,9 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@clientid", clientId);                       
-                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetCPMeetings", parameters,
+                        parameters.Add("@clientid", clientId);
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetCPMeetings", parameters,
                             commandType: CommandType.StoredProcedure);
-                        return result;
                     }
                 }
             }
@@ -179,9 +175,8 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("IRFId", IRFId);
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_IRFMultipleCandidateInvites", parameters,
-                        commandType: CommandType.StoredProcedure);
-                    return result;
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_IRFMultipleCandidateInvites", parameters,
+                        commandType: CommandType.StoredProcedure);                   
                 }
             }
             catch (SqlException ex)
@@ -194,7 +189,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> DeleteInterview(int imid)
+        public async Task DeleteInterview(int imid)
         {
             try
             {
@@ -202,23 +197,20 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("imid", imid);
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_DeleteInterview", parameters,
+                     await SqlMapper.QueryAsync<MeetingVM>(con, "usp_DeleteInterview", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return true;
-                    
                 }
             }
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);               
             }
-           
+
         }
         public async Task<IEnumerable<MeetingVM>> MultipleCandidateInvites()
         {
@@ -226,9 +218,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_MultipleCandidateInvites", null,
-                        commandType: CommandType.StoredProcedure);
-                    return result;
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_MultipleCandidateInvites", null,
+                        commandType: CommandType.StoredProcedure);                   
                 }
             }
             catch (SqlException ex)
@@ -493,7 +484,7 @@ namespace Risebird.Repository
             parameters.Add("@staffingAgency", entity.staffingAgency);
             parameters.Add("@currentEmployerName", entity.currentEmployerName);
             parameters.Add("@MobileNumber", entity.MobileNumber);
-            if(entity.HRCoordinatorEmailId != null)
+            if (entity.HRCoordinatorEmailId != null)
             {
                 parameters.Add("@HRCoordinatorEmailId", entity.HRCoordinatorEmailId);
 
@@ -578,7 +569,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
-                        con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid = meetingid }, commandType: Text);
+                        con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid }, commandType: Text);
                     return "Interview assigned successfully.";
                 }
             }
@@ -1048,17 +1039,17 @@ namespace Risebird.Repository
                         string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments, ProctoringCount ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments, @ProctoringCount);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
-                            IRFId = reportDetails.IRFId,
-                            InterviewId = reportDetails.InterviewId,
-                            CandidateName = reportDetails.CandidateName,
-                            confirmationStatus = reportDetails.confirmationStatus,
-                            OverallScore = reportDetails.OverallScore,
-                            Rating = reportDetails.Rating,
-                            TechSkillComments = reportDetails.TechSkillComments,
-                            SkillGeneralComments = reportDetails.SkillGeneralComments,
-                            SelectabilityComments = reportDetails.SelectabilityComments,
-                            JoinabilityComments = reportDetails.JoinabilityComments,
-                            ProctoringCount = reportDetails.ProctoringCount
+                            reportDetails.IRFId,
+                            reportDetails.InterviewId,
+                            reportDetails.CandidateName,
+                            reportDetails.confirmationStatus,
+                            reportDetails.OverallScore,
+                            reportDetails.Rating,
+                            reportDetails.TechSkillComments,
+                            reportDetails.SkillGeneralComments,
+                            reportDetails.SelectabilityComments,
+                            reportDetails.JoinabilityComments,
+                            reportDetails.ProctoringCount
 
                         }).Result;
 
@@ -1078,8 +1069,10 @@ namespace Risebird.Repository
                         techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
                     }
 
-                    SqlCommand cmdTechReport= new SqlCommand("usp_TechSkillReportBulkInsert", con);
-                    cmdTechReport.CommandType = CommandType.StoredProcedure;
+                    SqlCommand cmdTechReport = new SqlCommand("usp_TechSkillReportBulkInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
                     cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
                     cmdTechReport.Parameters["@TechSkillReportBulkData"].Value = techReportDt;
                     con.Open();
@@ -1103,8 +1096,10 @@ namespace Risebird.Repository
                         skillGeneralReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.Name, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.Value);
                     }
 
-                    SqlCommand cmdSkillGeneralReport = new SqlCommand("usp_SkillGeneralReportBulkInsert", con);
-                    cmdSkillGeneralReport.CommandType = CommandType.StoredProcedure;
+                    SqlCommand cmdSkillGeneralReport = new SqlCommand("usp_SkillGeneralReportBulkInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
                     cmdSkillGeneralReport.Parameters.Add(new SqlParameter("@SkillGeneralReportBulkData", SqlDbType.Structured));
                     cmdSkillGeneralReport.Parameters["@SkillGeneralReportBulkData"].Value = skillGeneralReportDt;
                     con.Open();
@@ -1127,8 +1122,10 @@ namespace Risebird.Repository
                         questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
                     }
 
-                    SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con);
-                    cmdQuestions.CommandType = CommandType.StoredProcedure;
+                    SqlCommand cmdQuestions = new SqlCommand("usp_QuestionsDiscussedBulkInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
                     cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
                     cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
                     con.Open();
@@ -1143,21 +1140,21 @@ namespace Risebird.Repository
                         string sqlProcReport = "INSERT INTO ProctoringReport Values (@InterviewId, @EyesDirection, @EyesReflection, @HeadDirection, @LipsOverhead, @LipsDarklight, @LipsHeadphone, @LatencyJitter, @DesktopSuspiciousApps, @DesktopScreenSharing, @VoiceAudioSplitter, @VoiceToneExpression, @VoicePersonalUnsatisfactory, @VoiceSuspicious, @LinkedInPhotoVerification);";
                         var result3 = con.Execute(sqlProcReport, new
                         {
-                            InterviewId = reportDetails.InterviewId,
-                            EyesDirection = reportDetails.Proctoring.EyesDirection,
-                            EyesReflection = reportDetails.Proctoring.EyesReflection,
-                            HeadDirection = reportDetails.Proctoring.HeadDirection,
-                            LipsOverhead = reportDetails.Proctoring.LipsOverhead,
-                            LipsDarklight = reportDetails.Proctoring.LipsDarklight,
-                            LipsHeadphone = reportDetails.Proctoring.LipsHeadphone,
-                            LatencyJitter = reportDetails.Proctoring.LatencyJitter,
-                            DesktopSuspiciousApps = reportDetails.Proctoring.DesktopSuspiciousApps,
-                            DesktopScreenSharing = reportDetails.Proctoring.DesktopScreenSharing,
-                            VoiceAudioSplitter = reportDetails.Proctoring.VoiceAudioSplitter,
-                            VoiceToneExpression = reportDetails.Proctoring.VoiceToneExpression,
-                            VoicePersonalUnsatisfactory = reportDetails.Proctoring.VoicePersonalUnsatisfactory,
-                            VoiceSuspicious = reportDetails.Proctoring.VoiceSuspicious,
-                            LinkedInPhotoVerification = reportDetails.Proctoring.LinkedInPhotoVerification
+                            reportDetails.InterviewId,
+                            reportDetails.Proctoring.EyesDirection,
+                            reportDetails.Proctoring.EyesReflection,
+                            reportDetails.Proctoring.HeadDirection,
+                            reportDetails.Proctoring.LipsOverhead,
+                            reportDetails.Proctoring.LipsDarklight,
+                            reportDetails.Proctoring.LipsHeadphone,
+                            reportDetails.Proctoring.LatencyJitter,
+                            reportDetails.Proctoring.DesktopSuspiciousApps,
+                            reportDetails.Proctoring.DesktopScreenSharing,
+                            reportDetails.Proctoring.VoiceAudioSplitter,
+                            reportDetails.Proctoring.VoiceToneExpression,
+                            reportDetails.Proctoring.VoicePersonalUnsatisfactory,
+                            reportDetails.Proctoring.VoiceSuspicious,
+                            reportDetails.Proctoring.LinkedInPhotoVerification
                         });
 
                     }
@@ -1661,7 +1658,7 @@ namespace Risebird.Repository
         {
             try
             {
-               if (id == 0)
+                if (id == 0)
                     return null;
                 var parameters = new DynamicParameters();
                 parameters.Add("@interviewId", id);
@@ -1682,7 +1679,7 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-               
+
             }
             return null;
         }
@@ -1711,29 +1708,24 @@ namespace Risebird.Repository
 
             return null;
         }
-        public string AddTotalViewCount(int id, string emailaddress)
+        public async Task AddTotalViewCount(int id, string emailaddress)
         {
             try
-            {
-
+            {   
                 var parameters = new DynamicParameters();
                 parameters.Add("@Interviewid", id);
                 parameters.Add("@EmailId", emailaddress);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<string>(con, "usp_AddinterviewView", parameters,
-                        commandType: CommandType.StoredProcedure);
-                    return "Success";
+                     await SqlMapper.QueryAsync<string>(con, "usp_AddinterviewView", parameters,
+                        commandType: CommandType.StoredProcedure);                    
                 }
-
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-
-            return "";
         }
         public async Task<string> VedioShare(string value, string vedioid)
         {
@@ -1885,7 +1877,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Id", vedioid);
                 dynamicParameters.Add("@Status", Status);
-                var id = 0;
+                
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Query(query, dynamicParameters);
@@ -2032,25 +2024,22 @@ namespace Risebird.Repository
 
             return "";
         }
-        public List<VideoCountdetail> GetTotalViewCount(int id)
+        public async Task<IEnumerable<VideoCountdetail>> GetTotalViewCount(int id)
         {
             try
             {
-
                 var parameters = new DynamicParameters();
                 parameters.Add("@Interviewid", id);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<VideoCountdetail>(con, "usp_GetinterviewView", parameters,
-                        commandType: CommandType.StoredProcedure);
-                    return (List<VideoCountdetail>)result;
+                    return await  SqlMapper.QueryAsync<VideoCountdetail>(con, "usp_GetinterviewView", parameters,
+                        commandType: CommandType.StoredProcedure);                    
                 }
-
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

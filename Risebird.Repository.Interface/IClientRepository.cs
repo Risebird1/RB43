@@ -1,7 +1,6 @@
 ﻿using Risebird.Entities.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Risebird.Entities.ViewModel;
 
 
 namespace Risebird.Repository.Interface

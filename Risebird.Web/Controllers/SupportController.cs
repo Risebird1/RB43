@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -33,7 +31,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                   
+
                     if (HttpContext.Session.GetString("NavigationShow") == "true")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -50,8 +48,8 @@ namespace Risebird.Web.Controllers
                         ViewBag.Message = TempData["SuccessErrorMessageSupport"].ToString();
                         TempData.Remove("SuccessErrorMessageSupport");
                     }
-                   
-                    if(controllerName != null && actMethod != null)
+
+                    if (controllerName != null && actMethod != null)
                     {
                         model.BackController = controllerName;
                         model.BackMethod = actMethod;
@@ -59,7 +57,7 @@ namespace Risebird.Web.Controllers
                         //TempData["controllerName"] = controllerName;
                     }
                     return View(model);
-                    
+
                 }
                 else
                 {
@@ -68,7 +66,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -150,7 +148,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if( profileName == "Admin" )
+                    if (profileName == "Admin")
                     {
                         var hrSupport = _supportService.GetSupportHR(id);
                         return View(hrSupport);
@@ -215,7 +213,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if( profileName == "Admin" )
+                    if (profileName == "Admin")
                     {
                         if (_supportService.DeleteSupportHR(id))
                         {

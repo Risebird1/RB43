@@ -760,7 +760,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception e)
+                                catch (Exception )
                                 {
                                     item.resumeLink = "";
                                 }
@@ -914,7 +914,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception e)
+                                catch (Exception )
                                 {
                                     item.resumeLink = "";
                                 }
@@ -1050,13 +1050,13 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("Index", "Home", new { url = "AddReport/Interviewer/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected });
                 }
                 string profileName = HttpContext.Session.GetString("profileName");
-                
+
                 if (profileName != null)
                 {
                     profileName = profileName.Replace("\"", "");
                 }
-               // var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
-                var model = _interviewerService.GetInterviewerinteviewReport(interviewId, irfId).Result; 
+                // var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = _interviewerService.GetInterviewerinteviewReport(interviewId, irfId).Result;
                 if (model == null)
                 {
                     model = new InterviewReport();

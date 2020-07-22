@@ -1,7 +1,6 @@
-using Microsoft.Identity.Client;
-
-using System.Threading;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Identity.Client;
+using System.Threading;
 
 
 namespace Risebird.Web.Hepler
@@ -40,9 +39,8 @@ namespace Risebird.Web.Hepler
         }
         public string ReadUserStateValue()
         {
-            string state = string.Empty;
             SessionLock.EnterReadLock();
-            state = (string)httpContext.Session.GetString(CacheId + "_state");
+            string state = httpContext.Session.GetString(CacheId + "_state");
             SessionLock.ExitReadLock();
             return state;
         }

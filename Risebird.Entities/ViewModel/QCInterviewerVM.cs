@@ -1,16 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
     public class QCInterviewerVM
     {
         public int id { get; set; }
-       
+
         [Required(ErrorMessage = "Please enter First Name")]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
@@ -22,7 +19,7 @@ namespace Risebird.Entities.ViewModel
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
         public string EmailId { get; set; }
-        [Display(Name = "Mobile Number")]       
+        [Display(Name = "Mobile Number")]
         public string MobileNumber { get; set; }
 
         public int userId { get; set; }
@@ -36,9 +33,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Availeble Slots")]
         public string Slots { get; set; }
 
-        [Display(Name ="Number Of Interview")]
+        [Display(Name = "Number Of Interview")]
         public int NoOfInterview { get; set; }
-        [Display(Name ="Success Rate")]
+        [Display(Name = "Success Rate")]
         public double SuccessRate { get; set; }
         public bool IsApproved { get; set; }
 
@@ -46,7 +43,7 @@ namespace Risebird.Entities.ViewModel
         public IFormFile File { get; set; }
 
         //[Required(ErrorMessage = "Please mention skill")]
-        public int[] SelectedSkillIds {get;set;}
+        public int[] SelectedSkillIds { get; set; }
         //public int SelectedSkillId { get; set; }
 
         [Display(Name = "Skills")]

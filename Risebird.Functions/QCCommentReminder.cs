@@ -1,12 +1,12 @@
+using Dapper;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
@@ -16,7 +16,7 @@ namespace Risebird.Functions
     public static class QCCommentReminder
     {
         [FunctionName("QCCommentReminder")]
-        public static void Run([TimerTrigger("0 0 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -40,7 +40,7 @@ namespace Risebird.Functions
                 }
                 var phoneNumbers = interviewList.Select(x => x.QCMobile);
                 phoneNumbers = phoneNumbers.Distinct();
-               
+
                 if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
                     var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";

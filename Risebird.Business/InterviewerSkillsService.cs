@@ -14,22 +14,17 @@ namespace Risebird.Business
 {
     public class InterviewerSkillsService : IInterviewerSkillsService
     {
-        private IInterviewerSkillsRepository _interviewerSkillsRepository;
+        private readonly IInterviewerSkillsRepository _interviewerSkillsRepository;
         private readonly INotificationHelper _notificationHelper;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        private readonly ITwilioHelper _twilioHelper;
-        private readonly IClientService _clientService;
-        private readonly IConfiguration _configuration;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+       
 
 
-        public InterviewerSkillsService(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper, INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration)
+        public InterviewerSkillsService(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
-            _applicationErrorLogger = applicationErrorLogger;
-            _twilioHelper = twilioHelper;
+            _applicationErrorLogger = applicationErrorLogger;            
             _notificationHelper = notificationHelper;
-            _clientService = clientService;
-            _configuration = configuration;
         }
         public IEnumerable<InterviewerSkillsChannelModel> GetAllInterviewerSkillsChannel(string profileName, string emailId)
         {
@@ -118,7 +113,7 @@ namespace Risebird.Business
         {
             try
             {
-                return  _interviewerSkillsRepository.GetInterviewerSkills(id).FirstOrDefault().PrimarySkill;
+                return _interviewerSkillsRepository.GetInterviewerSkills(id).FirstOrDefault().PrimarySkill;
             }
 
             catch (Exception e)
@@ -309,7 +304,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _interviewerSkillsRepository.AddUnApprovedInterviewer(model.Where(x=>x.IsAdded), iscId);
+                return _interviewerSkillsRepository.AddUnApprovedInterviewer(model.Where(x => x.IsAdded), iscId);
             }
 
             catch (Exception e)
@@ -318,7 +313,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public IEnumerable<UnApprovedInterviewer> GetUnApprovedInterviewerList(int id )
+        public IEnumerable<UnApprovedInterviewer> GetUnApprovedInterviewerList(int id)
         {
             try
             {
@@ -336,8 +331,8 @@ namespace Risebird.Business
         {
             try
             {
-               return _interviewerSkillsRepository.PauseInterviewerSkills(InterviewerSkillId, InterviewerSkillName);
-            
+                return _interviewerSkillsRepository.PauseInterviewerSkills(InterviewerSkillId, InterviewerSkillName);
+
             }
             catch (Exception ex)
             {
@@ -382,11 +377,11 @@ namespace Risebird.Business
             try
             {
                 var isc = _interviewerSkillsRepository.GetISCbyId(iscId);
-                
+
                 if (email != null && isc != null)
                 {
-                    var result = _notificationHelper.SendInviteToInterviewer(isc.InterviewerSkillId,isc.JDTiltle, isc.SkillName, isc.CalendlyLink, email, isc.HREmailId);
-                    if(result.Contains("successfully"))
+                    var result = _notificationHelper.SendInviteToInterviewer(isc.InterviewerSkillId, isc.JDTiltle, isc.SkillName, isc.CalendlyLink, email, isc.HREmailId);
+                    if (result.Contains("successfully"))
                     {
                         //update total invites count
                         _interviewerSkillsRepository.UpdateInterviewerInvites(iscId, interviewerProfileId);
@@ -408,10 +403,10 @@ namespace Risebird.Business
             try
             {
                 var isc = _interviewerSkillsRepository.GetISCbyId(iscId);
-                
+
                 if (email != null)
                 {
-                    
+
                     var result = _notificationHelper.CancelInterviewerInvite(isc.InterviewerSkillId, isc.SkillName, email, isc.HREmailId);
                     if (result.ToLower().Contains("success"))
                     {

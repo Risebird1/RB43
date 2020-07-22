@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -9,7 +7,7 @@ namespace Risebird.Entities.ViewModel
         public IEnumerable<IRF> IRFList { get; set; }
         public string Profile { get; set; }
         public string Message { get; set; }
-        public bool IsClientUser  { get; set; }
+        public bool IsClientUser { get; set; }
         public List<string> RoleList { get; set; }
     }
 }

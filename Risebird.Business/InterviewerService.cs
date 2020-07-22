@@ -1,12 +1,12 @@
 ﻿using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Risebird.Entities.ViewModel;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -350,7 +350,7 @@ namespace Risebird.Business
         public List<Meeting> GetUnapprovedInterviewerScheduledInterviews(string emailID)
         {
             try
-            {                
+            {
                 var assignedMeeting = _interviewerRepository.GetUnapprovedInterviewerScheduledInterviews(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
                 return assignedMeeting;
             }
@@ -451,7 +451,7 @@ namespace Risebird.Business
             {
                 var reportModel = new InterviewReport();
                 var irfDetails = _interviewerRepository.GetInterviewerSkillChannelDetails(irfId);
-               
+
                 //check whether an IRF exists for the given IRFId
                 var check = _interviewerRepository.GetInterviewerSkillChannelbyId(irfId);// what is need of this method
                 var interviewDetails = _interviewerRepository.GetInterviewerMeetingById(interviewId).Result;//Ask
@@ -465,7 +465,7 @@ namespace Risebird.Business
                 {
                     //call Edit Feedbackform method
                     reportModel = interviewReport.FirstOrDefault();
-                    EditInterviewReport(reportModel,irfId);
+                    EditInterviewReport(reportModel, irfId);
                 }
                 else
                 {
@@ -549,7 +549,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        private InterviewReport EditInterviewReport(InterviewReport model,int irfid)
+        private InterviewReport EditInterviewReport(InterviewReport model, int irfid)
         {
             var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
 
@@ -595,7 +595,7 @@ namespace Risebird.Business
             try
             {
                 var result = await _interviewerRepository.AddInterviewerReport(reportModel);
-                
+
                 return result;
             }
 
