@@ -3525,7 +3525,7 @@ namespace Risebird.Web.Controllers
                     var model = _userService.GetInterviewersDetails();
                     if (!String.IsNullOrEmpty(Searchvalue))
                     {
-                        model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper())).ToList();
+                        model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill!= null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
                         ViewBag.searchvalue = Searchvalue;
                     }
                     else
@@ -3534,7 +3534,9 @@ namespace Risebird.Web.Controllers
                     }
                     foreach (var item in model)
                     {
-                        var PrimarySkillSet = item.PrimarySkill.Split(',');
+                        var PrimarySkillSet = item.PrimarySkill?.Split(',');
+                        if (PrimarySkillSet == null)
+                            continue;
                         string PrimaryTopSkill = String.Empty;
                         int ForLoopCount = 5;
                         if (PrimarySkillSet.Count() < 5)
