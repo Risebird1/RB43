@@ -108,5 +108,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+
+        public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(int addDays = 0)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@dateValue", DateTime.Now.AddDays(addDays));
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Meeting>(con, "usp_GetDateWiseMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

@@ -10,5 +10,6 @@ namespace Risebird.Business.Interface
         List<Meeting> GetInterviwercnt();
         List<Meeting> GetCandidatecnt();
         string GetDoughnutGraphDetails(string flag);
+        Task<IEnumerable<Meeting>> GetDateWiseMeetings(int addDays = 0);
     }
 }

@@ -73,5 +73,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(int addDays = 0)
+        {
+            try
+            {
+                return _dashboardRespository.GetDateWiseMeetings(addDays).Result.OrderBy(x => x.interviewDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

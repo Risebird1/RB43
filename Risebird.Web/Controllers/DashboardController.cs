@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
+using System.Dynamic;
+using System.Data;
 
 namespace Risebird.Web.Controllers
 {
@@ -67,14 +70,54 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        //public async Task<IActionResult> Index1()
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            return View();
 
-        public IActionResult Index1()
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return null;
+        //    }
+        //}
+
+        public async Task<IActionResult> Index1()
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    int addDays = 0;
+                    var model = new DashboardVM();
+                    model.Meetings = await _dashboardService.GetDateWiseMeetings(addDays);
+                    var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
+                    //var irfList = model.Meetings.Select(x => x.IRFID).Distinct();
+                    var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
+                    List<object> iData = new List<object>();
 
+                    foreach (var item in meetingTimes)
+                    {
+                        dynamic expando = new ExpandoObject();
+                        expando.Time = item;
+                        foreach (var irf in irfList)
+                        {
+                            AddProperty(expando, irf, model.Meetings.Where(x => x.IRFID == irf.Split("(")[0] && x.interviewDate==item).Count());
+                        }
+                        iData.Add(expando);
+                    }
+
+                    ViewBag.MeetingsData = JsonConvert.SerializeObject(iData);
+                    ViewBag.MeetingsDataLabels = JsonConvert.SerializeObject(irfList);
+                   
 
                     return View();
                 }
@@ -87,6 +130,16 @@ namespace Risebird.Web.Controllers
             {
                 return null;
             }
+        }
+
+        public static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
+        {
+            // ExpandoObject supports IDictionary so we can extend it like this
+            var expandoDict = expando as IDictionary<string, object>;
+            if (expandoDict.ContainsKey(propertyName))
+                expandoDict[propertyName] = propertyValue;
+            else
+                expandoDict.Add(propertyName, propertyValue);
         }
     }
 }

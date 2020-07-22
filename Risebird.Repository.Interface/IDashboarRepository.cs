@@ -11,5 +11,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<Meeting> GetTotalInterviewer();
         IEnumerable<Meeting> GetTotalcandidate();
         Task<string> GetDoughnutGraphDetails(string flag);
+        Task<IEnumerable<Meeting>> GetDateWiseMeetings(int addDays = 0);
     }
 }
