@@ -40,12 +40,7 @@
                             </div>
                             <div class="dataloading">
                                 <div class="toolbar">
-                                    @*<div class="text-right">
-                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddInterviewer","User")'" data-original-title="Tooltip on top"> Add Interviewer</span></button>
-            </div>*@
-
-
-
+                                 
                                 </div>
                                 <div class="row">
                                     <div class="card-header clearfix">
@@ -62,7 +57,7 @@
                                                             <span class="input-group-btn" id="searchGo">
                                                                 <button class="btn btn3" id="btnSearch" value="Search" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg></button>
                                                             </span>
-                                                            <!-- <span id="searchGo"><input type="button" id="btnSearch" value="Search" style="background-color:blue;height:40px;color:white" /></span>--->
+                                                           
                                                         </div>
                                                     </div>
                                                 </div>
@@ -116,7 +111,7 @@
                                                     <div class="col-md-9 col-lg-9 interviewer-info" Onclick="callingfunction('@item.id')" style="cursor:pointer;">
                                                         <p><strong>@item.FirstName @item.LastName</strong></p>
                                                         <p>@item.EmailId (@item.MobileNumber)</p>
-                                                        <p><a class="callatag" target="_blank" title="Download Resume" href=@item.ResumeLink onclick="callatag()">Resume</a> || @item.Slots | Success rate: @item.SuccessRate | Selected: @item.SelectedSkillIds | No Of Interviews: @item.NoOfInterview</p>
+                                                        <p><a class="callatag" target="_blank" title="Download Resume" href=@item.ResumeLink onclick="callatag()">Resume</a>  @item.Slots | Success rate: @item.SuccessRate | Selected: @item.SelectedSkillIds | No Of Interviews: @item.NoOfInterview</p>
                                                         <p>Primary Skills:- @item.PrimarySkill</p>
                                                     </div>
                                                     <div class="col-md-2 col-lg-2" >

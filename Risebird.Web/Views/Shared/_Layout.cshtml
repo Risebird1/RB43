@@ -46,7 +46,7 @@
     <link href="~/Newassets/css/account.css" rel="stylesheet" />
     <link href="~/Newassets/css/project.css" rel="stylesheet" />
     <link href="~/Newassets/css/support.css" rel="stylesheet" />
-
+    <link href="~/Newassets/css/mail.css" rel="stylesheet" />
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
@@ -79,32 +79,6 @@
 
 
 
-
-
-    @*<!-- META SECTION -->
-        <title>@ViewData["Title"] - Risebird</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <!--[if IE]-->
-        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-        <!--[endif]-->
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-        <link rel="icon" href="~/favicon.ico" type="~/image/x-icon" />
-        <!-- END META SECTION -->
-        <!-- CSS INCLUDE -->
-        <link rel="stylesheet" type="text/css" id="theme" href="~/css/theme-default.css" />
-        <!-- EOF CSS INCLUDE -->
-        <link href="~/assets/sweetalert/lib/sweet-alert.css" rel="stylesheet" />
-        <script type="text/javascript" src="~/js/plugins/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="~/js/plugins/jquery/jquery-ui.min.js"></script>
-        <script src="~/js/angular/angular.js"></script>
-        <script src="~/js/angular-messages/angular-messages.min.js"></script>
-        <script src="~/js/dir_Pagination/dirPagination.js"></script>
-        <script src="~/js/layout.js"></script>
-        <link href="~/assets/MultiSelect/Newfolder/isteven-multi-select.css" rel="stylesheet" />
-        <script src="~/assets/MultiSelect/Newfolder/isteven-multi-select.js"></script>
-        <script src="~/js/angular/InfiniteScroll.js"></script>*@
-
 </head>
 <body class=" sidebar-mini ">
 
@@ -112,38 +86,7 @@
         <source src="~/audio/done-for-you.ogg" type="audio/ogg" />
     </audio>
 
-    @*<!-- START PAGE CONTAINER -->
-        <div class="page-container" ng-app="MyApp">
-            @Html.AntiForgeryToken()
-            <!-- Navigation -->
-            @Html.Partial("_Navigation")
-            <!-- Navigation end -->
-            <!-- PAGE CONTENT -->
-            <div class="page-content" style="margin-top:-13px;">
-                @Html.Partial("_Header")
-                <!-- PAGE CONTENT WRAPPER -->
-                <div style="margin-bottom:10px;">
-                    @RenderBody()
-                </div>
-                <!-- END PAGE CONTENT WRAPPER -->
-                <!-- END PAGE CONTENT -->
-            </div>
-            <style>
-                .footer {
-                    position: fixed;
-                    left: 0;
-                    bottom: 0;
-                    width: 100%;
-                    background-color: #1d2127;
-                    color: white;
-                    text-align: center;
-                }
-            </style>
-            <div class="footer">
-                <p style="margin-top:10px">Copyright © 2019 Risebird All Rights Reserved</p>
-            </div>
-        </div>
-        <!-- END PAGE CONTAINER -->*@
+   
 
     <div class="wrapper ">
         @Html.AntiForgeryToken()

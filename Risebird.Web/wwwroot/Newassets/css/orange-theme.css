@@ -5,8 +5,32 @@
 .navbar.navbar-transparent {
     background: linear-gradient(to right, #f7792e 0%, #fb8a44ed 60%, #ea7933 100%) !important;
 }
+textarea::-webkit-scrollbar {
+    background-color: var(#acacad, #565656) !important;
+}
 
+textarea::-webkit-scrollbar-thumb {
+    background-color: #acacad !important;
+    border: 1px solid #acacad !important;
+}
 
+input[type='radio']:checked:after {
+    background-color: #ea6e24 !important;
+    top: 1px !important;
+}
+
+#broadcastModal input[type='radio']:checked:after {
+    background-color: #ea6e24 !important;
+    top: -1px !important;
+}
+.can-details a, .callatag {
+    color: #ea6e24 !important;
+}
+
+    .can-details a:hover,
+    .can-details a:focus {
+        color: #ea6e24 !important;
+    }
 .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
     background: #ea6e24 !important;
 }
@@ -88,7 +112,7 @@ fill: rgb(255, 255, 255)!important;
     text-decoration: underline !important;
 }
 #btnPlus .fa {
-    color: #ea6e24 !important;
+    color: #fff !important;
 }
 #ProctoringTable .label-type {
     background: #ffb23630 !important;

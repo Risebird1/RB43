@@ -2,6 +2,27 @@ body {
     background: #1a1a1a!important;
     color: #a9a5a5 !important
 }
+.can-details a, .callatag {
+    color: #9a9a9a !important;
+}
+
+    .can-details a:hover,
+    .can-details a:focus {
+        color: #9a9a9a !important;
+    }
+.card-blue:hover {
+    box-shadow: 0 0 15px #1d1c1c;
+}
+input[type='radio']:checked:after {
+    background-color: #929292 !important;
+    top: 1px !important;
+}
+
+#broadcastModal input[type='radio']:checked:after {
+    background-color: #929292 !important;
+    top: -1px !important;
+}
+
 .navbar.navbar-transparent {
     background: linear-gradient(to right, #0c0c0c 0%, #0b0b0b 60%, #1a1a1a 100%) !important;
 }
@@ -10,7 +31,22 @@ body {
 .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
     background: #121212 !important;
 }
+textarea::-webkit-scrollbar {
 
+    background-color: var(#191919, #232222)!important;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background-color: #191919;
+    border: 1px solid #191919;
+
+}
+
+.mail .card .card-footer {
+    background-color: #000000 !important;
+    border: 0;
+    border-top: 1px #181818 solid !important;
+}
 hr {
     border-color: #464141;
 }

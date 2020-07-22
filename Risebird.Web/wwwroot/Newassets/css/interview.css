@@ -120,12 +120,11 @@ input.switch:empty ~ label:after {
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
-    background-color: var(--mdc-theme-primary, #018786) !important;
+    
 }
 
 textarea::-webkit-scrollbar-thumb {
-    background-color: #56a9ff;
-    border: 1px solid #56a9ff;
+
     margin: 2px;
     border-radius: 2px;
 }

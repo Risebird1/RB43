@@ -5,8 +5,32 @@
 .navbar.navbar-transparent {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
+textarea::-webkit-scrollbar {
+    background-color: var(#acacad, #565656) !important;
+}
 
+textarea::-webkit-scrollbar-thumb {
+    background-color: #acacad !important;
+    border: 1px solid #acacad !important;
+}
 
+input[type='radio']:checked:after {
+    background-color: #929292 !important;
+    top: 1px !important;
+}
+
+#broadcastModal input[type='radio']:checked:after {
+    background-color: #929292 !important;
+    top:-1px !important;
+}
+.can-details a, .callatag {
+    color: #929292 !important;
+}
+
+    .can-details a:hover,
+    .can-details a:focus {
+        color: #929292 !important;
+    }
  .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
         background: #9c9c9c!important;
 }

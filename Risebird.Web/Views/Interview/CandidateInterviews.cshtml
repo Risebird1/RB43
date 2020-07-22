@@ -229,12 +229,23 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Shortlisted</h5>
-                <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeshortlistPopUp()">&times;</span>
+           
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon fa fa-check fa-2x"></span>
+                </div>
+                <h5 class="modal-title pull-left"> Shortlisted</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" id="callPopUp" onclick="closeshortlistPopUp()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+
+
             <div class="modal-body">
-                <div class="row" id="divshortlist">
+                <div class="col-md-12" id="divshortlist">
 
 
                 </div>
@@ -255,12 +266,22 @@
 
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Interest shown by client(s)</h5>
-                <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeIntrestPopUp()">&times;</span>
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon fa fa-user fa-2x"></span>
+                </div>
+                <h5 class="modal-title pull-left"> Interest shown by client(s)</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" id="callPopUp" onclick="closeIntrestPopUp()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+
+
+          
             <div class="modal-body">
-                <div class="row" id="divIntrestedShown">
+                <div class="col-md-12" id="divIntrestedShown">
 
 
                 </div>

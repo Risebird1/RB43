@@ -2590,12 +2590,32 @@ ul.panel-controls > li > .dropdown-menu {
 input[type=radio],
 input[type=checkbox] {
     margin: 2px 0px 0px;
+    width: 18px;
+    height: 18px;
 }
 
-.checkbox.pull-left,
-.checkbox.pull-right,
-.radio.pull-left,
-.radio.pull-right {
+
+input[type='radio']:checked:after {
+    width: 14px;
+    height: 14px;
+    border-radius: 15px;
+    top: 1px;
+    left: 2px;
+    position: relative;
+
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+}
+    .radio-field {
+    margin: 0px 5px;
+    position: relative;
+    top: -2px;
+    color: #5f5c5c;
+}
+
+.checkbox.pull-left, .checkbox.pull-right, .radio.pull-left, .radio.pull-right {
     width: auto;
 }
 
