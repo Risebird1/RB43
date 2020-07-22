@@ -59,28 +59,29 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<MeetingVM> GetRiseTubeMeetings(int clientId, string profile, string Emailid)
+        public async Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid)
         {
             try
             {
-
-                return _meetingRespository.GetRiseTubeMeetings(clientId, profile, Emailid).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var result = await _meetingRespository.GetRiseTubeMeetings(clientId, profile, Emailid);
+                return  result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public List<MeetingVM> GetCPMeetings(int clientId, string profile, string Emailid)
+        public async Task<List<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid)
         {
             try
             {
-                return _meetingRespository.GetCPMeetings(clientId, profile, Emailid).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var dataResult = await _meetingRespository.GetCPMeetings(clientId, profile, Emailid);
+                return  dataResult.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -1096,20 +1097,17 @@ namespace Risebird.Business
             }
 
         }
-        public string AddTotalViewCount(int id, string emailaddress)
+        public async Task AddTotalViewCount(int id, string emailaddress)
         {
             try
             {
-                var meeting = _meetingRespository.AddTotalViewCount(id, emailaddress);
-                return "";
+                 await _meetingRespository.AddTotalViewCount(id, emailaddress);              
 
             }
-
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
 
-                return "";
             }
         }
         public string VedioShare(string value, string vedioid)
@@ -1278,18 +1276,16 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<VideoCountdetail> GetTotalViewCount(int id)
+        public async Task<IEnumerable<VideoCountdetail>> GetTotalViewCount(int id)
         {
             try
             {
-                var meeting = _meetingRespository.GetTotalViewCount(id);
-                return meeting;
-
+                return await _meetingRespository.GetTotalViewCount(id);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
 
                 return null;
             }

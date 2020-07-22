@@ -208,7 +208,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public ClientUserVM GetClientUserDetails(string emailID)
+        public async Task<ClientUserVM> GetClientUserDetails(string emailID)
         {
             try
             {
@@ -216,18 +216,19 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("Email", emailID);
-                    return SqlMapper.Query<ClientUserVM>(con, "sp_ClientUserDetail", parameters,
-                         commandType: CommandType.StoredProcedure).FirstOrDefault();
+                    var result= await  SqlMapper.QueryAsync<ClientUserVM>(con, "sp_ClientUserDetail", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

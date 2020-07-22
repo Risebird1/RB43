@@ -30,6 +30,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -103,6 +104,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

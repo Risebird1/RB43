@@ -76,7 +76,7 @@ namespace Risebird.Functions
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 log.Error($"Failed to send email. Please check all filled and try again.");
             }
@@ -104,7 +104,7 @@ namespace Risebird.Functions
 
                 smtpClient.Send(mailMessage);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return;
 

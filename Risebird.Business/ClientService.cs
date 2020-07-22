@@ -14,9 +14,10 @@ namespace Risebird.Business
         private readonly IClientRepository _clientRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        public ClientService(IClientRepository clientRepository)
+        public ClientService(IClientRepository clientRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _clientRepository = clientRepository;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         public List<Client> GetClients()
@@ -25,7 +26,7 @@ namespace Risebird.Business
             {
                 return _clientRepository.GetClients().ToList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

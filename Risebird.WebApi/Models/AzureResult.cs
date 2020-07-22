@@ -218,8 +218,7 @@ namespace WebApplication1.Models
             // process policy & encryption
             ProcessPolicyAndEncryption(encodedAsset);
 
-            // Get file name
-            string fileSession = "CurrentFile";
+           
 
             CloudFile model = fileToUpload;
             uploadFileOriginalName = model.FileName;

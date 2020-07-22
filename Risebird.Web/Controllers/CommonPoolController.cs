@@ -66,7 +66,8 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Client")
                         {
-                            ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
+                            var client = await _userRepository.GetClientUserDetails(emailid);
+                            ClientId = client.ClientId;
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -78,7 +79,7 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList = _meetingService.GetCPMeetings(ClientId, profileName, emailid).ToList();
+                            modelList = await _meetingService.GetCPMeetings(ClientId, profileName, emailid);
                         }
 
 
@@ -224,7 +225,8 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Client")
                         {
-                            ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
+                            var client = await _userRepository.GetClientUserDetails(emailid);
+                            ClientId = client.ClientId;
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -240,7 +242,7 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList = _meetingService.GetCPMeetings(ClientId, profileName, emailid).ToList();
+                            modelList = await _meetingService.GetCPMeetings(ClientId, profileName, emailid);
                         }
 
                         if (filter.StartDate != null && filter.EndDate != null)
@@ -390,7 +392,8 @@ namespace Risebird.Web.Controllers
                         emailId = emailId.Replace("\"", "");
                         if (profileName == "Client")
                         {
-                            ClientId = _userRepository.GetClientUserDetails(emailId).ClientId;
+                            var client = await _userRepository.GetClientUserDetails(emailId);
+                            ClientId = client.ClientId;                           
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -403,11 +406,11 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList1 = _meetingService.GetCPMeetings(ClientId, profileName, emailId).ToList();
+                            modelList1 = await _meetingService.GetCPMeetings(ClientId, profileName, emailId);
                         }
                         else if (profileName == "ExternalUser")
                         {
-                            modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList();
+                            modelList1 = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
                             if (id == 0)
                             {
                                 id = modelList1.OrderByDescending(x => x.SharedOn).Select(x => x.imid).FirstOrDefault();
@@ -417,13 +420,13 @@ namespace Risebird.Web.Controllers
                         //Start:Save View counts of vedio
                         if (HttpContext.Session.GetString("UserLogedIn") != null)
                         {
-                            string values = String.Empty;
+                            string values = string.Empty;
                             var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();
                             if (valuestatus == "Yes")
                             {
                                 var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                 emailaddress = emailaddress.Replace("\"", "");
-                                _meetingService.AddTotalViewCount(id, emailaddress);
+                                await _meetingService.AddTotalViewCount(id, emailaddress);
                                 //save into database to increase view count save into main table from where data is picked
                                 HttpContext.Session.SetString("UserLogedIn", "No");
                             }
@@ -575,8 +578,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
                         // to get videocount details
-                        var videodetailscount = _meetingService.GetTotalViewCount(id);
-                        NewModel.VideoCountDetail = videodetailscount;
+                        var videodetailscount = await _meetingService.GetTotalViewCount(id);
+                        NewModel.VideoCountDetail = videodetailscount.ToList();
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
@@ -680,8 +683,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
-                        var videodetailscount = _meetingService.GetTotalViewCount(id);
-                        NewModel.VideoCountDetail = videodetailscount;
+                        var videodetailscount = await _meetingService.GetTotalViewCount(id);
+                        NewModel.VideoCountDetail = videodetailscount.ToList();
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -746,7 +749,7 @@ namespace Risebird.Web.Controllers
                         {
                             var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                             emailaddress = emailaddress.Replace("\"", "");
-                            _meetingService.AddTotalViewCount(id, emailaddress);
+                            await _meetingService.AddTotalViewCount(id, emailaddress);
                             //save into database to increase view count save into main table from where data is picked
                             HttpContext.Session.SetString("UserLogedIn", "No");
                         }
@@ -768,7 +771,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                     emailaddress = emailaddress.Replace("\"", "");
-                                    _meetingService.AddTotalViewCount(id, emailaddress);
+                                    await _meetingService.AddTotalViewCount(id, emailaddress);
                                     //save into database to increase view count save into main table from where data is picked
                                 }
                             }
@@ -788,7 +791,8 @@ namespace Risebird.Web.Controllers
                         emailId = emailId.Replace("\"", "");
                         if (profileName == "Client")
                         {
-                            ClientId = _userRepository.GetClientUserDetails(emailId).ClientId;
+                            var client = await _userRepository.GetClientUserDetails(emailId);
+                            ClientId = client.ClientId;
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -805,7 +809,7 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList = _meetingService.GetCPMeetings(ClientId, profileName, emailId).ToList();
+                            modelList = await _meetingService.GetCPMeetings(ClientId, profileName, emailId);
                         }
 
                         MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
@@ -889,8 +893,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsIntrested = model.IsIntrested;
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
-                        var videodetailscount = _meetingService.GetTotalViewCount(id);
-                        NewModel.VideoCountDetail = videodetailscount;
+                        var videodetailscount = await _meetingService.GetTotalViewCount(id);
+                        NewModel.VideoCountDetail = videodetailscount.ToList();
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {

@@ -53,7 +53,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -84,7 +84,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -116,7 +116,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -147,7 +147,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -188,7 +188,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -216,7 +216,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -248,7 +248,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -281,7 +281,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -318,7 +318,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -351,7 +351,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -386,7 +386,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -423,7 +423,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -454,7 +454,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -485,7 +485,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -518,7 +518,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -527,8 +527,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();
-                var UserType = "Dear";
+                var mailMessage = new MailMessage();               
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
                 var toMails = model.TO.Split(";");
@@ -550,7 +549,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -582,7 +581,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -616,7 +615,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Broadcast mail sent Successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Broadcast failed.";
             }
@@ -645,7 +644,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -675,7 +674,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Failed to send mail. Please check all filled and try again.";
             }
@@ -709,7 +708,7 @@ namespace Risebird.CommonHelper
                 smtpClient.Send(mailMessage);
                 return "Mail sent Successfully.";
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Broadcast failed.";
             }

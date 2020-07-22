@@ -130,7 +130,7 @@ namespace Risebird.Functions
 
                 smtpClient.Send(mailMessage);
             }
-            catch (Exception e)
+            catch (Exception )
             {
                 return;
 

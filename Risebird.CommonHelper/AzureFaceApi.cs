@@ -30,7 +30,7 @@ namespace Risebird.CommonHelper
                     var result = MakeAnalysisRequest(imageFilePath);
                     return result.Result;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return "";
                 }

@@ -38,11 +38,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                // await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                // await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

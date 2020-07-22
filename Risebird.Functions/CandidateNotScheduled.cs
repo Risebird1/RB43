@@ -106,7 +106,7 @@ namespace Risebird.Functions
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 log.Error($"Failed.");
             }
@@ -172,7 +172,7 @@ namespace Risebird.Functions
 
                 smtpClient.Send(mailMessage);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return;
 

@@ -1802,7 +1802,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
                                     item.resumeLink = "";
                                 }
@@ -4599,7 +4599,7 @@ namespace Risebird.Web.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
@@ -4738,7 +4738,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 9].Style.Font.UnderLine = true;
                                 Sheet.Cells[i, 9].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 Sheet.Cells[i, 9].Value = "No Video";
                             }
@@ -4768,7 +4768,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 12].Style.Font.UnderLine = true;
                                 Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 Sheet.Cells[i, 12].Value = "No Resume";
                             }
@@ -4795,7 +4795,7 @@ namespace Risebird.Web.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";

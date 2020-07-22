@@ -2338,7 +2338,7 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells[i, 3].Style.Font.UnderLine = true;
                                         Sheet.Cells[i, 3].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                                     }
-                                    catch (Exception e)
+                                    catch (Exception)
                                     {
                                         Sheet.Cells[i, 3].Value = "No Resume";
                                     }
@@ -2382,7 +2382,7 @@ namespace Risebird.Web.Controllers
                                         Sheet.Cells[i, 22].Style.Font.UnderLine = true;
                                         Sheet.Cells[i, 22].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                                     }
-                                    catch (Exception e)
+                                    catch (Exception)
                                     {
                                         Sheet.Cells[i, 22].Value = "No Video";
                                     }

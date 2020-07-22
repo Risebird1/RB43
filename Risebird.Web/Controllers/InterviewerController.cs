@@ -760,7 +760,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception e)
+                                catch (Exception )
                                 {
                                     item.resumeLink = "";
                                 }
@@ -914,7 +914,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception e)
+                                catch (Exception )
                                 {
                                     item.resumeLink = "";
                                 }
