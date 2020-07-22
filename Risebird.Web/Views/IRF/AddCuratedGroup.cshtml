@@ -61,13 +61,13 @@
                                 </div>
                                 
                             </div>
-                            
+                            <hr class="l-hr"/>
                             <div id="tableID">
                                 <table class="table table-bordered mbn" id="IRFList">
                                     <thead>
                                         <tr>
-                                            <th class="text-center" style="font-size:15px!important; width:30%">IRF ID</th>
-                                            <th class="text-center" style="font-size:15px!important; width:40%">Primary Skills</th>
+                                            <th class="text-center border-db" style="font-size:15px!important; width:30%">IRF ID</th>
+                                            <th class="text-center border-db" style="font-size:15px!important; width:40%">Primary Skills</th>
                                             <th class="text-center" style="font-size:15px!important;width:30%">Add</th>
                                         </tr>
                                     </thead>
@@ -76,8 +76,8 @@
                                         {
                                             <tr>
 
-                                                <td class="text-center"> <a style="color:#007bff;" id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.CuratedIRFMappings[i].IRFId })'> @Model.CuratedIRFMappings[i].IRFName</a> </td>
-                                                <td class="text-center" width="30%">@Model.CuratedIRFMappings[i].PrimarySkills</td>
+                                                <td class="text-center border-db"> <a id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.CuratedIRFMappings[i].IRFId })'> @Model.CuratedIRFMappings[i].IRFName</a> </td>
+                                                <td class="text-center border-db" width="30%">@Model.CuratedIRFMappings[i].PrimarySkills</td>
                                                 <td class="text-center" width="20%">
                                                     <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                         <div class="mdc-checkbox">
@@ -134,5 +134,27 @@
     </div>
 
 </div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#IRFList').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order:[],
+            responsive: false,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
+        });
+        var table = $('#IRFList').DataTable();
+    });
+</script>
 
 

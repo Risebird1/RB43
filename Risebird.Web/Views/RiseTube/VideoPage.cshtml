@@ -149,10 +149,15 @@
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
                                             }
-                                            @if (ViewBag.actionstatus == "SkillChannel")
+                                            @if (ViewBag.actionstatus == "SkillChannel" && ViewBag.CuratedGroupId != null)
                                             {
                                                 <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
                                             }
+                                            else if (ViewBag.actionstatus == "SkillChannel")
+                                            {
+                                                <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
+                                            }
+
                                             else
                                             {
                                                 @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
@@ -166,7 +171,7 @@
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
-                                  
+
 
 
                                     <div class="filheader">
@@ -399,40 +404,17 @@
                                                         </div>
                                                     </div>
                                                 }
-                                                @*
-                    <div class="col-md-6 col-sm-6">
-                          <div class="form-group">
-                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR"> Client
-                            HR </label>
-                        <div class="col-md-6 col-sm-6">
-                              <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
 
-                                                                  @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
-                                                                  {
-                                                                  @if (item != null && item != "")
-                                                                  {
+                                                <div class="form-group col-md-12 col-sm-12 ">
+                                                    <div>
+                                                        <div class="col-md-12 col-sm-12 ">
+                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
+                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
 
-                            <option value="@item">@item</option>
-
-                                                                  }
-                                                                  }
-
-                          </select>
-                            </div>
-                      </div>
-                        </div>
-                                                *@
-                                               
-                                                    <div class="form-group col-md-12 col-sm-12 ">
-                                                        <div>
-                                                            <div class="col-md-12 col-sm-12 ">
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
-
-                                                            </div>
                                                         </div>
                                                     </div>
-                                               
+                                                </div>
+
                                             </div>
                                         </div>
                                     </form>
@@ -486,43 +468,41 @@
                                                             <div>
                                                                 <div>
                                                                     <div class="col-md-12">
-                                                                       
-                                                                            @foreach (var videolist in Model.SubVideo_List)
-                                                                            {
-                                                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-                                                                                <div class="video-card video-card-list videosidelist">
-                                                                                    <div class="video-card-image">
-                                                                                        @if (videolist.VideoLink.Contains(".mp4"))
-                                                                                        {
-                                                                                            @if (videolist.ThumbnailImage != null)
-                                                                                            {<img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />}
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% ">
-                                                                                                <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                            </video>
-                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a> }
+
+                                                                        @foreach (var videolist in Model.SubVideo_List)
+                                                                        {
+                                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                            <div class="video-card video-card-list videosidelist">
+                                                                                <div class="video-card-image">
+                                                                                    @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                    {
+                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                        {<img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                        <video controls style=" background:black!important;width:100%; height:100% ">
+                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                        </video>
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a> }
+                                                                                    else
+                                                                                    {
+                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                        {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
                                                                                         else
-                                                                                        {
-                                                                                            @if (videolist.ThumbnailImage != null)
-                                                                                            {<img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " /> }
-                                                                                            else
-                                                                                            { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+                                                                                        { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
 
 
-                                                                                        @*
-                                                                                            <div class="time">3:50</div>
-                                                                                        *@
+                                                                                    @*
+                                                                                        <div class="time">3:50</div>
+                                                                                    *@
+                                                                                </div>
+                                                                                <div class="video-card-body">
+                                                                                    <div class="video-title"> <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a> <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span> </div>
+                                                                                    <div class="video-page text-success">
+                                                                                        &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
                                                                                     </div>
-                                                                                    <div class="video-card-body">
-                                                                                        <div class="video-title"> <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a> <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span> </div>
-                                                                                        <div class="video-page text-success">
-                                                                                            &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
-    font-weight: 500;
-    font-size: 12px;">@videolist.interviewDate</span> @*Education <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
-</div>
-</div>
-</div>
-}
-                                                                        
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -555,7 +535,7 @@
                                                         {
                                                             @Model.candidateName
                                                         }
-                                                        <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
+                                                        <span class="job_title"> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span>
                                                         <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                         <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                         <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
@@ -569,10 +549,10 @@
                                                             @if (Model.IsLike == "Liked")
                                                             {
                                                                 <div class="btn2">
-                                                                    <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="color: blue;font-size: 24px;padding-right:10px">
+                                                                    <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click">
                                                                         &nbsp;
                                                                         <label id="pTotalvediolike">@Model.TotalVedioLike</label>
-                                                                    </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px">
+                                                                    </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1">
                                                                         <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label>
                                                                     </i>
                                                                 </div>
@@ -648,24 +628,22 @@
                                                                 {
                                                                     @if (Model.IsIntrested == "Interest Sent")
                                                                     {
-                                                                        <input type="button" class="share-wrap btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
+                                                                        <input type="button" class=" btninterest" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
                                                                     }
                                                                     else if (Model.IsIntrested == "Interest Accepted")
                                                                     {
-                                                                        <input type="button" class="share-wrap btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 0px;height: 30px;" />
+                                                                        <input type="button" class="btninterest " id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 0px;height: 30px;" />
                                                                     }
                                                                     else
                                                                     {
-                                                                        <input type="button" class="share-wrap btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        <input type="button" class=" btninterest " id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
                                                                     }
                                                                 }
                                                                 else
                                                                 {
                                                                     <div class="btn-group">
                                                                         <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            <img src="../../img/share-tweet-icon.png" style="        width: 28px;
-        padding-left: 4px;
-">  Share
+                                                                            <img class="tweet-icon" src="../../img/share-tweet-icon.png">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
                                                                             <span class="tooltip--right" data-tooltip="To convey the act to generate public sharing url ">   <input type="button" class="share-wrap btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
@@ -749,7 +727,7 @@
                                                                         <div class="left-chart">
 
                                                                             <div class="chart-box itemchart">
-                                                                                <p class="card-text">Overall Score: <span class="toscore"  id="totScore"></span></p>
+                                                                                <p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>
                                                                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                                                                     <div id="scoreChart" style="height: 200px; width: 100%;"></div>
                                                                                 </div>
@@ -1346,16 +1324,7 @@
                                                             </div>
                                                         }
                                                     </div>
-                                                    @*
-                                                        <h6>Cast:</h6>
-                                                        <p>Nathan Drake , Victor Sullivan , Sam Drake , Elena Fisher</p>
-                                                        <h6>Category :</h6>
-                                                        <p>Gaming , PS4 Exclusive , Gameplay , 1080p</p>
-                                                        <h6>About :</h6>
-                                                        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved overVarious versions have evolved over the years, sometimes </p>
-                                                        <h6>Tags :</h6>
-                                                        <p class="tags mb-0"> <span><a href="#">Uncharted 4</a></span> <span><a href="#">Playstation 4</a></span> <span><a href="#">Gameplay</a></span> <span><a href="#">1080P</a></span> <span><a href="#">ps4Share</a></span> <span><a href="#">+ 6</a></span> </p>
-                                                    *@
+
                                                 </div>
                                             </div>
                                         </div>
@@ -1379,7 +1348,7 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-           
+
 
             <div class="filheader">
                 <div class="filavatar">
@@ -1398,13 +1367,13 @@
 
 
             <div class="modal-body">
-                
-                    <h5 class="modal-title text-center mt-20" id="callingLabel text-center mt-20">Calling...</h5>
-                
-               
-                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
+
+                <h5 class="modal-title text-center mt-20" id="callingLabel text-center mt-20">Calling...</h5>
+
+
+                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
     display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-             
+
             </div>
 
         </div>
@@ -1414,10 +1383,7 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Interested</h5>
-                <span onclick="closeCommentPopUp()" style="cursor:pointer;" class="close" id="CommentPopUp">&times;</span>
-            </div>
+
 
 
             <div class="filheader">
@@ -1433,10 +1399,6 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeCommentPopUp()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
             </button>
-
-
-
-
 
 
             <div class="modal-body" style="padding: 2px 16px;">
@@ -1460,12 +1422,11 @@
         </div>
     </div>
 </div>
-<div id="MyShareModel1" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="MyShareModel1" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            
+
 
             <div class="filheader">
                 <div class="filavatar">
@@ -1474,7 +1435,7 @@
                 <h5 class="modal-title pull-left">Email Share</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closeSharePopUp1()" id="SharePopUp" style="cursor:pointer;"  aria-hidden="true">&times;</span>
+                <span onclick="closeSharePopUp1()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
 
 
@@ -1483,7 +1444,7 @@
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
 
                     <div class="sharing">
-                        <textarea class="form-control "  rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                        <textarea class="form-control " rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                     </div>
 
                 </div>
@@ -1506,12 +1467,11 @@
         </div>
     </div>
 </div>
-<div id="MyShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="MyShareModel" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-         
+
 
 
             <div class="filheader">
@@ -1526,15 +1486,15 @@
 
 
             <div class="modal-body">
-           
+
                 <div class="col-md-12">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
 
                     <div class="sharing">
-                    <textarea class="form-control" rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
-                </div>
+                        <textarea class="form-control" rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                     </div>
-             
+                </div>
+
 
                 <div class="col-md-12">
                     <div class=" text-right">
@@ -1543,17 +1503,16 @@
                     </div>
                 </div>
             </div>
-       
+
         </div>
     </div>
 </div>
 
-<div id="PublicShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="PublicShareModel" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-           
+
 
 
             <div class="filheader">
@@ -1563,18 +1522,18 @@
                 <h5 class="modal-title pull-left">Public Share</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closepublicSharePopUp()" id="SharePopUp" style="cursor:pointer;"  aria-hidden="true">&times;</span>
+                <span onclick="closepublicSharePopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
 
 
             <div class="modal-body">
-               
-                    <div class="col-md-12">
-                        <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
-                        <div class="sharing">
-                            <textarea class="form-control" rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated"></textarea>
 
-                       
+                <div class="col-md-12">
+                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
+                    <div class="sharing">
+                        <textarea class="form-control" rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated"></textarea>
+
+
                     </div>
                 </div>
 
@@ -1585,16 +1544,15 @@
                     </div>
                 </div>
             </div>
-           
+
         </div>
     </div>
 </div>
-<div id="PublicUrlShareModel" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="PublicUrlShareModel" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-        
+
             <div class="filheader">
                 <div class="filavatar">
                     <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
@@ -1612,7 +1570,7 @@
                     <div class="video-url">
                         <label class="label-field desp-label"> Video Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
                             <p class="special-text">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd"  d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
                                 <span id="special_text" class="special-text__tooltip">
                                     Copy Link
                                 </span>
@@ -1628,12 +1586,11 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </div>
-<div id="PublicShareVideo" class="modal" style="display: none;position: fixed;z-index: 10000000;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="PublicShareVideo" class="modal modal-bg">
 
 
     @if (ViewBag.VedioStatus == "Public")
@@ -1663,7 +1620,7 @@
                     </div>
                 </div>
             </div>
-           
+
         </div>
 
     </div>

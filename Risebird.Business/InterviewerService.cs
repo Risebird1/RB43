@@ -29,15 +29,15 @@ namespace Risebird.Business
         }
 
         #region Interviewer Profile Service Functions
-
         public List<InterviewerProfileVM> GetInterviewers()
         {
             try
             {
                 return _interviewerRepository.GetInterviewers().Result.ToList();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -45,10 +45,7 @@ namespace Risebird.Business
         {
             try
             {
-                //Add Method
                 return _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
-
-
             }
             catch (Exception e)
             {
@@ -204,21 +201,11 @@ namespace Risebird.Business
 
                 // Get all the List from DB
 
-                //List<TransInterviewerSkill> SkillList = _interviewerRepository.GetSkills(ProfileId).Result.ToList();
-                //List<TransInterviewerCertificate> CertificateList = _interviewerRepository.GetCertificateList(ProfileId).Result.ToList();
-                //List<TransInterviewerEducation> EducationList = _interviewerRepository.GetEducationList(ProfileId).Result.ToList();
-                ////List<InterviewerProfessional> ProfessionalList = _interviewerRepository.GetProfessionalList(ProfileId).Result.ToList();
-                //List<TransInterviewerProjects> ProjectsList = _interviewerRepository.GetProjectsList(ProfileId).Result.ToList();
                 List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
                 List<TransInterviewerAccDetails> AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result.ToList();
 
                 // Assign the Lists to model
 
-                //ProfileModel.InterviewerSkill = SkillList;
-                //ProfileModel.InterviewerCertificateDetails = CertificateList;
-                //ProfileModel.InterviewerEducationDetails = EducationList;
-                ////ProfileModel.InterviewerProfessionalDetails = ProfessionalList;
-                //ProfileModel.InterviewerProjectsDetails = ProjectsList;
                 ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
                 ProfileModel.InterviewerAccDetails = AccDetailsList;
 
@@ -363,8 +350,7 @@ namespace Risebird.Business
         public List<Meeting> GetUnapprovedInterviewerScheduledInterviews(string emailID)
         {
             try
-            {
-                ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
+            {                
                 var assignedMeeting = _interviewerRepository.GetUnapprovedInterviewerScheduledInterviews(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
                 return assignedMeeting;
             }
@@ -465,7 +451,7 @@ namespace Risebird.Business
             {
                 var reportModel = new InterviewReport();
                 var irfDetails = _interviewerRepository.GetInterviewerSkillChannelDetails(irfId);
-                //var levels = _meetingRespository.GetLevels();
+               
                 //check whether an IRF exists for the given IRFId
                 var check = _interviewerRepository.GetInterviewerSkillChannelbyId(irfId);// what is need of this method
                 var interviewDetails = _interviewerRepository.GetInterviewerMeetingById(interviewId).Result;//Ask
@@ -609,38 +595,7 @@ namespace Risebird.Business
             try
             {
                 var result = await _interviewerRepository.AddInterviewerReport(reportModel);
-                //if (reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
-                //{
-                //    if (reportModel.InterviewStatus.Value == 2 || reportModel.InterviewStatus.Value == 4)
-                //    {
-
-                //        var irfQualityControllers = _irfRepository.GetTransQualityController(reportModel.IRFId);
-                //        var mailIds = new List<string>();
-                //        foreach (var item in irfQualityControllers)
-                //        {
-                //            if (item.EmailId != null)
-                //            {
-                //                mailIds.Add(item.EmailId);
-                //            }
-                //        }
-                //        _notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
-
-                //        if (reportModel.InterviewStatus.Value == 2)
-                //        {
-                //            var namemodel = String.Empty;
-
-                //            if (reportModel.CandidateName != null && reportModel.CandidateName.Length >= 2)
-                //                namemodel = namemodel + reportModel.CandidateName?.ToCharArray()[0] + reportModel.CandidateName?.ToCharArray()[1];
-                //            else if (reportModel.CandidateName != null && reportModel.CandidateName.Length == 1)
-                //                namemodel = namemodel + reportModel.CandidateName?.ToCharArray()[0];
-                //            //get curated users
-                //            var curatedMailIds = _irfRepository.GetCuratedUserMailId(reportModel.IRFId);
-                //            _notificationHelper.SendCuratedUserMail(curatedMailIds.ToList(), reportModel.interviewDate, reportModel.IRFName, reportModel.PrimarySkill, namemodel);
-                //        }
-
-                //    }
-                //}
-
+                
                 return result;
             }
 

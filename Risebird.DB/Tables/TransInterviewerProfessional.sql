@@ -18,8 +18,8 @@ CREATE TABLE [dbo].[TransInterviewerProfessional](
 	[ExperienceId] [int] NULL,
 	[WorkNature] [varchar](50) NULL,
 	[PrimaryResponsibility] [varchar](50) NULL,
-	[CompanyLinkedinPage] [nvarchar](max) NULL,
-	[CompanyWebsite] [nvarchar](max) NULL,
+	[CompanyLinkedinPage] [varchar](1000) NULL,
+	[CompanyWebsite] [varchar](1000) NULL,
 	
 	CONSTRAINT [FK__IProfileID_Professional] FOREIGN KEY (InterviewerProfileId) REFERENCES InterviewerProfile(id),
 	CONSTRAINT [FK__ExperienceId] FOREIGN KEY (ExperienceId) REFERENCES ExperienceRanges(id),

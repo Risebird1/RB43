@@ -4,8 +4,8 @@ BEGIN
 CREATE TABLE [dbo].[TransInterviewerAvailability](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[InterviewerProfileId] [int] NOT NULL,
-	[Weekday] [nvarchar](50) NULL,
-	[Weekend] [nvarchar](50) NULL,
+	[Weekday] [varchar](50) NULL,
+	[Weekend] [varchar](50) NULL,
 	[IsAvailableOnPublicHolidays] [bit] NULL,
 	
 	CONSTRAINT [FK__IProfileID_Availability] FOREIGN KEY (InterviewerProfileId) REFERENCES InterviewerProfile(id),

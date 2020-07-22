@@ -655,9 +655,7 @@
                                                                     <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                     <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                    <!-- <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-          <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-      </button>-->
+                                                                  
 
 
 
@@ -677,7 +675,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        @*<label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>*@
+                                        <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
 
                                     </div><!--end of col-md-12-->
 
@@ -1544,26 +1542,7 @@
         //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = average;
 
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
+      
         am4core.ready(function () {
 
             // Themes begin
@@ -1857,7 +1836,7 @@
 
     function CheckQuestionsTiming() {
      var interviewStatusElem = document.getElementById("InterviewStatus");
-        if (interviewStatusElem.value == 2||interviewStatusElem.value == 3|| interviewStatusElem.value == 4)
+        if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4)
         {
         var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
         var oldVal = $("#QuestionsCollection_0__Timing").val();
@@ -2098,26 +2077,7 @@
         document.getElementById("totScore").innerHTML = totalScore;
 
 
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
+      
 
         am4core.ready(function () {
 

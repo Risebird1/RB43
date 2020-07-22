@@ -4,7 +4,7 @@ BEGIN
 
 CREATE TABLE [dbo].[ExperienceRanges](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[Description] [nvarchar](20) NULL,
+	[Description] [varchar](50) NULL,
  CONSTRAINT [PK_Exp] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

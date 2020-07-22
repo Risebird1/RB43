@@ -82,9 +82,6 @@ namespace Risebird.Business
         {
             try
             {
-
-                //var call = _twilioHelper.MakePhoneCall("+919284487005");
-
                 var hrList = new List<Users>();
                 var users = _interviewerSkillsRepository.GetUsers();
                 foreach (var item in users)
@@ -340,27 +337,7 @@ namespace Risebird.Business
             try
             {
                return _interviewerSkillsRepository.PauseInterviewerSkills(InterviewerSkillId, InterviewerSkillName);
-                ////update meeting status
-                //var updatedMeetings = _interviewerSkillsRepository.UpdateMeetingStatus(InterviewerSkillName).Result.ToList();
-
-                ////send mails
-                //if (updatedMeetings != null && updatedMeetings.Count() != 0)
-                //{
-                //    //get emails
-                //    foreach (var item in updatedMeetings)
-                //    {
-                //        _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"));
-                //        //insert meeting in PausedIRF
-                //        // _irfRepository.AddPausedMeetings(irfId, item.imid);
-
-
-                //        _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact, item.interviewDate.ToString("MMMM dd, yyyy"));
-
-                //    }
-                //    //_notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
-
-                //}
-                //return true;
+            
             }
             catch (Exception ex)
             {
@@ -377,14 +354,6 @@ namespace Risebird.Business
                 //update meeting status and IsPaused flag in IRF
                 var updatedMeetings = _interviewerSkillsRepository.PlayInterviewerSkills(InterviewerSkillId, InterviewerSkillName);
 
-                //if(updatedMeetings!=null && updatedMeetings.Count()>0)
-                //{
-                //    var meetingIds = string.Join(",", from item in updatedMeetings select item.imid);
-                //    var result = _irfRepository.UpdatePausedMeetingstoPlay(meetingIds);
-                //    _irfRepository.DeletePlayedMeetings(meetingIds);
-                //    return result;
-                //}
-                //send mails
 
                 return updatedMeetings;
             }

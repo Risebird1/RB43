@@ -10,13 +10,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
 CREATE PROCEDURE [dbo].[usp_DeleteInterviewerProfile] @UserId int
 AS
  Begin Try
