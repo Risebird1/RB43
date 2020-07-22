@@ -101,8 +101,7 @@
                                         <input id="JD" name="JD" value="Upload" type="radio" checked="checked" onclick="RadioChanged(this.value)">
                                         Add a link
                                         <input id="JD" name="JD" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                        @*None
-            <input id="JD" name="JD" value="None" type="radio" onclick="RadioChanged(this.value)">*@
+                                        
                                     </div>
 
                                     <div class="form-group" style="display:none" id="linkDiv">
@@ -142,13 +141,12 @@
                                 <div class="pull-right">
                                     <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary" />
 
-                                    @*<input type="submit" id="btnUpload" value="Update QCInterviewer" class="btn btn btn-primary" />*@
+                                  
                                 </div>
                                 <div>
                                     @Html.ActionLink("Back to List", "QCInterviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
 
-                                    @*@Html.ActionLink("Back to List", "QCInterviewers", "User", new { @class = "btn btn-fill btn-label", @role = "button" })*@
                                 </div>
                             </div>
                         </div>
@@ -159,25 +157,7 @@
     }
 
 </div>
-<style>
-    .fa-spinner {
-        font-size: 18px;
-        position: relative;
-        top: 6px;
-        left: 4px;
-    }
 
-    .webkitEnabled {
-        -webkit-appearance: menulist;
-    }
-
-    .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
-        color: #000 !important;
-        text-decoration: none;
-        background-color: #fff !important;
-        outline: 0;
-    }
-</style>
 <script type="text/javascript">
     var j = jQuery.noConflict();
     j(document).ready(function () {

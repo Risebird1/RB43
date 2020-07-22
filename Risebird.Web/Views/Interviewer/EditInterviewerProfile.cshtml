@@ -8,10 +8,6 @@
 
 
 
-@*<script src="sweetalert2.all.min.js"></script>
-    <script src="sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="sweetalert2.min.css">*@
-
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -992,53 +988,7 @@
                     </div>
     </div>
 
-    @*<script>
-            function Submit_InterviewerProfileDetails_Click() {
-                alert("Please Wait few Seconds...");
 
-                var InterviewerProfileDetails =
-                {
-                    "UserId": $("#hdn_UserId").val(),
-                    "EndUserLocation": $("#txtLocation").val(),
-                    "SoftwareType": $("#lst_SoftwareType").find("option:selected").text(),
-                    "DatabaseType": $("#lst_DatabaseType").find("option:selected").text(),
-                    "StaffCount": $("#txtStaffCount").val(),
-                    "DeviceCount": $("#txtDeviceCount").val(),
-                    "Amount": $("#txtAmount").val(),
-                    "ActivationCode": $("#txtActivationCode").val(),
-                    "ActivationDays": $("#txtActivationDays").val()
-                }
-                var url = $("#hdn_AddInterviewerProfile_Redirect").val();
-                $.ajax(
-                    {
-                        type: "Post",
-                        contentType: "application/json",
-                        dataType: 'json',
-                        url: url,
-                        data: JSON.stringify(LicenceDetails),
-                        success: function (d) {
-                            if (d.success) {
-                                //swal({
-                                //    title: "",
-                                //    text: "<b style='color:#03bd00'>
-                                " + d.Message + " < b > ",
-                                //    html: true,
-                                //});
-                                MessageBox(d.Message)
-                            }
-                            else
-                                ErrorMessageBox(d.Message)
-                            //swal({
-                            //    title: "",
-                            //    text: "<b style='color:Red'>
-                            " + d.Message + " < b >
-                                ",
-                            //    html: true,
-                            //});
-                        }
-                    });
-            }
-        </script>*@
 
     <script>
         //====== Age CalculationFunctiopn======//
@@ -1116,13 +1066,7 @@
         // For Certificate
 
         function addRowCertificateDetails() {
-            //var table = document.getElementById("certificateTable");
-            //var rowCount = table.rows.length;
-            //if (rowCount == 3) {
-            //    alert("Cannot add more than 2 Certificates");
-            //    return;
-            //}
-
+           
             var $ttc = $("#certificateTable").find("tbody tr:last");
             var $tr = $ttc.clone();
             var trIndexReplaced = $("#certificateTable tr").length - 1;
@@ -1363,13 +1307,6 @@
                         elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
                         elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
 
-                        //var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
-                        //elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
-                        //elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
-
-                        //var elem8 = document.getElementById(collectionName + "_" + i + "__" + tdEight);
-                        //elem8.id = collectionName + "_" + (i - 1) + "__" + tdEight;
-                        //elem8.name = collectionName + "[" + (i - 1) + "]." + tdEight;
                     }
 
                 }
@@ -1442,7 +1379,6 @@
             else {
                 document.getElementById("btnUpload").disabled = false;
 
-                //var currentvalue = $(this).attr('value');
                 var closestRow = $(element).closest('tr');
                 var currentIndex = closestRow[0].sectionRowIndex;
                 var totalRows = $(element).parents('tbody').find('tr').length;
@@ -1493,13 +1429,6 @@
 
 
 
-
-
-
-
-
-
-
         function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
             if ($(element).parents('tbody').find('tr').length === 1) {
 
@@ -1510,7 +1439,6 @@
             else {
                 document.getElementById("btnUpload").disabled = false;
 
-                //var currentvalue = $(this).attr('value');
                 var closestRow = $(element).closest('tr');
                 var currentIndex = closestRow[0].sectionRowIndex;
                 var totalRows = $(element).parents('tbody').find('tr').length;
@@ -1545,200 +1473,7 @@
         }
 
 
-            //function addProjectTableRow() {
-            //    var x = document.getElementById('projectTable');
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length:: " + rowLen);
-            //    if (rowLen > 3) {
-            //        alert("Cannot add more than 3 Projects Details.");
-            //        swal("Sweet Alert Called!!!!!!");
-            //        return;
-            //    }
-            //    else {
-            //        var new_row = x.rows[1].cloneNode(true);
-            //        x.appendChild(new_row);
-            //    }
-            //    // deep clone the targeted row
-
-
-            //    // get the total number of rows
-            //    //var len = x.rows.length;
-
-
-            //    // set the innerHTML of the first row
-            //    //  new_row.cells[0].innerHTML = len;
-
-            //    // grab the input from the first cell and update its ID and value
-            //    //var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
-            //    //inp1.id += len;
-            //    //inp1.value = '';
-
-            //    // grab the input from the first cell and update its ID and value
-            //    //var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
-            //    //inp2.id += len;
-            //    //inp2.value = '';
-
-            //    // append the new row to the table
-
-            //}
-
-            //function deleteProjectTableRow(row) {
-            //    var x = document.getElementById('projectTable');
-            //    // get the total number of rows
-            //    var rowLen = x.rows.length;
-            //    //console.log("Row Length to delete:: " + rowLen);
-            //    if (rowLen == 2) {
-            //        alert('Must have atleast one Row');
-            //        return false;
-            //    }
-            //    else {
-            //        var i = row.parentNode.parentNode.rowIndex;
-            //        document.getElementById('projectTable').deleteRow(i);
-            //    }
-            //}
-
-            //function addRowProfessionalDetails() {
-            //    var x = document.getElementById('professionalDetailsTable');
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length:: " + rowLen);
-            //    if (rowLen > 3) {
-            //        swal("Cannot add row more than 3 Professional Details.");
-
-            //        return;
-            //    }
-            //    else {
-            //        var new_row = x.rows[1].cloneNode(true);
-            //        x.appendChild(new_row);
-            //    }
-            //}
-
-            //function deleteRowProfessionalDetails(row) {
-            //    var x = document.getElementById('professionalDetailsTable');
-            //    // get the total number of rows
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length to delete:: " + rowLen);
-            //    if (rowLen == 2) {
-            //        alert('Must have atleast one Row');
-            //        return false;
-            //    }
-            //    else {
-            //        var i = row.parentNode.parentNode.rowIndex;
-            //        document.getElementById('professionalDetailsTable').deleteRow(i);
-            //    }
-            //}
-
-            //function addRowEducationDetails() {
-            //    var x = document.getElementById('educationTable');
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length:: " + rowLen);
-            //    if (rowLen > 2) {
-            //        alert("Cannot add more than 2 Educational Detaiils.");
-            //        return;
-            //    }
-            //    else {
-            //        var new_row = x.rows[1].cloneNode(true);
-            //        x.appendChild(new_row);
-            //    }
-            //}
-
-            //function deleteRowEducationDetails(row) {
-            //    var x = document.getElementById('educationTable');
-            //    // get the total number of rows
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length to delete:: " + rowLen);
-            //    if (rowLen == 2) {
-            //        alert('Must have atleast one Row');
-            //        return false;
-            //    }
-            //    else {
-            //        var i = row.parentNode.parentNode.rowIndex;
-            //        document.getElementById('educationTable').deleteRow(i);
-            //    }
-            //}
-
-            //function addRowSkillDetails() {
-            //    var x = document.getElementById('skillTable');
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length:: " + rowLen);
-            //    if (rowLen > 14) {
-            //        alert("Cannot add more than 14 Skill Detaiils.");
-            //        return;
-            //    }
-            //    else {
-            //        var new_row = x.rows[1].cloneNode(true);
-            //        x.appendChild(new_row);
-            //    }
-            //}
-
-            //function deleteRowSkillDetails(row) {
-            //    var x = document.getElementById('skillTable');
-            //    // get the total number of rows
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length to delete:: " + rowLen);
-            //    if (rowLen == 2) {
-            //        alert('Must have atleast one Row');
-            //        return false;
-            //    }
-            //    else {
-            //        var i = row.parentNode.parentNode.rowIndex;
-            //        document.getElementById('skillTable').deleteRow(i);
-            //    }
-            //}
-
-
-            //function addAvailabilityDetails() {
-            //    var x = document.getElementById('availabilityDetailsTable');
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length:: " + rowLen);
-            //    if (rowLen > 14) {
-            //        alert("Cannot add more than 14 Availability Detaiils.");
-            //        return;
-            //    }
-            //    else {
-            //        var new_row = x.rows[1].cloneNode(true);
-            //        x.appendChild(new_row);
-            //    }
-            //}
-
-            //function deleteRowAvailabilityDetails(row) {
-            //    var x = document.getElementById('availabilityDetailsTable');
-            //    // get the total number of rows
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length to delete:: " + rowLen);
-            //    if (rowLen == 2) {
-            //        alert('Must have atleast one Row');
-            //        return false;
-            //    }
-            //    else {
-            //        var i = row.parentNode.parentNode.rowIndex;
-            //        document.getElementById('availabilityDetailsTable').deleteRow(i);
-            //    }
-            //}
-
-            //function addRowCertificateDetails() {
-            //    var x = document.getElementById('certificateTable');
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length:: " + rowLen);
-
-            //    var new_row = x.rows[1].cloneNode(true);
-            //    x.appendChild(new_row);
-            //}
-
-            //function deleteRowCertificateDetails(row) {
-            //    var x = document.getElementById('certificateTable');
-            //    var rowLen = x.rows.length;
-            //    console.log("Row Length to delete:: " + rowLen);
-            //    if (rowLen == 2) {
-            //        alert('Must have atleast one Row');
-            //        return false;
-            //    }
-            //    else {
-            //        var i = row.parentNode.parentNode.rowIndex;
-            //        document.getElementById('certificateTable').deleteRow(i);
-            //    }
-            //}
-
-
+           
           function RadioChanged(val) {
               if (val == 'Upload') {
                     document.getElementById("uploadDiv").style.display = "block";

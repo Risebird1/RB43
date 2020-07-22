@@ -453,7 +453,7 @@ table {
 .card-blue .card-footer {
     text-align: center;
     padding: 8px 0px 8px 0px;
-}
+}blue-theme
 
  .card-blue .card-footer .stats-bttm-btn {
         padding: 0px 25px 0px 0px;
@@ -467,7 +467,7 @@ table {
 .mdc-card .modal .form-control, .modal .form-control, .mdc-card .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
- 
+
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;

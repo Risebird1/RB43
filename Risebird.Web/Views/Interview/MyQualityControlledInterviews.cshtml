@@ -176,11 +176,6 @@
                                                             <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.id)" title="QC Feedback" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                         </button>
 
-
-                                                        @*<span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>*@
-
-
-
                                                         <button class="mdc-fab app-fab--absolute six" aria-label="Report">
                                                             <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId, isQC=true})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27L15.73 3zM12 17.3c-.72 0-1.3-.58-1.3-1.3 0-.72.58-1.3 1.3-1.3.72 0 1.3.58 1.3 1.3 0 .72-.58 1.3-1.3 1.3zm1-4.3h-2V7h2v6z" /></svg></span>
                                                         </button>
@@ -210,10 +205,22 @@
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" style="font-size:20px;">QC Feedback</h5>
-                            <span style="cursor:pointer" class="close" id="feedbackPopUp">&times;</span>
+                       
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left">QC Feedback</h5>
                         </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span  aria-hidden="true" id="feedbackPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+
+
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6 col-sm-6 pr-1">
@@ -259,15 +266,6 @@
                                                 <label for="idFraudLipSync">Fraud Lip Sync</label>
                                             </div>
 
-
-
-
-
-
-
-                                            <!--
-                                                <label class="control-label" for="idFraudLipSync"><b>Fraud Lip Sync</b></label>
-                                                <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idFraudLipSync" name="idFraudLipSync">-->
                                         </div>
                                         <div class="form-group">
 
@@ -292,8 +290,6 @@
                                             </div>
 
 
-                                            <!--           <label class="control-label" for="idQuestionsRelevance"><b>Questions' Relevance with JD</b></label>
-                                            <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idQuestionsRelevance" name="idQuestionsRelevance">-->
                                         </div>
                                         <div class="form-group">
 
@@ -428,8 +424,6 @@
                                         </div>
                                         <div class="form-group">
 
-
-
                                             <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                 <div class="mdc-checkbox" style="margin-top:-10px;">
                                                     <input class="mdc-checkbox__native-control" type="checkbox" id="idTechSkillsMetric" name="idTechSkillsMetric">
@@ -555,9 +549,6 @@
 
                                         </div>
                                         <div class="form-group">
-
-
-
                                             <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                 <div class="mdc-checkbox" style="margin-top:-10px;">
                                                     <input class="mdc-checkbox__native-control" type="checkbox" id="idMeaningfulAssessments" name="idMeaningfulAssessments">
@@ -665,53 +656,7 @@
 
 <script>
     $(document).ready(function () {
-        @*$("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
-        $("#InterviewSlot").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-
-        $("#CandidateName").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-
-        $("#RisebirdHR").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-
-        $("#InterviewDate").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $("#JobLevel").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });*@
-        //$("#InterviewDuration").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '270px',
-        //    maxHeight: 200
-        //});
-
-        //FilterInterviews("Today");// on page load default dropdownlist value set
+  
 
         $('#MyInterviewList').DataTable({
             "pagingType": "full_numbers",
@@ -766,7 +711,7 @@
             var RisebirdHR =  @Html.Raw(Json.Serialize(RisebirdHR));
             var InterviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
             var JobLevel =  @Html.Raw(Json.Serialize(JobLevel));
-            @*//var InterviewDuration =  @Html.Raw(Json.Serialize(InterviewDuration));*@
+           
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -775,7 +720,6 @@
             $("#RisebirdHR").val(RisebirdHR);
             $("#InterviewDate").val(InterviewDate);
             $("#JobLevel").val(JobLevel);
-            //$("#InterviewDuration").val(InterviewDuration);
             var form = $("#form").serialize();
              $.ajax({
             type: "POST",
@@ -822,13 +766,6 @@
         modal.style.display = "none";
     }
 
-    // When the user clicks anywhere outside of the modal, close it
-    //window.onclick = function (event) {
-    //    var modal = document.getElementById("myModal");
-    //    if (event.target == modal) {
-    //        modal.style.display = "none";
-    //    }
-    //}
 </script>
 <script>
     function ModalButtonClick(item) {
@@ -1012,13 +949,6 @@
     }
 </script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-
-
-
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -1112,23 +1042,6 @@
 
     </script>
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

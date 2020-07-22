@@ -1358,6 +1358,12 @@ top:3px;
     position: relative;
     top: 10px;color:#fff;
 }
+.reportbtn-icon {
+    position: relative;
+    top: 11px;
+    color: #fff;
+    font-size: 20px;
+}
 .text-areadiv1 {
     height: auto;
     padding: 0px ;

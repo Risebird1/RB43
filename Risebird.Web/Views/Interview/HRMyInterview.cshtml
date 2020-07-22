@@ -67,19 +67,10 @@
 
                                         <div class="pull-right">
                                             <div>
-
-
-                                                @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
-
-                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                                <div class="mdc-button__ripple"></div>
-                                            </button>*@
-
-
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                                     <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="HRMyInterview" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
                                                 </button>
-                                                @*<i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;margin-left:3px;margin-top:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>*@
+                                              
 
                                             </div>
                                         </div>
@@ -238,25 +229,33 @@
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
-                        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                            <h5 class="modal-title" style="font-size:20px;">Call!</h5>
-                            <span style="cursor:pointer;" class="close" id="callPopUp">&times;</span>
+                      
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
+
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left">Call Candidate !</h5>
                         </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+
                         <div class="modal-body" style="padding: 2px 16px;">
-                            <div class="row">
-                                <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+                       
+                                <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
 
-                            </div>
-
-                            <div class="">
-                                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
-                            </div>
+                         
+                                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" tyle="margin: 10px auto;
+    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+                         
                         </div>
-                        <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #fff;
-        color: white;">
-
-                        </div>
+                     
                     </div>
 
                 </div>
@@ -267,10 +266,25 @@
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
-                        <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                            <h5 class="modal-title" id="hrCommentHeading"></h5>
-                            <span class="close" id="hrCommentPopUp" style="cursor:pointer;">&times;</span>
+                    
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
+
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left" id="hrCommentHeading">Interested </h5>
                         </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span  aria-hidden="true" id="hrCommentPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+
+
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 ">
@@ -309,13 +323,6 @@
 <script>
     //var interviewUnassignedMinutes;
     $(document).ready(function () {
-        //$.ajax({
-        //    type: "GET",
-        //    url: "/Interview/GetInterviewUnassignedMinutes",
-        //    success: function (data) {
-        //        interviewUnassignedMinutes = data;
-        //    }
-        //});
         
         $('#MyInterviewList').DataTable({
             "pagingType": "full_numbers",
@@ -355,7 +362,7 @@
    
 </script>
 <script type="text/javascript">
-    //// script for loader starts here
+   
     $(".dataloading").hide();
     $("#MyInterviewList").hide();
     var loader;
@@ -506,14 +513,6 @@
 
 </script>
 
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-
-
-
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -529,12 +528,7 @@
                     text: '@ViewBag.Message',
                     type: 'success',
                     showConfirmButton: true
-                    //allowOutsideClick: true,
-                    //confirmButtonText: "Ok",
-                    //closeOnConfirm: true
-
-                    //confirmButtonText: 'Ok',
-                    //allowOutsideClick: true
+                    
                 },
                     function (value) //confirm
                     {
@@ -550,12 +544,7 @@
                     text: '@ViewBag.Message',
                     type: 'error',
                     showConfirmButton: true
-                    //allowOutsideClick: true,
-                    //confirmButtonText: "Ok",
-                    //closeOnConfirm: true
-
-                    //confirmButtonText: 'Ok',
-                    //allowOutsideClick: true
+                    
                 },
                     function ()
                     {
@@ -610,88 +599,6 @@
             });
         }
     </script>
-@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    <script src="~/Newassets/js/enjoyhint.min.js"></script>
-    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-    <script>
-        var openInterview = localStorage.getItem('openinterview');
-
-        if (openInterview == "true") {
-            var enjoyhint_instance = new EnjoyHint({});
-
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Your assigned interviews and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-
-                {
-                    'next .first': 'Filter here based on available attributes or reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .second': 'Interview Details, scroll right or expand first column to see action buttons',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .unassignIntr': 'Click here to Unassign interview incase you will not able to take interview in case of emergency only',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .sampleQues': 'Click here to fill questions discussed during interview and each questions need to be filled in seperate row based on its skill',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-
-                {
-                    'next .voicebiobtn': 'Click here to upload voice biometric audio sample of candidate',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .feedbackreportbtn': 'Click here to open and fill candidate interview feedback report, Upload Video, Interviewer Comment, Questions, Tech Skill Report and General Skill report. All these section are mandatory',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .callcandidatebtn': 'Click here to call candidate incase it is require',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .iqcomenu': 'Click on Open QC Interviews menu to see its features',
-
-                }
-
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 5000)
-        }
-        else {
-            var enjoyhint_instance = new EnjoyHint({});
-
-            var enjoyhint_script_steps = [
-                {
-                    'click .inoi': 'Click here to navigate to Open Interview menu to see its features then return back to this menu again',
-
-                }
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 10000)
-
-        }
-
-    </script>
-}*@
 
 
 

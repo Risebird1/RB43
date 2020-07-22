@@ -26,6 +26,11 @@ textarea::-webkit-scrollbar-thumb {
     pointer-events: none !important;
     cursor: default !important;
 }
+.report-btn {
+    width: 145px;
+    margin-bottom: 16px;
+    background: #18ce0f !important;
+}
 .designation {
     color: #606060;
     font-weight: 500;
