@@ -326,13 +326,13 @@
                                                     @if (item.IsOnilne == 1)
                                                     {
                                                         <td>
-                                                            <a onclick="directopenChat('@item.candidateEmail')"> @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")   <span class="dot" style="background-color:green"></span></a>
+                                                            <a onclick="directopenChat('@item.candidateEmail')"> @item.candidateName   <span class="dot" style="background-color:green"></span></a>
                                                         </td>
                                                     }
                                                     else
                                                     {
                                                         <td>
-                                                            @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")
+                                                            @item.candidateName
                                                         </td>
                                                     }
                                                     <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
