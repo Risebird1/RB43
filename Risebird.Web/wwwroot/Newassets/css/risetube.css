@@ -1294,7 +1294,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .borders {
-    border: 2px solid #fff !important;
+    border: 2px solid #fff;
 }
 
 .comment-tri-right.border.left-tp:before {
@@ -1317,7 +1317,7 @@ textarea::-webkit-scrollbar-thumb {
     height: 0;
     left: -20px;
     right: auto;
-    top: 0px;
+    top: -1px;
     bottom: auto;
     border: 22px solid;
     border-color: #f4f4f4 transparent transparent transparent;
