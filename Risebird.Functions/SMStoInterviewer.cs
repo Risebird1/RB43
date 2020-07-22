@@ -1,27 +1,25 @@
-using System;
-using System.Configuration;
-using System.Data.SqlClient;
+using Dapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Dapper;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Net.Http;
-using System.Net;
+using System.Threading.Tasks;
 using Twilio.Clients;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
-using System.Threading.Tasks;
 
 namespace Risebird.Functions
 {
     public static class SMStoInterviewer
     {
         [FunctionName("SMStoInterviewer")]
-        public static void Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
-            
+
             try
             {
                 var msg = "Dear Interviewer! Greetings from RiseBird. This is a gentle reminder for your upcoming video based interview meeting scheduled today. Kindly be available on time.";
@@ -33,9 +31,9 @@ namespace Risebird.Functions
                 dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(35));
                 using (SqlConnection con = new SqlConnection(str))
                 {
-                     phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();                    
+                    phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();
                 }
-              
+
                 if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
                     //send an sms to all the interviewers with the message
@@ -68,7 +66,7 @@ namespace Risebird.Functions
                 log.Error($"Failed to send sms. Please check all filled and try again.");
             }
 
-            
+
 
         }
     }

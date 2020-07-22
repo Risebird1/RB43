@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.Enum
+﻿namespace Risebird.Entities.Enum
 {
     public enum LogLevelInfo
     {

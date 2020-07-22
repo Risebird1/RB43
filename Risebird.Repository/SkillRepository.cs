@@ -1,20 +1,19 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using static System.Data.CommandType;
-using System.Threading.Tasks;
-using Risebird.Entities.ViewModel;
 using System.Data;
-using Risebird.Entities.Enum;
-using Risebird.CommonHelper.Interface;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
-    public class SkillRepository: ISkillRepository
+    public class SkillRepository : ISkillRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
@@ -87,7 +86,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QuerySingleAsync<Skill>(con, "[usp_GetSkillById]", parameters,
-                        commandType: CommandType.StoredProcedure);                    
+                        commandType: CommandType.StoredProcedure);
                 }
             }
 
@@ -211,13 +210,13 @@ namespace Risebird.Repository
                 }
             }
 
-            catch(SqlException e)
+            catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
@@ -314,9 +313,9 @@ namespace Risebird.Repository
             if (entity.id > 0)
                 parameters.Add("@id", entity.id);
 
-            parameters.Add("@skillLevelName", entity.Name); 
-            parameters.Add("@skillLevelDescr", entity.Description); 
-            
+            parameters.Add("@skillLevelName", entity.Name);
+            parameters.Add("@skillLevelDescr", entity.Description);
+
             return parameters;
         }
 

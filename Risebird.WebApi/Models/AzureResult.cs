@@ -1,22 +1,19 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Web;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
-using System.Diagnostics;
-using System.Globalization;
-using System.Configuration;
-using System.Collections.Generic;
-using System.Security.Cryptography;
+﻿using Microsoft.WindowsAzure.MediaServices.Client;
+using Microsoft.WindowsAzure.MediaServices.Client.ContentKeyAuthorization;
+using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
-using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
-using Microsoft.WindowsAzure.MediaServices.Client.ContentKeyAuthorization;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Web;
 
 namespace WebApplication1.Models
 {

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.Enum
 {
     public enum CandidateStatus
     {
         [Description("New")]
-        New =1,
+        New = 1,
 
         [Display(Name = "In Progress")]
         [Description("In Progress")]
@@ -36,7 +33,7 @@ namespace Risebird.Entities.Enum
         GotAnotherOffer,
         [Display(Name = "Cold")]
         [Description("Cold")]
-        Cold, 
+        Cold,
         [Display(Name = "Hold")]
         [Description("Hold")]
         Hold

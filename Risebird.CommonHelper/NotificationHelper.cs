@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
@@ -492,7 +491,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SharedVideoNofitication(Mail model, string UrlDetails,string skills)
+        public string SharedVideoNofitication(Mail model, string UrlDetails, string skills)
         {
             try
             {
@@ -556,7 +555,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string SharedVideoNofiticationExternal(Mail model, string name, string url,string comment, string resumeLink)
+        public string SharedVideoNofiticationExternal(Mail model, string name, string url, string comment, string resumeLink)
         {
             try
             {
@@ -603,7 +602,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(supportEmail, null));
                 }
-                object[] parameters = new object[] { model.BroadcastReciever,  model.Message};
+                object[] parameters = new object[] { model.BroadcastReciever, model.Message };
                 mailMessage.Subject = model.Subject;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -695,8 +694,8 @@ namespace Risebird.CommonHelper
 
                 mailMessage.CC.Add(new MailAddress(clientEmailId, null));
 
-              
-                object[] parameters = new object[] { candidateDetails.Name, (candidateDetails.Skill!=null ? candidateDetails.Skill:string.Empty)};
+
+                object[] parameters = new object[] { candidateDetails.Name, (candidateDetails.Skill != null ? candidateDetails.Skill : string.Empty) };
                 mailMessage.Subject = "New Candidate added to Common Pool";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CommonPoolTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);

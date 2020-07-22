@@ -1,19 +1,17 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using Risebird.Entities.Data;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using static System.Data.CommandType;
-using System.Threading.Tasks;
-using System.Data;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Threading.Tasks;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -257,7 +255,7 @@ namespace Risebird.Repository
             {
                 DynamicParameters parameters = SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsDetails);
                 //parameters.Add("@id", InterviewerSkillsDetails.id);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkillsChannel", parameters,
@@ -320,7 +318,7 @@ namespace Risebird.Repository
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewerSkillsLeadInterviewer", param,
                                 commandType: CommandType.StoredProcedure);
 
-                     
+
                     }
                     return true;
                 }
@@ -607,7 +605,7 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsDetails);
-                
+
                 parameters.Add("@id", InterviewerSkillsDetails.id);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -849,7 +847,7 @@ namespace Risebird.Repository
                             {
                                 UserId = item.UserId,
                                 PrimarySkill = item.PrimarySkill,
-                                InterviewerSkillId=item.InterviewerSkillId,
+                                InterviewerSkillId = item.InterviewerSkillId,
                                 IsAdded = item.IsAdded
                             }).Result;
                         }

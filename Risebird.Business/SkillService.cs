@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Risebird.Business.Interface;
-using Risebird.Entities.Data;
-using Risebird.Repository.Interface;
-using Risebird.Entities.ViewModel;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 
 namespace Risebird.Business
 {
@@ -39,7 +37,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _skillRepository.AddSkill(skill).Result;                
+                return _skillRepository.AddSkill(skill).Result;
             }
 
             catch (Exception e)
@@ -70,7 +68,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _skillRepository.UpdateSkill(skillToUpdate).Result;                
+                return _skillRepository.UpdateSkill(skillToUpdate).Result;
             }
 
             catch (Exception e)
@@ -83,7 +81,7 @@ namespace Risebird.Business
         {
             try
             {
-               return _skillRepository.DeleteSkill(id).Result;               
+                return _skillRepository.DeleteSkill(id).Result;
             }
 
             catch (Exception e)
@@ -107,15 +105,15 @@ namespace Risebird.Business
             {
                 return null;
             }
-        }        
+        }
         public bool AddSkillLevel(SkillLevel skillLevel)
         {
             try
             {
-                return _skillRepository.AddSkillLevel(skillLevel).Result;                
+                return _skillRepository.AddSkillLevel(skillLevel).Result;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
@@ -126,11 +124,11 @@ namespace Risebird.Business
             try
             {
                 var skillLevel = _skillRepository.GetSkillLevel(id);
-                if (skillLevel  == null)
+                if (skillLevel == null)
                     return null;
                 else
                     return skillLevel.Result;
-                        
+
             }
 
             catch (Exception e)
@@ -143,7 +141,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _skillRepository.UpdateSkillLevel(skillLevelToUpdate).Result;             
+                return _skillRepository.UpdateSkillLevel(skillLevelToUpdate).Result;
             }
 
             catch (Exception e)
@@ -156,7 +154,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _skillRepository.DeleteSkillLevel(id).Result;                
+                return _skillRepository.DeleteSkillLevel(id).Result;
             }
 
             catch (Exception e)

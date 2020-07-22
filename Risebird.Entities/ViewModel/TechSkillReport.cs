@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.ViewModel
+﻿namespace Risebird.Entities.ViewModel
 {
     public class TechSkillReport
     {
@@ -10,7 +6,7 @@ namespace Risebird.Entities.ViewModel
         public int InterviewId { get; set; }
         public string RequiredLevel { get; set; }
         public int RequiredLevelId { get; set; }
-        public string SkillName{ get; set; }
+        public string SkillName { get; set; }
         public int SkillId { get; set; }
         public string ActualLevel { get; set; }
         public int ActualLevelId { get; set; }

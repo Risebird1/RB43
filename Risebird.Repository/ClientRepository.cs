@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
-    public class ClientRepository: IClientRepository
+    public class ClientRepository : IClientRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
@@ -166,7 +165,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<ClientRole>(con, "[sp_GetClientRoles]", null,
-                        commandType: CommandType.StoredProcedure);                    
+                        commandType: CommandType.StoredProcedure);
                 }
             }
 
@@ -187,7 +186,7 @@ namespace Risebird.Repository
         {
             var parameters = new DynamicParameters();
 
-            if (entity.id>0)
+            if (entity.id > 0)
                 parameters.Add("@id", entity.id);
 
             parameters.Add("@clientName", entity.Name);
@@ -197,6 +196,6 @@ namespace Risebird.Repository
 
             return parameters;
         }
-       
+
     }
 }

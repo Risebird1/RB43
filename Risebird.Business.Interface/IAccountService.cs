@@ -1,7 +1,5 @@
 ﻿using Risebird.Entities.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
@@ -18,7 +16,7 @@ namespace Risebird.Business.Interface
         IEnumerable<AccountProjectMapping> GetProjectsbyClientId(int clientId);
         IEnumerable<Account> GetAccounts(string emailId, string profile);
         IEnumerable<AccountProjectMapping> GetAccountCluster(int accountId);
-        IEnumerable<AccountProjectMapping> GetProjectbyClientId(int clientId, string projectList=null);
+        IEnumerable<AccountProjectMapping> GetProjectbyClientId(int clientId, string projectList = null);
         string Signout(string EmailId);
     }
 }

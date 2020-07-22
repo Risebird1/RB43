@@ -1,14 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Risebird.CommonHelper.Interface;
-using Risebird.Repository.Interface;
-using VoiceIt2API;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
+using System;
+using VoiceIt2API;
 
 namespace Risebird.Repository
 {
@@ -49,7 +46,7 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
-           
+
 
         }
 

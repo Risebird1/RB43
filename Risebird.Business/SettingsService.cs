@@ -4,12 +4,10 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Business
 {
-    public class SettingsService: ISettingsService
+    public class SettingsService : ISettingsService
     {
         private ISettingsRepository _settingsRespository;
         private IApplicationErrorLogger _applicationErrorLogger;

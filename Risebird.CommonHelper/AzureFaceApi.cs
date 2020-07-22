@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
+using System;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
@@ -39,7 +37,7 @@ namespace Risebird.CommonHelper
             }
             return "";
         }
-       
+
         async Task<string> MakeAnalysisRequest(string imageFilePath)
         {
             HttpClient client = new HttpClient();

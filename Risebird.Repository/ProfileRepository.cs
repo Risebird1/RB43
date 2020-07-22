@@ -13,7 +13,7 @@ using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
-    public class ProfileRepository: IProfileRepository
+    public class ProfileRepository : IProfileRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;

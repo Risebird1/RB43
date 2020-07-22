@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,6 +6,10 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -82,13 +82,13 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName =profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "ResumeEvaluator")
                     {
                         var result = _evaluatorService.AssignSelectabilityYourself(id, emailid);
-                        
+
                         TempData["SuccessErrorMessageEvaluator"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenEvaluatorEvaluations");
@@ -125,7 +125,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "HR")
                     {
                         var result = _evaluatorService.AssignJoinabilityYourself(id, emailid);
-                        
+
                         TempData["SuccessErrorMessageEvaluator"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenHREvaluations");
@@ -182,7 +182,7 @@ namespace Risebird.Web.Controllers
                                 item.ResumeLink = "";
                             }
 
-                            
+
                         }
                         if (TempData["SuccessErrorMessageEvaluator"] != null)
                         {
@@ -223,7 +223,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                   
+
                     if (profileName == "ResumeEvaluator")
                     {
                         bool result;
@@ -280,7 +280,7 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("SignOut", "Session");
                 }
 
-                
+
 
             }
             catch (Exception ex)
@@ -304,7 +304,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "ResumeEvaluator" || profileName == "HR")
                     {
-                        
+
                         if (_evaluatorService.AddSelectabilityReport(model).Result)
                         {
                             TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
@@ -449,7 +449,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    
+
                     if (profileName == "HR")
                     {
                         bool result;
@@ -569,7 +569,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Recruiter" )
+                    if (profileName == "Recruiter")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -600,7 +600,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageRecruiter"].ToString();
                             TempData.Remove("SuccessErrorMessageRecruiter");
                         }
-                        else if(TempData["SuccessErrorMessageAudio"] != null)
+                        else if (TempData["SuccessErrorMessageAudio"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageAudio"].ToString();
                             TempData.Remove("SuccessErrorMessageAudio");
@@ -631,7 +631,7 @@ namespace Risebird.Web.Controllers
             {
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName =  profileName.Replace("\"", "");
+                profileName = profileName.Replace("\"", "");
                 if (profileName == "Recruiter")
                 {
                     var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
@@ -718,7 +718,7 @@ namespace Risebird.Web.Controllers
                         new { ID = "Enrollment2", Name = "Enrollment 2"  },
                         new { ID = "Enrollment3", Name = "Enrollment 3" }
                     }, "ID", "Name", "Enrollment1");
-                    
+
 
                     ViewData["list"] = list;
                     return View(model);
@@ -744,8 +744,8 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadAudio(CandidateAudio model)
         {
-            string actMethod = string.Empty; 
-            if ( TempData["actMethod"] !=null)
+            string actMethod = string.Empty;
+            if (TempData["actMethod"] != null)
             {
                 actMethod = TempData["actMethod"].ToString();
             }
@@ -755,9 +755,9 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName =  profileName.Replace("\"", "");
-                    if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")                        
-                    {                        
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
+                    {
                         if (model.AudioFile != null)
                         {
                             await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
@@ -774,14 +774,14 @@ namespace Risebird.Web.Controllers
                                 model.AudioFileLink = uploadedaudioFileURL;
                             }
                         }
-                        
+
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
 
-                        if (_evaluatorService.AddCandidateAudio(model, emailid,profileName).Result)
+                        if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
                         {
                             TempData["SuccessErrorMessageAudio"] = "Audio uploaded successfully";
-                            return RedirectToAction(actMethod);                            
+                            return RedirectToAction(actMethod);
                         }
                         else
                         {
@@ -814,10 +814,10 @@ namespace Risebird.Web.Controllers
             {
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName =  profileName.Replace("\"", "");
+                profileName = profileName.Replace("\"", "");
                 if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
                 {
-                    var model = (IList<CandidateAudio>)_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x=>x.IsVoiceBiometric==true).ToList();  
+                    var model = (IList<CandidateAudio>)_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
                     TempData["actMethod"] = actMethod;
                     ViewBag.BackMethod = actMethod;
                     if (TempData["SuccessErrorMessageEnroll"] != null)
@@ -861,11 +861,11 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
                     {
-                       
-                        var result =_evaluatorService.EnrollCandidate(model);
+
+                        var result = _evaluatorService.EnrollCandidate(model);
                         TempData["SuccessErrorMessageEnroll"] = result;
                         return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId, actMethod = actionMethod });
-                        
+
                     }
                     else
                     {

@@ -1,27 +1,25 @@
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Host;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Risebird.Functions
 {
     public static class RisebirdMeetings
     {
         [FunctionName("RisebirdMeeting")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequestMessage req, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestMessage req, TraceWriter log)
         {
             log.Info("C# HTTP trigger function processed a request.");
 
@@ -44,7 +42,6 @@ namespace Risebird.Functions
             string resumeLink = string.Empty;
             string comfirmationStatus = "1";
             string zoomLink = string.Empty;
-            string zoomDetails = string.Empty;
             string interviewer = string.Empty;
             string eventGeneratedOn = string.Empty;
             string eventGeneratedBy = string.Empty;
@@ -111,7 +108,7 @@ namespace Risebird.Functions
                                 }
 
                                 interviewDate = Convert.ToDateTime(interviewDatestr);
-                                if(interviewDate < DateTime.Now)
+                                if (interviewDate < DateTime.Now)
                                 {
                                     return req.CreateResponse(HttpStatusCode.OK, "Past date Interview Update " + "Ok");
                                 }
@@ -128,7 +125,7 @@ namespace Risebird.Functions
                                 }
 
                                 candidateEmail = ((JProperty)mainFamilies1).Value["email"].ToString();
-                                textreminder= ((JProperty)mainFamilies1).Value["text_reminder_number"].ToString();
+                                textreminder = ((JProperty)mainFamilies1).Value["text_reminder_number"].ToString();
                                 isReschedule = ((JProperty)mainFamilies1).Value["is_reschedule"].ToString();
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.questions_and_answers")
@@ -290,7 +287,7 @@ namespace Risebird.Functions
                         SqlCommand cmd = new SqlCommand(
                             "usp_RisebirdHRs", conn);
                         cmd.CommandType = CommandType.StoredProcedure;
-                        
+
                         var reader = cmd.ExecuteReader();
                         mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
@@ -341,7 +338,7 @@ namespace Risebird.Functions
                         {
                             mailMessage.CC.Add(new MailAddress(reader.GetString(0), null));
                         }
-                        mailMessage.Subject = candidateName+ " has scheduled their interview on date: " + interviewDate;
+                        mailMessage.Subject = candidateName + " has scheduled their interview on date: " + interviewDate;
 
                         StringBuilder msgBody = new StringBuilder("Dear Clients,");
                         msgBody.Append("\n");
@@ -351,7 +348,7 @@ namespace Risebird.Functions
                         msgBody.AppendLine("Candidate Email: " + candidateEmail);
                         msgBody.Append("\n");
                         msgBody.AppendLine("Interview Details: " + interviewDetails);
-                        msgBody.Append("\n");                        
+                        msgBody.Append("\n");
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 
@@ -397,7 +394,7 @@ namespace Risebird.Functions
                         msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");
                         msgBody.AppendLine(
                             "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
-                        msgBody.Append("\n");                        
+                        msgBody.Append("\n");
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 

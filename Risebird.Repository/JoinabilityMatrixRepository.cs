@@ -1,20 +1,19 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using static System.Data.CommandType;
-using System.Threading.Tasks;
-using Risebird.Entities.ViewModel;
 using System.Data;
-using Risebird.Entities.Enum;
-using Risebird.CommonHelper.Interface;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
-   public class JoinabilityMatrixRepository : IJoinabilityMatrixRepository
+    public class JoinabilityMatrixRepository : IJoinabilityMatrixRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;

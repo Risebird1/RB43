@@ -118,7 +118,7 @@ namespace Risebird.Business
         {
             try
             {
-                return  _interviewerSkillsRepository.GetInterviewerSkills(id).FirstOrDefault().PrimarySkill;
+                return _interviewerSkillsRepository.GetInterviewerSkills(id).FirstOrDefault().PrimarySkill;
             }
 
             catch (Exception e)
@@ -309,7 +309,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _interviewerSkillsRepository.AddUnApprovedInterviewer(model.Where(x=>x.IsAdded), iscId);
+                return _interviewerSkillsRepository.AddUnApprovedInterviewer(model.Where(x => x.IsAdded), iscId);
             }
 
             catch (Exception e)
@@ -318,7 +318,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public IEnumerable<UnApprovedInterviewer> GetUnApprovedInterviewerList(int id )
+        public IEnumerable<UnApprovedInterviewer> GetUnApprovedInterviewerList(int id)
         {
             try
             {
@@ -336,8 +336,8 @@ namespace Risebird.Business
         {
             try
             {
-               return _interviewerSkillsRepository.PauseInterviewerSkills(InterviewerSkillId, InterviewerSkillName);
-            
+                return _interviewerSkillsRepository.PauseInterviewerSkills(InterviewerSkillId, InterviewerSkillName);
+
             }
             catch (Exception ex)
             {
@@ -382,11 +382,11 @@ namespace Risebird.Business
             try
             {
                 var isc = _interviewerSkillsRepository.GetISCbyId(iscId);
-                
+
                 if (email != null && isc != null)
                 {
-                    var result = _notificationHelper.SendInviteToInterviewer(isc.InterviewerSkillId,isc.JDTiltle, isc.SkillName, isc.CalendlyLink, email, isc.HREmailId);
-                    if(result.Contains("successfully"))
+                    var result = _notificationHelper.SendInviteToInterviewer(isc.InterviewerSkillId, isc.JDTiltle, isc.SkillName, isc.CalendlyLink, email, isc.HREmailId);
+                    if (result.Contains("successfully"))
                     {
                         //update total invites count
                         _interviewerSkillsRepository.UpdateInterviewerInvites(iscId, interviewerProfileId);
@@ -408,10 +408,10 @@ namespace Risebird.Business
             try
             {
                 var isc = _interviewerSkillsRepository.GetISCbyId(iscId);
-                
+
                 if (email != null)
                 {
-                    
+
                     var result = _notificationHelper.CancelInterviewerInvite(isc.InterviewerSkillId, isc.SkillName, email, isc.HREmailId);
                     if (result.ToLower().Contains("success"))
                     {

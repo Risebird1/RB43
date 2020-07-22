@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Risebird.Business.Interface;
-using Risebird.Entities.Data;
-using Risebird.Repository.Interface;
-using Risebird.Entities.ViewModel;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 
 namespace Risebird.Business
 {

@@ -1,16 +1,11 @@
-using System;
-using System.Configuration;
-using System.Data.SqlClient;
+using Dapper;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Dapper;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Net.Http;
-using System.Net;
-using Twilio.Clients;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 using System.Net.Mail;
 using System.Text;
 
@@ -19,7 +14,7 @@ namespace Risebird.Functions
     public static class EmailtoCandidate
     {
         [FunctionName("EmailtoCandidate")]
-        public static void Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
 
@@ -60,7 +55,7 @@ namespace Risebird.Functions
                         msgBody.AppendLine(msg);
                         msgBody.AppendLine(
                             "Kindly available 2 minutes before and use your zoom link to attend your interview meeting.");
-                        msgBody.Append("\n");                       
+                        msgBody.Append("\n");
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
 

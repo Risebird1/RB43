@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -191,7 +190,7 @@ namespace Risebird.Repository
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateAccount", parameters,
                        commandType: CommandType.StoredProcedure);
-                    
+
                     if (accountDetails.AccountProjectMappings != null)
                     {
                         foreach (var item in accountDetails.AccountProjectMappings)
@@ -205,7 +204,7 @@ namespace Risebird.Repository
                             }).Result;
                         }
                     }
-                    
+
                     return true;
                 }
 

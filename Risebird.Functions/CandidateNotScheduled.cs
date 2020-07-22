@@ -1,3 +1,9 @@
+using Dapper;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -8,12 +14,6 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
@@ -23,7 +23,7 @@ namespace Risebird.Functions
     public static class CandidateNotScheduled
     {
         [FunctionName("CandidateNotScheduled")]
-        public static void Run([TimerTrigger("0 0 21 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 21 * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -37,7 +37,7 @@ namespace Risebird.Functions
                 {
                     unfilteredCandidates = con.Query<NotScheduledCandidate>(query).ToList();
                 }
-                unfilteredCandidates = unfilteredCandidates.Where(x => x.InviteDate!= null && x.InviteDate >= DateTime.Now.AddDays(-5)).ToList();
+                unfilteredCandidates = unfilteredCandidates.Where(x => x.InviteDate != null && x.InviteDate >= DateTime.Now.AddDays(-5)).ToList();
                 foreach (var item in unfilteredCandidates)
                 {
                     int checkScheduleCount = 0;
@@ -71,7 +71,7 @@ namespace Risebird.Functions
                     //call each candidate
 
                     var phoneNumbers = candidates.Select(x => x.Phone).Distinct();
-                    
+
                     if (phoneNumbers != null && phoneNumbers.Count() > 0)
                     {
                         var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";

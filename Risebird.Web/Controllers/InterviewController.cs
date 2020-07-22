@@ -25,14 +25,14 @@ namespace Risebird.Web.Controllers
     [Authorize]
     public class InterviewController : Controller
     {
-        private IMeetingService _meetingService;
-        private ISettingsService _settingsService;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        private IAzureStorageHelper _azureStorageHelper;
-        private ISkillService _skillService;
-        private IIRFService _iRFService;
-        private IIRFRepository _iRFRepository;
-        private INotificationHelper _notificationHelper;
+        private readonly IMeetingService _meetingService;
+        private readonly ISettingsService _settingsService;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly ISkillService _skillService;
+        private readonly IIRFService _iRFService;
+        private readonly IIRFRepository _iRFRepository;
+        private readonly INotificationHelper _notificationHelper;
         private IAzureFaceApi _azureFaceApi;
         private IConfiguration _configuration;
         public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration)
@@ -73,7 +73,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
                             if (filter.StartDate != null && filter.EndDate != null)
                             {
-                                modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));                                
+                                modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
                             }
                             modelList = modelList.Select(x =>
                             {
@@ -92,18 +92,18 @@ namespace Risebird.Web.Controllers
                             filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
                             filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = modelList.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
 
-                            modelList = modelList.Where(c => filter.PrimarySkill!=null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                            modelList = modelList.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && filter.RFID.Contains(c.IRFId)
-                            && ((filter.ClientHR!= null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                            && ((filter.ConfirmationStatus!= null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
-                            && ((filter.MeetingStatus!= null && filter.MeetingStatus.Count() > 0) ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
+                            && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
+                            && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
+                            && ((filter.MeetingStatus != null && filter.MeetingStatus.Count() > 0) ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
                             && ((filter.InterviewStatus != null && filter.InterviewStatus.Count() > 0) ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
-                            && ((filter.Interviewer != null && filter.Interviewer.Count() > 0 )? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
+                            && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
 
                         }
                         else
                         {
-                            
+
                             modelList = _meetingService.GetAllMeetingList(DateTime.Now.Date, DateTime.Now.Date.AddDays(1));
                             modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                             modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
@@ -146,7 +146,7 @@ namespace Risebird.Web.Controllers
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
-                       
+
                     }
                     modelList = modelList.Select(x =>
                     {
@@ -332,10 +332,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 23].Value = item.preferredLocation;
                         Sheet.Cells[i, 24].Value = item.expectedPerHourRate;
                         Sheet.Cells[i, 25].Value = item.currentEmployerName;
-                        Sheet.Cells[i, 26].Value = item.NextLevelApprovalStat != null ? item.NextLevelApprovalStat : "";
-                        Sheet.Cells[i, 27].Value = item.ApprovalComments != null ? item.ApprovalComments : "Comments not submitted.";
-                        Sheet.Cells[i, 28].Value = item.FinalSelectionStat != null ? item.FinalSelectionStat : "";
-                        Sheet.Cells[i, 29].Value = item.FinalComments != null ? item.FinalComments : "Comments not submitted.";
+                        Sheet.Cells[i, 26].Value = item.NextLevelApprovalStat ?? "";
+                        Sheet.Cells[i, 27].Value = item.ApprovalComments ?? "Comments not submitted.";
+                        Sheet.Cells[i, 28].Value = item.FinalSelectionStat ?? "";
+                        Sheet.Cells[i, 29].Value = item.FinalComments ?? "Comments not submitted.";
                         Sheet.Cells[i, 30].Value = item.QCInterviewer;
 
                         i++;
@@ -505,7 +505,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus ==1);
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1);
                         if (filter.StartDate == null && filter.EndDate == null)
                         {
                             meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
@@ -647,7 +647,7 @@ namespace Risebird.Web.Controllers
                         }
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
-                        
+
                         foreach (var m in meetings)
                         {
                             if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
@@ -1296,8 +1296,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        var list = new List<SelectListItem>();
-                        list.Add(new SelectListItem { Text = "No Clients", Value = "" });
+                        var list = new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "No Clients", Value = "" }
+                        };
                         var model = new MeetingVM();
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
@@ -1357,8 +1359,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        var list = new List<SelectListItem>();
-                        list.Add(new SelectListItem { Text = "No Clients", Value = "" });
+                        var list = new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "No Clients", Value = "" }
+                        };
                         MeetingVM meetingToUpdate = _meetingService.GetMeeting(id);
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
@@ -1408,7 +1412,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return RedirectToAction("Index");
-              
+
             }
         }
 
@@ -1454,7 +1458,7 @@ namespace Risebird.Web.Controllers
                             }
                             else if (meetingUpdated.resumeLink == null || meetingUpdated.resumeLink == "")
                             {
-                                meetingUpdated.resumeLink = TempData["ResumeLink"] != null ? TempData["ResumeLink"].ToString() : null;
+                                meetingUpdated.resumeLink = TempData["ResumeLink"]?.ToString();
 
                             }
 
@@ -1745,7 +1749,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (HttpContext.Session.GetString("MyInterviewfilters") == null)
                         {
-                            myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date || (x.MeetingStatus== null && x.interviewDate.Date < DateTime.Now.Date)).ToList();
+                            myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date || (x.MeetingStatus == null && x.interviewDate.Date < DateTime.Now.Date)).ToList();
 
                         }
                         if (TempData["SuccessErrorMessage"] != null)
@@ -1950,7 +1954,7 @@ namespace Risebird.Web.Controllers
                        && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                        && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
 
-                       
+
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -2723,7 +2727,7 @@ namespace Risebird.Web.Controllers
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
                         }
-                       
+
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
@@ -3144,7 +3148,7 @@ namespace Risebird.Web.Controllers
                     {
 
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus ==1);
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1);
                         if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
@@ -3810,7 +3814,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-       
+
         public IActionResult AddReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false)
         {
             try
@@ -3848,10 +3852,10 @@ namespace Risebird.Web.Controllers
                         {
                             return RedirectToAction("MyInterview");
 
-                        }                        
+                        }
                     }
                 }
-                
+
 
                 if (model.QuestionsCollection == null)
                 {
@@ -3906,7 +3910,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                       
+
                         if (model.AudioFile != null)
                         {
                             await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
@@ -3951,7 +3955,7 @@ namespace Risebird.Web.Controllers
 
                         else if (model.VideoFile != null)
                         {
-                           
+
                             //Start:Generate Thumbnail from Vedio
 
                             //string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
@@ -4544,7 +4548,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 6].Value = item.confirmationStatus;
                         Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
-                        if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus==1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                        if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
                             Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
                         }
@@ -5276,7 +5280,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 6].Value = "No Video";
                         }
-                        Sheet.Cells[i, 11].Value = item.NextLevelApprovalStat != null ? item.NextLevelApprovalStat : "Comments not submitted.";
+                        Sheet.Cells[i, 11].Value = item.NextLevelApprovalStat ?? "Comments not submitted.";
 
 
                         i++;
@@ -5314,8 +5318,8 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetQualityControlInterviews(emailid).ToList().OrderByDescending(x=> x.interviewDate).ToList();
-                        
+                        var myInterview = _meetingService.GetQualityControlInterviews(emailid).ToList().OrderByDescending(x => x.interviewDate).ToList();
+
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
@@ -5351,13 +5355,13 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-                        
+
 
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
                             TempData.Remove("SuccessErrorMessage");
-                           
+
                         }
                         return View(myInterview);
                     }
@@ -5850,7 +5854,7 @@ namespace Risebird.Web.Controllers
                 Mail _mail = new Mail();
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-              
+
                 _mail.TO = Email.Comment;
                 if (Status == "Interest Accepted")
                 {
@@ -5861,7 +5865,7 @@ namespace Risebird.Web.Controllers
                     _mail.Subject = "Candidate has passed your interest";
 
                 }
-               
+
                 StringBuilder bulider = new StringBuilder();
                 if (Status == "Interest Accepted")
                 {
@@ -5922,7 +5926,7 @@ namespace Risebird.Web.Controllers
                     if (await _meetingService.DeleteInterview(id))
                     {
                         TempData["SuccessErrorMessageUser"] = "Interview is deleted Successfully";
-                        if(controllerName == "IRF")
+                        if (controllerName == "IRF")
                             return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
                         else
                             return RedirectToAction("MultipleCandidateInvites", controllerName);
@@ -5934,9 +5938,9 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId = irfId });
                         else
                             return RedirectToAction("MultipleCandidateInvites", controllerName);
-                    }                    
-                   
-                }            
+                    }
+
+                }
                 else
                 {
                     if (controllerName == "IRF")
@@ -5990,10 +5994,12 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        var model = new BroadcastModel();
-                        model.BroadcastReciever = receiver;
-                        model.Message = message;
-                        model.Subject = subject;
+                        var model = new BroadcastModel
+                        {
+                            BroadcastReciever = receiver,
+                            Message = message,
+                            Subject = subject
+                        };
                         var result = _meetingService.Broadcast(model);
                         TempData["SuccessErrorMessageInterview"] = result.Result;
                         return Json(result.Result);
@@ -6118,7 +6124,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid).Where(x=> x.interviewDate >= DateTime.Now);
+                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid).Where(x => x.interviewDate >= DateTime.Now);
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {

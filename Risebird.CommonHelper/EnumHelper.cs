@@ -1,14 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using Microsoft.AspNetCore.Authorization;
+﻿using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Risebird.CommonHelper
 {

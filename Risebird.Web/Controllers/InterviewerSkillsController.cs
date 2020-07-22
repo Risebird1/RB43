@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using Risebird.CommonHelper;
-using System.Data;
-using Microsoft.AspNetCore.Authorization;
-using OfficeOpenXml;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Routing;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 namespace Risebird.Web.Controllers
 {
     [Authorize]
@@ -46,9 +41,9 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                var emailid =  HttpContext.Session.GetString("email")?.Trim();
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" )
+                if (profileName == "Admin" || profileName == "HR")
                 {
                     var model = new InterviewerSkillsViewModel();
                     var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
@@ -207,7 +202,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
                 ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
 
-                
+
                 return View(model);
             }
             else
@@ -617,9 +612,9 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if(profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        
+
                         if (_iInterviewerSkillsService.AddUnApprovedInterviewer(model.UnApprovedInterviewersCollection, model.ISCId))
                         {
                             TempData["SuccessErrorMessageISCInterviewerList"] = "Interviewer added Successfully";

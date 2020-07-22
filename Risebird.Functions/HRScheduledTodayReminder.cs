@@ -1,3 +1,9 @@
+using Dapper;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -7,19 +13,13 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Risebird.Functions
 {
     public static class HRScheduledTodayReminder
     {
         [FunctionName("HRScheduledTodayReminder")]
-        public static void Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -31,7 +31,7 @@ namespace Risebird.Functions
                 {
                     unfilteredMeetings = con.Query<ScheduledCandidate>(query).ToList();
                 }
-                if(unfilteredMeetings!=null)
+                if (unfilteredMeetings != null)
                 {
                     unfilteredMeetings = unfilteredMeetings.Where(x => x.interviewDate.Date == DateTime.Today.Date).ToList();
                     var irfList = new List<int>();
@@ -57,7 +57,7 @@ namespace Risebird.Functions
                             {
                                 hrMailList = con.Query<string>(checkQuery, dynamicParameters).ToList();
                             }
-                            if(hrMailList==null || hrMailList.Count()==0)
+                            if (hrMailList == null || hrMailList.Count() == 0)
                             {
                                 continue;
                             }
@@ -65,7 +65,7 @@ namespace Risebird.Functions
                             {
                                 candidateEmails.Add(item.candidateName + "|" + item.candidateEmail + "|" + item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt"));
                             }
-                            if(candidateEmails==null || candidateEmails.Count()==0)
+                            if (candidateEmails == null || candidateEmails.Count() == 0)
                             {
                                 continue;
                             }
@@ -80,7 +80,7 @@ namespace Risebird.Functions
                         }
                     }
                 }
-                
+
             }
             catch (Exception)
             {
@@ -111,7 +111,7 @@ namespace Risebird.Functions
                 {
                     dt.Rows.Add(candidate.Split('|')[0], candidate.Split('|')[1], candidate.Split('|')[2]);
                 }
-                
+
                 StringBuilder sb = new StringBuilder();
                 //Table start.
                 sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
@@ -138,10 +138,10 @@ namespace Risebird.Functions
 
                 //Table end.
                 sb.Append("</table>");
-                
-                
 
-                object[] parameters = new object[] { irfName,client, primarySkill, sb };
+
+
+                object[] parameters = new object[] { irfName, client, primarySkill, sb };
                 mailMessage.Subject = "Interview scheduled for today " + DateTime.Now.ToString("dd MMMM yyyy");
                 string rawEmail = GetBlobData("mailtemplate", "HRScheduledTodayReminder.html");//HRScheduledTodayReminder.html
                 string msgBody = string.Format(rawEmail, parameters);

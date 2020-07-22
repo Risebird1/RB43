@@ -1,3 +1,6 @@
+using Dapper;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -6,19 +9,13 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Twilio;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 
 namespace Risebird.Functions
 {
     public static class InterviewAutoCancellation
     {
         [FunctionName("InterviewAutoCancellation")]
-        public static void Run([TimerTrigger("0 * * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -40,7 +37,7 @@ namespace Risebird.Functions
                 }
                 interviewList = interviewList.Where(x => (DateTime.Now.AddMinutes(autoCancellationsetting - 1) < x.interviewDate) && (DateTime.Now.AddMinutes(autoCancellationsetting) > x.interviewDate)).ToList();
                 var idsJoined = string.Join(",", from item in interviewList select item.id);
-                if(!string.IsNullOrEmpty(idsJoined))
+                if (!string.IsNullOrEmpty(idsJoined))
                 {
                     var queryUpdate = "update InterviewMeetings set confirmationStatus = 2 where id in (" + idsJoined + ")";
                     using (SqlConnection con = new SqlConnection(str))
@@ -48,7 +45,7 @@ namespace Risebird.Functions
                         con.Query(queryUpdate);
                     }
                 }
-                
+
                 //send auto cancellation mails
 
                 if (interviewList != null && interviewList.Count() > 0)
@@ -86,7 +83,7 @@ namespace Risebird.Functions
                 mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
                 mailMessage.To.Add(new MailAddress(candidateMail, "Risebird"));
                 //mailMessage.Bcc.Add(new MailAddress(candidateMail, null));
-                if(!string.IsNullOrEmpty(clientHRMail))
+                if (!string.IsNullOrEmpty(clientHRMail))
                 {
                     mailMessage.CC.Add(new MailAddress(clientHRMail, null));
 

@@ -113,7 +113,7 @@ namespace Risebird.Web.Hepler
                     context.HandleCodeRedemption(result.AccessToken, result.IdToken);
                 }
                 catch (Exception ex)
-                {                  
+                {
                     throw ex;
                 }
             }

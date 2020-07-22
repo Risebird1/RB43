@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -44,7 +43,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if(TempData["SuccessErrorMessageUser"] != null)
+                    if (TempData["SuccessErrorMessageUser"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageUser"].ToString();
                         TempData.Remove("SuccessErrorMessageUser");
@@ -72,7 +71,7 @@ namespace Risebird.Web.Controllers
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
 
-                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer","Candidate", "ResumeEvaluator" };                   
+                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer", "Candidate", "ResumeEvaluator" };
                     profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
@@ -150,7 +149,7 @@ namespace Risebird.Web.Controllers
                     {
                         List<Profile> profiles = _profileService.GetProfile();
 
-                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer","Candidate", "ResumeEvaluator", "Recruiter" };
+                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer", "Candidate", "ResumeEvaluator", "Recruiter" };
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
@@ -260,7 +259,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    if(TempData["SuccessErrorMessageClientUser"]!=null)
+                    if (TempData["SuccessErrorMessageClientUser"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageClientUser"].ToString();
                         TempData.Remove("SuccessErrorMessageClientUser");
@@ -469,7 +468,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if(TempData["SuccessErrorMessageInterviewer"] != null)
+                    if (TempData["SuccessErrorMessageInterviewer"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
                         TempData.Remove("SuccessErrorMessageInterviewer");
@@ -556,7 +555,7 @@ namespace Risebird.Web.Controllers
                         interviewer.ResumeLink = uploadedFileURL;
                         List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
                         interviewer.PrimarySkill = String.Join(",", selectedSkill);
-                        interviewer.EmailId = interviewer.EmailId.Trim().ToLower();                       
+                        interviewer.EmailId = interviewer.EmailId.Trim().ToLower();
                         if (_userService.AddInterviewer(interviewer))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
@@ -568,7 +567,7 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Interviewers");
                         }
                     }
-                                       
+
                 }
                 else
                 {
@@ -622,7 +621,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     string uploadedFileURL = null;
-                    
+
                     if (interviewer.File != null)
                     {
 
@@ -642,7 +641,7 @@ namespace Risebird.Web.Controllers
                         else
                             interviewer.ResumeLink = uploadedFileURL;
                     }
-                    else 
+                    else
                     {
                         interviewer.ResumeLink = TempData["ResumeLink"].ToString();
                     }
@@ -696,7 +695,7 @@ namespace Risebird.Web.Controllers
                     }
                     //if (ModelState.IsValid)
                     //{
-                        
+
                     //}
 
                     //else
@@ -763,7 +762,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if(TempData["SuccessErrorMessageInterviewer"]!=null)
+                if (TempData["SuccessErrorMessageInterviewer"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
                     TempData.Remove("SuccessErrorMessageInterviewer");
@@ -803,7 +802,7 @@ namespace Risebird.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     string uploadedFileURL = string.Empty;
-                    if (qcinterviewer.File == null && qcinterviewer.ResumeLink==null)
+                    if (qcinterviewer.File == null && qcinterviewer.ResumeLink == null)
                     {
                         ModelState.AddModelError(String.Empty, "Please upload a resume.");
                         qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
@@ -811,7 +810,7 @@ namespace Risebird.Web.Controllers
                         return View("AddQCInterviewer", qcinterviewer);
                     }
 
-                    if(qcinterviewer.File != null)
+                    if (qcinterviewer.File != null)
                     {
                         await _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", qcinterviewer.File);
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -819,11 +818,11 @@ namespace Risebird.Web.Controllers
                         uploadedFileURL = blob.Uri.ToString();
 
                     }
-                    else if(qcinterviewer.ResumeLink!=null)
+                    else if (qcinterviewer.ResumeLink != null)
                     {
                         uploadedFileURL = qcinterviewer.ResumeLink;
                     }
-                    
+
                     List<Skill> skills = _skillService.GetSkills();
 
                     if (uploadedFileURL == null)
@@ -928,7 +927,7 @@ namespace Risebird.Web.Controllers
                             else
                                 qcInterviewer.ResumeLink = uploadedFileURL;
                         }
-                        else if(qcInterviewer.PageResumeLink != null)
+                        else if (qcInterviewer.PageResumeLink != null)
                         {
                             qcInterviewer.ResumeLink = qcInterviewer.PageResumeLink;
                         }
@@ -1083,7 +1082,7 @@ namespace Risebird.Web.Controllers
                         TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not add Resume Evaluator!";
                         return RedirectToAction("ResumeEvaluators");
                     }
-                   
+
                 }
                 else
                 {

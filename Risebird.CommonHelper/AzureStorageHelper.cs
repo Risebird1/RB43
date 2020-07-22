@@ -2,28 +2,18 @@
 //using Microsoft.Azure.Management.Media;
 //using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Microsoft.IdentityModel.Clients.ActiveDirectory.Extensibility;
-using Microsoft.Rest;
-using Microsoft.Rest.Azure.Authentication;
-using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
-using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Caching;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 namespace Risebird.CommonHelper
 {
-    public class AzureStorageHelper: IAzureStorageHelper
+    public class AzureStorageHelper : IAzureStorageHelper
     {
         public CloudTableClient TableClient;
         private readonly string accountName;
@@ -46,9 +36,9 @@ namespace Risebird.CommonHelper
         public AzureStorageHelper(IConfiguration configuration)
         {
             _configuration = configuration;
-             accountName = _configuration["StorageSettings:StorageName"];
-             accountKey = _configuration["StorageSettings:SecretKey"];
-            _AADTenantDomain= _configuration["AzureMediaServices:AMSAADTenantDomain"];
+            accountName = _configuration["StorageSettings:StorageName"];
+            accountKey = _configuration["StorageSettings:SecretKey"];
+            _AADTenantDomain = _configuration["AzureMediaServices:AMSAADTenantDomain"];
             _RESTAPIEndpoint = _configuration["AzureMediaServices:AMSRESTAPIEndpoint"];
             _AMSClientId = _configuration["AzureMediaServices:AMSClientId"];
             _AMSClientSecret = _configuration["AzureMediaServices:AMSClientSecret"];
@@ -325,17 +315,17 @@ namespace Risebird.CommonHelper
             blob = GetCloudBlockBlobClient(containerName, filename);
             using (var fileStream = blobFile.OpenReadStream())
             {
-               await  blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
+                await blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
             }
-           
-           
+
+
         }
 
         public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile)
         {
             CloudBlockBlob blob;
-           
-                blob = GetCloudBlockBlobClient(containerName, filename);
+
+            blob = GetCloudBlockBlobClient(containerName, filename);
             if (blobFile != null)
             {
                 await blob.UploadFromStreamAsync(blobFile);

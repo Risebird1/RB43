@@ -1,18 +1,17 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using Risebird.Entities.Data;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using static System.Data.CommandType;
-using System.Threading.Tasks;
-using System.Data;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -816,7 +815,7 @@ namespace Risebird.Repository
                         con, "select * from IRF orderby ", null, commandType: Text).Result.AsList();
                     var irfID = irfList.Where(x => x.IRFId == irfDetails.IRFId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
 
-                    
+
                     DataTable joinabilityDt = new DataTable();
                     joinabilityDt.Columns.Add("IRFId", typeof(int));
                     joinabilityDt.Columns.Add("LevelId", typeof(int));
@@ -839,7 +838,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-                    
+
                     DataTable selectabilityDt = new DataTable();
                     selectabilityDt.Columns.Add("IRFId", typeof(int));
                     selectabilityDt.Columns.Add("LevelId", typeof(int));
@@ -865,7 +864,7 @@ namespace Risebird.Repository
 
 
                     //update general skill table
-                    
+
                     DataTable skillGeneralDt = new DataTable();
                     skillGeneralDt.Columns.Add("IRFId", typeof(int));
                     skillGeneralDt.Columns.Add("LevelId", typeof(int));
@@ -958,7 +957,7 @@ namespace Risebird.Repository
 
                     //update trans Client table
 
-                    
+
                     DataTable clientUserDt = new DataTable();
                     clientUserDt.Columns.Add("IRFId", typeof(int));
                     clientUserDt.Columns.Add("ClientUserId", typeof(int));
@@ -979,7 +978,7 @@ namespace Risebird.Repository
                     }
 
                     //update trans QC table
-                    
+
                     DataTable qualityControllerDt = new DataTable();
                     qualityControllerDt.Columns.Add("IRFId", typeof(int));
                     qualityControllerDt.Columns.Add("UserId", typeof(int));
@@ -998,7 +997,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-                    
+
                     DataTable resumeEvaluatorDt = new DataTable();
                     resumeEvaluatorDt.Columns.Add("IRFId", typeof(int));
                     resumeEvaluatorDt.Columns.Add("UserId", typeof(int));
@@ -1018,7 +1017,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    
+
                     DataTable hRDt = new DataTable();
                     hRDt.Columns.Add("IRFId", typeof(int));
                     hRDt.Columns.Add("UserId", typeof(int));
@@ -1127,7 +1126,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    
+
 
                     DataTable selectabilityDt = new DataTable();
                     selectabilityDt.Columns.Add("IRFId", typeof(int));
@@ -1268,7 +1267,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    
+
                     // update trans emergency interviewers table
                     //if (irfDetails.EmergencyInterviewerCollection != null)
                     //{
@@ -1340,7 +1339,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-                    
+
 
                     //update trans QC table
 
@@ -1407,7 +1406,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-                    
+
                     //if (irfDetails.HRCollection != null)
                     //{
                     //    foreach (var item in irfDetails.HRCollection)
@@ -2473,7 +2472,7 @@ namespace Risebird.Repository
         {
             try
             {
-               
+
                 var query = "select Candidate.*,ul.EmailId, IRF.EndDate, IRF.StartDate, IRF.ClientName,IRF.JDTiltle, IRF.JDLink, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id join CandidatesMaster cm on cm.id = Candidate.CandidateMasterId join UserList ul on ul.id=cm.UserId where ul.EmailId = @EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@EmailId", emailId);
@@ -2566,9 +2565,9 @@ namespace Risebird.Repository
                 parameters.Add("@IRFId", obj.IRFId);
                 parameters.Add("@Name", obj.Name?.Trim());
                 parameters.Add("@EmailId", obj.EmailId?.Trim().ToLower());
-                parameters.Add("@ResumeLink", obj.ResumeLink );
-                parameters.Add("@Type", obj.Type );
-                parameters.Add("@Location", obj.Location );
+                parameters.Add("@ResumeLink", obj.ResumeLink);
+                parameters.Add("@Type", obj.Type);
+                parameters.Add("@Location", obj.Location);
                 parameters.Add("@Skill", obj.Skill);
                 parameters.Add("@WorkAuth", obj.WorkAuth);
                 parameters.Add("@CurrentLocation", obj.CurrentLocation);
@@ -3334,7 +3333,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-                    
+
                     return true;
                 }
 
@@ -3385,7 +3384,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", curatedGroupDetails.id);
                 parameters.Add("@Name", curatedGroupDetails.Name);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateCuratedGroup", parameters,
@@ -3470,7 +3469,7 @@ namespace Risebird.Repository
                     dynamicParameters.Add("@CuratedGroupId", curatedUsers.CuratedGroupId);
                     con.Query(query, dynamicParameters);
 
-                    if (curatedUsers.CuratedGroupUserList != null )
+                    if (curatedUsers.CuratedGroupUserList != null)
                     {
                         DataTable curatedUsersDt = new DataTable();
                         curatedUsersDt.Columns.Add("UserId", typeof(int));
@@ -3492,7 +3491,7 @@ namespace Risebird.Repository
                             con.Close();
                         }
                     }
-                    
+
                     return true;
                 }
 
@@ -3600,7 +3599,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-       
+
         public IEnumerable<FetchInterviewerDetails> GetCareerProgression()
         {
             try

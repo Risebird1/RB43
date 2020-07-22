@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 
 namespace Risebird.Entities.ViewModel
@@ -9,7 +7,7 @@ namespace Risebird.Entities.ViewModel
     [DataContract]
     public class DataPoint
     {
-        public DataPoint(string label, double y,string color)
+        public DataPoint(string label, double y, string color)
         {
             this.Label = label;
             this.Y = y;
