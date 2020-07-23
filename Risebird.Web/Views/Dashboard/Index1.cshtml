@@ -90,7 +90,7 @@
                                         </div>
                                     </li>
                                     <li><button onclick="changeInterviewTracking()" class="panel-fullscreen"><span class="fa fa-check"></span></button></li>
-                                    <li><a href="#" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
+                                    @*<li><a href="#" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
                                     <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                                     <li class="dropdown">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-cog"></span></a>
@@ -98,7 +98,7 @@
                                             <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span> Collapse</a></li>
                                             <li><a href="#" class="panel-remove"><span class="fa fa-times"></span> Remove</a></li>
                                         </ul>
-                                    </li>
+                                    </li>*@
                                 </ul>
                             </div>
                             <div class="panel-body">
@@ -477,23 +477,12 @@
 
 </div>
 
-
-
-
-
-
-
-
-
-
-
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 
-@*<script>
+<script>
     function getDate() {
-        debugger;
         var today = new Date();
         var dd = today.getDate();
         var mm = today.getMonth() + 1; //January is 0!
@@ -507,39 +496,16 @@
             mm = '0' + mm
         }
 
-        //today = yyyy + '/' + mm + '/' + dd;
-        today = dd + '-' + mm + '-' + yyyy;
-        console.log(today);
+        today = yyyy + '-' + mm + '-' + dd;
         document.getElementById('interviewTrackingDate').value = today;
     }
-
-
-    window.onload = function () {
-        //getDate();
-        var today = new Date();
-        var dd = today.getDate();
-        var mm = today.getMonth() + 1; //January is 0!
-        var yyyy = today.getFullYear();
-
-        if (dd < 10) {
-            dd = '0' + dd
-        }
-
-        if (mm < 10) {
-            mm = '0' + mm
-        }
-
-        //today = yyyy + '/' + mm + '/' + dd;
-        today = dd + '-' + mm + '-' + yyyy;
-        console.log(today);
-        document.getElementById('interviewTrackingDate').value = today;
-    };
-</script>*@
+    
+</script>
 <script>
     
 
     window.onload = function () {
-        debugger;
+        getDate();
         var meetingsData = '@Model.MeetingsData';
         meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
         var meetingsDataLabels = '@Model.MeetingsDataLabels';

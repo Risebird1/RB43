@@ -104,7 +104,11 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var model = new DashboardVM();
+
+                    //daily interview tracking first chart
                     model = GetDateWiseInterviews(DateTime.Now);
+                    //daily interview tracking slots
+                    
                     return View(model);
                 }
                 else
