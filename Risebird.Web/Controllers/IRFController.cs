@@ -1447,8 +1447,6 @@ namespace Risebird.Web.Controllers
         public IActionResult EditIRF(string id)
         {
             try
-
-
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {

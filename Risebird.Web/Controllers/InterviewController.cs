@@ -3825,22 +3825,33 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("Index", "Home", new { url = "AddReport/Interview/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected });
                 }
-
+                bool isAdminHR = false;
+                    bool isInterviewer = false;
+               
                 string profileName = HttpContext.Session.GetString("profileName");
                 if (profileName != null)
                 {
                     profileName = profileName.Replace("\"", "");
-                }
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        isAdminHR = true;
+                    }
+                    else if ( (profileName == "Interviewer" ||
+                                                     profileName == "Quality Controller"))
+                    {
+                        isInterviewer = true;
+                    }
+                  }
+                
 
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
                 if (model == null)
                 {
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (isAdminHR)
                     {
                         return RedirectToAction("Index");
                     }
-                    else if (profileName != null && (profileName == "Interviewer" ||
-                                                     profileName == "Quality Controller"))
+                    else if (isInterviewer)
                     {
                         model.IsInterviewer = true;
                         if (isQC)
@@ -3868,6 +3879,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
+                model.IsInterviewer = isInterviewer;
                 GetStatusList(model, irfId);
                 if (isClient || isClientSelected)
                 {
