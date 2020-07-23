@@ -84,6 +84,12 @@
                                     <span>Interview Activity</span>
                                 </div>
                                 <ul class="panel-controls" style="margin-top: 2px;">
+                                    <li>
+                                        <div class="col-md-12 col-sm-12">
+                                            <input id="interviewTrackingDate" name="interviewTrackingDate" type="date" class="form-control">
+                                        </div>
+                                    </li>
+                                    <li><button onclick="changeInterviewTracking()" class="panel-fullscreen"><span class="fa fa-check"></span></button></li>
                                     <li><a href="#" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
                                     <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
                                     <li class="dropdown">
@@ -484,29 +490,61 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+@*<script>
+    function getDate() {
+        debugger;
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+
+        //today = yyyy + '/' + mm + '/' + dd;
+        today = dd + '-' + mm + '-' + yyyy;
+        console.log(today);
+        document.getElementById('interviewTrackingDate').value = today;
+    }
+
+
+    window.onload = function () {
+        //getDate();
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+
+        //today = yyyy + '/' + mm + '/' + dd;
+        today = dd + '-' + mm + '-' + yyyy;
+        console.log(today);
+        document.getElementById('interviewTrackingDate').value = today;
+    };
+</script>*@
 <script>
     
 
     window.onload = function () {
-        var meetingsData = '@ViewBag.MeetingsData';
-        var meetingsDataJO = JSON.parse(meetingsData.replace(/&quot;/g, '"'));
-        var meetingsDataLabels = '@ViewBag.MeetingsDataLabels';
-        var labels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"')); 
-        
-            config = {
-                data: meetingsDataJO,
-                xkey: 'Time',
-                ykeys: labels,
-                labels: labels,
-                resize: true,
-                hideHover: true,
-                //xLabels: 'day',
-                gridTextSize: '10px',
-                //lineColors: ['#1caf9a', '#33414E'],
-                gridLineColor: '#E5E5E5'
-            };
-        config.element = 'area-chart';
-        Morris.Area(config);
+        debugger;
+        var meetingsData = '@Model.MeetingsData';
+        meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
+        var meetingsDataLabels = '@Model.MeetingsDataLabels';
+        meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
+        UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
     }
     
 
@@ -543,6 +581,38 @@
 
 </script>
 <script>
+    function changeInterviewTracking() {
+        document.getElementById('area-chart').innerHTML = '';
+        var date = document.getElementById('interviewTrackingDate').value;
+        $.ajax({
+            url: '/Dashboard/GetDateWiseInterviews',
+            data: {'date': date},
+            success: function (data) {
+                UpdateInterviewTrackingGraph(JSON.parse(data.meetingsData), JSON.parse(data.meetingsDataLabels));
+            }
+        });
+    }
+
+    function UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels) {
+        
+        config = {
+            data: meetingsData,
+            xkey: 'Time',
+            ykeys: meetingsDataLabels,
+            labels: meetingsDataLabels,
+            resize: true,
+            hideHover: true,
+            //xLabels: 'day',
+            gridTextSize: '10px',
+            //lineColors: ['#1caf9a', '#33414E'],
+            gridLineColor: '#E5E5E5'
+        };
+        config.element = 'area-chart';
+        Morris.Area(config);
+
+    }
+</script>
+<script>
     (function ($) {
         $(window).on("load", function () {
             $(".scroll").mCustomScrollbar();
@@ -551,7 +621,7 @@
 
 </script>
 
-<script>
+@*<script>
 
    window.onload = function () {
         var pending='@ViewBag.Totinvites';
@@ -727,7 +797,7 @@
         });
 
     }
-</script>
+</script>*@
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script>
 
@@ -741,8 +811,6 @@
         return false;
     });
 </script>
-
-
 <script>
 
     $(".owl-carousel").owlCarousel({

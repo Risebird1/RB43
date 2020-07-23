@@ -1,5 +1,8 @@
 ﻿using Risebird.Entities.Data;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace Risebird.Business.Interface
 {
     public interface IDashboardService
@@ -8,6 +11,6 @@ namespace Risebird.Business.Interface
         List<Meeting> GetInterviwercnt();
         List<Meeting> GetCandidatecnt();
         string GetDoughnutGraphDetails(string flag);
-        Task<IEnumerable<Meeting>> GetDateWiseMeetings(int addDays = 0);
+        Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date);
     }
 }

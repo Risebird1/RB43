@@ -1,4 +1,5 @@
 ﻿using Risebird.Entities.Data;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,6 +11,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<Meeting> GetTotalInterviewer();
         IEnumerable<Meeting> GetTotalcandidate();
         Task<string> GetDoughnutGraphDetails(string flag);
-        Task<IEnumerable<Meeting>> GetDateWiseMeetings(int addDays = 0);
+        Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date);
     }
 }

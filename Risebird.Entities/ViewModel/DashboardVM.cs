@@ -8,5 +8,7 @@ namespace Risebird.Entities.ViewModel
     public class DashboardVM
     {
         public IEnumerable<Meeting> Meetings { get; set; }
+        public string MeetingsData { get; set; }
+        public string MeetingsDataLabels { get; set; }
     }
 }

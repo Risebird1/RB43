@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Dynamic;
 using System.Data;
+using Risebird.Entities.Enum;
 
 namespace Risebird.Web.Controllers
 {
@@ -102,38 +103,18 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    int addDays = 0;
                     var model = new DashboardVM();
-                    model.Meetings = await _dashboardService.GetDateWiseMeetings(addDays);
-                    var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
-                    //var irfList = model.Meetings.Select(x => x.IRFID).Distinct();
-                    var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
-                    List<object> iData = new List<object>();
-
-                    foreach (var item in meetingTimes)
-                    {
-                        dynamic expando = new ExpandoObject();
-                        expando.Time = item;
-                        foreach (var irf in irfList)
-                        {
-                            AddProperty(expando, irf, model.Meetings.Where(x => x.IRFID == irf.Split("(")[0] && x.interviewDate==item).Count());
-                        }
-                        iData.Add(expando);
-                    }
-
-                    ViewBag.MeetingsData = JsonConvert.SerializeObject(iData);
-                    ViewBag.MeetingsDataLabels = JsonConvert.SerializeObject(irfList);
-                   
-
-                    return View();
+                    model = GetDateWiseInterviews(DateTime.Now);
+                    return View(model);
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -146,6 +127,39 @@ namespace Risebird.Web.Controllers
                 expandoDict[propertyName] = propertyValue;
             else
                 expandoDict.Add(propertyName, propertyValue);
+        }
+
+        public DashboardVM GetDateWiseInterviews(DateTime date)
+        {
+            try
+            {
+                var model = new DashboardVM();
+                model.Meetings = _dashboardService.GetDateWiseMeetings(date).Result;
+                var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
+                //var irfList = model.Meetings.Select(x => x.IRFID).Distinct();
+                var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
+                List<object> iData = new List<object>();
+
+                foreach (var item in meetingTimes)
+                {
+                    dynamic expando = new ExpandoObject();
+                    expando.Time = item;
+                    foreach (var irf in irfList)
+                    {
+                        AddProperty(expando, irf, model.Meetings.Where(x => x.IRFID == irf.Split("(")[0] && x.interviewDate == item).Count());
+                    }
+                    iData.Add(expando);
+                }
+
+                model.MeetingsData = JsonConvert.SerializeObject(iData);
+                model.MeetingsDataLabels = JsonConvert.SerializeObject(irfList);
+                return model;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

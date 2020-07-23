@@ -6,6 +6,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -72,11 +73,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(int addDays = 0)
+        public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date)
         {
             try
             {
-                return _dashboardRespository.GetDateWiseMeetings(addDays).Result.OrderBy(x => x.interviewDate);
+                return _dashboardRespository.GetDateWiseMeetings(date).Result.OrderBy(x => x.interviewDate);
             }
             catch (Exception ex)
             {
