@@ -263,7 +263,7 @@
 
                                                         </div>
                                                     }
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
                                                                 Candidate Location
@@ -319,9 +319,10 @@
                                                             </div>
                                                         }
                                                     </div>
-                                                    @if (ViewBag.ProfileName != "CuratedUser")
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        @if (ViewBag.ProfileName != "CuratedUser")
+                                                        {
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
                                                                     Joining Status
@@ -340,11 +341,11 @@
                                                             </div>
 
 
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        }
+                                                        else
+                                                        {
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested">
                                                                     Interested
@@ -363,9 +364,7 @@
                                                             </div>
 
 
-                                                        </div>
-                                                    }
-                                                    <div class="col-md-6 col-sm-6">
+                                                        }
                                                         <div class="form-group">
 
 
@@ -385,7 +384,6 @@
 
 
                                                         </div>
-
                                                     </div>
                                                 </div>
 

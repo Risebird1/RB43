@@ -1383,6 +1383,12 @@ top:3px;
     position: absolute;
     top: -6px;
 }
+
+.interviewerprofile .text-danger {
+    color: #E04B4A !important;
+    position: relative;
+    top: 0px;
+}
 #irfForm .text-danger {
     top: 0px;
     position: relative;

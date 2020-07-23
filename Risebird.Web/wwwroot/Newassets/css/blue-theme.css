@@ -30,7 +30,7 @@ input[type='radio']:checked:after {
     background: #42a5f5 !important;
 }
 .mdc-card .modal .form-control, .modal .form-control {
-    background: #fff !important;
+    background: #fff;
 }
 .toscore {
     color: #000 !important;

@@ -38,7 +38,7 @@ input[type='radio']:checked:after {
     fill: #fff !important;
 }
 .mdc-card .modal .form-control, .modal .form-control{
-    background: #fff !important;
+    background: #fff;
 }
 .mdc-fab__icon {
 fill: rgb(255, 255, 255)!important;
