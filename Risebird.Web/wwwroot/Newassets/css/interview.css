@@ -1380,8 +1380,9 @@ top:3px;
     }
 .text-danger {
     color: #E04B4A !important;
-    position: absolute;
-    top: -6px;
+    font-weight:normal;
+    font-size:12px;
+
 }
 
 .interviewerprofile .text-danger {

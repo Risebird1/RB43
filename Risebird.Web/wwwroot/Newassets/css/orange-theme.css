@@ -123,7 +123,7 @@ fill: rgb(255, 255, 255)!important;
     background-size: 5% !important;
 }
 
-.mdc-card .modal .form-control [type="date"], .modal .form-control [type="date"] {
+.mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #fff url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
 }
 
