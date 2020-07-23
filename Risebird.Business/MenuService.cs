@@ -2,11 +2,11 @@
 
 namespace Risebird.Business
 {
-    public class MenuService:IMenuService
+    public class MenuService : IMenuService
     {
         public MenuService()
         {
-            
+
         }
     }
 }

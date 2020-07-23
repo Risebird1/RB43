@@ -6,21 +6,19 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Risebird.Business
 {
     public class SupportService : ISupportService
     {
-        private ISupportRepository _supportRespository;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        //private readonly INotificationHelper _notificationHelper;
-
-        public SupportService(ISupportRepository supportRespository,IApplicationErrorLogger applicationErrorLogger)
+        private readonly ISupportRepository _supportRespository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+      
+        public SupportService(ISupportRepository supportRespository, IApplicationErrorLogger applicationErrorLogger)
         {
             _supportRespository = supportRespository;
             _applicationErrorLogger = applicationErrorLogger;
-            
+
         }
 
         public List<Support> GetAllSupportHR()

@@ -9,12 +9,11 @@
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
-    background-color: var(--mdc-theme-primary, #018786) !important;
+
 }
 
 textarea::-webkit-scrollbar-thumb {
-    background-color: #56a9ff;
-    border: 1px solid #56a9ff;
+
     margin: 2px;
     border-radius: 2px;
 }
@@ -453,7 +452,7 @@ table {
 .card-blue .card-footer {
     text-align: center;
     padding: 8px 0px 8px 0px;
-}
+}blue-theme
 
  .card-blue .card-footer .stats-bttm-btn {
         padding: 0px 25px 0px 0px;
@@ -467,7 +466,7 @@ table {
 .mdc-card .modal .form-control, .modal .form-control, .mdc-card .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
- 
+
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;

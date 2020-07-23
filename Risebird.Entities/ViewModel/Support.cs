@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -28,9 +26,9 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter availability hours.")]
         [Display(Name = "Availability Hours")]
         public string AvailabilityHours { get; set; }
-        public bool OnVoiceCall { get;set; }
-        public bool OnWhatsapp { get;set; }
-        public bool OnEmail { get;set; }
+        public bool OnVoiceCall { get; set; }
+        public bool OnWhatsapp { get; set; }
+        public bool OnEmail { get; set; }
         public int IsOnline { get; set; }
     }
 

@@ -326,13 +326,13 @@
                                                     @if (item.IsOnilne == 1)
                                                     {
                                                         <td>
-                                                            <a onclick="directopenChat('@item.candidateEmail')"> @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")   <span class="dot" style="background-color:green"></span></a>
+                                                            <a onclick="directopenChat('@item.candidateEmail')"> @item.candidateName   <span class="dot" style="background-color:green"></span></a>
                                                         </td>
                                                     }
                                                     else
                                                     {
                                                         <td>
-                                                            @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")
+                                                            @item.candidateName
                                                         </td>
                                                     }
                                                     <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
@@ -426,7 +426,7 @@
                 </div>
                 <!-- end col-md-12 -->
             </div>
-            <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
+            <div id="myModal" class="modal modal-bg" >
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
@@ -435,20 +435,13 @@
                             <span style="cursor:pointer;" class="close" id="callPopUp">&times;</span>
                         </div>
                         <div class="modal-body" style="padding: 2px 16px;">
-                            <div class="row">
-                                <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+                          
+                                <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
 
-                            </div>
-
-                            <div class="">
                                 <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
-                            </div>
+                           
                         </div>
-                        <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #fff;
-        color: white;">
-
-                        </div>
+                       
                     </div>
 
                 </div>
@@ -568,7 +561,7 @@
             var RisebirdHR =  @Html.Raw(Json.Serialize(RisebirdHR));
             var InterviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
             var JobLevel =  @Html.Raw(Json.Serialize(JobLevel));
-            @*//var InterviewDuration =  @Html.Raw(Json.Serialize(InterviewDuration));*@
+            
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -792,10 +785,7 @@
             document.getElementById("submitFilter").disabled = false;
 
         }
-        //if (document.getElementById("EndDate").value != "") {
-        //    checkEndDate(document.getElementById("EndDate").value);
-        //}
-
+       
     }
 
     function checkEndDate(val) {
@@ -819,12 +809,6 @@
 
         //start Date object creation
 
-        //if (startDateValue == "") {
-        //    document.getElementById("endDateCheck").style.display = "block";
-        //    document.getElementById("endDateCheck").innerHTML = "Kindly fill the Start Date field.";
-        //    document.getElementById("StartDate").focus();
-        //    return;
-        //}
         var yearStart = startDateValue.substring(0, 4);
         var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
         var dateStart = startDateValue.substring(8, 10);
@@ -901,12 +885,6 @@
         });
     }
 </script>
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
 
 

@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Risebird.Web.Hepler
 {
@@ -25,7 +21,7 @@ namespace Risebird.Web.Hepler
         {
             _httpClient = new HttpClient();
 
-           
+
         }
 
         /// <summary>

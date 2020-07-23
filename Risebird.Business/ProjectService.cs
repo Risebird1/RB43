@@ -7,16 +7,15 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
     public class ProjectService : IProjectService
     {
-        private IProjectRepository _projectRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        private IIRFRepository _irfRepository;
+        private readonly IProjectRepository _projectRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IIRFRepository _irfRepository;
 
         public ProjectService(IProjectRepository projectRepository, IApplicationErrorLogger applicationErrorLogger, IIRFRepository irfRepository)
         {
@@ -30,7 +29,7 @@ namespace Risebird.Business
             try
             {
                 var projects = _projectRepository.GetAllProjects();
-                if(projects != null && projects.Count() != 0)
+                if (projects != null && projects.Count() != 0)
                 {
                     foreach (var item in projects)
                     {
@@ -39,7 +38,7 @@ namespace Risebird.Business
                         item.TotalIRF = projectCluster != null ? projectCluster.Count() : 0;
                     }
                 }
-                
+
                 return projects;
             }
 
@@ -68,7 +67,7 @@ namespace Risebird.Business
         public IEnumerable<IRF> GetAllIRF()
         {
             try
-            {               
+            {
                 return _projectRepository.GetAllIRF();
             }
 
@@ -85,8 +84,8 @@ namespace Risebird.Business
             {
                 var project = _projectRepository.GetAllProjects().Where(x => x.id == id).FirstOrDefault();
                 var projectCluster = _projectRepository.GetProjectCluster(id);
-                var allIRFs= _projectRepository.GetAllIRF();
-                if(projectCluster!=null && projectCluster.Count() != 0)
+                var allIRFs = _projectRepository.GetAllIRF();
+                if (projectCluster != null && projectCluster.Count() != 0)
                 {
                     foreach (var item in projectCluster)
                     {
@@ -95,38 +94,42 @@ namespace Risebird.Business
                         allIRFs = allIRFs.Where(x => x.id != item.IRFId);
                     }
                 }
-                
+
 
                 var objList = new List<ProjectIRFMapping>();
 
-                if(projectCluster != null && projectCluster.Count() != 0)
+                if (projectCluster != null && projectCluster.Count() != 0)
                 {
                     foreach (var item in projectCluster)
                     {
-                        var obj = new ProjectIRFMapping();
-                        obj.IRFId = item.IRFId;
-                        obj.IRFName = item.IRFName;
-                        obj.IsAdded = item.IsAdded;
-                        //obj.id = 0;
-                        obj.PrimarySkills = item.PrimarySkills;
-                        //obj.ProjectId = 0;
-                        obj.Client = item.Client;
+                        var obj = new ProjectIRFMapping
+                        {
+                            IRFId = item.IRFId,
+                            IRFName = item.IRFName,
+                            IsAdded = item.IsAdded,
+                            //obj.id = 0;
+                            PrimarySkills = item.PrimarySkills,
+                            //obj.ProjectId = 0;
+                            Client = item.Client
+                        };
                         objList.Add(obj);
                     }
 
                 }
-                
+
                 foreach (var item in allIRFs)
                 {
 
-                    var obj = new ProjectIRFMapping();
-                    obj.IRFId = item.id;
-                    obj.IRFName = item.IRFId;
-                    obj.IsAdded = false;
-                    //obj.id = 0;
-                    obj.PrimarySkills = item.JDTiltle.Split("|")[0];
-                    //obj.ProjectId = 0;
-                    obj.Client = item.ClientCompName;
+                    var obj = new ProjectIRFMapping
+                    {
+                        IRFId = item.id,
+                        IRFName = item.IRFId,
+                        IsAdded = false,
+                        //obj.id = 0;
+                        PrimarySkills = item.JDTiltle.Split("|")[0],
+                        //obj.ProjectId = 0;
+                        Client = item.ClientCompName
+                    };
                     objList.Add(obj);
                 }
                 project.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
@@ -155,8 +158,8 @@ namespace Risebird.Business
                     }
                     irfList = string.Join(",", from item in projectCluster select item.IRFId);
                 }
-                var remainingIRF = _projectRepository.GetIRFByClient(project.ClientId,irfList);
-                if (remainingIRF !=null&& remainingIRF.Count()!=0)
+                var remainingIRF = _projectRepository.GetIRFByClient(project.ClientId, irfList);
+                if (remainingIRF != null && remainingIRF.Count() != 0)
                 {
                     foreach (var item in remainingIRF)
                     {
@@ -253,13 +256,15 @@ namespace Risebird.Business
         {
             try
             {
-                var clients = new List<Client>();
-                clients.Add(new Client { Name = "All", id = 0, Description = "All" });
+                var clients = new List<Client>
+                {
+                    new Client { Name = "All", id = 0, Description = "All" }
+                };
                 foreach (var item in _projectRepository.GetClients())
                 {
                     clients.Add(item);
                 }
-                
+
                 return clients;
             }
 
@@ -297,7 +302,7 @@ namespace Risebird.Business
                         funnelData.TotalCandidates = funnelData.TotalCandidates + candidates.Count();
                         funnelData.TotalInvites = funnelData.TotalInvites + candidates.Where(x => x.TotalInvites > 0).Count();
                     }
-                    
+
                     var interviewIdList = new List<int>();
                     foreach (var email in emailList)
                     {
@@ -327,18 +332,18 @@ namespace Risebird.Business
                         funnelData.TotalFinalSelections = funnelData.TotalFinalSelections + finalSelected.Count();
                         waste = waste + approved.Where(x => x.IsSelected.HasValue && x.IsSelected > 7).Count();
                         var offered = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus == 1);
-                        funnelData.TotalOffered = funnelData.TotalOffered+ offered.Count();
+                        funnelData.TotalOffered = funnelData.TotalOffered + offered.Count();
                         var offerDeductions = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus > 3);
                         waste = waste + offerDeductions.Where(x => x.OfferStatus.HasValue && x.OfferStatus != 4).Count();
                         var joined = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus == 1);
                         funnelData.TotalJoined = funnelData.TotalJoined + joined.Count();
                         var joinedDeductions = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus > 2);
-                        waste = waste + joinedDeductions.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus >= 5).Count();
+                        waste += joinedDeductions.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus >= 5).Count();
                     }
 
 
                 }
-                
+
                 return funnelData;
             }
             catch (Exception e)

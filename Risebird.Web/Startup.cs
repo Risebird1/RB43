@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Risebird.Business;
@@ -16,8 +16,6 @@ using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Hepler;
 using System;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
 
 namespace Risebird.Web
@@ -63,7 +61,8 @@ namespace Risebird.Web
             });
             services.AddResponseCompression();
 
-            services.Configure<GzipCompressionProviderOptions>(options => {
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
                 options.Level = CompressionLevel.Fastest;
             });
             // Add Cors
@@ -79,7 +78,7 @@ namespace Risebird.Web
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(120);
+                options.IdleTimeout = TimeSpan.FromMinutes(1440);
                 options.Cookie.IsEssential = true;
                 options.Cookie.HttpOnly = true;
             });

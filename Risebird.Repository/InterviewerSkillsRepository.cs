@@ -1,19 +1,17 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using Risebird.Entities.Data;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using static System.Data.CommandType;
-using System.Threading.Tasks;
-using System.Data;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Threading.Tasks;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -22,7 +20,7 @@ namespace Risebird.Repository
 
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public InterviewerSkillsRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -79,7 +77,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -98,7 +96,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -114,7 +112,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -130,7 +128,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -146,7 +144,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -173,7 +171,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -189,7 +187,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -257,7 +255,7 @@ namespace Risebird.Repository
             {
                 DynamicParameters parameters = SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsDetails);
                 //parameters.Add("@id", InterviewerSkillsDetails.id);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkillsChannel", parameters,
@@ -275,10 +273,10 @@ namespace Risebird.Repository
                         var affectedRows = con.ExecuteAsync(sqlSelectability, new
                         {
                             IRFId = InterviewerSkillId,
-                            LevelId = item.LevelId,
-                            Type = item.Type,
-                            Value = item.Value,
-                            Weightage = item.Weightage
+                            item.LevelId,
+                            item.Type,
+                            item.Value,
+                            item.Weightage
                         }).Result;
                     }
 
@@ -291,10 +289,10 @@ namespace Risebird.Repository
                         var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
                         {
                             IRFId = InterviewerSkillId,
-                            LevelId = item.LevelId,
-                            Type = item.Type,
-                            Value = item.Value,
-                            Weightage = item.Weightage
+                            item.LevelId,
+                            item.Type,
+                            item.Value,
+                            item.Weightage
                         }).Result;
                     }
 
@@ -305,9 +303,9 @@ namespace Risebird.Repository
                         var affectedRows = con.Execute(sqlSkillTech, new
                         {
                             IRFId = InterviewerSkillId,
-                            LevelId = item.LevelId,
-                            SkillId = item.SkillId,
-                            Weightage = item.Weightage
+                            item.LevelId,
+                            item.SkillId,
+                            item.Weightage
                         });
                     }
 
@@ -320,7 +318,7 @@ namespace Risebird.Repository
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewerSkillsLeadInterviewer", param,
                                 commandType: CommandType.StoredProcedure);
 
-                     
+
                     }
                     return true;
                 }
@@ -367,7 +365,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -383,7 +381,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -399,7 +397,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -607,7 +605,7 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsDetails);
-                
+
                 parameters.Add("@id", InterviewerSkillsDetails.id);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -623,10 +621,10 @@ namespace Risebird.Repository
                             var affectedRows = con.ExecuteAsync(sqlSelectability, new
                             {
                                 InterviewerSkillId = InterviewerSkillsDetails.id,
-                                LevelId = item.LevelId,
-                                Type = item.Type,
-                                Value = item.Value,
-                                Weightage = item.Weightage
+                                item.LevelId,
+                                item.Type,
+                                item.Value,
+                                item.Weightage
                             }).Result;
                         }
                     }
@@ -641,10 +639,10 @@ namespace Risebird.Repository
                             var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
                             {
                                 InterviewerSkillId = InterviewerSkillsDetails.id,
-                                LevelId = item.LevelId,
-                                Type = item.Type,
-                                Value = item.Value,
-                                Weightage = item.Weightage
+                                item.LevelId,
+                                item.Type,
+                                item.Value,
+                                item.Weightage
                             }).Result;
                         }
                     }
@@ -661,9 +659,9 @@ namespace Risebird.Repository
                             var affectedRows = con.Execute(sqlSkillTech, new
                             {
                                 InterviewerSkillId = InterviewerSkillsDetails.id,
-                                LevelId = item.LevelId,
-                                SkillId = item.SkillId,
-                                Weightage = item.Weightage
+                                item.LevelId,
+                                item.SkillId,
+                                item.Weightage
                             });
                         }
                     }
@@ -811,9 +809,9 @@ namespace Risebird.Repository
                         string sqlAddInterviewer = "INSERT INTO TransInterviewerListInterviewerSkills (UserId, ISCId, InterviewerProfileId) Values (@UserId, @ISCId, @InterviewerProfileId);";
                         var result1 = con.ExecuteAsync(sqlAddInterviewer, new
                         {
-                            UserId = item.UserId,
+                            item.UserId,
                             ISCId = iscId,
-                            InterviewerProfileId = item.InterviewerProfileId
+                            item.InterviewerProfileId
 
                         }).Result;
                     }
@@ -847,10 +845,10 @@ namespace Risebird.Repository
                             var query = "insert into [dbo].[TransInterviewerListInterviewerSkills] (UserId,PrimarySkill,InterviewerSkillId,IsAdded) Values(@UserId,@PrimarySkill,@InterviewerSkillId,@IsAdded) ";
                             var results = con.ExecuteAsync(query, new
                             {
-                                UserId = item.UserId,
-                                PrimarySkill = item.PrimarySkill,
-                                InterviewerSkillId=item.InterviewerSkillId,
-                                IsAdded = item.IsAdded
+                                item.UserId,
+                                item.PrimarySkill,
+                                item.InterviewerSkillId,
+                                item.IsAdded
                             }).Result;
                         }
                     }

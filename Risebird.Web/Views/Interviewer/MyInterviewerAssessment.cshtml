@@ -8,435 +8,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
-<style>
-
-    body {
-        font-family: Roboto, sans-serif;
-    }
-
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-
-    textarea::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: var(--mdc-theme-primary, #018786) !important;
-    }
-
-    textarea::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-
-
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-
-
-
-        table.dataTable > thead > tr > th {
-            padding: 5px;
-        }
-
-
-    .table > tfoot > tr > th {
-        padding: 5px 7px;
-    }
-
-    td .wordwrap {
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: middle !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-                height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-    /*table.dataTable > thead > tr > th {
-            max-width: 200px !important;
-        }*/
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-
-    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
-
-    .table > thead > tr > th, .table > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
-
-
-    table {
-        border: 1px #ccc solid !important;
-    }
-
-        table td {
-            color: #504e4e;
-        }
-
-        table th {
-            color: #000000e0;
-        }
-
-
-
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-
-
-
-
-    .btn-call {
-        width: 30px !important;
-        height: 30px;
-        border-radius: 15px;
-        text-align: center;
-        font-size: 12px;
-        BORDER: 0px;
-        line-height: 1.42857;
-        background: #53a4f4;
-        display: inline-block;
-    }
-
-        .btn-call .fa {
-            color: #fff;
-            font-size: 14px;
-            padding: 0px;
-            top: 8px;
-            position: relative;
-        }
-
-    .call i {
-        color: #fff
-    }
-
-    .call-txt {
-        border: 1px #53a5f5 solid;
-        position: relative;
-        padding: 5px 15px;
-        left: -10px;
-        top: 8px;
-        font-size: 14px;
-        font-family: arial;
-        color: #53a5f5;
-        border-left: 0px;
-        border-top-right-radius: 13px;
-        border-bottom-right-radius: 13px;
-    }
-
-    #MyInterviewList_length, #MyInterviewList_filter {
-        margin: 10px 0px
-    }
-
-        #MyInterviewList_length label {
-            font-size: 14px;
-        }
-
-        #MyInterviewList_length select.form-control {
-            padding: 8px 8px;
-        }
-
-        #MyInterviewList_length select:focus {
-            border-color: #4a93de;
-        }
-
-        #MyInterviewList_filter input {
-            outline: none;
-        }
-
-    #meeting input[type=search] {
-        -webkit-appearance: textfield;
-        -webkit-box-sizing: content-box;
-        font-family: inherit;
-        font-size: 100%;
-    }
-
-    #MyInterviewList_filter input::-webkit-search-decoration,
-    #MyInterviewList_filter input::-webkit-search-cancel-button {
-        display: none;
-    }
-
-
-    #MyInterviewList_filter input[type=search] {
-        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-        border: solid 1px #ccc;
-        padding: 9px 10px 9px 32px;
-        width: 135px;
-        font-family: arial;
-        -webkit-border-radius: 10em;
-        -moz-border-radius: 10em;
-        border-radius: 10em;
-        -webkit-transition: all .5s;
-        -moz-transition: all .5s;
-        transition: all .5s;
-    }
-
-        #MyInterviewList_filter input[type=search]:focus {
-            width: 200px;
-            background-color: #fff;
-            border-color: #4a93de;
-            font-family: arial;
-            margin: 3px;
-            -webkit-box-shadow: 0 0 5px #4a93de;
-            -moz-box-shadow: 0 0 5px #4a93de;
-            box-shadow: 0 0 5px #4a93de;
-        }
-
-
-    #MyInterviewList_filter input:-moz-placeholder {
-        color: #999;
-    }
-
-    #MyInterviewList_filter input::-webkit-input-placeholder {
-        color: #999;
-    }
-
-
-
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #807e7e;
-        font-size: 12px;
-    }
-
-
-
-
-    #resumeId, #zoomlinkId {
-        background: #e2f0ff;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 16px;
-    }
-
-
-    #reportId {
-        background: #b3d2f1;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 16px;
-    }
-
-    #jdlinkId {
-        background: #fff;
-        color: #1d3b5e;
-        padding: 4px 10px;
-        border-radius: 16px;
-        border: 1px #79c0f3 solid;
-    }
-
-    #videoId {
-        background: #53a5f53d;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 16px;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        font-size: 13px;
-        height: auto;
-        border-radius: 10px;
-        margin: 5px 0px;
-        background-color: #eff7ff;
-    }
-
-    /* Modal */
-    .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-
-    /* Modal */
-
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-
-
-
-    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-        background-color: #4e9bea !important;
-        border-color: #4e9bea;
-        color: #FFFFFF;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .control-label {
-        color: #5f5c5c !important;
-    }
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        width: 200px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-    .mdc-card .modal .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-
-
-    @@media screen and (max-width: 767px) {
-
-        .table > tbody > tr > td {
-            padding: 12px 5px !important;
-        }
-    }
-</style>
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -485,187 +56,19 @@
 
                                         <div class="pull-right">
                                             <div>
-
-
-                                                @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
-
-                                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                                        <div class="mdc-button__ripple"></div>
-                                                    </button>*@
-
-
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                                     <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interviewer", actMethod ="MyInterviewerAssessment" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
                                                 </button>
-                                                @*<i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;margin-left:3px;margin-top:3px;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>*@
+                                               
 
                                             </div>
                                         </div>
                                     </div>
-
-
-
-
 
                                 </div>
 
-
-
                             </div>
-                            @*<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                                <h5 class="modal-title" id="filterModalLabel"> Filter</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <form action="@Url.Action("MyInterview","Interview")" method="post" id="form">
-
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
-                                                                    Start Date
-                                                                </label>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control" onblur="checkStartDate(this.value)">
-                                                                </div>
-                                                                <label class="text-danger col-md-6 col-sm-6" id="startDateCheck" style="display:none;"></label>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
-                                                                    End Date
-                                                                </label>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control" onblur="checkEndDate(this.value)">
-                                                                </div>
-                                                                <label class="text-danger col-md-6 col-sm-6" id="endDateCheck" style="display:none;"></label>
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Slot</label>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <select id="InterviewSlot" name="InterviewSlot" class="form-control multiselect" multiple="multiple">
-
-                                                                        @foreach (var item in Model.Select(x => x.interviewSlot).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="MeetingStatus">
-                                                                    Interview Date
-                                                                </label>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <select id="InterviewDate" name="InterviewDate" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.interviewDate).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null)
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="JobLevel">
-                                                                    Job Level
-                                                                </label>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <select id="JobLevel" name="JobLevel" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.JobLevelDesc).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="Interviewer">
-                                                                    Candidate Name
-                                                                </label>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.candidateName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
-                                                                    Zoom ID
-                                                                </label>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <select id="RisebirdHR" name="RisebirdHR" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.risebirdHR).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group col-md-12">
-                                                                <div class="row">
-                                                                    <div class="col-md-12 col-sm-12">
-
-
-
-                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                            <font style="font-size:12px;"> Reset Filter</font>
-                                                                        </button>
-
-
-                                                                        <button id="submitFilter" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                            <font style="font-size:12px;"> Apply Filter</font>
-                                                                        </button>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-
-
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-
-                                </div>*@
+                           
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <div id="tableID" class="second">
                                     <table id="MyInterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -746,12 +149,12 @@
                                                                 <span onclick="ModalButtonClick('@item.MobileNumber', '@item.candidateEmail')" data-original-title="Tooltip on top" title="Click here to call the interviewer." class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                             </button>
                                                         }
-                                                        <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
+                                                        @*<button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
                                                             <span onclick="location.href = '@Url.Action("SampleQuestions", "Interviewer", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
-                                                        </button>
-                                                        <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
+                                                        </button>*@
+                                                        @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
                                                             <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                        </button>
+                                                        </button>*@
                                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
                                                             <span onclick="location.href = '@Url.Action("AddReport", "Interviewer", new { interviewId = item.id, irfId = item.iscIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                         </button>
@@ -771,38 +174,32 @@
                 </div>
                 <!-- end col-md-12 -->
             </div>
-            <div id="myModal" class="modal" style="display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+            <div id="myModal" class="modal modal-bg">
                 <!-- Modal content -->
-                <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                    <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                        <h5 style="margin-left:40%;font-size:20px">Call Interviewer!</h5>
-                        <span class="close" id="callPopUp">&times;</span>
-                    </div>
-                    <div class="modal-body" style="padding: 2px 16px;">
-                        <div class="row">
-                            <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+                <div class="modal-content">
+                  
+                    <div class="filheader">
+                        <div class="filavatar">
+                            <span class="publicsharing-icon">
 
+
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                            </span>
                         </div>
-
-                        <div class="">
-                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
-                        </div>
+                        <h5 class="modal-title pull-left">Call Interviewer!</h5>
                     </div>
-                    <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #14406e;
-        color: white;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                    </button>
 
+                    <div class="modal-body">
+                     
+                   <label id="callingLabel" class="modal-title text-center mt-20"><b>Calling...</b></label>
+
+              <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+                       
                     </div>
+              
                 </div>
 
             </div>
@@ -814,52 +211,6 @@
 
 
 
-<style>
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-
-    .dropdown-toggle {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke !important;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .dropdown-toggle::after {
-            color: rgba(0, 0, 0, 0.29);
-            position: absolute;
-            right: 30px;
-            top: 14px;
-        }
-
-    .modal .form-group {
-        margin-bottom: 10px;
-    }
-
-        .modal .form-group .btn {
-            margin: 0px;
-        }
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-</style>
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 <script>

@@ -14,21 +14,18 @@ using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
-    public class IRFService :IIRFService
+    public class IRFService : IIRFService
     {
-        private IIRFRepository _irfRepository;
+        private readonly IIRFRepository _irfRepository;
         private readonly INotificationHelper _notificationHelper;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        private readonly ITwilioHelper _twilioHelper;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IClientService _clientService;
         private readonly IConfiguration _configuration;
 
-
-        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper, INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration)
+        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
-            _twilioHelper = twilioHelper;
             _notificationHelper = notificationHelper;
             _clientService = clientService;
             _configuration = configuration;
@@ -40,7 +37,7 @@ namespace Risebird.Business
             try
             {
                 irfDetails.CreatedOn = DateTime.UtcNow;
-                return  _irfRepository.AddIRFDetails(irfDetails).Result;
+                return _irfRepository.AddIRFDetails(irfDetails).Result;
             }
 
             catch (Exception e)
@@ -61,13 +58,13 @@ namespace Risebird.Business
                 var users = _irfRepository.GetUsers();
                 foreach (var item in users)
                 {
-                    if(item.idProfile == 2)
+                    if (item.idProfile == 2)
                     {
                         hrList.Add(item);
                     }
                 }
                 return hrList;
-                
+
             }
 
             catch (Exception e)
@@ -134,7 +131,7 @@ namespace Risebird.Business
             try
             {
                 return _irfRepository.GetRecruiterDomain(userId);
-                
+
             }
 
             catch (Exception e)
@@ -154,7 +151,7 @@ namespace Risebird.Business
                 var skillNameList = new List<string>();
                 foreach (var skill in skillList)
                 {
-                    if(skill == "")
+                    if (skill == "")
                     {
                         continue;
                     }
@@ -172,7 +169,7 @@ namespace Risebird.Business
                         //if (skill == "")
                         //    continue;
                         //var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt16(skill)).FirstOrDefault().Name;
-                        if(item.PrimarySkill.Contains(skillName))
+                        if (item.PrimarySkill.Contains(skillName))
                         {
                             list.Add(item);
                             break;
@@ -180,7 +177,7 @@ namespace Risebird.Business
                     }
                 }
                 list = list.Distinct().ToList();
-                
+
                 return list;
             }
 
@@ -199,7 +196,7 @@ namespace Risebird.Business
                 //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
                 var interviewers = _irfRepository.GetIRFInterviewerSkills();
                 var skillNameList = skillNames.Split(",");
-                
+
                 //skillList.RemoveAt()
                 var list = new List<Interviewer>();
 
@@ -279,10 +276,10 @@ namespace Risebird.Business
                 foreach (var item in skills)
                 {
 
-                   var obj= result.Where(x => x.id == item.SkillId).FirstOrDefault();
+                    var obj = result.Where(x => x.id == item.SkillId).FirstOrDefault();
                     list.Add(obj);
                 }
-                
+
                 return list;
 
             }
@@ -312,7 +309,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _irfRepository.AddCandidateCuratedScore(IrfId,candidateCuratedScore);
+                return _irfRepository.AddCandidateCuratedScore(IrfId, candidateCuratedScore);
             }
 
             catch (Exception e)
@@ -363,14 +360,14 @@ namespace Risebird.Business
         }
 
 
-        public List<MeetingVM> GetIRFInterviewMeetings(int id,string profileName, string email)
+        public List<MeetingVM> GetIRFInterviewMeetings(int id, string profileName, string email)
         {
             try
             {
-                int role =0;
-                var result= _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.interviewDate).ToList();
-                
-                if(email != string.Empty && profileName == "Client")
+                int role = 0;
+                var result = _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.interviewDate).ToList();
+
+                if (email != string.Empty && profileName == "Client")
                 {
                     var clients = _irfRepository.GetTransClientUser(id);
                     foreach (var item in clients)
@@ -381,7 +378,7 @@ namespace Risebird.Business
                             break;
                         }
                     }
-                    if(role ==0)
+                    if (role == 0)
                     {
                         return new List<MeetingVM>();
                     }
@@ -402,7 +399,7 @@ namespace Risebird.Business
                 {
                     return result;
                 }
-                
+
             }
 
             catch (Exception e)
@@ -451,7 +448,7 @@ namespace Risebird.Business
                 model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
                 model.Selectability = (IList<TransSelectability>)(transSelectability);
                 model.StartDate = IRF.StartDate;
-                model.ClientCollection= (IList<TransClientUser>)(transClientUser);
+                model.ClientCollection = (IList<TransClientUser>)(transClientUser);
                 model.ResumeEvaluatorCollection = (IList<TransResumeEvaluator>)(transResumeEvaluator);
                 model.RecruiterCollection = (IList<TransRecruiter>)(transRecruiter);
                 model.HRCollection = (IList<TransHR>)(transHR);
@@ -605,7 +602,7 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
-            
+
         }
         public InterviewPlanner GetInterviewPlanner(int id)
         {
@@ -620,25 +617,25 @@ namespace Risebird.Business
             }
 
         }
-        public InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST,string discount, string clientAddress)
+        public InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST, string discount, string clientAddress)
         {
             try
             {
                 var irfDetails = _irfRepository.GetIRFbyId(irfId);
                 var currentMonth = DateTime.Now.Month;
-                var interviewDetails = _irfRepository.GetIRFInterviewMeetings(irfId).Where(x => x.MeetingStatus.HasValue && (x.MeetingStatus ==4 || x.MeetingStatus == 2) && x.interviewDate.Date<=endDate.Date && x.interviewDate.Date>= startDate.Date).ToList();// && x.interviewDate.Month ==currentMonth).ToList();
+                var interviewDetails = _irfRepository.GetIRFInterviewMeetings(irfId).Where(x => x.MeetingStatus.HasValue && (x.MeetingStatus == 4 || x.MeetingStatus == 2) && x.interviewDate.Date <= endDate.Date && x.interviewDate.Date >= startDate.Date).ToList();// && x.interviewDate.Month ==currentMonth).ToList();
                 var invoiceModel = new InvoiceModel();
-                if(irfDetails!=null && invoiceModel!=null)
+                if (irfDetails != null && invoiceModel != null)
                 {
                     //var address = irfDetails.ClientAddress;
                     //var address = "Bagmane World Technology Center, Marathalli Ring Road, Doddanakhundi Village,Bangalore 560048";
                     var strb = new StringBuilder();
                     var addressArray = clientAddress.Split(",");
-                    for (int i=1; i <= addressArray.Length; i++)
+                    for (int i = 1; i <= addressArray.Length; i++)
                     {
-                        if(i!= addressArray.Length)
+                        if (i != addressArray.Length)
                         {
-                            strb.Append(addressArray[i-1] + "," + "<br/>");
+                            strb.Append(addressArray[i - 1] + "," + "<br/>");
                         }
                         else
                         {
@@ -659,7 +656,7 @@ namespace Risebird.Business
                     invoiceModel.IsGST = isGST;
                     invoiceModel.StartDate = startDate;
                     invoiceModel.EndDate = endDate;
-                    invoiceModel.InvoiceNumber= generator.Next(0, 999999).ToString("D6");
+                    invoiceModel.InvoiceNumber = generator.Next(0, 999999).ToString("D6");
                     invoiceModel.InvoiceReferenceCode = "RB" + irfDetails.ClientCompName.Substring(0, 2).ToUpper() + irfDetails.JDTiltle.Split("|")[0].Substring(0, 2).ToUpper() + invoiceModel.CurrentMonth.ToString().Substring(0, 2).ToUpper();
                     invoiceModel.InterviewCount = interviewDetails.Count();
                     invoiceModel.ClientAddress = strb.ToString();//irfDetails.ClientAddress;
@@ -680,7 +677,7 @@ namespace Risebird.Business
                     invoiceModel.Discount = Convert.ToDouble(discount);//irfDetails.Discount;
                     invoiceModel.DiscountedPricePerInterview = (1 - (invoiceModel.Discount / 100)) * irfDetails.PerMintuteRate;
                     invoiceModel.PartialPayable = invoiceModel.PartialInterviewCount * invoiceModel.DiscountedPricePerInterview;
-                    if(isGST)
+                    if (isGST)
                     {
                         invoiceModel.IGST = (0.18) * (invoiceModel.PartialPayable);
                         invoiceModel.IGSTSymbol = "18%";
@@ -693,7 +690,7 @@ namespace Risebird.Business
                     }
                     invoiceModel.Netpayable = invoiceModel.PartialPayable + invoiceModel.IGST;
                 }
-                
+
                 return invoiceModel;
             }
             catch (Exception e)
@@ -735,8 +732,8 @@ namespace Risebird.Business
             try
             {
                 //check if the candidate email exists for the IRFId
-                var duplicate = _irfRepository.GetIRFCandidates(obj.IRFId).Where(x=> x.EmailId.ToLower()==obj.EmailId?.Trim().ToLower());
-                if(duplicate != null && duplicate.Count()>0)
+                var duplicate = _irfRepository.GetIRFCandidates(obj.IRFId).Where(x => x.EmailId.ToLower() == obj.EmailId?.Trim().ToLower());
+                if (duplicate != null && duplicate.Count() > 0)
                 {
                     return "Sorry! Candidate already exists for the IRF.";
                 }
@@ -746,7 +743,7 @@ namespace Risebird.Business
                 if (result.Contains("successfully"))
                 {
                     //get all resume evaluators and hrs to send mails to
-                    var resumeEvaluators =_irfRepository.GetResumeEvaluatorsMailIds(obj.IRFId);
+                    var resumeEvaluators = _irfRepository.GetResumeEvaluatorsMailIds(obj.IRFId);
                     _notificationHelper.SendCandidateOnboardedMail(resumeEvaluators.ToList(), obj.Name, obj.IRFName, "Evaluator");
 
                     var hrs = _irfRepository.GetHRsMailIds(obj.IRFId);
@@ -790,7 +787,7 @@ namespace Risebird.Business
         {
             try
             {
-                var candidate = _irfRepository.GetIRFCandidates(irfId).Where(x => x.id == id).FirstOrDefault();                
+                var candidate = _irfRepository.GetIRFCandidates(irfId).Where(x => x.id == id).FirstOrDefault();
                 return candidate;
             }
 
@@ -825,18 +822,18 @@ namespace Risebird.Business
                 var calendlyLink = irf.CalendlyLink;
                 var candidate = _irfRepository.GetIRFCandidates(irfId).Where(x => x.EmailId == email).FirstOrDefault();
                 //var candidateInviteCount = candidate.TotalInvites;
-                if (email != null && calendlyLink!=null)
+                if (email != null && calendlyLink != null)
                 {
                     var jdLink = irf.JDLink;
                     var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
-                    var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x=>x.ClientRoleId==1 || x.ClientRoleId == 4);
-                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(),irf.JDTiltle.Split("|")[0],calendlyLink,email);
-                    if(candidate.TotalInvites==0)
+                    var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], calendlyLink, email);
+                    if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
 
                     }
-                    _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites +1));
+                    _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
                     return true;
                 }
                 return false;
@@ -863,12 +860,12 @@ namespace Risebird.Business
                     var jdLink = irf.JDLink;
                     var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
-                    var result=_notificationHelper.CancelCandidateInvite(ClientName,  irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0],  email); 
-                    if(result.ToLower().Contains("success"))
+                    var result = _notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
+                    if (result.ToLower().Contains("success"))
                     {
                         return true;
                     }
-                    
+
                 }
                 return false;
             }
@@ -878,7 +875,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        
+
         public async Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model)
         {
             try
@@ -904,9 +901,9 @@ namespace Risebird.Business
                 //if(candidates.Count()==0)
                 {
                     //get candidates from Meeting table by passing IRFId
-                    emailList  = _irfRepository.GetIRFCandidatesEmail(irfName).ToList();
+                    emailList = _irfRepository.GetIRFCandidatesEmail(irfName).ToList();
                     funnelData.TotalCandidates = emailList.Count();
-                    funnelData.TotalInvites = emailList.Count(); 
+                    funnelData.TotalInvites = emailList.Count();
                 }
                 //else
                 //{
@@ -914,47 +911,47 @@ namespace Risebird.Business
                 //    funnelData.TotalCandidates = candidates.Count();
                 //    funnelData.TotalInvites = candidates.Where(x => x.TotalInvites > 0).Count();
                 //}
-               
+
                 //get interviewMeetings where candidateEmail and irfName matches
                 var interviewIdList = new List<int>();
                 foreach (var email in emailList)
                 {
                     var interviewId = _irfRepository.InterviewMeetings(irfName, email);
-                    if(interviewId!=0)
+                    if (interviewId != 0)
                     {
                         interviewIdList.Add(interviewId);
                     }
                 }
 
                 funnelData.TotalConfirmations = interviewIdList.Count();
-               
+
 
                 string ids = string.Join<int>(",", interviewIdList);
                 var meetingData = _irfRepository.GetInterviewComments(ids);
-                if(meetingData != null)
+                if (meetingData != null)
                 {
                     var completed = meetingData.Where(x => x.MeetingStatus == 4);
-                   
+
                     funnelData.TotalCompleted = completed.Count();
-                   
+
                     var risebirdSelected = completed.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus == 2 || x.InterviewStatus == 4));
-                   
+
                     funnelData.TotalRisebirdSelection = risebirdSelected.Count();
-                    
+
                     var approved = risebirdSelected.Where(x => x.IsApproved.HasValue && x.IsApproved == 1);
-                   
+
                     funnelData.TotalApproved = approved.Count();
                     var approvalFilter = risebirdSelected.Where(x => x.IsApproved.HasValue && x.IsApproved > 2);
-                                waste = waste + approvalFilter.Where(x => x.IsApproved > 3).Count();
+                    waste = waste + approvalFilter.Where(x => x.IsApproved > 3).Count();
                     var finalSelected = approved.Where(x => x.IsSelected.HasValue && x.IsSelected == 1);
-                  
+
                     funnelData.TotalFinalSelections = finalSelected.Count();
-                                waste = waste + approved.Where(x => x.IsSelected.HasValue && x.IsSelected > 7).Count();
+                    waste = waste + approved.Where(x => x.IsSelected.HasValue && x.IsSelected > 7).Count();
                     var offered = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus == 1);
-                   
+
                     funnelData.TotalOffered = offered.Count();
                     var offerDeductions = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus > 3);
-                    
+
                     waste = waste + offerDeductions.Where(x => x.OfferStatus.HasValue && x.OfferStatus != 4).Count();
                     var joined = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus == 1);
                     //var totalJoined = joined.Count();
@@ -962,8 +959,8 @@ namespace Risebird.Business
                     var joinedDeductions = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus > 2);
                     //var joinedDenominator = totalOffered - joinedDeductions.Count();
                     //funnelData.JoiningRate = joinedDenominator != 0 ? ((totalJoined * 100 / joinedDenominator) * 100) : 0;
-                    waste = waste + joinedDeductions.Where(x =>x.JoiningStatus.HasValue && x.JoiningStatus >= 5).Count();
-                    funnelData.WasteRate = risebirdSelected.Count() != 0?(waste * 100 / risebirdSelected.Count()) : 0;
+                    waste += joinedDeductions.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus >= 5).Count();
+                    funnelData.WasteRate = risebirdSelected.Count() != 0 ? (waste * 100 / risebirdSelected.Count()) : 0;
                 }
 
                 return funnelData;
@@ -981,7 +978,7 @@ namespace Risebird.Business
             int result = 0;
             try
             {
-               result= _irfRepository.GetUserId(emailId, profile);
+                result = _irfRepository.GetUserId(emailId, profile);
                 return result;
             }
 
@@ -993,11 +990,11 @@ namespace Risebird.Business
         }
 
         public List<InterviewVM> GetUpComingInterviewList()
-        {           
+        {
             try
             {
-                return _irfRepository.GetUpComingInterviewList()?.ToList()?? new List<InterviewVM>();
-               
+                return _irfRepository.GetUpComingInterviewList()?.ToList() ?? new List<InterviewVM>();
+
             }
             catch (Exception e)
             {
@@ -1027,17 +1024,17 @@ namespace Risebird.Business
                 var updatedMeetings = _irfRepository.UpdateMeetingStatus(irfName).Result.ToList();
 
                 //send mails
-                if (updatedMeetings != null && updatedMeetings.Count()!=0)
+                if (updatedMeetings != null && updatedMeetings.Count() != 0)
                 {
                     //get emails
                     foreach (var item in updatedMeetings)
-                    { 
-                   _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"));
-//insert meeting in PausedIRF
-                       // _irfRepository.AddPausedMeetings(irfId, item.imid);
+                    {
+                        _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"));
+                        //insert meeting in PausedIRF
+                        // _irfRepository.AddPausedMeetings(irfId, item.imid);
 
 
-                        _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact,item.interviewDate.ToString("MMMM dd, yyyy"));
+                        _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact, item.interviewDate.ToString("MMMM dd, yyyy"));
 
                     }
                     //_notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
@@ -1068,7 +1065,7 @@ namespace Risebird.Business
                 //    return result;
                 //}
                 //send mails
-                
+
                 return updatedMeetings;
             }
             catch (Exception ex)
@@ -1085,7 +1082,7 @@ namespace Risebird.Business
                 var irfList = _irfRepository.GetAllIRFs(emailId, profileName).Result.ToList();
                 foreach (var irf in irfList)
                 {
-                    if(irf.TotalBudget!=0)
+                    if (irf.TotalBudget != 0)
                     {
                         var consumedBudget = (irf.TotalBudgetConsumed / irf.TotalBudget) * (100);
                         irf.BudgetConsumed = consumedBudget.ToString() + "%";
@@ -1194,7 +1191,7 @@ namespace Risebird.Business
                 var list = _irfRepository.GetCuratedGroupMappingsById(curatedGroupId).Result;
                 var mappings = list.Where(x => x.IsAdded).ToList();
                 mappings.AddRange(list.Where(x => !x.IsAdded));
-                cgModel.CuratedIRFMappings= (IList<CuratedIRFMapping>)(mappings);
+                cgModel.CuratedIRFMappings = (IList<CuratedIRFMapping>)(mappings);
                 cgModel.Name = cgModel.CuratedIRFMappings.FirstOrDefault().CuratedGroupName;
                 cgModel.id = curatedGroupId;
                 return cgModel;
@@ -1225,8 +1222,10 @@ namespace Risebird.Business
         {
             try
             {
-                var model = new CuratedGroupUsersVM();
-                model.CuratedGroupUserList = (IList<CuratedGroupUsers>)_irfRepository.GetCuratedGroupUsers(curatedGroupId).Result;
+                var model = new CuratedGroupUsersVM
+                {
+                    CuratedGroupUserList = (IList<CuratedGroupUsers>)_irfRepository.GetCuratedGroupUsers(curatedGroupId).Result
+                };
                 model.CuratedGroupName = model.CuratedGroupUserList.FirstOrDefault().CuratedGroupName;
                 model.CuratedGroupId = model.CuratedGroupUserList.FirstOrDefault().CuratedGroupId;
                 return model;

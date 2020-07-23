@@ -2032,6 +2032,15 @@ a {
         color: #f96332;
     }
 
+.sidebar[data-color="blue"] a {
+    color: #fff !important
+}
+
+    .sidebar[data-color="blue"] a:hover,
+    .sidebar[data-color="blue"] a:focus {
+        color: #fff !important
+    }
+
 h1,
 .h1 {
     font-size: 3.5em;

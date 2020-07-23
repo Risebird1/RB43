@@ -9,12 +9,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
 {
-    public class SupportRepository: ISupportRepository
+    public class SupportRepository : ISupportRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;

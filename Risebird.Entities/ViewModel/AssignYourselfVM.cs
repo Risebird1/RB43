@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -10,7 +7,7 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         [Display(Name = "Interview Date")]
         public string InterviewDate { get; set; }
-        [Display(Name = "Candidate Name")]       
+        [Display(Name = "Candidate Name")]
         public string CandidateEmail { get; set; }
         [Display(Name = "Interviewer Email")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",

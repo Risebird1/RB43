@@ -1,3 +1,9 @@
+using Dapper;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -7,19 +13,13 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Risebird.Functions
 {
     public static class HRNoScheduleReminder
     {
         [FunctionName("HRNoScheduleReminder")]
-        public static void Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -30,7 +30,7 @@ namespace Risebird.Functions
                 var unfilteredCandidate = new List<NoScheduleCandidate>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
                 var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client,Candidate.[Name] as CandidateName, Candidate.EmailId, Candidate.Phone from Candidate join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0";
-                
+
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     unfilteredCandidate = con.Query<NoScheduleCandidate>(query).ToList();
@@ -38,7 +38,7 @@ namespace Risebird.Functions
                 unfilteredCandidate = unfilteredCandidate.Where(x => x.EndDate > DateTime.Now).ToList();
                 foreach (var item in unfilteredCandidate)
                 {
-                    int checkScheduleCount =0;
+                    int checkScheduleCount = 0;
                     var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId and confirmationStatus!=2";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", item.IRFId);
@@ -48,22 +48,22 @@ namespace Risebird.Functions
                         var scheduleResult = con.Query<int>(checkQuery, dynamicParameters).ToList();
                         checkScheduleCount = scheduleResult.Count();
                     }
-                    if(checkScheduleCount==0)
+                    if (checkScheduleCount == 0)
                     {
                         candidates.Add(item);
                     }
                 }
-               
+
                 if (candidates != null && candidates.Count() != 0)
                 {
                     var irfList = new List<int>();
-                    
+
                     irfList = candidates.Select(x => x.id).ToList();
                     irfList = irfList.Distinct().ToList();
                     foreach (var irf in irfList)
                     {
                         var hrMailList = new List<string>();
-                        var candidateEmails= new List<string>();
+                        var candidateEmails = new List<string>();
                         var checkQuery = "select UserList.EmailId from  TransClientUser join UserList on TransClientUser.ClientUserId = UserList.Id where TransClientUser.IRFId=@IRFId and ClientRoleId in (1,4)";
                         var dynamicParameters = new DynamicParameters();
                         dynamicParameters.Add("@IRFId", irf);
@@ -104,7 +104,7 @@ namespace Risebird.Functions
 
         }
 
-        public static void SendMailToHR(List<string> hrEmails,List<string> candidates, string irfName, string client, string primarySkill)
+        public static void SendMailToHR(List<string> hrEmails, List<string> candidates, string irfName, string client, string primarySkill)
         {
             try
             {
@@ -162,7 +162,7 @@ namespace Risebird.Functions
                 //    candidateBody.Append("\n");
                 //}
 
-                object[] parameters = new object[] { irfName, client, primarySkill, sb};
+                object[] parameters = new object[] { irfName, client, primarySkill, sb };
                 mailMessage.Subject = "Schedule Pending Alert!";
                 string rawEmail = GetBlobData("mailtemplate", "HRNoScheduleMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);

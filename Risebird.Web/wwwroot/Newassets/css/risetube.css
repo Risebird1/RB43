@@ -637,12 +637,14 @@
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
-    background-color: var(--mdc-theme-primary, #018786) !important;
+    margin: 3px;
+   
+    background-color: var(#acacad, #565656);
 }
 
 textarea::-webkit-scrollbar-thumb {
-    background-color: #56a9ff;
-    border: 1px solid #56a9ff;
+    background-color: #acacad;
+    border: 1px solid #acacad;
     margin: 2px;
     border-radius: 2px;
 }
@@ -825,7 +827,7 @@ textarea::-webkit-scrollbar-thumb {
     outline: none;
 }
 
-    #myForm input[type=email] {
+    #myForm input[type=email], #myForm input[type=text] {
         -webkit-appearance: textfield;
         -webkit-box-sizing: content-box;
         font-family: inherit;
@@ -838,7 +840,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
 
-    #myForm input[type=email] {
+    #myForm input[type=email], #myForm input[type=text] {
         background: #fff;
         border: solid 1px #ccc;
         padding: 0px 10px 0px 20px;
@@ -858,7 +860,7 @@ textarea::-webkit-scrollbar-thumb {
         border-bottom-right-radius: 0em;
     }
 
-        #myForm input[type=email]:focus {
+        #myForm input[type=email]:focus, #myForm input[type=text]:focus {
             width: 280px;
             background-color: #fff;
             border-color: #4a93de;
@@ -902,7 +904,9 @@ textarea::-webkit-scrollbar-thumb {
     margin-bottom: 0px;
 }
 
-
+.interviewer-info p {
+    margin-bottom: 5px;
+}
 .video-block {
     margin-top: 15px;
 }
@@ -1292,7 +1296,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .borders {
-    border: 2px solid #fff !important;
+    border: 2px solid #fff;
 }
 
 .comment-tri-right.border.left-tp:before {
@@ -1315,7 +1319,7 @@ textarea::-webkit-scrollbar-thumb {
     height: 0;
     left: -20px;
     right: auto;
-    top: 0px;
+    top: -1px;
     bottom: auto;
     border: 22px solid;
     border-color: #f4f4f4 transparent transparent transparent;
@@ -1556,7 +1560,7 @@ textarea::-webkit-scrollbar-thumb {
     font-size: 24px;
     padding-right: 30px
 }
-.chat{background:#fff; position:relative;}
+.chat{background:#fff; }
 
 .date-calendar {
     color: #606060;

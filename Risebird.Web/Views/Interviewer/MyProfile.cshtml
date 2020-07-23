@@ -5,17 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
-
-@*<script src="sweetalert2.all.min.js"></script>
-<script src="sweetalert2.min.js"></script>
-<link rel="stylesheet" href="sweetalert2.min.css">*@
-
-
-<!-- Style added by Vishwanath for AddInterviewerProfile-->>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -155,7 +145,6 @@
 
                                                             <div class="mdc-checkbox">
 
-
                                                                 @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"
@@ -169,13 +158,6 @@
                                                                 <div class="mdc-checkbox__ripple"></div>
 
                                                             </div>
-
-
-
-
-
-
-
 
                                                         </td>
                                                         <td class="action text-center">
@@ -223,9 +205,6 @@
        </div>-->
 
 
-
-
-
                                                             </td>
                                                             <td class="action text-center">
                                                                 <span id="btnPlus" onclick="addAvailabilityDetails()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
@@ -238,7 +217,7 @@
 
                                             </tbody>
                                         </table>
-                                        @*<label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>*@
+                                      
 
                                     </div>
                                 </div>
@@ -377,17 +356,7 @@
         </div>
     </div>
 </div>
-    @*<script>
-
-        $(document).ready(function () {
-            $("#txt_ConfirmAccountNumber").change(function () {
-                var firstInput = document.getElementById("txt_AccountNumber").value;
-                var secondInput = document.getElementById("txt_ConfirmAccountNumber").value;
-                if (firstInput !== secondInput)
-                    alert("Account Number Not match!");
-            });
-        });
-    </script>*@
+  
 
     <script>
         
@@ -416,15 +385,6 @@
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
 
-
-
-        // reset fields in the new row
-        //$tr.find("select").val("");
-        //$tr.find("input[type=text]").val("");
-        //$tr.find("input[type=hidden]").val("");
-
-        //$tr.find("a").val("");
-
         // add cloned row as last row
         $("#availabilityDetailsTable").find("tbody tr:last").after($tr);
 
@@ -435,8 +395,7 @@
         $form.unbind();
         $form.data("validator", null);
 
-        // Check document for changes
-        //$.validator.unobtrusive.parse(document);
+   
 
     }
 

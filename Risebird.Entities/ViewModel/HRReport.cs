@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -25,10 +23,10 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Candidate EmailId")]
         public string CandidateEmailId { get; set; }
         public string JDLink { get; set; }
-        
+
         [Display(Name = "Current Employer")]
         public string currentEmployerName { get; set; }
-        
+
         public IList<JoinabilityHRReport> JoinabilityHRReportCollection { get; set; }
         public IList<TechSkillEvaluatorReport> TechSkillEvaluatorReportCollection { get; set; }
         public IList<SkillGeneralEvaluatorReport> SkillGeneralEvaluatorReportCollection { get; set; }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 
 namespace Risebird.Entities.Enum
 {
@@ -23,7 +20,7 @@ namespace Risebird.Entities.Enum
         PublicLimited
     }
 
-    public enum SeniorityLevel 
+    public enum SeniorityLevel
     {
         [Description("Entry")]
         Entry,

@@ -57,14 +57,6 @@
                                 </div>
 
 
-
-
-
-
-
-
-
-
                               
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
@@ -275,12 +267,6 @@
 </div>
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-
-
 
 @if (ViewBag.Message != null)
 {
@@ -332,10 +318,6 @@
 
 <script>
     $(document).ready(function () {
-
-
-
-
         $('#interviewer').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
@@ -357,21 +339,6 @@
     });
 
     function DeleteEntityfromEnvironment(UserId, FirstName) {
-
-        //var confirmMessageBox = confirm('Are you sure you want to delete interviewer ' + EmailId + ' ?');
-        //if (confirmMessageBox) {
-        //    if (userId != '') {
-        //        $.ajax({
-        //            url: '/User/DeleteInterviewer',
-        //            data: { 'id': userId },
-        //            type: 'get',
-        //            success: function (data) {
-        //                window.location = data.url;
-        //            }
-        //        });
-        //    }
-        //}
-
 
         swal.fire({
             title: 'Are you sure you want to delete interviewer ' + FirstName + '?',

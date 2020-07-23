@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -65,6 +63,6 @@ namespace Risebird.Entities.ViewModel
         public string GitHubLink { get; set; }
         public string LinkedinLink { get; set; }
         public string StackOverflowLink { get; set; }
-       
+
     }
 }

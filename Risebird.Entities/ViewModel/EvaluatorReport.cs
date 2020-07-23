@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -12,7 +10,7 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public int CandidateId { get; set; }
         public int ResumeEvaluatorId { get; set; }
-        public string ResumeEvaluatorEmailId{ get; set; }
+        public string ResumeEvaluatorEmailId { get; set; }
         public int IRFId { get; set; }
         public string IRFName { get; set; }
 
@@ -43,7 +41,7 @@ namespace Risebird.Entities.ViewModel
 
         //[Display(Name = "Expected Salary")]
         //public string expectedPerHourRate { get; set; }
-        
+
         public IList<SelectabilityEvaluatorReport> SelectabilityEvaluatorReportCollection { get; set; }
         public IList<TechSkillEvaluatorReport> TechSkillEvaluatorReportCollection { get; set; }
         public IList<SkillGeneralEvaluatorReport> SkillGeneralEvaluatorReportCollection { get; set; }
@@ -62,13 +60,13 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Job Level")]
         public string JobLevelName { get; set; }
-        
+
         [DisplayName("Preferred Location")]
         public string PreferredLocation { get; set; }
 
         [Display(Name = "Uploaded Candidate Resume")]
         public string ResumeLink { get; set; }
-        
+
         public bool IsClientUser { get; set; }
         public SelectList Level { get; set; }
         //public SelectList LevelTech { get; set; }

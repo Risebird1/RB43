@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.Data
+﻿namespace Risebird.Entities.Data
 {
     public class IRFFunnel
-    {        
+    {
         public int id { get; set; } //IRF Id
         public string Name { get; set; }// IRFName 
         //public double InvitesRate { get; set; }
