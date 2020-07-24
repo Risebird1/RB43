@@ -438,13 +438,43 @@
                                                                                         *@
                                                                                     </div>
                                                                                     <div class="video-card-body">
-                                                                                        <div class="video-title"> <a onclick="location.href='@Url.Action("VideoPage", "CommonPool", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a> <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span> </div>
+                                                                                        <div class="video-title"> <a onclick="location.href='@Url.Action("VideoPage", "CommonPool", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a> <span style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span> </div>
                                                                                         <div class="video-page text-success">
                                                                                             &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
     font-weight: 500;
     font-size: 12px;">@videolist.interviewDate</span> @*Education <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
-</div>
-</div>
+                                                                                    </div>
+
+                                                                                    <div class="video-view">
+                                                                                        @if (videolist.InterviewStatus == 4)
+                                                                                        {
+                                                                                            <span> Interview Staus:</span> <span style="color:palevioletred">Border Line</span>
+                                                                                        }
+                                                                                        else if (videolist.InterviewStatus == 1)
+                                                                                        {
+                                                                                            <span> Interview Staus:</span> <span style="color:cornflowerblue">Proxy</span>
+                                                                                        }
+                                                                                        else if (videolist.InterviewStatus == 2)
+                                                                                        {
+                                                                                            <span> Interview Staus:</span> <span style="color:green">Selected</span>
+
+                                                                                        }
+                                                                                        else if (videolist.InterviewStatus == 3)
+                                                                                        {
+                                                                                            <span> Interview Staus:</span> <span style="color:red">Rejected</span>
+
+                                                                                        }
+                                                                                    </div>
+                                                                                    <div class="video-view">
+                                                                                        <span> Joining Time: </span> <span> @videolist.joiningTime</span>
+                                                                                    </div>
+
+                                                                                    <div class="video-view">
+                                                                                        <span>Expected Salary:</span> <span>@videolist.expectedPerHourRate</span>
+                                                                                    </div>
+
+
+                                                                                    </div>
 </div>
 }
                                                                         

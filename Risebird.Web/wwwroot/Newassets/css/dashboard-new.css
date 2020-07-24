@@ -2581,7 +2581,7 @@ ul.panel-controls > li > .dropdown-menu {
     width: 100%;
 }
 
-    .radio + .radio {
+/* .radio + .radio {
         margin-top: 0px;
     }
 
@@ -2605,13 +2605,43 @@ input[type='radio']:checked:after {
     display: inline-block;
     visibility: visible;
     border: 2px solid white;
-}
+}*/
     .radio-field {
     margin: 0px 5px;
     position: relative;
     top: -2px;
     color: #5f5c5c;
 }
+
+
+input[type='radio'] {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    outline: none;
+    border: 1px solid gray;
+}
+
+    input[type='radio']:before {
+        content: '';
+        display: block;
+        width: 60%;
+        height: 60%;
+        margin: 20% auto;
+        border-radius: 50%;
+    }
+
+  
+
+
+
+
+
+
+
+
+
 
 .checkbox.pull-left, .checkbox.pull-right, .radio.pull-left, .radio.pull-right {
     width: auto;

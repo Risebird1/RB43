@@ -370,7 +370,7 @@
 
 
                                 <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                    <div id="tableID" class="second">
+                                    <span id="tableID" class="second">
                                         <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
@@ -462,13 +462,18 @@
                                                         {
                                                             <td>No Video</td>
                                                         }
-                                                        <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in">
-                                                                <div class="talktext">
-                                                                    <textarea style="height:40px;">@item.InterviewerComment</textarea>
-                                                                </div>
-                                                            </div>
-                                                        </td>
+                                                    <td>
+                                                        <div class="talk-bubble tri-right border-bubble right-in ">
+                                                            <div class="talktext">
+                                                                <a href="#" data-tooltip="@item.InterviewerComment"><textarea >@item.InterviewerComment</textarea></a>
+</div>
+                                                        </div>
+
+                                                        
+                                                      
+
+
+                                                    </td>
                                                         <td>  </td>
 
 
@@ -739,7 +744,12 @@
 
             <!-- end row -->
         </div>
-
+        <style>
+            .tooltip-text {
+            display: none;
+            }
+        </style>
+   
         <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
         <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
         @if (ViewBag.Message != null)
