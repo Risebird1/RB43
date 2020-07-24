@@ -2,6 +2,7 @@
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,18 @@ namespace Risebird.Business
             try
             {
                 return _dashboardRespository.GetDateWiseMeetings(date).Result.OrderBy(x => x.interviewDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date)
+        {
+            try
+            {
+                return _dashboardRespository.GetDateWiseMeetingsSlots(date).Result;
             }
             catch (Exception ex)
             {

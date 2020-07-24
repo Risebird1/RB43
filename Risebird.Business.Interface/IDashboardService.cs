@@ -1,4 +1,5 @@
 ﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,5 +13,6 @@ namespace Risebird.Business.Interface
         List<Meeting> GetCandidatecnt();
         string GetDoughnutGraphDetails(string flag);
         Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date);
+        Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date);
     }
 }

@@ -108,7 +108,7 @@ namespace Risebird.Web.Controllers
                     //daily interview tracking first chart
                     model = GetDateWiseInterviews(DateTime.Now);
                     //daily interview tracking slots
-                    
+                    model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
                     return View(model);
                 }
                 else

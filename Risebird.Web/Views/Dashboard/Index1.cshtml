@@ -263,37 +263,19 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td><strong>RISEDMM01</strong></td>
-                                                    <td class="text-center"><span class="label-num">2</span></td>
-                                                    <td class="text-center"><span class="label-num">4</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>RISEACCM01</strong></td>
-                                                    <td class="text-center"><span class="label-num">1</span></td>
-                                                    <td class="text-center"><span class="label-num">4</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>USJAND001</strong></td>
-                                                    <td class="text-center"><span class="label-num">8</span></td>
-                                                    <td class="text-center"><span class="label-num">4</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>RISEBDM01</strong></td>
-                                                    <td class="text-center"><span class="label-num">1</span></td>
-                                                    <td class="text-center"><span class="label-num">4</span></td>
-                                                </tr>
+                                                @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count()>0)
+                                                {
+                                                    foreach (var item in Model.DailyInterviewSlots)
+                                                    {
+                                                        <tr>
+                                                            <td><strong>@item.IRFnSkill</strong></td>
+                                                            <td class="text-center"><span class="label-num">@item.Morning</span></td>
+                                                            <td class="text-center"><span class="label-num">@item.Evening</span></td>
+                                                        </tr>
 
-                                                <tr>
-                                                    <td><strong>MPABD001</strong></td>
-                                                    <td class="text-center"><span class="label-num">0</span></td>
-                                                    <td class="text-center"><span class="label-num">24</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>USTGW0001</strong></td>
-                                                    <td class="text-center"><span class="label-num">0</span></td>
-                                                    <td class="text-center"><span class="label-num">24</span></td>
-                                                </tr>
+                                                    }
+                                                }
+
 
                                             </tbody>
                                         </table>
