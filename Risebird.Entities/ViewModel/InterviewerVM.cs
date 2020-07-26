@@ -35,7 +35,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter a link.")]
         public string ResumeLink { get; set; }
 
-        [Required(ErrorMessage = "Please mention available slots")]
+        //[Required(ErrorMessage = "Please mention available slots")]
         [Display(Name = "Available Slots")]
         public string Slots { get; set; }
 

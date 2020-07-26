@@ -643,7 +643,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        interviewer.ResumeLink = TempData["ResumeLink"].ToString();
+                        interviewer.ResumeLink = TempData["ResumeLink"]?.ToString();
                     }
 
 
