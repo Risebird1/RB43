@@ -141,7 +141,7 @@
                                                     <td> @item.interviewSlot </td>
                                                     <td> @item.interviewDuration </td>
                                                     <td> @item.JobLevelDesc </td>
-                                                    <td> @Regex.Replace(@item.candidateName, "[a-zA-Z0-9]", "*")</td>
+                                                    <td> @item.candidateName</td>
                                                     <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
 
                                                     @if (item.resumeLink != null && item.resumeLink != "")
