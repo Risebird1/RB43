@@ -1839,12 +1839,12 @@
         for (i = 0; i < questionItems.length; i++) {
             var temp = $("#QuestionsCollection_" + i + "__Timing").val();
             if (temp == null || temp == '') {
-                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60)."
+                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60) and it should be in ascending order."
                 return false;
             }
             if (i > 0) {
                 if (parseInt(temp) < parseInt(oldVal)) {
-                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60).";
+                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60) and it should be in ascending order.";
                     return false;
                 }
                 else
