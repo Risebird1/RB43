@@ -263,7 +263,7 @@
 
                                                         </div>
                                                     }
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
                                                                 Candidate Location
@@ -319,9 +319,10 @@
                                                             </div>
                                                         }
                                                     </div>
-                                                    @if (ViewBag.ProfileName != "CuratedUser")
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        @if (ViewBag.ProfileName != "CuratedUser")
+                                                        {
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
                                                                     Joining Status
@@ -340,11 +341,11 @@
                                                             </div>
 
 
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        }
+                                                        else
+                                                        {
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested">
                                                                     Interested
@@ -363,9 +364,7 @@
                                                             </div>
 
 
-                                                        </div>
-                                                    }
-                                                    <div class="col-md-6 col-sm-6">
+                                                        }
                                                         <div class="form-group">
 
 
@@ -385,7 +384,6 @@
 
 
                                                         </div>
-
                                                     </div>
                                                 </div>
 
@@ -433,7 +431,7 @@
                                                 <div class="video-card-body">
                                                     <div class="video-title">
                                                         <a onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;">@item.candidateName </a>
-                                                        <span class="designation">(@item.JDTiltle.Split("|")[0])</span>
+                                                        <span class="designation" title="(@item.JDTiltle.Split("|")[0])">(@item.JDTiltle.Split("|")[0])</span>
                                                     </div>
 
                                                     <div class="video-page text-success">
@@ -441,11 +439,33 @@
 
                                                     </div>
                                                     <div class="video-view">
-                                                        &nbsp;<i  class="fas fa-calendar-alt"></i> <span>@item.interviewDate</span>
-</div>
-</div>
-</div>
-</div>
+                                                        &nbsp;<i class="fas fa-calendar-alt"></i> <span>@item.interviewDate</span>
+                                                    </div>
+
+
+                                                    <div class="video-view">
+                                                        @if (item.InterviewStatus == 4)
+                                                        {
+                                                            <span> Interview Staus:</span> <span style="color:palevioletred">Border Line</span>
+                                                        }
+                                                        
+                                                        else if (item.InterviewStatus == 2)
+                                                        {
+                                                            <span> Interview Staus:</span> <span style="color:green">Selected</span>
+
+                                                        }
+                                                        
+                                                    </div>
+                                                    <div class="video-view">
+                                                        <span> Joining Time: </span> <span> @item.joiningTime</span>
+                                                    </div>
+
+                                                    <div class="video-view">
+                                                        <span>Expected Salary:</span> <span>@item.expectedPerHourRate</span>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                        </div>
 }
 
 

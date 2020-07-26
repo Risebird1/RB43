@@ -367,6 +367,9 @@
         float: right;
     }
 
+
+
+
 .tooltip1 {
     position: relative;
     display: inline-block;
@@ -1107,7 +1110,7 @@ textarea::-webkit-scrollbar-thumb {
 
 .video-block .video-title {
     margin-bottom: 5px;
-    min-height: 40px;
+    min-height: 20px;
 }
 
 
