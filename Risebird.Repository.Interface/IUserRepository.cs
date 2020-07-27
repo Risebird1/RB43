@@ -30,6 +30,7 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteInterviewer(int id);
         Task<InterviewerVM> GetInterviewer(int id);
         IEnumerable<InterviewerVM> GetInterviewerVideos(string Emailid);
+        MeetingVM GetMeetingbyid(int id);
 
         Task<bool> UpdateInterviewer(InterviewerVM Interviewer);
 

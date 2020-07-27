@@ -3576,7 +3576,7 @@ namespace Risebird.Web.Controllers
             if (!String.IsNullOrEmpty(Videoid))
             {
                 //fetch vediolink wth details
-                MeetingVM model = _meetingService.GetMeetingbyid(Convert.ToInt32(Videoid), interviewerVM.EmailId);
+                var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
                 interviewerVM.VideoLink = model.VideoLink;
             }
             interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
