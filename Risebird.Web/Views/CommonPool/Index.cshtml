@@ -485,11 +485,12 @@
 
 
                                                     <div class="video-info">
-                                                        <span> Joining Time: </span> <span class="join-time"> @item.joiningTime</span></a>}
-                                    else
-                                    {
-                                    <span id="join_time"> @item.joiningTime</span>}
-                                </div>
+                                                        <span> Joining Time: </span> @if (videolist.joiningTime.Length > 10)
+                                                        {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                    else
+                                                    {
+                                                        <span id="join_time"> @videolist.joiningTime</span>}
+                                                    </div>
 
 
                                 <div class="video-info">
