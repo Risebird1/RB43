@@ -3573,6 +3573,7 @@ namespace Risebird.Web.Controllers
         {
             // code for fetch data or any thing else
             InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
+            interviewerVM.id = Convert.ToInt32(Id);
             if (!String.IsNullOrEmpty(Videoid))
             {
                 //fetch vediolink wth details
