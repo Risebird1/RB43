@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using RestSharp;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Dynamic;
 using System.Linq;
 
 namespace Risebird.Web.Controllers
@@ -374,6 +376,19 @@ namespace Risebird.Web.Controllers
 
 
         }
+        public JsonResult SendMeetingInvite()
+        {
+            var client = new RestClient("http://localhost:7071/api/");
+            var request = new RestRequest("OnlineMeeting", Method.POST);
+            request.RequestFormat = DataFormat.Json;
+            dynamic obj = new ExpandoObject();
+            obj.startDateTime = "2020-07-28T14:30:34.2444915-07:00";
+            obj.endDateTime = "2020-07-28T15:00:34.2464912-07:00";
+            obj.subject = "User Token Meeting";
 
+            request.AddBody(obj);
+            var result=client.Execute(request);
+            return Json("");
+        }
     }
 }
