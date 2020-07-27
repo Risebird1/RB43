@@ -32,8 +32,8 @@ namespace Risebird.MicroService
             //    EndDateTime = DateTimeOffset.Parse("2020-07-30T22:00:34.2464912+00:00"),
             //    Subject = "User Team Meeting"
             //};
-           // string requestBody = File.ReadAllText(@"c:\prem\meeting.txt", Encoding.UTF8);
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            string requestBody = File.ReadAllText(@"c:\prem\meeting.txt", Encoding.UTF8);
+           // string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             log.LogInformation("C# HTTP trigger function processed a request.");
 
             var httpClient = await _authenticationService.CreateAuthorizedHttpClient();
