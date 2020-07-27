@@ -103,8 +103,8 @@
                                 <div class="container-wrap pb-0">
                                     <div class="video-block section-padding">
                                         @*<div class="row mn-section">*@
-                                        <div>
-                                            <div class=" col-8 player-main" id="player">
+                                        <div class="row">
+                                            <div class=" col-md-8 player-main" id="player">
                                                 <div class="single-video-left">
                                                     <div>
                                                         <div class="single-video">
@@ -154,55 +154,72 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-4  side-player scroll" id="sd-player">
-                                                @if (Model.SubVideo_List.Count > 0)
+                                                @if (Model.VideoLink != null && Model.VideoLink != "")
                                                 {
-                                                    <div id="style-2" class="single-video-right">
-                                                        <div>
-                                                            <div>
-                                                                <div class="col-md-12">
+                                                    <p>Name: @Model.FirstName @Model.LastName</p>
 
-                                                                    @foreach (var videolist in Model.SubVideo_List)
-                                                                    {
-                                                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-                                                                        <div class="video-card video-card-list videosidelist">
-                                                                            <div class="video-card-image">
-                                                                                @if (videolist.VideoLink.Contains(".mp4"))
-                                                                                {
-                                                                                    @*@if (videolist.ThumbnailImage != null)
-                                                                                        {<img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />}*@
-                                                                                    <video controls style=" background:black!important;width:100%; height:100% ">
-                                                                                        <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                    </video>
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a> }
-                                                                                else
-                                                                                {
-                                                                                    <img src="~/RiseTube/img/video-icon.png" /> <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                }
-
-
-                                                                                @*}
-                                                                                    <div class="time">3:50</div>
-                                                                                *@
-                                                                            </div>
-                                                                            @*<div class="video-card-body">
-                                                                                <div class="video-title"> <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a> <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span> </div>
-                                                                                <div class="video-page text-success">
-                                                                                &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
-                                                                                     font-weight: 500;
-                                                                                     font-size: 12px;">@videolist.interviewDate</span>
-                                                                                 </div>
-                                                                                 </div>*@
-                                                                        </div>
-                                                                    }
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <p>Email Address: @Model.EmailId</p>
+                                                    <p>Primary Skills: @Model.PrimarySkill</p>
+                                                    @if (Model.GitHubLink != null && Model.GitHubLink != "")
+                                                    {
+                                                        <p>GitHubLink: @Model.GitHubLink</p>
+                                                    }
+                                                    @if (Model.StackOverflowLink != null && Model.StackOverflowLink != "")
+                                                    {
+                                                        <p>StackOverflowLink: @Model.StackOverflowLink</p>
+                                                    }
+                                                    @if (Model.LinkedinLink != null && Model.LinkedinLink != "")
+                                                    {
+                                                        <p>LinkedinLink: @Model.LinkedinLink</p>
+                                                    }
                                                 }
                                                 else
                                                 {
+                                                    @if (Model.SubVideo_List.Count > 0)
+                                                    {
+                                                        <div id="style-2" class="single-video-right">
+                                                            <div>
+                                                                <div>
+                                                                    <div class="col-md-12">
 
+                                                                        @foreach (var videolist in Model.SubVideo_List)
+                                                                        {
+                                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                            <div class="video-card video-card-list videosidelist">
+                                                                                <div class="video-card-image">
+                                                                                    @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                    {
+                                                                                        @*@if (videolist.ThumbnailImage != null)
+                                                                                            {<img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />}*@
+                                                                                        <video controls style=" background:black!important;width:100%; height:100% ">
+                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                        </video>
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("InterviewerDetailById", "IRF", new { Id=Model.id ,Videoid = videolist.imid })'" style=" cursor: pointer;"></a> }
+                                                                                    else
+                                                                                    {
+                                                                                        <img src="~/RiseTube/img/video-icon.png" /> <a class="play-icon" onclick="location.href='@Url.Action("InterviewerDetailById", "IRF", new { Id=Model.id ,Videoid = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                    }
+
+
+                                                                                </div>
+                                                                                <div class="video-card-body">
+                                                                                    <div class="video-title"> @videolist.FirstName<span style="color: #6c757d;font-weight: 500; font-size:13px;"></span> </div>
+                                                                                    <div class="video-page text-success">
+                                                                                        &nbsp;<i class="fas fa-calendar-alt"></i> 
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+
+                                                    }
                                                 }
                                             </div>
                                         </div>

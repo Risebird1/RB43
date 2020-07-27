@@ -3523,7 +3523,7 @@ namespace Risebird.Web.Controllers
                     var model = _userService.GetInterviewersDetails();
                     if (!String.IsNullOrEmpty(Searchvalue))
                     {
-                        model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill!= null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
+                        model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
                         ViewBag.searchvalue = Searchvalue;
                     }
                     else
@@ -3569,17 +3569,23 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        public async Task<IActionResult> InterviewerDetailById(string Id)
+        public async Task<IActionResult> InterviewerDetailById(string Id, string Videoid)
         {
             // code for fetch data or any thing else
             InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
+            interviewerVM.id = Convert.ToInt32(Id);
+            if (!String.IsNullOrEmpty(Videoid))
+            {
+                //fetch vediolink wth details
+                var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
+                interviewerVM.VideoLink = model.VideoLink;
+            }
             interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
             if (interviewerVM.SubVideo_List == null || interviewerVM.SubVideo_List.Count == 0)
             {
                 interviewerVM.SubVideo_List = new List<InterviewerVM>();
             }
             return View(interviewerVM);
-
         }
 
         [Authorize]
