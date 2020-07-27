@@ -99,5 +99,17 @@ namespace Risebird.Business
             }
         }
 
+        public Task<DashboardInterviewerCount> GetInterviewerCount()
+        {
+            try
+            {
+                return _dashboardRespository.GetInterviewerCount();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

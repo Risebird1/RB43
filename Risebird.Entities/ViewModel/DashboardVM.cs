@@ -11,5 +11,8 @@ namespace Risebird.Entities.ViewModel
         public IEnumerable<DailyInterviewSlot> DailyInterviewSlots { get; set; }
         public string MeetingsData { get; set; }
         public string MeetingsDataLabels { get; set; }
+        public int TotalCompletedMeetings { get; set; }
+        public DashboardInterviewerCount InterviewerCountObj { get; set; }
+
     }
 }

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using static System.Data.CommandType;
 
@@ -152,5 +153,23 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<DashboardInterviewerCount> GetInterviewerCount()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<DashboardInterviewerCount>(con, "usp_GetInterviewerCount",
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

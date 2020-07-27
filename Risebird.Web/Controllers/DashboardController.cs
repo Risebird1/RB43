@@ -109,6 +109,12 @@ namespace Risebird.Web.Controllers
                     model = GetDateWiseInterviews(DateTime.Now);
                     //daily interview tracking slots
                     model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
+                    model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
+
+                    //interview status graph
+                    model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
+
+                    //interviewer count
                     return View(model);
                 }
                 else
@@ -165,5 +171,37 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        public IActionResult GetDateWiseInterviewStatus(DateTime date)
+        {
+            try
+            {
+                var model = new DashboardVM();
+                model.Meetings = _dashboardService.GetDateWiseMeetings(date).Result;
+                model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
+                return PartialView("InterviewStatusPartial", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public IActionResult GetDateWiseMeetingsSlots(DateTime date)
+        {
+            try
+            {
+                var model = new DashboardVM();
+                model.DailyInterviewSlots = _dashboardService.GetDateWiseMeetingsSlots(date).Result;
+                return PartialView("InterviewSlotsPartial", model); 
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }
