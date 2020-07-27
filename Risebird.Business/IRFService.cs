@@ -110,9 +110,11 @@ namespace Risebird.Business
                 string Name = string.Empty;
                 foreach (var item in interviewers)
                 {
-                    if (item.UserId == id)
+                    if (item == null)
+                        continue;
+                    if (item?.UserId == id)
                     {
-                        Name = item.PrimarySkill;
+                        Name = item?.PrimarySkill;
                         break;
                     }
 

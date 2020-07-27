@@ -17,7 +17,7 @@ CREATE PROCEDURE [dbo].[usp_GetIAllDateWiseInterviewMeetings]
 AS        
 Begin        
         
-select distinct Meetings.*,  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber from (select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,      
+select  Meetings.*,  ca.ResumeLink as resumeLink, ca.Phone as MobileNumber from (select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail,      
 im.ClientHrContact, im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice,       
 im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.candidateName, im.currentEmployerName,       
 im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,      
