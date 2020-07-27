@@ -914,6 +914,9 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     width: 230px;
     margin-bottom: 10px;
 }
+.videosidelist:first-child {
+    padding-top: 35px;
+}
 
 .video-card-list {
     background: transparent none repeat scroll 0 0;
