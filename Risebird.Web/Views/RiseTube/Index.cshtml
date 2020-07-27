@@ -263,7 +263,7 @@
 
                                                         </div>
                                                     }
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
                                                                 Candidate Location
@@ -319,9 +319,10 @@
                                                             </div>
                                                         }
                                                     </div>
-                                                    @if (ViewBag.ProfileName != "CuratedUser")
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        @if (ViewBag.ProfileName != "CuratedUser")
+                                                        {
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
                                                                     Joining Status
@@ -340,11 +341,11 @@
                                                             </div>
 
 
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        }
+                                                        else
+                                                        {
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested">
                                                                     Interested
@@ -363,9 +364,7 @@
                                                             </div>
 
 
-                                                        </div>
-                                                    }
-                                                    <div class="col-md-6 col-sm-6">
+                                                        }
                                                         <div class="form-group">
 
 
@@ -385,7 +384,6 @@
 
 
                                                         </div>
-
                                                     </div>
                                                 </div>
 
@@ -433,7 +431,21 @@
                                                 <div class="video-card-body">
                                                     <div class="video-title">
                                                         <a onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;">@item.candidateName </a>
-                                                        <span class="designation">(@item.JDTiltle.Split("|")[0])</span>
+                                                       
+
+
+
+                                                        @if (@item.JDTiltle.Length > 10)
+                                                        {
+                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">(@item.JDTiltle.Split("|")[0])</span></a>}
+
+                                                        else
+                                                        {
+                                                            <span>@item.JDTiltle</span>}
+
+
+
+
                                                     </div>
 
                                                     <div class="video-page text-success">
@@ -441,11 +453,46 @@
 
                                                     </div>
                                                     <div class="video-view">
-                                                        &nbsp;<i  class="fas fa-calendar-alt"></i> <span>@item.interviewDate</span>
-</div>
-</div>
-</div>
-</div>
+                                                        &nbsp;<i class="fas fa-calendar-alt"></i>
+                                                        <span>@item.interviewDate</span> 
+                                                        <span class="divider-g">
+                                                            @if (item.InterviewStatus == 4)
+                                                            {
+                                                                <span style="color:palevioletred">Border Line</span>
+                                                            }
+
+                                                            else if (item.InterviewStatus == 2)
+                                                            {
+                                                                <span style="color:green">Selected</span>
+
+                                                            }
+                                                        </span>
+
+                                                    </div>
+
+
+                                             
+                                                    <div class="video-info">
+                                                        <span> Joining Time: </span>
+                                                        @if (item.joiningTime.Length > 10)
+                                                        {<a href="#" data-tooltip="@item.joiningTime"> <span class="join-time"> @item.joiningTime</span></a>}
+                                                    else
+                                                    {
+                                                        <span id="join_time"> @item.joiningTime</span>}
+                                                    </div>
+
+                                                    <div class="video-info">
+                                                        <span>Expected Salary:</span> @if (@item.expectedPerHourRate.Length > 10)
+                                                        {
+                                                            <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="join-time">@item.expectedPerHourRate</span></a>}
+
+                                                        else
+                                                        {
+                                                            <span>@item.expectedPerHourRate</span>}
+                                                    </div>
+                                                </div>
+                                                </div>
+                                        </div>
 }
 
 
@@ -499,7 +546,27 @@
 <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
 <!-- Custom scripts for all pages-->
 <script src="~/RiseTube/js/custom.js"></script>
+<script>
+    $(document).ready(function () {
 
+        $(".join-time").each(function () {
+            if ($(this).text().length > 10) {
+                $(this).text($(this).text().substr(0, 10) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+
+
+
+
+    });
+</script>
 
 <script type="text/javascript">
 

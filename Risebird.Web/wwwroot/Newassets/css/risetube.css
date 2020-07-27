@@ -367,6 +367,9 @@
         float: right;
     }
 
+
+
+
 .tooltip1 {
     position: relative;
     display: inline-block;
@@ -472,12 +475,13 @@
 
     .show [class^="tooltip"]:after {
         opacity: 0;
+        border: 0 !important;
         visibility: hidden;
         position: absolute;
         content: attr(data-tooltip);
         padding: 6px 10px;
-        top: 1.4em;
-        left: 50%;
+        top: 1em;
+        left: 10%;
         -webkit-transform: translateX(-110%) translateY(0px);
         transform: translateX(-110%) translateY(0px);
         background: grey;
@@ -502,7 +506,7 @@
 
 
 .show .tooltip--left:after {
-    top: 5px;
+    top: 0px;
     left: 0%;
     -webkit-transform: translateX(-103%) translateY(0px);
     transform: translateX(-103%) translateY(0);
@@ -514,29 +518,29 @@
 }
 
 .show .tooltip--right:after {
-    top: 5px;
-    left: 100%;
+    top: 0px;
+    left: 10%;
     -webkit-transform: translateX(45%) translateY(0);
     transform: translateX(45%) translateY(0);
 }
 
 .show .tooltip--right:first-child:after {
-    top: 5px;
-    left: 100%;
+    top:0px;
+    left: 0%;
     -webkit-transform: translateX(51%) translateY(0) !important;
     transform: translateX(51%) translateY(0) !important;
 }
 
 .show .tooltip--right:last-child:after {
-    top: 5px;
-    left: 100%;
+    top: 0px;
+    left: 0%;
     -webkit-transform: translateX(50%) translateY(0) !important;
     transform: translateX(50%) translateY(0) !important;
 }
 
 .show .tooltip--right:nth-child(3):after {
-    top: 5px;
-    left: 100%;
+    top: 0px;
+    left: 10%;
     -webkit-transform: translateX(45%) translateY(0) !important;
     transform: translateX(45%) translateY(0) !important;
 }
@@ -555,7 +559,7 @@
     position: absolute;
     -webkit-transform: translateX(-50%) translateY(-2px);
     transform: translateX(-50%) translateY(-2px);
-    top: 1.1em;
+    top: 1em;
     left: 50%;
     -webkit-transition: opacity 0.2s cubic-bezier(0.64, 0.09, 0.08, 1), -webkit-transform 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
     transition: opacity 0.2s cubic-bezier(0.64, 0.09, 0.08, 1), -webkit-transform 0.2s cubic-bezier(0.64, 0.09, 0.08, 1);
@@ -774,7 +778,10 @@ textarea::-webkit-scrollbar-thumb {
     background: black;
     width: 100%
 }
-
+.video-page {
+    font-size: 12px;
+    font-weight: 600;
+}
 .video-view .fa {
     font-size: 14px;
     color: #888888;
@@ -783,7 +790,13 @@ textarea::-webkit-scrollbar-thumb {
 .video-view span {
     color: #606060;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 12.5px;
+}
+
+.video-info span {
+    color: #606060;
+    font-weight: 600;
+    font-size: 11.5px;
 }
 
 .comment-area .talk-bubble {
@@ -817,6 +830,7 @@ textarea::-webkit-scrollbar-thumb {
 .side-player {
     margin-left: auto !important;
     margin-top: 10px;
+    padding-right:0px;
 }
 
 .video-contop {
@@ -1107,7 +1121,7 @@ textarea::-webkit-scrollbar-thumb {
 
 .video-block .video-title {
     margin-bottom: 5px;
-    min-height: 40px;
+    min-height: 20px;
 }
 
 
@@ -1577,6 +1591,15 @@ textarea::-webkit-scrollbar-thumb {
     width: 28px;
     padding-left: 4px;
 }
+/*.join-time {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 150px;
+    overflow: hidden;
+    display: inline-block;
+    line-height: 10px;
+}*/
+
     @media screen and (max-width: 991px) {
         .interviewer-comment .talk-bubble {
         margin: 0px 10px 10px 10px;

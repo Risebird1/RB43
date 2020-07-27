@@ -33,7 +33,13 @@ textarea::-webkit-scrollbar-thumb {
 .designation {
     color: #606060;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 13px;
+  
+}
+.divider-g {
+    padding-left: 8px;
+    border-left: 1px #868383cc solid;
+    margin-left: 8px;
 }
 .l-hr {
     margin: 5px 0px;

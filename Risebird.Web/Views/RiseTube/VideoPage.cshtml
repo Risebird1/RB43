@@ -163,7 +163,7 @@
                                                 @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                             }
                                         }
-                                   
+
                                     </div>
                                 </div>
                             </div>
@@ -467,7 +467,7 @@
                                                         <div id="style-2" class="single-video-right">
                                                             <div>
                                                                 <div>
-                                                                    <div class="col-md-12">
+                                                                    <div>
 
                                                                         @foreach (var videolist in Model.SubVideo_List)
                                                                         {
@@ -495,9 +495,52 @@
                                                                                     *@
                                                                                 </div>
                                                                                 <div class="video-card-body">
-                                                                                    <div class="video-title"> <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a> <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span> </div>
+                                                                                    <div class="video-title">
+                                                                                        <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
+
+                                                                                        @if (@videolist.JDTiltle.Length > 10)
+                                                                                        {
+                                                                                            <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
+
+                                                                                        else
+                                                                                        {
+                                                                                    <span>@videolist.JDTiltle</span>}
+
+                                                                                    </div>
                                                                                     <div class="video-page text-success">
                                                                                         &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
+                                                                                        <span class="divider-g">
+                                                                                            @if (videolist.InterviewStatus == 4)
+                                                                                            {
+                                                                                                <span style="color:palevioletred">Border Line</span>
+                                                                                            }
+
+                                                                                            else if (videolist.InterviewStatus == 2)
+                                                                                            {
+                                                                                                <span style="color:green">Selected</span>
+
+                                                                                            }
+                                                                                        </span>
+
+                                                                                    </div>
+
+
+                                                                                    <div class="video-info">
+                                                                                        <span> Joining Time: </span> @if (videolist.joiningTime.Length > 10)
+                                                                                        {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                                    else
+                                                                                    {
+                                                                                        <span id="join_time"> @videolist.joiningTime</span>}
+                                                                                    </div>
+
+                                                                                    <div class="video-info">
+                                                                                        <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                                        {
+                                                                                            <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+
+                                                                                        else
+                                                                                        {
+                                                                                            <span>@videolist.expectedPerHourRate</span>}
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -757,12 +800,14 @@
 
 
                                                                                 <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
-                                                                                    <div class="talktext">
+                                                                                    <a href="#" data-tooltip="@Model.InterviewerComment">
+                                                                                        <div class="talktext">
 
 
-                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;width:100%", @readonly = "readonly" })
+                                                                                            @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;width:100%", @readonly = "readonly" })
 
-                                                                                    </div>
+                                                                                        </div>
+                                                                                    </a>
                                                                                 </div>
 
 
@@ -1638,8 +1683,9 @@
 <!-- Custom scripts for all pages-->
 <script src="~/RiseTube/js/custom.js"></script>
 
-<script>
 
+
+<script>
 
     jQuery(document).ready(function ($) {
 
@@ -2209,6 +2255,32 @@
 
 
 </script>
+<style>
+ [role="tooltip"]{
+        visibility: hidden;
+      }
+    </style>
+<script>
+    $(document).ready(function () {
+
+        $(".join-time").each(function () {
+            if ($(this).text().length > 10) {
+                $(this).text($(this).text().substr(0, 10) + "...")
+               
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+
+
+
+
+    });
+</script>
 <script>
 
 
@@ -2505,8 +2577,9 @@
     {
         <script src="~/Newassets/js/enjoyhint.min.js"></script>
         <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
 
+
+        <script>
 
             var enjoyhint_instance = new EnjoyHint({});
 

@@ -698,6 +698,115 @@ modal-content .modal-body {
     border-color: #53a5f5;
 }
 
+
+
+
+
+.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip] {
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    left: 0%;
+}
+
+    /* Hide the tooltip content by default */
+    .talk-bubble [data-tooltip]:before,
+    .talk-bubble [data-tooltip]:after, .video-info [data-tooltip]:before,
+    .video-info [data-tooltip]:after, .video-title [data-tooltip]:before,
+    .video-title [data-tooltip]:after {
+        visibility: hidden;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Position tooltip above the element */
+.talk-bubble [data-tooltip]:before {
+    position: absolute;
+    bottom: 150%;
+    left: 10%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    font-weight: 300;
+    padding: 7px;
+    width: 300px;
+    font-size: 13px;
+    height: auto;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+    content: attr(data-tooltip);
+    text-align: center;
+    /* font-size: 14px; */
+    line-height: 1.3;
+    white-space: normal;
+    border-radius: 15px;
+}
+
+    .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        margin-bottom: 5px;
+        margin-left: -80px;
+        font-weight: 300;
+        padding: 7px;
+        min-width: 180px;
+        font-size: 13px;
+        height: auto;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+        content: attr(data-tooltip);
+        text-align: center;
+        /* font-size: 14px; */
+        line-height: 1.3;
+        white-space: normal;
+    }
+
+
+    /* Triangle hack to make tooltip look like a speech bubble */
+    .talk-bubble [data-tooltip]:after {
+        position: absolute;
+        bottom: 150%;
+        left: 50%;
+        margin-left: -5px;
+        width: 0;
+        content: " ";
+        font-size: 0;
+        line-height: 0;
+    }
+
+
+    .video-info [data-tooltip]:after, .video-title [data-tooltip]:after {
+        position: absolute;
+        bottom: 95%;
+        left: 10%;
+        margin-left: -5px;
+        width: 0;
+        content: " ";
+        font-size: 0;
+        line-height: 0;
+    }
+
+
+
+    /* Show tooltip content on hover */
+    .talk-bubble [data-tooltip]:hover:before,
+    .talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after {
+        visibility: visible;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+        opacity: 1;
+    }
+
+
+
+
+
 @media screen and (max-width:991px) {
     #ProctoringTable .label-type {
         white-space: normal;
