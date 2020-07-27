@@ -366,7 +366,7 @@
 
 
                                                 <div class="choose-file">
-                                                    <label class="file-lable"> Upload Thumbnail Image File</label>
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Upload Thumbnail Image File</label>
 
                                                     @*<div class="form-group">*@
                                                     @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -395,7 +395,7 @@
 
                                             <div class="mdc-card-wrapper__text-section">
                                                 <div class="choose-file ">
-                                                    <label class="file-lable"> Upload Video File</label>
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label"> Upload Video File</label>
 
 
 
@@ -691,13 +691,16 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Bias free Decision Making</label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.DecisionMaking, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.DecisionMaking, "No")No
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Bias free Decision Making</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
 
+                                                                    @Html.RadioButtonFor(m => m.DecisionMaking, "Yes") <span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.DecisionMaking, "No")<span class="radio-field">No</span>
+
+                                                                </div>
+                                                             </div>
                                                             </div>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -706,11 +709,12 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Articulation/ Communication</label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.Articulation, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.Articulation, "No")No
-
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Articulation/ Communication</label>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.Articulation, "Yes") <span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.Articulation, "No")<span class="radio-field">No</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -724,13 +728,15 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Readiness for Online Interviews </label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "No")No
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Readiness for Online Interviews </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.ReadinessOnlineInterviews, "No")<span class="radio-field">No</span>
+                                                                </div>
+                                                            </div>
                                                             </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
@@ -738,14 +744,16 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Interpersonal - Teamwork</label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.Teamwork, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.Teamwork, "No")No
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Interpersonal - Teamwork</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.Teamwork, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.Teamwork, "No")<span class="radio-field">No</span>
 
+                                                                </div>
+                                                            </div>
                                                             </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -756,14 +764,16 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Relationship Management</label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.RelationshipManagement, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.RelationshipManagement, "No")No
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Relationship Management</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.RelationshipManagement, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.RelationshipManagement, "No")<span class="radio-field">No</span>
 
+                                                                </div>
+                                                            </div>
                                                             </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
@@ -771,14 +781,16 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Conflict Resolution</label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.ConflictResolution, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.ConflictResolution, "No")No
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Conflict Resolution</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.ConflictResolution, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.ConflictResolution, "No")<span class="radio-field">No</span>
 
+                                                                </div>
+                                                            </div>
                                                             </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -789,14 +801,16 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Adaptability</label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.Adaptability, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.Adaptability, "No")No
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Adaptability</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.Adaptability, "Yes")<span class="radio-field">Yes</span>
+                                                                    @Html.RadioButtonFor(m => m.Adaptability, "No")<span class="radio-field">No</span>
 
+                                                                </div>
+                                                            </div>
                                                             </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
@@ -804,14 +818,15 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Mode of Interviews</label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.ModeInterviews, "Telephonic")Telephonic
-                                                                @Html.RadioButtonFor(m => m.ModeInterviews, "Video")Video
-
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Mode of Interviews</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.ModeInterviews, "Telephonic")<span class="radio-field">Telephonic</span>
+    @Html.RadioButtonFor(m => m.ModeInterviews, "Video")<span class="radio-field">Video</span>
+</div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -822,15 +837,17 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Ability to Work Under Pressure</label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.WorkUnderPressure, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.WorkUnderPressure, "No")No
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Ability to Work Under Pressure</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.WorkUnderPressure, "Yes")<span class="radio-field">
+    Yes</span>
+    @Html.RadioButtonFor(m => m.WorkUnderPressure, "No")<span class="radio-field">No</span>
 
-
+</div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6">
@@ -838,42 +855,50 @@
 
                                                     <div class="mdc-card-wrapper__text-section">
                                                         <div class="choose-file ">
-                                                            <label class="file-lable"> Time Management</label>
-                                                            <div class="form-group">
-                                                                @Html.RadioButtonFor(m => m.TimeManagement, "Yes")Yes
-                                                                @Html.RadioButtonFor(m => m.TimeManagement, "No")No
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label"> Time Management</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.TimeManagement, "Yes")<span class="radio-field">
+    Yes</span>
+    @Html.RadioButtonFor(m => m.TimeManagement, "No")<span class="radio-field">No</span>
+</div>
                                                             </div>
                                                         </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-12 col-sm-12">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Interviewscompleted, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.Interviewscompleted, new { @class = "form-control text-box single-line" })
+                                                    </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-12 col-sm-12">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.ReadymadeAssessment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.ReadymadeAssessment, new { @class = "form-control text-box single-line" })
+                                                    </div>
+                                                </div>
+                                                </div>
 
-                                        </div>
+                                            </div>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Interviewscompleted, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.Interviewscompleted, new { @class = "form-control text-box single-line" })
+                                                <div class="col-md-12 col-sm-12">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.Creativity, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.Creativity, new { @class = "form-control text-box single-line" })
 
+                                                    </div>
+                                                </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.ReadymadeAssessment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.ReadymadeAssessment, new { @class = "form-control text-box single-line" })
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    @Html.LabelFor(model => model.Creativity, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                    @Html.TextBoxFor(m => m.Creativity, new { @class = "form-control text-box single-line" })
-
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -919,11 +944,13 @@
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="mdc-card-wrapper__text-section">
                                                     <div class="choose-file ">
-                                                        <label class="file-lable"> CompanyType</label>
-                                                        <div class="form-group">
-                                                            @Html.RadioButtonFor(m => m.CompanyType, "Product")Product
-                                                            @Html.RadioButtonFor(m => m.CompanyType, "Service")Service
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label"> CompanyType</label>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                @Html.RadioButtonFor(m => m.CompanyType, "Product")<span class="radio-field">Product</span>
+                                                                @Html.RadioButtonFor(m => m.CompanyType, "Service")<span class="radio-field">Service</span>
 
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

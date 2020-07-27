@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -22,7 +21,7 @@ namespace Risebird.Entities.ViewModel
 
         [Required(ErrorMessage = "Please Enter Nick Name")]
         [Display(Name = "Nick Name")]
-        [Remote("IsNickNameExists", "Interviewer",AdditionalFields = "UserId", ErrorMessage = "Nick Name already in use")]
+        [Remote("IsNickNameExists", "Interviewer", AdditionalFields = "UserId", ErrorMessage = "Nick Name already in use")]
         public string NickName { get; set; }
 
         [Display(Name = "Email ID")]
@@ -51,7 +50,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Current City")]
         public string City { get; set; }
         [Display(Name = "Mobile Number")]
-        [Required(ErrorMessage ="Please enter Mobile Number")]
+        [Required(ErrorMessage = "Please enter Mobile Number")]
         public string MobileNumber { get; set; }
 
         [Display(Name = "Altername Mobile Number")]
@@ -128,7 +127,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList DegreeList { get; set; }
         public SelectList NatureOfProjectList { get; set; }
 
-        
+
         public SelectList CollegeTypeList { get; set; }
         public SelectList DayTimeSlotList { get; set; }
         public SelectList DaySlotList { get; set; }

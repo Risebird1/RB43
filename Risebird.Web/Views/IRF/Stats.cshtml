@@ -51,7 +51,7 @@
                                     <div class="card-body">
                                         <div id="myFunnelChart" style="height: 300px; width: 100%;"></div>
 
-                                        @*<canvas id="myFunnelChart" style="display: block;height: 350px;width: 100%;"></canvas>*@
+                                       
                                     </div>
 
                                 </div>
@@ -496,48 +496,7 @@
                 series.labels.template.text = "{category}: [bold]{value}[/]";
 
             });
-            //var chart = new CanvasJS.Chart("myFunnelChart", {
-            //    animationEnabled: true,
-            //    title: {
-            //        text: ""
-            //    },
-            //    data: [{
-            //        type: "funnel",
-            //        reversed: true,
-            //        indexLabel: "{label} - {y}",
-            //        indexLabelFontSize: 14,
-            //        indexLabelFontColor: "grey",
-            //        toolTipContent: "<b>{label}</b>: {y} <b>({percentage}%)</b>",
-            //        neckWidth: 20,
-            //        neckHeight: 0,
-            //        valueRepresents: "area",
-            //        dataPoints: [
-            //            { y: chData.totalCandidates, label: "Total Candidates" },
-            //            { y: chData.totalInvites, label: "Total Invites" },
-            //            { y: chData.totalConfirmations, label: "Total Confirmations" },
-            //            { y: chData.totalCompleted, label: "Completed" },
-            //            { y: chData.totalRisebirdSelection, label: "Total Risebird Selections" },
-            //            { y: chData.totalApproved, label: "Total Approved" },
-            //            { y: chData.totalFinalSelections, label: "Final Selections" },
-            //            { y: chData.totalOffered, label: "Total Offers released" },
-            //            { y: chData.totalJoined, label: "Total Joined" }
-            //        ]
-            //    }]
-            //});
-            //calculatePercentage();
-            //chart.render();
-
-            //function calculatePercentage() {
-            //    var dataPoint = chart.options.data[0].dataPoints;
-            //    var total = dataPoint[0].y;
-            //    for (var i = 0; i < dataPoint.length; i++) {
-            //        if (i == 0) {
-            //            chart.options.data[0].dataPoints[i].percentage = 100;
-            //        } else {
-            //            chart.options.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
-            //        }
-            //    }
-            //}
+            
         }
     });
 

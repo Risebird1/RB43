@@ -80,16 +80,9 @@
                                                         <td class="text-center action-area">
 
                                                             <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="far fa  fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                            @*<button class="mdc-fab app-fab--absolute"  aria-label="Add">
-                                        <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                    </button>*@
-
-
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                            </button>
-
+                                                            
 
 
 
@@ -122,15 +115,10 @@
 
                                                                 <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                
 
-                                                                @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                            <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                        </button>*@
-
-
-                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                                </button>
+                                                             
 
 
                                                             </td>
@@ -270,10 +258,6 @@
 
 
 </script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
 
 
@@ -298,10 +282,7 @@
                     {
                         //if Yes do this
                         window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
-                        //location.reload(true);
-
-                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+           
                     }
                 )
 
@@ -317,9 +298,7 @@
                     function ()
                     {
                         window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
-                        //location.reload(true);
-                        //document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
-                        //document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                      
                     }
                 )
             }

@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -33,7 +31,7 @@ namespace Risebird.Entities.ViewModel
         public string Description { get; set; }
         public string DropDescription { get; set; }
         public string EnrollmentMessage { get; set; }
-        public string VoiceItUserId { get; set; }       
+        public string VoiceItUserId { get; set; }
         public bool IsEnrolled { get; set; }
         public SelectList PhraseList { get; set; }
         public SelectList EnrollmentList { get; set; }

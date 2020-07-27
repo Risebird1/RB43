@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -58,7 +57,7 @@ namespace Risebird.Entities.ViewModel
         public string JDLink { get; set; }
 
         [DisplayName("Company Details")]
-         public string CompanyDetails { get; set; }
+        public string CompanyDetails { get; set; }
 
         [DisplayName("No of Positions")]
         [Required]

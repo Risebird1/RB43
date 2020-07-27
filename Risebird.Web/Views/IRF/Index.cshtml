@@ -91,12 +91,14 @@
                                             }
 
                                         }
+                                        @if (Model.Profile == "Admin")
+                                        {
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                <span data-toggle="tooltip" data-placement="top" title="Curated Groups" onclick="location.href='@Url.Action("CuratedGroups", "IRF")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill=" rgb(255, 255, 255)" d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><font style="font-family:arial;"> Curated Groups</font></span>
+                                            </button>
+                                        }
 
-                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                            <span data-toggle="tooltip" data-placement="top" title="Curated Groups" onclick="location.href='@Url.Action("CuratedGroups", "IRF")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill=" rgb(255, 255, 255)" d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><font style="font-family:arial;"> Curated Groups</font></span>
-                                        </button>
-
-                                    </div>
+                                        </div>
                                 </div>
                             </div>
 
@@ -544,7 +546,7 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="stDate">
                                                         Start Date
                                                     </label>
-                                                    <div>
+                                                    <div class="col-md-12 col-sm-12">
                                                         <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
                                                         <label class="text-danger" id="stDate_Error" style="color:red"></label>
 
@@ -556,7 +558,7 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="EndDateInvoice">
                                                         End Date
                                                     </label>
-                                                    <div>
+                                                    <div class="col-md-12 col-sm-12">
                                                         <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
                                                         <label class="text-danger" id="endDate_Error" style="color:red"></label>
                                                     </div>
@@ -569,7 +571,7 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="srNumber">
                                                         SR Number
                                                     </label>
-                                                    <div>
+                                                    <div class="col-md-12 col-sm-12">
                                                         <input id="srNumberId" name="srNumberId" type="text" class="form-control">
                                                         <label class="text-danger" id="srNumber_Error" style="color:red"></label>
 
@@ -581,7 +583,7 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="poNumber">
                                                         PO Number
                                                     </label>
-                                                    <div>
+                                                    <div class="col-md-12 col-sm-12">
                                                         <input id="poNumberId" name="poNumberId" type="text" class="form-control">
                                                         <label class="text-danger" id="poNumber_Error" style="color:red"></label>
                                                     </div>
@@ -594,7 +596,7 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="requestNumber">
                                                         Request Number
                                                     </label>
-                                                    <div>
+                                                    <div class="col-md-12 col-sm-12">
                                                         <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
                                                         <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
                                                     </div>
@@ -605,7 +607,7 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="projectCode">
                                                         Project Code
                                                     </label>
-                                                    <div>
+                                                    <div class="col-md-12 col-sm-12">
                                                         <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
                                                         <label class="text-danger" id="projectCode_Error" style="color:red"></label>
                                                     </div>
@@ -618,7 +620,7 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="clientAddress">
                                                         Client Address
                                                     </label>
-                                                    <div>
+                                                    <div class="col-md-12 col-sm-12">
                                                         <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
                                                         <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
                                                     </div>
@@ -629,20 +631,20 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="discount">
                                                         Discount
                                                     </label>
-                                                    <div>
+                                                    <div class="col-md-12 col-sm-12">
                                                         <input id="discountId" name="discountId" type="text" class="form-control">
                                                         <label class="text-danger" id="discount_Error" style="color:red"></label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row border-bottom">
+                                        <div class="row">
                                             <div class="col-md-6 col-sm-6 border-rv">
                                                 <div class="form-group">
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="currencyCode">
                                                         Currency Code
                                                     </label>
-                                                    <div>
+                                                    <div class="col-md-12 col-sm-12">
                                                         <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
                                                         <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
 
@@ -687,9 +689,8 @@
                                         <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
 
 
-
-                                        <div style="margin: 10px 10px 0px 10px;
-    float: right;">
+                                        <hr/>
+                                        <div class="col-md-12 mc-button-area">
                                             <input style="box-shadow:none!important" type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Generate Invoice">
                                         </div>
                                     </div>
@@ -707,13 +708,6 @@
         </div>
     </div>
 </div>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-
-
 
 @if (Model.Message != null)
 {

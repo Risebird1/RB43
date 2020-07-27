@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 namespace Risebird.Entities.Data
 {
-   public class GeneralSkillMatrix
+    public class GeneralSkillMatrix
     {
         public int id { get; set; }
 

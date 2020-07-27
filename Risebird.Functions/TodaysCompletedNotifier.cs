@@ -1,3 +1,9 @@
+using Dapper;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -7,19 +13,13 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Risebird.Functions
 {
     public static class TodaysCompletedNotifier
     {
         [FunctionName("TodaysCompletedNotifier")]
-        public static void Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -63,7 +63,7 @@ namespace Risebird.Functions
                             }
                             foreach (var item in meetings.Where(x => x.IRFintId == irf))
                             {
-                                candidates.Add(item.candidateName + "|" + item.candidateEmail + "|" + item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt") + "|"+(item.MeetingStatus==4 ? "Completed":"No Show" ));
+                                candidates.Add(item.candidateName + "|" + item.candidateEmail + "|" + item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt") + "|" + (item.MeetingStatus == 4 ? "Completed" : "No Show"));
                             }
                             if (candidates == null || candidates.Count() == 0)
                             {
@@ -100,7 +100,7 @@ namespace Risebird.Functions
                 {
                     mailMessage.Bcc.Add(new MailAddress(hrEmail, null));
                 }
-                
+
                 DataTable dt = new DataTable();
                 dt.Columns.AddRange(new DataColumn[4] { new DataColumn("Name", typeof(string)),
                     new DataColumn("Email", typeof(string)),
@@ -137,7 +137,7 @@ namespace Risebird.Functions
 
                 //Table end.
                 sb.Append("</table>");
-                
+
                 object[] parameters = new object[] { irfName, client, primarySkill, sb };
                 mailMessage.Subject = "Completed Intervew Status for Date " + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy");
                 string rawEmail = GetBlobData("mailtemplate", "TodayCompletedNotification.html");

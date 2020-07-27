@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Business.Interface
+﻿namespace Risebird.Business.Interface
 {
     public interface IMenuService
     {

@@ -4,140 +4,7 @@
     ViewData["Title"] = "Sample Questions";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #013855;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 45px;
-    }
 
-
-
-    textarea::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: var(--mdc-theme-primary, #018786) !important;
-    }
-
-    textarea::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .mdc-card .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .glyphicon {
-        top: -1px;
-        right: -2px;
-        vertical-align: middle;
-        line-height: 0;
-    }
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-
-    .navbar .navbar-wrapper .navbar-brand {
-        margin-right: 0.5rem;
-    }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        font-size: 13px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-
-        .trash-btn {
-            background: #d20505 !important;
-        }
-        #btnPlus {
-            top: -3px;
-        }
-    </style>
 
 
 <div class="main-panel" id="main-panel">
@@ -211,20 +78,7 @@
                                                         <td class="text-center action-area">
 
                                                             <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-
-
-                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>*@
-
-
-
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                            </button>
-
-
-
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -255,15 +109,9 @@
                                                             <td class="text-center">
                                                                 <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                                @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                    <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>*@
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-
-
-                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                                </button>
+                                                               
 
 
                                                             </td>

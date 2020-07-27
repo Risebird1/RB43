@@ -1,3 +1,9 @@
+using Dapper;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -6,12 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Twilio.Clients;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
@@ -21,7 +21,7 @@ namespace Risebird.Functions
     public static class SetUpReminder
     {
         [FunctionName("SetUpReminder")]
-        public static void Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 */12 * * *")] TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -42,14 +42,16 @@ namespace Risebird.Functions
                 {
                     foreach (var item in receiverDetails)
                     {
-                        
+
                         SendMail(item.candidateEmail, item.InteviewerEmailId, item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt"));
 
-                        var phoneNumbers = new List<string>();
-                        phoneNumbers.Add(item.CandidatePhone);
-                        phoneNumbers.Add(item.InteviewerPhone);
+                        var phoneNumbers = new List<string>
+                        {
+                            item.CandidatePhone,
+                            item.InteviewerPhone
+                        };
 
-                        var msg = "You have received this communication as a reminder to set up your system prior to your meeting scheduled at " + item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt") +" to avoid any last minute hassles.";
+                        var msg = "You have received this communication as a reminder to set up your system prior to your meeting scheduled at " + item.interviewDate.ToString("dd MMMM yyyy hh:mm:ss tt") + " to avoid any last minute hassles.";
                         if (phoneNumbers != null && phoneNumbers.Count() > 0)
                         {
                             //send an sms to all the interviewers with the message
@@ -74,7 +76,7 @@ namespace Risebird.Functions
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 log.Error($"Failed to send email. Please check all filled and try again.");
             }
@@ -102,7 +104,7 @@ namespace Risebird.Functions
 
                 smtpClient.Send(mailMessage);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return;
 

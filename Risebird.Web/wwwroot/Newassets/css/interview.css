@@ -120,12 +120,11 @@ input.switch:empty ~ label:after {
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
-    background-color: var(--mdc-theme-primary, #018786) !important;
+    
 }
 
 textarea::-webkit-scrollbar-thumb {
-    background-color: #56a9ff;
-    border: 1px solid #56a9ff;
+
     margin: 2px;
     border-radius: 2px;
 }
@@ -1358,6 +1357,12 @@ top:3px;
     position: relative;
     top: 10px;color:#fff;
 }
+.reportbtn-icon {
+    position: relative;
+    top: 11px;
+    color: #fff;
+    font-size: 20px;
+}
 .text-areadiv1 {
     height: auto;
     padding: 0px ;
@@ -1366,7 +1371,7 @@ top:3px;
     .text-areadiv1 textarea {
         border: 0;
         min-height:80px;
-        background: #f5f5f5;
+       
         padding: 5px 10px 5px 10px;
         border-bottom: 1px rgba(0, 0, 0, 0.29) solid
     }
@@ -1375,8 +1380,15 @@ top:3px;
     }
 .text-danger {
     color: #E04B4A !important;
-    position: absolute;
-    top: -6px;
+    font-weight:normal;
+    font-size:12px;
+
+}
+
+.interviewerprofile .text-danger {
+    color: #E04B4A !important;
+    position: relative;
+    top: 0px;
 }
 #irfForm .text-danger {
     top: 0px;

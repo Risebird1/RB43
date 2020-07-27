@@ -1,24 +1,23 @@
 ﻿using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using Risebird.Entities.ViewModel;
 using System.Linq;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
-using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
     public class ClientService : IClientService
     {
-        private IClientRepository _clientRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IClientRepository _clientRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        public ClientService(IClientRepository clientRepository)
+        public ClientService(IClientRepository clientRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _clientRepository = clientRepository;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         public List<Client> GetClients()
@@ -27,7 +26,7 @@ namespace Risebird.Business
             {
                 return _clientRepository.GetClients().ToList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -37,10 +36,10 @@ namespace Risebird.Business
         {
             try
             {
-                return _clientRepository.AddClient(client).Result;                
+                return _clientRepository.AddClient(client).Result;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
@@ -59,7 +58,7 @@ namespace Risebird.Business
                     return client.Result;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
@@ -102,10 +101,10 @@ namespace Risebird.Business
                 if (clientRoles != null)
                     return clientRoles.Result.ToList();
                 else
-                    return null;                
+                    return null;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;

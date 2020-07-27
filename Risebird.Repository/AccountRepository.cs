@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -18,7 +17,7 @@ namespace Risebird.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public AccountRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -83,12 +82,12 @@ namespace Risebird.Repository
                     string sqlInsertReport = "INSERT INTO Account (Name,ClientId, EndClient, Location, AccountOwnerId, IsDeleted, CreatedOn ) Values (@Name,@ClientId,@EndClient, @Location,@AccountOwnerId, @IsDeleted, @CreatedOn);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
-                        Name = accountDetails.Name,
-                        ClientId = accountDetails.ClientId,
-                        EndClient = accountDetails.EndClient,
-                        Location = accountDetails.Location,
-                        AccountOwnerId = accountDetails.AccountOwnerId,
-                        CreatedOn = accountDetails.CreatedOn,
+                        accountDetails.Name,
+                        accountDetails.ClientId,
+                        accountDetails.EndClient,
+                        accountDetails.Location,
+                        accountDetails.AccountOwnerId,
+                        accountDetails.CreatedOn,
                         IsDeleted = false
 
                     });
@@ -104,8 +103,8 @@ namespace Risebird.Repository
                             var result1 = con.ExecuteAsync(sqlTechReport, new
                             {
                                 AccountId = accountId,
-                                ProjectId = item.ProjectId,
-                                IsAdded = item.IsAdded
+                                item.ProjectId,
+                                item.IsAdded
 
                             }).Result;
                         }
@@ -191,7 +190,7 @@ namespace Risebird.Repository
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateAccount", parameters,
                        commandType: CommandType.StoredProcedure);
-                    
+
                     if (accountDetails.AccountProjectMappings != null)
                     {
                         foreach (var item in accountDetails.AccountProjectMappings)
@@ -200,12 +199,12 @@ namespace Risebird.Repository
                             var affectedRows = con.ExecuteAsync(sqlQuery, new
                             {
                                 AccountId = accountDetails.id,
-                                ProjectId = item.ProjectId,
-                                IsAdded = item.IsAdded
+                                item.ProjectId,
+                                item.IsAdded
                             }).Result;
                         }
                     }
-                    
+
                     return true;
                 }
 

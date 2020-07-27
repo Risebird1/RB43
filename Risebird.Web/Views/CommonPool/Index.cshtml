@@ -120,12 +120,19 @@
                             <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
-                                        <div class="modal-header br-bm">
-                                            <h5 class="modal-title btn3 w-color" id="filterModalLabel"> Filter</h5>
-                                            <button type="button" class="close " data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                                     
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                         </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+
                                         <form action="@Url.Action("Index","commonpool")" method="post" id="form">
 
                                             <div class="modal-body">
@@ -374,22 +381,12 @@
                                                                     </button>
 
 
-                                                                    <!--<button type="button" id="ResetFilter" style="float:right;margin-top: 39px;" class="buttons button-2 button-2b">Reset Filter</button>-->
-
-
 
                                                                     <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
                                                                         Apply Filter
                                                                     </button>
 
 
-
-
-
-
-
-
-                                                                    <!--  <button type="submit" style="margin-top: 40px; float:right" class="buttons button-2 button-2b">Apply Filter</button>-->
                                                                 </div>
 
                                                             </div>
@@ -452,7 +449,7 @@
                                                 <div class="video-card-body">
                                                     <div class="video-title">
                                                         <a onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid})'" style=" cursor: pointer;">@item.candidateName </a>
-                                                        <span style="  color: #606060; font-weight: 500;font-size: 14px;">(@item.JDTiltle.Split("|")[0])</span>
+                                                        <span class="designation" title="(@item.JDTiltle.Split("|")[0])">(@item.JDTiltle.Split("|")[0])</span>
                                                     </div>
 
                                                     <div class="video-page text-success">
@@ -461,6 +458,30 @@
                                                     </div>
                                                     <div class="video-view">
                                                         &nbsp;<i class="fas fa-calendar-alt"></i> <span>@item.interviewDate</span>
+                                                    </div>
+
+
+
+                                                    <div class="video-view">
+                                                        @if (item.InterviewStatus == 4)
+                                                        {
+                                                            <span> Interview Staus:</span> <span style="color:palevioletred">Border Line</span>
+                                                        }                                                        
+                                                        else if (item.InterviewStatus == 2)
+                                                        {
+                                                            <span> Interview Staus:</span> <span style="color:green">Selected</span>
+
+                                                        }
+                                                        
+                                                    </div>
+
+                                                    <div class="video-view">
+                                                        <span> Joining Time: </span> <span> @item.joiningTime</span>
+                                                    </div>
+
+
+                                                    <div class="video-view">
+                                                        <span>Expected Salary:</span> <span>@item.expectedPerHourRate</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -502,16 +523,11 @@
 <!-- Owl Carousel -->
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="~/Newassets/css/risetube.css" rel="stylesheet" />
 
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
-@*<script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>*@
+
 <!-- Core plugin JavaScript-->
 <script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
 <!-- Owl Carousel -->

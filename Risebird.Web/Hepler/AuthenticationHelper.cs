@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Azure.ActiveDirectory.GraphClient;
+﻿using Microsoft.Azure.ActiveDirectory.GraphClient;
+using System;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Hepler

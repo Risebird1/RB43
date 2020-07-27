@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Risebird.Entities.Data;
-using Risebird.Entities.ViewModel;
 
 namespace Risebird.Business.Interface
 {

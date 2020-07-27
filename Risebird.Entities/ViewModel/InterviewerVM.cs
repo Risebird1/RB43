@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -37,7 +35,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter a link.")]
         public string ResumeLink { get; set; }
 
-        [Required(ErrorMessage = "Please mention available slots")]
+        //[Required(ErrorMessage = "Please mention available slots")]
         [Display(Name = "Available Slots")]
         public string Slots { get; set; }
 
@@ -65,6 +63,6 @@ namespace Risebird.Entities.ViewModel
         public string GitHubLink { get; set; }
         public string LinkedinLink { get; set; }
         public string StackOverflowLink { get; set; }
-       
+
     }
 }

@@ -38,7 +38,7 @@ namespace Risebird.Business.Interface
         List<Meeting> GetQCOpenInterviews(string emailId);
         string QCAssignYourself(int meetingid, string interviewerMail);
         bool QCUnassignYourself(int meetingid, string email);
-        List<Meeting> GetCandidateInterviews(string emailID,string status);
+        List<Meeting> GetCandidateInterviews(string emailID, string status);
         bool CancelInterview(int meetingid, string interviewDate, string candidateEmail);
         List<string> GetClientHRContactList(string emailId, List<MeetingVM> meetingList);
         List<string> GetEndClientList(string emailId, List<MeetingVM> meetingList);
@@ -47,22 +47,22 @@ namespace Risebird.Business.Interface
         string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId, string type);
 
         MeetingVM GetMeetingbyid(int id, string Email);
-        List<MeetingVM> GetRiseTubeMeetings(int clientId, string profile, string Emailid);
-        MeetingVM VedioLike(string value, string vedioid,string email);
-        string AddTotalViewCount(int id,string emailaddress);
+        Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid);
+        MeetingVM VedioLike(string value, string vedioid, string email);
+        Task AddTotalViewCount(int id, string emailaddress);
         //Task<string> VedioLikeAsync(string value, string vedioid, string email);
         string VedioShare(string value, string vedioid);
-        string VedioShared(string value, string vedioid,string Userid);
+        string VedioShared(string value, string vedioid, string Userid);
         string VedioComment(string value, string vedioid, string email);
         List<VedioComments> GetvedioComments(int id);
         EmailDetails GetvedioShortList(string vedioid, string email);
-        string CandidateSuitable(int id,string email,string Comment);
+        string CandidateSuitable(int id, string email, string Comment);
         VedioComments Intrestreaction(string vedioid, string Status);
         string ShortListreaction(string vedioid, string Status);
         List<Meeting> ShortListedClient(string emailid, string IRFID);
         List<Meeting> InterestListClient(string emailid, string IRFID);
         string Fetchusername(string emailid);
-        List<VideoCountdetail> GetTotalViewCount(int id);
+        Task<IEnumerable<VideoCountdetail>> GetTotalViewCount(int id);
 
         List<MeetingVM> IRFMultipleCandidateInvites(string IRFId);
         Task<bool> DeleteInterview(int imid);
@@ -73,7 +73,7 @@ namespace Risebird.Business.Interface
         IEnumerable<Meeting> GetHRAssignedInterviews(string emailID);
         bool HRUnassignYourself(int meetingid);
         bool SaveHRComment(int id, string comment);
-        List<MeetingVM> GetCPMeetings(int clientId, string profile, string Emailid);
+        Task<List<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid);
         IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId);
     }
 }

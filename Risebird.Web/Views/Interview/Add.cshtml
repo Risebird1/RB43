@@ -64,7 +64,7 @@
                                         @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.interviewDate, new { htmlAttributes = new { @class = "form-control", @Value = Model.interviewDate.ToString("dd/MM/yyyy") } })
                                         @*@Html.ValidationMessageFor(model => model.interviewDate, "", new { @class = "text-danger" })*@
-                                        <label class="text-danger" id="error_interviewDate" style="color:red;font-size:14px; position:absolute;"></label>
+                                        <label class="text-danger" id="error_interviewDate" style="color:red;"></label>
 
                                     </div>
                                     <div class="form-group">
@@ -107,7 +107,7 @@
                                         @Html.LabelFor(model => model.ClientHrContact, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownListFor(model => model.ClientHrContact, Model.ClientHrContactList, new { @class = "select-css form-control" })
 
-                                        @*@Html.EditorFor(model => model.ClientHrContact, new { htmlAttributes = new { @class = "form-control" } })*@
+                                        
                                         @Html.ValidationMessageFor(model => model.ClientHrContact, "", new { @class = "text-danger" })
                                     </div>
 
@@ -147,15 +147,7 @@
                                                 <div class="mdc-radio__ripple"></div>
                                             </div>
                                         </div>
-
-
-                                        <!--<input id="Resume" name="Resume" value="Upload" type="radio" onclick="RadioChanged(this.value)">-->
                                         Add a link
-
-
-
-
-
 
                                         <div class="mdc-touch-target-wrapper" style="top: 4px;
     position: relative;">
@@ -169,11 +161,7 @@
                                             </div>
                                         </div>
 
-
-
-
-
-                                        <!-- <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
+                                      
                                     </div>
 
                                     <div style="display:none" id="linkDiv">
@@ -205,7 +193,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.staffingAgency, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownListFor(model => model.staffingAgency, Model.StaffingAgencyList, new { @class = "select-css form-control" })
-                                        @*@Html.EditorFor(model => model.staffingAgency, new { htmlAttributes = new { @class = "form-control" } })*@
+                                      
                                         @Html.ValidationMessageFor(model => model.staffingAgency, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -234,9 +222,7 @@
 
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <!-- <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Add Interview">Submit</button>-->
-
-
+                                     
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Add Interview">
                                             Submit
                                         </button>
@@ -255,14 +241,7 @@
 
 </div>
 
-<style>
-    .fa-spinner {
-        font-size: 18px;
-        position: relative;
-        top: 6px;
-        left: 4px;
-    }
-</style>
+
 <script>
     $(document).ready(function () {
         var inputs = document.getElementsByTagName("input");

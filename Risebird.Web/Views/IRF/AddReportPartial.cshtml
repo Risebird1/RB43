@@ -87,7 +87,7 @@
 
 
 
-                                <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-success" style="width:145px; margin-bottom:16px;background: #18ce0f!important;">
+                                <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded report-btn">
                                     <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
                                 </button>
 
@@ -321,8 +321,6 @@
                                                         </div>
                                                     </div>
 
-
-                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
                                                     @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                                 </div>
                                                 <div class="form-group">
@@ -390,7 +388,6 @@
 
                                                             </td>
                                                             <td>
-                                                                @*<input class="form-control text-box single-line" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.FirstOrDefault().Text">*@
 
                                                                 @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control" })
 
@@ -423,9 +420,7 @@
                                                         {
                                                             <tr>
                                                                 <td>
-                                                                    @*<input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">*@
-
-
+                                                                  
                                                                     @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
@@ -435,8 +430,7 @@
                                                                     @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                 </td>
                                                                 <td>
-                                                                    @*<input class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.Where(x=> x.Value == Model.QuestionsCollection[i].RatingId.ToString()).FirstOrDefault().Text">*@
-
+                                                                    
                                                                     @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control", @disabled = "disabled" })
 
 
@@ -504,7 +498,6 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @*<input class="form-control" id="@("TechSkillReportCollection_"+i+"__ActualLevelId")" name="TechSkillReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.LevelTech.Where(x=> x.Value == Model.TechSkillReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
                                                                     @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
 
                                                                 </td>
@@ -540,7 +533,6 @@
                                             </div>
 
 
-                                            @*@Html.TextAreaFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line", @style = "width:100%" })*@
                                         </div>
 
 
@@ -988,7 +980,7 @@
                                                         </td>
                                                         <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                            @*<input class="form-control text-box single-line" id="Proctoring_LinkedInPhotoVerification" name="Proctoring.LinkedInPhotoVerification" type="number" min="0" value="0">*@
+                                                           
 
                                                         </td>
 
@@ -1027,6 +1019,21 @@
                         <h5 class="modal-title" style="font-size:20px;">Approved For Next Round</h5>
                         <span class="close" id="approvePopUp">&times;</span>
                     </div>
+
+
+                    <div class="filheader">
+                        <div class="filavatar">
+                            <span class="reportbtn-icon fas fa-thumbs-up"></span>                        
+                        </div>
+                        <h5 class="modal-title pull-left">Approved For Next Round</h5>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" id="approvePopUp" style="cursor:pointer;">&times;</span>
+                    </button>
+
+
+
+
                     <div class="modal-body">
                         <div class="form-group">
 
@@ -1041,9 +1048,7 @@
                             <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
                         </div>
                     </div>
-                    <div class="modal-footer">
 
-                    </div>
                 </div>
 
             </div>
@@ -1054,10 +1059,20 @@
 
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" style="font-size:20px;">Final Selection Status</h5>
-                        <span class="close" id="selectPopUp">&times;</span>
+                 
+                    <div class="filheader">
+                        <div class="filavatar">
+                            <span class="reportbtn-icon fas fa-check"></span>
+                        </div>
+                        <h5 class="modal-title pull-left">Final Selection Status</h5>
                     </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" id="selectPopUp" style="cursor:pointer;">&times;</span>
+                    </button>
+
+                   
+
+
                     <div class="modal-body">
                         <div class="form-group">
 
@@ -1073,9 +1088,7 @@
                         </div>
 
                     </div>
-                    <div class="modal-footer">
-                        @*<h3>Modal Footer</h3>*@
-                    </div>
+
                 </div>
 
             </div>
@@ -2139,26 +2152,6 @@
         document.getElementById("totScore").innerHTML = totalScore;
 
 
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
         am4core.ready(function () {
 
             // Themes begin

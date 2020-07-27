@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
@@ -8,10 +10,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using static System.Data.CommandType;
 using System.Threading.Tasks;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
+using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -1397,7 +1397,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                  
+
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportRecommendation", parametersRecomm,

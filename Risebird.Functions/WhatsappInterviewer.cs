@@ -1,15 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
-using System.Linq;
-using Dapper;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Twilio.Clients;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
-
 namespace Risebird.Functions
 {
     public static class WhatsappInterviewer

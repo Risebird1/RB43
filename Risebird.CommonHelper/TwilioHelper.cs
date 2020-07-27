@@ -1,30 +1,20 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Mail;
-using System.Text;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Clients;
 using Twilio.Exceptions;
 using Twilio.Rest.Api.V2010.Account;
-using Twilio.TwiML;
 using Twilio.Types;
 
 namespace Risebird.CommonHelper
 {
-    public class TwilioHelper :ITwilioHelper
+    public class TwilioHelper : ITwilioHelper
     {
         //private readonly IHostingEnvironment _hostingEnvironment;
-        private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IConfiguration _configuration;
         private readonly string _twilioSMSNumber = string.Empty;
         private readonly string _twilioWhatsappSender = string.Empty;
@@ -43,7 +33,7 @@ namespace Risebird.CommonHelper
             var twilioAuthToken = _configuration["TwilioSettings:AUTH_TOKEN"];
             _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
         }
-        
+
 
         /// <summary>
         /// Send Event SMS Async
@@ -56,7 +46,7 @@ namespace Risebird.CommonHelper
             try
             {
                 // Send an SMS message.              
-                 await MessageResource.CreateAsync(to: new PhoneNumber(userMobileNumber), from: new PhoneNumber(_twilioSMSNumber), body: msg, client: _twilioClient);
+                await MessageResource.CreateAsync(to: new PhoneNumber(userMobileNumber), from: new PhoneNumber(_twilioSMSNumber), body: msg, client: _twilioClient);
 
             }
             catch (TwilioException ex)
@@ -81,7 +71,7 @@ namespace Risebird.CommonHelper
             try
             {
                 // Send a Whatsapp message.              
-                await MessageResource.CreateAsync(to: new PhoneNumber("whatsapp:"+userMobileNumber), from: new PhoneNumber("whatsapp:"+_twilioWhatsappSender), body: msg, client: _twilioClient);
+                await MessageResource.CreateAsync(to: new PhoneNumber("whatsapp:" + userMobileNumber), from: new PhoneNumber("whatsapp:" + _twilioWhatsappSender), body: msg, client: _twilioClient);
 
             }
             catch (TwilioException ex)
@@ -95,20 +85,20 @@ namespace Risebird.CommonHelper
             }
         }
 
-       /// <summary>
-       /// Make a phone call
-       /// </summary>
-       /// <param name="msg"></param>
-       /// <param name="userMobileNumber"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// Make a phone call
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="userMobileNumber"></param>
+        /// <returns></returns>
         public async Task MakePhoneCall(string userMobileNumber)
         {
             try
             {
-               
+
                 TwilioClient.Init(_configuration["TwilioSettings:ACCOUNT_SID"], _configuration["TwilioSettings:AUTH_TOKEN"]);
                 var to = new PhoneNumber(userMobileNumber);
-                var from = new PhoneNumber(_twilioCallerNumber); 
+                var from = new PhoneNumber(_twilioCallerNumber);
                 var call = await CallResource.CreateAsync(
                     to: to,
                     from: from,

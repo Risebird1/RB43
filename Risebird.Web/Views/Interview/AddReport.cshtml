@@ -59,8 +59,7 @@
 
             <div class="navbar-wrapper" style="width: 100%;
         float: left;
-        display: block;
-">
+        display: block;">
 
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler">
@@ -108,14 +107,9 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @if (Model.IsInterviewer && Model.CandidateName != null)
-                                            {
-                                                @Regex.Replace(@Model.CandidateName, "[a-zA-Z0-9]", "*")
-                                            }
-                                            else
-                                            {
-                                                @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            }
+                                           
+                                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
@@ -255,7 +249,7 @@
                                                     @*@Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })*@
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:16px"></label>
+                                                    <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
                                                 </div>
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -655,9 +649,7 @@
                                                                     <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                     <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                    <!-- <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-          <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-      </button>-->
+                                                                  
 
 
 
@@ -677,7 +669,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        @*<label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>*@
+                                        <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
 
                                     </div><!--end of col-md-12-->
 
@@ -837,7 +829,8 @@
                                     </div><!--end of col-md-12-->
 
                                 </div>
-
+                                @if (!Model.IsInterviewer)
+                                {
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -995,6 +988,7 @@
                                     </div><!--end of col-md-12-->
 
                                 </div>
+                                }
 
                                 @if (Model.IsBiometricEnabled)
                                 {
@@ -1544,26 +1538,7 @@
         //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = average;
 
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
+      
         am4core.ready(function () {
 
             // Themes begin
@@ -1857,19 +1832,19 @@
 
     function CheckQuestionsTiming() {
      var interviewStatusElem = document.getElementById("InterviewStatus");
-        if (interviewStatusElem.value == 2||interviewStatusElem.value == 3|| interviewStatusElem.value == 4)
+        if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4)
         {
         var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
         var oldVal = $("#QuestionsCollection_0__Timing").val();
         for (i = 0; i < questionItems.length; i++) {
             var temp = $("#QuestionsCollection_" + i + "__Timing").val();
             if (temp == null || temp == '') {
-                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60)."
+                document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60) and it should be in ascending order."
                 return false;
             }
             if (i > 0) {
                 if (parseInt(temp) < parseInt(oldVal)) {
-                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60).";
+                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60) and it should be in ascending order.";
                     return false;
                 }
                 else
@@ -2098,26 +2073,7 @@
         document.getElementById("totScore").innerHTML = totalScore;
 
 
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
+      
 
         am4core.ready(function () {
 
