@@ -276,7 +276,7 @@ select * {
     color: #47484a;
     border: 1px #77737359 solid;
 }
-#reportId {
+#reportId, #videoId {
     background: #121212;
     color: #8a8181;
 }
@@ -445,6 +445,18 @@ input[type="radio"]:checked {
 
 .text-areadiv1 textarea {
     background: #181818 !important;
+}
+
+[data-tooltip]:before {
+    background: #121212 !important;
+    color: #8a8181 !important;
+
+}
+
+[data-tooltip]:after {
+    border-top: 8px solid hsl(0deg 0% 7%) !important;
+    border-right: 8px solid transparent !important;
+    border-left: 8px solid transparent !important;
 }
 @media screen and (max-width: 768px) {
     .d_active {
