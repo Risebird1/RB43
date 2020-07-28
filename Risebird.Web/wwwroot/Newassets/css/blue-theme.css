@@ -39,11 +39,13 @@ textarea::-webkit-scrollbar {
 
     background-color: var(#acacad, #565656)!important;
 }
+.video-card-image {
+    border: 3px #ccc solid;
+}
 
 textarea::-webkit-scrollbar-thumb {
-    background-color: #acacad!important;
-    border: 1px solid #acacad!important;
-
+    background-color: #acacad !important;
+    border: 1px solid #acacad !important;
 }
 
 

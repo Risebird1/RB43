@@ -271,7 +271,7 @@ select * {
 .text-areadiv textarea {
     background: #181818;
 }
-#resumeId, #zoomlinkId {
+#resumeId, #zoomlinkId, .callatag {
     background: #000000;
     color: #47484a;
     border: 1px #77737359 solid;
