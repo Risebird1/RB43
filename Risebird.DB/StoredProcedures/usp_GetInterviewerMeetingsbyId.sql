@@ -12,10 +12,8 @@ AS
 Begin              
         
 Declare @id int   
-  
-select ic.VideoLink
-from InterviewMeetings im join InterviewerComments ic on ic.InterviewId =im.id               
- 
+select ic.VideoLink  
+from InterviewMeetings im join InterviewComments ic on ic.InterviewId =im.id                 
 where im.id = @interviewId            
              
 End   

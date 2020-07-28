@@ -115,8 +115,14 @@ namespace Risebird.Entities.ViewModel
         public bool IsPaused { get; set; }
         public int? PriorityLevel { get; set; }
         public SelectList PriorityLevelList { get; set; }
-    }
+        public List<InterviewerIds> InterviewerIds { get; set; }
 
+    }
+    public class InterviewerIds
+    {
+        public int index { get; set; }
+        public int Id { get; set; }
+    }
     public class IRF
     {
         public int id { get; set; }
