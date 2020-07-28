@@ -89,7 +89,15 @@
                                         }
                                         else
                                         {
-                                            @Html.ActionLink("Back to List", "InterviewerDetail", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                            @if (Model.VideoLink != null && Model.VideoLink != "")
+                                            {
+                                                @Html.ActionLink("Back to List", "InterviewerDetailById", "IRF", new { Id = Model.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+
+                                            }
+                                            else
+                                            {
+                                                @Html.ActionLink("Back to List", "InterviewerDetail", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                            }
                                         }
                                     </div>
                                 </div>
@@ -136,18 +144,77 @@
 
                                                                 <p>Email Address: @Model.EmailId</p>
                                                                 <p>Primary Skills: @Model.PrimarySkill</p>
-                                                                @if (Model.GitHubLink != null && Model.GitHubLink != "")
-                                                                {
-                                                                    <p>GitHubLink: @Model.GitHubLink</p>
-                                                                }
-                                                                @if (Model.StackOverflowLink != null && Model.StackOverflowLink != "")
-                                                                {
-                                                                    <p>StackOverflowLink: @Model.StackOverflowLink</p>
-                                                                }
-                                                                @if (Model.LinkedinLink != null && Model.LinkedinLink != "")
-                                                                {
-                                                                    <p>LinkedinLink: @Model.LinkedinLink</p>
-                                                                }
+                                                                <p>
+                                                                    Mobile Number:
+                                                                    @if (Model.MobileNumber != null && Model.MobileNumber != "")
+                                                                    {
+                                                                        @Model.MobileNumber
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    GitHubLink:
+                                                                    @if (Model.GitHubLink != null && Model.GitHubLink != "")
+                                                                    {
+                                                                        @Model.GitHubLink
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    StackOverflowLink:
+                                                                    @if (Model.StackOverflowLink != null && Model.StackOverflowLink != "")
+                                                                    {
+                                                                        @Model.StackOverflowLink
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    LinkedinLink:
+                                                                    @if (Model.LinkedinLink != null && Model.LinkedinLink != "")
+                                                                    {
+                                                                        @Model.LinkedinLink
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    Resume Link:
+                                                                    @if (Model.ResumeLink != null && Model.ResumeLink != "")
+                                                                    {
+                                                                        <a class="callatag" target="_blank" title="Download Resume" href=@Model.ResumeLink onclick="callatag()">Resume</a>
+
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    Role:
+                                                                    @if (Model.CurrentRole != null && Model.CurrentRole != "")
+                                                                    {
+                                                                        @Model.CurrentRole
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    Certificate:
+                                                                    @if (Model.Certificate != null && Model.Certificate != "")
+                                                                    {
+                                                                        @Model.Certificate
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    Education:
+                                                                    @if (Model.Education != null && Model.Education != "")
+                                                                    {
+                                                                        @Model.Education
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    Education Completed:
+                                                                    @if (Model.PassingYear != null && Model.PassingYear != "")
+                                                                    {
+                                                                        @Model.PassingYear
+                                                                    }
+                                                                </p>
+                                                                <p>
+                                                                    University:
+                                                                    @if (Model.UniversityName != null && Model.UniversityName != "")
+                                                                    {
+                                                                        @Model.UniversityName
+                                                                    }
+                                                                </p>
                                                             }
                                                         </div>
                                                     </div>
@@ -160,18 +227,35 @@
 
                                                     <p>Email Address: @Model.EmailId</p>
                                                     <p>Primary Skills: @Model.PrimarySkill</p>
-                                                    @if (Model.GitHubLink != null && Model.GitHubLink != "")
-                                                    {
-                                                        <p>GitHubLink: @Model.GitHubLink</p>
-                                                    }
-                                                    @if (Model.StackOverflowLink != null && Model.StackOverflowLink != "")
-                                                    {
-                                                        <p>StackOverflowLink: @Model.StackOverflowLink</p>
-                                                    }
-                                                    @if (Model.LinkedinLink != null && Model.LinkedinLink != "")
-                                                    {
-                                                        <p>LinkedinLink: @Model.LinkedinLink</p>
-                                                    }
+                                                    <p>
+                                                        GitHubLink:
+                                                        @if (Model.GitHubLink != null && Model.GitHubLink != "")
+                                                        {
+                                                            @Model.GitHubLink
+                                                        }
+                                                    </p>
+                                                    <p>
+                                                        StackOverflowLink:
+                                                        @if (Model.StackOverflowLink != null && Model.StackOverflowLink != "")
+                                                        {
+                                                            @Model.StackOverflowLink
+                                                        }
+                                                    </p>
+                                                    <p>
+                                                        LinkedinLink:
+                                                        @if (Model.LinkedinLink != null && Model.LinkedinLink != "")
+                                                        {
+                                                            @Model.LinkedinLink
+                                                        }
+                                                    </p>
+                                                    <p>
+                                                        Resume Link:
+                                                        @if (Model.ResumeLink != null && Model.ResumeLink != "")
+                                                        {
+                                                            <a class="callatag" target="_blank" title="Download Resume" href=@Model.ResumeLink onclick="callatag()">Resume</a>
+
+                                                        }
+                                                    </p>
                                                 }
                                                 else
                                                 {
@@ -204,9 +288,7 @@
                                                                                 </div>
                                                                                 <div class="video-card-body">
                                                                                     <div class="video-title"> @videolist.FirstName<span style="color: #6c757d;font-weight: 500; font-size:13px;"></span> </div>
-                                                                                    <div class="video-page text-success">
-                                                                                        &nbsp;<i class="fas fa-calendar-alt"></i> 
-                                                                                    </div>
+                                                                                    
                                                                                 </div>
                                                                             </div>
                                                                         }

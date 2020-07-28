@@ -850,7 +850,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     transition-duration: 0.4s;
 }
 
-.video-title a {
+.video-title a, .video-title .candidate {
     color: #000;
     font-size: 13px;
     font-weight: 600;
@@ -897,8 +897,8 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 }
 
 .video-card-body {
-    padding: 10px;
-    height: 125px;
+    padding: 8px;
+    height: 100px;
 }
 
 .video-card-list .video-card-image {
@@ -915,6 +915,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     width: 230px;
     margin-bottom: 10px;
 }
+
 .videosidelist:first-child {
     padding-top: 35px;
 }
@@ -927,7 +928,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     width: 100%;
 }
 
-    .video-card-list .video-card-body .video-title a {
+    .video-card-list .video-card-body .video-title a, .video-card-list .video-card-body .video-title .candidate {
         font-size: 13px;
     }
 

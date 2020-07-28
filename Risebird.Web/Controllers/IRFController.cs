@@ -657,7 +657,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Add()
+        public IActionResult Add(string IntrviewerId)
         {
             if (HttpContext.Session.GetString("email") != null)
             {
@@ -694,6 +694,24 @@ namespace Risebird.Web.Controllers
                 var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                    select new { ID = (int)s, Name = s.GetDescription() };
                 model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                if (!String.IsNullOrEmpty(IntrviewerId))
+                {
+                    List<InterviewerIds> _string = new List<InterviewerIds>();
+                    ViewBag.InterviewerFromSearch = IntrviewerId;
+                    var interviewer = IntrviewerId.Split(',');
+                    var resultset = _irfRepository.pickInterviewerSills(IntrviewerId);
+                    for (int i = 0; i < interviewer.Count(); i++)
+                    {
+                        _string.Add(new InterviewerIds { index = i, Id = Convert.ToInt32(interviewer[i]) });
+                    }
+                    model.InterviewerIds = _string;
+                    ViewBag.InterviewerSkills = resultset;
+                }
+                else
+                {
+                    ViewBag.InterviewerFromSearch = "";
+                    ViewBag.InterviewerSkills = "";
+                }
                 return View(model);
             }
             else
