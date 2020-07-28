@@ -449,7 +449,7 @@
                                                 <div class="video-card-body">
                                                     <div class="video-title">
 
-                                                        @if (@item.candidateName.Length > 15)
+                                                        @if (@item.candidateName.Length > 20)
                                                         {
                                                             <a onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid})'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
                                                         }
@@ -457,7 +457,7 @@
                                                         {
                                                             <span class="candidate">@item.candidateName</span>}
 
-                                                        @if (@item.JDTiltle.Length > 10)
+                                                        @if (@item.JDTiltle.Length > 20)
                                                         {
                                                             <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">(@item.JDTiltle.Split("|")[0])</span></a>}
 
