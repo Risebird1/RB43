@@ -970,7 +970,7 @@ table {
 /* Needed */
 .interview .table > tbody > tr > td {
     padding: 0px 5px !important;
-    white-space: initial;
+   
 }
 
 .fa-spinner {
