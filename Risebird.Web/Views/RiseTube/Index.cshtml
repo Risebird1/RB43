@@ -430,7 +430,7 @@
                                                 </div>
                                                 <div class="video-card-body">
                                                     <div class="video-title">
-                                                        @if (@item.candidateName.Length > 15)
+                                                        @if (@item.candidateName.Length > 20)
                                                         {
                                                             <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
                                                         }
@@ -441,7 +441,7 @@
 
 
 
-                                                        @if (@item.JDTiltle.Length > 10)
+                                                        @if (@item.JDTiltle.Length > 20)
                                                         {
                                                             <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">(@item.JDTiltle.Split("|")[0])</span></a>}
 
