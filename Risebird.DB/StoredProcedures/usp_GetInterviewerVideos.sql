@@ -13,9 +13,9 @@ Create procedure usp_GetInterviewerVideos
   @Emailid varchar(100)  
   AS  
   BEGIN  
-  Select top(5)ic.VideoLink,im.id as imid,(ul.FirstName+' '+ul.LastName) as FirstName
-  from [dbo].[InterviewMeetings] im join InterviewerComments ic on im.id=ic.InterviewId 
-  left join Userlist ul on im.candidateEmail=ul.EmailId
+ Select top(5)ic.VideoLink,im.id as imid,ul.FirstName   
+  from [dbo].[InterviewMeetings] im join InterviewComments ic on im.id=ic.InterviewId     
+  left join Userlist ul on im.candidateEmail=ul.EmailId    
   where Interviewer=@Emailid and ic.VideoLink is not null  
   END
   GO

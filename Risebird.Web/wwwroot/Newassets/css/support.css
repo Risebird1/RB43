@@ -198,8 +198,11 @@ table {
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
-
-#resumeId {
+.icon-lst {
+    position: relative !important;
+    top: -3px !important;
+}
+#resumeId, .callatag {
     background: #e2f0ff;
     color: #1d3b5e;
     padding: 5px 10px;

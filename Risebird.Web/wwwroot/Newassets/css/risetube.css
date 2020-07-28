@@ -101,7 +101,7 @@
         }
 
 .private-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>');
+    background-image: url('svg>');
     background-repeat: no-repeat !important;
     background-size: 14% !important;
     background-position: 6% 50% !important;
@@ -130,7 +130,7 @@
 }
 
 .email-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>');
+    background-image: url('svg>');
     background-repeat: no-repeat !important;
     background-size: 14% !important;
     background-position: 6% 50% !important;
@@ -300,6 +300,7 @@
         margin-top: -2px;
         z-index: 1;
     }
+
 
 .video-url {
     padding: 10px;
@@ -525,7 +526,7 @@
 }
 
 .show .tooltip--right:first-child:after {
-    top:0px;
+    top: 0px;
     left: 0%;
     -webkit-transform: translateX(51%) translateY(0) !important;
     transform: translateX(51%) translateY(0) !important;
@@ -642,7 +643,6 @@ textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
     margin: 3px;
-   
     background-color: var(#acacad, #565656);
 }
 
@@ -778,10 +778,12 @@ textarea::-webkit-scrollbar-thumb {
     background: black;
     width: 100%
 }
+
 .video-page {
     font-size: 12px;
     font-weight: 600;
 }
+
 .video-view .fa {
     font-size: 14px;
     color: #888888;
@@ -790,7 +792,7 @@ textarea::-webkit-scrollbar-thumb {
 .video-view span {
     color: #606060;
     font-weight: 600;
-    font-size: 12.5px;
+    font-size: 11.8px;
 }
 
 .video-info span {
@@ -830,7 +832,7 @@ textarea::-webkit-scrollbar-thumb {
 .side-player {
     margin-left: auto !important;
     margin-top: 10px;
-    padding-right:0px;
+    padding-right: 0px;
 }
 
 .video-contop {
@@ -921,6 +923,7 @@ textarea::-webkit-scrollbar-thumb {
 .interviewer-info p {
     margin-bottom: 5px;
 }
+
 .video-block {
     margin-top: 15px;
 }
@@ -1557,6 +1560,7 @@ textarea::-webkit-scrollbar-thumb {
     position: absolute;
     z-index: auto;
 }
+
 .interviewDate {
     color: #606060;
     font-weight: 500;
@@ -1574,7 +1578,10 @@ textarea::-webkit-scrollbar-thumb {
     font-size: 24px;
     padding-right: 30px
 }
-.chat{background:#fff; }
+
+.chat {
+    background: #fff;
+}
 
 .date-calendar {
     color: #606060;
@@ -1582,336 +1589,394 @@ textarea::-webkit-scrollbar-thumb {
     padding-top: -50px;
     font-size: 13px;
 }
+
 .job_title {
     color: #606060;
     font-weight: 500;
     font-size: 16px;
 }
+
 .tweet-icon {
     width: 28px;
     padding-left: 4px;
 }
-/*.join-time {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    width: 150px;
-    overflow: hidden;
-    display: inline-block;
-    line-height: 10px;
-}*/
+
+@media screen and (max-width:1200px) {
+    .video-card-body {
+        height: 110px;
+    }
+
+    .video-title .candidate {
+        font-size: 13px;
+    }
+
+    .video-view span {
+        font-size: 11px;
+    }
+
+    .video-info span {
+        font-size: 11px;
+    }
+    .designation {
+        font-size: 12px;
+    }
+}
+
+    @media screen and (max-width:1024px) {
+        .designation {
+            font-size: 16px;
+        }
+
+        .video-card-body {
+            height: 110px;
+        }
+
+        .video-title .candidate {
+            font-size: 16px;
+        }
+
+        .video-view span {
+            font-size: 14px;
+        }
+
+        .video-info span {
+            font-size: 14px;
+        }
+    }
+
 
     @media screen and (max-width: 991px) {
         .interviewer-comment .talk-bubble {
-        margin: 0px 10px 10px 10px;
-        width: calc(100% - 10px) !important;
-    }
-
-    .single-video-left {
-        -ms-flex: 0 0 100%;
-        flex: 0 0 100%;
-        max-width: 100%;
-        padding: 0px;
-    }
-
-    .single-video-left {
-        border-bottom: 0px #620bee21 solid;
-        margin-bottom: 20px;
-        padding: 0px;
-    }
-
-    .single-video-right {
-        -ms-flex: 0 0 100%;
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-
-    .col-md-8.video-contop .mdc-button--outlined {
-        font-size: 11px
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .tabs {
-        display: none;
-    }
-
-    .tab_drawer_heading {
-        background-color: #ececec;
-        color: #5a5757cc;
-        border-bottom: 1px solid #ccc;
-        margin: 0 0 5px 0;
-        padding: 5px 20px;
-        display: block;
-        font-size: 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    .d_active {
-        background-color: #53a5f5;
-        color: #fff;
-    }
-
-    .video-block {
-        border-bottom: 1px #ccc solid;
-        margin-bottom: 15px;
-    }
-
-    .col-md-8.video-contop {
-        /* width: 68%;
-        padding: 0;*/
-        width: 100%;
-        padding: 0px 15px;
-        margin-top: 0;
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-
-    .mn-section {
-        /*position: absolute;
-        width: calc(100% - 30px);*/
-        position: relative !important;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-    }
-
-
-
-
-
-    .player-main {
-        /* width: 68% !important;
-        text-align: center !important;
-        margin: 0px !important;
-        padding: 0;*/
-        width: 100% !important;
-        text-align: center !important;
-        margin: 0px auto !important;
-        max-width: 100% !important;
-        flex: 0 0 100%;
-    }
-
-    .side-player {
-        margin-left: auto !important;
-        margin-top: 0px;
-        /* width: 33%;*/
-        width: 100%;
-        padding: 0;
-        max-width: 100% !important;
-        flex: 0 0 100%;
-    }
-
-    .col-md-8.video-contop .title.name-video-primary-info-renderer, .col-md-8.video-contop span {
-        font-size: 13.5px !important;
-    }
-
-    .col-md-8.video-contop .mdc-button--outlined {
-        font-size: 12px;
-        height: 27px;
-        padding: 0px 5px;
-        height: 30px;
-        line-height: 16px;
-    }
-
-    .left-chart, .interviewer-comment {
-        max-width: 100% !important;
-        flex: 0 0 100%;
-        padding: 0px 10px 0px 10px;
-    }
-
-    .comment-area .talk-bubble {
-        width: 85%;
-    }
-}
-
-@media screen and (max-width: 767px) {
-
-    .single-video-left .comment-area textarea {
-        width: 87%
-    }
-
-    .share {
-        width: 20%;
-    }
-
-    .shortlist {
-        width: 25%;
-    }
-
-    .k {
-        width: 50%;
-        margin: 0;
-        position: absolute;
-        top: 35px;
-    }
-
-    .views {
-        padding: 10px 10px 0px 10px;
-        width: 30%;
-    }
-
-    .showinter {
-        padding: 5px 0;
-        width: 25%;
-    }
-}
-
-@media screen and (max-width: 640px) {
-    .player-main {
-        width: 100% !important;
-        text-align: center !important;
-        margin: 0px auto !important;
-    }
-
-    .side-player {
-        margin-left: auto !important;
-        margin-top: 10px;
-        width: 100% !important;
-    }
-
-    .mn-section {
-        position: relative !important;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-    }
-
-    .showinter .btn-group {
-        right: 10px;
-    }
-
-    .k {
-        width: 50%;
-        margin: 0;
-        position: absolute;
-        top: 25px;
-        right: 0;
-    }
-
-        .k .fa-thumbs-up {
-            margin-left: 0 !important;
-            padding-right: 0 !important
+            margin: 0px 10px 10px 10px;
+            width: calc(100% - 10px) !important;
         }
 
-    .comment-area .mdc-button--raised {
-        padding: 25px 9px;
+        .single-video-left {
+            -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0px;
+        }
+
+        .single-video-left {
+            border-bottom: 0px #620bee21 solid;
+            margin-bottom: 20px;
+            padding: 0px;
+        }
+
+        .single-video-right {
+            -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .col-md-8.video-contop .mdc-button--outlined {
+            font-size: 11px
+        }
     }
 
+    @media screen and (max-width: 768px) {
+        .tabs {
+            display: none;
+        }
 
-    .views {
-        padding: 0px 10px 0px 10px;
-        right: 4px;
-    }
+        .tab_drawer_heading {
+            background-color: #ececec;
+            color: #5a5757cc;
+            border-bottom: 1px solid #ccc;
+            margin: 0 0 5px 0;
+            padding: 5px 20px;
+            display: block;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
 
-    .comment-area .talk-bubble {
-        width: 86%;
-    }
+        .d_active {
+            background-color: #53a5f5;
+            color: #fff;
+        }
 
-    #wrapper #content-wrapper .container-wrap {
-        padding: 0px !important;
-    }
+        .video-block {
+            border-bottom: 1px #ccc solid;
+            margin-bottom: 15px;
+        }
 
-    .video-contop {
-        margin-top: 0;
-    }
+        .col-md-8.video-contop {
+            /* width: 68%;
+        padding: 0;*/
+            width: 100%;
+            padding: 0px 15px;
+            margin-top: 0;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
 
-    .col-md-8.video-contop {
-        width: 100%;
-        padding: 0px 15px;
-    }
-
-    .video-width {
-        background: black !important;
-        width: 100%;
-        height: auto;
-    }
-
-    .card-text {
-        text-align: center
-    }
-
-    .single-video-left .comment-area textarea {
-        width: 79%
-    }
-
-    .counts-liks {
-        position: relative
-    }
-
-    .showinter {
-        width: 35%;
-        float: left;
-        padding: 0px !important;
-    }
-
-    .shortlist {
-        margin: 0;
-        width: 40%;
-    }
-
-    .share {
-        width: 50%;
-    }
-
-    .views {
-        margin: 5px 0px 0px 0px;
-        width: 60%;
-    }
-
-    .single-video-info-content hr {
-        margin-top: 0;
-    }
-}
-
-@media screen and (max-width: 540px) {
-    .audio-wrap {
-        margin: 0px 0px;
-        clear: both;
-        width: 100%;
-        float: left;
-        text-align: center;
-    }
-
-        .audio-wrap h1 {
-            font-size: 17px;
-            float: left;
-            padding: 20px 4px 10px 4px;
-            margin: 0px;
+        .mn-section {
+            /*position: absolute;
+        width: calc(100% - 30px);*/
+            position: relative !important;
+            margin: 0;
+            padding: 0;
             width: 100%;
         }
 
-        .audio-wrap audio {
-            width: 285px;
-            float: none;
+
+
+
+
+        .player-main {
+            /* width: 68% !important;
+        text-align: center !important;
+        margin: 0px !important;
+        padding: 0;*/
+            width: 100% !important;
+            text-align: center !important;
+            margin: 0px auto !important;
+            max-width: 100% !important;
+            flex: 0 0 100%;
         }
-}
 
-@media screen and (max-width: 480px) {
-    .single-video-left .comment-area textarea {
-        width: 72%;
+        .side-player {
+            margin-left: auto !important;
+            margin-top: 0px;
+            /* width: 33%;*/
+            width: 100%;
+            padding: 0;
+            max-width: 100% !important;
+            flex: 0 0 100%;
+        }
+
+        .col-md-8.video-contop .title.name-video-primary-info-renderer, .col-md-8.video-contop span {
+            font-size: 13.5px !important;
+        }
+
+        .col-md-8.video-contop .mdc-button--outlined {
+            font-size: 12px;
+            height: 27px;
+            padding: 0px 5px;
+            height: 30px;
+            line-height: 16px;
+        }
+
+        .left-chart, .interviewer-comment {
+            max-width: 100% !important;
+            flex: 0 0 100%;
+            padding: 0px 10px 0px 10px;
+        }
+
+        .comment-area .talk-bubble {
+            width: 85%;
+        }
     }
 
-    .comment-area .talk-bubble {
-        width: 83%;
+    @media screen and (max-width: 767px) {
+
+        .single-video-left .comment-area textarea {
+            width: 87%
+        }
+
+        .video-card-body {
+            height: 130px;
+        }
+
+        .share {
+            width: 20%;
+        }
+
+        .shortlist {
+            width: 25%;
+        }
+
+        .k {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: 35px;
+        }
+
+        .views {
+            padding: 10px 10px 0px 10px;
+            width: 30%;
+        }
+
+        .showinter {
+            padding: 5px 0;
+            width: 25%;
+        }
     }
 
-    .col-md-8.video-contop .mdc-button--outlined {
-        font-size: 13px;
-        font-size: 12px;
-        padding: 0px 6px;
-        width: 100%;
-    }
-}
+    @media screen and (max-width: 640px) {
+        .player-main {
+            width: 100% !important;
+            text-align: center !important;
+            margin: 0px auto !important;
+        }
 
-@media screen and (max-width: 375px) {
-    .comment-area .talk-bubble {
-        width: 78%;
+        .side-player {
+            margin-left: auto !important;
+            margin-top: 10px;
+            width: 100% !important;
+        }
+
+        .mn-section {
+            position: relative !important;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        .showinter .btn-group {
+            right: 10px;
+        }
+
+        .k {
+            width: 50%;
+            margin: 0;
+            position: absolute;
+            top: 25px;
+            right: 0;
+        }
+
+            .k .fa-thumbs-up {
+                margin-left: 0 !important;
+                padding-right: 0 !important
+            }
+
+        .comment-area .mdc-button--raised {
+            padding: 25px 9px;
+        }
+
+
+        .views {
+            padding: 0px 10px 0px 10px;
+            right: 4px;
+        }
+
+        .comment-area .talk-bubble {
+            width: 86%;
+        }
+
+        #wrapper #content-wrapper .container-wrap {
+            padding: 0px !important;
+        }
+
+        .video-contop {
+            margin-top: 0;
+        }
+
+        .col-md-8.video-contop {
+            width: 100%;
+            padding: 0px 15px;
+        }
+
+        .video-width {
+            background: black !important;
+            width: 100%;
+            height: auto;
+        }
+
+        .card-text {
+            text-align: center
+        }
+
+        .single-video-left .comment-area textarea {
+            width: 79%
+        }
+
+        .counts-liks {
+            position: relative
+        }
+
+        .showinter {
+            width: 35%;
+            float: left;
+            padding: 0px !important;
+        }
+
+        .shortlist {
+            margin: 0;
+            width: 40%;
+        }
+
+        .share {
+            width: 50%;
+        }
+
+        .views {
+            margin: 5px 0px 0px 0px;
+            width: 60%;
+        }
+
+        .single-video-info-content hr {
+            margin-top: 0;
+        }
     }
-}
+
+    @media screen and (max-width: 540px) {
+        .audio-wrap {
+            margin: 0px 0px;
+            clear: both;
+            width: 100%;
+            float: left;
+            text-align: center;
+        }
+
+            .audio-wrap h1 {
+                font-size: 17px;
+                float: left;
+                padding: 20px 4px 10px 4px;
+                margin: 0px;
+                width: 100%;
+            }
+
+            .audio-wrap audio {
+                width: 285px;
+                float: none;
+            }
+    }
+
+    @media screen and (max-width: 480px) {
+        .single-video-left .comment-area textarea {
+            width: 72%;
+        }
+
+        .comment-area .talk-bubble {
+            width: 83%;
+        }
+
+        .col-md-8.video-contop .mdc-button--outlined {
+            font-size: 13px;
+            font-size: 12px;
+            padding: 0px 6px;
+            width: 100%;
+        }
+    }
+
+    @media screen and (max-width: 375px) {
+        .comment-area .talk-bubble {
+            width: 78%;
+        }
+
+        .designation {
+            font-size: 14px;
+        }
+
+        .video-title .candidate {
+            font-size: 14px;
+        }
+
+        .video-view span {
+            font-size: 13px;
+        }
+
+        .video-info span {
+            font-size: 13px;
+        }
+    }

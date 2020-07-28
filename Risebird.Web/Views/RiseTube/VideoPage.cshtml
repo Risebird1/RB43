@@ -496,7 +496,13 @@
                                                                                 </div>
                                                                                 <div class="video-card-body">
                                                                                     <div class="video-title">
-                                                                                        <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
+                                                                                        @if (@videolist.candidateName.Length > 11)
+                                                                                        {
+                                                                                            <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span class="candidate">@videolist.candidateName</span>}
 
                                                                                         @if (@videolist.JDTiltle.Length > 10)
                                                                                         {
@@ -504,7 +510,7 @@
 
                                                                                         else
                                                                                         {
-                                                                                    <span>@videolist.JDTiltle</span>}
+                                                                                            <span>@videolist.JDTiltle</span>}
 
                                                                                     </div>
                                                                                     <div class="video-page text-success">
@@ -2340,7 +2346,17 @@
     </style>
 <script>
     $(document).ready(function () {
+      $(".candidate-name").each(function () {
+            if ($(this).text().length > 11) {
+                $(this).text($(this).text().substr(0, 11) + "...")
 
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
         $(".join-time").each(function () {
             if ($(this).text().length > 10) {
                 $(this).text($(this).text().substr(0, 10) + "...")

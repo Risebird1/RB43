@@ -15841,10 +15841,10 @@ be a descendant of the grid when it is being dragged.
         display: none;
     }
 
-    button .fa {
+    /*button .fa {
         font-size: 16px;
         margin-left: 10px;
-    }
+    }*/ 
 
     .min .fa {
         font-size: 14px;
