@@ -18,3 +18,4 @@ Create procedure usp_GetInterviewerVideos
   left join Userlist ul on im.candidateEmail=ul.EmailId
   where Interviewer=@Emailid and ic.VideoLink is not null  
   END
+  GO

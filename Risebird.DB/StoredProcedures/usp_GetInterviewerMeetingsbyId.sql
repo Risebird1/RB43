@@ -19,4 +19,5 @@ from InterviewMeetings im join InterviewerComments ic on ic.InterviewId =im.id
 where im.id = @interviewId            
              
 End   
+GO
 

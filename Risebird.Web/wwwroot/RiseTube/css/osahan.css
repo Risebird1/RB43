@@ -852,6 +852,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 
 .video-title a {
     color: #000;
+    font-size: 13px;
     font-weight: 600;
     text-decoration: none;
 }
@@ -866,9 +867,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 }
 
 
-.video-page {
-    font-size: 11px;
-}
+
 
 .video-view {
     color: #acacac;
@@ -899,7 +898,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 
 .video-card-body {
     padding: 10px;
-    height: 135px;
+    height: 125px;
 }
 
 .video-card-list .video-card-image {
@@ -913,8 +912,11 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     padding: 0;
     height: auto;
     float: left;
-    width: 225px;
+    width: 230px;
     margin-bottom: 10px;
+}
+.videosidelist:first-child {
+    padding-top: 35px;
 }
 
 .video-card-list {
