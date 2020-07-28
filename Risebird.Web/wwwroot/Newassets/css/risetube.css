@@ -1600,7 +1600,26 @@ textarea::-webkit-scrollbar-thumb {
     width: 28px;
     padding-left: 4px;
 }
-
+.expected-salari {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 52px;
+    display: inline-block;
+    line-height: 15px;
+    position: relative;
+    top: 4px;
+}
+.expected-timing {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 52px;
+    display: inline-block;
+    line-height: 15px;
+    position: relative;
+    top: 4px;
+}
 @media screen and (max-width:1200px) {
     .video-card-body {
         height: 110px;
@@ -1620,13 +1639,24 @@ textarea::-webkit-scrollbar-thumb {
     .designation {
         font-size: 12px;
     }
+    .expected-salari{width:32%}
+    .expected-timing {
+        width: 35%;
+    }
 }
 
     @media screen and (max-width:1024px) {
         .designation {
             font-size: 16px;
         }
-
+        .expected-salari {
+            white-space: nowrap;
+            /* overflow: hidden; */
+            text-overflow: ellipsis;
+            width: 55%;
+            display: inline-block;
+            line-height: 12px;
+        }
         .video-card-body {
             height: 110px;
         }
@@ -1641,6 +1671,9 @@ textarea::-webkit-scrollbar-thumb {
 
         .video-info span {
             font-size: 14px;
+        }
+        .expected-timing {
+            width: 60%;
         }
     }
 
@@ -1673,7 +1706,12 @@ textarea::-webkit-scrollbar-thumb {
         .col-md-8.video-contop .mdc-button--outlined {
             font-size: 11px
         }
-    }
+        .expected-salari{width:40%}
+
+        .expected-timing {
+            width:50%;
+        }
+        }
 
     @media screen and (max-width: 768px) {
         .tabs {
