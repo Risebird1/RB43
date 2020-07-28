@@ -20,18 +20,12 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerDetails]
   
 AS
 BEGIN
-select c.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from (SELECT  Id as id, NickName, AltEmailID, DOB, Gender, AnnualSalary, Country, City, AltMobileNumber, CurrentRole, 
-Experience, PreferredDomain, GitHubLink, ResumeLink, CodedResumeLink, StackOverflowLink, LinkedinLink, Blog,
-IsLeadInterviewer, IsApproved,
-UserId, PrimarySkill = 
-			STUFF((SELECT ', ' + SkillName
-			FROM (select ipr.*, tis.SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id ) b 
-			WHERE b.Id = a.Id
-			FOR XML PATH('')), 1, 2, '')
-FROM (select ipr.*, tis.SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id) a
-GROUP BY Id, UserId, NickName, AltEmailID, DOB, Gender, AnnualSalary, Country, City, AltMobileNumber, CurrentRole,
-Experience, PreferredDomain, GitHubLink, ResumeLink, CodedResumeLink, StackOverflowLink, LinkedinLink, Blog,
-IsLeadInterviewer, IsApproved) c join UserList ul on ul.id = c.UserId
+select intp.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber,PrimarySkill = 
+			STUFF((SELECT distinct  ', ' + Name
+			FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b
+			WHERE b.InterviewerProfileId = intp.Id
+			FOR XML PATH('')), 1, 1, '')  
+FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId
 
 
 END
