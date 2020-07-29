@@ -2677,7 +2677,7 @@ namespace Risebird.Web.Controllers
                                 meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             }
                         }
-                        
+
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
                         //ViewBag.IsSelected = false;
@@ -2759,7 +2759,7 @@ namespace Risebird.Web.Controllers
                             && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
                             && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
 
-                           
+
                         }
                         ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, meetings);
                         ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, meetings);
@@ -2853,7 +2853,7 @@ namespace Risebird.Web.Controllers
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
                         }
-                  
+
 
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
@@ -2886,7 +2886,7 @@ namespace Risebird.Web.Controllers
                         && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
                         && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
 
-                       
+
                         return View(meetings);
                     }
                     else
@@ -3043,7 +3043,7 @@ namespace Risebird.Web.Controllers
                                 meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             }
                         }
-                       
+
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         foreach (var meeting in meetings)
                         {
@@ -3057,7 +3057,7 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-                        
+
                         foreach (var m in meetings)
                         {
                             if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
@@ -3136,7 +3136,7 @@ namespace Risebird.Web.Controllers
                             && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                             && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
 
-                           
+
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
@@ -3642,8 +3642,8 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("Index", "Home", new { url = "AddReport/Interview/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected });
                 }
                 bool isAdminHR = false;
-                    bool isInterviewer = false;
-               
+                bool isInterviewer = false;
+
                 string profileName = HttpContext.Session.GetString("profileName");
                 if (profileName != null)
                 {
@@ -3652,13 +3652,13 @@ namespace Risebird.Web.Controllers
                     {
                         isAdminHR = true;
                     }
-                    else if ( (profileName == "Interviewer" ||
+                    else if ((profileName == "Interviewer" ||
                                                      profileName == "Quality Controller"))
                     {
                         isInterviewer = true;
                     }
-                  }
-                
+                }
+
 
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
                 if (model == null)
@@ -5782,7 +5782,7 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageUser"] = "Deletion of Interview Failed";
                 if (controllerName == "IRF")
-                    return RedirectToAction("MultipleCandidateInvites", controllerName, new {irfId });
+                    return RedirectToAction("MultipleCandidateInvites", controllerName, new { irfId });
                 else
                     return RedirectToAction("MultipleCandidateInvites", controllerName);
 
