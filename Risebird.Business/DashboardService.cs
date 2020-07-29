@@ -111,5 +111,43 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<IRF>> GetIRFProgress()
+        {
+            try
+            {
+                return await _dashboardRespository.GetIRFProgress();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public IEnumerable<IrfProgress> GetProgressOptions()
+        {
+            try
+            {
+                return _dashboardRespository.GetProgressOptions();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateIRFProgress(IList<IRF> irfProgressList)
+        {
+            try
+            {
+                return await _dashboardRespository.UpdateIRFProgress(irfProgressList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false ;
+            }
+        }
+
     }
 }

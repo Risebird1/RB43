@@ -13,6 +13,8 @@ using System.Linq;
 using System.Dynamic;
 using System.Data;
 using Risebird.Entities.Enum;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
 
 namespace Risebird.Web.Controllers
 {
@@ -110,9 +112,11 @@ namespace Risebird.Web.Controllers
                     //daily interview tracking slots
                     model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
                     model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
-
+                    model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress());
+                    //model.IrfProgressList = (List<IRF>)(await _dashboardService.GetIRFProgress());
                     //interview status graph
                     model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
+                    model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
 
                     //interviewer count
                     return View(model);
@@ -202,6 +206,43 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        //SaveIRFProgress
+        [HttpPost]
+        public async Task<IActionResult> UpdateIRFProgress(IList<IRF> IrfProgressList)
+        {
+            try
+            {
+                await _dashboardService.UpdateIRFProgress(IrfProgressList);
+                return RedirectToAction("Index1");
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> UpdateIRFProgress(string IrfProgressList)
+        //{
+        //    try
+        //    {
+        //        //IrfProgressList=IrfProgressList.Replace("%5B", "[");
+        //        //IrfProgressList=IrfProgressList.Replace("%5D", "]");
+        //        var data = JsonConvert.DeserializeObject<List<IRF>>(IrfProgressList);
+        //        //await _dashboardService.UpdateIRFProgress(JsonConvert.DeserializeObject<IList<IRF>>(IrfProgressList));
+        //        return null;
+        //        //var model = new DashboardVM();
+        //        //model.DailyInterviewSlots = _dashboardService.GetDateWiseMeetingsSlots(date).Result;
+        //        //return PartialView("InterviewSlotsPartial", model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+        //}
 
     }
 }

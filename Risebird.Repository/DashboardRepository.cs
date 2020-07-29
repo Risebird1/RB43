@@ -171,5 +171,96 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<IRF>> GetIRFProgress()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@dateValue", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync<IRF>(con, "[usp_GetIRFProgress]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<IrfProgress> GetProgressOptions()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    return SqlMapper.Query<IrfProgress>(con, "usp_GetProgressOptions", commandType: CommandType.StoredProcedure);
+
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateIRFProgress(IList<IRF> irfProgressList)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    
+                    DataTable progressDt = new DataTable();
+                    progressDt.Columns.Add("id", typeof(int));
+                    progressDt.Columns.Add("Comment", typeof(string));
+                    progressDt.Columns.Add("idProgress", typeof(int));
+                   
+
+                    foreach (var item in irfProgressList)
+                    {
+                        progressDt.Rows.Add(item.id, item.Comment, item.idProgress);
+                    }
+
+                    SqlCommand cmdProgress = new SqlCommand("usp_IRFProgressStatusBulkUpdate", con);
+                    cmdProgress.CommandType = CommandType.StoredProcedure;
+                    cmdProgress.Parameters.Add(new SqlParameter("@ProgressBulkData", SqlDbType.Structured));
+                    cmdProgress.Parameters["@ProgressBulkData"].Value = progressDt;
+                    con.Open();
+                    if (cmdProgress.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

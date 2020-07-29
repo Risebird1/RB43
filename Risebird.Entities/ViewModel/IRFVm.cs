@@ -182,5 +182,9 @@ namespace Risebird.Entities.ViewModel
         public string CompanyDetails { get; set; }
         public bool IsSubscribed { get; set; }
         public int? SubId { get; set; }
+        public string IRFnSkill { get; set; }
+        public string ProgressStatus { get; set; }
+        public int idProgress { get; set; }
+        public string Comment { get; set; }
     }
 }

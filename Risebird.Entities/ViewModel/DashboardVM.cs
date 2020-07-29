@@ -1,4 +1,6 @@
-﻿using Risebird.Entities.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +15,12 @@ namespace Risebird.Entities.ViewModel
         public string MeetingsDataLabels { get; set; }
         public int TotalCompletedMeetings { get; set; }
         public DashboardInterviewerCount InterviewerCountObj { get; set; }
+
+        [BindProperty]
+        //public List<IRF> IrfProgressList { get; set; }
+        //public IEnumerable<IRF> IrfProgressList { get; set; }
+        public IList<IRF> IrfProgressList { get; set; }
+        public SelectList ProgressOptions { get; set; }
 
     }
 }
