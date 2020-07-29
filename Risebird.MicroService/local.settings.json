@@ -8,8 +8,8 @@
     "Scope": "https://graph.microsoft.com/.default",
     "Resource": "https://graph.microsoft.com",
     "TenantId": "1e4b595b-d20a-49dd-83c5-19ca3ccd87d1",
-    "ClientId": "ba04c077-f5e6-4e29-8a3d-b0192c6f96b6",
-    "ClientSecret": "nxk.TgF5_V_eGV7oP-P7o22Fjn9Qa~f52N",
+    "ClientId": "bde4b6c7-33c6-424f-bceb-4089674ed596",
+    "ClientSecret": "ALm9N3_9vv_~OSJGeifw2Te.OxK0-bLR.2",
     "GraphEndpoint": "https://graph.microsoft.com/v1.0/"
   }
 }

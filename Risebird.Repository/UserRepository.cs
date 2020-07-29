@@ -216,7 +216,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("Email", emailID);
-                    var result= await  SqlMapper.QueryAsync<ClientUserVM>(con, "sp_ClientUserDetail", parameters,
+                    var result = await SqlMapper.QueryAsync<ClientUserVM>(con, "sp_ClientUserDetail", parameters,
                          commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -505,6 +505,30 @@ namespace Risebird.Repository
                 {
                     return SqlMapper.Query<InterviewerVM>(con, "[dbo].[usp_GetInterviewerVideos]", parameters,
                         commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public MeetingVM GetMeetingbyid(int id)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@interviewId", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<MeetingVM>(con, "[dbo].[usp_GetInterviewerMeetingsbyId]", parameters,
+                        commandType: StoredProcedure);
+                    return result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)

@@ -22,7 +22,8 @@ AS
 Begin        
         
 SELECT [InterviewMeetings].id as imid        
-     ,[InterviewMeetings].IRFId        
+     ,[InterviewMeetings].IRFId ,
+     InterviewerComments.VideoLink
   ,interviewDate        
   ,interviewSlot        
   ,interviewDuration        

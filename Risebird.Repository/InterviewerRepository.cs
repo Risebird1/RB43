@@ -624,18 +624,18 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<IEnumerable<TransInterviewerSkill>> GetSkills(int ProfileId)
+        public async Task<IEnumerable<TransInterviewerSkill>> GetSkills(int interviewerId)
         {
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@Profileid", ProfileId);
+                parameters.Add("@interviewerId", interviewerId);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //Id, InterviewerProfileId,  SkillId, Level, SkillName
                     return await SqlMapper.QueryAsync<TransInterviewerSkill>(
-                        con, "select * from [dbo].[TransInterviewerSkill] where InterviewerProfileId = @ProfileId",
+                        con, "select trs.*,sk.Name as SkillName from [dbo].[TransInterviewerSkill] trs  join Skill sk on sk.id = trs.SkillId where trs.InterviewerProfileId = @interviewerId",
                         parameters, commandType: Text);
                 }
             }

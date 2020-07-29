@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
 
 @{
-    ViewData["Title"] = "Add Interviewer Profile";
+    ViewData["Title"] = "My Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -95,7 +95,7 @@
                             <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label " })
-                                    @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
+                                    @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line", disabled = "disabled", @readonly = "readonly" } })
                                     @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="form-group">
@@ -312,7 +312,7 @@
                                     <div class="col-md-12 mc-button-area">
                                         <input type="submit" id="btnUpload" value="Submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
                                         @*<button type="submit"  value="Submit">Submit</button>*@
-                                        @Html.ActionLink("Back to List", "Index", "Interviewers", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        @*@Html.ActionLink("Back to List", "Index", "Interviewers", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })*@
                                     </div>
 
                                 </div>
@@ -324,35 +324,7 @@
                 </div>
             </div>
 
-            <footer class="footer">
-                <div class=" container-fluid ">
-                    <nav>
-                        <ul>
-                            <li>
-                                <a href="#">
-                                    Risebird
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    About Us
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    Blog
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <div class="copyright" id="copyright">
-                        &copy;
-                        <script>
-                            document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                        </script> Risebird All Rights Reserved.
-                    </div>
-                </div>
-            </footer>
+           
         </div>
     </div>
 </div>

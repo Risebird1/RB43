@@ -268,6 +268,25 @@ namespace Risebird.Business
             }
 
         }
+        public MeetingVM GetMeetingbyid(int id)
+        {
+            try
+            {
+                var interviewer = _userRepository.GetMeetingbyid(id);
+
+                if (interviewer == null)
+                    return null;
+                else
+                    return interviewer;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
         public bool UpdateInterviewer(InterviewerVM interviewer)
         {
             try

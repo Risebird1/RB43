@@ -108,98 +108,105 @@
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
-                                            <tr id=@item.id>
-                                                <td>@item.FirstName</td>
-                                                <td>@item.LastName</td>
-                                                <td>@item.EmailId</td>
-                                                <td>@item.MobileNumber</td>
-                                                <td>@item.City</td>
-                                                <td>@item.CurrentRole</td>
-                                                <td>@item.Experience</td>
-                                                <td>@item.PreferredDomain</td>
-                                                <td>@item.PrimarySkill</td>
-                                                @if (item.ResumeLink != null && item.ResumeLink != "")
-                                                {
-                                                    <td>
+                                        <tr id=@item.id>
+                                            <td>@item.FirstName</td>
+                                            <td>@item.LastName</td>
+                                            <td>@item.EmailId</td>
+                                            <td>@item.MobileNumber</td>
+                                            <td>@item.City</td>
+                                            <td>@item.CurrentRole</td>
+                                            <td>@item.Experience</td>
+                                            <td>@item.PreferredDomain</td>
+                                            <td>
+                                                <div class="talk-bubble tri-right border-bubble right-in ">
+                                                    <div class="talktext">
+                                                        <a href="#" data-tooltip="@item.PrimarySkill"><textarea>@item.PrimarySkill</textarea></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                           
+                                            @if (item.ResumeLink != null && item.ResumeLink != "")
+                                            {
+                                                <td>
 
-                                                        <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                @if (item.GitHubLink != null && item.GitHubLink != "")
-                                                {
-                                                    <td>
+                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Resume</td>
+                                            }
+                                            @if (item.GitHubLink != null && item.GitHubLink != "")
+                                            {
+                                                <td>
 
-                                                        <a id="githubId" target="_blank" title="Github" href=@item.GitHubLink>Github</a>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Github</td>
-                                                }
-                                                @if (item.CodedResumeLink != null && item.CodedResumeLink != "")
-                                                {
-                                                    <td>
+                                                    <a id="githubId" target="_blank" title="Github" href=@item.GitHubLink>Github</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Github</td>
+                                            }
+                                            @if (item.CodedResumeLink != null && item.CodedResumeLink != "")
+                                            {
+                                                <td>
 
-                                                        <a id="codedResumeId" target="_blank" title="Coded Resume" href=@item.CodedResumeLink>Coded Resume</a>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Coded Resume</td>
-                                                }
-                                                @if (item.LinkedinLink != null && item.LinkedinLink != "")
-                                                {
-                                                    <td>
+                                                    <a id="codedResumeId" target="_blank" title="Coded Resume" href=@item.CodedResumeLink>Coded Resume</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Coded Resume</td>
+                                            }
+                                            @if (item.LinkedinLink != null && item.LinkedinLink != "")
+                                            {
+                                                <td>
 
-                                                        <a id="linkedInId" target="_blank" title="LinkedIn" href=@item.LinkedinLink>LinkedIn</a>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No LinkedIn</td>
-                                                }
-                                                @if (item.StackOverflowLink != null && item.StackOverflowLink != "")
-                                                {
-                                                    <td>
+                                                    <a id="linkedInId" target="_blank" title="LinkedIn" href=@item.LinkedinLink>LinkedIn</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No LinkedIn</td>
+                                            }
+                                            @if (item.StackOverflowLink != null && item.StackOverflowLink != "")
+                                            {
+                                                <td>
 
-                                                        <a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=@item.StackOverflowLink>Stackoverflow</a>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Stackoverflow</td>
-                                                }
-                                                @if (item.Blog != null && item.Blog != "")
-                                                {
-                                                    <td>
+                                                    <a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=@item.StackOverflowLink>Stackoverflow</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Stackoverflow</td>
+                                            }
+                                            @if (item.Blog != null && item.Blog != "")
+                                            {
+                                                <td>
 
-                                                        <a id="blogId" target="_blank" title="Blog" href=@item.Blog>Blog</a>
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Blog</td>
-                                                }
-                                                @if (item.IsApproved == true)
-                                                {
-                                                    <td>Approved</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>Not Approved</td>
-                                                }
-                                                @if (item.IsLeadInterviewer)
-                                                {
-                                                    <td>Yes</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No</td>
-                                                }
+                                                    <a id="blogId" target="_blank" title="Blog" href=@item.Blog>Blog</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Blog</td>
+                                            }
+                                            @if (item.IsApproved == true)
+                                            {
+                                                <td>Approved</td>
+                                            }
+                                            else
+                                            {
+                                                <td>Not Approved</td>
+                                            }
+                                            @if (item.IsLeadInterviewer)
+                                            {
+                                                <td>Yes</td>
+                                            }
+                                            else
+                                            {
+                                                <td>No</td>
+                                            }
                                             <td class="text-right action">
 
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit interviewer Profile">
@@ -207,7 +214,7 @@
                                                 </button>
 
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Click here to Add interviewer Employer Details">
-                                                    <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to Add interviewer Employer Details" class="mdc-fab__icon material-icons">              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 4l9 16 9-16H3zm3.38 2h11.25L12 16 6.38 6z" /></svg></span>
+                                                    <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to Add interviewer Employer Details" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
                                                 </button>
 
 
@@ -218,7 +225,7 @@
 
 
                                             </td>
-                                            </tr>
+                                        </tr>
                                         }
                                     </tbody>
                                 </table>
@@ -235,35 +242,7 @@
         </div>
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+
 </div>
 
 

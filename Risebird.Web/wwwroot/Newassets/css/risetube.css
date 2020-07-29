@@ -101,7 +101,7 @@
         }
 
 .private-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>');
+    background-image: url('svg>');
     background-repeat: no-repeat !important;
     background-size: 14% !important;
     background-position: 6% 50% !important;
@@ -130,7 +130,7 @@
 }
 
 .email-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(83, 165, 245)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>');
+    background-image: url('svg>');
     background-repeat: no-repeat !important;
     background-size: 14% !important;
     background-position: 6% 50% !important;
@@ -300,6 +300,7 @@
         margin-top: -2px;
         z-index: 1;
     }
+
 
 .video-url {
     padding: 10px;
@@ -525,7 +526,7 @@
 }
 
 .show .tooltip--right:first-child:after {
-    top:0px;
+    top: 0px;
     left: 0%;
     -webkit-transform: translateX(51%) translateY(0) !important;
     transform: translateX(51%) translateY(0) !important;
@@ -642,7 +643,6 @@ textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
     margin: 3px;
-   
     background-color: var(#acacad, #565656);
 }
 
@@ -778,10 +778,12 @@ textarea::-webkit-scrollbar-thumb {
     background: black;
     width: 100%
 }
+
 .video-page {
     font-size: 12px;
     font-weight: 600;
 }
+
 .video-view .fa {
     font-size: 14px;
     color: #888888;
@@ -830,7 +832,7 @@ textarea::-webkit-scrollbar-thumb {
 .side-player {
     margin-left: auto !important;
     margin-top: 10px;
-    padding-right:0px;
+    padding-right: 0px;
 }
 
 .video-contop {
@@ -921,6 +923,7 @@ textarea::-webkit-scrollbar-thumb {
 .interviewer-info p {
     margin-bottom: 5px;
 }
+
 .video-block {
     margin-top: 15px;
 }
@@ -1557,6 +1560,7 @@ textarea::-webkit-scrollbar-thumb {
     position: absolute;
     z-index: auto;
 }
+
 .interviewDate {
     color: #606060;
     font-weight: 500;
@@ -1574,7 +1578,10 @@ textarea::-webkit-scrollbar-thumb {
     font-size: 24px;
     padding-right: 30px
 }
-.chat{background:#fff; }
+
+.chat {
+    background: #fff;
+}
 
 .date-calendar {
     color: #606060;
@@ -1582,40 +1589,93 @@ textarea::-webkit-scrollbar-thumb {
     padding-top: -50px;
     font-size: 13px;
 }
+
 .job_title {
     color: #606060;
     font-weight: 500;
     font-size: 16px;
 }
+
 .tweet-icon {
     width: 28px;
     padding-left: 4px;
 }
-@media screen and (max-width: 1200px) {
-    .designation{font-size:12.5px;}
+.expected-salari {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 52px;
+    display: inline-block;
+    line-height: 15px;
+    position: relative;
+    top: 4px;
 }
-@media screen and (max-width: 1024px) {
-    .designation {
-        font-size: 15px!important;
-    }
-
-    .video-title a {
-        font-size: 15px!important;
-    }
-
-    .video-info{float:left; padding-right:5px; }
-        .video-info span {
-            font-size: 14px !important
-        }
-    .video-view span {
-        font-size: 14px !important
-    }
+.expected-timing {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 52px;
+    display: inline-block;
+    line-height: 15px;
+    position: relative;
+    top: 4px;
+}
+@media screen and (max-width:1200px) {
     .video-card-body {
-        padding: 8px;
-        height: 95px;
+        height: 110px;
+    }
+
+    .video-title .candidate {
+        font-size: 13px;
+    }
+
+    .video-view span {
+        font-size: 11px;
+    }
+
+    .video-info span {
+        font-size: 11px;
+    }
+    .designation {
+        font-size: 12px;
+    }
+    .expected-salari{width:32%}
+    .expected-timing {
+        width: 35%;
     }
 }
 
+    @media screen and (max-width:1024px) {
+        .designation {
+            font-size: 16px;
+        }
+        .expected-salari {
+            white-space: nowrap;
+            /* overflow: hidden; */
+            text-overflow: ellipsis;
+            width: 55%;
+            display: inline-block;
+            line-height: 12px;
+        }
+        .video-card-body {
+            height: 110px;
+        }
+
+        .video-title .candidate {
+            font-size: 16px;
+        }
+
+        .video-view span {
+            font-size: 14px;
+        }
+
+        .video-info span {
+            font-size: 14px;
+        }
+        .expected-timing {
+            width: 60%;
+        }
+    }
 
 
     @media screen and (max-width: 991px) {
@@ -1646,7 +1706,12 @@ textarea::-webkit-scrollbar-thumb {
         .col-md-8.video-contop .mdc-button--outlined {
             font-size: 11px
         }
-    }
+        .expected-salari{width:40%}
+
+        .expected-timing {
+            width:50%;
+        }
+        }
 
     @media screen and (max-width: 768px) {
         .tabs {
@@ -1753,6 +1818,10 @@ textarea::-webkit-scrollbar-thumb {
 
         .single-video-left .comment-area textarea {
             width: 87%
+        }
+
+        .video-card-body {
+            height: 130px;
         }
 
         .share {
@@ -1931,5 +2000,21 @@ textarea::-webkit-scrollbar-thumb {
     @media screen and (max-width: 375px) {
         .comment-area .talk-bubble {
             width: 78%;
+        }
+
+        .designation {
+            font-size: 14px;
+        }
+
+        .video-title .candidate {
+            font-size: 14px;
+        }
+
+        .video-view span {
+            font-size: 13px;
+        }
+
+        .video-info span {
+            font-size: 13px;
         }
     }
