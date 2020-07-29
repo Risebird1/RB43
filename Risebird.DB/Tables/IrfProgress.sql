@@ -1,0 +1,18 @@
+/****** Object:  Table [dbo].[IrfProgress]    Script Date: 29-07-2020 10.54.31 PM ******/
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'IrfProgress')
+BEGIN
+
+CREATE TABLE [dbo].[IrfProgress](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](150) NOT NULL,
+ CONSTRAINT [PK_IrfProgress] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+END
+GO
+
+
