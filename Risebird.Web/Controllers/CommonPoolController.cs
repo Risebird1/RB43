@@ -393,7 +393,7 @@ namespace Risebird.Web.Controllers
                         if (profileName == "Client")
                         {
                             var client = await _userRepository.GetClientUserDetails(emailId);
-                            ClientId = client.ClientId;                           
+                            ClientId = client.ClientId;
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -1119,7 +1119,7 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "Risebird: Candidate Name: " + Name + " Interview video is shared with you"
                 };
-               _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
+                _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl);
             }
             return Json("");
         }
@@ -1142,7 +1142,7 @@ namespace Risebird.Web.Controllers
                     CC = email,
                     Subject = "An interview of Candidate: " + Name + " video is shared with you"
                 };
-               _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
+                _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currenturl, comment, resumeLink);
             }
             return Json("");
         }
