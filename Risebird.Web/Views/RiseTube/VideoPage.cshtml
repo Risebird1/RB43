@@ -569,6 +569,7 @@
                                                 @if (Model.JDTiltle != null)
                                                 {
                                                     <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                        <input hidden value="@Model.candidateEmail" id="txtOnlineEmail" />
                                                         @if (ViewBag.VideoStatus != "Public")
                                                         {
                                                             @if (Model.IsOnline == 1)
@@ -626,6 +627,9 @@
                                                                 </i>}
                                                         </div>
                                                     }
+                                                    <div>
+                                                        <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnmeeting" value="Send Invite" />
+                                                    </div>
                                                     @if (Model.VideoLink != null)
                                                     {
                                                         @if (ViewBag.VideoStatus != "Public")
@@ -1701,9 +1705,9 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <div class='input-group date' id='datetimepicker3'>
-                                <input type='text' class="form-control" />
+                                <input type='text' class="form-control" id="txtOnlinestart" />
                                 <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-time"></span>
+                                    <span class="fa fa-time"></span>
                                 </span>
                             </div>
                         </div>
@@ -1712,7 +1716,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <div class='input-group date' id='datetimepicker4'>
-                                <input type='text' class="form-control" />
+                                <input type='text' class="form-control" id="txtOnlineend" />
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-time"></span>
                                 </span>
@@ -1798,14 +1802,12 @@
     $(document).ready(function () {
         $("#datetimepicker3").datetimepicker();
         $("#datetimepicker4").datetimepicker();
-        $("#datetimepicker3").datetimepicker({
-            format: 'LT'
-        });
-        $("#datetimepicker4").datetimepicker({
-            format: 'LT'
-        });
-        console.log("ready!");
-
+        //$("#datetimepicker3").datetimepicker({
+        //    format: 'LT'
+        //});
+        //$("#datetimepicker4").datetimepicker({
+        //    format: 'LT'
+        //});
     });
     jQuery(document).ready(function ($) {
 
@@ -1883,7 +1885,8 @@
         function SubmitMeeting() {
               $.ajax({
                 type: "GET",
-                url: "/Chat/SendMeetingInvite",
+                  url: "/Chat/SendMeetingInvite",
+                  data: {Subject:$("#txtOnlineSubject").val(),emailid:$("#txtOnlineEmail").val(),startdate:$("#txtOnlinestart").val(),enddate:$("#txtOnlineend").val(),Message:$("#txtOnlineBody").val()},
                   success: function (data) {
                       alert(data);
                 }
@@ -2340,13 +2343,13 @@
 
 </script>
 <style>
- [role="tooltip"]{
+    [role="tooltip"] {
         visibility: hidden;
-      }
-    </style>
+    }
+</style>
 <script>
     $(document).ready(function () {
-      $(".candidate-name").each(function () {
+        $(".candidate-name").each(function () {
             if ($(this).text().length > 11) {
                 $(this).text($(this).text().substr(0, 11) + "...")
 
@@ -2360,7 +2363,7 @@
         $(".join-time").each(function () {
             if ($(this).text().length > 10) {
                 $(this).text($(this).text().substr(0, 10) + "...")
-               
+
                 $('[role="data-tooltip"]').css("visibility", "visible");
 
             }
@@ -2415,6 +2418,10 @@
                 }
             });
 
+        });
+        $("#btnmeeting").on('click', function () {
+            var modal = document.getElementById("OnlineMeetingModel");
+            modal.style.display = "block";
         });
         $("#btnShortlist").on('click', function () {
             if ($(this).attr('Shortvalue') == 1) {
@@ -2581,7 +2588,16 @@
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "none";
     }
-
+    function closeOnlineMeetingModel() {
+        var modal = document.getElementById("OnlineMeetingModel");
+        modal.style.display = "none";
+    }
+    function OpenOnlineMeetingModel() {
+        var modal = document.getElementById("OnlineMeetingModel");
+        modal.style.display = "block";
+        $("#datetimepicker3").datetimepicker();
+        $("#datetimepicker4").datetimepicker();
+    }
     function ShareVedioLinkToMail(resume) {
         $.ajax({
             type: "POST",

@@ -51,4 +51,14 @@ namespace Risebird.Entities.ViewModel
         public string onlineMeetingProvider { get; set; }
         public string AccountEmail { get; set; }
     }
+    public class MetingResponse
+    {
+        public string joinUrl { get; set; }
+    }
+    public class OnlineMeetingResponse
+    {
+        public MetingResponse onlineMeeting { get; set; }
+        public int MyProperty { get; set; }
+
+    }
 }

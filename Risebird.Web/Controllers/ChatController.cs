@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using RestSharp;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -14,9 +16,12 @@ namespace Risebird.Web.Controllers
     public class ChatController : Controller
     {
         private IConfiguration _configuration;
-        public ChatController(IConfiguration configuration)
+        private readonly INotificationHelper _notificationHelper;
+
+        public ChatController(IConfiguration configuration, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
+            _notificationHelper = notificationHelper;
         }
         [HttpPost]
         public JsonResult ChatBox()
@@ -370,10 +375,72 @@ namespace Risebird.Web.Controllers
             {
                 return Json("");
             }
-
-
-
         }
+        public JsonResult SendMeetingInvite(string Subject, string emailid, DateTime startdate, DateTime enddate, string Message)
+        {
+            var Emailaddress = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                Emailaddress = HttpContext.Session.GetString("email")?.Trim();
+            }
+            RestClient _client = new RestClient(" http://localhost:7071/api/");
+            RestRequest request = new RestRequest("MSTeamMeeting", Method.POST);
+            OnlineMeeting _meeting = new OnlineMeeting();
+            _meeting.subject = Subject;
+            _meeting.body = new Body();
+            _meeting.body.content = "HTML";
+            _meeting.body.contentType = "Does next month work for you?";
+            _meeting.start = new Start();
+            _meeting.start.dateTime = startdate;
+            _meeting.start.timeZone = "India Standard Time";
+            _meeting.end = new End();
+            _meeting.end.dateTime = enddate;
+            _meeting.end.timeZone = "India Standard Time";
+            _meeting.location = new Location();
+            _meeting.location.displayName = "Tim Tom";
+            _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = emailid, name = "Prem Prakash" }, type = "required" });
+            _meeting.isOnlineMeeting = true;
+            _meeting.onlineMeetingProvider = "teamsForBusiness";
 
+            string connectionString = _configuration["ConnectionString:DBConnectionString"];
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@startdate", startdate);
+                parameters.Add("@enddate", enddate);
+                var result = SqlMapper.Query(con, "usp_checkOnlinemettings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                _meeting.AccountEmail = result.FirstOrDefault().ToString();
+            }
+            request.AddBody(_meeting);
+            var response = _client.Execute<OnlineMeetingResponse>(request);
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@startdate", startdate);
+                parameters.Add("@enddate", enddate);
+                parameters.Add("@Whocreate", Emailaddress);
+                parameters.Add("@Meetingid", _meeting.AccountEmail);
+                parameters.Add("@LinkUrl", response.ToString());
+                var result = SqlMapper.Query(con, "usp_InsertOnlinemeeting", parameters,
+                        commandType: CommandType.StoredProcedure);
+            }
+
+            Mail _mail = new Mail
+            {
+                TO = emailid,
+                CC = Emailaddress,
+                Subject = Subject
+            };
+            var resultset = _notificationHelper.OnlineMeetingInvite(_mail, response.ToString(), Message);
+            if (resultset == "Mail sent Successfully.")
+            {
+                return Json("Invite Successfully Send");
+            }
+            else
+            {
+                return Json("Fail To send invite");
+            }
+        }
     }
 }
