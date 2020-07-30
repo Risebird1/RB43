@@ -47,9 +47,10 @@
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
     amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
 </script>
+<link href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
 
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+<script src="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
 <script>
     function dropDwnToolTips(id) {
 
@@ -590,6 +591,9 @@
                                                         <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                         <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
 
+                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Send Invite" />
+
+
                                                     </h1>
                                                 }
                                                 <div class="row counts-liks">
@@ -627,9 +631,7 @@
                                                                 </i>}
                                                         </div>
                                                     }
-                                                    <div>
-                                                        <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnmeeting" value="Send Invite" />
-                                                    </div>
+
                                                     @if (Model.VideoLink != null)
                                                     {
                                                         @if (ViewBag.VideoStatus != "Public")
@@ -1688,7 +1690,7 @@
 
             <div class="filheader">
                 <div class="filavatar">
-                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                    <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></svg></span>
                 </div>
                 <h5 class="modal-title pull-left">Shchedule Team Meeting</h5>
             </div>
@@ -1697,11 +1699,66 @@
             </button>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-2">Subject  </div>
-                    <div class="col-md-10"><input type="text" class="form-control" id="txtOnlineSubject" /></div>
+
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label">
+                                Subject
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" class="form-control w-full" id="txtOnlineSubject" />
+                            </div>
+                        </div>
+
+                    </div>
+
+
                 </div>
                 <div class="row">
-                    <div class="col-md-2">Start Date</div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label">
+                                Start Date
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <div class='input-group date' id='datetimepicker3'>
+                                    <input type='text' class="form-control" id="txtOnlinestart" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label">
+                                End Date
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <div class='input-group date' id='datetimepicker4'>
+                                    <input type='text' class="form-control" id="txtOnlineend" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+                    <!--   <div class="col-md-2">Start Date</div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <div class='input-group date' id='datetimepicker3'>
@@ -1712,22 +1769,38 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">End Date</div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <div class='input-group date' id='datetimepicker4'>
-                                <input type='text' class="form-control" id="txtOnlineend" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-time"></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                               <div class="col-md-2">End Date</div>
+                               <div class="col-md-4">
+                                   <div class="form-group">
+                                       <div class='input-group date' id='datetimepicker4'>
+                                           <input type='text' class="form-control" id="txtOnlineend" />
+                                           <span class="input-group-addon">
+                                               <span class="glyphicon glyphicon-time"></span>
+                                           </span>
+                                       </div>
+                                   </div>
+                               </div>---->
 
                 </div>
                 <div class="row">
-                    <div class="col-md-2">Message</div>
-                    <div class="col-md-10"><textarea id="txtOnlineBody" class="form-control" rows="3"></textarea></div>
+
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label">
+                                Message
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <textarea id="txtOnlineBody" class="form-control w-full" rows="3" style="height:100px;"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+                    <!---  <div class="col-md-2">Message</div>
+                    <div class="col-md-10"><textarea id="txtOnlineBody" class="form-control" rows="3"></textarea></div>-->
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
@@ -1751,9 +1824,6 @@
 <!-- Owl Carousel -->
 <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
 <!-- Custom scripts for all pages-->
-<script src="~/RiseTube/js/custom.js"></script>
-
-
 
 <script>
 
@@ -2679,6 +2749,13 @@
         $('#special_text').text('Copied');
     }
 </script>
+<script src="~/RiseTube/js/custom.js"></script>
+
+
+
+
+
+
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");

@@ -2675,16 +2675,7 @@ input[type='radio'] {
         border-color: #D5D5D5;
     }
 
-.input-group-addon {
-    border-color: #1b1e24;
-    background-color: #1b1e24;
-    font-size: 13px;
-    padding: 0px 10px;
-    line-height: 28px;
-    color: #FFF;
-    text-align: center;
-    min-width: 36px;
-}
+
 
 .input-group-addon,
 .input-group-btn {
