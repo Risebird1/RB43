@@ -58,12 +58,12 @@
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group" style="margin-bottom:0px;">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                      
+
 
                                         @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
                                         <label class="text-danger" id="uniqueMsg" style="color:red"></label>
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
-                                      
+
 
                                     </div>
                                 </div>
@@ -135,19 +135,19 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                      
+
 
                                         @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
 
-                                  
+
 
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                       
+
                                         @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, new { @class = "select-css form-control text-box single-line" })
 
 
@@ -163,12 +163,12 @@
 
                                     </div>
                                     <div class="form-group">
-                                        
+
                                         @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                              
+
                                         @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
 
                                     </div>
@@ -181,7 +181,7 @@
                                         <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
                                         @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
 
-                                      
+
 
                                     </div>
                                     <div class="form-group">
@@ -192,13 +192,13 @@
                                         <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></label>
                                         @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
 
-                                   
+
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                      
+
 
                                         @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
@@ -206,7 +206,7 @@
                                             <button type="button" class="up button">&rsaquo;</button>
                                             <button type="button" class="down button">&lsaquo;</button>
                                         </div>
-                                       
+
 
                                     </div>
                                     <div class="form-group">
@@ -219,7 +219,7 @@
                                             <button type="button" class="up-1 button">&rsaquo;</button>
                                             <button type="button" class="down-1 button">&lsaquo;</button>
                                         </div>
-                                       
+
 
                                     </div>
                                     <div class="form-group">
@@ -247,7 +247,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                       
+
 
                                         @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "input-2 form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
@@ -255,13 +255,13 @@
                                             <button type="button" class="up-2 button">&rsaquo;</button>
                                             <button type="button" class="down-2 button">&lsaquo;</button>
                                         </div>
-                                      
+
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                       
+
 
                                         @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "input-3 form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @class = "text-danger" })
@@ -269,13 +269,13 @@
                                             <button type="button" class="up-3 button">&rsaquo;</button>
                                             <button type="button" class="down-3 button">&lsaquo;</button>
                                         </div>
-                                      
+
 
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        
+
 
                                         @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { @class = "select-css form-control" })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
@@ -346,6 +346,8 @@
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="table-responsive-sm">
+                                        <input type="text" id="txtinterviewerskills" value="@ViewBag.InterviewerSkills" hidden />
+
                                         <table class="table table-bordered mbn" id="SkillTable">
                                             <thead>
                                                 <tr>
@@ -373,7 +375,7 @@
 
                                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                       
+
 
                                                     </td>
                                                 </tr>
@@ -432,7 +434,7 @@
                                                         <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                        
+
 
                                                     </td>
                                                 </tr>
@@ -486,7 +488,7 @@
 
                                                         <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        
+
 
                                                     </td>
                                                 </tr>
@@ -541,7 +543,7 @@
                                                     <td class="action text-center">
                                                         <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        
+
                                                     </td>
                                                 </tr>
 
@@ -578,7 +580,7 @@
                                                         @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "select-css form-control", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                     </td>
                                                     <td>
-                                                        
+
                                                         @Html.TextBox("ClientCollection[0].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                     </td>
@@ -586,7 +588,7 @@
                                                     <td class="action text-center">
                                                         <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                       
+
 
 
 
@@ -609,6 +611,8 @@
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="table-responsive-sm">
+                                        <input type="text" id="txtinterviewerids" value="@ViewBag.InterviewerFromSearch" hidden />
+
                                         <table class="table table-bordered mbn" id="InterviewerTable">
                                             <thead>
                                                 <tr>
@@ -625,7 +629,7 @@
                                                     </td>
 
                                                     <td>
-                                                      
+
                                                         @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                     </td>
@@ -722,7 +726,7 @@
 
                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                       
+
 
                                                     </td>
                                                 </tr>
@@ -760,7 +764,7 @@
 
                                                         <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                       
+
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -840,12 +844,9 @@
 
                                                         <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        
 
 
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                        </button>
+
 
 
 
@@ -871,7 +872,14 @@
                                 <div class="row">
 
                                     <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        @if (String.IsNullOrEmpty(ViewBag.InterviewerFromSearch))
+                                        {
+                                            @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Back to List", "InterviewerDetail", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        }
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
                                     </div>
                                 </div>
@@ -897,7 +905,7 @@
 <script>
     $(document).ready(function () {
         var inputs = document.getElementsByTagName("input");
-        for (i = 0; i <= inputs.length-1 ; i++) {
+        for (i = 0; i <= inputs.length - 1; i++) {
             inputs[i].addEventListener("input", function () {
                 document.getElementById("btnUpload").disabled = false;
             });
@@ -907,7 +915,7 @@
 </script>
 
 <script>
-    
+
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";
@@ -1055,7 +1063,21 @@
     }
 
     function TechSkillChanged() {
-
+        var interviewerskills = $("#txtinterviewerskills").val();
+        if (interviewerskills != "") {
+            var interviewerskill = interviewerskills.split(',');
+            for (var j = 0; j < interviewerskill.length; j++) {
+                var createid = "SkillCollection_" + j + "__SkillId";
+                var SkillLabel = "SkillCollection_" + j + "__LevelId";
+                var options = createid + " option[value='" + interviewerskill[j] + "']";
+                $("#" + options).attr('selected', 'selected');
+                $("#" + SkillLabel + " option[value='1']").attr('selected', 'selected');
+               
+                if (j < (interviewerskill.length - 1)) {
+                    AddRow();
+                }
+            }
+        }
         //var index = id.charAt(16);
         var techSkills = $('[id^="SkillCollection"][id$="SkillId"]');
         //var arr = [];
@@ -1111,10 +1133,27 @@
                             //Add the Option element to DropDownList.
 
                             $("#" + drpdowns[i].id).append(option);
-
+                            //interviewerids = $("#txtinterviewerids").val();
+                            //if (interviewerids == "") {
+                            //    InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
+                            //}
 
                             //drpdwnId.append(option);
                         });
+                        interviewerids = $("#txtinterviewerids").val();
+                        if (interviewerids != "") {
+
+                            var interviewer = interviewerids.split(',');
+                            for (var j = 0; j < interviewer.length; j++) {
+                                var createid = "InterviewerCollection_" + j + "__UserId";
+                                var options = createid + " option[value='" + interviewer[j] + "']";
+                                $("#" + options).attr('selected', 'selected');
+                                InterviewerChanged(interviewer[j], createid);
+                                if (j < (interviewer.length - 1)) {
+                                    AddRowInterviewer();
+                                }
+                            }
+                        }
                         //InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
                         BindSkills(drpdowns[i].id, interviewerSkills);
                     }
@@ -1167,7 +1206,7 @@
                         BindSkills(drpdownsQC[i].id, interviewerSkills);
 
                     }
-                    
+
                 }
 
 
@@ -1328,7 +1367,7 @@
         $form.data("validator", null);
 
         // Check document for changes
-        $.validator.unobtrusive.parse(document);
+        // $.validator.unobtrusive.parse(document);
         // document.getElementById("btnUpload").disabled = false;
 
     }
@@ -1574,7 +1613,7 @@
         $form.data("validator", null);
 
         // Check document for changes
-        $.validator.unobtrusive.parse(document);
+        //$.validator.unobtrusive.parse(document);
         //document.getElementById("btnUpload").disabled = false;
 
     }
@@ -1913,8 +1952,8 @@
 
 
     $(document).ready(function () {
-        
-      
+
+        TechSkillChanged();
         //Perform Ajax request.
 
         var id = $("#InterviewerCollection_0__UserId").val();
@@ -1941,7 +1980,7 @@
             }
         });
 
-        
+
 
         //Get Client Role based on Client User Id
         var id = $("#ClientCollection_0__ClientUserId").val();

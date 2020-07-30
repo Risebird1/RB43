@@ -1,0 +1,15 @@
+{
+    "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "Endpoint": "https://login.microsoftonline.com/",
+    "GrantType": "client_credentials",
+    "Scope": "https://graph.microsoft.com/.default",
+    "Resource": "https://graph.microsoft.com",
+    "TenantId": "1e4b595b-d20a-49dd-83c5-19ca3ccd87d1",
+    "ClientId": "bde4b6c7-33c6-424f-bceb-4089674ed596",
+    "ClientSecret": "ALm9N3_9vv_~OSJGeifw2Te.OxK0-bLR.2",
+    "GraphEndpoint": "https://graph.microsoft.com/v1.0/"
+  }
+}

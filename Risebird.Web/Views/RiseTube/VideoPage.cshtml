@@ -38,7 +38,7 @@
     IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
     IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
 }
-
+<script src="~/js/plugins/bootstrap/bootstrap-datepicker.js"></script>
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
 <script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
 
@@ -163,7 +163,7 @@
                                                 @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                             }
                                         }
-                                   
+
                                     </div>
                                 </div>
                             </div>
@@ -467,7 +467,7 @@
                                                         <div id="style-2" class="single-video-right">
                                                             <div>
                                                                 <div>
-                                                                    <div class="col-md-12">
+                                                                    <div>
 
                                                                         @foreach (var videolist in Model.SubVideo_List)
                                                                         {
@@ -495,9 +495,58 @@
                                                                                     *@
                                                                                 </div>
                                                                                 <div class="video-card-body">
-                                                                                    <div class="video-title"> <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a> <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span> </div>
+                                                                                    <div class="video-title">
+                                                                                        @if (@videolist.candidateName.Length > 11)
+                                                                                        {
+                                                                                            <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span class="candidate">@videolist.candidateName</span>}
+
+                                                                                        @if (@videolist.JDTiltle.Length > 10)
+                                                                                        {
+                                                                                            <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
+
+                                                                                        else
+                                                                                        {
+                                                                                            <span>@videolist.JDTiltle</span>}
+
+                                                                                    </div>
                                                                                     <div class="video-page text-success">
                                                                                         &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
+                                                                                        <span class="divider-g">
+                                                                                            @if (videolist.InterviewStatus == 4)
+                                                                                            {
+                                                                                                <span style="color:palevioletred">Border Line</span>
+                                                                                            }
+
+                                                                                            else if (videolist.InterviewStatus == 2)
+                                                                                            {
+                                                                                                <span style="color:green">Selected</span>
+
+                                                                                            }
+                                                                                        </span>
+
+                                                                                    </div>
+
+
+                                                                                    <div class="video-info">
+                                                                                        <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
+                                                                                        {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                                    else
+                                                                                    {
+                                                                                        <span id="join_time"> @videolist.joiningTime</span>}
+                                                                                    </div>
+
+                                                                                    <div class="video-info">
+                                                                                        <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                                        {
+                                                                                            <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+
+                                                                                        else
+                                                                                        {
+                                                                                            <span>@videolist.expectedPerHourRate</span>}
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -757,12 +806,14 @@
 
 
                                                                                 <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
-                                                                                    <div class="talktext">
+                                                                                    <a href="#" data-tooltip="@Model.InterviewerComment">
+                                                                                        <div class="talktext">
 
 
-                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;width:100%", @readonly = "readonly" })
+                                                                                            @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;width:100%", @readonly = "readonly" })
 
-                                                                                    </div>
+                                                                                        </div>
+                                                                                    </a>
                                                                                 </div>
 
 
@@ -1626,6 +1677,66 @@
     </div>
 </div>
 
+<div id="OnlineMeetingModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Shchedule Team Meeting</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeOnlineMeetingModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-2">Subject  </div>
+                    <div class="col-md-10"><input type="text" class="form-control" id="txtOnlineSubject" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">Start Date</div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class='input-group date' id='datetimepicker3'>
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-time"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">End Date</div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class='input-group date' id='datetimepicker4'>
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-time"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-2">Message</div>
+                    <div class="col-md-10"><textarea id="txtOnlineBody" class="form-control" rows="3"></textarea></div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input type="button" onclick="SubmitMeeting()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                        <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
@@ -1638,8 +1749,9 @@
 <!-- Custom scripts for all pages-->
 <script src="~/RiseTube/js/custom.js"></script>
 
-<script>
 
+
+<script>
 
     jQuery(document).ready(function ($) {
 
@@ -1683,9 +1795,19 @@
 
 </script>
 <script>
+    $(document).ready(function () {
+        $("#datetimepicker3").datetimepicker();
+        $("#datetimepicker4").datetimepicker();
+        $("#datetimepicker3").datetimepicker({
+            format: 'LT'
+        });
+        $("#datetimepicker4").datetimepicker({
+            format: 'LT'
+        });
+        console.log("ready!");
+
+    });
     jQuery(document).ready(function ($) {
-
-
 
         var main = function () {
             $('.btn').click(function () {
@@ -1758,7 +1880,15 @@
 
 
     });
-
+        function SubmitMeeting() {
+              $.ajax({
+                type: "GET",
+                url: "/Chat/SendMeetingInvite",
+                  success: function (data) {
+                      alert(data);
+                }
+            });
+        }
 
 
 </script>
@@ -2209,6 +2339,42 @@
 
 
 </script>
+<style>
+ [role="tooltip"]{
+        visibility: hidden;
+      }
+    </style>
+<script>
+    $(document).ready(function () {
+      $(".candidate-name").each(function () {
+            if ($(this).text().length > 11) {
+                $(this).text($(this).text().substr(0, 11) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+        $(".join-time").each(function () {
+            if ($(this).text().length > 10) {
+                $(this).text($(this).text().substr(0, 10) + "...")
+               
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+
+
+
+
+    });
+</script>
 <script>
 
 
@@ -2505,8 +2671,9 @@
     {
         <script src="~/Newassets/js/enjoyhint.min.js"></script>
         <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
 
+
+        <script>
 
             var enjoyhint_instance = new EnjoyHint({});
 

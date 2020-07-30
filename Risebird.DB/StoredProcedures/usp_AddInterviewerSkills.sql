@@ -18,18 +18,17 @@ Create PROCEDURE [dbo].[usp_AddInterviewerSkills]
 
 @InterviewerProfileId int, 
 @SkillId int, 
-@Category varchar(150), 
-@Ip varchar (150), 
-@Level varchar (50),
-@SkillExperience nvarchar (50),
-@Nature varchar (50)
+@Category int, 
+@Ip int, 
+@Level int,
+@SkillExperience int,
+@Nature int
 
 AS
 Begin
 INSERT INTO [dbo].[TransInterviewerSkill]
 		(InterviewerProfileId, 
-		SkillId, 
-		SkillName, 
+		SkillId,  
 		Category, 
 		Ip, 
 		Level, 
@@ -37,8 +36,7 @@ INSERT INTO [dbo].[TransInterviewerSkill]
 		Nature)
  Values 
 		(@InterviewerProfileId, 
-		 @SkillId, 
-		 (select Description from Skill where Id = @SkillId ), 
+		 @SkillId,
 		 @Category, 
 		 @Ip, 
 		 @Level,

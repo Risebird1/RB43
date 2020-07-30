@@ -3776,5 +3776,77 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public string pickInterviewerSills(string Interviewerids)
+        {
+            try
+            {
+                var interviewer = Interviewerids.Split(',');
+                var resultset = String.Empty;
+                for (int i = 0; i < interviewer.Count(); i++)
+                {
+                    var query = "select PrimarySkill from Interviewer where Userid =@Interviewerids";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@Interviewerids", interviewer[i].Trim());
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<string>(query, dynamicParameters);
+                        var result = results.FirstOrDefault().Split(',');
+                        var resultsets = resultset.Split(',');
+                        var flag = true;
+                        foreach (var item in resultsets)
+                        {
+                            if (result[0].ToUpper() == item.ToUpper())
+                            {
+                                flag = false;
+                            }
+                        }
+                        if (flag == true)
+                        {
+                            if (String.IsNullOrEmpty(resultset))
+                            {
+                                resultset = result[0];
+                            }
+                            else
+                            {
+                                resultset = resultset + "," + result[0];
+                            }
+                        }
+                    }
+                }
+                var Skills = resultset.Split(',');
+                var Skillset = String.Empty;
+                for (int i = 0; i < Skills.Count(); i++)
+                {
+                    var query = "Select Id from skill where Name=@Skill";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@Skill", Skills[i].Trim());
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<string>(query, dynamicParameters);
+                        var result = results.FirstOrDefault();
+                        if (String.IsNullOrEmpty(Skillset))
+                        {
+                            Skillset = result;
+                        }
+                        else
+                        {
+                            Skillset = Skillset + "," + result;
+                        }
+                    }
+
+                }
+
+                return Skillset;
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+
+        }
     }
 }

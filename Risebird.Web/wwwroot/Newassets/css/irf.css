@@ -6,17 +6,17 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 5px;
 }
+
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
-
 }
 
 textarea::-webkit-scrollbar-thumb {
-
     margin: 2px;
     border-radius: 2px;
 }
+
 .no-sort::after {
     display: none !important;
 }
@@ -25,16 +25,25 @@ textarea::-webkit-scrollbar-thumb {
     pointer-events: none !important;
     cursor: default !important;
 }
+
 .report-btn {
     width: 145px;
     margin-bottom: 16px;
     background: #18ce0f !important;
 }
+
 .designation {
     color: #606060;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 13px;
 }
+
+.divider-g {
+    padding-left: 5px;
+    border-left: 1px #868383cc solid;
+    margin-left: 5px;
+}
+
 .l-hr {
     margin: 5px 0px;
 }
@@ -71,6 +80,7 @@ td:hover.wordwrap {
 table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
     max-width: 300px !important;
 }
+
 table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
     padding: 7px;
     font-weight: normal !important;
@@ -80,9 +90,11 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
     padding: 7px;
     font-weight: normal !important;
 }
+
 .table > tbody > tr > td {
     padding: 0px 5px;
 }
+
 table td {
     color: #504e4e;
 }
@@ -96,7 +108,7 @@ table th {
 [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
-    padding:10px!important;
+    padding: 10px !important;
 }
 
     [type="date"]::-webkit-inner-spin-button {
@@ -106,6 +118,7 @@ table th {
     [type="date"]::-webkit-calendar-picker-indicator {
         opacity: 0;
     }
+
 .card .card-header .card-title, .card .card-header h4.card-title {
     margin: 0 0px 10px 0;
 }
@@ -129,6 +142,7 @@ table th {
     padding-top: 65px;
     background: none !important;
 }
+
 .invoice-box {
     max-width: 800px;
     margin: auto;
@@ -140,10 +154,12 @@ table th {
     font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
     color: #555;
 }
+
 .tableBill td, th {
     border-right: 1px solid rgb(229,229,229);
     border-bottom: 1px solid rgb(229,229,229);
 }
+
 .select-css {
     display: block;
     line-height: 1.3;
@@ -209,10 +225,12 @@ table th {
 .input {
     position: relative;
 }
+
 .joiningtime .spinner {
     top: 15px;
 }
-    .spinner {
+
+.spinner {
     top: 30px;
     width: 0.8rem;
     position: absolute;
@@ -259,7 +277,11 @@ table th {
     transform: rotate(-90deg);
     top: -2rem;
 }
-.spinner-wrap{position:relative}
+
+.spinner-wrap {
+    position: relative
+}
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -275,6 +297,7 @@ input[type=number] {
     margin: 0px 10px 10px 10px;
     width: calc(100% - 20px);
 }
+
 .text-areadiv {
     height: auto;
     padding: 0px 10px !important;
@@ -290,7 +313,7 @@ input[type=number] {
 
 
 
- .text-areadiv textarea:focus {
+        .text-areadiv textarea:focus {
             border-bottom: 2px rgb(80, 158, 235) solid;
         }
 
@@ -319,13 +342,19 @@ input[type=number] {
     padding: 8px 10px;
     border: 0;
 }
+
 .m10-b {
     margin-bottom: 10px;
 }
-.mb-0{margin-bottom:0px;}
+
+.mb-0 {
+    margin-bottom: 0px;
+}
+
 .mt-0 {
     margin-top: 0px;
 }
+
 .multiple_row > h2 {
     font-size: 16px;
     background: #42a5f5 !important;
@@ -364,6 +393,7 @@ input[type=number] {
 .card .card-header .card-title, .card .card-header h4.card-title {
     margin: 0 0px 10px 0;
 }
+
 .can-details {
     width: 100%;
     float: left;
@@ -411,6 +441,7 @@ input[type=number] {
         padding: 0;
         margin: 0;
     }
+
 .mdc-card-wrapper__text-section {
     padding: 16px;
 }
@@ -437,12 +468,13 @@ input[type=number] {
     background-color: #fff;
 }
 
-.talk-bubble textarea {
+    .talk-bubble textarea {
         resize: none;
         border: 0;
         background: #fff;
         padding: 5px;
     }
+
 .multiselect-selected-text {
     text-transform: capitalize;
     font-weight: normal;
@@ -529,16 +561,17 @@ input[type=number] {
     overflow: hidden !important;
     text-overflow: ellipsis;
 }
+
 .modal-bg {
     display: none;
-    position: fixed; 
+    position: fixed;
     z-index: 1;
-    padding-top: 100px; 
+    padding-top: 100px;
     left: 0;
     top: 0;
-    width: 100%; 
+    width: 100%;
     height: 100%;
-    overflow: auto; 
+    overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
 }
@@ -546,17 +579,20 @@ input[type=number] {
 .action-area {
     width: 20%
 }
+
 .thumbnail {
     border-top: 5px solid #443f3f;
 }
+
 .form-group select.form-control.select-box {
     width: 200px;
 }
 
-   .card-header .form-group select.form-control:focus {
-        outline: 0;
-        border-bottom: 1px #E3E3E3 solid !important;
-    }
+.card-header .form-group select.form-control:focus {
+    outline: 0;
+    border-bottom: 1px #E3E3E3 solid !important;
+}
+
 .list-group-item-heading {
     font-size: 13px;
     font-weight: 700;
@@ -604,6 +640,7 @@ input[type=number] {
     color: #5f5c5c;
     padding: 0px 20px;
 }
+
 .mdc-card-wrapper__text-section {
     padding: 16px;
 }
@@ -624,7 +661,7 @@ input[type=number] {
 
 
 .mdc-card {
-    border-top: 3px #53a5f5 solid!important;
+    border-top: 3px #53a5f5 solid !important;
 }
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
@@ -679,7 +716,7 @@ input[type=number] {
 
 #irf-card-footer {
     padding-left: 25px;
-    padding-top:10px;
+    padding-top: 10px;
     padding-right: 0px;
 }
 
@@ -690,7 +727,7 @@ input[type=number] {
 }
 
 .card-blue .card-header {
-    padding: .5rem 0rem 0.3rem 0rem!important;
+    padding: .5rem 0rem 0.3rem 0rem !important;
 }
 
     .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
@@ -757,23 +794,25 @@ input[type=number] {
         margin: 0px;
         padding: 12px 5px 10px 5px;
     }
+
 .statistics .card-blue .card-body {
     margin: 0px;
     padding: 12px 20px 10px 20px;
 }
-        .card-blue .card-body .client-field {
-            color: #1b4775;
-            display: block;
-            float: left;
-            font-weight: bold;
-            padding-right: 4px;
-        }
+
+.card-blue .card-body .client-field {
+    color: #1b4775;
+    display: block;
+    float: left;
+    font-weight: bold;
+    padding-right: 4px;
+}
 
 
 
-    .card-blue:hover {
-        box-shadow: 0 0 25px #134e8c45;
-    }
+.card-blue:hover {
+    box-shadow: 0 0 25px #134e8c45;
+}
 
 .card-header-buttons button.btn-danger {
     background: #FF3636 !important;
@@ -824,14 +863,22 @@ input[type=number] {
     margin-bottom: 10px;
 }
 
-.modal .form-group .btn {
+    .modal .form-group .btn {
         margin: 0px;
- }
+    }
+
 .modal-bg {
-display: none; position: fixed; z-index: 1;padding-top: 100px;
-left: 0;top: 0;width: 100%; height: 100%;
-overflow: auto;background-color: rgb(0,0,0);
-background-color: rgba(0,0,0,0.4);
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
 }
 
 .dropdown-toggle {
@@ -855,6 +902,7 @@ background-color: rgba(0,0,0,0.4);
 .mdc-card button.dropdown-toggle:focus {
     border-bottom: 2px #42a5f5 solid;
 }
+
 .border-rv {
     border-right: 1px dotted #ccc;
 }
@@ -870,6 +918,7 @@ background-color: rgba(0,0,0,0.4);
 .border-bottom {
     border-bottom: 1px #cccccc63 solid;
 }
+
 .unarchive-btn {
     background: #848080eb !important;
 }
@@ -894,9 +943,11 @@ background-color: rgba(0,0,0,0.4);
     vertical-align: bottom;
     padding: 15px 11px;
 }
+
 .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
     border-color: #53a5f5 !important;
 }
+
 .mc-button-area {
     text-align: right;
 }
@@ -916,6 +967,7 @@ background-color: rgba(0,0,0,0.4);
     float: left;
     padding: 0px 15px;
 }
+
 #QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
     cursor: pointer !important;
 }
@@ -927,6 +979,7 @@ background-color: rgba(0,0,0,0.4);
         background-position: 45%;
         z-index: 1000;
     }
+
 .jobs-user {
     font-size: 18px;
     font-weight: normal;
@@ -979,6 +1032,7 @@ background-color: rgba(0,0,0,0.4);
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
+
 .uploadfile {
     margin-top: 30px;
     /* text-align: center; */
@@ -996,7 +1050,11 @@ background-color: rgba(0,0,0,0.4);
     color: #2f5d8e;
     font-weight: normal;
 }
-.upload{margin-top:10px;}
+
+.upload {
+    margin-top: 10px;
+}
+
 #resumeId, #zoomlinkId {
     background: #e2f0ff;
     color: #1d3b5e;
@@ -1026,7 +1084,11 @@ background-color: rgba(0,0,0,0.4);
     padding: 5px 10px;
     border-radius: 16px;
 }
-#uploadDiv #videoId{background:none; text-decoration:none;}
+
+#uploadDiv #videoId {
+    background: none;
+    text-decoration: none;
+}
 
 .interviewr-cmt #videoId {
     background: none;
@@ -1108,6 +1170,7 @@ background-color: rgba(0,0,0,0.4);
     margin-right: 10px;
     padding: 10px 10px;
 }
+
 .stats .card-chart .card-header .card-title {
     margin-top: 10px;
     margin-bottom: 0;
@@ -1137,9 +1200,11 @@ background-color: rgba(0,0,0,0.4);
         margin: 0;
         padding: 0;
     }
+
 .table-responsive-sm .table > tbody > tr > td {
     padding: 12px 5px !important;
 }
+
 @media (min-width: 1200px) {
     .container {
         width: 1125px;
@@ -1166,6 +1231,4 @@ background-color: rgba(0,0,0,0.4);
     .card-blue .card-header h6 {
         text-align: center;
     }
-
-
 }

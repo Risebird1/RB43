@@ -263,7 +263,7 @@
 
                                                         </div>
                                                     }
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
                                                                 Candidate Location
@@ -319,9 +319,10 @@
                                                             </div>
                                                         }
                                                     </div>
-                                                    @if (ViewBag.ProfileName != "CuratedUser")
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        @if (ViewBag.ProfileName != "CuratedUser")
+                                                        {
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
                                                                     Joining Status
@@ -340,11 +341,11 @@
                                                             </div>
 
 
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        }
+                                                        else
+                                                        {
+
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested">
                                                                     Interested
@@ -363,9 +364,7 @@
                                                             </div>
 
 
-                                                        </div>
-                                                    }
-                                                    <div class="col-md-6 col-sm-6">
+                                                        }
                                                         <div class="form-group">
 
 
@@ -385,7 +384,6 @@
 
 
                                                         </div>
-
                                                     </div>
                                                 </div>
 
@@ -432,8 +430,28 @@
                                                 </div>
                                                 <div class="video-card-body">
                                                     <div class="video-title">
-                                                        <a onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;">@item.candidateName </a>
-                                                        <span class="designation">(@item.JDTiltle.Split("|")[0])</span>
+                                                        @if (@item.candidateName.Length > 20)
+                                                        {
+                                                            <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="candidate">@item.candidateName</span>}
+
+
+
+
+                                                        @if (@item.JDTiltle.Length > 20)
+                                                        {
+                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">(@item.JDTiltle.Split("|")[0])</span></a>}
+
+                                                        else
+                                                        {
+                                                            <span>@item.JDTiltle</span>}
+
+
+
+
                                                     </div>
 
                                                     <div class="video-page text-success">
@@ -441,11 +459,58 @@
 
                                                     </div>
                                                     <div class="video-view">
-                                                        &nbsp;<i  class="fas fa-calendar-alt"></i> <span>@item.interviewDate</span>
-</div>
-</div>
-</div>
-</div>
+                                                        &nbsp;<i class="fas fa-calendar-alt"></i>
+                                                        <span>@item.interviewDate</span>
+                                                        <span class="divider-g">
+                                                            @if (item.InterviewStatus == 4)
+                                                            {
+                                                                <span style="color:palevioletred">Border Line</span>
+                                                            }
+
+                                                            else if (item.InterviewStatus == 2)
+                                                            {
+                                                                <span style="color:green">Selected</span>
+
+                                                            }
+                                                        </span>
+
+                                                    </div>
+
+
+
+                                                    <div class="video-info">
+                                                        <span> Notice Period: </span>
+                                                        @if (item.joiningTime.Length > 20)
+                                                        {<a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>}
+                                                    else
+                                                    {
+                                                        <span> @item.joiningTime</span>}
+                                                    </div>
+
+                                                    <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                        <span>Expected Salary:</span> @if (@item.expectedPerHourRate.Length > 5)
+                                                        {
+                                                            <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
+
+                                                        else
+                                                        {
+                                                            <span>@item.expectedPerHourRate</span>}
+                                                    </div>
+
+                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+
+                                                        <span>Location:</span>
+                                                        <span>
+                                                            @if (@item.preferredLocation.Length > 3) { 
+                                                           <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
+                                                            else{<span>@item.preferredLocation</span>}
+                                                            </span>
+
+                                                    </div>
+
+                                                    </div>
+                                                </div>
+                                        </div>
 }
 
 
@@ -499,7 +564,80 @@
 <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
 <!-- Custom scripts for all pages-->
 <script src="~/RiseTube/js/custom.js"></script>
+<script>
+    $(document).ready(function () {
 
+        $(".candidate-name").each(function () {
+            if ($(this).text().length > 15) {
+                $(this).text($(this).text().substr(0, 15) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+        $(".join-time").each(function () {
+            if ($(this).text().length > 10) {
+                $(this).text($(this).text().substr(0, 10) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+        $(".joining-time").each(function () {
+            if ($(this).text().length > 20) {
+                $(this).text($(this).text().substr(0, 20) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+
+
+        $(".expected-salary").each(function () {
+            if ($(this).text().length > 5) {
+                $(this).text($(this).text().substr(0, 5) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+
+           
+
+
+
+        });
+
+
+        $(".expected-time").each(function () {
+            if ($(this).text().length > 3) {
+                $(this).text($(this).text().substr(0, 3) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+        
+    });
+</script>
 
 <script type="text/javascript">
 

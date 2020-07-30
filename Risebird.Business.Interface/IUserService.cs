@@ -29,7 +29,7 @@ namespace Risebird.Business.Interface
         bool AddQCInterviewer(QCInterviewerVM qcinterviewer);
         InterviewerVM GetInterviewer(int id);
         List<InterviewerVM> GetInterviewerVideos(string Emailid);
-
+        MeetingVM GetMeetingbyid(int id);
 
         bool DeleteInterviewer(int id);
         bool UpdateInterviewer(InterviewerVM interviewer);

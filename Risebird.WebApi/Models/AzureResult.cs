@@ -218,7 +218,7 @@ namespace WebApplication1.Models
             // process policy & encryption
             ProcessPolicyAndEncryption(encodedAsset);
 
-           
+
 
             CloudFile model = fileToUpload;
             uploadFileOriginalName = model.FileName;

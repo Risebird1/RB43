@@ -56,9 +56,9 @@ namespace Risebird.Business
 
                 var hrList = new List<Users>();
                 var users = _irfRepository.GetUsers();
-                foreach (var item in users)
+                foreach (var item in users ?? new List<Users>())
                 {
-                    if (item.idProfile == 2)
+                    if (item?.idProfile == 2)
                     {
                         hrList.Add(item);
                     }
@@ -108,11 +108,13 @@ namespace Risebird.Business
             {
                 var interviewers = _irfRepository.GetInterviewerSkills();
                 string Name = string.Empty;
-                foreach (var item in interviewers)
+                foreach (var item in interviewers ?? new List<Interviewer>())
                 {
-                    if (item.UserId == id)
+                    if (item == null)
+                        continue;
+                    if (item?.UserId == id)
                     {
-                        Name = item.PrimarySkill;
+                        Name = item?.PrimarySkill;
                         break;
                     }
 
@@ -145,11 +147,10 @@ namespace Risebird.Business
         {
             try
             {
-                //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
                 var interviewers = _irfRepository.GetIRFInterviewerSkills();
                 var skillList = skills.Split(",");
                 var skillNameList = new List<string>();
-                foreach (var skill in skillList)
+                foreach (var skill in skillList ?? new List<string>().ToArray())
                 {
                     if (skill == "")
                     {
@@ -158,17 +159,13 @@ namespace Risebird.Business
                     var skillName = _irfRepository.GetSkillById(Convert.ToInt16(skill)).Name;
                     skillNameList.Add(skillName);
                 }
-                //skillList.RemoveAt()
+
                 var list = new List<Interviewer>();
-
-
-                foreach (var item in interviewers)
+                foreach (var item in interviewers ?? new List<Interviewer>())
                 {
-                    foreach (var skillName in skillNameList)
+                    foreach (var skillName in skillNameList ?? new List<string>())
                     {
-                        //if (skill == "")
-                        //    continue;
-                        //var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt16(skill)).FirstOrDefault().Name;
+
                         if (item.PrimarySkill.Contains(skillName))
                         {
                             list.Add(item);
@@ -201,9 +198,9 @@ namespace Risebird.Business
                 var list = new List<Interviewer>();
 
 
-                foreach (var item in interviewers)
+                foreach (var item in interviewers ?? new List<Interviewer>())
                 {
-                    foreach (var skillName in skillNameList)
+                    foreach (var skillName in skillNameList ?? new List<string>().ToArray())
                     {
                         if (item.PrimarySkill.Contains(skillName))
                         {
@@ -273,7 +270,7 @@ namespace Risebird.Business
                 List<Skill> list = new List<Skill>();
                 var skills = _irfRepository.GetSkillsbyIRFid(id);
                 var result = _irfRepository.GetSkills();
-                foreach (var item in skills)
+                foreach (var item in skills ?? new List<TransSkill>())
                 {
 
                     var obj = result.Where(x => x.id == item.SkillId).FirstOrDefault();
@@ -370,7 +367,7 @@ namespace Risebird.Business
                 if (email != string.Empty && profileName == "Client")
                 {
                     var clients = _irfRepository.GetTransClientUser(id);
-                    foreach (var item in clients)
+                    foreach (var item in clients ?? new List<TransClientUser>())
                     {
                         if (item.EmailId.ToLower() == email.ToLower())
                         {
@@ -627,8 +624,7 @@ namespace Risebird.Business
                 var invoiceModel = new InvoiceModel();
                 if (irfDetails != null && invoiceModel != null)
                 {
-                    //var address = irfDetails.ClientAddress;
-                    //var address = "Bagmane World Technology Center, Marathalli Ring Road, Doddanakhundi Village,Bangalore 560048";
+
                     var strb = new StringBuilder();
                     var addressArray = clientAddress.Split(",");
                     for (int i = 1; i <= addressArray.Length; i++)
@@ -642,10 +638,7 @@ namespace Risebird.Business
                             strb.Append(addressArray[i - 1]);
                         }
                     }
-                    //foreach (var item in address.Split(","))
-                    //{
-                    //    strb.Append(item + "," + "<br/>");
-                    //}
+
                     invoiceModel.CurrentMonth = DateTime.Now.ToString("MMMM yyyy");
                     Random generator = new Random();
                     invoiceModel.SRNumber = srNumber;
@@ -764,7 +757,7 @@ namespace Risebird.Business
             try
             {
                 var candidates = _irfRepository.GetIRFCandidates(candidateList.FirstOrDefault().IRFId);
-                foreach (var candidate in candidateList)
+                foreach (var candidate in candidateList ?? new List<Candidate>())
                 {
                     //check if the candidate email exists for the IRFId
                     var duplicate = candidates.Where(x => x.EmailId == candidate.EmailId);
@@ -914,7 +907,7 @@ namespace Risebird.Business
 
                 //get interviewMeetings where candidateEmail and irfName matches
                 var interviewIdList = new List<int>();
-                foreach (var email in emailList)
+                foreach (var email in emailList ?? new List<string>())
                 {
                     var interviewId = _irfRepository.InterviewMeetings(irfName, email);
                     if (interviewId != 0)
@@ -1027,7 +1020,7 @@ namespace Risebird.Business
                 if (updatedMeetings != null && updatedMeetings.Count() != 0)
                 {
                     //get emails
-                    foreach (var item in updatedMeetings)
+                    foreach (var item in updatedMeetings ?? new List<MeetingVM>())
                     {
                         _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"));
                         //insert meeting in PausedIRF
@@ -1080,7 +1073,7 @@ namespace Risebird.Business
             try
             {
                 var irfList = _irfRepository.GetAllIRFs(emailId, profileName).Result.ToList();
-                foreach (var irf in irfList)
+                foreach (var irf in irfList ?? new List<IRF>())
                 {
                     if (irf.TotalBudget != 0)
                     {

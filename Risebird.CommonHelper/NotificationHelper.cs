@@ -527,7 +527,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var mailMessage = new MailMessage();               
+                var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
                 var toMails = model.TO.Split(";");

@@ -23,7 +23,7 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content employee">
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
@@ -108,10 +108,14 @@
                                                     <td>@Html.DropDownList("item.PrimaryResponsibility", (SelectList)ViewBag.PrimaryResponsibilityList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
 
                                                     <td class="text-right">
-                                                        @*<span onclick="location.href = '@Url.Action("AddEmployerDetails", "Interviewer")'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-plus-square" aria-hidden="true"></i></span>*@
-                                                        <span onclick="location.href = '@Url.Action("EditEmployerDetails", "Interviewer", new { id = item.id, IProfileId = @ViewBag.IProfileId })'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                        <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.CompanyName');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
-                                                    </td>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit interviewer">
+                                                            <span onclick="location.href = '@Url.Action("EditEmployerDetails", "Interviewer", new { id = item.id, IProfileId = @ViewBag.IProfileId })'" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete interviewer">
+                                                            <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.CompanyName');" title="Click here to delete interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                   
+                                                            </button>
+                                                            </td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -132,35 +136,7 @@
         </div>
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+    
 </div>
 
 
