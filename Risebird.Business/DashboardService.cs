@@ -149,5 +149,30 @@ namespace Risebird.Business
             }
         }
 
+        public Task<MeetingResultCount> GetMeetingResultCount()
+        {
+            try
+            {
+                return _dashboardRespository.GetMeetingResultCount();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public Task<CandidatesCount> GetCandidatesCount()
+        {
+            try
+            {
+                return _dashboardRespository.GetCandidatesCount();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

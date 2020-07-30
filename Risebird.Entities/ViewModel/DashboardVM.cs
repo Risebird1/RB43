@@ -15,6 +15,8 @@ namespace Risebird.Entities.ViewModel
         public string MeetingsDataLabels { get; set; }
         public int TotalCompletedMeetings { get; set; }
         public DashboardInterviewerCount InterviewerCountObj { get; set; }
+        public MeetingResultCount MeetingResultCountObj { get; set; }
+        public CandidatesCount CandidatesCountObj { get; set; }
 
         [BindProperty]
         //public List<IRF> IrfProgressList { get; set; }

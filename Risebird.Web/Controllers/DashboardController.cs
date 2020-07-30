@@ -113,6 +113,8 @@ namespace Risebird.Web.Controllers
                     model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
                     model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
                     model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress());
+                    model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount();
+                    model.CandidatesCountObj = await _dashboardService.GetCandidatesCount();
                     //model.IrfProgressList = (List<IRF>)(await _dashboardService.GetIRFProgress());
                     //interview status graph
                     model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;

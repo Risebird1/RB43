@@ -90,15 +90,7 @@
                                         </div>
                                     </li>
                                     <li><button onclick="changeInterviewTracking()" class="panel-fullscreen"><span class="fa fa-check"></span></button></li>
-                                    @*<li><a href="#" class="panel-fullscreen"><span class="fa fa-expand"></span></a></li>
-                                        <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="fa fa-cog"></span></a>
-                                            <ul class="dropdown-menu">
-                                                <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span> Collapse</a></li>
-                                                <li><a href="#" class="panel-remove"><span class="fa fa-times"></span> Remove</a></li>
-                                            </ul>
-                                        </li>*@
+                                   
                                 </ul>
                             </div>
                             <div class="panel-body">
@@ -123,12 +115,12 @@
                                 <div class="panel-title-box">
                                     <h3>Skill Channel activity</h3>
                                 </div>
-                                <ul class="panel-controls" style="margin-top: 2px;">
+                                @*<ul class="panel-controls" style="margin-top: 2px;">
                                     <li>
                                         <a href="#"><span class="fa fa-cog"></span></a>
                                     </li>
 
-                                </ul>
+                                </ul>*@
                             </div>
                             @if (Model.IrfProgressList != null && Model.IrfProgressList.Count() != 0)
                             {
@@ -148,7 +140,7 @@
                                                     @foreach (var item in Model.IrfProgressList)
                                                     {
                                                         <tr>
-                                                            <td><strong>@item.IRFnSkill</strong></td>
+                                                            <td title="@item.Comment"><strong>@item.IRFnSkill</strong></td>
                                                             <td onclick="openProgressModal()" style="cursor: pointer;"><span class="label label-danger">@item.ProgressStatus</span></td>
                                                             <td>
                                                                 <div class="progress progress-small progress-striped active">
@@ -348,37 +340,37 @@
                     <!--    <div class="col-md-4">
 
 
-                        <div class="widget widget-default widget-carousel">
-                            <div class="owl-carousel" id="owl-example">
-                                <div>
-                                    <div class="widget-title">Total Visitors</div>
-                                    <div class="widget-subtitle">27/08/2014 15:23</div>
-                                    <div class="widget-int">3,548</div>
-                                </div>
-                                <div>
-                                    <div class="widget-title">Returned</div>
-                                    <div class="widget-subtitle">Visitors</div>
-                                    <div class="widget-int">1,695</div>
-                                </div>
-                                <div>
-                                    <div class="widget-title">New</div>
-                                    <div class="widget-subtitle">Visitors</div>
-                                    <div class="widget-int">1,977</div>
-                                </div>
-                            </div>
-                            <div class="widget-controls">
-                                <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
-                            </div>
-                        </div>
+        <div class="widget widget-default widget-carousel">
+            <div class="owl-carousel" id="owl-example">
+                <div>
+                    <div class="widget-title">Total Visitors</div>
+                    <div class="widget-subtitle">27/08/2014 15:23</div>
+                    <div class="widget-int">3,548</div>
+                </div>
+                <div>
+                    <div class="widget-title">Returned</div>
+                    <div class="widget-subtitle">Visitors</div>
+                    <div class="widget-int">1,695</div>
+                </div>
+                <div>
+                    <div class="widget-title">New</div>
+                    <div class="widget-subtitle">Visitors</div>
+                    <div class="widget-int">1,977</div>
+                </div>
+            </div>
+            <div class="widget-controls">
+                <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
+            </div>
+        </div>
 
 
-                    </div> -->
+    </div> -->
 
 
 
 
 
-                    <div class="col-md-4">
+                    @*<div class="col-md-4">
 
                         <!-- START WIDGET MESSAGES -->
                         <div class="widget widget-default widget-item-icon">
@@ -396,56 +388,78 @@
                         </div>
                         <!-- END WIDGET MESSAGES -->
 
-                    </div>
-                    <div class="col-md-4">
+                    </div>*@
+                    @*<div class="col-md-4">
 
-                        <!-- START WIDGET MESSAGES -->
+            <!-- START WIDGET MESSAGES -->
+            <div class="widget widget-default widget-item-icon">
+                <div class="widget-item-left">
+                    <span class="fa fa-video-camera"></span>
+                </div>
+                <div class="widget-data">
+                    <div class="widget-int num-count">@ViewBag.TotInterviewer 439</div>
+                    <div class="widget-title">Interviewer</div>
+                    <div class="widget-subtitle">On your website</div>
+
+                </div>
+                <div class="widget-controls">
+                    <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
+                </div>
+            </div>
+            <!-- END WIDGET MESSAGES -->
+
+        </div>*@
+                    @*<div class="col-md-4">
+
+                        <!-- START WIDGET REGISTRED -->
                         <div class="widget widget-default widget-item-icon">
                             <div class="widget-item-left">
-                                <span class="fa fa-video-camera"></span>
+                                <span class="fa fa-user"></span>
                             </div>
                             <div class="widget-data">
-                                <div class="widget-int num-count">@ViewBag.TotInterviewer 439</div>
-                                <div class="widget-title">Interviewer</div>
-                                <div class="widget-subtitle">On your website</div>
+            <div class="widget-int num-count">@ViewBag.Totinvites 1935</div>
+            <div class="widget-title">Interview</div>
+            <div class="widget-subtitle">On your website</div>
 
-                            </div>
+        </div>
+
                             <div class="widget-controls">
                                 <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
                             </div>
                         </div>
-                        <!-- END WIDGET MESSAGES -->
+                        <!-- END WIDGET REGISTRED -->
 
-                    </div>
-                    @*<div class="col-md-4">
-
-                                        <!-- START WIDGET REGISTRED -->
-                                        <div class="widget widget-default widget-item-icon">
-                                            <div class="widget-item-left">
-                                                <span class="fa fa-user"></span>
-                                            </div>
-                                            <div class="widget-data">
-                            <div class="widget-int num-count">@ViewBag.Totinvites 1935</div>
-                            <div class="widget-title">Interview</div>
-                            <div class="widget-subtitle">On your website</div>
-
-                        </div>
-
-                                            <div class="widget-controls">
-                                                <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
-                                            </div>
-                                        </div>
-                                        <!-- END WIDGET REGISTRED -->
-
-                                    </div>*@
+                    </div>*@
                     <div class="col-lg-4 col-md-4 col-sm-4">
 
-                        @*<h2>Interviewers</h2>*@
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">Total Candidates : <span>@Model.CandidatesCountObj.TotalCandidates</span></p>
+                                <div @*class="col-lg-6 col-md-6 col-sm-6" *@>
+                                    <div id="candidatesPieId" style="height: 200px; width: 40%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+
                         <div class="card">
                             <div class="card-body">
                                 <p class="card-text">Total Interviewers : <span>@Model.InterviewerCountObj.InterviewerCount</span></p>
                                 <div @*class="col-lg-6 col-md-6 col-sm-6" *@>
                                     <div id="interviewers" style="height: 200px; width: 40%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">Total Meetings : <span>@Model.MeetingResultCountObj.TotalMeetingsCount</span></p>
+                                <div @*class="col-lg-6 col-md-6 col-sm-6" *@>
+                                    <div id="meetingsCountId" style="height: 200px; width: 40%;"></div>
                                 </div>
                             </div>
                         </div>
@@ -571,7 +585,28 @@
     //}
 </script>
 
+
 <script>
+    function getDate() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById('interviewTrackingDate').value = today;
+        document.getElementById('statusTrackingDate').value = today;
+        document.getElementById('interviewSlotsDate').value = today;
+    }
+
     function setDatatable() {
         $('#progressTable').DataTable({
             "pagingType": "full_numbers",
@@ -598,27 +633,6 @@
 
         });
 
-    }
-</script>
-<script>
-    function getDate() {
-        var today = new Date();
-        var dd = today.getDate();
-        var mm = today.getMonth() + 1; //January is 0!
-        var yyyy = today.getFullYear();
-
-        if (dd < 10) {
-            dd = '0' + dd
-        }
-
-        if (mm < 10) {
-            mm = '0' + mm
-        }
-
-        today = yyyy + '-' + mm + '-' + dd;
-        document.getElementById('interviewTrackingDate').value = today;
-        document.getElementById('statusTrackingDate').value = today;
-        document.getElementById('interviewSlotsDate').value = today;
     }
 
 </script>
@@ -658,6 +672,69 @@
                 //    { y: 70, label: "Completed" }
                 //]
                 dataPoints: interviewerCountObj
+            }]
+        });
+        chart.render();
+
+        //meetingsCountId
+        var meetingsCountObj = [{ y: @Model.MeetingResultCountObj.ProxyCount, label: "Proxy" },
+            { y: @Model.MeetingResultCountObj.SelectedCount, label: "Selected" },
+            { y: @Model.MeetingResultCountObj.RejectedCount, label: "Rejected" },
+            { y: @Model.MeetingResultCountObj.BorderLineCount, label:"Border Line"},
+            {y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}]
+
+        var chart = new CanvasJS.Chart("meetingsCountId", {
+           theme: "light2",
+            width: 350,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: null,
+            data: [{
+                type: "pie",
+                startAngle: 60,
+                innerRadius: 55,
+                indexLabelFontSize: 15,
+                indexLabel: "{label}  {y}",
+                toolTipContent: "<b>{label} </b>({y})",
+                //dataPoints: @*@Html.Raw(ViewBag.DataPoints2)*@,
+                //indexLabel: "{label}  #percent%",
+                //toolTipContent: "<b>{label} </b>(#percent%)",
+                //dataPoints: [
+                //    { y: 30, label: "Scheduled", color: "#5184c1" },
+                //    { y: 70, label: "Completed" }
+                //]
+                dataPoints: meetingsCountObj
+            }]
+        });
+        chart.render();
+
+        //candidatesPieId
+        var candidateCountObj = [{ y: 8, label: "Proxy" },
+            { y: 31, label: "Selected" },
+            { y: 27, label: "Rejected" },
+            { y: 34, label:"Border Line"}]
+
+        var chart = new CanvasJS.Chart("candidatesPieId", {
+           theme: "light2",
+            width: 350,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: null,
+            data: [{
+                type: "pie",
+                startAngle: 60,
+                innerRadius: 55,
+                indexLabelFontSize: 15,
+                indexLabel: "{label}  {y}%",
+                toolTipContent: "<b>{label} </b>({y}%)",
+                //dataPoints: @*@Html.Raw(ViewBag.DataPoints2)*@,
+                //indexLabel: "{label}  #percent%",
+                //toolTipContent: "<b>{label} </b>(#percent%)",
+                //dataPoints: [
+                //    { y: 30, label: "Scheduled", color: "#5184c1" },
+                //    { y: 70, label: "Completed" }
+                //]
+                dataPoints: candidateCountObj
             }]
         });
         chart.render();
