@@ -13,9 +13,9 @@ Create PROCEDURE [dbo].[usp_GetInterviewerCount]
 AS  
 Begin 
 
-select count(id) as InterviewerCount, (select count(id) from Interviewer where IsApproved=1) as ApprovedCount,  
-(select count(id) from Interviewer where IsApproved=0) as UnapprovedCount
-from Interviewer
+select count(id) as InterviewerCount, (select count(id) from InterviewerProfile where IsApproved=1) as ApprovedCount,  
+(select count(id) from InterviewerProfile where IsApproved=0) as UnapprovedCount
+from InterviewerProfile
 
 End
 
