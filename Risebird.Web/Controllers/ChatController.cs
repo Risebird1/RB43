@@ -383,6 +383,9 @@ namespace Risebird.Web.Controllers
             {
                 Emailaddress = HttpContext.Session.GetString("email")?.Trim();
             }
+            DateTime startdateU = TimeZoneInfo.ConvertTime(startdate, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+            DateTime enddateU = TimeZoneInfo.ConvertTime(enddate, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+
             RestClient _client = new RestClient("http://localhost:7071/api/");
             RestRequest request = new RestRequest("MSTeamMeeting", Method.POST);
             OnlineMeeting _meeting = new OnlineMeeting();
@@ -391,14 +394,14 @@ namespace Risebird.Web.Controllers
             _meeting.body.content = "HTML";
             _meeting.body.contentType = "Does next month work for you?";
             _meeting.start = new Start();
-            _meeting.start.dateTime = startdate;
-            _meeting.start.timeZone = "India Standard Time";
+            _meeting.start.dateTime = startdateU;
+            _meeting.start.timeZone = "Central Standard Time";
             _meeting.end = new End();
-            _meeting.end.dateTime = enddate;
-            _meeting.end.timeZone = "India Standard Time";
+            _meeting.end.dateTime = enddateU;
+            _meeting.end.timeZone = "Central Standard Time";
             _meeting.location = new Location();
             _meeting.location.displayName = "Tim Tom";
-            _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = emailid, name = "Prem Prakash" }, type = "required" });
+            _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = emailid, name = "" }, type = "required" });
             _meeting.isOnlineMeeting = true;
             _meeting.onlineMeetingProvider = "teamsForBusiness";
 
@@ -406,8 +409,8 @@ namespace Risebird.Web.Controllers
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@startdate", startdate);
-                parameters.Add("@enddate", enddate);
+                parameters.Add("@startdate", startdateU);
+                parameters.Add("@enddate", enddateU);
                 var result = SqlMapper.Query(con, "usp_checkOnlinemettings", parameters,
                         commandType: CommandType.StoredProcedure);
                 _meeting.AccountEmail = result.FirstOrDefault().ToString();
@@ -418,8 +421,8 @@ namespace Risebird.Web.Controllers
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@startdate", startdate);
-                parameters.Add("@enddate", enddate);
+                parameters.Add("@startdate", startdateU);
+                parameters.Add("@enddate", enddateU);
                 parameters.Add("@Whocreate", Emailaddress);
                 parameters.Add("@Meetingid", _meeting.AccountEmail);
                 parameters.Add("@LinkUrl", response.ToString());
@@ -434,7 +437,7 @@ namespace Risebird.Web.Controllers
                 CC = Emailaddress,
                 Subject = Subject
             };
-            var resultset = _notificationHelper.OnlineMeetingInvite(_mail, response.ToString(), Message);
+            var resultset = _notificationHelper.OnlineMeetingInvite(_mail, response.ToString(), Message,startdateU,enddateU);
             if (resultset == "Mail sent Successfully.")
             {
                 return Json("Invite Successfully Send");

@@ -1709,8 +1709,6 @@
                         </div>
 
                     </div>
-
-
                 </div>
                 <div class="row">
                     <div class="col-md-6 col-sm-6">
@@ -1720,19 +1718,13 @@
                             </label>
                             <div class="col-md-12 col-sm-12">
                                 <div class='input-group date' id='datetimepicker3'>
-                                    <input type='text' class="form-control" id="txtOnlinestart" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-time"></span>
-                                    </span>
+                                    <input type='datetime-local' class="form-control" id="txtOnlinestart" />
                                 </div>
 
 
                             </div>
                         </div>
                     </div>
-
-
-
                     <div class="col-md-6 col-sm-6">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label">
@@ -1740,42 +1732,12 @@
                             </label>
                             <div class="col-md-12 col-sm-12">
                                 <div class='input-group date' id='datetimepicker4'>
-                                    <input type='text' class="form-control" id="txtOnlineend" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-time"></span>
-                                    </span>
+                                    <input type='datetime-local' class="form-control" id="txtOnlineend" />
                                 </div>
 
                             </div>
                         </div>
                     </div>
-
-
-
-
-
-
-
-                    <!--   <div class="col-md-2">Start Date</div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <div class='input-group date' id='datetimepicker3'>
-                                <input type='datetime-local' class="form-control" id="txtOnlinestart" />
-                            </div>
-                        </div>
-                    </div>
-                               <div class="col-md-2">End Date</div>
-                               <div class="col-md-4">
-                                   <div class="form-group">
-                                       <div class='input-group date' id='datetimepicker4'>
-                                           <input type='text' class="form-control" id="txtOnlineend" />
-                                           <span class="input-group-addon">
-                                               <span class="glyphicon glyphicon-time"></span>
-                                           </span>
-                                       </div>
-                                   </div>
-                               </div>---->
-
                 </div>
                 <div class="row">
 
@@ -1790,12 +1752,6 @@
                         </div>
 
                     </div>
-
-
-
-
-                    <!---  <div class="col-md-2">Message</div>
-                    <div class="col-md-10"><textarea id="txtOnlineBody" class="form-control" rows="3"></textarea></div>-->
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
@@ -1938,16 +1894,67 @@
 
     });
         function SubmitMeeting() {
-              $.ajax({
-                type: "GET",
-                  url: "/Chat/SendMeetingInvite",
-                  data: {Subject:$("#txtOnlineSubject").val(),emailid:$("#txtOnlineEmail").val(),startdate:$("#txtOnlinestart").val(),enddate:$("#txtOnlineend").val(),Message:$("#txtOnlineBody").val()},
-                  success: function (data) {
-                      alert(data);
+            var resultreturn = checkStartDate($("#txtOnlinestart").val());
+            if ($("#txtOnlineSubject").val().trim() != "") {
+                if (resultreturn == "true") {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Chat/SendMeetingInvite",
+                        data: { Subject: $("#txtOnlineSubject").val(), emailid: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val() },
+                        success: function (data) {
+                            alert(data);
+                        }
+                    });
+                } else {
+                    alert(resultreturn);
                 }
-            });
+            } else {
+                alert("Kindly fill the Subject field");
+            }
         }
+        function checkStartDate(val) {
+        if (val == "") {
+            return "Kindly fill the Start Date field";
+        }
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var StartDate = new Date(year, month, date);
+        var d = new Date();
+        var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        if (StartDate < currentDate) {
+            return "Start Date should be greater than or equal to Current Date";
+        }
+        else {
+        }
+        if (document.getElementById("txtOnlineend").value != "") {
+            var resultset = checkEndDate(document.getElementById("txtOnlineend").value);
+            return resultset;
+        }
+    }
 
+    function checkEndDate(val) {
+        if (val == "") {
+            return "Kindly fill the End Date field";
+        }
+        var startDateValue = document.getElementById("txtOnlinestart").value;
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var endDate = new Date(year, month, date);
+        if (startDateValue == "") {
+            return "Kindly fill the Start Date field";
+        }
+        var yearStart = startDateValue.substring(0, 4);
+        var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
+        var dateStart = startDateValue.substring(8, 10);
+        var startDate = new Date(yearStart, monthStart, dateStart);
+        if (val < startDateValue) {
+           return "End Date should be greater than Start Date";
+        } else {
+            return "true";
+        }
+    }
 
 </script>
 
