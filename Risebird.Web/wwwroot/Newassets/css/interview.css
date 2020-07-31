@@ -628,7 +628,34 @@ table {
     margin-left: 3px;
     border: 0;
 }
-
+.interview-date [type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 93% 50% no-repeat !important;
+    background-size: 9% !important;
+    padding: 5px 10px !important;
+    border-radius: 5px;
+}
+ul.panel-controls > li > button {
+    display: block;
+    float: left;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 28px;
+    color: #22262e;
+    border: 1px solid #BBB;
+    -moz-border-radius: 20%;
+    -webkit-border-radius: 20%;
+    border-radius: 20%;
+    margin-left: 3px;
+    -webkit-transition: all 200ms ease;
+    -moz-transition: all 200ms ease;
+    -ms-transition: all 200ms ease;
+    -o-transition: all 200ms ease;
+    transition: all 200ms ease;
+}
+.panel .panel-heading .panel-title-box h3 {
+    line-height: 31px;
+}
 .btn-call {
     width: 30px !important;
     height: 30px;
