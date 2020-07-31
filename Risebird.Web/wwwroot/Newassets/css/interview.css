@@ -660,6 +660,16 @@ ul.panel-controls > li > button {
     overflow: auto;
     height: 200px;
 }
+.scroller {
+    height: 200px;
+}
+#progressTable_wrapper {
+    padding: 10px;
+}
+
+#statusModal .dataTables_length, #statusModal .dataTables_filter {
+    margin: 0px 0px;
+}
 .btn-call {
     width: 30px !important;
     height: 30px;
