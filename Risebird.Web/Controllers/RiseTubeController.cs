@@ -66,7 +66,7 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Client")
                         {
-                            var client= await _userRepository.GetClientUserDetails(emailid);
+                            var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
                             isClientUser = true;
                         }
@@ -1394,7 +1394,7 @@ namespace Risebird.Web.Controllers
 
                         var irfList = _meetingService.GetCuratedGroupIRFs(curatedGroupId).ToArray();
                         var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
-                         modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                        modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
 
                         modelList1 = modelList1.Where(x => irfList.Contains(x.irfIntId)).ToList();
                         ViewBag.actionstatus = "SkillChannel";

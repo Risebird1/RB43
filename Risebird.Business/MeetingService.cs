@@ -64,7 +64,7 @@ namespace Risebird.Business
             try
             {
                 var result = await _meetingRespository.GetRiseTubeMeetings(clientId, profile, Emailid);
-                return  result.OrderByDescending(x => x.interviewDate).ToList();
+                return result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
@@ -77,7 +77,7 @@ namespace Risebird.Business
             try
             {
                 var dataResult = await _meetingRespository.GetCPMeetings(clientId, profile, Emailid);
-                return  dataResult.OrderByDescending(x => x.interviewDate).ToList();
+                return dataResult.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
@@ -157,13 +157,11 @@ namespace Risebird.Business
         {
             try
             {
-                //var clientHrList = _meetingRespository.GetClientHRContactList().Result.ToList();
-                //Get client user details
                 var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
                 meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId && x.ClientHrContact != string.Empty).ToList();
                 var finalList = meetingList.Select(x => x.ClientHrContact).ToList();
 
-                foreach (var item in finalList)
+                foreach (var item in finalList ?? new List<string>())
                 {
                     if (item != null)
                         item.Replace("\n", "");
@@ -183,12 +181,10 @@ namespace Risebird.Business
         {
             try
             {
-                //var clientHrList = _meetingRespository.GetClientHRContactList().Result.ToList();
-                //Get client user details
                 var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
-                meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId /*&& x.ClientHrContact != string.Empty*/).ToList();
+                meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId).ToList();
                 var finalList = meetingList.Select(x => x.ClientName).ToList();
-                foreach (var item in finalList)
+                foreach (var item in finalList ?? new List<string>())
                 {
                     item.Replace("\n", "");
                 }
@@ -318,10 +314,10 @@ namespace Risebird.Business
                 if (movetoCP)
                 {
                     //send mail to other client users of the same client
-                    var clientUsers = _meetingRespository.GetClientUsers(clientEmailId);
-                    clientUsers = clientUsers.Where(x => x != clientEmailId);
-                    var candidateDetails = _meetingRespository.GetCandidateDetails(imid);
-                    _notificationHelper.SendCommonPoolMail(clientUsers.ToList(), clientEmailId, candidateDetails);
+                    //var clientUsers = _meetingRespository.GetClientUsers(clientEmailId);
+                    //clientUsers = clientUsers.Where(x => x != clientEmailId);
+                    //var candidateDetails = _meetingRespository.GetCandidateDetails(imid);
+                    //_notificationHelper.SendCommonPoolMail(clientUsers.ToList(), clientEmailId, candidateDetails);
                 }
                 return result;
             }
@@ -372,7 +368,7 @@ namespace Risebird.Business
                 var emergencyMeetings = _meetingRespository.GetAllEmergencyOpenInterviews(emailId).Result.ToList();
                 if (emergencyMeetings != null)
                 {
-                    foreach (var item in emergencyMeetings)
+                    foreach (var item in emergencyMeetings ?? new List<Meeting>())
                     {
                         openMeeting.Add(item);
                     }
@@ -466,13 +462,7 @@ namespace Risebird.Business
             {
                 //var finalList = new List<Meeting>();
                 var assignedMeeting = _meetingRespository.GetQualityControlInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
-                //foreach (var item in assignedMeeting)
-                //{
-                //    if(_meetingRespository.CheckCompletedInterviews(item.candidateEmail,item.ClientId, item.irfIntId).Result.ToList().Count()==0)
-                //    {
-                //        finalList.Add(item);
-                //    }
-                //}
+
                 return assignedMeeting;
             }
             catch (Exception ex)
@@ -710,16 +700,14 @@ namespace Risebird.Business
                     //get all values from database
                     var levelTech = _meetingRespository.GetLevelTech();
                     var skills = _meetingRespository.GetSkills();
-                    //var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
                     var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
                     var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
-                    //var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
-                    //var selectabilityDetails = _meetingRespository.GetTransSelectability(irfId);
+
                     var techSkillList = new List<TechSkillReport>();
 
 
                     //assign values to model
-                    foreach (var item in techSkillsDetails)
+                    foreach (var item in techSkillsDetails ?? new List<TransSkill>())
                     {
                         TechSkillReport obj = new TechSkillReport
                         {
@@ -737,7 +725,7 @@ namespace Risebird.Business
 
                     var genSkillList = new List<SkillGeneralReport>();
 
-                    foreach (var item in skillGeneralDetails)
+                    foreach (var item in skillGeneralDetails ?? new List<TransSkillGeneral>())
                     {
                         SkillGeneralReport obj = new SkillGeneralReport
                         {
@@ -753,39 +741,6 @@ namespace Risebird.Business
                     }
 
                     model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)genSkillList;
-
-                    //var joinabilityList = new List<JoinabilityReport>();
-
-
-                    //foreach (var item in joinabilityDetails)
-                    //{
-                    //    JoinabilityReport obj = new JoinabilityReport();
-                    //    obj.InterviewId = interviewId;
-                    //    obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                    //    obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                    //    obj.Name = item.Name;
-                    //    obj.Type = item.Type;
-                    //    obj.Value = item.Value;
-                    //    obj.WeightageRequired = item.Weightage;
-                    //    joinabilityList.Add(obj);
-                    //}
-                    //model.JoinabilityReportCollection = (IList<JoinabilityReport>)joinabilityList;
-
-                    //var selectabilityList = new List<SelectabilityReport>();
-                    //foreach (var item in selectabilityDetails)
-                    //{
-                    //    SelectabilityReport obj = new SelectabilityReport();
-                    //    obj.InterviewId = interviewId;
-                    //    obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                    //    obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                    //    obj.Type = item.Type;
-                    //    obj.Name = item.Name;
-                    //    obj.Value = item.Value;
-                    //    obj.WeightageRequired = item.Weightage;
-                    //    selectabilityList.Add(obj);
-                    //}
-
-                    //model.SelectabilityReportCollection = (IList<SelectabilityReport>)selectabilityList;
 
                     model.InterviewId = interviewId;
                     model.CandidateName = interviewDetails.candidateName;
@@ -826,7 +781,7 @@ namespace Risebird.Business
                 {
                     var selectabilityDetails = _evaluatorRespository.GetTransSelectability(irfId);
                     var selectabilityList = new List<SelectabilityEvaluatorReport>();
-                    foreach (var item in selectabilityDetails)
+                    foreach (var item in selectabilityDetails ?? new List<TransSelectability>())
                     {
                         SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport
                         {
@@ -855,7 +810,7 @@ namespace Risebird.Business
                 {
                     var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
                     var joinabilityList = new List<JoinabilityHRReport>();
-                    foreach (var item in joinabilityDetails)
+                    foreach (var item in joinabilityDetails ?? new List<TransJoinability>())
                     {
                         JoinabilityHRReport obj = new JoinabilityHRReport
                         {
@@ -898,7 +853,7 @@ namespace Risebird.Business
                 var skills = _meetingRespository.GetSkills();
 
                 //assign values to model
-                foreach (var item in techSkillsDetails)
+                foreach (var item in techSkillsDetails ?? new List<TransSkill>())
                 {
                     TechSkillReport obj = new TechSkillReport
                     {
@@ -919,10 +874,8 @@ namespace Risebird.Business
                 model.TechSkillReportCollection = techReportCollection;
             }
 
-            //model.JoinabilityReportCollection = (IList<JoinabilityReport>)(_meetingRespository.GetJoinabilityReport(model.InterviewId));
-            //model.SelectabilityReportCollection = (IList<SelectabilityReport>)(_meetingRespository.GetSelectabilityReport(model.InterviewId));
+
             model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
-            //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
             model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)(_meetingRespository.GetSkillGeneralReport(model.InterviewId));
             model.Proctoring = _meetingRespository.GetProctoringReport(model.InterviewId);
             model.IsEdited = true;
@@ -932,11 +885,6 @@ namespace Risebird.Business
             model.resumeLink = interviewMeetingsDetails.resumeLink;
             model.currentEmployerName = model.currentEmployerName;
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
-            //model.IsApproved = interviewMeetingsDetails.IsApproved;
-            //model.IsSelected = interviewMeetingsDetails.IsSelected;
-            //model.FinalComments = interviewMeetingsDetails.FinalComments;
-            //model.ApprovalComments = interviewMeetingsDetails.ApprovalComments;
-            // model.MeetingStatus = Enum.GetName(typeof(MeetingStatus), model.MeetingStatusList);
 
             return model;
         }
@@ -953,7 +901,7 @@ namespace Risebird.Business
 
                         var irfQualityControllers = _irfRepository.GetTransQualityController(reportModel.IRFId);
                         var mailIds = new List<string>();
-                        foreach (var item in irfQualityControllers)
+                        foreach (var item in irfQualityControllers ?? new List<TransQualityController>())
                         {
                             if (item.EmailId != null)
                             {
@@ -1101,7 +1049,7 @@ namespace Risebird.Business
         {
             try
             {
-                 await _meetingRespository.AddTotalViewCount(id, emailaddress);              
+                await _meetingRespository.AddTotalViewCount(id, emailaddress);
 
             }
             catch (Exception e)

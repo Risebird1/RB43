@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
-using Risebird.Web.Hepler;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -13,13 +11,13 @@ namespace Risebird.Web.Controllers
 {
     [Authorize]
     public class HomeController : Controller
-    {        
+    {
         private readonly IUserService _userService;
         private readonly ISettingsService _settingsService;
-        public HomeController(IUserService userService,ISettingsService settingsService)
+        public HomeController(IUserService userService, ISettingsService settingsService)
         {
             _userService = userService;
-           
+
             _settingsService = settingsService;
         }
         public IActionResult Index(string url = null)
@@ -31,7 +29,7 @@ namespace Risebird.Web.Controllers
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
-                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 var currenttheme = _userService.GetCurrenttheme(emailId);
                 if (String.IsNullOrEmpty(currenttheme))
