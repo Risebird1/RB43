@@ -383,7 +383,7 @@ namespace Risebird.Web.Controllers
             {
                 Emailaddress = HttpContext.Session.GetString("email")?.Trim();
             }
-            RestClient _client = new RestClient(" http://localhost:7071/api/");
+            RestClient _client = new RestClient("http://localhost:7071/api/");
             RestRequest request = new RestRequest("MSTeamMeeting", Method.POST);
             OnlineMeeting _meeting = new OnlineMeeting();
             _meeting.subject = Subject;
@@ -414,6 +414,7 @@ namespace Risebird.Web.Controllers
             }
             request.AddBody(_meeting);
             var response = _client.Execute<OnlineMeetingResponse>(request);
+            
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 var parameters = new DynamicParameters();
@@ -422,6 +423,7 @@ namespace Risebird.Web.Controllers
                 parameters.Add("@Whocreate", Emailaddress);
                 parameters.Add("@Meetingid", _meeting.AccountEmail);
                 parameters.Add("@LinkUrl", response.ToString());
+                //parameters.Add("@Whom", emailid);
                 var result = SqlMapper.Query(con, "usp_InsertOnlinemeeting", parameters,
                         commandType: CommandType.StoredProcedure);
             }
