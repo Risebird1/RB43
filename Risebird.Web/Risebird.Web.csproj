@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <UserSecretsId>aspnet-OneShareManagement.Web-04b0927d-59ce-40a8-a8bf-c48556ff1710</UserSecretsId>
     <WebProject_DirectoryAccessLevelKey>1</WebProject_DirectoryAccessLevelKey>
     <ApplicationIcon>risebird.ico</ApplicationIcon>
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
-    <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+  <!--  <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>-->
   </PropertyGroup>
 
   <ItemGroup>

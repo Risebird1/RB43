@@ -1,9 +1,9 @@
 ﻿@model Risebird.Entities.ViewModel.DashboardVM
-
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 <div class="panel-body panel-body-table">
     @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
     {
-        <div class="scroll">
+        <div class="sb-container scroller">
             <div class="table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -38,3 +38,9 @@
         <div>No interviews for this day!</div>
     }
 </div>
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>

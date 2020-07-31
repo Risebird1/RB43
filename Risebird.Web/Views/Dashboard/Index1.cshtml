@@ -10,7 +10,7 @@
 
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 
 <script type="text/javascript" src="~/js/plugins/jquery/jquery.min.js"></script>
 
@@ -82,15 +82,16 @@
                             <div class="panel-heading">
                                 <div class="panel-title-box">
                                     <h3>Daily Interview Tracking</h3>
+
                                 </div>
                                 <ul class="panel-controls" style="margin-top: 2px;">
                                     <li>
-                                        <div class="col-md-12 col-sm-12">
+                                        <div class="col-md-12 col-sm-12 interview-date">
                                             <input id="interviewTrackingDate" name="interviewTrackingDate" type="date" class="form-control">
                                         </div>
                                     </li>
-                                    <li><button onclick="changeInterviewTracking()" class="panel-fullscreen"><span class="fa fa-check"></span></button></li>
-                                   
+                                    <li><button onclick="changeInterviewTracking()" class="panel-fullscreen"><span class="fa fa-eye"></span></button></li>
+
                                 </ul>
                             </div>
                             <div class="panel-body">
@@ -107,54 +108,55 @@
 
                 <div class="row" style="padding-bottom:30px">
 
-                    <div class="col-md-4" style="overflow:scroll;overflow-x:hidden;overflow-y:scroll;height:350px">
+                    <div class="col-md-4">
 
                         <!-- START INTERVIEW BLOCK -->
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="panel-title-box">
                                     <h3>Skill Channel activity</h3>
+
                                 </div>
                                 @*<ul class="panel-controls" style="margin-top: 2px;">
-                                    <li>
-                                        <a href="#"><span class="fa fa-cog"></span></a>
-                                    </li>
+                                        <li>
+                                            <a href="#"><span class="fa fa-cog"></span></a>
+                                        </li>
 
-                                </ul>*@
+                                    </ul>*@
                             </div>
                             @if (Model.IrfProgressList != null && Model.IrfProgressList.Count() != 0)
                             {
-                                <div class="panel-body panel-body-table">
-                                    <div class="scroll">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="50%">Skill Channel</th>
-                                                        <th width="20%">Status</th>
-                                                        <th width="30%">Activity</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
+                        <div class="panel-body panel-body-table">
+                            <div class="sb-container scroller">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th width="50%">Skill Channel</th>
+                                                <th width="20%">Status</th>
+                                                <th width="30%">Activity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
 
-                                                    @foreach (var item in Model.IrfProgressList)
-                                                    {
-                                                        <tr>
-                                                            <td title="@item.Comment"><strong>@item.IRFnSkill</strong></td>
-                                                            <td onclick="openProgressModal()" style="cursor: pointer;"><span class="label label-danger">@item.ProgressStatus</span></td>
-                                                            <td>
-                                                                <div class="progress progress-small progress-striped active">
-                                                                    <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @((item.idProgress * 100)/11)%;">@((item.idProgress * 100) / 11)%</div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    }
+                                            @foreach (var item in Model.IrfProgressList)
+                                            {
+                                                <tr>
+                                                    <td title="@item.Comment"><strong>@item.IRFnSkill</strong></td>
+                                                    <td onclick="openProgressModal()" style="cursor: pointer;"><span class="label label-danger">@item.ProgressStatus</span></td>
+                                                    <td>
+                                                        <div class="progress progress-small progress-striped active">
+                                                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @((item.idProgress * 100)/11)%;">@((item.idProgress * 100) / 11)%</div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
 
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                        </tbody>
+                                    </table>
                                 </div>
+                            </div>
+                        </div>
                             }
 
                         </div>
@@ -170,13 +172,14 @@
                             <div class="panel-heading">
                                 <div class="panel-title-box">
                                     <h3>Daily Interview Slots</h3>
+
                                 </div>
                                 <ul class="panel-controls" style="margin-top: 2px;">
                                     @*<li>
                                             <a href="#"><span class="fa fa-cog"></span></a>
                                         </li>*@
                                     <li>
-                                        <div class="col-md-12 col-sm-12">
+                                        <div class="col-md-12 col-sm-12 interview-date">
                                             <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
                                         </div>
                                     </li>
@@ -190,9 +193,9 @@
                                 <div class="panel-body panel-body-table">
                                     @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
                                     {
-                                        <div class="scroll">
+                                        <div class="sb-container scroller">
                                             <div class="table-responsive">
-                                                <table class="table table-bordered table-striped">
+                                                <table class="table table-bordered table-striped ">
                                                     <thead>
                                                         <tr>
                                                             <th width="50%">IRF ID</th>
@@ -238,10 +241,11 @@
                             <div class="panel-heading">
                                 <div class="panel-title-box">
                                     <h3>Daily Interview Status</h3>
+
                                 </div>
                                 <ul class="panel-controls panel-controls-title">
                                     <li>
-                                        <div class="col-md-12 col-sm-12">
+                                        <div class="col-md-12 col-sm-12 interview-date">
                                             <input id="statusTrackingDate" name="statusTrackingDate" type="date" class="form-control">
                                         </div>
                                     </li>
@@ -258,69 +262,69 @@
                                 <div class="panel-body">
                                     @if (Model.TotalCompletedMeetings != 0)
                                     {
-                                        <div class="row stacked">
-                                            <div class="scroll-2">
-                                                <div>
+                                    <div class="stacked">
+                                        <div class="sb-container scroller">
+                                            <div>
 
-                                                    @{
-                                                        var borderLine = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 4).Count();
-                                                        <div class="progress-list">
-                                                            <div class="pull-left"><strong>Border Line</strong></div>
-                                                            <div class="pull-right">
-                                                                @borderLine / @Model.TotalCompletedMeetings
-                                                            </div>
-                                                            <div class="progress progress-small progress-striped active">
-                                                                <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(borderLine * 100 / Model.TotalCompletedMeetings)%;">
-                                                                    @(borderLine * 100 / Model.TotalCompletedMeetings)%
-                                                                </div>
+                                                @{
+                                                    var borderLine = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 4).Count();
+                                                    <div class="progress-list">
+                                                        <div class="pull-left"><strong>Border Line</strong></div>
+                                                        <div class="pull-right">
+                                                            @borderLine / @Model.TotalCompletedMeetings
+                                                        </div>
+                                                        <div class="progress progress-small progress-striped active">
+                                                            <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(borderLine * 100 / Model.TotalCompletedMeetings)%;">
+                                                                @(borderLine * 100 / Model.TotalCompletedMeetings)%
                                                             </div>
                                                         </div>
+                                                    </div>
 
-                                                        var proxy = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 1).Count();
-                                                        <div class="progress-list">
-                                                            <div class="pull-left"><strong>Proxy</strong></div>
-                                                            <div class="pull-right">
-                                                                @proxy / @Model.TotalCompletedMeetings
-                                                            </div>
-                                                            <div class="progress progress-small progress-striped active">
-                                                                <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(proxy * 100 / Model.TotalCompletedMeetings)%;">
-                                                                    @(proxy * 100 / Model.TotalCompletedMeetings)%
-                                                                </div>
+                                                    var proxy = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 1).Count();
+                                                    <div class="progress-list">
+                                                        <div class="pull-left"><strong>Proxy</strong></div>
+                                                        <div class="pull-right">
+                                                            @proxy / @Model.TotalCompletedMeetings
+                                                        </div>
+                                                        <div class="progress progress-small progress-striped active">
+                                                            <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(proxy * 100 / Model.TotalCompletedMeetings)%;">
+                                                                @(proxy * 100 / Model.TotalCompletedMeetings)%
                                                             </div>
                                                         </div>
+                                                    </div>
 
-                                                        var rejected = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 3).Count();
-                                                        <div class="progress-list">
-                                                            <div class="pull-left"><strong class="text-danger">Rejected</strong></div>
-                                                            <div class="pull-right">
-                                                                @rejected / @Model.TotalCompletedMeetings
-                                                            </div>
-                                                            <div class="progress progress-small progress-striped active">
-                                                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(rejected * 100 / Model.TotalCompletedMeetings)%;">
-                                                                    @(rejected * 100 / Model.TotalCompletedMeetings)%
-                                                                </div>
+                                                    var rejected = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 3).Count();
+                                                    <div class="progress-list">
+                                                        <div class="pull-left"><strong class="text-danger">Rejected</strong></div>
+                                                        <div class="pull-right">
+                                                            @rejected / @Model.TotalCompletedMeetings
+                                                        </div>
+                                                        <div class="progress progress-small progress-striped active">
+                                                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(rejected * 100 / Model.TotalCompletedMeetings)%;">
+                                                                @(rejected * 100 / Model.TotalCompletedMeetings)%
                                                             </div>
                                                         </div>
+                                                    </div>
 
-                                                        var selected = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 2).Count();
-                                                        <div class="progress-list">
-                                                            <div class="pull-left"><strong class="text-warning">Selected</strong></div>
-                                                            <div class="pull-right">
-                                                                @selected / @Model.TotalCompletedMeetings
-                                                            </div>
-                                                            <div class="progress progress-small progress-striped active">
-                                                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(selected * 100 / Model.TotalCompletedMeetings)%;">
-                                                                    @(selected * 100 / Model.TotalCompletedMeetings)%
-                                                                </div>
+                                                    var selected = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 2).Count();
+                                                    <div class="progress-list">
+                                                        <div class="pull-left"><strong class="text-warning">Selected</strong></div>
+                                                        <div class="pull-right">
+                                                            @selected / @Model.TotalCompletedMeetings
+                                                        </div>
+                                                        <div class="progress progress-small progress-striped active">
+                                                            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(selected * 100 / Model.TotalCompletedMeetings)%;">
+                                                                @(selected * 100 / Model.TotalCompletedMeetings)%
                                                             </div>
                                                         </div>
+                                                    </div>
 
-                                                    }
-
-                                                </div>
+                                                }
 
                                             </div>
+
                                         </div>
+                                    </div>
                                     }
                                     else
                                     {
@@ -340,96 +344,91 @@
                     <!--    <div class="col-md-4">
 
 
-        <div class="widget widget-default widget-carousel">
-            <div class="owl-carousel" id="owl-example">
-                <div>
-                    <div class="widget-title">Total Visitors</div>
-                    <div class="widget-subtitle">27/08/2014 15:23</div>
-                    <div class="widget-int">3,548</div>
-                </div>
-                <div>
-                    <div class="widget-title">Returned</div>
-                    <div class="widget-subtitle">Visitors</div>
-                    <div class="widget-int">1,695</div>
-                </div>
-                <div>
-                    <div class="widget-title">New</div>
-                    <div class="widget-subtitle">Visitors</div>
-                    <div class="widget-int">1,977</div>
-                </div>
-            </div>
-            <div class="widget-controls">
-                <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
-            </div>
-        </div>
-
-
-    </div> -->
-
-
-
-
-
-                    @*<div class="col-md-4">
-
-                        <!-- START WIDGET MESSAGES -->
-                        <div class="widget widget-default widget-item-icon">
-                            <div class="widget-item-left">
-                                <span class="fa fa-user"></span>
-                            </div>
-                            <div class="widget-data">
-                                <div class="widget-int num-count">@ViewBag.Totcandidate 1477</div>
-                                <div class="widget-title">Candidates</div>
-                                <div class="widget-subtitle">On your website</div>
+                        <div class="widget widget-default widget-carousel">
+                            <div class="owl-carousel" id="owl-example">
+                                <div>
+                                    <div class="widget-title">Total Visitors</div>
+                                    <div class="widget-subtitle">27/08/2014 15:23</div>
+                                    <div class="widget-int">3,548</div>
+                                </div>
+                                <div>
+                                    <div class="widget-title">Returned</div>
+                                    <div class="widget-subtitle">Visitors</div>
+                                    <div class="widget-int">1,695</div>
+                                </div>
+                                <div>
+                                    <div class="widget-title">New</div>
+                                    <div class="widget-subtitle">Visitors</div>
+                                    <div class="widget-int">1,977</div>
+                                </div>
                             </div>
                             <div class="widget-controls">
                                 <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
                             </div>
                         </div>
-                        <!-- END WIDGET MESSAGES -->
 
-                    </div>*@
+
+                    </div> -->
                     @*<div class="col-md-4">
 
-            <!-- START WIDGET MESSAGES -->
-            <div class="widget widget-default widget-item-icon">
-                <div class="widget-item-left">
-                    <span class="fa fa-video-camera"></span>
-                </div>
-                <div class="widget-data">
-                    <div class="widget-int num-count">@ViewBag.TotInterviewer 439</div>
-                    <div class="widget-title">Interviewer</div>
-                    <div class="widget-subtitle">On your website</div>
+                            <!-- START WIDGET MESSAGES -->
+                            <div class="widget widget-default widget-item-icon">
+                                <div class="widget-item-left">
+                                    <span class="fa fa-user"></span>
+                                </div>
+                                <div class="widget-data">
+                                    <div class="widget-int num-count">@ViewBag.Totcandidate 1477</div>
+                                    <div class="widget-title">Candidates</div>
+                                    <div class="widget-subtitle">On your website</div>
+                                </div>
+                                <div class="widget-controls">
+                                    <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
+                                </div>
+                            </div>
+                            <!-- END WIDGET MESSAGES -->
 
-                </div>
-                <div class="widget-controls">
-                    <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
-                </div>
-            </div>
-            <!-- END WIDGET MESSAGES -->
-
-        </div>*@
+                        </div>*@
                     @*<div class="col-md-4">
 
-                        <!-- START WIDGET REGISTRED -->
-                        <div class="widget widget-default widget-item-icon">
-                            <div class="widget-item-left">
-                                <span class="fa fa-user"></span>
-                            </div>
-                            <div class="widget-data">
-            <div class="widget-int num-count">@ViewBag.Totinvites 1935</div>
-            <div class="widget-title">Interview</div>
-            <div class="widget-subtitle">On your website</div>
+                            <!-- START WIDGET MESSAGES -->
+                            <div class="widget widget-default widget-item-icon">
+                                <div class="widget-item-left">
+                                    <span class="fa fa-video-camera"></span>
+                                </div>
+                                <div class="widget-data">
+                                    <div class="widget-int num-count">@ViewBag.TotInterviewer 439</div>
+                                    <div class="widget-title">Interviewer</div>
+                                    <div class="widget-subtitle">On your website</div>
 
-        </div>
-
-                            <div class="widget-controls">
-                                <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
+                                </div>
+                                <div class="widget-controls">
+                                    <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
+                                </div>
                             </div>
+                            <!-- END WIDGET MESSAGES -->
+
+                        </div>*@
+                    @*<div class="col-md-4">
+
+                                        <!-- START WIDGET REGISTRED -->
+                                        <div class="widget widget-default widget-item-icon">
+                                            <div class="widget-item-left">
+                                                <span class="fa fa-user"></span>
+                                            </div>
+                                            <div class="widget-data">
+                            <div class="widget-int num-count">@ViewBag.Totinvites 1935</div>
+                            <div class="widget-title">Interview</div>
+                            <div class="widget-subtitle">On your website</div>
+
                         </div>
-                        <!-- END WIDGET REGISTRED -->
 
-                    </div>*@
+                                            <div class="widget-controls">
+                                                <a href="#" class="widget-control-right widget-remove" data-toggle="tooltip" data-placement="top" title="Remove Widget"><span class="fa fa-times"></span></a>
+                                            </div>
+                                        </div>
+                                        <!-- END WIDGET REGISTRED -->
+
+                                    </div>*@
                     <div class="col-lg-4 col-md-4 col-sm-4">
 
                         <div class="card">
@@ -485,13 +484,13 @@
                     <div class="filavatar">
                         <span class="publicsharing-icon fas fa-question fa-2x"></span>
                     </div>
-                    <h5 class="modal-title pull-left" id="statusHeading"> </h5>
+                    <h5 class="modal-title pull-left" id="statusHeading">Status</h5>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" id="statusPopUp" style="cursor:pointer;">&times;</span>
                 </button>
 
-                <form action="@Url.Action("UpdateIRFProgress","Dashboard")" method="post" id="idFormProgress">
+                <form action="@Url.Action("UpdateIRFProgress","Dashboard")" method="post" id="idFormProgress" >
                     <div class="modal-body">
 
                         <table class="table table-bordered table-striped" id="progressTable" style="width:100%">
@@ -503,30 +502,30 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
+
 
                                 @for (var i = 0; i < Model.IrfProgressList.Count(); i++)
                                 {
-                                <tr>
-                                    <td><strong>@Model.IrfProgressList[i].IRFnSkill</strong></td>
-                                    <td>
-                                        @Html.DropDownListFor(m => m.IrfProgressList[i].idProgress, Model.ProgressOptions, new { @class = "form-control" })
+                                    <tr>
+                                        <td><strong>@Model.IrfProgressList[i].IRFnSkill</strong></td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.IrfProgressList[i].idProgress, Model.ProgressOptions, new { @class = "form-control" })
 
-                                    </td>
-                                    <td>
-                                        @Html.EditorFor(m => m.IrfProgressList[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        </td>
+                                        <td>
+                                            @Html.EditorFor(m => m.IrfProgressList[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
-                                    </td>
-                                    @Html.HiddenFor(m => m.IrfProgressList[i].id)
+                                        </td>
+                                        @Html.HiddenFor(m => m.IrfProgressList[i].id)
 
-                                </tr>
+                                    </tr>
 
                                 }
 
                             </tbody>
                         </table>
-
-                        <div class="form-group">
+                        <hr/>
+                        <div class="form-group clearfix">
                             <div>
                                 <div class="col-md-12 col-sm-12">
                                     @*<input type="button" onclick="updateIRFProgress()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">*@
@@ -560,7 +559,7 @@
         var modal = document.getElementById("statusModal");
         modal.style.display = "none";
     }
-    
+
     function openProgressModal() {
         var modal = document.getElementById("statusModal");
         modal.style.display = "block";
@@ -577,7 +576,7 @@
     //        data: { 'IrfProgressList': valdata },
     //        type: 'POST',
     //        dataType: 'json',
-    //        contentType: 'application/x-www-form-urlencoded; charset=UTF-8', 
+    //        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
     //        success: function (response) {
     //            //UpdateInterviewTrackingGraph(JSON.parse(data.meetingsData), JSON.parse(data.meetingsDataLabels));
     //        }
@@ -805,14 +804,8 @@
 
     }
 </script>
-<script>
-    (function ($) {
-        $(window).on("load", function () {
-            $(".scroll").mCustomScrollbar();
-        });
-    })(jQuery);
 
-</script>
+
 <script>
     function getInterviewStatus() {
         var date = document.getElementById('statusTrackingDate').value;
@@ -1004,6 +997,12 @@
 
         }
     </script>*@
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script>
 
