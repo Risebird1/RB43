@@ -8,10 +8,6 @@ namespace Risebird.Business.Interface
 {
     public interface IDashboardService
     {
-        List<Meeting> GetInvitecnt();
-        List<Meeting> GetInterviwercnt();
-        List<Meeting> GetCandidatecnt();
-        string GetDoughnutGraphDetails(string flag);
         Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date);
         Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date);
         Task<DashboardInterviewerCount> GetInterviewerCount();

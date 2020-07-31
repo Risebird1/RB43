@@ -8,10 +8,7 @@ namespace Risebird.Repository.Interface
 {
     public interface IDashboarRepository
     {
-        IEnumerable<Meeting> GetTotalInvites();
-        IEnumerable<Meeting> GetTotalInterviewer();
-        IEnumerable<Meeting> GetTotalcandidate();
-        Task<string> GetDoughnutGraphDetails(string flag);
+
         Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date);
         Task<IEnumerable<DailyInterviewSlot>> GetDateWiseMeetingsSlots(DateTime date);
         Task<DashboardInterviewerCount> GetInterviewerCount();

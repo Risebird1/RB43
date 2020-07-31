@@ -28,77 +28,7 @@ namespace Risebird.Web.Controllers
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        public async Task<IActionResult> Index()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var Totinvites = _dashboardService.GetInvitecnt();
-                    ViewBag.Totinvites = Totinvites.Count;
-                    var TotInterviewer = _dashboardService.GetInterviwercnt();
-                    ViewBag.TotInterviewer = TotInterviewer.Count;
-                    var Totcandidate = _dashboardService.GetCandidatecnt();
-                    ViewBag.Totcandidate = Totcandidate.Count;
-                    /* bind graph */
-                    var pendinginterview = _dashboardService.GetDoughnutGraphDetails("A");
-                    double acceptinterview = 100 - Convert.ToDouble(pendinginterview);
-                    List<DataPoint> dataPoints = new List<DataPoint>
-                    {
-                        new DataPoint("Confirmed", Convert.ToDouble(pendinginterview), "#6db8bc"),
-                        new DataPoint("Cancelled", acceptinterview, "#ccc")
-                    };
-                    ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoints);
-
-                    List<DataPoint> dataPoints1 = new List<DataPoint>
-                    {
-                        new DataPoint("Accepted", acceptinterview, ""),
-                        new DataPoint("", Convert.ToDouble(pendinginterview), "#ccc")
-                    };
-                    ViewBag.DataPoints1 = JsonConvert.SerializeObject(dataPoints1);
-
-                    var complete = _dashboardService.GetDoughnutGraphDetails("C");
-                    double schedule = 100 - Convert.ToDouble(complete);
-                    List<DataPoint> dataPoints2 = new List<DataPoint>
-                    {
-                        new DataPoint("Approved", Convert.ToDouble(complete), "#5184c1"),
-                        new DataPoint("Not Approved", Convert.ToDouble(schedule), "")
-                    };
-                    ViewBag.DataPoints2 = JsonConvert.SerializeObject(dataPoints2);
-                    return View();
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-
-            }
-        }
-
-        //public async Task<IActionResult> Index1()
-        //{
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //        {
-        //            return View();
-
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("SignOut", "Session");
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return null;
-        //    }
-        //}
-
+        
         public async Task<IActionResult> Index1()
         {
             try
@@ -120,7 +50,6 @@ namespace Risebird.Web.Controllers
                     model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                     model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
 
-                    //interviewer count
                     return View(model);
                 }
                 else
@@ -208,7 +137,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        //SaveIRFProgress
+
         [HttpPost]
         public async Task<IActionResult> UpdateIRFProgress(IList<IRF> IrfProgressList)
         {
@@ -224,27 +153,6 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> UpdateIRFProgress(string IrfProgressList)
-        //{
-        //    try
-        //    {
-        //        //IrfProgressList=IrfProgressList.Replace("%5B", "[");
-        //        //IrfProgressList=IrfProgressList.Replace("%5D", "]");
-        //        var data = JsonConvert.DeserializeObject<List<IRF>>(IrfProgressList);
-        //        //await _dashboardService.UpdateIRFProgress(JsonConvert.DeserializeObject<IList<IRF>>(IrfProgressList));
-        //        return null;
-        //        //var model = new DashboardVM();
-        //        //model.DailyInterviewSlots = _dashboardService.GetDateWiseMeetingsSlots(date).Result;
-        //        //return PartialView("InterviewSlotsPartial", model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return null;
-        //    }
-        //}
 
     }
 }
