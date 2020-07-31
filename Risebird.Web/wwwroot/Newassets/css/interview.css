@@ -656,6 +656,10 @@ ul.panel-controls > li > button {
 .panel .panel-heading .panel-title-box h3 {
     line-height: 31px;
 }
+.scrollbox {
+    overflow: auto;
+    height: 200px;
+}
 .btn-call {
     width: 30px !important;
     height: 30px;

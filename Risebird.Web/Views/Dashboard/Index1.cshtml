@@ -127,7 +127,7 @@
                             @if (Model.IrfProgressList != null && Model.IrfProgressList.Count() != 0)
                             {
                                 <div class="panel-body panel-body-table">
-                                    <div class="scroll">
+                                    <div class="scrollbox">
                                         <div class="table-responsive">
                                             <table class="table table-bordered table-striped">
                                                 <thead>
@@ -812,7 +812,8 @@
 <script>
     (function ($) {
         $(window).on("load", function () {
-            $(".scroll").mCustomScrollbar();
+            $(".scrollbox").mCustomScrollbar();
+
         });
     })(jQuery);
 
