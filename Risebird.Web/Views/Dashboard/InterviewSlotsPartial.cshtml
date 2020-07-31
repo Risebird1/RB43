@@ -1,0 +1,46 @@
+﻿@model Risebird.Entities.ViewModel.DashboardVM
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<div class="panel-body panel-body-table">
+    @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
+    {
+        <div class="sb-container scroller">
+            <div class="table-responsive ">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th width="50%">IRF ID</th>
+                            <th width="20%">Morning Counts</th>
+                            <th width="30%">Evening Counts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @{
+                            foreach (var item in Model.DailyInterviewSlots)
+                            {
+                                <tr>
+                                    <td><strong>@item.IRFnSkill</strong></td>
+                                    <td class="text-center"><span class="label-num">@item.Morning</span></td>
+                                    <td class="text-center"><span class="label-num">@item.Evening</span></td>
+                                </tr>
+
+                            }
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div>No interviews for this day!</div>
+    }
+</div>
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
