@@ -314,10 +314,10 @@ namespace Risebird.Business
                 if (movetoCP)
                 {
                     //send mail to other client users of the same client
-                    var clientUsers = _meetingRespository.GetClientUsers(clientEmailId);
-                    clientUsers = clientUsers.Where(x => x != clientEmailId);
-                    var candidateDetails = _meetingRespository.GetCandidateDetails(imid);
-                    _notificationHelper.SendCommonPoolMail(clientUsers.ToList(), clientEmailId, candidateDetails);
+                    //var clientUsers = _meetingRespository.GetClientUsers(clientEmailId);
+                    //clientUsers = clientUsers.Where(x => x != clientEmailId);
+                    //var candidateDetails = _meetingRespository.GetCandidateDetails(imid);
+                    //_notificationHelper.SendCommonPoolMail(clientUsers.ToList(), clientEmailId, candidateDetails);
                 }
                 return result;
             }
