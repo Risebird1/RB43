@@ -1018,10 +1018,22 @@ textarea::-webkit-scrollbar-thumb {
     .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
         border-bottom: 2px rgb(80, 158, 235) solid !important;
     }
-
-.mtop-10 {
-    margin-top: 10px;
+.btnmeeting {
+    background: #39393a7a;
+    border: 2px #e2e2e2 double;
+    color: #ffffff;
+    font-size: 12px;
+    padding: 0px 5px;
+    line-height: 26px;
+    border-radius: 5px;
+    margin-left: 10px;
 }
+    .btnmeeting:hover {
+        background: #39393a85;
+    }
+    .mtop-10 {
+        margin-top: 10px;
+    }
 
 .caret {
     display: none !important;
