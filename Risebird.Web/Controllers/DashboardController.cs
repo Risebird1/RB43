@@ -29,7 +29,7 @@ namespace Risebird.Web.Controllers
             _applicationErrorLogger = applicationErrorLogger;
         }
         
-        public async Task<IActionResult> Index1()
+        public async Task<IActionResult> Index()
         {
             try
             {
@@ -144,7 +144,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 await _dashboardService.UpdateIRFProgress(IrfProgressList);
-                return RedirectToAction("Index1");
+                return RedirectToAction("Index");
 
             }
             catch (Exception ex)
