@@ -772,7 +772,11 @@ ul.panel-controls > li > button {
     color: #807e7e;
     font-size: 12px;
 }
-
+#statusModal.modal-bg{padding-top:30px;}
+#statusModal hr{margin:10px 0px;}
+#statusModal .pagination .page-item .page-link {
+    padding: 0px 5px;
+}
 .interview #videoId {
     background: #53a5f53d;
     color: #1d3b5e;
