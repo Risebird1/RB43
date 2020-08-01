@@ -254,7 +254,7 @@ namespace Risebird.Web.Controllers
             _meeting.subject = Subject;
             _meeting.body = new Body();
             _meeting.body.content = "HTML";
-            _meeting.body.contentType = "Does next month work for you?";
+            _meeting.body.contentType = Message;
             _meeting.start = new Start();
             _meeting.start.dateTime = startdateU;
             _meeting.start.timeZone = "Central Standard Time";
