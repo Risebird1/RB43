@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using RestSharp;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -17,11 +19,15 @@ namespace Risebird.Web.Controllers
     {
         private IConfiguration _configuration;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IChatService _chatservice;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        public ChatController(IConfiguration configuration, INotificationHelper notificationHelper)
+        public ChatController(IConfiguration configuration, INotificationHelper notificationHelper, IChatService chatservice, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
             _notificationHelper = notificationHelper;
+            _chatservice = chatservice;
+            _applicationErrorLogger = applicationErrorLogger;
         }
         [HttpPost]
         public JsonResult ChatBox()
@@ -38,7 +44,8 @@ namespace Risebird.Web.Controllers
                     user = HttpContext.Session.GetString("email")?.Trim();
                     user = user.Replace("\"", "");
                 }
-                var resultset = GetConversation(user, "", "Chat", "");
+                //To fetch Details of incoming users massage 
+                var resultset = _chatservice.GetConversation(user, "", "Chat", "");
                 var _lst = resultset.Select(x => x.Sender.ToUpper()).Distinct();
                 var _lstset = new List<Conversation>();
                 foreach (var item in _lst)
@@ -82,292 +89,147 @@ namespace Risebird.Web.Controllers
                 }
                 userid = userid.Replace("\"", "");
                 contact = contact.Replace("\"", "");
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@id", userid);
-                    parameters.Add("@contact", contact);
-                    if (status == "Chat")
-                    {
-                        var result = SqlMapper.Query<Conversation>(con, "usp_GetConversation", parameters,
-                              commandType: CommandType.StoredProcedure);
-                        return (List<Conversation>)result;
-                    }
-                    else
-                    {
-                        parameters.Add("@WhoSend", WhoSend);
-                        var result = SqlMapper.Query<Conversation>(con, "usp_GetConversationdetails", parameters,
-                               commandType: CommandType.StoredProcedure);
-                        var resultset = new List<Conversation>();
-                        foreach (var item in result)
-                        {
-                            if (item.id == 0)
-                            {
-
-                            }
-                            else
-                            {
-                                item.Sender = item.Sender.ToUpper();
-                                item.Reciver = item.Reciver.ToUpper();
-                                if (item.Sender == userid.ToUpper())
-                                {
-                                    item.self = 1;
-                                }
-                                else
-                                {
-                                    item.self = 0;
-                                }
-                                resultset.Add(item);
-                            }
-                        }
-                        return resultset;
-                    }
-
-                }
+                //To fetch Details of users massage and fetch user to user converation
+                return _chatservice.GetConversation(userid, contact, status, WhoSend);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return new List<Conversation>();
             }
         }
+        //User to add message into database
         public void AddConversation(string userid, string contact, string message)
         {
             try
             {
-                string connectionString = _configuration["ConnectionString:DBConnectionString"];
                 if (String.IsNullOrEmpty(userid))
                 {
                     userid = HttpContext.Session.GetString("email")?.Trim();
                 }
                 userid = userid.Replace("\"", "");
                 contact = contact.Replace("\"", "");
-                string WhoSend = "U";
-                if (contact.Contains("@"))
-                {
-                    WhoSend = "U";
-                }
-                else
-                {
-                    WhoSend = "G";
-                }
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@id", userid);
-                    parameters.Add("@contact", contact);
-                    parameters.Add("@message", message);
-                    parameters.Add("@WhoSend", WhoSend);
-
-                    var result = SqlMapper.Query(con, "usp_AddConversation", parameters,
-                            commandType: CommandType.StoredProcedure);
-                    // return result;
-                }
+                _chatservice.AddConversation(userid, contact, message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+        //User to add Group 
+
         public void AddGroup(string GroupName)
         {
             try
             {
-                string connectionString = _configuration["ConnectionString:DBConnectionString"];
                 if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var query = "Insert into ChatGroupName Values(@GroupName)";
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@GroupName", GroupName);
-                        var results = con.Query(query, parameters);
-                    }
+                    _chatservice.AddGroup(GroupName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+        //To fetch Groupnames
         public JsonResult FetchGroup()
         {
             try
             {
-                string connectionString = _configuration["ConnectionString:DBConnectionString"];
                 if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var query = "Select id,GroupName from ChatGroupName";
-                        var results = con.Query<GroupDetails>(query);
-                        // return result;
-                        return Json(results);
-                    }
+                    var results = _chatservice.FetchGroup();
+                    return Json(results);
                 }
                 return Json("");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("");
             }
         }
+        //to delete Existing gropus
         public void DeleteGroup(string GroupId)
         {
             try
             {
-                string connectionString = _configuration["ConnectionString:DBConnectionString"];
                 if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var query = "Delete from ChatGroupUsers where Groupid=@Id";
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@Id", GroupId);
-                        var results = con.Query(query, parameters);
-                    }
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var query = "Delete from ChatGroupName where Id=@Id";
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@Id", GroupId);
-                        var results = con.Query(query, parameters);
-                    }
+                    _chatservice.DeleteGroup(GroupId);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+        //To fetch the users into a group
         public JsonResult FetchUser(string GroupId)
         {
             try
             {
-                string connectionString = _configuration["ConnectionString:DBConnectionString"];
                 if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var query = "Select cg.id,ul.Emailid from ChatGroupUsers cg join UserList ul on cg.Userid= ul.id where GroupId=@Id";
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@Id", GroupId);
-                        var results = con.Query<GroupDetails>(query, parameters);
-                        // return result;
-                        return Json(results);
-                    }
+                    var results = _chatservice.FetchUser(GroupId);
+                    return Json(results);
                 }
                 return Json("");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("");
             }
 
         }
+        //To add users into a group
         public JsonResult AddUser(string GroupId, string Emailid)
         {
             try
             {
-                string connectionString = _configuration["ConnectionString:DBConnectionString"];
-                int id = 0;
-                int count = 0;
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var query = "Select Id from UserList where Emailid=@Emailid";
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@Emailid", Emailid);
-                    id = con.Query<int>(query, parameters).FirstOrDefault();
-                }
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var query = "Select Count(*) from ChatGroupUsers where Userid=@Id and Groupid=@GroupId";
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@Id", id);
-                    parameters.Add("@GroupId", GroupId);
-                    count = con.Query<int>(query, parameters).FirstOrDefault();
-                }
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    if (count == 0)
-                    {
-                        if (id != 0)
-                        {
-                            var query = "Insert into ChatGroupUsers values(@GroupId,@Id)";
-                            var parameters = new DynamicParameters();
-                            parameters.Add("@Id", id);
-                            parameters.Add("@GroupId", GroupId);
-                            var results = con.Query(query, parameters);
-                            return Json("success");
-                        }
-                        else
-                        {
-                            return Json("User Not found");
-
-                        }
-                    }
-                    else
-                    {
-                        return Json("Duplicate User");
-                    }
-                }
+                var result = _chatservice.AddUser(GroupId, Emailid);
+                return Json(result);
             }
             catch (Exception)
             {
                 return Json("User Not found");
             }
         }
+        //To delete users from the group
         public void DeleteUser(string Userid)
         {
             try
             {
-                string connectionString = _configuration["ConnectionString:DBConnectionString"];
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var query = "Delete from ChatGroupUsers where Id=@Id";
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@Id", Userid);
-                    var results = con.Query(query, parameters);
-                }
+                _chatservice.DeleteUser(Userid);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 
-        /* Store theme in database user table     */
-
-
-
+        /* Store user selected theme in database user table     */
         public JsonResult Savetheme(string theme)
         {
             try
             {
-                string connectionString = _configuration["ConnectionString:DBConnectionString"];
                 if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var query = "Update  UserList SET Usertheme = @Usertheme where EmailId = @id";
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@id", userid);
-                        parameters.Add("@Usertheme", theme);
-                        var results = con.Query(query, parameters);
-
-                        HttpContext.Session.SetString("Currenttheme", theme);
-                        // return result;
-                        return Json(results);
-                    }
+                    var results = _chatservice.Savetheme(theme, userid);
+                    HttpContext.Session.SetString("Currenttheme", theme);
+                    return Json(results);
                 }
                 return Json("");
             }
@@ -401,43 +263,25 @@ namespace Risebird.Web.Controllers
             _meeting.end.timeZone = "Central Standard Time";
             _meeting.location = new Location();
             _meeting.location.displayName = "Tim Tom";
+            _meeting.attendees = new List<Attendee>();
             _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = emailid, name = "" }, type = "required" });
             _meeting.isOnlineMeeting = true;
             _meeting.onlineMeetingProvider = "teamsForBusiness";
-
-            string connectionString = _configuration["ConnectionString:DBConnectionString"];
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("@startdate", startdateU);
-                parameters.Add("@enddate", enddateU);
-                var result = SqlMapper.Query(con, "usp_checkOnlinemettings", parameters,
-                        commandType: CommandType.StoredProcedure);
-                _meeting.AccountEmail = result.FirstOrDefault().ToString();
-            }
+            // to chek the emailid for create a meeting for perticular timeslot
+            var result = _chatservice.checkOnlinemettings(startdateU, enddateU);
+            _meeting.AccountEmail = result;
             request.AddBody(_meeting);
             var response = _client.Execute<OnlineMeetingResponse>(request);
-            
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("@startdate", startdateU);
-                parameters.Add("@enddate", enddateU);
-                parameters.Add("@Whocreate", Emailaddress);
-                parameters.Add("@Meetingid", _meeting.AccountEmail);
-                parameters.Add("@LinkUrl", response.ToString());
-                //parameters.Add("@Whom", emailid);
-                var result = SqlMapper.Query(con, "usp_InsertOnlinemeeting", parameters,
-                        commandType: CommandType.StoredProcedure);
-            }
-
+            //Save upcoming online meeting
+            var resultsetvalue = _chatservice.InsertOnlinemeeting(startdateU, enddateU, Emailaddress, _meeting.AccountEmail, response.ToString(), emailid);
+            //Send mail with meeting invite to candidate and who create meeting
             Mail _mail = new Mail
             {
                 TO = emailid,
                 CC = Emailaddress,
                 Subject = Subject
             };
-            var resultset = _notificationHelper.OnlineMeetingInvite(_mail, response.ToString(), Message,startdateU,enddateU);
+            var resultset = _notificationHelper.OnlineMeetingInvite(_mail, response.ToString(), Message, startdateU, enddateU);
             if (resultset == "Mail sent Successfully.")
             {
                 return Json("Invite Successfully Send");

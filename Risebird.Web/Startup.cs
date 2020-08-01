@@ -178,6 +178,8 @@ namespace Risebird.Web
             services.AddScoped<IInterviewerService, InterviewerService>();
             services.AddScoped<IInterviewerRepository, InterviewerRepository>();
             services.AddScoped<IAzureFaceApi, AzureFaceApi>();
+            services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IChatRepository, ChatRepository>();
 
             //IInterviewerService
 

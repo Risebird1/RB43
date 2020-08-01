@@ -3538,42 +3538,52 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessageInterviewer");
 
                     }
-                    var model = _userService.GetInterviewersDetails();
-                    if (!String.IsNullOrEmpty(Searchvalue))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
-                        ViewBag.searchvalue = Searchvalue;
+                        //fetch Interviewers details
+                        var model = _userService.GetInterviewersDetails();
+                        //on search interviewer with name and skills
+                        if (!String.IsNullOrEmpty(Searchvalue))
+                        {
+                            model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
+                            ViewBag.searchvalue = Searchvalue;
+                        }
+                        else
+                        {
+                            ViewBag.searchvalue = "";
+                        }
+                        foreach (var item in model)
+                        {
+                            var PrimarySkillSet = item.PrimarySkill?.Split(',');
+                            if (PrimarySkillSet == null)
+                                continue;
+                            string PrimaryTopSkill = String.Empty;
+                            int ForLoopCount = 5;
+                            if (PrimarySkillSet.Count() < 5)
+                            {
+                                ForLoopCount = PrimarySkillSet.Count();
+                            }
+                            for (int i = 0; i < ForLoopCount; i++)
+                            {
+                                if (String.IsNullOrEmpty(PrimaryTopSkill))
+                                {
+                                    PrimaryTopSkill = PrimarySkillSet[i];
+                                }
+                                else
+                                {
+                                    PrimaryTopSkill = PrimaryTopSkill + "," + PrimarySkillSet[i];
+                                }
+                            }
+                            item.PrimarySkill = PrimaryTopSkill;
+                        }
+                        return View(model.ToPagedList(Page ?? 1, 12));
                     }
                     else
                     {
-                        ViewBag.searchvalue = "";
+                        return RedirectToAction("SignOut", "Session");
                     }
-                    foreach (var item in model)
-                    {
-                        var PrimarySkillSet = item.PrimarySkill?.Split(',');
-                        if (PrimarySkillSet == null)
-                            continue;
-                        string PrimaryTopSkill = String.Empty;
-                        int ForLoopCount = 5;
-                        if (PrimarySkillSet.Count() < 5)
-                        {
-                            ForLoopCount = PrimarySkillSet.Count();
-                        }
-                        for (int i = 0; i < ForLoopCount; i++)
-                        {
-                            if (String.IsNullOrEmpty(PrimaryTopSkill))
-                            {
-                                PrimaryTopSkill = PrimarySkillSet[i];
-                            }
-                            else
-                            {
-                                PrimaryTopSkill = PrimaryTopSkill + "," + PrimarySkillSet[i];
-                            }
-                        }
-                        item.PrimarySkill = PrimaryTopSkill;
-                    }
-
-                    return View(model.ToPagedList(Page ?? 1, 12));
                 }
                 else
                 {
@@ -3589,21 +3599,37 @@ namespace Risebird.Web.Controllers
         }
         public async Task<IActionResult> InterviewerDetailById(string Id, string Videoid)
         {
-            // code for fetch data or any thing else
-            InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
-            interviewerVM.id = Convert.ToInt32(Id);
-            if (!String.IsNullOrEmpty(Videoid))
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                //fetch vediolink wth details
-                var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
-                interviewerVM.VideoLink = model.VideoLink;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    //fetch Interviewer by id
+                    InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
+                    interviewerVM.id = Convert.ToInt32(Id);
+                    if (!String.IsNullOrEmpty(Videoid))
+                    {
+                        //fetch vediolink with details when click on any video
+                        var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
+                        interviewerVM.VideoLink = model.VideoLink;
+                    }
+                    interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
+                    if (interviewerVM.SubVideo_List == null || interviewerVM.SubVideo_List.Count == 0)
+                    {
+                        interviewerVM.SubVideo_List = new List<InterviewerVM>();
+                    }
+                    return View(interviewerVM);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
             }
-            interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
-            if (interviewerVM.SubVideo_List == null || interviewerVM.SubVideo_List.Count == 0)
+            else
             {
-                interviewerVM.SubVideo_List = new List<InterviewerVM>();
+                return RedirectToAction("SignOut", "Session");
             }
-            return View(interviewerVM);
         }
 
         [Authorize]
