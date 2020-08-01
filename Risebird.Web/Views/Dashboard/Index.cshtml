@@ -680,7 +680,11 @@
             { y: @Model.MeetingResultCountObj.SelectedCount, label: "Selected" },
             { y: @Model.MeetingResultCountObj.RejectedCount, label: "Rejected" },
             { y: @Model.MeetingResultCountObj.BorderLineCount, label:"Border Line"},
-            {y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}]
+            { y: @Model.MeetingResultCountObj.NoShowCount, label:"No Show"},
+            { y: @Model.MeetingResultCountObj.ScheduledCount, label:"Scheduled"},
+            { y: @Model.MeetingResultCountObj.DroppedCount, label:"Dropped"},
+            { y: @Model.MeetingResultCountObj.StatusPendingCount, label:"Status Pending"}
+            @*{y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}*@]
 
         var chart = new CanvasJS.Chart("meetingsCountId", {
            theme: "light2",
