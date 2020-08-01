@@ -1,20 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
 using System.Dynamic;
-using System.Data;
-using Risebird.Entities.Enum;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Risebird.Entities.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -28,7 +25,7 @@ namespace Risebird.Web.Controllers
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        
+
         public async Task<IActionResult> Index()
         {
             try
@@ -129,7 +126,7 @@ namespace Risebird.Web.Controllers
             {
                 var model = new DashboardVM();
                 model.DailyInterviewSlots = _dashboardService.GetDateWiseMeetingsSlots(date).Result;
-                return PartialView("InterviewSlotsPartial", model); 
+                return PartialView("InterviewSlotsPartial", model);
             }
             catch (Exception ex)
             {

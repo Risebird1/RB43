@@ -11,7 +11,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -138,12 +137,12 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
                     DataTable progressDt = new DataTable();
                     progressDt.Columns.Add("id", typeof(int));
                     progressDt.Columns.Add("Comment", typeof(string));
                     progressDt.Columns.Add("idProgress", typeof(int));
-                   
+
 
                     foreach (var item in irfProgressList)
                     {
@@ -159,7 +158,7 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-                    
+
                     return true;
                 }
 

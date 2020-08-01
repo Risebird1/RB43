@@ -8,9 +8,9 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th width="50%">IRF ID</th>
                             <th width="20%">Morning Counts</th>
                             <th width="30%">Evening Counts</th>
+                            <th width="50%">Skill Channel ID</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -18,10 +18,10 @@
                         @{
                             foreach (var item in Model.DailyInterviewSlots)
                             {
-                                <tr>
-                                    <td><strong>@item.IRFnSkill</strong></td>
-                                    <td class="text-center"><span class="label-num">@item.Morning</span></td>
-                                    <td class="text-center"><span class="label-num">@item.Evening</span></td>
+                                <tr>                                   
+                                    <td class="text-center"><span class="label-num"><strong>@item.Morning</strong></span></td>
+                                    <td class="text-center"><span class="label-num"><strong>@item.Evening</strong></span></td>
+                                     <td><strong>@item.IRFnSkill</strong></td>
                                 </tr>
 
                             }

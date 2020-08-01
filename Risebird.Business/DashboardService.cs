@@ -20,7 +20,7 @@ namespace Risebird.Business
             _dashboardRespository = dashboardRespository;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        
+
         public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date)
         {
             try
@@ -92,7 +92,7 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false ;
+                return false;
             }
         }
 
