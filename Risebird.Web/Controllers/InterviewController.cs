@@ -174,8 +174,8 @@ namespace Risebird.Web.Controllers
                     && (filter.Interviewer.Count() > 0 ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
 
                     if (modelList.Count == 0 && filter.StartDate != null && filter.EndDate != null)
-                    {
-                        modelList = _meetingService.GetMeetingList();
+                    {                       
+                        modelList = _meetingService.GetAllMeetingList(filter.StartDate.Value, filter.EndDate.Value.AddDays(1));
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
@@ -229,7 +229,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 28].Value = "Final Selection Status";
                 Sheet.Cells[1, 29].Value = "Final Selection Comments";
                 Sheet.Cells[1, 30].Value = "QC Interviewer";
-
+                Sheet.Cells[1, 31].Value = "Coordinating HR";
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -337,7 +337,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 28].Value = item.FinalSelectionStat ?? "";
                         Sheet.Cells[i, 29].Value = item.FinalComments ?? "Comments not submitted.";
                         Sheet.Cells[i, 30].Value = item.QCInterviewer;
-
+                        Sheet.Cells[i, 31].Value = item.HRCoordinatorEmailId;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
