@@ -71,7 +71,6 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                string connectionString = _configuration["ConnectionString:DBConnectionString"];
                 if (String.IsNullOrEmpty(userid))
                 {
                     if (HttpContext.Session.GetString("email")?.Trim() == null)
@@ -247,9 +246,10 @@ namespace Risebird.Web.Controllers
             }
             DateTime startdateU = TimeZoneInfo.ConvertTime(startdate, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
             DateTime enddateU = TimeZoneInfo.ConvertTime(enddate, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
-
-            RestClient _client = new RestClient("http://localhost:7071/api/");
-            RestRequest request = new RestRequest("MSTeamMeeting", Method.POST);
+            var baseurl = _configuration["OnlineMeetingAzure:Apiendpoint"];
+            var methodname = _configuration["OnlineMeetingAzure:Methodname"];
+            RestClient _client = new RestClient(baseurl);
+            RestRequest request = new RestRequest(methodname, Method.POST);
             OnlineMeeting _meeting = new OnlineMeeting();
             _meeting.subject = Subject;
             _meeting.body = new Body();
