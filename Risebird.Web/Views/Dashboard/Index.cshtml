@@ -568,7 +568,7 @@
             { y: @Model.MeetingResultCountObj.NoShowCount, label:"No Show"},
             { y: @Model.MeetingResultCountObj.ScheduledCount, label:"Scheduled"},
             { y: @Model.MeetingResultCountObj.DroppedCount, label:"Dropped"},
-            { y: @Model.MeetingResultCountObj.StatusPendingCount, label:"Status Pending"}
+            @*{ y: @Model.MeetingResultCountObj.StatusPendingCount, label:"Status Pending"}*@
             @*{y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}*@]
 
         var chart = new CanvasJS.Chart("meetingsCountId", {
