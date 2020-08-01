@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Risebird.Business.Interface;
+﻿using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -17,13 +16,13 @@ namespace Risebird.Business
         private readonly IInterviewerSkillsRepository _interviewerSkillsRepository;
         private readonly INotificationHelper _notificationHelper;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-       
+
 
 
         public InterviewerSkillsService(IInterviewerSkillsRepository InterviewerSkillsRepository, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
         {
             _interviewerSkillsRepository = InterviewerSkillsRepository;
-            _applicationErrorLogger = applicationErrorLogger;            
+            _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
         }
         public IEnumerable<InterviewerSkillsChannelModel> GetAllInterviewerSkillsChannel(string profileName, string emailId)

@@ -3532,20 +3532,18 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (TempData["SuccessErrorMessageInterviewer"] != null)
-                    {
-                        ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
-                        TempData.Remove("SuccessErrorMessageInterviewer");
-
-                    }
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        //fetch Interviewers details
+                        if (TempData["SuccessErrorMessageInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterviewer");
+
+                        }
                         var model = _userService.GetInterviewersDetails();
-                        //on search interviewer with name and skills
-                        if (!String.IsNullOrEmpty(Searchvalue))
+                        if (!string.IsNullOrEmpty(Searchvalue))
                         {
                             model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
                             ViewBag.searchvalue = Searchvalue;
@@ -3559,7 +3557,7 @@ namespace Risebird.Web.Controllers
                             var PrimarySkillSet = item.PrimarySkill?.Split(',');
                             if (PrimarySkillSet == null)
                                 continue;
-                            string PrimaryTopSkill = String.Empty;
+                            string PrimaryTopSkill = string.Empty;
                             int ForLoopCount = 5;
                             if (PrimarySkillSet.Count() < 5)
                             {
@@ -3567,7 +3565,7 @@ namespace Risebird.Web.Controllers
                             }
                             for (int i = 0; i < ForLoopCount; i++)
                             {
-                                if (String.IsNullOrEmpty(PrimaryTopSkill))
+                                if (string.IsNullOrEmpty(PrimaryTopSkill))
                                 {
                                     PrimaryTopSkill = PrimarySkillSet[i];
                                 }
@@ -3578,6 +3576,7 @@ namespace Risebird.Web.Controllers
                             }
                             item.PrimarySkill = PrimaryTopSkill;
                         }
+
                         return View(model.ToPagedList(Page ?? 1, 12));
                     }
                     else
@@ -3589,7 +3588,7 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-                //details for InterviewerDetails Page
+               
             }
             catch (Exception ex)
             {
@@ -3599,36 +3598,44 @@ namespace Risebird.Web.Controllers
         }
         public async Task<IActionResult> InterviewerDetailById(string Id, string Videoid)
         {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            try
             {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    //fetch Interviewer by id
-                    InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
-                    interviewerVM.id = Convert.ToInt32(Id);
-                    if (!String.IsNullOrEmpty(Videoid))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        //fetch vediolink with details when click on any video
-                        var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
-                        interviewerVM.VideoLink = model.VideoLink;
+                        // code for fetch data or any thing else
+                        InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
+                        interviewerVM.id = Convert.ToInt32(Id);
+                        if (!String.IsNullOrEmpty(Videoid))
+                        {
+                            //fetch vediolink wth details
+                            var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
+                            interviewerVM.VideoLink = model.VideoLink;
+                        }
+                        interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
+                        if (interviewerVM.SubVideo_List == null || interviewerVM.SubVideo_List.Count == 0)
+                        {
+                            interviewerVM.SubVideo_List = new List<InterviewerVM>();
+                        }
+                        return View(interviewerVM);
                     }
-                    interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
-                    if (interviewerVM.SubVideo_List == null || interviewerVM.SubVideo_List.Count == 0)
+                    else
                     {
-                        interviewerVM.SubVideo_List = new List<InterviewerVM>();
+                        return RedirectToAction("SignOut", "Session");
                     }
-                    return View(interviewerVM);
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return RedirectToAction("SignOut", "Session");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewerDetail");
             }
         }
 

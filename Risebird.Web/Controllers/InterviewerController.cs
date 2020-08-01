@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class InterviewerController : Controller
     {
         private IInterviewerService _interviewerService;
@@ -52,29 +53,39 @@ namespace Risebird.Web.Controllers
 
         #region Interviewer Profile functions
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (TempData["MessageInterviewer"] != null)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        ViewBag.Message = TempData["MessageInterviewer"].ToString();
-                        TempData.Remove("MessageInterviewer");
+                        if (TempData["MessageInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["MessageInterviewer"].ToString();
+                            TempData.Remove("MessageInterviewer");
 
+                        }
+
+                        return View(_interviewerService.GetInterviewers());
                     }
-
-                    return View(_interviewerService.GetInterviewers());
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
             }
         }
 
@@ -85,11 +96,20 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    InterviewerProfileVM model = new InterviewerProfileVM();
-                    // Get all the select Lists
-                    GetAllSelectList(model);
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        InterviewerProfileVM model = new InterviewerProfileVM();
+                        // Get all the select Lists
+                        GetAllSelectList(model);
 
-                    return View("AddInterviewerProfile", model);
+                        return View("AddInterviewerProfile", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
                 }
                 else
                 {
@@ -112,48 +132,56 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    string uploadedFileURL = string.Empty;
-
-                    if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        if (interviewerProfile.ResumeFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ResumeLink = uploadedFileURL;
+                        string uploadedFileURL = string.Empty;
 
-                        }
-                        else if (interviewerProfile.CodedResumeFile != null)
+                        if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.CodedResumeLink = uploadedFileURL;
+                            if (interviewerProfile.ResumeFile != null)
+                            {
+                                await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                interviewerProfile.ResumeLink = uploadedFileURL;
+
+                            }
+                            else if (interviewerProfile.CodedResumeFile != null)
+                            {
+                                await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                interviewerProfile.CodedResumeLink = uploadedFileURL;
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Please add a Resume File");
+                            InterviewerProfileVM model = new InterviewerProfileVM();
+                            // Get all the select Lists
+                            GetAllSelectList(model);
+                            return View("AddInterviewerProfile", model);
+                        }
+
+                        if (_interviewerService.AddInterviewerProfile(interviewerProfile).Result)
+                        {
+                            TempData["MessageInterviewer"] = "Interviewer Profile is added Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["MessageInterviewer"] = "Interviewer Profile addition is Failed";
+                            return RedirectToAction("Index");
                         }
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Please add a Resume File");
-                        InterviewerProfileVM model = new InterviewerProfileVM();
-                        // Get all the select Lists
-                        GetAllSelectList(model);
-                        return View("AddInterviewerProfile", model);
+                        return RedirectToAction("SignOut", "Session");
                     }
-
-                    if (_interviewerService.AddInterviewerProfile(interviewerProfile).Result)
-                    {
-                        TempData["MessageInterviewer"] = "Interviewer Profile is added Successfully";
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        TempData["MessageInterviewer"] = "Interviewer Profile addition is Failed";
-                        return RedirectToAction("Index");
-                    }
-
                 }
                 else
                 {
@@ -175,11 +203,20 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    InterviewerProfileVM model = _interviewerService.GetInterviewerProfileById(userId);
-                    // Get all the select Lists
-                    GetAllSelectList(model);
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        InterviewerProfileVM model = _interviewerService.GetInterviewerProfileById(userId);
+                        // Get all the select Lists
+                        GetAllSelectList(model);
 
-                    return View("EditInterviewerProfile", model);
+                        return View("EditInterviewerProfile", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
                 }
                 else
                 {
@@ -201,40 +238,48 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    string uploadedFileURL = string.Empty;
-
-                    if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        if (interviewerProfile.ResumeFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ResumeLink = uploadedFileURL;
+                        string uploadedFileURL = string.Empty;
 
-                        }
-                        else if (interviewerProfile.CodedResumeFile != null)
+                        if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.CodedResumeLink = uploadedFileURL;
-                        }
-                    }
+                            if (interviewerProfile.ResumeFile != null)
+                            {
+                                await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                interviewerProfile.ResumeLink = uploadedFileURL;
 
-                    if (_interviewerService.EditInterviewerProfile(interviewerProfile).Result)
-                    {
-                        TempData["MessageInterviewer"] = "Edit Interviewer Successful";
-                        return RedirectToAction("Index");
+                            }
+                            else if (interviewerProfile.CodedResumeFile != null)
+                            {
+                                await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                interviewerProfile.CodedResumeLink = uploadedFileURL;
+                            }
+                        }
+
+                        if (_interviewerService.EditInterviewerProfile(interviewerProfile).Result)
+                        {
+                            TempData["MessageInterviewer"] = "Edit Interviewer Successful";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["MessageInterviewer"] = " Edit Interviewer is Failed";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["MessageInterviewer"] = " Edit Interviewer is Failed";
-                        return RedirectToAction("Index");
+                        return RedirectToAction("SignOut", "Session");
                     }
-
                 }
                 else
                 {
@@ -617,15 +662,16 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
+
                     if (profileName == "Interviewer")
                     {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
                         InterviewerProfileVM model = _interviewerService.GetInterviewerProfileByEmailId(emailid, profileName);
                         if (model == null)
                         {
                             TempData["MessageInterviewer"] = "No Information available in the System";
-                            return RedirectToAction("Index");
+                            return RedirectToAction("MyInterview", "Interview");
                         }
                         // Get all the select Lists
                         GetAllSelectList(model);
@@ -659,28 +705,37 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     string uploadedFileURL = string.Empty;
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
 
-                    if (interviewerProfile.ResumeFile != null)
+                    if (profileName == "Interviewer")
                     {
-                        await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-                        interviewerProfile.ResumeLink = uploadedFileURL;
+                        if (interviewerProfile.ResumeFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            interviewerProfile.ResumeLink = uploadedFileURL;
 
-                    }
+                        }
 
-                    if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
-                    {
-                        TempData["MessageInterviewer"] = "My Profile is added Successfully";
-                        return RedirectToAction("Index");
+                        if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
+                        {
+                            TempData["MessageInterviewer"] = "My Profile is added Successfully";
+                            return View("MyProfile", interviewerProfile);
+                        }
+                        else
+                        {
+                            TempData["MessageInterviewer"] = "My Profile addition is Failed";
+                            return View("MyProfile", interviewerProfile);
+                        }
                     }
                     else
                     {
-                        TempData["MessageInterviewer"] = "My Profile addition is Failed";
-                        return RedirectToAction("Index");
-                    }
+                        return RedirectToAction("SignOut", "Session");
 
+                    }
                 }
                 else
                 {
@@ -760,7 +815,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception )
+                                catch (Exception)
                                 {
                                     item.resumeLink = "";
                                 }
@@ -914,7 +969,7 @@ namespace Risebird.Web.Controllers
                                     item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                                 }
-                                catch (Exception )
+                                catch (Exception)
                                 {
                                     item.resumeLink = "";
                                 }
@@ -1064,27 +1119,15 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("Index");
                     }
-                    else if (profileName != null && (profileName == "Interviewer" || profileName == "Quality Controller"))
+                    else if (profileName != null && (profileName == "Interviewer"))
                     {
                         model.IsInterviewer = true;
-                        if (isQC)
-                        {
-                            return RedirectToAction("MyQualityControlledInterviews");
-                        }
-                        else
-                        {
-                            return RedirectToAction("MyInterviewerAssessment");
-                        }
+                       
+                       return RedirectToAction("MyInterviewerAssessment");
+                        
                     }
                 }
-                //if (model.QuestionsCollection == null)
-                //{
-                //    ViewBag.QuestionsDiscussedCount = 0;
-                //}
-                //else
-                //{
-                //    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
-                //}
+                
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -1101,17 +1144,12 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                if (isQC)
-                {
-                    return RedirectToAction("MyQualityControlledInterviews");
-
-                }
-                else
-                {
-                    return RedirectToAction("MyInterviewerAssessment");
-                }
+                
+                 return RedirectToAction("MyInterviewerAssessment");
+                
             }
         }
+
         [Authorize]
         [HttpPost]
         [DisableRequestSizeLimit]
@@ -1126,8 +1164,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     profileName = "Interviewer";
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
-                        profileName == "Quality Controller")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
                     {
                         if (model.AudioFile != null)
                         {
@@ -1178,16 +1215,10 @@ namespace Risebird.Web.Controllers
                             {
                                 return RedirectToAction("Index");
                             }
-                            else if (model.IsQC)
-                            {
-                                return RedirectToAction("MyQualityControlledInterviews");
+                           
+                            return RedirectToAction("MyInterviewerAssessment");
 
-                            }
-                            else
-                            {
-                                return RedirectToAction("MyInterviewerAssessment");
-
-                            }
+                            
 
                         }
                         else
@@ -1197,16 +1228,10 @@ namespace Risebird.Web.Controllers
                             {
                                 return RedirectToAction("Index");
                             }
-                            else if (model.IsQC)
-                            {
-                                return RedirectToAction("MyQualityControlledInterviews");
+                           
+                            return RedirectToAction("MyInterviewerAssessment");
 
-                            }
-                            else
-                            {
-                                return RedirectToAction("MyInterviewerAssessment");
-
-                            }
+                            
                         }
                     }
                     else
