@@ -19,7 +19,9 @@ select (select Count(im.id) from InterviewMeetings im  left join InterviewCommen
 (select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.InterviewStatus=2) as SelectedCount,
 (select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.InterviewStatus=3) as RejectedCount,
 (select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.InterviewStatus=4) as BorderLineCount,
-(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.InterviewStatus is null) as NoResultCount,
+(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.InterviewStatus is null and ic.MeetingStatus=1) as NoShowCount,
+(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.InterviewStatus is null and (ic.MeetingStatus=2 or ic.MeetingStatus is null)) as ScheduledCount,
+(select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and ic.InterviewStatus is null and ic.MeetingStatus=3) as DroppedCount,
 (select Count(im.id) from InterviewMeetings im  left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1) as TotalMeetingsCount
 
 

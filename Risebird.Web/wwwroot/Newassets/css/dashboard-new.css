@@ -1775,7 +1775,7 @@ a.list-group-item:focus {
         }
 
             .panel .panel-heading .panel-title-box h3 {
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 600;
                 line-height: 31px;
                 color: #1b1e24;
@@ -5288,8 +5288,15 @@ blockquote {
 .modal-title {
     text-align: center;
     padding: 10px 10px 0px 10px;
+    font-size: 1.57em!important;
     text-transform: uppercase;
 }
+#progressTable_wrapper .dataTables_filter input[type=search] {
+    width: 150px;
+    font-size:13px;
+}
+#progressTable_wrapper .form-control{font-size:14px;}
+
 
 .modal-content {
     border-radius: 10px;
@@ -5303,9 +5310,9 @@ button.close {
     margin-right: -30px;
     cursor: pointer;
     color: #fff;
-    border: 1px solid #AEAEAE;
+    border: 1px solid #AEAEAE !important;
     border-radius: 30px;
-    background: #605F61;
+    background: #605F61 !important;
     font-size: 31px;
     font-weight: bold;
     display: inline-block;
@@ -5314,6 +5321,7 @@ button.close {
     position: absolute;
     top: 50px;
     right: 50px;
+    opacity:1!important;
 }
 
 
