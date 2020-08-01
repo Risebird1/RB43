@@ -38,13 +38,10 @@
 <script type="text/javascript" src="~/js/plugins/daterangepicker/daterangepicker.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
-
 <!-- END THIS PAGE PLUGINS-->
 <!-- START TEMPLATE -->
 
-<style>
 
-</style>
 
 <script type="text/javascript" src="~/js/demo_dashboard.js"></script>
 
@@ -120,14 +117,7 @@
                                     <h3>Skill Channel Activity</h3>
 
                                 </div>
-                                <ul class="panel-controls" style="margin-top: 2px;">
 
-
-                                    <li>
-
-                                        <button onclick="#" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
-                                    </li>
-                                </ul>
                             </div>
                             @if (Model.IrfProgressList != null && Model.IrfProgressList.Count() != 0)
                             {
@@ -170,17 +160,15 @@
                                                             label = "progress-bar-green";
                                                             statuslabel = "label-green";
                                                         }
-
-
-                                                        <tr>
-                                                            <td title="@item.Comment"><strong>@item.IRFnSkill</strong></td>
-                                                            <td onclick="openProgressModal()" style="cursor: pointer;"><span class="label @statuslabel">@item.ProgressStatus</span></td>
-                                                            <td>
-                                                                <div class="progress progress-small progress-striped active">
-                                                                    <div class="progress-bar @label" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" title="" style="width: @((item.idProgress * 100)/11)%;"><a href="#" data-toggle="tooltip" title="@((item.idProgress * 100) / 11)%"> <span>@((item.idProgress * 100) / 11)%</span></a></div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
+                                                    <tr>
+                                                        <td title="@item.Comment"><strong>@item.IRFnSkill</strong></td>
+                                                        <td onclick="openProgressModal()" style="cursor: pointer;"><span class="label label-danger">@item.ProgressStatus</span></td>
+                                                        <td>
+                                                            <div class="progress progress-small progress-striped active">
+                                                                <div class="progress-bar @label" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" title="" style="width: @((item.idProgress * 100)/11)%;"><a href="#" data-toggle="tooltip" title="@((item.idProgress * 100) / 11)%"> <span>@((item.idProgress * 100) / 11)%</span></a></div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
                                                     }
 
                                                 </tbody>
@@ -736,12 +724,6 @@
     $(".sb-container").scrollBox();
 </script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
-<script>
-    $(document).ready(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-</script>
 <script>
 
 
