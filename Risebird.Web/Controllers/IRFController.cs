@@ -3532,54 +3532,63 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (TempData["SuccessErrorMessageInterviewer"] != null)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
-                        TempData.Remove("SuccessErrorMessageInterviewer");
+                        if (TempData["SuccessErrorMessageInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterviewer");
 
-                    }
-                    var model = _userService.GetInterviewersDetails();
-                    if (!String.IsNullOrEmpty(Searchvalue))
-                    {
-                        model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
-                        ViewBag.searchvalue = Searchvalue;
+                        }
+                        var model = _userService.GetInterviewersDetails();
+                        if (!string.IsNullOrEmpty(Searchvalue))
+                        {
+                            model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
+                            ViewBag.searchvalue = Searchvalue;
+                        }
+                        else
+                        {
+                            ViewBag.searchvalue = "";
+                        }
+                        foreach (var item in model)
+                        {
+                            var PrimarySkillSet = item.PrimarySkill?.Split(',');
+                            if (PrimarySkillSet == null)
+                                continue;
+                            string PrimaryTopSkill = string.Empty;
+                            int ForLoopCount = 5;
+                            if (PrimarySkillSet.Count() < 5)
+                            {
+                                ForLoopCount = PrimarySkillSet.Count();
+                            }
+                            for (int i = 0; i < ForLoopCount; i++)
+                            {
+                                if (string.IsNullOrEmpty(PrimaryTopSkill))
+                                {
+                                    PrimaryTopSkill = PrimarySkillSet[i];
+                                }
+                                else
+                                {
+                                    PrimaryTopSkill = PrimaryTopSkill + "," + PrimarySkillSet[i];
+                                }
+                            }
+                            item.PrimarySkill = PrimaryTopSkill;
+                        }
+
+                        return View(model.ToPagedList(Page ?? 1, 12));
                     }
                     else
                     {
-                        ViewBag.searchvalue = "";
+                        return RedirectToAction("SignOut", "Session");
                     }
-                    foreach (var item in model)
-                    {
-                        var PrimarySkillSet = item.PrimarySkill?.Split(',');
-                        if (PrimarySkillSet == null)
-                            continue;
-                        string PrimaryTopSkill = String.Empty;
-                        int ForLoopCount = 5;
-                        if (PrimarySkillSet.Count() < 5)
-                        {
-                            ForLoopCount = PrimarySkillSet.Count();
-                        }
-                        for (int i = 0; i < ForLoopCount; i++)
-                        {
-                            if (String.IsNullOrEmpty(PrimaryTopSkill))
-                            {
-                                PrimaryTopSkill = PrimarySkillSet[i];
-                            }
-                            else
-                            {
-                                PrimaryTopSkill = PrimaryTopSkill + "," + PrimarySkillSet[i];
-                            }
-                        }
-                        item.PrimarySkill = PrimaryTopSkill;
-                    }
-
-                    return View(model.ToPagedList(Page ?? 1, 12));
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-                //details for InterviewerDetails Page
+               
             }
             catch (Exception ex)
             {
@@ -3589,21 +3598,45 @@ namespace Risebird.Web.Controllers
         }
         public async Task<IActionResult> InterviewerDetailById(string Id, string Videoid)
         {
-            // code for fetch data or any thing else
-            InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
-            interviewerVM.id = Convert.ToInt32(Id);
-            if (!String.IsNullOrEmpty(Videoid))
+            try
             {
-                //fetch vediolink wth details
-                var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
-                interviewerVM.VideoLink = model.VideoLink;
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        // code for fetch data or any thing else
+                        InterviewerVM interviewerVM = _userService.GetInterviewer(Convert.ToInt32(Id));
+                        interviewerVM.id = Convert.ToInt32(Id);
+                        if (!String.IsNullOrEmpty(Videoid))
+                        {
+                            //fetch vediolink wth details
+                            var model = _userService.GetMeetingbyid(Convert.ToInt32(Videoid));
+                            interviewerVM.VideoLink = model.VideoLink;
+                        }
+                        interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
+                        if (interviewerVM.SubVideo_List == null || interviewerVM.SubVideo_List.Count == 0)
+                        {
+                            interviewerVM.SubVideo_List = new List<InterviewerVM>();
+                        }
+                        return View(interviewerVM);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
             }
-            interviewerVM.SubVideo_List = _userService.GetInterviewerVideos(interviewerVM.EmailId);
-            if (interviewerVM.SubVideo_List == null || interviewerVM.SubVideo_List.Count == 0)
+            catch (Exception ex)
             {
-                interviewerVM.SubVideo_List = new List<InterviewerVM>();
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewerDetail");
             }
-            return View(interviewerVM);
         }
 
         [Authorize]
