@@ -108,9 +108,7 @@
                     <div>
                         <button class="close" title="Minimize"> <i class='fa fa-minus'></i> </button>
                     </div>
-                    @*<div>
-                            <span onclick="closeChatPopUp()" style="cursor:pointer;" title="Close" class="close" id="SharePopUp">&times;</span>
-                        </div>*@
+                 
 
                 </div>
                 <div class="modal-body nopad">
@@ -119,21 +117,12 @@
                         <div class="clearfix"></div>
                         <div class="right-in" style="width:100%">
                             <div class="container-chat">
-                                <div class=" col-md-4 chatlist pull-left nopad">
-
-                                    @*<div class="search">
-                                            <input type="text" placeholder="search" />
-                                            <i class="fa fa-search"></i>
-                                        </div>*@
+                                <div class=" col-md-4 chatlist pull-left nopad">                                  
                                     <div class="scroll-box-wrap">
                                         <div class="col-md-12 scroll-box-list" id="divchatboxmenu"></div>
-
                                     </div>
                                 </div>
                                 <div class="col-md-8 pull-left chat  nopad">
-
-
-
                                     <div class="chat-header clearfix">
                                         <div class="pull-right">
                                             @if (User.Identity.IsAuthenticated)
@@ -163,7 +152,7 @@
                                                 <div class="chat-with"><lable id="lblChatname"></lable></div>
 
                                             </div>
-                                            @*<i class="fa fa-star"></i>*@
+                                          
                                         </div>
 
 
@@ -191,19 +180,6 @@
                                             </div>
                                         </form>
 
-
-
-
-
-
-
-                                        <!--    <div class="col-md-9" style="padding-right:0px">
-                                             <input type="text" id="txtmessage" class="form-control" placeholder="Start writting here....." style="display:none" />
-                                         </div>
-                                         <div class="col-md-3" style="padding-left:0px">
-                                             <input type="button" id="btnchatConversation" style="background-color:blue;color:white;display:none" value="send" onclick="SendConversation()" class="form-control" />
-                                         </div>
-                                        -->
 
 
 
@@ -242,18 +218,16 @@
                 success: function (data) {
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].messageInfo == "Send") {
-                            //var modal = document.getElementById("MyChatModel");
-                            //modal.style.display = "block";
-                            flagdisplay = false;
-                            // $(".modalMinimize").click();
+                          
+                            flagdisplay = false;                           
                             $('#chatAudio')[0].play();
                         }
                     }
-                    //setTimeout(checkConversation(''), 5000);
+                   
                 }
             });
         }
-        //$("#btncreategroup").attr('clickmethod') == 1
+       
         function OpenChatPopUp() {
             flag = false;
             $.ajax({
@@ -277,9 +251,7 @@
                             html += '<svg class="bi bi-circle-fill bugger" width=".6em" height=".6em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">';
                             html += '<circle cx="8" cy="8" r="8"/>';
                             html += '</svg>';
-                            //html += '<svg class="bi bi-info-circle-fill bugger" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">';
-                            //html += '<path fill-rule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>';
-                            //html += '</svg>';
+                           
                         }
                         html += '</div>';
                         html += '</div>';
@@ -287,14 +259,10 @@
                         html += '<input type="text" hidden value="' + data.result[i].whoSend + '" id="txtWhoSend_' + i + '" />';
                     }
                     $("#txtself").val(data.self);
-                    //$("#lblChatname").text("");
-                    //document.getElementById("txtmessage").style.display = "none";
-                    //document.getElementById("btnchatConversation").style.display = "none";
-                    //var msg = document.getElementById("msger-inputarea");
-                    //msg.style.display = "none";
+                   
                     $("#divchatboxmenu").empty().html(html);
                     setTimeout(OpenChatPopUp(), 5000);
-                    //Details(0);
+                   
                     flag = true;
                 }
             });
@@ -397,7 +365,7 @@
 
 
         $(document).ready(function () {
-            checkConversation();
+           
             var $content, $modal, $apnData, $modalCon;
             $content = $(".min");
             $(".mdlFire").click(function (e) {
@@ -412,6 +380,7 @@
             $(".modalMinimize").on("click", function () {
                 if (flagdisplay == false) {
                     OpenChatPopUp();
+                    checkConversation();
                 }
                 $modalCon = $(this).closest(".mymodal").attr("id");
                 $apnData = $(this).closest(".mymodal");
@@ -610,41 +579,7 @@
     <script src="~/Newassets/js/now-ui-dashboard.min.js?v=1.4.1" type="text/javascript"></script>
     <script type="text/javascript" src="~/js/settings.js"></script>
 
-    @*<!-- START PRELOADS -->
-        <audio id="audio-alert" src="~/audio/alert.mp3" preload="auto"></audio>
-        <audio id="audio-fail" src="~/audio/fail.mp3" preload="auto"></audio>
-        <!-- END PRELOADS -->
-        <!-- START SCRIPTS -->
-        <!-- START PLUGINS -->
-        <script type="text/javascript" src="~/js/plugins/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="~/js/plugins/jquery/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="~/js/plugins/bootstrap/bootstrap.min.js"></script>
-        <script src="~/js/plugins/datatables/jquery.dataTables.min.js"></script>
-        <!-- END PLUGINS -->
-        <!-- START THIS PAGE PLUGINS-->
-        <script type='text/javascript' src='~/js/plugins/icheck/icheck.min.js'></script>
-        <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js"></script>
-        <script type="text/javascript" src="~/js/plugins/scrolltotop/scrolltopcontrol.js"></script>
-        <script type="text/javascript" src="~/js/plugins/rickshaw/d3.v3.js"></script>
-        <script type="text/javascript" src="~/js/plugins/rickshaw/rickshaw.min.js"></script>
-        <script type='text/javascript' src='~/js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js'></script>
-        <script type='text/javascript' src='~/js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js'></script>
-        <script type='text/javascript' src='~/js/plugins/bootstrap/bootstrap-datepicker.js'></script>
-        <script type="text/javascript" src="~/js/plugins/owl/owl.carousel.min.js"></script>
-        <script type="text/javascript" src="~/js/plugins/bootstrap/bootstrap-file-input.js"></script>
-        <script type="text/javascript" src="~/assets/sweetalert/lib/sweet-alert.js"></script>
-        <script type="text/javascript" src="~/js/plugins/moment.min.js"></script>
-        <script type="text/javascript" src="~/js/plugins/daterangepicker/daterangepicker.js"></script>
-        <script src="~/js/plugins/bootstrap/bootstrap-timepicker.min.js"></script>
-        <script type="text/javascript" src="~/js/plugins/bootstrap/bootstrap-select.js"></script>
-        <script src="~/assets/Common.js"></script>
-        <!-- END THIS PAGE PLUGINS-->
-        <!-- START TEMPLATE -->
-        <script type="text/javascript" src="~/js/plugins.js"></script>
-        <script type="text/javascript" src="~/js/actions.js"></script>
-        <script type="text/javascript" src="~/js/demo_dashboard.js"></script>
-        <!-- END TEMPLATE -->
-        <!-- END SCRIPTS -->*@
+  
 
     @RenderSection("Scripts", required: false)
 </body>

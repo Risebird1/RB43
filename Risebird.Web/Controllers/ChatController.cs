@@ -24,11 +24,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var user = string.Empty;
-                if (HttpContext.Session.GetString("email") == null)
-                {
-
-                }
-                else
+                if (HttpContext.Session.GetString("email") != null)
                 {
                     user = HttpContext.Session.GetString("email")?.Trim();
                     user = user.Replace("\"", "");
@@ -60,7 +56,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 string connectionString = _configuration["ConnectionString:DBConnectionString"];
-                if (String.IsNullOrEmpty(userid))
+                if (string.IsNullOrEmpty(userid))
                 {
                     if (HttpContext.Session.GetString("email")?.Trim() == null)
                     {
@@ -71,7 +67,7 @@ namespace Risebird.Web.Controllers
                         userid = HttpContext.Session.GetString("email")?.Trim();
                     }
                 }
-                if (String.IsNullOrEmpty(contact))
+                if (string.IsNullOrEmpty(contact))
                 {
                     contact = "";
                 }
@@ -130,7 +126,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 string connectionString = _configuration["ConnectionString:DBConnectionString"];
-                if (String.IsNullOrEmpty(userid))
+                if (string.IsNullOrEmpty(userid))
                 {
                     userid = HttpContext.Session.GetString("email")?.Trim();
                 }
@@ -168,7 +164,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 string connectionString = _configuration["ConnectionString:DBConnectionString"];
-                if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");
@@ -215,7 +211,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 string connectionString = _configuration["ConnectionString:DBConnectionString"];
-                if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");
@@ -245,7 +241,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 string connectionString = _configuration["ConnectionString:DBConnectionString"];
-                if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");
@@ -347,7 +343,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 string connectionString = _configuration["ConnectionString:DBConnectionString"];
-                if (!String.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("email")?.Trim()))
                 {
                     var userid = HttpContext.Session.GetString("email")?.Trim();
                     userid = userid.Replace("\"", "");
