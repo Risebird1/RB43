@@ -17,5 +17,5 @@ Create procedure usp_checkOnlinemettings
 @enddate datetime
 AS
 BEGIN
-Select OnlineEmail from OnlineMaster b where Not Exists(Select MeetingId from  OnlinemeetingDetails a where ((MeetingStart between @startdate and @enddate) or (MeetingEnd between @startdate and @enddate)) and b.OnlineEmail = a.MeetingId)
+Select OnlineEmail from MeetingAccount b where Not Exists(Select AccountId from  OnlinemeetingDetails a where ((MeetingStart between @startdate and @enddate) or (MeetingEnd between @startdate and @enddate)) and b.id = a.AccountId)
 END

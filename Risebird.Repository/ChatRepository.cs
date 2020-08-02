@@ -306,7 +306,7 @@ namespace Risebird.Repository
                 return "";
             }
         }
-        public string InsertOnlinemeeting(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom)
+        public string InsertOnlinemeeting(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject)
         {
             try
             {
@@ -319,7 +319,9 @@ namespace Risebird.Repository
                     parameters.Add("@Whocreate", Emailaddress);
                     parameters.Add("@Meetingid", Accountemail);
                     parameters.Add("@LinkUrl", Linkurl);
-                    //parameters.Add("@Whom", whom);
+                    parameters.Add("@whom", whom);
+                    parameters.Add("@subject", Subject);
+
                     var result = SqlMapper.Query(con, "usp_InsertOnlinemeeting", parameters,
                             commandType: CommandType.StoredProcedure);
                     return "sucess";

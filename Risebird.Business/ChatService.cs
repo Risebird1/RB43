@@ -138,11 +138,11 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public string InsertOnlinemeeting(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom)
+        public string InsertOnlinemeeting(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject)
         {
             try
             {
-                return _chatRepository.InsertOnlinemeeting(starttime, endtime, Emailaddress, Accountemail, Linkurl, whom);
+                return _chatRepository.InsertOnlinemeeting(starttime, endtime, Emailaddress, Accountemail, Linkurl, whom, Subject);
             }
             catch (Exception ex)
             {

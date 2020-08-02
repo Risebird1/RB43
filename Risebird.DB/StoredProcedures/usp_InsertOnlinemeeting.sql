@@ -16,10 +16,12 @@ Create Procedure usp_InsertOnlinemeeting
 @enddate datetime,
 @Whocreate varchar(100),
 @Meetingid varchar(100),
-@LinkUrl varchar(max)
+@LinkUrl varchar(max),
+@subject varchar(max),
+@whom varchar(max)
 AS
 BEGIN
 DECLARE @id int
-Select @id=id from UserList where Emailid= @Whocreate
-Insert into OnlinemeetingDetails values(@startdate,@enddate,@id,@Meetingid,'Active',@LinkUrl)
+Select @id=id from MeetingAccount where OnlineEmail= @Meetingid
+Insert into OnlinemeetingDetails values(@startdate,@enddate,@Whocreate,'Active',@LinkUrl,@subject,@whom,Getdate(),@id)
 END

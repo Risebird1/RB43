@@ -273,7 +273,7 @@ namespace Risebird.Web.Controllers
             request.AddBody(_meeting);
             var response = _client.Execute<OnlineMeetingResponse>(request);
             //Save upcoming online meeting
-            var resultsetvalue = _chatservice.InsertOnlinemeeting(startdateU, enddateU, Emailaddress, _meeting.AccountEmail, response.ToString(), emailid);
+            var resultsetvalue = _chatservice.InsertOnlinemeeting(startdateU, enddateU, Emailaddress, _meeting.AccountEmail, response.ToString(), emailid, Subject);
             //Send mail with meeting invite to candidate and who create meeting
             Mail _mail = new Mail
             {
