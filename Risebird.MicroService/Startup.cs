@@ -1,14 +1,13 @@
-﻿using Risebird.MicroService;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Risebird.MicroService;
 using System;
-using Microsoft.AspNetCore.Authentication;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Risebird.MicroService
 {
-    public class Startup: FunctionsStartup
+    public class Startup : FunctionsStartup
     {
         public IConfiguration Configuration { get; }
         public override void Configure(IFunctionsHostBuilder builder)
@@ -18,10 +17,10 @@ namespace Risebird.MicroService
             .AddJsonFile("appsettings.json", true, true)
             .AddEnvironmentVariables()
             .Build();
-          
-            builder.Services.AddSingleton<IConfiguration>(configuration);           
+
+            builder.Services.AddSingleton<IConfiguration>(configuration);
             builder.Services.AddSingleton<AuthenticationService>();
-          
+
 
 
         }

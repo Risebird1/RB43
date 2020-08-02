@@ -628,7 +628,90 @@ table {
     margin-left: 3px;
     border: 0;
 }
+.interview-date [type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 93% 50% no-repeat !important;
+    background-size: 9% !important;
+    padding: 5px 10px !important;
+    border-radius: 5px;
+}
+ul.panel-controls > li > button {
+    display: block;
+    float: left;
+    width: 30px;
+    height: 32px;
+    text-align: center;
+    line-height: 28px;
+    color: #22262e;
+    border: 1px solid #BBB;
+    -moz-border-radius: 20%;
+    -webkit-border-radius: 20%;
+    border-radius: 20%;
+    margin-left: 3px;
+    -webkit-transition: all 200ms ease;
+    -moz-transition: all 200ms ease;
+    -ms-transition: all 200ms ease;
+    -o-transition: all 200ms ease;
+    transition: all 200ms ease;
+}
+.panel .panel-heading .panel-title-box h3 {
+    line-height: 31px;
+}
+.scrollbox {
+    overflow: auto;
+    height: 300px;
+}
+    .scrollbox table td{font-size:13px;}
+    .scroller {
+        height: 300px;
+    }
+#progressTable_wrapper {
+    padding: 10px;
+}
+.progress-bar-yellow {
+    background-color: #ffeb3bd1 !important;
 
+}
+.progress-bar-green {
+    background-color: #519205e6 !important;
+}
+
+.label-yellow {
+    background-color: #ffeb3bd1 !important;
+    COLOR: #000000ad !IMPORTANT;
+}
+
+.label-green {
+    background-color: #519205e6 !important;
+}
+
+
+#statusModal .dataTables_length, #statusModal .dataTables_filter {
+    margin: 0px 0px;
+}
+
+
+.skill {
+    -ms-flex: 0 0 36.666667%;
+    flex: 0 0 36.666667%;
+    max-width: 36.666667%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.daily-interview {
+    -ms-flex: 0 0 33.333333%;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding-right: 15px;
+
+}
+
+.daily-slot {
+    -ms-flex: 0 0 30%;
+    flex: 0 0 30%;
+    max-width: 30%;
+    padding-right: 15px;
+
+}
 .btn-call {
     width: 30px !important;
     height: 30px;
@@ -666,77 +749,20 @@ table {
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
-/*
-#meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter {
-    margin: 10px 0px
+.skill .tooltip-inner {
+    min-width: 50px;
+    /* If max-width does not work, try using width instead */
+    width: 50px;
+    background: #333333;
 }
 
-    #meeting_length label, #OpeninterviewList_length label, #MyInterviewList_length label {
-        font-size: 14px;
-    }
-
-    #meeting_length select.form-control, #OpeninterviewList_length select.form-control, #MyInterviewList_length select.form-control {
-        padding: 8px 8px;
-    }
-
-    #meeting_length select:focus, #OpeninterviewList_length select:focus, #MyInterviewList_length select:focus {
-        border-color: #4a93de;
-    }
-
-    .dataTables_filter input, #OpeninterviewList_filter input, #MyInterviewList_filter input {
-        outline: none;
-    }
-
-#meeting input[type=search] {
-    -webkit-appearance: textfield;
-    -webkit-box-sizing: content-box;
-    font-family: inherit;
-    font-size: 100%;
+.skill .tooltip.top .tooltip-arrow {
+    bottom: 0;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px 5px 0;
+    border-top-color: #333333;
 }
-
-.dataTables_filter input::-webkit-search-decoration,
-.dataTables_filter input::-webkit-search-cancel-button, #OpeninterviewList_filter input::-webkit-search-decoration,
-#OpeninterviewList_filter input::-webkit-search-cancel-button, #MyInterviewList_filter input::-webkit-search-decoration,
-#MyInterviewList_filter input::-webkit-search-cancel-button {
-    display: none;
-}
-
-
-#meeting_filter input[type=search], #OpeninterviewList_filter input[type=search], #MyInterviewList_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-    border: solid 1px #ccc;
-    padding: 9px 10px 9px 32px;
-    width: 135px;
-    font-family: arial;
-    -webkit-border-radius: 10em;
-    -moz-border-radius: 10em;
-    border-radius: 10em;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    transition: all .5s;
-}
-
-    #meeting_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search]:focus {
-        width: 200px;
-        background-color: #fff;
-        border-color: #4a93de;
-        font-family: arial;
-        margin: 3px;
-        -webkit-box-shadow: 0 0 5px #4a93de;
-        -moz-box-shadow: 0 0 5px #4a93de;
-        box-shadow: 0 0 5px #4a93de;
-    }
-
-
-.dataTables_filter input:-moz-placeholder:-moz-placeholder, #OpeninterviewList_filter input:-moz-placeholder, #MyInterviewList_filter input:-moz-placeholder {
-    color: #999;
-}
-
-.dataTables_filter input:-moz-placeholder input::-webkit-input-placeholder, #OpeninterviewList_filter input::-webkit-input-placeholder, #MyInterviewList_filter input::-webkit-input-placeholder {
-    color: #999;
-}
-
-*/
 
 
 .multiselect-selected-text {
@@ -746,7 +772,11 @@ table {
     color: #807e7e;
     font-size: 12px;
 }
-
+#statusModal.modal-bg{padding-top:30px;}
+#statusModal hr{margin:10px 0px;}
+#statusModal .pagination .page-item .page-link {
+    padding: 0px 5px;
+}
 .interview #videoId {
     background: #53a5f53d;
     color: #1d3b5e;

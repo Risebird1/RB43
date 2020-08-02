@@ -82,14 +82,14 @@ y-axis
 	
 	.mCS-dir-rtl > .mCSB_outside + .mCSB_scrollTools{ left: -26px; } /* RTL direction/left-side scrollbar (scrollbar position: outside) */
 
-	.mCSB_scrollTools .mCSB_draggerContainer{ /* contains the draggable element and dragger rail markup */
-		position: absolute;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		right: 0; 
-		height: auto;
-	}
+.mCSB_scrollTools .mCSB_draggerContainer { /* contains the draggable element and dragger rail markup */
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: -14px;
+	height: auto;
+}
 
 	.mCSB_scrollTools a + .mCSB_draggerContainer{ margin: 20px 0; }
 

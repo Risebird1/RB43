@@ -87,6 +87,7 @@ namespace Risebird.Entities.Data
         public string HRComment { get; set; }
 
         public int iscIntId { get; set; }
+        public string IRFnSkill { get; set; }
 
     }
 }
