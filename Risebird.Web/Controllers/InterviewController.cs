@@ -1364,6 +1364,8 @@ namespace Risebird.Web.Controllers
                             new SelectListItem { Text = "No Clients", Value = "" }
                         };
                         MeetingVM meetingToUpdate = _meetingService.GetMeeting(id);
+                        if(meetingToUpdate== null)
+                            return RedirectToAction("Index");
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
                         meetingToUpdate.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");

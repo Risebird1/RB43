@@ -18,7 +18,7 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerProfileByEmailId]
 
 AS
 Begin
-declare @UserId int  = (select id from UserList where EmailId = @EmailId and idProfile=(select id from [Profile] where [Name]=@Profile))
+
 
 
 select Ipr.id as [id], Ipr.UserId, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber, 
@@ -27,9 +27,8 @@ Ipr.City, Ipr.AltMobileNumber, Ipr.CurrentRole, Ipr.Experience, Ipr.PreferredDom
 Ipr.ResumeLink, Ipr.CodedResumeLink, Ipr.StackOverflowLink, Ipr.LinkedinLink, Ipr.Blog, Ipr.IsLeadInterviewer,
 Ipr.IsApproved, ul.IsActive
 from [InterviewerProfile] Ipr
-inner join [dbo].[UserList] ul on Ipr.UserId = ul.id
-  
-WHERE Ipr.userId = @UserId ;
+inner join [dbo].[UserList] ul on Ipr.UserId = ul.id  
+WHERE ul.Emailid = @EmailId 
 
 
 End
