@@ -1700,7 +1700,7 @@
                     <div class="col-md-12 col-sm-12">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label">
-                                Participent
+                                Additional Participent
                             </label>
                             <div class="col-md-12 col-sm-12">
                                 <input type="text" class="form-control w-full" id="txtOnlineMEmailids" />
@@ -1916,12 +1916,12 @@
     });
         function SubmitMeeting() {
             var resultreturn = checkStartDate($("#txtOnlinestart").val());
-            if ($("#txtOnlineSubject").val().trim() != "" && $("#txtOnlineMEmailids").val().trim()!="") {
+            if ($("#txtOnlineSubject").val().trim() != "") {
                 if (resultreturn == "true") {
                     $.ajax({
                         type: "POST",
                         url: "/MeetingInvite/SendMeetingInvite",
-                        data: { Subject: $("#txtOnlineSubject").val(), emailid: $("#txtOnlineMEmailids").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(),TimeZoneDetails:$("#txtOnlineTimeZone").val() },
+                        data: { Subject: $("#txtOnlineSubject").val(), emailid: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(),TimeZoneDetails:$("#txtOnlineTimeZone").val(),AdditionalUser:$("#txtOnlineMEmailids").val() },
                         success: function (data) {
                             alert(data);
                         }
@@ -2509,7 +2509,6 @@
                 success: function (data) {
                     var modal = document.getElementById("OnlineMeetingModel");
                     modal.style.display = "block";
-                    $("#txtOnlineMEmailids").val($("#txtOnlineEmail").val());
                     $("#txtOnlineTimeZone").empty();
                     for (var i = 0; i < data.result.length; i++) {
                         $("#txtOnlineTimeZone").append($("<option></option>").val(data.result[i].Id).html(data.result[i].DisplayName));
