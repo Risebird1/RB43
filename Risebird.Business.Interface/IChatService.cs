@@ -1,7 +1,5 @@
 ﻿using Risebird.Entities.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Business.Interface
 {
@@ -16,7 +14,5 @@ namespace Risebird.Business.Interface
         string AddUser(string GroupId, string Emailid);
         void DeleteUser(string Userid);
         string Savetheme(string theme, string userid);
-        string checkOnlinemettings(DateTime starttime,DateTime endtime);
-        string InsertOnlinemeeting(DateTime starttime, DateTime endtime,string Emailaddress,string Accountemail,string Linkurl,string whom,string Subject);
     }
 }

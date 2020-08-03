@@ -29,7 +29,7 @@ namespace Risebird.CommonHelper.Interface
 
         string SendInviteToInterviewer(string iscName, string jdTitle, string primarySkill, string calendlyLink, string interviewerMailId, string hrEmailId);
         string CancelInterviewerInvite(string iscName, string primarySkill, string interviewerMailId, string hrEmailId);
-        string OnlineMeetingInvite(Mail model, string Url, string Message,DateTime start, DateTime end);
+        string OnlineMeetingInvite(Mail model, string Url, string Message, DateTime start, DateTime end);
 
     }
 }

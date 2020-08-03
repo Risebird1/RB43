@@ -1789,7 +1789,7 @@ else
                 if (resultreturn == "true") {
                     $.ajax({
                         type: "GET",
-                        url: "/Chat/SendMeetingInvite",
+                        url: "/MeetingInvite/SendMeetingInvite",
                         data: { Subject: $("#txtOnlineSubject").val(), emailid: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val() },
                         success: function (data) {
                             alert(data);
@@ -2093,8 +2093,7 @@ else
         }
     }
     function checkAnotherMode() {
-
-        console.log(localStorage.getItem('isTheaterMode'));
+       
         if (localStorage.getItem('isTheaterMode') == "true") {
 
             this.getThMode();
@@ -2314,7 +2313,7 @@ else
             var modal = document.getElementById("MyShareModel1");
             modal.style.display = "block";
             var getComment = document.getElementById("IreportModel_InterviewerComment").value;
-            console.log(getComment);
+          
             document.getElementById("comment").innerHTML = getComment;
 
         });

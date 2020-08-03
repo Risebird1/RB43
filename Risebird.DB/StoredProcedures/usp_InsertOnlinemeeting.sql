@@ -1,6 +1,6 @@
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_InsertOnlinemeeting'))
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_InsertMeeting'))
 BEGIN
-    DROP PROCEDURE [dbo].[usp_InsertOnlinemeeting]
+    DROP PROCEDURE [dbo].[usp_InsertMeeting]
 END
 
 SET ANSI_NULLS ON
@@ -11,17 +11,17 @@ GO
 
 
 
-Create Procedure usp_InsertOnlinemeeting
+Create Procedure usp_InsertMeeting
 @startdate datetime,
 @enddate datetime,
-@Whocreate varchar(100),
-@Meetingid varchar(100),
+@CreatedBy varchar(100),
+@AccountEmail varchar(100),
 @LinkUrl varchar(max),
-@subject varchar(max),
-@whom varchar(max)
+@AttendesMails varchar(500),
+@Subject varchar(300)
 AS
 BEGIN
 DECLARE @id int
-Select @id=id from MeetingAccount where OnlineEmail= @Meetingid
-Insert into OnlinemeetingDetails values(@startdate,@enddate,@Whocreate,'Active',@LinkUrl,@subject,@whom,Getdate(),@id)
+select @id=id from MeetingAccount where AccountEmail= @AccountEmail
+Insert into MeetingDetails values(@startdate,@enddate,@CreatedBy,@LinkUrl,@Subject,@AttendesMails,@id,1,getutcdate())
 END

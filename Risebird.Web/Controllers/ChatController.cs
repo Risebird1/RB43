@@ -1,16 +1,12 @@
-﻿using Dapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace Risebird.Web.Controllers
@@ -233,59 +229,6 @@ namespace Risebird.Web.Controllers
                 return Json("");
             }
         }
-        public JsonResult SendMeetingInvite(string Subject, string emailid, DateTime startdate, DateTime enddate, string Message)
-        {
-            var Emailaddress = string.Empty;
-            if (HttpContext.Session.GetString("email") != null)
-            {
-                Emailaddress = HttpContext.Session.GetString("email")?.Trim();
-            }
-            DateTime startdateU = TimeZoneInfo.ConvertTime(startdate, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
-            DateTime enddateU = TimeZoneInfo.ConvertTime(enddate, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
-            var baseurl = _configuration["OnlineMeetingAzure:Apiendpoint"];
-            var methodname = _configuration["OnlineMeetingAzure:Methodname"];
-            RestClient _client = new RestClient(baseurl);
-            RestRequest request = new RestRequest(methodname, Method.POST);
-            OnlineMeeting _meeting = new OnlineMeeting();
-            _meeting.subject = Subject;
-            _meeting.body = new Body();
-            _meeting.body.content = "HTML";
-            _meeting.body.contentType = Message;
-            _meeting.start = new Start();
-            _meeting.start.dateTime = startdateU;
-            _meeting.start.timeZone = "Central Standard Time";
-            _meeting.end = new End();
-            _meeting.end.dateTime = enddateU;
-            _meeting.end.timeZone = "Central Standard Time";
-            _meeting.location = new Location();
-            _meeting.location.displayName = "Tim Tom";
-            _meeting.attendees = new List<Attendee>();
-            _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = emailid, name = "" }, type = "required" });
-            _meeting.isOnlineMeeting = true;
-            _meeting.onlineMeetingProvider = "teamsForBusiness";
-            // to chek the emailid for create a meeting for perticular timeslot
-            var result = _chatservice.checkOnlinemettings(startdateU, enddateU);
-            _meeting.AccountEmail = result;
-            request.AddBody(_meeting);
-            var response = _client.Execute<OnlineMeetingResponse>(request);
-            //Save upcoming online meeting
-            var resultsetvalue = _chatservice.InsertOnlinemeeting(startdateU, enddateU, Emailaddress, _meeting.AccountEmail, response.ToString(), emailid, Subject);
-            //Send mail with meeting invite to candidate and who create meeting
-            Mail _mail = new Mail
-            {
-                TO = emailid,
-                CC = Emailaddress,
-                Subject = Subject
-            };
-            var resultset = _notificationHelper.OnlineMeetingInvite(_mail, response.ToString(), Message, startdateU, enddateU);
-            if (resultset == "Mail sent Successfully.")
-            {
-                return Json("Invite Successfully Send");
-            }
-            else
-            {
-                return Json("Fail To send invite");
-            }
-        }
+
     }
 }

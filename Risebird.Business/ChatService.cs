@@ -5,7 +5,6 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Business
 {
@@ -16,7 +15,6 @@ namespace Risebird.Business
         private readonly IChatRepository _chatRepository;
         public ChatService(INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger, IChatRepository chatRepository)
         {
-
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _chatRepository = chatRepository;
@@ -126,30 +124,7 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public string checkOnlinemettings(DateTime starttime, DateTime endtime)
-        {
-            try
-            {
-                return _chatRepository.checkOnlinemettings(starttime, endtime);
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "";
-            }
-        }
-        public string InsertOnlinemeeting(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject)
-        {
-            try
-            {
-                return _chatRepository.InsertOnlinemeeting(starttime, endtime, Emailaddress, Accountemail, Linkurl, whom, Subject);
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "";
-            }
-        }
+
 
 
     }

@@ -726,7 +726,7 @@ namespace Risebird.CommonHelper
                 }
 
                 object[] parameters = new object[] { Message, Url };
-                mailMessage.Subject = model.Subject +"(Meeting Time-"+ start + " To "+ end + "(US Standrad Time))";
+                mailMessage.Subject = model.Subject + "(Meeting Time-" + start + " To " + end + "(US Standrad Time))";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "Onlinemeeting.html");
                 string msgBody = string.Format(rawEmail, parameters);
 

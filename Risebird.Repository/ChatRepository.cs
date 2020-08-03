@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 
 namespace Risebird.Repository
 {
@@ -277,54 +276,6 @@ namespace Risebird.Repository
                     parameters.Add("@Usertheme", theme);
                     var results = con.Query(query, parameters);
                     return "success";
-                }
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "";
-            }
-        }
-        public string checkOnlinemettings(DateTime starttime, DateTime endtime)
-        {
-            try
-            {
-                string connectionString = dbconnectionString;
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@startdate", starttime);
-                    parameters.Add("@enddate", endtime);
-                    var result = SqlMapper.Query(con, "usp_checkOnlinemettings", parameters,
-                            commandType: CommandType.StoredProcedure);
-                    return (result.FirstOrDefault()).OnlineEmail.ToString();
-                }
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "";
-            }
-        }
-        public string InsertOnlinemeeting(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject)
-        {
-            try
-            {
-                string connectionString = dbconnectionString;
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@startdate", starttime);
-                    parameters.Add("@enddate", endtime);
-                    parameters.Add("@Whocreate", Emailaddress);
-                    parameters.Add("@Meetingid", Accountemail);
-                    parameters.Add("@LinkUrl", Linkurl);
-                    parameters.Add("@whom", whom);
-                    parameters.Add("@subject", Subject);
-
-                    var result = SqlMapper.Query(con, "usp_InsertOnlinemeeting", parameters,
-                            commandType: CommandType.StoredProcedure);
-                    return "sucess";
                 }
             }
             catch (Exception ex)

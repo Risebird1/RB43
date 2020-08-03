@@ -298,7 +298,7 @@
         function addAvailabilityDetails() {
             var x = document.getElementById('availabilityDetailsTable');
             var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
+          
             if (rowLen > 14) {
                 alert("Cannot add more than 14 Availability Detaiils.");
                 return;
@@ -313,7 +313,7 @@
             var x = document.getElementById('availabilityDetailsTable');
             // get the total number of rows
             var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
+            
             if (rowLen == 2) {
                 alert('Must have atleast one Row');
                 return false;
