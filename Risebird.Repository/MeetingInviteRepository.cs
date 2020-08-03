@@ -40,11 +40,11 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@startdate", starttime);
                     parameters.Add("@enddate", endtime);
-                    var result = await SqlMapper.QueryAsync(con, "usp_CheckOnlineMettings", parameters,
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_CheckOnlineMettings", parameters,
                             commandType: CommandType.StoredProcedure);
                     if (result != null && result.Count() > 0)
                     {
-                        return (result.FirstOrDefault()).OnlineEmail.ToString();
+                        return (result.FirstOrDefault());
                     }
                     else
                         return "";
