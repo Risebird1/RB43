@@ -713,6 +713,37 @@ namespace Risebird.CommonHelper
                 return "Broadcast failed.";
             }
         }
+        public string OnlineMeetingInvite(Mail model, string Url, string Message, DateTime start, DateTime end)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(model.TO, null));
+                if (!String.IsNullOrEmpty(model.CC))
+                {
+                    mailMessage.CC.Add(new MailAddress(model.CC, null));
+                }
+
+                object[] parameters = new object[] { Message, Url };
+                mailMessage.Subject = model.Subject + "(Meeting Time-" + start + " To " + end + "(US Standrad Time))";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "Onlinemeeting.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent Successfully.";
+            }
+            catch (Exception)
+            {
+                return "Broadcast failed.";
+            }
+        }
 
     }
 }

@@ -1122,12 +1122,12 @@ namespace Risebird.Web.Controllers
                     else if (profileName != null && (profileName == "Interviewer"))
                     {
                         model.IsInterviewer = true;
-                       
-                       return RedirectToAction("MyInterviewerAssessment");
-                        
+
+                        return RedirectToAction("MyInterviewerAssessment");
+
                     }
                 }
-                
+
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -1144,9 +1144,9 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                
-                 return RedirectToAction("MyInterviewerAssessment");
-                
+
+                return RedirectToAction("MyInterviewerAssessment");
+
             }
         }
 
@@ -1215,10 +1215,10 @@ namespace Risebird.Web.Controllers
                             {
                                 return RedirectToAction("Index");
                             }
-                           
+
                             return RedirectToAction("MyInterviewerAssessment");
 
-                            
+
 
                         }
                         else
@@ -1228,10 +1228,10 @@ namespace Risebird.Web.Controllers
                             {
                                 return RedirectToAction("Index");
                             }
-                           
+
                             return RedirectToAction("MyInterviewerAssessment");
 
-                            
+
                         }
                     }
                     else
