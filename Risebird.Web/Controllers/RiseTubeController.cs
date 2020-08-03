@@ -549,6 +549,7 @@ namespace Risebird.Web.Controllers
                         //End:Save View counts of vedio
 
                         MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+
                         if (model == null)
                         {
                             model = new MeetingVM();
@@ -745,7 +746,6 @@ namespace Risebird.Web.Controllers
                             GetStatusList(IRListModel, model.irfIntId);
                         }
                         ViewBag.VideoStatus = "Private";
-
                         return View(NewModel);
                     }
                     else

@@ -1697,6 +1697,19 @@
             </button>
             <div class="modal-body">
                 <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label">
+                                Additional Participent
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" class="form-control w-full" id="txtOnlineMEmailids" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
 
                     <div class="col-md-12 col-sm-12">
                         <div class="form-group">
@@ -1740,6 +1753,14 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <select class="form-control" id="txtOnlineTimeZone"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
 
                     <div class="col-md-12 col-sm-12">
                         <div class="form-group">
@@ -1755,7 +1776,7 @@
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input type="button" onclick="SubmitMeeting()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                        <input type="button" onclick="SubmitMeeting()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1898,9 +1919,9 @@
             if ($("#txtOnlineSubject").val().trim() != "") {
                 if (resultreturn == "true") {
                     $.ajax({
-                        type: "GET",
+                        type: "POST",
                         url: "/MeetingInvite/SendMeetingInvite",
-                        data: { Subject: $("#txtOnlineSubject").val(), emailid: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val() },
+                        data: { Subject: $("#txtOnlineSubject").val(), emailid: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(),TimeZoneDetails:$("#txtOnlineTimeZone").val(),AdditionalUser:$("#txtOnlineMEmailids").val() },
                         success: function (data) {
                             alert(data);
                         }
@@ -2204,7 +2225,7 @@
     }
     function checkAnotherMode() {
 
-       
+
         if (localStorage.getItem('isTheaterMode') == "true") {
 
             this.getThMode();
@@ -2460,7 +2481,7 @@
             var modal = document.getElementById("MyShareModel1");
             modal.style.display = "block";
             var getComment = document.getElementById("IreportModel_InterviewerComment").value;
-           
+
             document.getElementById("comment").innerHTML = getComment;
 
         });
@@ -2482,8 +2503,20 @@
 
         });
         $("#btnmeeting").on('click', function () {
-            var modal = document.getElementById("OnlineMeetingModel");
-            modal.style.display = "block";
+            $.ajax({
+                type: "POST",
+                url: "/MeetingInvite/FetchTimeZones",
+                success: function (data) {
+                    var modal = document.getElementById("OnlineMeetingModel");
+                    modal.style.display = "block";
+                    $("#txtOnlineTimeZone").empty();
+                    for (var i = 0; i < data.result.length; i++) {
+                        $("#txtOnlineTimeZone").append($("<option></option>").val(data.result[i].Id).html(data.result[i].DisplayName));
+                    }
+                    $('#txtOnlineTimeZone').val(data.current.standardName);
+                }
+            });
+
         });
         $("#btnShortlist").on('click', function () {
             if ($(this).attr('Shortvalue') == 1) {

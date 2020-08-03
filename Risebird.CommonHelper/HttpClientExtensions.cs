@@ -10,7 +10,7 @@ namespace Risebird.CommonHelper
     public static class HttpClientExtensions
     {
         public static async Task<HttpResponseMessage> SendRequestAsync(this HttpClient httpClient, HttpMethod method,
-            string path, object requestBody, string functionKey, CancellationToken ct)
+            string path, object requestBody, string functionKey,string accountEmail, CancellationToken ct)
         {
             var request = new HttpRequestMessage(method, path);
 
@@ -21,6 +21,7 @@ namespace Risebird.CommonHelper
                 request.Content = content;
             }
             request.Headers.Add("x-functions-key", functionKey);
+            request.Headers.Add("accountEmail", accountEmail);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var response = await httpClient.SendAsync(request, ct);
