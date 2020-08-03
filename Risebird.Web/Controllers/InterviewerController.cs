@@ -667,7 +667,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        InterviewerProfileVM model = _interviewerService.GetInterviewerProfileByEmailId(emailid, profileName);
+                        InterviewerProfileVM model = await _interviewerService.GetInterviewerProfileByEmailId(emailid, profileName);
                         if (model == null)
                         {
                             TempData["MessageInterviewer"] = "No Information available in the System";
