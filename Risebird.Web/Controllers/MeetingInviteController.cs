@@ -29,18 +29,26 @@ namespace Risebird.Web
             _meetingInviteService = meetingInviteService;
             _applicationErrorLogger = applicationErrorLogger;
         }
-
-        public JsonResult SendMeetingInvite(string Subject, string emailid, DateTime startdate, DateTime enddate, string Message)
+        [HttpPost]
+        public JsonResult FetchTimeZones()
+        {
+            //Add TimeZone details
+            var alltimezones = TimeZoneInfo.GetSystemTimeZones();
+            var currenttimezone = TimeZone.CurrentTimeZone;
+            return Json(new { result = alltimezones, current = currenttimezone });
+        }
+        [HttpPost]
+        public JsonResult SendMeetingInvite(string Subject, string emailid, DateTime startdate, DateTime enddate, string Message, string TimeZoneDetails)
         {
             var Emailaddress = string.Empty;
             if (HttpContext.Session.GetString("email") != null)
             {
                 Emailaddress = HttpContext.Session.GetString("email")?.Trim();
             }
-
-
-            DateTime startdateU = TimeZoneInfo.ConvertTime(startdate, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
-            DateTime enddateU = TimeZoneInfo.ConvertTime(enddate, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+            var emailaddresses = emailid.Split(";");
+            var selectTimeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneDetails);
+            DateTime startdateU = TimeZoneInfo.ConvertTime(startdate, selectTimeZone, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+            DateTime enddateU = TimeZoneInfo.ConvertTime(enddate, selectTimeZone, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
 
             OnlineMeeting _meeting = new OnlineMeeting();
             _meeting.subject = Subject;
@@ -48,15 +56,18 @@ namespace Risebird.Web
             _meeting.body.content = "HTML";
             _meeting.body.contentType = Message;
             _meeting.start = new Start();
-            _meeting.start.dateTime = startdateU;
-            _meeting.start.timeZone = "Central Standard Time";
+            _meeting.start.dateTime = startdate;
+            _meeting.start.timeZone = TimeZoneDetails;
             _meeting.end = new End();
-            _meeting.end.dateTime = enddateU;
-            _meeting.end.timeZone = "Central Standard Time";
+            _meeting.end.dateTime = enddate;
+            _meeting.end.timeZone = TimeZoneDetails;
             _meeting.location = new Location();
             _meeting.location.displayName = "Risebird Meeting";
             _meeting.attendees = new List<Attendee>();
-            _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = emailid, name = "" }, type = "required" });
+            foreach (var item in emailaddresses)
+            {
+                _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = item, name = "" }, type = "required" });
+            }
             _meeting.isOnlineMeeting = true;
             _meeting.onlineMeetingProvider = "teamsForBusiness";
             _meeting.AccountEmail = _meetingInviteService.CheckMeetingAccount(startdateU, enddateU).Result;

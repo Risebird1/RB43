@@ -2,28 +2,36 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
 
 namespace Risebird.Web.Controllers
 {
     public class ChatController : Controller
     {
+        private readonly HttpClient _httpClient;
         private IConfiguration _configuration;
         private readonly INotificationHelper _notificationHelper;
         private readonly IChatService _chatservice;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IMeetingInviteService _meetingInviteService;
+        private readonly CancellationToken _cancellationToken;
 
-        public ChatController(IConfiguration configuration, INotificationHelper notificationHelper, IChatService chatservice, IApplicationErrorLogger applicationErrorLogger)
+        public ChatController(HttpClientHelper factory, IConfiguration configuration, INotificationHelper notificationHelper, IChatService chatservice, IApplicationErrorLogger applicationErrorLogger, IMeetingInviteService meetingInviteService)
         {
+            _httpClient = factory.GetHttpClient();
             _configuration = configuration;
             _notificationHelper = notificationHelper;
             _chatservice = chatservice;
             _applicationErrorLogger = applicationErrorLogger;
+            _meetingInviteService = meetingInviteService;
         }
         [HttpPost]
         public JsonResult ChatBox()
@@ -229,6 +237,6 @@ namespace Risebird.Web.Controllers
                 return Json("");
             }
         }
-
+      
     }
 }
