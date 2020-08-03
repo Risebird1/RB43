@@ -45,7 +45,7 @@ namespace Risebird.Web
             {
                 Emailaddress = HttpContext.Session.GetString("email")?.Trim();
             }
-            var emailaddresses = AdditionalUser.Split(";");
+          
             var selectTimeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneDetails);
             DateTime startdateU = TimeZoneInfo.ConvertTime(startdate, selectTimeZone, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
             DateTime enddateU = TimeZoneInfo.ConvertTime(enddate, selectTimeZone, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
@@ -65,9 +65,13 @@ namespace Risebird.Web
             _meeting.location.displayName = "Risebird Meeting";
             _meeting.attendees = new List<Attendee>();
             _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = emailid, name = "" }, type = "required" });
-            foreach (var item in emailaddresses)
+            if (!String.IsNullOrEmpty(AdditionalUser))
             {
-                _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = item, name = "" }, type = "required" });
+                var emailaddresses = AdditionalUser.Split(";");
+                foreach (var item in emailaddresses)
+                {
+                    _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = item, name = "" }, type = "required" });
+                }
             }
             _meeting.isOnlineMeeting = true;
             _meeting.onlineMeetingProvider = "teamsForBusiness";
