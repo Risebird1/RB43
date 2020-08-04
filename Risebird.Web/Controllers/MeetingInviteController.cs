@@ -10,7 +10,10 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -51,9 +54,10 @@ namespace Risebird.Web
                 {
                     Emailaddress = HttpContext.Session.GetString("email")?.Trim();
                 }
-
+                emailid = "prashantindoliya@gmail.com";
+                Emailaddress = "prashantindoliya@gmail.com";
                 var selectTimeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneDetails);
-               
+
                 OnlineMeeting _meeting = new OnlineMeeting();
                 _meeting.subject = Subject;
                 _meeting.body = new Body();
@@ -84,14 +88,15 @@ namespace Risebird.Web
                 var functionKey = "Q/8CUsLsbKYeqRMFNPT5QnKsNWzoudpVayC1bN7tQbYK0SEAw1wboQ==";
                 var path = $"MSTeamMeeting";
                 var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, _meeting, functionKey, accountEmail, _cancellationToken);
-                var result =  response.Content.ReadAsStringAsync().Result;
+                var result = response.Content.ReadAsStringAsync().Result;
 
                 if (response.IsSuccessStatusCode)
                 {
-                    JArray jsonResponse = JArray.Parse(result);
-                    var meetingURL = JsonConvert.DeserializeObject<OnlineMeetingResponse>(result);
-                    var resultsetvalue = _meetingInviteService.InsertMeetingInvite(startdate, enddate, Emailaddress, accountEmail, response.ToString(), emailid, Subject);
-
+                    var urllinkdetails = result.ToString().Split("onlineMeeting")[result.ToString().Split("onlineMeeting").Length - 1];
+                    var deatils = urllinkdetails.Split("https")[1].Replace(":", "https:").Replace("}}", "").Replace(@"\", "");
+                    var meetingURL = deatils.Remove(deatils.Length - 2, 2);
+                    //var meetingURL = JsonConvert.DeserializeObject<object>(result);
+                    var resultsetvalue = _meetingInviteService.InsertMeetingInvite(startdate, enddate, Emailaddress, accountEmail, meetingURL.ToString(), emailid, Subject);
                 }
             }
             catch (Exception ex)
