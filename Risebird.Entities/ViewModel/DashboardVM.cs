@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
+using System;
 using System.Collections.Generic;
 
 namespace Risebird.Entities.ViewModel
@@ -21,6 +22,7 @@ namespace Risebird.Entities.ViewModel
         //public IEnumerable<IRF> IrfProgressList { get; set; }
         public IList<IRF> IrfProgressList { get; set; }
         public SelectList ProgressOptions { get; set; }
+        public DateTime ProgressDate { get; set; }
 
     }
 }

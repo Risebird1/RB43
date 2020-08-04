@@ -58,11 +58,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<IRF>> GetIRFProgress()
+        public async Task<IEnumerable<IRF>> GetIRFProgress(DateTime date)
         {
             try
             {
-                return await _dashboardRespository.GetIRFProgress();
+                return await _dashboardRespository.GetIRFProgress(date);
             }
             catch (Exception ex)
             {
