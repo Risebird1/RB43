@@ -2568,11 +2568,23 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     font-size: 0.8571em;
     padding-top: 0rem;
     padding-bottom: 0rem;
-    /* padding-top: 0.5rem;
-    padding-bottom: 0.5rem;*/
-    line-height: 1.625rem;
+    height:auto!important;
+     padding-left: 0;
+    padding-right: 0;
+    line-height: 1.625rem!important;
 }
-
+.navbar-toggle {
+    position: relative;
+    float: right;
+    padding: 0px 10px !important;
+    margin-right: 0px !important;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
 .navbar .navbar-toggler {
     width: 37px;
     height: 27px;
@@ -2593,7 +2605,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 }
 
 .navbar.navbar-transparent {
-    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%) !important;
+    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
     box-shadow: none;
     color: #FFFFFF;
 }
@@ -15233,7 +15245,9 @@ be a descendant of the grid when it is being dragged.
         padding-right: 15px;
     }
 }
-
+@media (min-width: 768px){ .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+    margin-left: 0px!important;
+}
 @media screen and (max-width: 768px) {
     .nav-tabs {
         display: inline-block;

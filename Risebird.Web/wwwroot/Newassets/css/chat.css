@@ -55,9 +55,11 @@
     background: none;
     border: 0;
     position: absolute;
-    right: 27px;
+    right: 38px;
     top: 30px;
     outline: 0;
+    background: none !important;
+    border: 0px !important;
 }
 .min .fa {
     font-size: 14px;
