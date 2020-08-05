@@ -1588,7 +1588,7 @@ textarea::-webkit-scrollbar-thumb {
 #toggle-click1 {
     color: black;
     font-size: 24px;
-    padding-right: 30px
+ 
 }
 
 .chat {
@@ -1860,6 +1860,11 @@ textarea::-webkit-scrollbar-thumb {
             padding: 5px 0;
             width: 25%;
         }
+
+        .interviewer-comment .talk-bubble {
+           
+            width: calc(100% - 20px) !important;
+        }
     }
 
     @media screen and (max-width: 640px) {
@@ -2011,7 +2016,7 @@ textarea::-webkit-scrollbar-thumb {
 
     @media screen and (max-width: 375px) {
         .comment-area .talk-bubble {
-            width: 78%;
+            width: 75%;
         }
 
         .designation {

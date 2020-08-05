@@ -123,6 +123,13 @@ fill: rgb(255, 255, 255)!important;
     background-size: 5% !important;
 }
 
+
+.mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
+    background: #fff url(../img/orange-timdate.png) 97% 50% no-repeat !important;
+    background-size: 5% !important;
+}
+
+
 .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #fff url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;

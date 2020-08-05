@@ -1487,8 +1487,10 @@ top:3px;
         margin: 0px 20px;
         width: 100%;
     }
-
-    #ProctoringTable .label-type {
+    .comment-area.form-group .form-control {
+        padding: 10px 10px 10px 10px;
+    }
+        #ProctoringTable .label-type {
         white-space: nowrap;
     }
 

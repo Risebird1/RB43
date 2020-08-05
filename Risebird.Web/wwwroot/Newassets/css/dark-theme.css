@@ -57,6 +57,7 @@ hr {
 }
 .mdc-card .modal .form-control, .modal .form-control, .mdc-card .form-control {
     background: #181818;
+    color: #5f5c5c !important;
 }
     .video-card {
     box-shadow: none!important;
