@@ -6,6 +6,6 @@ namespace Risebird.Business.Interface
     public interface IMeetingInviteService
     {
         Task<string> CheckMeetingAccount(DateTime starttime, DateTime endtime);
-        Task<string> InsertMeetingInvite(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject);
+        Task<string> InsertMeetingInvite(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject, string timeZone);
     }
 }

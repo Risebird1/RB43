@@ -9,8 +9,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 Create Procedure usp_InsertMeeting
 @startdate datetime,
 @enddate datetime,
@@ -18,10 +16,12 @@ Create Procedure usp_InsertMeeting
 @AccountEmail varchar(100),
 @LinkUrl varchar(max),
 @AttendesMails varchar(500),
-@Subject varchar(300)
+@Subject varchar(300),
+@TimeZone varchar(120)
 AS
 BEGIN
 DECLARE @id int
 select @id=id from MeetingAccount where AccountEmail= @AccountEmail
-Insert into MeetingDetails values(@startdate,@enddate,@CreatedBy,@LinkUrl,@Subject,@AttendesMails,@id,1,getutcdate())
+Insert into MeetingDetails values(@startdate,@enddate,@CreatedBy,@LinkUrl,@Subject,@AttendesMails,@TimeZone,@id,1,getutcdate())
+select Password from MeetingAccount where AccountEmail= @AccountEmail
 END

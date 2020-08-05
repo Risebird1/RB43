@@ -535,7 +535,7 @@ else
                                                     <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                     <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                     <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
-
+                                                    <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Team Meeting" />
                                                 </h1>
                                                 }
                                                 <div class="row counts-liks">
@@ -1552,6 +1552,19 @@ else
             </button>
             <div class="modal-body">
                 <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label">
+                                Additional Participent
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" class="form-control w-full" id="txtOnlineMEmailids" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
 
                     <div class="col-md-12 col-sm-12">
                         <div class="form-group">
@@ -1595,6 +1608,19 @@ else
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label">
+                                Select Time Zone
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="txtOnlineTimeZone"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
 
                     <div class="col-md-12 col-sm-12">
                         <div class="form-group">
@@ -1610,7 +1636,7 @@ else
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input type="button" onclick="SubmitMeeting()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                        <input type="button" onclick="SubmitMeeting()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1619,6 +1645,7 @@ else
         </div>
     </div>
 </div>
+
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
@@ -1783,16 +1810,17 @@ else
 
     });
 
-         function SubmitMeeting() {
+        function SubmitMeeting() {
             var resultreturn = checkStartDate($("#txtOnlinestart").val());
             if ($("#txtOnlineSubject").val().trim() != "") {
                 if (resultreturn == "true") {
                     $.ajax({
-                        type: "GET",
+                        type: "POST",
                         url: "/MeetingInvite/SendMeetingInvite",
-                        data: { Subject: $("#txtOnlineSubject").val(), emailid: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val() },
+                        data: { Subject: $("#txtOnlineSubject").val(), candidateEmailId: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(), TimeZoneDetails: $("#txtOnlineTimeZone").val(), AdditionalUser: $("#txtOnlineMEmailids").val() },
                         success: function (data) {
                             alert(data);
+                            closeOnlineMeetingModel();
                         }
                     });
                 } else {
@@ -1803,48 +1831,48 @@ else
             }
         }
         function checkStartDate(val) {
-        if (val == "") {
-            return "Kindly fill the Start Date field";
+            if (val == "") {
+                return "Kindly fill the Start Date field";
+            }
+            var year = val.substring(0, 4);
+            var month = parseInt(val.substring(5, 7)) - 1;
+            var date = val.substring(8, 10);
+            var StartDate = new Date(year, month, date);
+            var d = new Date();
+            var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            if (StartDate < currentDate) {
+                return "Start Date should be greater than or equal to Current Date";
+            }
+            else {
+            }
+            if (document.getElementById("txtOnlineend").value != "") {
+                var resultset = checkEndDate(document.getElementById("txtOnlineend").value);
+                return resultset;
+            }
         }
-        var year = val.substring(0, 4);
-        var month = parseInt(val.substring(5, 7)) - 1;
-        var date = val.substring(8, 10);
-        var StartDate = new Date(year, month, date);
-        var d = new Date();
-        var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-        if (StartDate < currentDate) {
-            return "Start Date should be greater than or equal to Current Date";
-        }
-        else {
-        }
-        if (document.getElementById("txtOnlineend").value != "") {
-            var resultset = checkEndDate(document.getElementById("txtOnlineend").value);
-            return resultset;
-        }
-    }
 
-    function checkEndDate(val) {
-        if (val == "") {
-            return "Kindly fill the End Date field";
+        function checkEndDate(val) {
+            if (val == "") {
+                return "Kindly fill the End Date field";
+            }
+            var startDateValue = document.getElementById("txtOnlinestart").value;
+            var year = val.substring(0, 4);
+            var month = parseInt(val.substring(5, 7)) - 1;
+            var date = val.substring(8, 10);
+            var endDate = new Date(year, month, date);
+            if (startDateValue == "") {
+                return "Kindly fill the Start Date field";
+            }
+            var yearStart = startDateValue.substring(0, 4);
+            var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
+            var dateStart = startDateValue.substring(8, 10);
+            var startDate = new Date(yearStart, monthStart, dateStart);
+            if (val < startDateValue) {
+                return "End Date should be greater than Start Date";
+            } else {
+                return "true";
+            }
         }
-        var startDateValue = document.getElementById("txtOnlinestart").value;
-        var year = val.substring(0, 4);
-        var month = parseInt(val.substring(5, 7)) - 1;
-        var date = val.substring(8, 10);
-        var endDate = new Date(year, month, date);
-        if (startDateValue == "") {
-            return "Kindly fill the Start Date field";
-        }
-        var yearStart = startDateValue.substring(0, 4);
-        var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
-        var dateStart = startDateValue.substring(8, 10);
-        var startDate = new Date(yearStart, monthStart, dateStart);
-        if (val < startDateValue) {
-           return "End Date should be greater than Start Date";
-        } else {
-            return "true";
-        }
-    }
 
 </script>
 
@@ -2093,7 +2121,7 @@ else
         }
     }
     function checkAnotherMode() {
-       
+
         if (localStorage.getItem('isTheaterMode') == "true") {
 
             this.getThMode();
@@ -2313,7 +2341,7 @@ else
             var modal = document.getElementById("MyShareModel1");
             modal.style.display = "block";
             var getComment = document.getElementById("IreportModel_InterviewerComment").value;
-          
+
             document.getElementById("comment").innerHTML = getComment;
 
         });
@@ -2330,6 +2358,22 @@ else
                     var modal = document.getElementById("PublicUrlShareModel");
                     modal.style.display = "block";
                     $("#txtvideoUrls").text(window.location.href);
+                }
+            });
+
+        });
+        $("#btnmeeting").on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "/MeetingInvite/FetchTimeZones",
+                success: function (data) {
+                    var modal = document.getElementById("OnlineMeetingModel");
+                    modal.style.display = "block";
+                    $("#txtOnlineTimeZone").empty();
+                    for (var i = 0; i < data.result.length; i++) {
+                        $("#txtOnlineTimeZone").append($("<option></option>").val(data.result[i].Id).html(data.result[i].DisplayName));
+                    }
+                    $('#txtOnlineTimeZone').val(data.current.standardName);
                 }
             });
 
@@ -2499,7 +2543,14 @@ else
         var modal = document.getElementById("PublicUrlShareModel");
         modal.style.display = "none";
     }
-
+        function closeOnlineMeetingModel() {
+            var modal = document.getElementById("OnlineMeetingModel");
+            modal.style.display = "none";
+        }
+        function OpenOnlineMeetingModel() {
+            var modal = document.getElementById("OnlineMeetingModel");
+            modal.style.display = "block";
+        }
     function ShareVedioLinkToMail(resume) {
         $.ajax({
             type: "POST",
