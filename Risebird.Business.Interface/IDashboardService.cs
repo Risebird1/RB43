@@ -16,5 +16,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateIRFProgress(IList<IRF> irfProgressList);
         Task<MeetingResultCount> GetMeetingResultCount();
         Task<CandidatesCount> GetCandidatesCount();
+        Task<IEnumerable<Meeting>> GetDateWiseClientMeetings(DateTime date, string emailId);
     }
 }
