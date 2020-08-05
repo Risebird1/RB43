@@ -75,15 +75,15 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
-    background: #fff url(../img/blue-timdate.png) 97% 50% no-repeat !important;
+    background: #fff url(../img/blue-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
 
-
-
-
-
-.mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
+.btnmeeting {
+    background: #53a5f5;
+    border: 2px #53a5f54d double;
+}
+    .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
     padding: 10px !important;
