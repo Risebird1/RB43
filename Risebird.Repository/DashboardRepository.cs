@@ -87,14 +87,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<IRF>> GetIRFProgress()
+        public async Task<IEnumerable<IRF>> GetIRFProgress(DateTime date)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@dateValue", DateTime.Now);
+                    parameters.Add("@dateValue", date);
                     var result = await SqlMapper.QueryAsync<IRF>(con, "[usp_GetIRFProgress]", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -205,6 +205,28 @@ namespace Risebird.Repository
                     var result = await SqlMapper.QueryAsync<CandidatesCount>(con, "usp_GetCandidatesCount",
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<Meeting>> GetDateWiseClientMeetings(DateTime date, string emailId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@dateValue", date);
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Meeting>(con, "usp_GetDateWiseClientMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
                 }
 
             }

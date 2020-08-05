@@ -18,7 +18,7 @@ Begin
 
 select irf.id, IRFId, JDTiltle, irf.idProgress, ipr.[Name] as [ProgressStatus], irf.Comment,
 (irf.irfID + '('+ CASE WHEN CHARINDEX('|', JDTiltle) != 0 THEN (SUBSTRING(JDTiltle,0, (CHARINDEX('|', JDTiltle)))) ELSE JDTiltle END +')' ) as IRFnSkill  from IRF
-join IrfProgress ipr on ipr.id = irf.idProgress where cast(irf.EndDate as date) >= cast (@dateValue as date) order by idProgress asc
+join IrfProgress ipr on ipr.id = irf.idProgress where cast(irf.EndDate as date) >= cast (@dateValue as date) and cast(irf.StartDate as date) <= cast (@dateValue as date) order by idProgress asc
 
 
 
