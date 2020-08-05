@@ -4,14 +4,14 @@
     margin: 0 2px 0 0;
     background-color: #bbb;
     border-radius: 50%;
-  
     display: inline-block;
     transition: background-color 0.6s ease;
 }
+
 .dot-p {
     position: relative;
     top: 5px;
-    float:left;
+    float: left;
 }
 
 .min {
@@ -41,13 +41,19 @@
 .display-none {
     display: none;
 }
-#MyChatModel .modal-body{margin:0px;}
+
+#MyChatModel .modal-body {
+    margin: 0px;
+}
+
 #MyChatModel button .fa {
     font-size: 16px;
     margin-left: 10px;
 }
 
-
+#MyChatModel .modal-content {
+    border: 0px;
+}
 
 #MyChatModel.modal .modal-header .close {
     color: #FFF;
@@ -55,10 +61,13 @@
     background: none;
     border: 0;
     position: absolute;
-    right: 27px;
+    right: 38px;
     top: 30px;
     outline: 0;
+    background: none !important;
+    border: 0px !important;
 }
+
 .min .fa {
     font-size: 14px;
 }
@@ -89,35 +98,40 @@ button:focus {
     opacity: 0.7 !important;
     right: 3px;
 }
-.f-w{width:100%;float:left}
- .search {
+
+.f-w {
+    width: 100%;
+    float: left
+}
+
+.search {
     padding: 15px;
 }
 
-.search input {
-    border-radius: 3px;
-    border: none;
-    padding: 8px;
-    color: white;
-    background: #6A6C75;
-    width: 90%;
-    font-size: 14px;
-}
-
-
-
-
-    .search input::-webkit-input-placeholder { /* Edge */
-        color: #ccc;
+    .search input {
+        border-radius: 3px;
+        border: none;
+        padding: 8px;
+        color: white;
+        background: #6A6C75;
+        width: 90%;
+        font-size: 14px;
     }
 
-    .search input:-ms-input-placeholder { /* Internet Explorer 10-11 */
-        color: #ccc;
-    }
 
-    .search input::placeholder {
-        color: #ccc;
-    }
+
+
+        .search input::-webkit-input-placeholder { /* Edge */
+            color: #ccc;
+        }
+
+        .search input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+            color: #ccc;
+        }
+
+        .search input::placeholder {
+            color: #ccc;
+        }
 
 
 
@@ -131,6 +145,7 @@ button:focus {
         left: -25px;
         color: #fff;
     }
+
 #msger-inputarea {
     display: flex;
     padding: 10px;
@@ -138,13 +153,14 @@ button:focus {
     background: #eee;
     width: 100%;
 }
+
     #msger-inputarea input {
         height: 60px;
     }
 
-    #msger-inputarea input.form-control:focus {
-        border: 0 !important;
-    }
+        #msger-inputarea input.form-control:focus {
+            border: 0 !important;
+        }
 
 .msger-input {
     flex: 1;
@@ -198,15 +214,16 @@ button:focus {
     display: block;
     text-transform: uppercase;
 }
+
 #MyChatModel .mdc-button--outlined {
     font-size: 12px;
     padding: 0px 10px;
     height: 30px;
     margin: 10px 0px;
     float: right;
-   
-    border:0;
+    border: 0;
 }
+
     #MyChatModel .mdc-button--outlined img {
         border-radius: 0px;
         border: 0px;
@@ -214,10 +231,11 @@ button:focus {
         height: 30px;
         margin-right: 5px;
     }
-    #MyChatModel .modal .modal-header .close {
-        right: 10px;
-        top: 15px;
-    }
+
+#MyChatModel .modal .modal-header .close {
+    right: 10px;
+    top: 15px;
+}
 
 .input-box {
     display: block;
@@ -226,7 +244,7 @@ button:focus {
     font-size: 14px;
     line-height: 1.25;
     color: #464a4c;
-    margin-bottom:10px;
+    margin-bottom: 10px;
     background-color: #fff;
     background-image: none;
     -webkit-background-clip: padding-box;
@@ -239,17 +257,19 @@ button:focus {
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
 }
+
     .input-box:focus {
         border: 1px #53a5f5 solid;
         outline: 0;
     }
-    #divchatbox {
-        padding: 5px;
-    }
+
+#divchatbox {
+    padding: 5px;
+}
 
 
 .del-btn {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(175, 23, 23)" d="M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>') !important;
+    background-image: url('svg>') !important;
     border: 0;
     outline: 0;
     background-repeat: no-repeat;
@@ -258,12 +278,14 @@ button:focus {
     width: 20px;
     background-position: 10%;
 }
+
 .add-btn-m {
-    padding: 10px 10px 10px 0px!important;
+    padding: 10px 10px 10px 0px !important;
     margin-left: 10px;
 }
+
 .add-btn {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(255, 255, 255)" d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>') !important;
+    background-image: url('svg>') !important;
     border: 0;
     outline: 0;
     background-repeat: no-repeat;
@@ -272,11 +294,12 @@ button:focus {
     padding: 4px 0px 4px 32px;
     width: auto;
     font-size: 14px;
-    line-height:32px;
+    line-height: 32px;
     color: #fff;
     font-family: Roboto, sans-serif;
     text-transform: uppercase;
 }
+
 .user-group {
     background: #dfdfdf;
     padding: 5px 10px 5px 10px;
@@ -353,7 +376,11 @@ button:focus {
     background: #9c9fa2;
     border-radius: 10px;
 }
-.nopad{padding:0!important;}
+
+.nopad {
+    padding: 0 !important;
+}
+
 .container-chat {
     border-bottom-right-radius: 5px;
     background: #f2f5f8;
@@ -387,6 +414,7 @@ button:focus {
     transform: translate3d(0, -0px, 0);
     opacity: 1;
 }
+
 #MyChatModel .modal-content {
     border-radius: 5px;
 }
@@ -412,18 +440,20 @@ button:focus {
         height: 35px;
         margin-right: 10px;
         border-radius: 200px;
-       
         border: 3px #666f74 solid;
     }
+
     .scroll-box-wrap .about {
         float: left;
         margin-top: 5px;
         padding-left: 0px;
         color: #d0cbcb;
-  
         text-transform: lowercase;
     }
-    .mt-15{margin-top:15px;}
+
+.mt-15 {
+    margin-top: 15px;
+}
 
 .user-name {
     display: block;
@@ -433,31 +463,36 @@ button:focus {
     text-overflow: ellipsis;
     width: 153px;
 }
+
 .scroll-box-wrap .about input {
     margin-top: 10px;
 }
-        .scroll-box-list::-webkit-scrollbar {
-            width: 5px;
-        }
+
+.scroll-box-list::-webkit-scrollbar {
+    width: 5px;
+}
 
 /* Track */
 .scroll-box-list::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px grey;
     border-radius: 2px;
 }
- .chat-header .chat-with {
+
+.chat-header .chat-with {
     font-weight: bold;
     font-size: 16px;
 }
+
 .chat {
     background: #F2F5F8;
-
     color: #434651;
 }
+
 .chat-header {
     padding: 10px;
     border-bottom: 2px solid white;
 }
+
     .chat-header img {
         float: left;
         width: 45px;
@@ -471,6 +506,7 @@ button:focus {
         padding-left: 10px;
         margin-top: 15px;
     }
+
 .chat .chat-header .fa-star {
     float: right;
     color: #D8DADF;
@@ -496,7 +532,7 @@ button:focus {
     color: #42a5f5;
     position: relative;
     top: -5px;
-    left:1px;
+    left: 1px;
 }
 
 #MyChatModel .close.modalMinimize {
@@ -514,8 +550,17 @@ button:focus {
     margin: 0px;
     text-transform: capitalize;
     padding: 0;
+    font-weight: normal;
     font-family: Roboto, sans-serif !important;
 }
+
+#MyChatModel .modal-header {
+    justify-content: end;
+}
+
+    #MyChatModel .modal-header .close {
+        margin-top: -16px;
+    }
 
 #MyChatModel h5 {
     margin: 10px 0px 8px 0px;
@@ -527,7 +572,11 @@ button:focus {
     font-family: Roboto, sans-serif !important;
     font-size: 14px !important;
 }
-#MyChatModel .modal-lg{max-width:690px!important;}
+
+#MyChatModel .modal-lg {
+    max-width: 690px !important;
+}
+
 .modal-bg {
     display: none;
     position: fixed;
@@ -558,10 +607,13 @@ button:focus {
     #MyChatModel .modal-lg {
         max-width: 600px !important;
     }
-    .input-box{width:100%;}
+
+    .input-box {
+        width: 100%;
+    }
 
     .nopad-7 {
-        padding: 0 4px!important;
+        padding: 0 4px !important;
     }
 }
 
@@ -578,13 +630,20 @@ button:focus {
         margin: 0px 0px 10px 0 !important;
         display: block;
     }
+
     #MyChatModel .modal-lg {
-     max-width: 100% !important;
+        max-width: 100% !important;
     }
 }
 
 
 @media screen and (max-width: 360px) {
+    .add-btn-m {
+        padding: 10px 0px 10px 0px !important;
+        margin-left: 2px;
+        min-width: 35px !important;
+    }
+
     .add-btn {
         background-image: url(data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>) !important;
         border: 0;
@@ -600,10 +659,5 @@ button:focus {
         font-family: Roboto, sans-serif;
         text-transform: uppercase;
         text-indent: -999px;
-    }
-    .add-btn-m {
-        padding: 10px 0px 10px 0px !important;
-        margin-left: 2px;
-        min-width: 35px !important;
     }
 }

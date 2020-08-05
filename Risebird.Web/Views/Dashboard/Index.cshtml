@@ -43,7 +43,6 @@
 
 
 
-<script type="text/javascript" src="~/js/demo_dashboard.js"></script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -454,7 +453,7 @@
                             <div class="card-body">
                                 <p class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
                                 <div>
-                                    <div id="candidatesPieId" style="height: 200px; width: 40%;"></div>
+                                    <div id="candidatesPieId" class="PieId"></div>
                                 </div>
                             </div>
                         </div>
@@ -465,7 +464,7 @@
                             <div class="card-body">
                                 <p class="card-text">Total Interviewers : <span><strong>@Model.InterviewerCountObj.InterviewerCount</strong></span></p>
                                 <div>
-                                    <div id="interviewers" style="height: 200px; width: 40%;"></div>
+                                    <div id="interviewers" class="PieId"></div>
                                 </div>
                             </div>
                         </div>
@@ -477,7 +476,7 @@
                             <div class="card-body">
                                 <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
                                 <div>
-                                    <div id="meetingsCountId" style="height: 200px; width: 40%;"></div>
+                                    <div id="meetingsCountId" class="PieId"></div>
                                 </div>
                             </div>
                         </div>
