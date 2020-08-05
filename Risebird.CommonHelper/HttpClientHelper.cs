@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Risebird.Entities;
+using System;
 using System.Net.Http;
 
-namespace Risebird.Web.Hepler
+namespace Risebird.CommonHelper
 {
     public class HttpClientHelper
     {
@@ -17,11 +19,16 @@ namespace Risebird.Web.Hepler
         /// <param name="contextAccessor"></param>
         /// <param name="loggerFactory"></param>
         /// <param name="options"></param>
-        public HttpClientHelper(IHttpContextAccessor contextAccessor, IOptions<AzureAdB2COptions> options)
+        public HttpClientHelper(IHttpContextAccessor contextAccessor, IOptions<ConfigurationOptions> options)
         {
             _httpClient = new HttpClient();
 
-
+            // Set the BaseAddress of the HttpClient if WebApiUrl is found in configuration.
+            var baseAddress = options?.Value?.MicroServiceSettings.WebApiUrl;
+            if (!string.IsNullOrEmpty(baseAddress))
+            {
+                _httpClient.BaseAddress = new Uri(baseAddress);
+            }
         }
 
         /// <summary>
