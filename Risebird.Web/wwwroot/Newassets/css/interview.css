@@ -309,7 +309,29 @@ input[type=number] {
 }
 
 
+#statusModal table td {
+    white-space: normal;
+}
 
+.call-btn {
+    background: #0ea93d;
+    border-radius: 100%;
+    float: right;
+    padding: 2px;
+    border: 0px;
+}
+
+.skill {
+    -ms-flex: 0 0 36.666667%;
+    flex: 0 0 36.666667%;
+    max-width: 36.666667%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+    .skill [type="datetime-local"] {
+        background: #fff !important;
+    }
 
 
 [type="date"] {
@@ -712,7 +734,7 @@ ul.panel-controls > li > button {
 }
 #statusModal table td{white-space:normal;}
 .call-btn {
-    background: #0ea93d;
+    background: #2aea65;
     border-radius: 100%;
     float: right;
     padding: 2px;
@@ -725,15 +747,13 @@ ul.panel-controls > li > button {
     padding-right: 15px;
     padding-left: 15px;
 }
-    .skill [type="datetime-local"] {
-        background:#fff!important;
-    }
-        .daily-interview {
-        -ms-flex: 0 0 33.333333%;
-        flex: 0 0 33.333333%;
-        max-width: 33.333333%;
-        padding-right: 15px;
-    }
+
+.daily-interview {
+    -ms-flex: 0 0 33.333333%;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding-right: 15px;
+}
 
 .daily-slot {
     -ms-flex: 0 0 30%;
