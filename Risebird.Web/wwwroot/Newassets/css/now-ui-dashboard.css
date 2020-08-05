@@ -2604,7 +2604,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     width: 17px;
 }
 
-.navbar.navbar-transparent {
+.navbar.navbar-transparent.bg-white, .navbar.navbar-transparent {
     background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
     box-shadow: none;
     color: #FFFFFF;
@@ -11797,6 +11797,25 @@ div.dtr-modal {
         width: 95%;
     }
 
+    table.dataTable > thead > tr > th,
+    table.dataTable > tbody > tr > th,
+    table.dataTable > tfoot > tr > th,
+    table.dataTable > thead > tr > td,
+    table.dataTable > tbody > tr > td,
+    table.dataTable > tfoot > tr > td {
+        outline: 0;
+        max-width:300px!important;
+        width: 300px!important;
+        border-right: 0;
+        border-bottom: 0;
+    }
+   
+    .dtr-inline.collapsed table.dataTable > tfoot > tr > td {
+        display: inline-block;
+      
+    }
+
+
     table.dataTable > tbody > tr > td:first-child {
         padding-left: 30px !important;
     }
@@ -15121,7 +15140,7 @@ be a descendant of the grid when it is being dragged.
         width: 22px;
         height: 2px;
         border-radius: 1px;
-        background: #53a5f5;
+        background: #fff;
     }
 
         .navbar-toggler-bar + .navbar-toggler-bar {
