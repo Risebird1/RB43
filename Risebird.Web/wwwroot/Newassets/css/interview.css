@@ -690,7 +690,29 @@ ul.panel-controls > li > button {
 #statusModal .dataTables_length, #statusModal .dataTables_filter {
     margin: 0px 0px;
 }
+#statusModal table td {
+    white-space: normal;
+}
 
+.call-btn {
+    background: #0ea93d;
+    border-radius: 100%;
+    float: right;
+    padding: 2px;
+    border: 0px;
+}
+
+.skill {
+    -ms-flex: 0 0 36.666667%;
+    flex: 0 0 36.666667%;
+    max-width: 36.666667%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+    .skill [type="datetime-local"] {
+        background: #fff !important;
+    }
 
 .skill {
     -ms-flex: 0 0 36.666667%;

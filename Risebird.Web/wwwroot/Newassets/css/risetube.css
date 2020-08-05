@@ -1024,8 +1024,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
 .btnmeeting {
-    background: #53a5f5;
-    border: 2px #53a5f54d double;
+
     color: #ffffff;
     font-size: 11px;
     padding: 4px 4px;

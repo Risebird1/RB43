@@ -54,7 +54,7 @@
         <div class="page-content">
             <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute" style="height:53px;">
                 <div class="container-fluid">
-                    <div class="navbar-wrapper w-full"  >
+                    <div class="navbar-wrapper w-full">
                         <div class="navbar-toggle">
                             <button type="button" class="navbar-toggler">
                                 <span class="navbar-toggler-bar bar1"></span>
@@ -120,7 +120,7 @@
                                     <li>
                                         <div class="col-md-12 col-sm-12 nopad interview-date">
                                             @*<input id="progressTrackingDate" name="progressTrackingDate" type="date" for="@Model.ProgressDate" class="form-control">*@
-                                            @Html.EditorFor(model => model.ProgressDate.Date, new { htmlAttributes = new { @class = "form-control text-box single-line"} })
+                                            @Html.EditorFor(model => model.ProgressDate.Date, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
                                         </div>
                                     </li>
@@ -130,7 +130,7 @@
                                 </ul>
 
                             </div>
-                            
+
                             <div id="progressTableId">
                                 <div class="panel-body panel-body-table">
                                     @if (Model.IrfProgressList != null && Model.IrfProgressList.Count() != 0)
@@ -263,7 +263,7 @@
 
                                 </div>
                             </div>
-                            
+
 
                         </div>
                         <!-- END INTERVIEW BLOCK -->
@@ -492,7 +492,7 @@
     </div>
     <!-- END PAGE CONTAINER -->
 
-    
+
 
 
 
@@ -759,17 +759,17 @@
 </script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 @*<script>
-    $(".widget-remove").on("click", function () {
-        $(this).parents(".widget").fadeOut(400, function () {
-            $(this).remove();
+        $(".widget-remove").on("click", function () {
+            $(this).parents(".widget").fadeOut(400, function () {
+                $(this).remove();
 
+            });
+            return false;
         });
-        return false;
-    });
-</script>
-<script>
+    </script>
+    <script>
 
-    $(".owl-carousel").owlCarousel({
-        mouseDrag: false, touchDrag: true, slideSpeed: 300, paginationSpeed: 400, singleItem: true, navigation: false, autoPlay: true
-    });
-</script>*@
+        $(".owl-carousel").owlCarousel({
+            mouseDrag: false, touchDrag: true, slideSpeed: 300, paginationSpeed: 400, singleItem: true, navigation: false, autoPlay: true
+        });
+    </script>*@
