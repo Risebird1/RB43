@@ -220,35 +220,27 @@ namespace Risebird.Business
 
         }
 
-        public InterviewerProfileVM GetInterviewerProfileByEmailId(string emailId, string profile)
+        public async Task<InterviewerProfileVM> GetInterviewerProfileByEmailId(string emailId, string profile)
         {
             try
             {
-                var interviewerProfile = _interviewerRepository.GetInterviewerProfileByEmailId(emailId, profile).Result;
-                InterviewerProfileVM ProfileModel = interviewerProfile.FirstOrDefault();
+                var interviewerProfile = await _interviewerRepository.GetInterviewerProfileByEmailId(emailId, profile);
+                if (interviewerProfile != null)
+                {
+                    InterviewerProfileVM profileModel = interviewerProfile.FirstOrDefault();
+                    // Get all the List from DB
+                    profileModel.InterviewerAvailabilityDetails = _interviewerRepository.GetAvailabilityList(profileModel.id).Result.ToList();
+                    profileModel.InterviewerAccDetails = _interviewerRepository.GetAccDetailsList(profileModel.id).Result.ToList();
 
-                int ProfileId = ProfileModel.id;
-
-                // Get all the List from DB
-
-                List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
-                List<TransInterviewerAccDetails> AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result.ToList();
-
-                // Assign the Lists to model
-
-
-                ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
-                ProfileModel.InterviewerAccDetails = AccDetailsList;
-
-                return ProfileModel;
-
+                    return profileModel;
+                }
+                else return new InterviewerProfileVM { EmailId = emailId };
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
-
         }
 
         public InterviewerProfessional GetEmployerById(int id)
