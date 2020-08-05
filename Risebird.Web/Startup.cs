@@ -12,6 +12,7 @@ using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Hepler;
@@ -37,7 +38,10 @@ namespace Risebird.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ConfigurationOptions>(options => Configuration.Bind(options));
 
+            var configOptions = new ConfigurationOptions();
+            Configuration.Bind(configOptions);
             //Configure session state
             services.AddDistributedRedisCache(options =>
             {
@@ -134,9 +138,11 @@ namespace Risebird.Web
         /// Mapping all the buisness and repository dependencies
         /// </summary>
         /// <param name="services"></param>
-        private static void DependencyMapping(IServiceCollection services)
+        private void DependencyMapping(IServiceCollection services)
         {
             services.AddSingleton<HttpClientHelper>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IConfiguration>(Configuration);
             services.AddScoped<INotificationHelper, NotificationHelper>();
             services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             services.AddScoped<IUserService, UserService>();
@@ -178,8 +184,10 @@ namespace Risebird.Web
             services.AddScoped<IInterviewerService, InterviewerService>();
             services.AddScoped<IInterviewerRepository, InterviewerRepository>();
             services.AddScoped<IAzureFaceApi, AzureFaceApi>();
-
-            //IInterviewerService
+            services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddScoped<IMeetingInviteService, MeetingInviteService>();
+            services.AddScoped<IMeetingInviteRepository, MeetingInviteRepository>();
 
         }
     }

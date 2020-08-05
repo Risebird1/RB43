@@ -132,7 +132,7 @@ table {
 }
 
 
-    table.dataTable > thead > tr > th {
+table.dataTable > thead > tr > th {
         padding: 5px;
     }
 

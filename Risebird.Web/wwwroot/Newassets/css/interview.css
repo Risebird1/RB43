@@ -628,6 +628,8 @@ table {
     margin-left: 3px;
     border: 0;
 }
+
+
 .interview-date [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 93% 50% no-repeat !important;
     background-size: 9% !important;
@@ -688,7 +690,29 @@ ul.panel-controls > li > button {
 #statusModal .dataTables_length, #statusModal .dataTables_filter {
     margin: 0px 0px;
 }
+#statusModal table td {
+    white-space: normal;
+}
 
+.call-btn {
+    background: #0ea93d;
+    border-radius: 100%;
+    float: right;
+    padding: 2px;
+    border: 0px;
+}
+
+.skill {
+    -ms-flex: 0 0 36.666667%;
+    flex: 0 0 36.666667%;
+    max-width: 36.666667%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+    .skill [type="datetime-local"] {
+        background: #fff !important;
+    }
 
 .skill {
     -ms-flex: 0 0 36.666667%;
@@ -1485,14 +1509,38 @@ top:3px;
         margin: 0px 20px;
         width: 100%;
     }
-
-    #ProctoringTable .label-type {
+    .comment-area.form-group .form-control {
+        padding: 10px 10px 10px 10px;
+    }
+        #ProctoringTable .label-type {
         white-space: nowrap;
     }
 
     #meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter, #dupmeeting_length, #dupmeeting_filter {
         margin: 7px 0 0 0px !important;
     }
+
+    .skill {
+        -ms-flex: 100%;
+        flex: 100%;
+        max-width: 100%;
+    
+    }
+
+    .daily-interview {
+        -ms-flex: 100%;
+        flex: 100%;
+        max-width: 100%;
+        padding-left: 15px;
+    }
+
+    .daily-slot {
+        -ms-flex: 100%;
+        flex: 100%;
+        max-width: 100%;
+        padding-left: 15px;
+    }
+
 }
 
 @media (min-width: 576px) {

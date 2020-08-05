@@ -118,11 +118,7 @@ var encodeFile = function (assetId) {
     }).done(function (state) {
         if (!state.error) {
             displayStatusMessage(state.message);
-            console.log("Asset Id: " + state.assetId);
-            console.log("Job Id: " + state.jobId);
-            console.log("Locator: " + state.locator);
-            console.log("Encrypted content or not: " + state.encrypted);
-            console.log("Token: " + state.token);
+           
             $("#videourl").text(state.locator);
             $.ajax({
                 type: "GET",

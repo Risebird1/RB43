@@ -1,5 +1,6 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 
 namespace Risebird.CommonHelper.Interface
@@ -28,5 +29,7 @@ namespace Risebird.CommonHelper.Interface
 
         string SendInviteToInterviewer(string iscName, string jdTitle, string primarySkill, string calendlyLink, string interviewerMailId, string hrEmailId);
         string CancelInterviewerInvite(string iscName, string primarySkill, string interviewerMailId, string hrEmailId);
+        string MeetingInvite(DateTime startTime, DateTime endTime, string TimeZone, string accountMail, string accountPass, string Message, string subject, string sender, string candidateMail, string additionMail, string meetingURL);
+
     }
 }

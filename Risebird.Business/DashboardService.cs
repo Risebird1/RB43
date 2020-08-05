@@ -58,11 +58,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<IRF>> GetIRFProgress()
+        public async Task<IEnumerable<IRF>> GetIRFProgress(DateTime date)
         {
             try
             {
-                return await _dashboardRespository.GetIRFProgress();
+                return await _dashboardRespository.GetIRFProgress(date);
             }
             catch (Exception ex)
             {
@@ -117,6 +117,19 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Meeting>> GetDateWiseClientMeetings(DateTime date, string emailId)
+        {
+            try
+            {
+                return _dashboardRespository.GetDateWiseClientMeetings(date, emailId).Result.OrderBy(x => x.interviewDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
