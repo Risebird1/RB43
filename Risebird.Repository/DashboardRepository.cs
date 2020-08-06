@@ -237,5 +237,26 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IRFFunnel> GetClientFunnelData(string emailId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<IRFFunnel>(con, "usp_GetClientFunnelData", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

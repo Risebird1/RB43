@@ -134,5 +134,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IRFFunnel> GetClientFunnelData(string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetClientFunnelData(emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

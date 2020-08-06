@@ -194,9 +194,13 @@ namespace Risebird.Web.Controllers
                     if(profileName == "Client")
                     {
                         var model = new ClientDashboardVM();
+                        var funnelData = await _dashboardService.GetClientFunnelData(emailid);
+
                         //daily interview tracking first chart
                         model = GetDateWiseClientInterviews(DateTime.Now, emailid);
                         model.EmailId = emailid;
+                        model.FunnelData = JsonConvert.SerializeObject(funnelData);
+
                         return View(model);
                     }
                     else
