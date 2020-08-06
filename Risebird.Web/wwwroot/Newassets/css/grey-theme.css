@@ -2,7 +2,7 @@
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
 
-.navbar.navbar-transparent {
+.navbar.navbar-transparent.bg-white,  {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
 textarea::-webkit-scrollbar {
@@ -77,6 +77,14 @@ input[type='radio']:checked:after {
 }
 [type="datetime-local"] {
     background: #f5f5f5 url(../img/grey-timdate.png) 97% 50% no-repeat !important;
+    background-size: 5% !important;
+}
+.btnmeeting {
+    background: #929292;
+    border: 2px #929292a8 double;
+}
+    .mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
+    background: #fff url(../img/grey-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
 .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {

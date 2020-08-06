@@ -568,29 +568,44 @@
                                             <div class=" col-md-8 video-contop">
                                                 @if (Model.JDTiltle != null)
                                                 {
-                                                    <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                        <input hidden value="@Model.candidateEmail" id="txtOnlineEmail" />
-                                                        @if (ViewBag.VideoStatus != "Public")
+                                                <h1 class="title video-title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                    <input hidden value="@Model.candidateEmail" id="txtOnlineEmail" />
+                                                    @if (ViewBag.VideoStatus != "Public")
+                                                    {
+                                                        @if (Model.IsOnline == 1)
                                                         {
-                                                            @if (Model.IsOnline == 1)
-                                                            {
-                                                                <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <a onclick="">   @Model.candidateName <span class="dot"></span></a>
-                                                            }
+                                                            <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
                                                         }
                                                         else
                                                         {
-                                                            @Model.candidateName
+                                                            <a onclick="">   @Model.candidateName <span class="dot"></span></a>
                                                         }
-                                                        <span class="job_title"> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span>
-                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
-                                                        <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
-                                                        <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
+                                                    }
+                                                    else
+                                                    {
+                                                        @Model.candidateName
+                                                    }
 
-                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Send Invite" />
+                                                    @if (@Model.JDTiltle.Length > 5)
+                                                    {
+
+                                                        <a href="#" data-tooltip="@Model.JDTiltle">
+                                                            <span class="job_title join-time"> (@Model.JDTiltle.Split("|")[0])</span></a>}
+                                                            else
+                                                            {
+                                                <span>@Model.JDTiltle</span>}
+                                                            &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span>
+
+
+
+
+
+
+                                                            <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                            <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
+                                                            <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
+
+                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Team Meeting" />
 
 
                                                     </h1>
@@ -815,7 +830,7 @@
                                                                                         <div class="talktext">
 
 
-                                                                                            @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;width:100%", @readonly = "readonly" })
+                                                                                            @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;", @readonly = "readonly" })
 
                                                                                         </div>
                                                                                     </a>
@@ -1754,11 +1769,16 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 col-sm-12">
+                    <div class="col-md-12 col-sm-12">                       
                         <div class="form-group">
-                            <select class="form-control" id="txtOnlineTimeZone"></select>
+                            <label class="control-label col-md-12 col-sm-12 desp-label">
+                                Select Time Zone
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="txtOnlineTimeZone"></select>
+                            </div>
                         </div>
-                    </div>
+                        </div>
                 </div>
 
                 <div class="row">
@@ -2174,13 +2194,15 @@
                     $.ajax({
                         type: "POST",
                         url: "/MeetingInvite/SendMeetingInvite",
-                        data: { Subject: $("#txtOnlineSubject").val(), emailid: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(),TimeZoneDetails:$("#txtOnlineTimeZone").val(),AdditionalUser:$("#txtOnlineMEmailids").val() },
+                        data: { Subject: $("#txtOnlineSubject").val(), candidateEmailId: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(),TimeZoneDetails:$("#txtOnlineTimeZone").val(),AdditionalUser:$("#txtOnlineMEmailids").val() },
                         success: function (data) {
                             alert(data);
+                            closeOnlineMeetingModel();
                         }
                     });
                 } else {
                     alert(resultreturn);
+                    
                 }
             } else {
                 alert("Kindly fill the Subject field");

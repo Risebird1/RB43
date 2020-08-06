@@ -713,21 +713,22 @@ namespace Risebird.CommonHelper
                 return "Broadcast failed.";
             }
         }
-        public string OnlineMeetingInvite(Mail model, string Url, string Message, DateTime start, DateTime end)
+        public string MeetingInvite(DateTime startTime, DateTime endTime, string TimeZone, string accountMail, string accountPass, string Message, string subject, string sender, string candidateMail, string additionalMail, string meetingURL )
         {
             try
             {
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(model.TO, null));
-                if (!String.IsNullOrEmpty(model.CC))
+                mailMessage.To.Add(new MailAddress(candidateMail, null));
+                mailMessage.To.Add(new MailAddress(sender, null));
+                if (!String.IsNullOrEmpty(additionalMail))
                 {
-                    mailMessage.CC.Add(new MailAddress(model.CC, null));
+                    mailMessage.To.Add(new MailAddress(additionalMail, null));
                 }
 
-                object[] parameters = new object[] { Message, Url };
-                mailMessage.Subject = model.Subject + "(Meeting Time-" + start + " To " + end + "(US Standrad Time))";
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "Onlinemeeting.html");
+                object[] parameters = new object[] { Message, TimeZone, startTime, endTime, meetingURL };
+                mailMessage.Subject = subject;
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "MeetingInvite.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 mailMessage.IsBodyHtml = true;
@@ -737,11 +738,29 @@ namespace Risebird.CommonHelper
                 smtpClient.Credentials = credentials;
 
                 smtpClient.Send(mailMessage);
+               
+
+                mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");              
+                mailMessage.To.Add(new MailAddress(sender, null));
+                 parameters = new object[] { accountMail, accountPass };
+                mailMessage.Subject = $"Confidential: Team Meeting Account detail for meeting schedule at {startTime} with {candidateMail}";
+                rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "MeetingAccountDetail.html");
+                 msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                 smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
                 return "Mail sent Successfully.";
+
             }
             catch (Exception)
             {
-                return "Broadcast failed.";
+                return "Mail sent failed.";
             }
         }
 
