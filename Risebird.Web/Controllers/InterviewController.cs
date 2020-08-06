@@ -3619,8 +3619,7 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("Index");
                     }
                     else if (isInterviewer)
-                    {
-                        model.IsInterviewer = true;
+                    {                       
                         if (isQC)
                         {
                             return RedirectToAction("MyQualityControlledInterviews");

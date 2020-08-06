@@ -723,12 +723,12 @@ namespace Risebird.Web.Controllers
                         if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
                         {
                             TempData["MessageInterviewer"] = "My Profile is added Successfully";
-                            return View("MyProfile", interviewerProfile);
+                            return RedirectToAction("MyProfile");
                         }
                         else
                         {
                             TempData["MessageInterviewer"] = "My Profile addition is Failed";
-                            return View("MyProfile", interviewerProfile);
+                            return RedirectToAction("MyProfile");
                         }
                     }
                     else
