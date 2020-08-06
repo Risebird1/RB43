@@ -49,11 +49,11 @@ namespace Risebird.Business
         /// <param name="whom"></param>
         /// <param name="Subject"></param>
         /// <returns></returns>
-        public async Task<string> InsertMeetingInvite(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject)
+        public async Task<string> InsertMeetingInvite(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject, string timeZone)
         {
             try
             {
-                return await _meetingInviteRepository.InsertMeetingInvite(starttime, endtime, Emailaddress, Accountemail, Linkurl, whom, Subject);
+                return await _meetingInviteRepository.InsertMeetingInvite(starttime, endtime, Emailaddress, Accountemail, Linkurl, whom, Subject, timeZone);
             }
             catch (Exception ex)
             {

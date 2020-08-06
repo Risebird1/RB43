@@ -1001,6 +1001,10 @@ textarea::-webkit-scrollbar-thumb {
     color: #42a5f5;
 }
 
+.mdc-button--outlined {
+    padding: 0 10px 0 10px;
+}
+
 .mdc-fab-secondary {
     background: #fff !important;
     color: #53a5f5 !important;
@@ -1018,22 +1022,26 @@ textarea::-webkit-scrollbar-thumb {
     .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
         border-bottom: 2px rgb(80, 158, 235) solid !important;
     }
+
 .btnmeeting {
-    background: #39393a7a;
-    border: 2px #e2e2e2 double;
+
     color: #ffffff;
-    font-size: 12px;
-    padding: 0px 5px;
-    line-height: 26px;
+    font-size: 11px;
+    padding: 4px 4px;
+    line-height: 16px;
     border-radius: 5px;
     margin-left: 10px;
+    top: -2px;
+    position: relative;
 }
+
     .btnmeeting:hover {
-        background: #39393a85;
+        background: #53a5f5;
     }
-    .mtop-10 {
-        margin-top: 10px;
-    }
+
+.mtop-10 {
+    margin-top: 10px;
+}
 
 .caret {
     display: none !important;
@@ -1163,6 +1171,9 @@ textarea::-webkit-scrollbar-thumb {
     flex: 0 0 66.666667%;
 }
 
+.video-contop .title.name-video-primary-info-renderer {
+    overflow: inherit;
+}
 
 .title.name-video-primary-info-renderer {
     display: block;
@@ -1588,7 +1599,6 @@ textarea::-webkit-scrollbar-thumb {
 #toggle-click1 {
     color: black;
     font-size: 24px;
-    padding-right: 30px
 }
 
 .chat {
@@ -1612,6 +1622,7 @@ textarea::-webkit-scrollbar-thumb {
     width: 28px;
     padding-left: 4px;
 }
+
 .expected-salari {
     white-space: nowrap;
     overflow: hidden;
@@ -1622,6 +1633,7 @@ textarea::-webkit-scrollbar-thumb {
     position: relative;
     top: 4px;
 }
+
 .expected-timing {
     white-space: nowrap;
     overflow: hidden;
@@ -1632,6 +1644,7 @@ textarea::-webkit-scrollbar-thumb {
     position: relative;
     top: 4px;
 }
+
 @media screen and (max-width:1200px) {
     .video-card-body {
         height: 110px;
@@ -1648,385 +1661,400 @@ textarea::-webkit-scrollbar-thumb {
     .video-info span {
         font-size: 11px;
     }
+
     .designation {
         font-size: 12px;
     }
-    .expected-salari{width:32%}
+
+    .expected-salari {
+        width: 32%
+    }
+
     .expected-timing {
         width: 35%;
     }
 }
 
-    @media screen and (max-width:1024px) {
-        .designation {
-            font-size: 16px;
-        }
-        .expected-salari {
-            white-space: nowrap;
-            /* overflow: hidden; */
-            text-overflow: ellipsis;
-            width: 55%;
-            display: inline-block;
-            line-height: 12px;
-        }
-        .video-card-body {
-            height: 110px;
-        }
+@media screen and (max-width:1024px) {
+    .designation {
+        font-size: 16px;
+    }
 
-        .video-title .candidate {
-            font-size: 16px;
-        }
+    .expected-salari {
+        white-space: nowrap;
+        /* overflow: hidden; */
+        text-overflow: ellipsis;
+        width: 55%;
+        display: inline-block;
+        line-height: 12px;
+    }
 
-        .video-view span {
-            font-size: 14px;
-        }
+    .video-card-body {
+        height: 110px;
+    }
 
-        .video-info span {
-            font-size: 14px;
-        }
-        .expected-timing {
-            width: 60%;
-        }
+    .video-title .candidate {
+        font-size: 16px;
+    }
+
+    .video-view span {
+        font-size: 14px;
+    }
+
+    .video-info span {
+        font-size: 14px;
+    }
+
+    .expected-timing {
+        width: 60%;
+    }
+}
+
+
+@media screen and (max-width: 991px) {
+    .interviewer-comment .talk-bubble {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 10px) !important;
+    }
+
+    .single-video-left {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding: 0px;
+    }
+
+    .single-video-left {
+        border-bottom: 0px #620bee21 solid;
+        margin-bottom: 20px;
+        padding: 0px;
+    }
+
+    .single-video-right {
+        -ms-flex: 0 0 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .col-md-8.video-contop .mdc-button--outlined {
+        font-size: 11px
+    }
+
+    .expected-salari {
+        width: 40%
+    }
+
+    .expected-timing {
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .tabs {
+        display: none;
+    }
+
+    .tab_drawer_heading {
+        background-color: #ececec;
+        color: #5a5757cc;
+        border-bottom: 1px solid #ccc;
+        margin: 0 0 5px 0;
+        padding: 5px 20px;
+        display: block;
+        font-size: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .d_active {
+        background-color: #53a5f5;
+        color: #fff;
+    }
+
+    .video-block {
+        border-bottom: 1px #ccc solid;
+        margin-bottom: 15px;
+    }
+
+    .col-md-8.video-contop {
+        /* width: 68%;
+        padding: 0;*/
+        width: 100%;
+        padding: 0px 15px;
+        margin-top: 0;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .mn-section {
+        /*position: absolute;
+        width: calc(100% - 30px);*/
+        position: relative !important;
+        margin: 0;
+        padding: 0;
+        width: 100%;
     }
 
 
-    @media screen and (max-width: 991px) {
-        .interviewer-comment .talk-bubble {
-            margin: 0px 10px 10px 10px;
-            width: calc(100% - 10px) !important;
-        }
-
-        .single-video-left {
-            -ms-flex: 0 0 100%;
-            flex: 0 0 100%;
-            max-width: 100%;
-            padding: 0px;
-        }
-
-        .single-video-left {
-            border-bottom: 0px #620bee21 solid;
-            margin-bottom: 20px;
-            padding: 0px;
-        }
-
-        .single-video-right {
-            -ms-flex: 0 0 100%;
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
-
-        .col-md-8.video-contop .mdc-button--outlined {
-            font-size: 11px
-        }
-        .expected-salari{width:40%}
-
-        .expected-timing {
-            width:50%;
-        }
-        }
-
-    @media screen and (max-width: 768px) {
-        .tabs {
-            display: none;
-        }
-
-        .tab_drawer_heading {
-            background-color: #ececec;
-            color: #5a5757cc;
-            border-bottom: 1px solid #ccc;
-            margin: 0 0 5px 0;
-            padding: 5px 20px;
-            display: block;
-            font-size: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        .d_active {
-            background-color: #53a5f5;
-            color: #fff;
-        }
-
-        .video-block {
-            border-bottom: 1px #ccc solid;
-            margin-bottom: 15px;
-        }
-
-        .col-md-8.video-contop {
-            /* width: 68%;
-        padding: 0;*/
-            width: 100%;
-            padding: 0px 15px;
-            margin-top: 0;
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
-
-        .mn-section {
-            /*position: absolute;
-        width: calc(100% - 30px);*/
-            position: relative !important;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-        }
 
 
 
-
-
-        .player-main {
-            /* width: 68% !important;
+    .player-main {
+        /* width: 68% !important;
         text-align: center !important;
         margin: 0px !important;
         padding: 0;*/
-            width: 100% !important;
-            text-align: center !important;
-            margin: 0px auto !important;
-            max-width: 100% !important;
-            flex: 0 0 100%;
-        }
-
-        .side-player {
-            margin-left: auto !important;
-            margin-top: 0px;
-            /* width: 33%;*/
-            width: 100%;
-            padding: 0;
-            max-width: 100% !important;
-            flex: 0 0 100%;
-        }
-
-        .col-md-8.video-contop .title.name-video-primary-info-renderer, .col-md-8.video-contop span {
-            font-size: 13.5px !important;
-        }
-
-        .col-md-8.video-contop .mdc-button--outlined {
-            font-size: 12px;
-            height: 27px;
-            padding: 0px 5px;
-            height: 30px;
-            line-height: 16px;
-        }
-
-        .left-chart, .interviewer-comment {
-            max-width: 100% !important;
-            flex: 0 0 100%;
-            padding: 0px 10px 0px 10px;
-        }
-
-        .comment-area .talk-bubble {
-            width: 85%;
-        }
+        width: 100% !important;
+        text-align: center !important;
+        margin: 0px auto !important;
+        max-width: 100% !important;
+        flex: 0 0 100%;
     }
 
-    @media screen and (max-width: 767px) {
-
-        .single-video-left .comment-area textarea {
-            width: 87%
-        }
-
-        .video-card-body {
-            height: 130px;
-        }
-
-        .share {
-            width: 20%;
-        }
-
-        .shortlist {
-            width: 25%;
-        }
-
-        .k {
-            width: 50%;
-            margin: 0;
-            position: absolute;
-            top: 35px;
-        }
-
-        .views {
-            padding: 10px 10px 0px 10px;
-            width: 30%;
-        }
-
-        .showinter {
-            padding: 5px 0;
-            width: 25%;
-        }
+    .side-player {
+        margin-left: auto !important;
+        margin-top: 0px;
+        /* width: 33%;*/
+        width: 100%;
+        padding: 0;
+        max-width: 100% !important;
+        flex: 0 0 100%;
     }
 
-    @media screen and (max-width: 640px) {
-        .player-main {
-            width: 100% !important;
-            text-align: center !important;
-            margin: 0px auto !important;
+    .col-md-8.video-contop .title.name-video-primary-info-renderer, .col-md-8.video-contop span {
+        font-size: 13.5px !important;
+    }
+
+    .col-md-8.video-contop .mdc-button--outlined {
+        font-size: 12px;
+        height: 27px;
+        padding: 0px 5px;
+        height: 30px;
+        line-height: 16px;
+    }
+
+    .left-chart, .interviewer-comment {
+        max-width: 100% !important;
+        flex: 0 0 100%;
+        padding: 0px 10px 0px 10px;
+    }
+
+    .comment-area .talk-bubble {
+        width: 85%;
+    }
+}
+
+@media screen and (max-width: 767px) {
+
+    .single-video-left .comment-area textarea {
+        width: 87%
+    }
+
+    .video-card-body {
+        height: 130px;
+    }
+
+    .share {
+        width: 20%;
+    }
+
+    .shortlist {
+        width: 25%;
+    }
+
+    .k {
+        width: 50%;
+        margin: 0;
+        position: absolute;
+        top: 35px;
+    }
+
+    .views {
+        padding: 10px 10px 0px 10px;
+        width: 30%;
+    }
+
+    .showinter {
+        padding: 5px 0;
+        width: 25%;
+    }
+
+    .interviewer-comment .talk-bubble {
+        width: calc(100% - 20px) !important;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .player-main {
+        width: 100% !important;
+        text-align: center !important;
+        margin: 0px auto !important;
+    }
+
+    .side-player {
+        margin-left: auto !important;
+        margin-top: 10px;
+        width: 100% !important;
+    }
+
+    .mn-section {
+        position: relative !important;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .showinter .btn-group {
+        right: 10px;
+    }
+
+    .k {
+        width: 50%;
+        margin: 0;
+        position: absolute;
+        top: 25px;
+        right: 0;
+    }
+
+        .k .fa-thumbs-up {
+            margin-left: 0 !important;
+            padding-right: 0 !important
         }
 
-        .side-player {
-            margin-left: auto !important;
-            margin-top: 10px;
-            width: 100% !important;
-        }
-
-        .mn-section {
-            position: relative !important;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-        }
-
-        .showinter .btn-group {
-            right: 10px;
-        }
-
-        .k {
-            width: 50%;
-            margin: 0;
-            position: absolute;
-            top: 25px;
-            right: 0;
-        }
-
-            .k .fa-thumbs-up {
-                margin-left: 0 !important;
-                padding-right: 0 !important
-            }
-
-        .comment-area .mdc-button--raised {
-            padding: 25px 9px;
-        }
+    .comment-area .mdc-button--raised {
+        padding: 25px 9px;
+    }
 
 
-        .views {
-            padding: 0px 10px 0px 10px;
-            right: 4px;
-        }
+    .views {
+        padding: 0px 10px 0px 10px;
+        right: 4px;
+    }
 
-        .comment-area .talk-bubble {
-            width: 86%;
-        }
+    .comment-area .talk-bubble {
+        width: 86%;
+    }
 
-        #wrapper #content-wrapper .container-wrap {
-            padding: 0px !important;
-        }
+    #wrapper #content-wrapper .container-wrap {
+        padding: 0px !important;
+    }
 
-        .video-contop {
-            margin-top: 0;
-        }
+    .video-contop {
+        margin-top: 0;
+    }
 
-        .col-md-8.video-contop {
-            width: 100%;
-            padding: 0px 15px;
-        }
+    .col-md-8.video-contop {
+        width: 100%;
+        padding: 0px 15px;
+    }
 
-        .video-width {
-            background: black !important;
-            width: 100%;
-            height: auto;
-        }
+    .video-width {
+        background: black !important;
+        width: 100%;
+        height: auto;
+    }
 
-        .card-text {
-            text-align: center
-        }
+    .card-text {
+        text-align: center
+    }
 
-        .single-video-left .comment-area textarea {
-            width: 79%
-        }
+    .single-video-left .comment-area textarea {
+        width: 79%
+    }
 
-        .counts-liks {
-            position: relative
-        }
+    .counts-liks {
+        position: relative
+    }
 
-        .showinter {
-            width: 35%;
+    .showinter {
+        width: 35%;
+        float: left;
+        padding: 0px !important;
+    }
+
+    .shortlist {
+        margin: 0;
+        width: 40%;
+    }
+
+    .share {
+        width: 50%;
+    }
+
+    .views {
+        margin: 5px 0px 0px 0px;
+        width: 60%;
+    }
+
+    .single-video-info-content hr {
+        margin-top: 0;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .audio-wrap {
+        margin: 0px 0px;
+        clear: both;
+        width: 100%;
+        float: left;
+        text-align: center;
+    }
+
+        .audio-wrap h1 {
+            font-size: 17px;
             float: left;
-            padding: 0px !important;
-        }
-
-        .shortlist {
-            margin: 0;
-            width: 40%;
-        }
-
-        .share {
-            width: 50%;
-        }
-
-        .views {
-            margin: 5px 0px 0px 0px;
-            width: 60%;
-        }
-
-        .single-video-info-content hr {
-            margin-top: 0;
-        }
-    }
-
-    @media screen and (max-width: 540px) {
-        .audio-wrap {
-            margin: 0px 0px;
-            clear: both;
-            width: 100%;
-            float: left;
-            text-align: center;
-        }
-
-            .audio-wrap h1 {
-                font-size: 17px;
-                float: left;
-                padding: 20px 4px 10px 4px;
-                margin: 0px;
-                width: 100%;
-            }
-
-            .audio-wrap audio {
-                width: 285px;
-                float: none;
-            }
-    }
-
-    @media screen and (max-width: 480px) {
-        .single-video-left .comment-area textarea {
-            width: 72%;
-        }
-
-        .comment-area .talk-bubble {
-            width: 83%;
-        }
-
-        .col-md-8.video-contop .mdc-button--outlined {
-            font-size: 13px;
-            font-size: 12px;
-            padding: 0px 6px;
+            padding: 20px 4px 10px 4px;
+            margin: 0px;
             width: 100%;
         }
+
+        .audio-wrap audio {
+            width: 285px;
+            float: none;
+        }
+}
+
+@media screen and (max-width: 480px) {
+    .single-video-left .comment-area textarea {
+        width: 72%;
     }
 
-    @media screen and (max-width: 375px) {
-        .comment-area .talk-bubble {
-            width: 78%;
-        }
-
-        .designation {
-            font-size: 14px;
-        }
-
-        .video-title .candidate {
-            font-size: 14px;
-        }
-
-        .video-view span {
-            font-size: 13px;
-        }
-
-        .video-info span {
-            font-size: 13px;
-        }
+    .comment-area .talk-bubble {
+        width: 83%;
     }
+
+    .col-md-8.video-contop .mdc-button--outlined {
+        font-size: 13px;
+        font-size: 12px;
+        padding: 0px 6px;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .comment-area .talk-bubble {
+        width: 75%;
+    }
+
+    .designation {
+        font-size: 14px;
+    }
+
+    .video-title .candidate {
+        font-size: 14px;
+    }
+
+    .video-view span {
+        font-size: 13px;
+    }
+
+    .video-info span {
+        font-size: 13px;
+    }
+}

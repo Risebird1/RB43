@@ -10,7 +10,10 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,18 +45,19 @@ namespace Risebird.Web
             return Json(new { result = alltimezones, current = currenttimezone });
         }
         [HttpPost]
-        public async Task<JsonResult> SendMeetingInvite(string Subject, string emailid, DateTime startdate, DateTime enddate, string Message, string TimeZoneDetails, string AdditionalUser)
+        public async Task<JsonResult> SendMeetingInvite(string Subject, string candidateEmailId, DateTime startdate, DateTime enddate, string Message, string TimeZoneDetails, string AdditionalUser)
         {
             try
             {
-                var Emailaddress = string.Empty;
+                var loggedinUser = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    Emailaddress = HttpContext.Session.GetString("email")?.Trim();
+                    loggedinUser = HttpContext.Session.GetString("email")?.Trim();
+                    loggedinUser = loggedinUser.Replace("\"", "");
                 }
-
+              
                 var selectTimeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneDetails);
-               
+
                 OnlineMeeting _meeting = new OnlineMeeting();
                 _meeting.subject = Subject;
                 _meeting.body = new Body();
@@ -68,7 +72,8 @@ namespace Risebird.Web
                 _meeting.location = new Location();
                 _meeting.location.displayName = "Risebird Meeting";
                 _meeting.attendees = new List<Attendee>();
-                _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = emailid, name = "" }, type = "required" });
+                _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = candidateEmailId, name = "" }, type = "required" });
+                _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = loggedinUser, name = "" }, type = "required" });
                 if (!String.IsNullOrEmpty(AdditionalUser))
                 {
                     var emailaddresses = AdditionalUser.Split(";");
@@ -84,42 +89,34 @@ namespace Risebird.Web
                 var functionKey = "Q/8CUsLsbKYeqRMFNPT5QnKsNWzoudpVayC1bN7tQbYK0SEAw1wboQ==";
                 var path = $"MSTeamMeeting";
                 var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, _meeting, functionKey, accountEmail, _cancellationToken);
-                var result =  response.Content.ReadAsStringAsync().Result;
+                var result = response.Content.ReadAsStringAsync().Result;
 
                 if (response.IsSuccessStatusCode)
                 {
-                    JArray jsonResponse = JArray.Parse(result);
-                    var meetingURL = JsonConvert.DeserializeObject<OnlineMeetingResponse>(result);
-                    var resultsetvalue = _meetingInviteService.InsertMeetingInvite(startdate, enddate, Emailaddress, accountEmail, response.ToString(), emailid, Subject);
-
+                    var urllinkdetails = result.ToString().Split("onlineMeeting")[result.ToString().Split("onlineMeeting").Length - 1];
+                    var deatils = urllinkdetails.Split("https")[1].Replace(":", "https:").Replace("}}", "").Replace(@"\", "");
+                    var meetingURL = deatils.Remove(deatils.Length - 2, 2);                   
+                    var resultValue = await _meetingInviteService.InsertMeetingInvite(startdate, enddate, loggedinUser, accountEmail, meetingURL.ToString(), candidateEmailId+";"+ AdditionalUser, Subject, TimeZoneDetails);
+                    if(!resultValue.Contains("failed"))
+                    {
+                        var resultset = _notificationHelper.MeetingInvite(startdate, enddate, TimeZoneDetails, accountEmail, resultValue,Message, Subject, loggedinUser, candidateEmailId, AdditionalUser, meetingURL);
+                        if (resultset == "Mail sent Successfully.")
+                        {
+                            return Json("Invite Successfully Send");
+                        }
+                        else
+                        {
+                            return Json("Fail To send invite");
+                        }
+                    }                   
                 }
+                return Json("Fail To send invite");
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json("Invite Successfully Send");
-            }
-
-
-            ////Save upcoming online meeting
-            //
-            ////Send mail with meeting invite to candidate and who create meeting
-            //Mail _mail = new Mail
-            //{
-            //    TO = emailid,
-            //    CC = Emailaddress,
-            //    Subject = Subject
-            //};
-            //var resultset = _notificationHelper.OnlineMeetingInvite(_mail, response.ToString(), Message, startdateU, enddateU);
-            //if (resultset == "Mail sent Successfully.")
-            //{
-            //    return Json("Invite Successfully Send");
-            //}
-            //else
-            //{
-            //    return Json("Fail To send invite");
-            //}
-            return Json("Invite Successfully Send");
+                return Json("Fail To send invite");
+            }           
         }
     }
 }

@@ -1,7 +1,6 @@
 body {
     background: #ebecf1;
 }
-
 .can-details a, .callatag {
     color: #007bff !important;
 }
@@ -10,14 +9,12 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
-
 .navbar.navbar-transparent.bg-white, .navbar.navbar-transparent {
     background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
 }
-
 input[type='radio']:checked:after {
-    background-color: #42a5f5 !important;
-    top: 1px !important;
+    background-color: #42a5f5!important;
+    top: 1px!important;
 }
 
 
@@ -25,7 +22,6 @@ input[type='radio']:checked:after {
     background-color: #42a5f5 !important;
     top: -1px !important;
 }
-
 .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
     background: #2CA8FF;
 }
@@ -33,19 +29,16 @@ input[type='radio']:checked:after {
 .filavatar {
     background: #42a5f5 !important;
 }
-
 .mdc-card .modal .form-control, .modal .form-control {
     background: #fff;
 }
-
 .toscore {
     color: #000 !important;
 }
-
 textarea::-webkit-scrollbar {
-    background-color: var(#acacad, #565656) !important;
-}
 
+    background-color: var(#acacad, #565656)!important;
+}
 .video-card-image {
     border: 3px #ccc solid;
 }
@@ -82,15 +75,15 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .mdc-card .modal .form-control[type="datetime-local"], .modal .form-control[type="datetime-local"] {
-    background: #fff url(../img/blue-timdate.png) 97% 50% no-repeat !important;
+    background: #fff url(../img/blue-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
 
-
-
-
-
-.mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
+.btnmeeting {
+    background: #53a5f5;
+    border: 2px #53a5f54d double;
+}
+    .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
     padding: 10px !important;
@@ -101,8 +94,7 @@ textarea::-webkit-scrollbar-thumb {
     background-size: 7% !important;
     padding: 10px !important;
 }
-
-.file-lable {
+    .file-lable {
     color: #000;
     font-size: 14px !important;
 }
@@ -149,15 +141,14 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .theme-settings .ts-button {
-    background: #1091f9 !important;
+    background: #1091f9!important;
 }
 
 .theme-settings .ts-body {
-    background: #1091f9 !important;
+    background: #1091f9!important;
 }
-
 input[type="radio"]:checked:before {
-    background: #53a5f5 !important;
+    background: #53a5f5!important;
 }
 
 input[type="radio"]:checked {
@@ -165,7 +156,7 @@ input[type="radio"]:checked {
 }
 
 .text-areadiv1 textarea {
-    background: #f5f5f5 !important;
+    background: #f5f5f5!important;
 }
 
 [data-tooltip]:before {
@@ -173,7 +164,6 @@ input[type="radio"]:checked {
     color: #fff !important;
     border: 1px #fff solid !important;
 }
-
 [data-tooltip]:after {
     border-top: 8px solid hsl(0deg 0% 50%) !important;
     border-right: 7px solid white !important;

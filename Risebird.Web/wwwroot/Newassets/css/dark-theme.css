@@ -234,10 +234,13 @@ table {
 }
 
 [type="datetime-local"] {
-    background: #181818 url(../img/dark-timdate.png) 97% 50% no-repeat !important;
+    background: #181818 url(../img/dark-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
-
+.btnmeeting {
+    background: #232222;
+    border: 2px #929292a8 double;
+}
 .spinner, .spinner .button {
     background: #181818;
 }
