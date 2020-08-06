@@ -1657,6 +1657,10 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
+        [AllowAnonymous]
+        public async Task<IActionResult> Sharecreatedview(MeetingVM _newobject)
+        {
+            return View("VideoPage");
+        }
     }
 }
