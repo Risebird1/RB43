@@ -2264,6 +2264,87 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> AddSharedVideoDetails(InterviewReport reportModel)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    InterviewComments interviewComments = new InterviewComments();
+                    DynamicParameters parameters = new DynamicParameters();
+                    DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@InterviewId", reportModel.InterviewId);
+                    paramx.Add("@TechSkillComments", reportModel.TechSkillComments);
+                    paramx.Add("@CandidateName", reportModel.CandidateName);
+                    paramx.Add("@CandidateEmail", reportModel.CandidateEmail);
+                    paramx.Add("@InterviewerComment", reportModel.InterviewerComment);
 
+                    //paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
+                    //paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
+                    // paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
+
+                    var resultset = SqlMapper.Query<int>(con, "usp_AddSharedInterviewVideo", paramx,
+                                        commandType: CommandType.StoredProcedure);
+
+                    DataTable techReportDt = new DataTable();
+                    techReportDt.Columns.Add("InterviewId", typeof(int));
+                    techReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    techReportDt.Columns.Add("SkillId", typeof(int));
+                    techReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    techReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    techReportDt.Columns.Add("WeightageActual", typeof(int));
+
+                    foreach (var item in reportModel.TechSkillReportCollection)
+                    {
+                        techReportDt.Rows.Add(resultset.FirstOrDefault(), item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
+                    }
+
+                    SqlCommand cmdTechReport = new SqlCommand("usp_SharedTechSkillReportBulkInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
+                    cmdTechReport.Parameters["@TechSkillReportBulkData"].Value = techReportDt;
+                    con.Open();
+                    if (cmdTechReport.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    DataTable questionsDt = new DataTable();
+                    questionsDt.Columns.Add("InterviewId", typeof(int));
+                    questionsDt.Columns.Add("Comment", typeof(string));
+                    questionsDt.Columns.Add("RatingId", typeof(int));
+                    questionsDt.Columns.Add("Timing", typeof(int));
+                    questionsDt.Columns.Add("SkillName", typeof(string));
+
+
+                    foreach (var item in reportModel.QuestionsCollection)
+                    {
+                        questionsDt.Rows.Add(resultset.FirstOrDefault(), item.Comment, item.RatingId, item.Timing, item.SkillName);
+                    }
+
+                    SqlCommand cmdQuestions = new SqlCommand("usp_SharedQuestionsDiscussedBulkInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    var result = resultset.FirstOrDefault();
+                    return resultset.FirstOrDefault().ToString();
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }

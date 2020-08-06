@@ -97,5 +97,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId);
         IEnumerable<string> GetClientUsers(string clientEmailId);
         Candidate GetCandidateDetails(int imid);
+        Task<string> AddSharedVideoDetails(InterviewReport reportModel);
+
     }
 }

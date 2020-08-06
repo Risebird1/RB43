@@ -568,44 +568,45 @@
                                             <div class=" col-md-8 video-contop">
                                                 @if (Model.JDTiltle != null)
                                                 {
-                                                <h1 class="title video-title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                    <input hidden value="@Model.candidateEmail" id="txtOnlineEmail" />
-                                                    @if (ViewBag.VideoStatus != "Public")
-                                                    {
-                                                        @if (Model.IsOnline == 1)
+                                                    <h1 class="title video-title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                        <input hidden value="@Model.candidateEmail" id="txtOnlineEmail" />
+                                                        @if (ViewBag.VideoStatus != "Public")
                                                         {
-                                                            <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            @if (Model.IsOnline == 1)
+                                                            {
+                                                                <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a onclick="">   @Model.candidateName <span class="dot"></span></a>
+                                                            }
                                                         }
                                                         else
                                                         {
-                                                            <a onclick="">   @Model.candidateName <span class="dot"></span></a>
+                                                            @Model.candidateName
                                                         }
-                                                    }
-                                                    else
-                                                    {
-                                                        @Model.candidateName
-                                                    }
 
-                                                    @if (@Model.JDTiltle.Length > 5)
-                                                    {
+                                                        @if (@Model.JDTiltle.Length > 5)
+                                                        {
 
-                                                        <a href="#" data-tooltip="@Model.JDTiltle">
-                                                            <span class="job_title join-time"> (@Model.JDTiltle.Split("|")[0])</span></a>}
-                                                            else
-                                                            {
-                                                <span>@Model.JDTiltle</span>}
-                                                            &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span>
+                                                            <a href="#" data-tooltip="@Model.JDTiltle">
+                                                                <span class="job_title join-time"> (@Model.JDTiltle.Split("|")[0])</span>
+                                                            </a>}
+                                                        else
+                                                        {
+                                                            <span>@Model.JDTiltle</span>}
+                                                        &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span>
 
 
 
 
 
 
-                                                            <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
-                                                            <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
-                                                            <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
+                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                        <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
+                                                        <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
 
-                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Team Meeting" />
+                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Team Meeting" />
 
 
                                                     </h1>
@@ -1769,7 +1770,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 col-sm-12">                       
+                    <div class="col-md-12 col-sm-12">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label">
                                 Select Time Zone
@@ -1778,7 +1779,7 @@
                                 <select class="form-control" id="txtOnlineTimeZone"></select>
                             </div>
                         </div>
-                        </div>
+                    </div>
                 </div>
 
                 <div class="row">
@@ -1826,19 +1827,20 @@
                 @*@using (Html.BeginForm("Sharecreatedview", "RiseTube", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckTotalWeightage()" }))*@
                 @using (Html.BeginForm("Sharecreatedview", "RiseTube", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
                 {
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label col-md-12 col-sm-12 desp-label">
-                                    Email Address
-                                </label>
-                                <div class="col-md-12 col-sm-12">
-                                    <input type="text" class="form-control w-full" id="txtOnlineMEmailids" />
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label">
+                                Email Address
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <input type="text" class="form-control w-full" id="txtOnlineMEmailids" />
+                                @Html.TextBoxFor(m => m.IreportModel.SharedEmailAddress, new { @class = "form-control text-box single-line" })
 
-                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
                     <div class="row">
                         <div class="col-md-6 col-sm-6">
                             <div class="form-group">
@@ -1857,6 +1859,8 @@
                                 </label>
                                 <div class="col-md-12 col-sm-12">
                                     @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line" })
+                                    @Html.HiddenFor(m => m.IreportModel.InterviewId, new { @class = "form-control text-box single-line" })
+
                                 </div>
                             </div>
                         </div>
@@ -2202,7 +2206,7 @@
                     });
                 } else {
                     alert(resultreturn);
-                    
+
                 }
             } else {
                 alert("Kindly fill the Subject field");
@@ -3044,7 +3048,7 @@
     }
     function SubmitSharedVideo() {
         var TableData = new Array();
-       
+
         $('#shareQuestionsTable tr').each(function (row, tr) {
             alert($(tr).find('td:eq(0)').innerHTML());
             alert($(tr).find('td:eq(1)').innerHTML());

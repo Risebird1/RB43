@@ -1356,7 +1356,21 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> AddSharedVideoDetails(InterviewReport reportModel)
+        {
+            try
+            {
+                var result = _meetingRespository.AddSharedVideoDetails(reportModel);
+                return result.Result;
 
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 
 }

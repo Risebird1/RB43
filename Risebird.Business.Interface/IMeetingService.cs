@@ -75,5 +75,7 @@ namespace Risebird.Business.Interface
         bool SaveHRComment(int id, string comment);
         Task<List<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid);
         IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId);
+        Task<string> AddSharedVideoDetails(InterviewReport reportModel);
+
     }
 }
