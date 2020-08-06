@@ -104,9 +104,25 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-6 col-lg-6 col-sm-6">
+                    <div class="card card-chart">
+                        <div class="card-header">
+                            <h4 class="card-title">Interview Analysis</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="myFunnelChart" style="height: 300px; width: 100%;"></div>
+
+
+                        </div>
+
+                    </div>
+
+
+                </div>
                 <!-- END DASHBOARD CHART -->
 
-                
+
 
             </div>
             <!-- END PAGE CONTENT WRAPPER -->
@@ -125,7 +141,71 @@
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
+<script>
+    debugger;
+    
+    var chData= JSON.parse(('@Model.FunnelData').replace(/&quot;/g, '"'));
+    am4core.ready(function () {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        let chart = am4core.create("myFunnelChart", am4charts.SlicedChart);
+        chart.data = [{
+            "name": "Total Joined   ",
+            "value": chData.TotalJoined
+        }, {
+            "name": "Total Offers released",
+            "value": chData.TotalOffered
+        }, {
+            "name": "Total Final Selections",
+            "value": chData.TotalFinalSelections
+        }, {
+            "name": "Total Approved",
+            "value": chData.TotalApproved
+        }, {
+            "name": "Total Risebird Selections",
+            "value": chData.TotalRisebirdSelection
+        }, {
+            "name": "Completed",
+            "value": chData.TotalCompleted
+        }, {
+            "name": "Total Confirmations",
+            "value": chData.TotalConfirmations
+        }, {
+            "name": "Total Invites",
+                "value": chData.TotalCandidates
+        }, {
+            "name": "Total Candidates",
+            "value": chData.TotalCandidates
+        }];
+
+
+        chart.logo.disabled = true;
+        let series = chart.series.push(new am4charts.FunnelSeries());
+        series.dataFields.value = "value";
+        series.dataFields.category = "name";
+        series.labels.template.disabled = false;
+
+        series.colors.step = 16;
+        var fillModifier = new am4core.LinearGradientModifier();
+        fillModifier.brightnesses = [-0.1, -0.1, -0.1];
+        fillModifier.offsets = [0, 0.5, 1];
+
+
+        series.slices.template.fillModifier = fillModifier;
+        series.alignLabels = true;
+
+        chart.fontSize = 13;
+        series.labels.template.text = "{category}: [bold]{value}[/]";
+
+    });
+</script>
 <script>
     function getDate() {
         var today = new Date();
@@ -158,12 +238,8 @@
         var meetingsDataLabels = '@Model.MeetingsDataLabels';
         meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
         UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
-        
+
     }
-
-
-
-
 
 </script>
 <script>
@@ -202,49 +278,49 @@
 
 
 @*<script>
-    function getInterviewStatus() {
-        var date = document.getElementById('statusTrackingDate').value;
-        $.ajax({
-            url: '/Dashboard/GetDateWiseInterviewStatus',
-            data: { 'date': date },
-            success: function (data) {
-                $('#statusTrackingId').html('');
-                $('#statusTrackingId').html(data);
+        function getInterviewStatus() {
+            var date = document.getElementById('statusTrackingDate').value;
+            $.ajax({
+                url: '/Dashboard/GetDateWiseInterviewStatus',
+                data: { 'date': date },
+                success: function (data) {
+                    $('#statusTrackingId').html('');
+                    $('#statusTrackingId').html(data);
 
 
-            }
-        });
-    }
+                }
+            });
+        }
 
-    function getInterviewSlots() {
-        var date = document.getElementById('interviewSlotsDate').value;
-        $.ajax({
-            url: '/Dashboard/GetDateWiseMeetingsSlots',
-            data: { 'date': date },
-            success: function (data) {
-                $('#slotsId').html('');
-                $('#slotsId').html(data);
-
-
-            }
-        });
-    }
-
-    function getIRFProgress() {
-        var date = document.getElementById('ProgressDate_Date').value;
-        $.ajax({
-            url: '/Dashboard/GetDateWiseIRFProgress',
-            data: { 'date': date },
-            success: function (data) {
-                debugger;
-                $('#progressTableId').html('');
-                $('#progressTableId').html(data);
+        function getInterviewSlots() {
+            var date = document.getElementById('interviewSlotsDate').value;
+            $.ajax({
+                url: '/Dashboard/GetDateWiseMeetingsSlots',
+                data: { 'date': date },
+                success: function (data) {
+                    $('#slotsId').html('');
+                    $('#slotsId').html(data);
 
 
-            }
-        });
-    }
-</script>*@
+                }
+            });
+        }
+
+        function getIRFProgress() {
+            var date = document.getElementById('ProgressDate_Date').value;
+            $.ajax({
+                url: '/Dashboard/GetDateWiseIRFProgress',
+                data: { 'date': date },
+                success: function (data) {
+                    debugger;
+                    $('#progressTableId').html('');
+                    $('#progressTableId').html(data);
+
+
+                }
+            });
+        }
+    </script>*@
 
 
 <script src="~/Newassets/js/scrollBar.js"></script>
