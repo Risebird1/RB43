@@ -1599,7 +1599,7 @@ else
                                 Start Date
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <div class='input-group date' id='datetimepicker3'>
+                                <div class='input-group date' id='datetimepicker3' onclick="datecal()">
                                     <input type='datetime-local' class="form-control" id="txtOnlinestart" />
                                 </div>
 
@@ -1613,7 +1613,7 @@ else
                                 End Date
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <div class='input-group date' id='datetimepicker4'>
+                                <div class='input-group date' id='datetimepicker4' onclick="endcal()">
                                     <input type='datetime-local' class="form-control" id="txtOnlineend" />
                                 </div>
 
@@ -1825,6 +1825,7 @@ else
     });
 
         function SubmitMeeting() {
+    document.getElementById("OnlineSubmitBtn").disabled = true;
             var resultreturn = checkStartDate($("#txtOnlinestart").val());
             if ($("#txtOnlineSubject").val().trim() != "") {
                 if (resultreturn == "true") {
@@ -1835,13 +1836,16 @@ else
                         success: function (data) {
                             alert(data);
                             closeOnlineMeetingModel();
+          document.getElementById("OnlineSubmitBtn").disabled = false;
                         }
                     });
                 } else {
                     alert(resultreturn);
+       document.getElementById("OnlineSubmitBtn").disabled = false;
                 }
             } else {
                 alert("Kindly fill the Subject field");
+                     document.getElementById("OnlineSubmitBtn").disabled = false;
             }
         }
         function checkStartDate(val) {
@@ -2334,6 +2338,43 @@ else
     }
 
 
+</script>
+<script>
+    function datecal() {
+        var dtToday = new Date();
+        var time = dtToday.getHours() + ":" + dtToday.getMinutes();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = year + '-' + month + '-' + day + 'T' + time;
+
+        $('#txtOnlinestart').attr('min', maxDate);
+    }
+
+    function endcal() {
+
+
+        var maxDate = $('#txtOnlinestart').val();
+        if (maxDate == '') {
+            var dtToday = new Date();
+            var time = dtToday.getHours() + ":" + dtToday.getMinutes();
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+            if (month < 10)
+                month = '0' + month.toString();
+            if (day < 10)
+                day = '0' + day.toString();
+
+            maxDate = year + '-' + month + '-' + day + 'T' + time;
+        }
+        $('#txtOnlineend').attr('min', maxDate);
+    }
 </script>
 <script>
 

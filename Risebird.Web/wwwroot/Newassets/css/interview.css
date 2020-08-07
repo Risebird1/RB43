@@ -629,13 +629,10 @@ table {
     border: 0;
 }
 
-
-.interview-date [type="date"] {
-    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 93% 50% no-repeat !important;
-    background-size: 9% !important;
-    padding: 5px 10px !important;
-    border-radius: 5px;
+#OnlineMeetingModel.mdc-button--raised:not(:disabled) {
+    background:red;
 }
+
 ul.panel-controls > li > button {
     display: block;
     float: left;
@@ -710,10 +707,7 @@ ul.panel-controls > li > button {
     padding-left: 15px;
 }
 
-    .skill [type="datetime-local"] {
-        background: #fff url(../img/blue-timdate.png) 97% 50% no-repeat !important;
-        background-size: 7% !important;
-    }
+   
 
 .skill {
     -ms-flex: 0 0 36.666667%;
