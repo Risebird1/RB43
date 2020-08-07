@@ -98,6 +98,10 @@ namespace Risebird.Repository.Interface
         IEnumerable<string> GetClientUsers(string clientEmailId);
         Candidate GetCandidateDetails(int imid);
         Task<string> AddSharedVideoDetails(InterviewReport reportModel);
+        Task<int> SharedGetInterviewId(int videoid);
+        IEnumerable<TechSkillReport> GetSharedTechSkillReport(int id);
+        IEnumerable<QuestionsDiscussed> GetSharedQuestionsDiscussed(int id);
+
 
     }
 }

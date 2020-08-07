@@ -670,6 +670,8 @@
                                                                             </span>
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly ">   <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
                                                                             <span class="tooltip--right" data-tooltip="To generate public sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+                                                                            <span class="tooltip--right" data-tooltip="Create/Edit View and Share ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare4" value="Create/Edit View" Shortvalue="1" /></span>
+
                                                                         </div>
                                                                     </div>
 
@@ -727,6 +729,7 @@
                                                                             <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
                                                                                 <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
                                                                             </span>
+                                                                            <span class="tooltip--right" data-tooltip="Create/Edit View and Share ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare4" value="Create/Edit View" Shortvalue="1" /></span>
 
 
                                                                         </div>
@@ -1834,7 +1837,6 @@
                                 Email Address
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <input type="text" class="form-control w-full" id="txtOnlineMEmailids" />
                                 @Html.TextBoxFor(m => m.IreportModel.SharedEmailAddress, new { @class = "form-control text-box single-line" })
 
                             </div>
@@ -2780,6 +2782,10 @@
                 }
             });
 
+        });
+         $("#btnShare4").on('click', function () {
+            var modal = document.getElementById("CreateAndShareModel");
+            modal.style.display = "block";
         });
         $("#btnmeeting").on('click', function () {
             $.ajax({

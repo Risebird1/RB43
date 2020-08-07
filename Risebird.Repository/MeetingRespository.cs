@@ -2346,5 +2346,65 @@ namespace Risebird.Repository
                 return "";
             }
         }
+        public async Task<int> SharedGetInterviewId(int videoid)
+        {
+            try
+            {
+                var query = "Select InterviewId from SharedInterviewComments where id=@Id";
+                var Parameters = new DynamicParameters();
+                Parameters.Add("@Id", videoid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, Parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public IEnumerable<TechSkillReport> GetSharedTechSkillReport(int id)
+        {
+            try
+            {
+                var query = "select a.*, Skill.[Name] as SkillName from (select SharedTechSkillReport.*, [LevelTech].[Name] as RequiredLevel from SharedTechSkillReport inner join [LevelTech] on SharedTechSkillReport.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TechSkillReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<QuestionsDiscussed> GetSharedQuestionsDiscussed(int id)
+        {
+            try
+            {
+                var query = "Select * from SharedQuestionsDiscussed where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<QuestionsDiscussed>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
