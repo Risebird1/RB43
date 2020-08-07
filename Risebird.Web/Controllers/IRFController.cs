@@ -1616,7 +1616,6 @@ namespace Risebird.Web.Controllers
                                 return RedirectToAction("Index");
                             }
                         }
-
                     }
                     else
                     {
