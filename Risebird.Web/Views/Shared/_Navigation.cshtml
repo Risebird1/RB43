@@ -154,6 +154,15 @@
                                 </a>
                             </li>
                         }
+                        else if (m.sUrl == "/CommonPool/VideoPage")
+                        {
+                            <li class="disabled risetubemenu" style="cursor: not-allowed;">
+                                <a href="@m.sUrl" style="pointer-events: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"></path></svg>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
                         else if (m.sUrl == "/Interview/Index")
                         {
                             <li class="interviewmenu">
