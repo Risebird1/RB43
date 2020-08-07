@@ -1496,7 +1496,9 @@ top:3px;
         #ProctoringTable .label-type {
             white-space: normal;
         }
-
+        .main-panel > .content {
+            padding: 0 10px 10px;
+        }
         .mdc-radio {
             padding: 15px 0px !important;
             margin: 0px !important;
@@ -1515,6 +1517,7 @@ top:3px;
     }
 
     @media screen and (max-width: 767px) {
+     
         #txtvideoUrls {
             word-break: break-word;
         }
