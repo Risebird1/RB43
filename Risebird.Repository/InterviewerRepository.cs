@@ -874,12 +874,7 @@ namespace Risebird.Repository
                 parameters.Add("@v_ProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    //Just added to get Id this way
-                    //var result = await SqlMapper.QueryAsync<int>(con, "usp_MyProfile", parameters,
-                    //   commandType: CommandType.StoredProcedure);
-                    //int MyProfileId = result.FirstOrDefault();
-
+                {                    
                     await SqlMapper.QueryAsync<int>(con, "usp_MyProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 

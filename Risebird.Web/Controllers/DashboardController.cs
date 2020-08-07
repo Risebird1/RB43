@@ -39,33 +39,24 @@ namespace Risebird.Web.Controllers
                     //daily interview tracking slots
                     model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
                     model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
-                    //TempData.Remove("ProgressDate");
-                    if (TempData["ProgressDate"] != null)
+                    var progressDate = TempData.Peek("ProgressDate")?.ToString();
+                    if (!string.IsNullOrEmpty(progressDate))
                     {
-                        model.ProgressDate=Convert.ToDateTime(TempData["ProgressDate"]);
-                       // model.ProgressDate = (DateTime)(TempData["ProgressDate"]);
+                        model.ProgressDate=Convert.ToDateTime(progressDate);
+                      
                         TempData.Keep("ProgressDate");
                     }
                     else
                     {
                         model.ProgressDate = DateTime.Now;
                     }
-                    //if (progressDate != null)
-                    //{
-                    //    model.ProgressDate = progressDate.Value;
-                    //}
-                    //else
-                    //{
-                    //    model.ProgressDate = DateTime.Now;
-
-                    //}
+                   
 
                     model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate));
 
                     model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount();
                     model.CandidatesCountObj = await _dashboardService.GetCandidatesCount();
-                    //model.IrfProgressList = (List<IRF>)(await _dashboardService.GetIRFProgress());
-                    //interview status graph
+                   
                     model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                     model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
 
@@ -157,21 +148,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> UpdateIRFProgress(IList<IRF> IrfProgressList)
-        //{
-        //    try
-        //    {
-        //        await _dashboardService.UpdateIRFProgress(IrfProgressList);
-        //        return RedirectToAction("Index");
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return null;
-        //    }
-        //}
         [HttpPost]
         public async Task<IActionResult> UpdateIRFProgress(DashboardVM model)
         {
@@ -212,9 +188,9 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "Client";//profileName.Replace("\"", "");
+                    profileName = "Client";
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = "ramanaidu.m@mphasis.com";//emailid.Replace("\"", "");
+                    emailid = emailid.Replace("\"", "");
                     if(profileName == "Client")
                     {
                         var model = new ClientDashboardVM();
@@ -248,7 +224,7 @@ namespace Risebird.Web.Controllers
                 var model = new ClientDashboardVM();
                 model.Meetings = _dashboardService.GetDateWiseClientMeetings(date, emailId).Result;
                 var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
-                //var irfList = model.Meetings.Select(x => x.IRFID).Distinct();
+              
                 var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
                 List<object> iData = new List<object>();
 
