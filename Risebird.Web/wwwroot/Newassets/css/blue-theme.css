@@ -9,8 +9,8 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
-.navbar.navbar-transparent.bg-white, .navbar.navbar-transparent {
-    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
+.navbar.navbar.bg-white, .navbar.navbar-transparent {
+    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%)!important;
 }
 input[type='radio']:checked:after {
     background-color: #42a5f5!important;

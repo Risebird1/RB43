@@ -438,3 +438,14 @@ table {
 .mdc-fab.trash-btn {
     background: #d20505 !important;
 }
+
+
+@media screen and (max-width: 767px) {
+    .dtr-data .talk-bubble {
+        width: 100%
+    }
+    .desktop-view{display:none;}
+    .mobile-view {
+        display: block;
+    }
+}

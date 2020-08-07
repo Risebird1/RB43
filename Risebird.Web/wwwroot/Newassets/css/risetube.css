@@ -1651,7 +1651,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .video-title .candidate {
-        font-size: 13px;
+        font-size: 13px!important;
     }
 
     .video-view span {
@@ -1663,7 +1663,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .designation {
-        font-size: 12px;
+        font-size: 14px!important;
     }
 
     .expected-salari {
@@ -1690,19 +1690,19 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .video-card-body {
-        height: 110px;
+        height: 110px!important;
     }
 
     .video-title .candidate {
-        font-size: 16px;
+        font-size: 15px!important;
     }
 
     .video-view span {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .video-info span {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .expected-timing {
@@ -1741,7 +1741,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .expected-salari {
-        width: 40%
+        width: 36%
     }
 
     .expected-timing {
@@ -1851,13 +1851,17 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 @media screen and (max-width: 767px) {
-
+    #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
+        width: 230px;
+    }
     .single-video-left .comment-area textarea {
         width: 87%
     }
-
+    .expected-salari {
+        width: 33%;
+    }
     .video-card-body {
-        height: 130px;
+        height: 130px!important;
     }
 
     .share {
@@ -1895,6 +1899,10 @@ textarea::-webkit-scrollbar-thumb {
         width: 100% !important;
         text-align: center !important;
         margin: 0px auto !important;
+    }
+
+    .expected-salari {
+        width: 16%;
     }
 
     .side-player {
@@ -2024,6 +2032,14 @@ textarea::-webkit-scrollbar-thumb {
     .single-video-left .comment-area textarea {
         width: 72%;
     }
+    #myForm .searchbox {
+        margin-right: 10px !important;
+    }
+    #myForm .searchbox input[type=email] {
+        width: 200px;
+        height: 18px;
+      
+    }
 
     .comment-area .talk-bubble {
         width: 83%;
@@ -2041,7 +2057,10 @@ textarea::-webkit-scrollbar-thumb {
     .comment-area .talk-bubble {
         width: 75%;
     }
-
+    #myForm .searchbox {
+        margin-bottom:10px!important;
+        margin-right: 0px !important;
+    }
     .designation {
         font-size: 14px;
     }
