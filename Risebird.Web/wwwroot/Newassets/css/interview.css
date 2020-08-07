@@ -711,7 +711,8 @@ ul.panel-controls > li > button {
 }
 
     .skill [type="datetime-local"] {
-        background: #fff !important;
+        background: #fff url(../img/blue-timdate.png) 97% 50% no-repeat !important;
+        background-size: 6% !important;
     }
 
 .skill {
