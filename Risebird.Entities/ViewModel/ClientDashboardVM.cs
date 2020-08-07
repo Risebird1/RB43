@@ -12,5 +12,6 @@ namespace Risebird.Entities.ViewModel
         public string MeetingsDataLabels { get; set; }
         public string EmailId { get; set; }
         public string FunnelData { get; set; }
+        public IEnumerable<ClientDailySlotsStatus> DailyMeetingResultsSlots { get; set; }
     }
 }

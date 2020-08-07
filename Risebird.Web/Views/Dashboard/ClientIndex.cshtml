@@ -120,6 +120,73 @@
 
 
                 </div>
+                <div class="col-md-6 col-lg-6 col-sm-6">
+                    <div style="height:50%">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title-box">
+                                    <h3>Daily Interview Slots</h3>
+
+                                </div>
+                                <ul class="panel-controls" style="margin-top: 2px;">
+
+                                    <li>
+                                        <div class="col-md-12 col-sm-12 nopad interview-date">
+                                            <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
+                                        </div>
+                                    </li>
+                                    <li>
+
+                                        <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="slotsId">
+                                <div class="panel-body panel-body-table">
+                                    @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
+                                    {
+                                        <div class="sb-container scroller">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-striped ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="20%">Morning Counts</th>
+                                                            <th width="30%">Evening Counts</th>
+                                                            <th width="30%">Result(S/R/B/Proxy/Pending)</th>
+                                                            <th width="50%">Skill Channel ID</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @{
+                                                            foreach (var item in Model.DailyMeetingResultsSlots)
+                                                            {
+                                                                <tr>
+                                                                    <td class="text-center"><span class="label-num"><strong>@item.Morning</strong></span></td>
+                                                                    <td class="text-center"><span class="label-num"><strong>@item.Evening</strong></span></td>
+                                                                    <td class="text-center"><span class="label-num"><strong>@item.total (@item.Selected/@item.Rejected/@item.BorderLine/@item.Proxy/@item.Pending)</strong></span></td>
+                                                                    <td><strong>@item.IRFnSkill</strong></td>
+                                                                </tr>
+
+                                                            }
+                                                        }
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div>No interviews for this day!</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
                 <!-- END DASHBOARD CHART -->
 
 
@@ -224,7 +291,7 @@
         today = yyyy + '-' + mm + '-' + dd;
         document.getElementById('interviewTrackingDate').value = today;
         //document.getElementById('statusTrackingDate').value = today;
-        //document.getElementById('interviewSlotsDate').value = today;
+        document.getElementById('interviewSlotsDate').value = today;
         //document.getElementById('progressTrackingDate').value = today;
     }
 
@@ -276,7 +343,22 @@
 
     }
 </script>
+<script>
+    function getInterviewSlots() {
+        var date = document.getElementById('interviewSlotsDate').value;
+        $.ajax({
+            url: '/Dashboard/GetDateWiseClientMeetingsSlots',
+            data: { 'date': date , 'emailId': '@Model.EmailId'},
+            success: function (data) {
+                $('#slotsId').html('');
+                $('#slotsId').html(data);
 
+
+            }
+        });
+    }
+
+</script>
 
 @*<script>
         function getInterviewStatus() {

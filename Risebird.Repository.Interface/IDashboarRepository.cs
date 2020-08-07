@@ -19,5 +19,6 @@ namespace Risebird.Repository.Interface
         Task<CandidatesCount> GetCandidatesCount();
         Task<IEnumerable<Meeting>> GetDateWiseClientMeetings(DateTime date, string emailId);
         Task<IRFFunnel> GetClientFunnelData(string emailId);
+        Task<IEnumerable<ClientDailySlotsStatus>> GetDateWiseClientMeetingsSlots(DateTime date, string emailId);
     }
 }

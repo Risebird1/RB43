@@ -188,19 +188,18 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "Client";
+                    profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if(profileName == "Client")
+                    if (profileName == "Client")
                     {
                         var model = new ClientDashboardVM();
                         var funnelData = await _dashboardService.GetClientFunnelData(emailid);
-
-                        //daily interview tracking first chart
+                        var slotsDetails= await _dashboardService.GetDateWiseClientMeetingsSlots(DateTime.Now, emailid);
                         model = GetDateWiseClientInterviews(DateTime.Now, emailid);
                         model.EmailId = emailid;
                         model.FunnelData = JsonConvert.SerializeObject(funnelData);
-
+                        model.DailyMeetingResultsSlots = slotsDetails;
                         return View(model);
                     }
                     else
@@ -254,5 +253,19 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public IActionResult GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
+        {
+            try
+            {
+                var model = new ClientDashboardVM();
+                model.DailyMeetingResultsSlots = _dashboardService.GetDateWiseClientMeetingsSlots(date, emailId).Result;
+                return PartialView("ClientSlotsStatusPartial", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

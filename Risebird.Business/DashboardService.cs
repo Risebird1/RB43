@@ -147,5 +147,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<ClientDailySlotsStatus>> GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetDateWiseClientMeetingsSlots(date, emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }
