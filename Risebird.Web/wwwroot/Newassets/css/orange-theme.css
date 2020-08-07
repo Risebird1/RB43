@@ -2,8 +2,8 @@
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
 
-.navbar.navbar-transparent.bg-white, .navbar.navbar-transparent {
-    background: linear-gradient(to right, #f7792e 0%, #fb8a44ed 60%, #ea7933 100%) !important;
+.navbar.navbar.bg-white, .navbar.navbar-transparent {
+    background: linear-gradient(to right, #f7792e 0%, #fb8a44ed 60%, #ea7933 100%)!important;
 }
 
 textarea::-webkit-scrollbar {

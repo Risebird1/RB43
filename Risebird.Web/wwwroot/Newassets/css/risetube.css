@@ -1027,7 +1027,7 @@ textarea::-webkit-scrollbar-thumb {
 
     color: #ffffff;
     font-size: 11px;
-    padding: 4px 4px;
+    padding: 5px 4px;
     line-height: 16px;
     border-radius: 5px;
     margin-left: 10px;
@@ -1538,7 +1538,7 @@ textarea::-webkit-scrollbar-thumb {
 .single-video-right {
     -ms-flex: 0 0 33.333333%;
     flex: 0 0 33.333333%;
-    height: 900px;
+    height: 600px;
     overflow: auto;
 }
 
@@ -1651,7 +1651,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .video-title .candidate {
-        font-size: 13px;
+        font-size: 13px!important;
     }
 
     .video-view span {
@@ -1663,7 +1663,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .designation {
-        font-size: 12px;
+        font-size: 14px!important;
     }
 
     .expected-salari {
@@ -1690,19 +1690,19 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .video-card-body {
-        height: 110px;
+        height: 110px!important;
     }
 
     .video-title .candidate {
-        font-size: 16px;
+        font-size: 15px!important;
     }
 
     .video-view span {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .video-info span {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .expected-timing {
@@ -1716,7 +1716,32 @@ textarea::-webkit-scrollbar-thumb {
         margin: 0px 10px 10px 10px;
         width: calc(100% - 10px) !important;
     }
+    .video-card-list .video-card-image {
+        width: 100px!important;
+    }
 
+    .video-card-list .video-card-body {
+        width:180px!important;
+    }
+
+    .divider-g {
+        padding-left: 0px;
+        border-left: 0px #868383cc solid;
+    }
+
+
+    .comment-area .talk-bubble {
+        width: 88%;
+    }
+        .single-video-right {
+        height: 600px;
+    }
+    #wrapper #content-wrapper .container-wrap {
+        padding: 0px 0px 30px 15px;
+    }
+    .mdc-card-wrapper__text-section {
+        padding: 10px !important;
+    }
     .single-video-left {
         -ms-flex: 0 0 100%;
         flex: 0 0 100%;
@@ -1737,11 +1762,11 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .col-md-8.video-contop .mdc-button--outlined {
-        font-size: 11px
+        font-size: 10px
     }
 
     .expected-salari {
-        width: 40%
+        width: 36%
     }
 
     .expected-timing {
@@ -1791,10 +1816,11 @@ textarea::-webkit-scrollbar-thumb {
         flex: 0 0 100%;
         max-width: 100%;
     }
-
+    .divider-g {
+        padding-left: 5px;
+        border-left: 1px #868383cc solid;
+    }
     .mn-section {
-        /*position: absolute;
-        width: calc(100% - 30px);*/
         position: relative !important;
         margin: 0;
         padding: 0;
@@ -1802,14 +1828,17 @@ textarea::-webkit-scrollbar-thumb {
     }
 
 
+    .video-card-list .video-card-image {
+        width: 122px!important;
+    }
 
+    .video-card-list .video-card-body {
+        width: 230px!important;
+    }
 
 
     .player-main {
-        /* width: 68% !important;
-        text-align: center !important;
-        margin: 0px !important;
-        padding: 0;*/
+ 
         width: 100% !important;
         text-align: center !important;
         margin: 0px auto !important;
@@ -1820,13 +1849,14 @@ textarea::-webkit-scrollbar-thumb {
     .side-player {
         margin-left: auto !important;
         margin-top: 0px;
-        /* width: 33%;*/
         width: 100%;
         padding: 0;
         max-width: 100% !important;
         flex: 0 0 100%;
     }
-
+    .single-video-right {
+        height: 250px;
+    }
     .col-md-8.video-contop .title.name-video-primary-info-renderer, .col-md-8.video-contop span {
         font-size: 13.5px !important;
     }
@@ -1851,13 +1881,20 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 @media screen and (max-width: 767px) {
+    #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
+        width: 230px;
+    }
+ 
 
+   
     .single-video-left .comment-area textarea {
         width: 87%
     }
-
+    .expected-salari {
+        width: 33%;
+    }
     .video-card-body {
-        height: 130px;
+        height:auto!important;
     }
 
     .share {
@@ -1897,6 +1934,10 @@ textarea::-webkit-scrollbar-thumb {
         margin: 0px auto !important;
     }
 
+    .expected-salari {
+        width: 16%;
+    }
+
     .side-player {
         margin-left: auto !important;
         margin-top: 10px;
@@ -1915,10 +1956,10 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .k {
-        width: 50%;
+        width: 98%;
         margin: 0;
         position: absolute;
-        top: 25px;
+        top: 9px;
         right: 0;
     }
 
@@ -2025,6 +2066,19 @@ textarea::-webkit-scrollbar-thumb {
         width: 72%;
     }
 
+    .share-btn {
+        position: relative;
+        left: 50px;
+    }
+    #myForm .searchbox {
+        margin-right: 10px !important;
+    }
+    #myForm .searchbox input[type=email] {
+        width: 200px;
+        height: 18px;
+      
+    }
+
     .comment-area .talk-bubble {
         width: 83%;
     }
@@ -2033,7 +2087,7 @@ textarea::-webkit-scrollbar-thumb {
         font-size: 13px;
         font-size: 12px;
         padding: 0px 6px;
-        width: 100%;
+   
     }
 }
 
@@ -2041,7 +2095,25 @@ textarea::-webkit-scrollbar-thumb {
     .comment-area .talk-bubble {
         width: 75%;
     }
-
+    .k {
+        width: 50%;
+        margin: 0;
+        position: absolute;
+        top: 25px;
+        right: 0;
+    }
+    .share-btn {
+        position: relative;
+        left:0px;
+    }
+    .video-card-list .video-card-image {
+        height: 70px!important;width:90px!important;
+    }
+    .video-card-list .video-card-body{width:200px!important;}
+    #myForm .searchbox {
+        margin-bottom: 10px !important;
+        margin-right: 0px !important;
+    }
     .designation {
         font-size: 14px;
     }
