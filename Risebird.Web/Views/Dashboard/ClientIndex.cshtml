@@ -265,7 +265,8 @@
             labels: meetingsDataLabels,
             resize: true,
             hideHover: true,
-            //xLabels: 'day',
+            xLabels: 'hour',
+            yLabelFormat: function (y) { return y != Math.round(y) ? '' : y; },
             gridTextSize: '10px',
             //lineColors: ['#1caf9a', '#33414E'],
             gridLineColor: '#E5E5E5'
