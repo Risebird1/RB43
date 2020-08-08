@@ -94,6 +94,17 @@ textarea::-webkit-scrollbar-thumb {
     background-size: 7% !important;
     padding: 10px !important;
 }
+
+.skill [type="datetime-local"]{
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 6% !important;
+}
+
+.interview-date [type="date"] {
+    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 9% !important;
+}
+
     .file-lable {
     color: #000;
     font-size: 14px !important;

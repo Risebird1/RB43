@@ -1744,7 +1744,7 @@
                                 Start Date
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <div class='input-group date' id='datetimepicker3'>
+                                <div class='input-group date' id='datetimepicker3' onclick="datecal()">
                                     <input type='datetime-local' class="form-control" id="txtOnlinestart" />
                                    
                                 </div>
@@ -1759,7 +1759,7 @@
                                 End Date
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <div class='input-group date' id='datetimepicker4'>
+                                <div class='input-group date' id='datetimepicker4' onclick="endcal()">
                                     <input type='datetime-local' class="form-control" id="txtOnlineend" />
                                 </div>
 
@@ -1796,7 +1796,7 @@
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input type="button" onclick="SubmitMeeting()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                        <input type="button" id="OnlineSubmitBtn" onclick="SubmitMeeting()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1805,6 +1805,43 @@
         </div>
     </div>
 </div>
+<script>
+    function datecal() {
+        var dtToday = new Date();
+        var time = dtToday.getHours() + ":" + dtToday.getMinutes();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = year + '-' + month + '-' + day + 'T' + time;
+
+        $('#txtOnlinestart').attr('min', maxDate);
+    }
+
+    function endcal() {
+      
+
+        var maxDate = $('#txtOnlinestart').val();
+        if (maxDate == '') {
+            var dtToday = new Date();
+            var time = dtToday.getHours() + ":" + dtToday.getMinutes();
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+            if (month < 10)
+                month = '0' + month.toString();
+            if (day < 10)
+                day = '0' + day.toString();
+
+            maxDate = year + '-' + month + '-' + day + 'T' + time;
+        }
+        $('#txtOnlineend').attr('min', maxDate);
+    }
+</script>
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
@@ -1937,9 +1974,11 @@
 
     });
         function SubmitMeeting() {
+            document.getElementById("OnlineSubmitBtn").disabled = true;
             var resultreturn = checkStartDate($("#txtOnlinestart").val());
             if ($("#txtOnlineSubject").val().trim() != "") {
                 if (resultreturn == "true") {
+
                     $.ajax({
                         type: "POST",
                         url: "/MeetingInvite/SendMeetingInvite",
@@ -1947,14 +1986,17 @@
                         success: function (data) {
                             alert(data);
                             closeOnlineMeetingModel();
+                               document.getElementById("OnlineSubmitBtn").disabled = false;
                         }
                     });
                 } else {
                     alert(resultreturn);
+                    document.getElementById("OnlineSubmitBtn").disabled = false;
                     
                 }
             } else {
                 alert("Kindly fill the Subject field");
+                   document.getElementById("OnlineSubmitBtn").disabled = false;
             }
         }
         function checkStartDate(val) {
@@ -2797,11 +2839,7 @@
     }
 </script>
 <script src="~/RiseTube/js/custom.js"></script>
-
-
-
-
-
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {

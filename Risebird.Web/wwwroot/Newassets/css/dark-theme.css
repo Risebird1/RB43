@@ -217,6 +217,16 @@ table {
         padding: 10px !important;
     }
 
+.skill [type="datetime-local"] {
+    background: #fff url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 6% !important;
+}
+
+.interview-date [type="date"].form-control {
+    background: #fff url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 9% !important;
+}
+
 [type="date"] {
     background: #f5f5f5 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
