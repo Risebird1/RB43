@@ -680,17 +680,18 @@
     }
 
     function UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels) {
-
         config = {
             data: meetingsData,
             xkey: 'Time',
             ykeys: meetingsDataLabels,
             labels: meetingsDataLabels,
             resize: true,
-            hideHover: true,           
-            gridTextSize: '10px',           
-            gridLineColor: '#E5E5E5',           
-            yLabelMargin: 1
+            hideHover: true,
+            xLabels: 'hour',
+            yLabelFormat: function (y) { return y != Math.round(y) ? '' : y; },
+            gridTextSize: '10px',
+            //lineColors: ['#1caf9a', '#33414E'],
+            gridLineColor: '#E5E5E5'  
         };
         config.element = 'area-chart';
         Morris.Area(config);
