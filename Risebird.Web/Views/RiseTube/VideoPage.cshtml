@@ -604,7 +604,7 @@
                                                             <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                             <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
 
-                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Team Meeting" />
+                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
 
 
                                                     </h1>
@@ -617,8 +617,7 @@
                                                             {
                                                                 <div class="btn2">
                                                                     <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click">
-                                                                        &nbsp;
-                                                                        <label id="pTotalvediolike">@Model.TotalVedioLike</label>
+                                                                         <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                     </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1">
                                                                         <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label>
                                                                     </i>
@@ -628,7 +627,7 @@
                                                             {
                                                                 <div class="btn3">
                                                                     <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px;padding-right:10px">
-                                                                        &nbsp;
+                                                                       
                                                                         <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                     </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:10px">
                                                                         <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label>
@@ -1705,7 +1704,7 @@
                 <div class="filavatar">
                     <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" /></svg></span>
                 </div>
-                <h5 class="modal-title pull-left">Schedule Team Meeting</h5>
+                <h5 class="modal-title pull-left">Schedule Meeting</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeOnlineMeetingModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
@@ -1745,8 +1744,9 @@
                                 Start Date
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <div class='input-group date' id='datetimepicker3'>
+                                <div class='input-group date' id='datetimepicker3' onclick="datecal()">
                                     <input type='datetime-local' class="form-control" id="txtOnlinestart" />
+                                   
                                 </div>
 
 
@@ -1759,7 +1759,7 @@
                                 End Date
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <div class='input-group date' id='datetimepicker4'>
+                                <div class='input-group date' id='datetimepicker4' onclick="endcal()">
                                     <input type='datetime-local' class="form-control" id="txtOnlineend" />
                                 </div>
 
@@ -1796,7 +1796,7 @@
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input type="button" onclick="SubmitMeeting()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                        <input type="button" id="OnlineSubmitBtn" onclick="SubmitMeeting()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1805,7 +1805,44 @@
         </div>
     </div>
 </div>
+<script>
+    function datecal() {
+        var dtToday = new Date();
+        var time = dtToday.getHours() + ":" + dtToday.getMinutes();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
 
+        var maxDate = year + '-' + month + '-' + day + 'T' + time;
+
+        $('#txtOnlinestart').attr('min', maxDate);
+    }
+
+    function endcal() {
+      
+
+        var maxDate = $('#txtOnlinestart').val();
+        if (maxDate == '') {
+            var dtToday = new Date();
+            var time = dtToday.getHours() + ":" + dtToday.getMinutes();
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+            if (month < 10)
+                month = '0' + month.toString();
+            if (day < 10)
+                day = '0' + day.toString();
+
+            maxDate = year + '-' + month + '-' + day + 'T' + time;
+        }
+        $('#txtOnlineend').attr('min', maxDate);
+    }
+</script>
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
@@ -1820,7 +1857,7 @@
 <script>
 
     jQuery(document).ready(function ($) {
-
+         
         $(".tab_content").hide();
         $(".tab_content:first").show();
 
@@ -1932,12 +1969,16 @@
 
         }
 
+     
+
 
     });
         function SubmitMeeting() {
+            document.getElementById("OnlineSubmitBtn").disabled = true;
             var resultreturn = checkStartDate($("#txtOnlinestart").val());
             if ($("#txtOnlineSubject").val().trim() != "") {
                 if (resultreturn == "true") {
+
                     $.ajax({
                         type: "POST",
                         url: "/MeetingInvite/SendMeetingInvite",
@@ -1945,14 +1986,17 @@
                         success: function (data) {
                             alert(data);
                             closeOnlineMeetingModel();
+                               document.getElementById("OnlineSubmitBtn").disabled = false;
                         }
                     });
                 } else {
                     alert(resultreturn);
+                    document.getElementById("OnlineSubmitBtn").disabled = false;
                     
                 }
             } else {
                 alert("Kindly fill the Subject field");
+                   document.getElementById("OnlineSubmitBtn").disabled = false;
             }
         }
         function checkStartDate(val) {
@@ -2795,11 +2839,7 @@
     }
 </script>
 <script src="~/RiseTube/js/custom.js"></script>
-
-
-
-
-
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {

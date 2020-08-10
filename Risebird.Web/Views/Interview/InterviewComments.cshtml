@@ -225,10 +225,10 @@
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
-                                                <h2>Candidate Documents</h2>
+                                                <h2>Candidate Details</h2>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 col-sm-12">
+                                        <div class="col-md-6 col-sm-6 pr-1">
                                             <div class="card">
 
                                                 <div class="mdc-card-wrapper__text-section">
@@ -285,8 +285,16 @@
 
                                                 </div>
                                             </div>
-                                        </div>
 
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 pl-1">
+                                            <div class="form-group">
+
+                                                Candidate Available: @Html.CheckBoxFor(model => model.CandidateAvailable, new { htmlAttributes = new { @class = "form-control" } })
+
+
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>

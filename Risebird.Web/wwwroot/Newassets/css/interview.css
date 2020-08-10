@@ -629,13 +629,10 @@ table {
     border: 0;
 }
 
-
-.interview-date [type="date"] {
-    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 93% 50% no-repeat !important;
-    background-size: 9% !important;
-    padding: 5px 10px !important;
-    border-radius: 5px;
+#OnlineMeetingModel.mdc-button--raised:not(:disabled) {
+    background:red;
 }
+
 ul.panel-controls > li > button {
     display: block;
     float: left;
@@ -1480,83 +1477,114 @@ top:3px;
     border: 0;
     border-top: 1px #eeeeee73 solid;
 }
-@media screen and (max-width:991px) {
-    #ProctoringTable .label-type {
-        white-space: normal;
+@media screen and (max-width:1024px) {
+    .call-btn {
+        width: 21px;
+        height: 21px;
     }
 
-    .mdc-radio {
-        padding: 15px 0px !important;
-        margin: 0px !important;
-    }
+        .call-btn svg {
+            width: 15px;
+            height: 13px;
+            margin-top: -4px;
+        }
 }
-
-@media screen and (max-width: 767px) {
-    #txtvideoUrls {
-        word-break: break-word;
-    }
-
-    .table > tbody > tr > td {
-        padding: 12px 5px !important;
-    }
-    .interview .table > tbody > tr > td {
-        padding: 12px 5px!important;
-    }
-
-    .dtr-inline.collapsed{display:block!important; white-space:nowrap}
-
-    .form-group .form-control, .input-group .form-control {
-        padding: 10px 18px 10px 18px;
-        margin: 0px 20px;
-        width: 100%;
-    }
-    .comment-area.form-group .form-control {
-        padding: 10px 10px 10px 10px;
-    }
+    @media screen and (max-width:991px) {
         #ProctoringTable .label-type {
-        white-space: nowrap;
+            white-space: normal;
+        }
+        .main-panel > .content {
+            padding: 0 10px 10px;
+        }
+        .mdc-radio {
+            padding: 15px 0px !important;
+            margin: 0px !important;
+        }
+
+        .call-btn {
+            width: 21px;
+            height: 21px;
+        }
+
+            .call-btn svg {
+                width: 15px;
+                height: 13px;
+                margin-top: -4px;
+            }
     }
 
-    #meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter, #dupmeeting_length, #dupmeeting_filter {
-        margin: 7px 0 0 0px !important;
+    @media screen and (max-width: 767px) {
+     
+        #txtvideoUrls {
+            word-break: break-word;
+        }
+
+        .table > tbody > tr > td {
+            padding: 12px 5px !important;
+        }
+
+        .interview .table > tbody > tr > td {
+            padding: 12px 5px !important;
+        }
+
+        .dtr-inline.collapsed {
+            display: block !important;
+            white-space: nowrap
+        }
+
+        .form-group .form-control, .input-group .form-control {
+            padding: 10px 18px 10px 18px;
+            margin: 0px 20px;
+            width: 100%;
+        }
+
+        .comment-area.form-group .form-control {
+            padding: 10px 10px 10px 10px;
+        }
+
+        #ProctoringTable .label-type {
+            white-space: nowrap;
+        }
+
+        #meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter, #dupmeeting_length, #dupmeeting_filter {
+            margin: 7px 0 0 0px !important;
+        }
+
+        .skill {
+            -ms-flex: 100%;
+            flex: 100%;
+            max-width: 100%;
+        }
+
+        .daily-interview {
+            -ms-flex: 100%;
+            flex: 100%;
+            max-width: 100%;
+            padding-left: 15px;
+        }
+
+        .daily-slot {
+            -ms-flex: 100%;
+            flex: 100%;
+            max-width: 100%;
+            padding-left: 15px;
+        }
     }
 
-    .skill {
-        -ms-flex: 100%;
-        flex: 100%;
-        max-width: 100%;
-    
+    @media (min-width: 576px) {
+        .modal-dialog {
+            max-width: 600px;
+            margin: 1.75rem auto;
+        }
     }
 
-    .daily-interview {
-        -ms-flex: 100%;
-        flex: 100%;
-        max-width: 100%;
-        padding-left: 15px;
+    @media screen and (max-width:480px) {
+        .client-cmt {
+            width: 25% !important;
+        }
+
+        .client-action {
+            width: 27% !important;
+        }
     }
 
-    .daily-slot {
-        -ms-flex: 100%;
-        flex: 100%;
-        max-width: 100%;
-        padding-left: 15px;
-    }
-
-}
-
-@media (min-width: 576px) {
-    .modal-dialog {
-        max-width: 600px;
-        margin: 1.75rem auto;
-    }
-}
-
-@media screen and (max-width:480px) {
-    .client-cmt {
-        width: 25% !important;
-    }
-
-    .client-action {
-        width: 27% !important;
-    }
-}

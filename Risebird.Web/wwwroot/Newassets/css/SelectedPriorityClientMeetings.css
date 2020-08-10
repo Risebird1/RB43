@@ -235,19 +235,13 @@ td:hover.wordwrap {
 .loader {
     font-family: Arial;
     font-size: 10pt;
-    /*border: 5px solid #67CFF5;*/
-    /*width: 200px;
-            height: 100px;*/
     display: none;
     position: center !important;
     background-color: White;
     z-index: 999;
-    /*opacity: 0.5;*/
     filter: alpha(opacity = 50);
 }
-/*table.dataTable > thead > tr > th {
-        max-width: 200px !important;
-    }*/
+
 table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
     max-width: 300px !important;
 }
@@ -283,10 +277,6 @@ table {
     padding-top: 65px;
     background: none !important;
 }
-
-
-
-
 
 .btn-call {
     width: 30px !important;
@@ -326,72 +316,7 @@ table {
     border-bottom-right-radius: 13px;
 }
 
-/*#meeting_length, #meeting_filter {
-    margin: 10px 0px
-}
 
-    #meeting_length label {
-        font-size: 14px;
-    }
-
-    #meeting_length select.form-control {
-        padding: 8px 8px;
-    }
-
-    #meeting_length select:focus {
-        border-color: #4a93de;
-    }
-
-.dataTables_filter input{
-    outline: none;
-}
-
-#meeting input[type=search] {
-    -webkit-appearance: textfield;
-    -webkit-box-sizing: content-box;
-    font-family: inherit;
-    font-size: 100%;
-}
-
-#meeting_filter input::-webkit-search-decoration,
-#meeting_filter input::-webkit-search-cancel-button {
-    display: none;
-}
-
-
-#meeting_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-    border: solid 1px #ccc;
-    padding: 9px 10px 9px 32px;
-    width: 135px;
-    font-family: arial;
-    -webkit-border-radius: 10em;
-    -moz-border-radius: 10em;
-    border-radius: 10em;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    transition: all .5s;
-}
-
-    #meeting_filter input[type=search]:focus {
-        width: 200px;
-        background-color: #fff;
-        border-color: #4a93de;
-        font-family: arial;
-        margin: 3px;
-        -webkit-box-shadow: 0 0 5px #4a93de;
-        -moz-box-shadow: 0 0 5px #4a93de;
-        box-shadow: 0 0 5px #4a93de;
-    }
-
-
-#meeting_filter input:-moz-placeholder {
-    color: #999;
-}
-
-#meeting_filter input::-webkit-input-placeholder {
-    color: #999;
-}*/
 
 .multiple_row > h2 {
     font-size: 16px;
@@ -745,6 +670,12 @@ modal-content .modal-body {
     border-radius: 15px;
 }
 
+.interviewer-comment .talk-bubble [data-tooltip]:before {
+    width:400px;
+}
+
+
+
     .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
         position: absolute;
         bottom: 100%;
@@ -814,11 +745,53 @@ modal-content .modal-body {
 }
 
 @media screen and (max-width: 767px) {
+    .interviewer-comment .talk-bubble [data-tooltip]:before {
+        width: 350px;
+        left: 25%;
+        margin-left: 10px;
+    }
 
+    .interviewer-comment .talk-bubble [data-tooltip]:after {
+        margin-left: 190px;
+    }
     .table > tbody > tr > td {
         padding: 12px 5px !important;
     }
     #ProctoringTable .label-type {
         white-space: nowrap
     }
+    .talk-bubble [data-tooltip]:before {
+        width: 350px;
+        left: 30%;
+    }
 }
+@media screen and (max-width:480px){
+    .talk-bubble [data-tooltip]:before {
+    width: 350px;
+    left: 25%;
+}
+
+  
+
+
+}
+
+    @media screen and (max-width:375px) {
+
+        .talk-bubble [data-tooltip]:before {
+            width: 250px;
+            left: 30%;
+        }
+
+        .interviewer-comment .talk-bubble [data-tooltip]:before {
+            width: 250px;
+            left: 30%;
+            margin-left: 10px;
+        }
+        .interviewer-comment .talk-bubble [data-tooltip]:after {
+            margin-left: 130px;
+        }
+
+
+
+    }

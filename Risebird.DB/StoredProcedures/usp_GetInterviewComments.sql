@@ -20,7 +20,7 @@ Begin
   
 SELECT [InterviewStatus], [InterviewerComment], [FraudCheckStatus], [HRComment],[TrainingStatus], [TrainerComment],  
 	   [AudioLink], [VideoLink], [L2InterviewStatus], [ClientInterviewStatus] as FinalInterviewMeetingStatus,
-	   [MeetingStatus], [OfferStatus], [PreparationStatus], [JoiningStatus], [AadharFileLink],
+	   [MeetingStatus], [OfferStatus], [PreparationStatus], [JoiningStatus], [AadharFileLink],[CandidateAvailable],
 	   qcfr.QCStatus, qcfr.QCComment
 
 FROM [dbo].[InterviewComments]  
