@@ -526,9 +526,7 @@ table {
         width: 100%;
     }
 
-.mdc-card {
-    border-top: 3px #53a5f5 solid;
-}
+
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #42a5f5;

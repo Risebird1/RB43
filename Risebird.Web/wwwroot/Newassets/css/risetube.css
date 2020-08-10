@@ -986,9 +986,6 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 
-.mdc-card {
-    border-top: 3px #53a5f5 solid;
-}
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     font-family: Roboto, sans-serif;

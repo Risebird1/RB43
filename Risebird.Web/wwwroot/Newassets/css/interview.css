@@ -976,9 +976,7 @@ ul.panel-controls > li > button {
     font-size: 13px !important;
 }
 
-.mdc-card {
-    border-top: 3px #53a5f5 solid !important;
-}
+
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #42a5f5 !important;

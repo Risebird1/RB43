@@ -449,10 +449,6 @@ div.dataTables_wrapper div.dataTables_filter label{position:relative;}
 
 
 
-.mdc-card {
-    border-top: 3px #53a5f5 solid;
-}
-
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #42a5f5;
     font-family: Roboto, sans-serif;
