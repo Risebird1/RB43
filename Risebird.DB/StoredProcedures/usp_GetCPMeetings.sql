@@ -29,7 +29,7 @@ inner join IRF on im.IRFId = IRF.IRFId
 inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id
 inner join dbo.UserList ul on ul.id = tc.ClientUserId
 inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
-where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and QCF.QCStatus=1 and ic.MoveToCP=1 and IRF.ClientId= @clientid
+where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.CandidateAvailable=1 and ic.VideoLink is not null and QCF.QCStatus=1 and ic.MoveToCP=1 and IRF.ClientId= @clientid
 
    
 End   
