@@ -160,5 +160,30 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<CandidatesCount> GetClientCandidatesCount(string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetClientCandidatesCount(emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<MeetingResultCount> GetClientMeetingsResults(string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetClientMeetingsResults(emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

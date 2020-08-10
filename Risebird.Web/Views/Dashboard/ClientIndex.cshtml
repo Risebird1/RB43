@@ -105,86 +105,111 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 col-lg-6 col-sm-6">
-                    <div class="card card-chart">
-                        <div class="card-header">
-                            <h4 class="card-title">Interview Analysis</h4>
-                        </div>
-                        <div class="card-body">
-                            <div id="myFunnelChart" style="height: 300px; width: 100%;"></div>
+                <div class="row">
+                    <div class="col-md-5 col-lg-5 col-sm-5">
+                        <div class="card card-chart">
+                            <div class="card-header">
+                                <h4 class="card-title">Interview Analysis</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="myFunnelChart" style="height: 300px; width: 100%;"></div>
 
 
+                            </div>
+
                         </div>
+
 
                     </div>
+                    <div class="col-md-7 col-lg-7 col-sm-7">
+                        <div style="height:50%">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="panel-title-box">
+                                        <h3>Daily Interview Slots</h3>
 
+                                    </div>
+                                    <ul class="panel-controls" style="margin-top: 2px;">
 
-                </div>
-                <div class="col-md-6 col-lg-6 col-sm-6">
-                    <div style="height:50%">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="panel-title-box">
-                                    <h3>Daily Interview Slots</h3>
-
-                                </div>
-                                <ul class="panel-controls" style="margin-top: 2px;">
-
-                                    <li>
-                                        <div class="col-md-12 col-sm-12 nopad interview-date">
-                                            <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
-                                        </div>
-                                    </li>
-                                    <li>
-
-                                        <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div id="slotsId">
-                                <div class="panel-body panel-body-table">
-                                    @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
-                                    {
-                                        <div class="sb-container scroller">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered table-striped ">
-                                                    <thead>
-                                                        <tr>
-                                                            <th width="20%">Morning Counts</th>
-                                                            <th width="30%">Evening Counts</th>
-                                                            <th width="30%">Result(S/R/B/Proxy/Pending)</th>
-                                                            <th width="50%">Skill Channel ID</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-
-                                                        @{
-                                                            foreach (var item in Model.DailyMeetingResultsSlots)
-                                                            {
-                                                                <tr>
-                                                                    <td class="text-center"><span class="label-num"><strong>@item.Morning</strong></span></td>
-                                                                    <td class="text-center"><span class="label-num"><strong>@item.Evening</strong></span></td>
-                                                                    <td class="text-center"><span class="label-num"><strong>@item.total (@item.Selected/@item.Rejected/@item.BorderLine/@item.Proxy/@item.Pending)</strong></span></td>
-                                                                    <td><strong>@item.IRFnSkill</strong></td>
-                                                                </tr>
-
-                                                            }
-                                                        }
-
-
-                                                    </tbody>
-                                                </table>
+                                        <li>
+                                            <div class="col-md-12 col-sm-12 nopad interview-date">
+                                                <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
                                             </div>
+                                        </li>
+                                        <li>
+
+                                            <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="slotsId">
+                                    <div class="panel-body panel-body-table">
+                                        @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
+                                        {
+                                            <div class="sb-container scroller">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-striped ">
+                                                        <thead>
+                                                            <tr>
+                                                                <th width="20%">Morning Counts</th>
+                                                                <th width="30%">Evening Counts</th>
+                                                                <th width="30%">Result(S/R/B/Proxy/NS/Sch/Dr/Pen)</th>
+                                                                <th width="50%">Skill Channel ID</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                            @{
+                                                                foreach (var item in Model.DailyMeetingResultsSlots)
+                                                                {
+                                                                    <tr>
+                                                                        <td class="text-center"><span class="label-num"><strong>@item.Morning</strong></span></td>
+                                                                        <td class="text-center"><span class="label-num"><strong>@item.Evening</strong></span></td>
+                                                                        <td class="text-center"><span class="label-num"><strong>@item.total (@item.Selected/@item.Rejected/@item.BorderLine/@item.Proxy/@item.NoShowCount/@item.ScheduledCount/@item.DroppedCount/@item.Pending)</strong></span></td>
+                                                                        <td><strong>@item.IRFnSkill</strong></td>
+                                                                    </tr>
+
+                                                                }
+                                                            }
+
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div>No interviews for this day!</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p style="width:100%" class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                        <div>
+                                            <div id="candidatesPieId" class="PieId"></div>
                                         </div>
-                                    }
-                                    else
-                                    {
-                                        <div>No interviews for this day!</div>
-                                    }
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                        <div>
+                                            <div id="meetingsCountId" class="PieId"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
                 <!-- END DASHBOARD CHART -->
@@ -213,7 +238,6 @@
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
 <script>
-    debugger;
     
     var chData= JSON.parse(('@Model.FunnelData').replace(/&quot;/g, '"'));
     am4core.ready(function () {
@@ -305,13 +329,69 @@
         var meetingsDataLabels = '@Model.MeetingsDataLabels';
         meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
         UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
+        //candidatesPieId
+        if (@Model.CandidatesCountObj.TotalCandidates!= 0) {
+            var candidateCountObj = [{ y: 8, label: "Proxy" },
+            { y: 31, label: "Selected" },
+            { y: 27, label: "Rejected" },
+            { y: 34, label: "Border Line" }]
+
+            var chart = new CanvasJS.Chart("candidatesPieId", {
+                theme: "light2",
+                width: 350,//in pixels
+                height: 200,//in pixels
+                animationEnabled: true,
+                title: null,
+                data: [{
+                    type: "pie",
+                    startAngle: 60,
+                    innerRadius: 55,
+                    indexLabelFontSize: 15,
+                    indexLabel: "{label}  {y}%",
+                    toolTipContent: "<b>{label} </b>({y}%)",
+
+                    dataPoints: candidateCountObj
+                }]
+            });
+            chart.render();
+        }
+        
+
+        //meetingsCountId
+        var meetingsCountObj = [{ y: @Model.MeetingResultCountObj.ProxyCount, label: "Proxy" },
+            { y: @Model.MeetingResultCountObj.SelectedCount, label: "Selected" },
+            { y: @Model.MeetingResultCountObj.RejectedCount, label: "Rejected" },
+            { y: @Model.MeetingResultCountObj.BorderLineCount, label:"Border Line"},
+            { y: @Model.MeetingResultCountObj.NoShowCount, label:"No Show"},
+            { y: @Model.MeetingResultCountObj.ScheduledCount, label:"Scheduled"},
+            { y: @Model.MeetingResultCountObj.DroppedCount, label:"Dropped"},
+            @*{ y: @Model.MeetingResultCountObj.StatusPendingCount, label:"Status Pending"}*@
+            @*{y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}*@]
+
+        var chart = new CanvasJS.Chart("meetingsCountId", {
+           theme: "light2",
+            width: 350,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: null,
+            data: [{
+                type: "pie",
+                startAngle: 60,
+                innerRadius: 55,
+                indexLabelFontSize: 15,
+                indexLabel: "{label}  {y}",
+                toolTipContent: "<b>{label} </b>({y})",
+
+                dataPoints: meetingsCountObj
+            }]
+        });
+        chart.render();
 
     }
 
 </script>
 <script>
     function changeInterviewTracking() {
-        debugger;
         document.getElementById('area-chart').innerHTML = '';
         var date = document.getElementById('interviewTrackingDate').value;
         $.ajax({
@@ -395,7 +475,6 @@
                 url: '/Dashboard/GetDateWiseIRFProgress',
                 data: { 'date': date },
                 success: function (data) {
-                    debugger;
                     $('#progressTableId').html('');
                     $('#progressTableId').html(data);
 

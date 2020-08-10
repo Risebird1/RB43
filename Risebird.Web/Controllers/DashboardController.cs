@@ -188,8 +188,8 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    profileName = "Client"; profileName.Replace("\"", "");
+                    var emailid = "sreejith.chandran@ust-global.com";//HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
@@ -197,6 +197,8 @@ namespace Risebird.Web.Controllers
                         var funnelData = await _dashboardService.GetClientFunnelData(emailid);
                         var slotsDetails= await _dashboardService.GetDateWiseClientMeetingsSlots(DateTime.Now, emailid);
                         model = GetDateWiseClientInterviews(DateTime.Now, emailid);
+                        model.MeetingResultCountObj = await _dashboardService.GetClientMeetingsResults(emailid);
+                        model.CandidatesCountObj = await _dashboardService.GetClientCandidatesCount(emailid);
                         model.EmailId = emailid;
                         model.FunnelData = JsonConvert.SerializeObject(funnelData);
                         model.DailyMeetingResultsSlots = slotsDetails;

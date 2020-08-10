@@ -16,5 +16,8 @@ namespace Risebird.Entities.ViewModel
         public int BorderLine { get; set; }
         public int Pending { get; set; }
         public int total { get; set; }
+        public int NoShowCount { get; set; }
+        public int ScheduledCount { get; set; }
+        public int DroppedCount { get; set; }
     }
 }
