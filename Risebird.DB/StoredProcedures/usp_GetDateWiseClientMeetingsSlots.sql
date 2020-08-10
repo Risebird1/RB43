@@ -26,10 +26,6 @@ if(@roleId=1)
 
 	Begin
 		
-		--declare  @dateValue datetime, @emailId varchar(100);
-		--set @dateValue = '2020-06-21 23:00:00.000'
-		--set @emailId = 'ramanaidu.m@mphasis.com'
-		
 
 		select irf.irfid, (irf.irfID + '('+ CASE WHEN CHARINDEX('|', JDTiltle) != 0 THEN (SUBSTRING(JDTiltle,0, (CHARINDEX('|', JDTiltle)))) ELSE JDTiltle END +')' ) as IRFnSkill,
 		(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=1 and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and ClientHrContact=@emailId) as Morning,
@@ -52,10 +48,6 @@ if(@roleId=1)
 
 else if(@roleId=4)
 	Begin
-		--declare  @dateValue datetime, @emailId varchar(100);
-		--set @dateValue = '2020-06-15 21:30:00.000'
-		--set @emailId = 'shweta_kadechkar@risebird.io'
-		
 
 		select irf.irfid, (irf.irfID + '('+ CASE WHEN CHARINDEX('|', JDTiltle) != 0 THEN (SUBSTRING(JDTiltle,0, (CHARINDEX('|', JDTiltle)))) ELSE JDTiltle END +')' ) as IRFnSkill,
 		(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=1 and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency=@emailId) as Morning,
@@ -76,24 +68,19 @@ else if(@roleId=4)
 
 else
 	Begin
-		
-		--declare  @dateValue datetime, @emailId varchar(100), @userId int;
-		--set @dateValue = '2020-05-31 17:00:00.000'
-		--set @emailId = 'venkatesh.radhakrishnan@ust-global.com'
-		--set @userId=1235
 
 		select irf.irfid, (irf.irfID + '('+ CASE WHEN CHARINDEX('|', JDTiltle) != 0 THEN (SUBSTRING(JDTiltle,0, (CHARINDEX('|', JDTiltle)))) ELSE JDTiltle END +')' ) as IRFnSkill,
-		(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=1 and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId) as Morning,
-		(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=2 and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId) as Evening,
-		(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId) as total,
-		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId and InterviewStatus=1) as Proxy,
-		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId and InterviewStatus=2) as Selected,
-		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId and InterviewStatus=3) as Rejected,
-		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId and InterviewStatus=4) as BorderLine,
-		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId and InterviewStatus is null and MeetingStatus=1) as NoShowCount,
-		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId and InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
-		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId and InterviewStatus is null and MeetingStatus=3) as DroppedCount,
-		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and staffingAgency!=@emailId and ClientHRContact!=@emailId and InterviewStatus is null and MeetingStatus=4) as Pending
+		(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=1 and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1) as Morning,
+		(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=2 and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1) as Evening,
+		(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1) as total,
+		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=1) as Proxy,
+		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=2) as Selected,
+		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=3) as Rejected,
+		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=4) as BorderLine,
+		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus is null and MeetingStatus=1) as NoShowCount,
+		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
+		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus is null and MeetingStatus=3) as DroppedCount,
+		(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus is null and MeetingStatus=4) as Pending
 		from InterviewMeetings im join IRF on irf.IRFId = im.IRFId 
 		join TransClientUser tcu on tcu.IRFId = irf.id
 		join UserList ul on tcu.ClientUserId = ul.id
