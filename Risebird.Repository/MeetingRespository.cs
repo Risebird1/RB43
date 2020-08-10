@@ -1706,18 +1706,28 @@ namespace Risebird.Repository
 
             return null;
         }
-        public async Task AddTotalViewCount(int id, string emailaddress)
+        public async Task AddTotalViewCount(int id, string emailaddress, string flag)
         {
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@Interviewid", id);
                 parameters.Add("@EmailId", emailaddress);
-
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if (flag == "Public")
                 {
-                    await SqlMapper.QueryAsync<string>(con, "usp_AddinterviewView", parameters,
-                       commandType: CommandType.StoredProcedure);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<string>(con, "usp_AddinterviewView", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<string>(con, "usp_SharedAddinterviewView", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    }
                 }
             }
             catch (SqlException ex)
@@ -2405,6 +2415,26 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    VideoDetails interviewComments = new VideoDetails();
+                    DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@InterviewId", Interviewid);
+                    var resultset = SqlMapper.Query<VideoDetails>(con, "usp_FetchVideoSumaryDetails", paramx,
+                                        commandType: CommandType.StoredProcedure);
+                    return resultset;
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

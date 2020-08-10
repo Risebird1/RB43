@@ -162,6 +162,8 @@
                                             {
                                                 @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                             }
+                                            @*<a href="/RiseTube/VideoDetailView" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Video Detail View</a>*@
+                                            @Html.ActionLink("Video Detail View", "VideoDetailView", "Risetube", new { interviewid = Model.imid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                         }
 
                                     </div>
@@ -1830,19 +1832,19 @@
                 @*@using (Html.BeginForm("Sharecreatedview", "RiseTube", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckTotalWeightage()" }))*@
                 @using (Html.BeginForm("Sharecreatedview", "RiseTube", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
                 {
-                <div class="row">
-                    <div class="col-md-12 col-sm-12">
-                        <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label">
-                                Email Address
-                            </label>
-                            <div class="col-md-12 col-sm-12">
-                                @Html.TextBoxFor(m => m.IreportModel.SharedEmailAddress, new { @class = "form-control text-box single-line" })
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label">
+                                    Email Address
+                                </label>
+                                <div class="col-md-12 col-sm-12">
+                                    @Html.TextBoxFor(m => m.IreportModel.SharedEmailAddress, new { @class = "form-control text-box single-line" })
 
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                     <div class="row">
                         <div class="col-md-6 col-sm-6">
                             <div class="form-group">
@@ -2053,8 +2055,8 @@
                     </div>
                     <div class="col-md-12 ">
                         <div class="text-right">
-                            <input type="submit" value="submit form" />
-                            <input type="button" onclick="SubmitSharedVideo()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                            <input type="submit" value="Submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+                            @*<input type="button" onclick="SubmitSharedVideo()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">*@
                             <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeCreateAndShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                         </div>
                     </div>
@@ -2120,6 +2122,7 @@
 
 </script>
 <script>
+   
     jQuery(document).ready(function ($) {
 
         var main = function () {
@@ -2743,8 +2746,7 @@
     });
 </script>
 <script>
-
-
+   
     jQuery(document).ready(function ($) {
 
         if ($("#txtVideostatus").val() == "Public") {
@@ -2783,7 +2785,7 @@
             });
 
         });
-         $("#btnShare4").on('click', function () {
+        $("#btnShare4").on('click', function () {
             var modal = document.getElementById("CreateAndShareModel");
             modal.style.display = "block";
         });
@@ -3041,31 +3043,17 @@
     }
     function SubmitEmail() {
         if ($("#txtvideoemailid").val() != "") {
+            var currentUrl = window.location.href;
             $.ajax({
                 type: "POST",
                 url: "/RiseTube/VedioShareEmail",
-                data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val() },
+                data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl },
                 success: function (data) {
                     closepublicSharePopUpvideo();
                     $("#divbackground").removeClass("blk-bg");
                 }
             });
         }
-    }
-    function SubmitSharedVideo() {
-        var TableData = new Array();
-
-        $('#shareQuestionsTable tr').each(function (row, tr) {
-            alert($(tr).find('td:eq(0)').innerHTML());
-            alert($(tr).find('td:eq(1)').innerHTML());
-            alert($(tr).find('td:eq(2)').innerHTML());
-            alert($(tr).find('td:eq(3)').innerHTML());
-
-        });
-        TableData.shift();
-        debugger;
-        alert(JSON.stringify(TableData));
-        alert(TableData);
     }
     function closepublicSharePopUpvideo() {
         var modal = document.getElementById("PublicShareVideo");

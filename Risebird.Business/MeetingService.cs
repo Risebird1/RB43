@@ -1045,11 +1045,11 @@ namespace Risebird.Business
             }
 
         }
-        public async Task AddTotalViewCount(int id, string emailaddress)
+        public async Task AddTotalViewCount(int id, string emailaddress, string flag)
         {
             try
             {
-                await _meetingRespository.AddTotalViewCount(id, emailaddress);
+                await _meetingRespository.AddTotalViewCount(id, emailaddress, flag);
 
             }
             catch (Exception e)
@@ -1602,6 +1602,19 @@ namespace Risebird.Business
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
 
             return model;
+        }
+        public IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid)
+        {
+            try
+            {
+                var result=_meetingRespository.GetVideoSumaryDetails(Interviewid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 
