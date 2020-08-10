@@ -28,7 +28,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewComments](
 				@JoiningStatus int =  null,
 				@ThumbnailImage varchar(Max),
 				@FeedbackAudioLink nvarchar(max) =null,
-				@AadharFileLink nvarchar(max) = null)  
+				@AadharFileLink nvarchar(max) = null,
+				@CandidateAvailable bit)  
 AS  
 Begin Try  
   BEGIN TRAN UpdateUser   
@@ -52,7 +53,8 @@ Begin Try
           VideoLink = ISNULL(@videolink, VideoLink) ,
 		  ThumbnailImage=ISNULL(@ThumbnailImage,ThumbnailImage),
 		  FeedbackAudioLink = ISNULL(@FeedbackAudioLink, FeedbackAudioLink),
-		  AadharFileLink = ISNULL(@AadharFileLink, AadharFileLink)
+		  AadharFileLink = ISNULL(@AadharFileLink, AadharFileLink),
+		  CandidateAvailable = @CandidateAvailable
       WHERE        interviewId = @InterviewId  
   
                       
@@ -76,7 +78,8 @@ Begin Try
 					  VideoLink,
 					  ThumbnailImage,
 					  FeedbackAudioLink,
-					  AadharFileLink)   
+					  AadharFileLink,
+					  CandidateAvailable)   
 				VALUES  
 					 (@interviewId,  
 					  @InterviewStatus,  
@@ -94,7 +97,8 @@ Begin Try
 					  @videolink,
 					  @ThumbnailImage,
 					  @FeedbackAudioLink,
-					  @AadharFileLink)  
+					  @AadharFileLink,
+					  @CandidateAvailable)  
 
 				INSERT INTO 
 					InterviewReport 
