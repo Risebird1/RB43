@@ -188,8 +188,8 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "Client"; profileName.Replace("\"", "");
-                    var emailid = "sreejith.chandran@ust-global.com";//HttpContext.Session.GetString("email")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
