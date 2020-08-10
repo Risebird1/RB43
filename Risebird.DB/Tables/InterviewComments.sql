@@ -106,6 +106,15 @@ BEGIN
     ALTER TABLE InterviewComments
     Add MoveToCP bit null
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CandidateAvailable')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add CandidateAvailable bit Not NUll default 1
+END
 
 End
 GO

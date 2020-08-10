@@ -1583,6 +1583,7 @@ namespace Risebird.Repository
             parameters.Add("@JoiningStatus", entity.JoiningStatus);
             parameters.Add("@ThumbnailImage", entity.ThumbnailImage);
             parameters.Add("@AadharFileLink", entity.AadharFileLink);
+            parameters.Add("@CandidateAvailable", entity.CandidateAvailable);
             return parameters;
         }
 
