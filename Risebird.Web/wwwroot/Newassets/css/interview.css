@@ -841,7 +841,7 @@ ul.panel-controls > li > button {
  margin:0;
 padding:0;
 }
-
+.selected .tooltip-inner{color:red}
 .legend li {
     display: inline-block;
     list-style: none;
