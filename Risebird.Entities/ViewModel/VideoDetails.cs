@@ -11,5 +11,6 @@ namespace Risebird.Entities.ViewModel
         public int Count { get; set; }
         public int Videoid { get; set; }
         public string VideoUrl { get; set; }
+        public string TimeSpend { get; set; }
     }
 }

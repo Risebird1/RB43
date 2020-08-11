@@ -2079,7 +2079,25 @@
 <!-- Custom scripts for all pages-->
 
 <script>
-
+    var d = new Date();
+    var start = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    $(window).bind('beforeunload', function () {
+        abc();
+        //return 'Are you sure you want to leave?';
+    });
+    function abc() {
+        var d1 = new Date();
+        var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds(); end
+        var currentUrl = window.location.href;;
+        $.ajax({
+            type: "GET",
+            url: "/RiseTube/CalculateTimeSpend",
+            data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: start, timeend: end },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+    }
     jQuery(document).ready(function ($) {
 
         $(".tab_content").hide();
@@ -2122,7 +2140,7 @@
 
 </script>
 <script>
-   
+
     jQuery(document).ready(function ($) {
 
         var main = function () {
@@ -2746,7 +2764,7 @@
     });
 </script>
 <script>
-   
+
     jQuery(document).ready(function ($) {
 
         if ($("#txtVideostatus").val() == "Public") {

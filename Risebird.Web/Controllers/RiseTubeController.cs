@@ -1808,7 +1808,7 @@ namespace Risebird.Web.Controllers
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);
                     foreach (var item in model)
                     {
-                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl+"/"+item.Videoid.ToString();
+                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
                         item.interviewid = interviewid;
                     }
                     return View(model.ToPagedList(Page ?? 1, 12));
@@ -1822,6 +1822,35 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+        public JsonResult CalculateTimeSpend(string vedioid, string Emailid, string CurrentUrl, string timeStart, string timeend)
+        {
+            //Start:SaveTime Spend on vedio page
+            if (String.IsNullOrEmpty(Emailid))
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                }
+            }
+            else
+            {
+                Emailid = Emailid.Replace("\"", "");
+            }
+            var TimeSpend = Convert.ToDateTime(timeend) - Convert.ToDateTime(timeStart);
+            if (CurrentUrl.Contains("SharedVideoPage"))
+            {
+                vedioid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
+                _meetingService.AddTimeSpend(Convert.ToInt32(vedioid), Emailid, "Shared", TimeSpend);
+
+            }
+            else
+            {
+                _meetingService.AddTimeSpend(Convert.ToInt32(vedioid), Emailid, "Public", TimeSpend);
+            }
+            //End:SaveTime Spend on vedio page
+            return Json("Succecss");
         }
     }
 }

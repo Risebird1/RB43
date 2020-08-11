@@ -2436,5 +2436,48 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task AddTimeSpend(int id, string emailaddress, string flag, TimeSpan TimeSpend)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Interviewid", id);
+                parameters.Add("@EmailId", emailaddress);
+                if (flag == "Public")
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var query = "Select id from USerList where Emailid = @emailaddress";
+                        var dynamicParameters = new DynamicParameters();
+                        dynamicParameters.Add("@emailaddress", emailaddress);
+                        var results = con.Query<int>(query, dynamicParameters);
+                        int userid = results.FirstOrDefault();
+                        if (userid == 0)
+                        {
+                            SqlMapper.Query<string>(
+                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress }, commandType: Text);
+                        }
+                        else
+                        {
+                            SqlMapper.Query<string>(
+                                con, "Update VideoCountDetails set TimeSpend=@TimeSpend where Videoid=@id and Userid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = userid }, commandType: Text);
+                        }
+                    }
+                }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        SqlMapper.Query<string>(
+                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress }, commandType: Text);
+
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
     }
 }
