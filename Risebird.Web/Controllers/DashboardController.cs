@@ -32,35 +32,46 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var model = new DashboardVM();
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
 
-                    //daily interview tracking first chart
-                    model = GetDateWiseInterviews(DateTime.Now);
-                    //daily interview tracking slots
-                    model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
-                    model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
-                    var progressDate = TempData.Peek("ProgressDate")?.ToString();
-                    if (!string.IsNullOrEmpty(progressDate))
+                    if (profileName == "Admin")
                     {
-                        model.ProgressDate=Convert.ToDateTime(progressDate);
-                      
-                        TempData.Keep("ProgressDate");
+                        var model = new DashboardVM();
+
+                        //daily interview tracking first chart
+                        model = GetDateWiseInterviews(DateTime.Now);
+                        //daily interview tracking slots
+                        model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(DateTime.Now);
+                        model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
+                        var progressDate = TempData.Peek("ProgressDate")?.ToString();
+                        if (!string.IsNullOrEmpty(progressDate))
+                        {
+                            model.ProgressDate = Convert.ToDateTime(progressDate);
+
+                            TempData.Keep("ProgressDate");
+                        }
+                        else
+                        {
+                            model.ProgressDate = DateTime.Now;
+                        }
+
+
+                        model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate));
+
+                        model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount();
+                        model.CandidatesCountObj = await _dashboardService.GetCandidatesCount();
+
+                        model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
+                        model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
+
+                        return View(model);
                     }
                     else
                     {
-                        model.ProgressDate = DateTime.Now;
+                        return RedirectToAction("SignOut", "Session");
                     }
-                   
 
-                    model.IrfProgressList = (IList<IRF>)(await _dashboardService.GetIRFProgress(model.ProgressDate));
-
-                    model.MeetingResultCountObj = await _dashboardService.GetMeetingResultCount();
-                    model.CandidatesCountObj = await _dashboardService.GetCandidatesCount();
-                   
-                    model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
-                    model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
-
-                    return View(model);
                 }
                 else
                 {
@@ -188,15 +199,20 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "Client";
+                    profileName =  profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    if(profileName == "Client")
+                    emailid =  emailid.Replace("\"", "");
+                    if (profileName == "Client")
                     {
                         var model = new ClientDashboardVM();
-                        //daily interview tracking first chart
+                        var funnelData = await _dashboardService.GetClientFunnelData(emailid);
+                        var slotsDetails= await _dashboardService.GetDateWiseClientMeetingsSlots(DateTime.Now, emailid);
                         model = GetDateWiseClientInterviews(DateTime.Now, emailid);
+                        model.MeetingResultCountObj = await _dashboardService.GetClientMeetingsResults(emailid);
+                        model.CandidatesCountObj = await _dashboardService.GetClientCandidatesCount(emailid);
                         model.EmailId = emailid;
+                        model.FunnelData = JsonConvert.SerializeObject(funnelData);
+                        model.DailyMeetingResultsSlots = slotsDetails;
                         return View(model);
                     }
                     else
@@ -250,5 +266,19 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public IActionResult GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
+        {
+            try
+            {
+                var model = new ClientDashboardVM();
+                model.DailyMeetingResultsSlots = _dashboardService.GetDateWiseClientMeetingsSlots(date, emailId).Result;
+                return PartialView("ClientSlotsStatusPartial", model);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
