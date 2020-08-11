@@ -149,6 +149,7 @@
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
                                             }
+                                            @Html.ActionLink("Video Detail View", "VideoDetailView", "Risetube", new { interviewid = Model.imid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;margin-right:3px;" })
                                             @if (ViewBag.actionstatus == "SkillChannel" && ViewBag.CuratedGroupId != null)
                                             {
                                                 <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
@@ -163,7 +164,7 @@
                                                 @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                             }
                                             @*<a href="/RiseTube/VideoDetailView" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Video Detail View</a>*@
-                                            @Html.ActionLink("Video Detail View", "VideoDetailView", "Risetube", new { interviewid = Model.imid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+
                                         }
 
                                     </div>

@@ -75,12 +75,12 @@
                                 </div>
                             </div>
                             <div style="clear:both;padding:10px"></div>
-                            <table style="width:100%">
+                            <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
                                 <tr>
                                     <th>Video Link</th>
                                     <th>User Name</th>
-                                    <th>Total View</th>
-                                    <th>Total Time</th>
+                                    <th ><span class="pull-left">Total View</span>   <span class="pull-right"><button class="icon-btn"><span class="fa fa-eye"></span></button></span></th>
+                                    <th ><span class="pull-left">Total Time</span> <span class="pull-right"><button class="icon-btn"><span class="fa fa-clock-o"></span></button></th>
 
                                 </tr>
                                 @foreach (var item in Model)
@@ -90,8 +90,8 @@
                                     <tr>
                                         <td>@item.VideoUrl</td>
                                         <td>@item.Candidate</td>
-                                        <td>@item.Count</td>
-                                        <td>@item.TimeSpend</td>
+                                        <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
+                                        <td class="text-center">@item.TimeSpend</td>
 
                                     </tr>
 

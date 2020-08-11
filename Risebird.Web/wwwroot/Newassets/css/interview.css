@@ -655,6 +655,28 @@ ul.panel-controls > li > button {
     -o-transition: all 200ms ease;
     transition: all 200ms ease;
 }
+
+.icon-btn {
+    display: block;
+    float: left;
+    width: 26px;
+    height: 26px;
+    text-align: center;
+    position: relative;
+    line-height: 23px;
+    color: #22262e;
+    top: -2px;
+    border: 1px solid #BBB;
+    -moz-border-radius: 20%;
+    -webkit-border-radius: 20%;
+    border-radius: 20%;
+    margin-left: 3px;
+    -webkit-transition: all 200ms ease;
+    -moz-transition: all 200ms ease;
+    -ms-transition: all 200ms ease;
+    -o-transition: all 200ms ease;
+    transition: all 200ms ease;
+}
 .panel .panel-heading .panel-title-box h3 {
     line-height: 31px;
 }

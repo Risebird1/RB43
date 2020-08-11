@@ -21,7 +21,17 @@
     height: 406px;
 }
 
-
+.count-view .label-num {
+    background: #ccc;
+    width: 26px;
+    height: 26px;
+    border-radius: 100%;
+    display: inline-table;
+    line-height: 27px;
+    color: #423f3f;
+    padding: 3px 4px;
+    font-size: 12px;
+}
 
 
 .text-areadiv #comment::-webkit-input-placeholder { /* Edge */
