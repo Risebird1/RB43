@@ -12,10 +12,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 
-<script type="text/javascript" src="~/js/plugins/jquery/jquery.min.js"></script>
 
-<script type="text/javascript" src="~/js/plugins/jquery/jquery-ui.min.js"></script>
-<script type="text/javascript" src="~/js/plugins/bootstrap/bootstrap.min.js"></script>
 <!-- END PLUGINS -->
 <!-- START THIS PAGE PLUGINS-->
 <script type='text/javascript' src='~/js/plugins/icheck/icheck.min.js'></script>
@@ -36,7 +33,9 @@
 
 <script type='text/javascript' src='~/js/plugins/bootstrap/bootstrap-datepicker.js'></script>
 <script type="text/javascript" src="~/js/plugins/daterangepicker/daterangepicker.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" defer>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
 
 <!-- END THIS PAGE PLUGINS-->
 <!-- START TEMPLATE -->
@@ -117,11 +116,11 @@
                             </div>
 
 
-                                <div class="panel-body">
-                                    <div id="myFunnelChart" class="Funnelid"></div>
+                            <div class="panel-body">
+                                <div id="myFunnelChart" class="Funnelid"></div>
 
 
-                               
+
 
 
                             </div>
@@ -129,104 +128,119 @@
                         </div>
 
                     </div>
-                            <div class="daily-interview">
-                              
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <div class="panel-title-box">
-                                                <h3>Daily Interview Stats</h3>
+                    <div class="daily-interview">
 
-                                            </div>
-                                            <ul class="panel-controls" style="margin-top: 2px;">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title-box">
+                                    <h3>Daily Interview Stats</h3>
 
-                                                <li>
-                                                    <div class="col-md-12 col-sm-12 nopad interview-date">
-                                                        <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
-                                                    </div>
-                                                </li>
-                                                <li>
+                                </div>
+                                <ul class="panel-controls" style="margin-top: 2px;">
 
-                                                    <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
-                                                </li>
-                                            </ul>
+                                    <li>
+                                        <div class="col-md-12 col-sm-12 nopad interview-date">
+                                            <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
                                         </div>
-                                        <div id="slotsId">
-                                            <div class="panel-body panel-body-table">
-                                                <div style="min-height:200px;">
-                                                    @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
-                                                    {
+                                    </li>
+                                    <li>
 
-                                                        <div class="sb-container scroller-height">
-                                                            <div class="table-responsive">
-                                                                <table class="table table-bordered table-striped ">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th width="20%">Morning Counts</th>
-                                                                            <th width="30%">Evening Counts</th>
-                                                                            <th width="30%">Result@*(Selected/Rejected/Borderline/Proxy/NoShow/Scheduled/Dropped/Pending)*@</th>
-                                                                            <th width="50%">Skill</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
+                                        <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="slotsId">
+                                <div class="panel-body panel-body-table">
+                                    <div style="min-height:200px;">
+                                        @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
+                                        {
 
-                                                                        @{
-                                                                            foreach (var item in Model.DailyMeetingResultsSlots)
-                                                                            {
-                                                                                <tr>
-                                                                                    <td class="text-center"><strong>@item.Morning</strong></td>
-                                                                                    <td class="text-center"><strong>@item.Evening</strong></td>
-                                                                                    <td class="text-center"><strong>@item.Selected/@item.Rejected/@item.BorderLine/@item.Proxy/@item.NoShowCount/@item.ScheduledCount/@item.DroppedCount/@item.Pending</strong></td>
-                                                                                    <td><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
-                                                                                </tr>
+                                        <div class="sb-container scroller-height">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-striped ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="20%">Morning Counts</th>
+                                                            <th width="30%">Evening Counts</th>
+                                                            <th width="30%">Result@*(Selected/Rejected/Borderline/Proxy/NoShow/Scheduled/Dropped/Pending)*@</th>
+                                                            <th width="50%">Skill</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
 
-                                                                            }
-                                                                        }
+                                                        @{
+                                                            foreach (var item in Model.DailyMeetingResultsSlots)
+                                                            {
+                                                                <tr>
+                                                                    <td class="text-center"><strong>@item.Morning</strong></td>
+                                                                    <td class="text-center"><strong>@item.Evening</strong></td>
+                                                                    <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="ScheduledCount : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
+                                                                    <td><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
+                                                                </tr>
+
+                                                            }
+                                                        }
 
 
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div>No interviews for this day!</div>
-                                                    }
-                                                </div>
+                                                    </tbody>
+                                                </table>
                                             </div>
+
+                                            <div class="legend">
+
+                                                <ul>
+                                                    <li><div class="g color"></div>Selected</li>
+                                                    <li><div class="r color"></div>Rejected</li>
+                                                    <li><div class="b color"></div>BorderLine</li>
+                                                    <li><div class="pr color"></div>Proxy</li>
+                                                    <li><div class="ns color"></div>NoShow</li>
+                                                    <li><div class="sch color"></div>Schedule</li>
+                                                    <li><div class="dr color"></div>Dropped</li>
+                                                    <li><div class="pe color"></div>Pending</li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        }
+                                        else
+                                        {
+                                            <div>No interviews for this day!</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p style="width:100%" class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                        <div>
+                                            <div id="candidatesPieId" class="PieId"></div>
                                         </div>
                                     </div>
+                                </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 col-lg-6 col-sm-6">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <p style="width:100%" class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
-                                                <div>
-                                                    <div id="candidatesPieId" class="PieId"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="col-md-6 col-lg-6 col-sm-6">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
-                                                <div>
-                                                    <div id="meetingsCountId" class="PieId"></div>
-                                                </div>
-                                            </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                        <div>
+                                            <div id="meetingsCountId" class="PieId"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- END DASHBOARD CHART -->
-
-
-
                     </div>
+                </div>
+                <!-- END DASHBOARD CHART -->
+
+
+
+            </div>
             <!-- END PAGE CONTENT WRAPPER -->
         </div>
         <!-- END PAGE CONTENT -->
@@ -248,7 +262,7 @@
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
 <script>
-    
+
     var chData= JSON.parse(('@Model.FunnelData').replace(/&quot;/g, '"'));
     am4core.ready(function () {
 
@@ -365,7 +379,7 @@
             });
             chart.render();
         }
-        
+
 
         //meetingsCountId
         var meetingsCountObj = [{ y: @Model.MeetingResultCountObj.ProxyCount, label: "Proxy" },
@@ -506,5 +520,12 @@
 <script type="text/javascript">
     $(".sb-container").scrollBox();
 </script>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 

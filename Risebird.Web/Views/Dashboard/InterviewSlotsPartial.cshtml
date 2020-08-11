@@ -3,37 +3,52 @@
     <div class="panel-body panel-body-table">
         @if (Model.DailyInterviewSlots != null && Model.DailyInterviewSlots.Count() > 0)
         {
-            <div class="sb-container scroller">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped ">
-                        <thead>
-                            <tr>
-                                <th width="50%">Skill Channel ID</th>
-                                <th width="20%">Morning Counts</th>
-                                <th width="30%">Evening Counts</th>
-                                <th width="30%">Result(S/R/B/Proxy/NS/Sch/Dr/Pen)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+        <div class="sb-container scroller">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped ">
+                    <thead>
+                        <tr>
+                            <th width="50%">Skill Channel ID</th>
+                            <th width="20%">Morning Counts</th>
+                            <th width="30%">Evening Counts</th>
+                            <th width="30%">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                            @{
-                                foreach (var item in Model.DailyInterviewSlots)
-                                {
-                                    <tr>
-                                        <td><strong>@item.IRFnSkill</strong></td>
-                                        <td class="text-center"><span class="label-num"><strong>@item.Morning</strong></span></td>
-                                        <td class="text-center"><span class="label-num"><strong>@item.Evening</strong></span></td>
-                                        <td class="text-center"><span class="label-num"><strong>@item.Selected/@item.Rejected/@item.BorderLine/@item.Proxy/@item.NoShowCount/@item.ScheduledCount/@item.DroppedCount/@item.Pending</strong></span></td>
-                                    </tr>
+                        @{
+                            foreach (var item in Model.DailyInterviewSlots)
+                            {
+                                <tr>
+                                    <td><strong>@item.IRFnSkill</strong></td>
+                                    <td class="text-center"><span class="label-num"><strong>@item.Morning</strong></span></td>
+                                    <td class="text-center"><span class="label-num"><strong>@item.Evening</strong></span></td>
+                                    <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
+                                </tr>
 
-                                }
                             }
+                        }
 
 
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
             </div>
+
+            <div class="legend">
+
+                <ul>
+                    <li><div class="g color"></div>Selected</li>
+                    <li><div class="r color"></div>Rejected</li>
+                    <li><div class="b color"></div>BorderLine</li>
+                    <li><div class="pr color"></div>Proxy</li>
+                    <li><div class="ns color"></div>NoShow</li>
+                    <li><div class="sch color"></div>Schedule</li>
+                    <li><div class="dr color"></div>Dropped</li>
+                    <li><div class="pe color"></div>Pending</li>
+
+                </ul>
+            </div>
+        </div>
         }
         else
         {
@@ -45,4 +60,10 @@
 
 <script type="text/javascript">
     $(".sb-container").scrollBox();
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>
