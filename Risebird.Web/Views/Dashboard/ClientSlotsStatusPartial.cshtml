@@ -4,7 +4,7 @@
     @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
     {
 
-        <div class="sb-container scroller">
+        <div class="sb-container scroller-height">
             <div class="table-responsive">
                 <table class="table table-bordered table-striped ">
                     <thead>
@@ -21,9 +21,9 @@
                             foreach (var item in Model.DailyMeetingResultsSlots)
                             {
                                 <tr>
-                                    <td class="text-center"><span class="label-num"><strong>@item.Morning</strong></span></td>
-                                    <td class="text-center"><span class="label-num"><strong>@item.Evening</strong></span></td>
-                                    <td class="text-center"><span class="label-num"><strong>@item.Selected/@item.Rejected/@item.BorderLine/@item.Proxy/@item.NoShowCount/@item.ScheduledCount/@item.DroppedCount/@item.Pending</strong></span></td>
+                                    <td class="text-center"><strong>@item.Morning</strong></td>
+                                    <td class="text-center"><strong>@item.Evening</strong></td>
+                                    <td class="text-center"><strong>@item.Selected/@item.Rejected/@item.BorderLine/@item.Proxy/@item.NoShowCount/@item.ScheduledCount/@item.DroppedCount/@item.Pending</strong></td>
                                     <td><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
                                 </tr>
 

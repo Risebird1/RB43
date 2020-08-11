@@ -106,118 +106,127 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-5 col-lg-5 col-sm-5">
-                        <div class="card card-chart">
-                            <div class="card-header">
-                                <h4 class="card-title">Interview Analysis</h4>
+                    <div class="skill">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title-box">
+                                    <h3>Interview Analysis</h3>
+
+                                </div>
+
                             </div>
-                            <div class="card-body">
-                                <div id="myFunnelChart" style="height: 300px; width: 100%;"></div>
+
+
+                                <div class="panel-body">
+                                    <div id="myFunnelChart" class="Funnelid"></div>
+
+
+                               
 
 
                             </div>
 
                         </div>
 
-
                     </div>
-                    <div class="col-md-7 col-lg-7 col-sm-7">
-                        <div style="height:50%">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <div class="panel-title-box">
-                                        <h3>Daily Interview Stats</h3>
+                            <div class="daily-interview">
+                              
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <div class="panel-title-box">
+                                                <h3>Daily Interview Stats</h3>
 
-                                    </div>
-                                    <ul class="panel-controls" style="margin-top: 2px;">
-
-                                        <li>
-                                            <div class="col-md-12 col-sm-12 nopad interview-date">
-                                                <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
                                             </div>
-                                        </li>
-                                        <li>
+                                            <ul class="panel-controls" style="margin-top: 2px;">
 
-                                            <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div id="slotsId">
-                                    <div class="panel-body panel-body-table">
-                                        @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
-                                        {
+                                                <li>
+                                                    <div class="col-md-12 col-sm-12 nopad interview-date">
+                                                        <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
+                                                    </div>
+                                                </li>
+                                                <li>
 
-                                            <div class="sb-container scroller">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered table-striped ">
-                                                        <thead>
-                                                            <tr>
-                                                                <th width="20%">Morning Counts</th>
-                                                                <th width="30%">Evening Counts</th>
-                                                                <th width="30%">Result@*(Selected/Rejected/Borderline/Proxy/NoShow/Scheduled/Dropped/Pending)*@</th>
-                                                                <th width="50%">Skill</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
+                                                    <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div id="slotsId">
+                                            <div class="panel-body panel-body-table">
+                                                <div style="min-height:200px;">
+                                                    @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
+                                                    {
 
-                                                            @{
-                                                                foreach (var item in Model.DailyMeetingResultsSlots)
-                                                                {
-                                                                    <tr>
-                                                                        <td class="text-center"><span class="label-num"><strong>@item.Morning</strong></span></td>
-                                                                        <td class="text-center"><span class="label-num"><strong>@item.Evening</strong></span></td>
-                                                                        <td class="text-center"><span class="label-num"><strong>@item.Selected/@item.Rejected/@item.BorderLine/@item.Proxy/@item.NoShowCount/@item.ScheduledCount/@item.DroppedCount/@item.Pending</strong></span></td>
-                                                                        <td><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
-                                                                    </tr>
+                                                        <div class="sb-container scroller-height">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-bordered table-striped ">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th width="20%">Morning Counts</th>
+                                                                            <th width="30%">Evening Counts</th>
+                                                                            <th width="30%">Result@*(Selected/Rejected/Borderline/Proxy/NoShow/Scheduled/Dropped/Pending)*@</th>
+                                                                            <th width="50%">Skill</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
 
-                                                                }
-                                                            }
+                                                                        @{
+                                                                            foreach (var item in Model.DailyMeetingResultsSlots)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td class="text-center"><strong>@item.Morning</strong></td>
+                                                                                    <td class="text-center"><strong>@item.Evening</strong></td>
+                                                                                    <td class="text-center"><strong>@item.Selected/@item.Rejected/@item.BorderLine/@item.Proxy/@item.NoShowCount/@item.ScheduledCount/@item.DroppedCount/@item.Pending</strong></td>
+                                                                                    <td><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
+                                                                                </tr>
+
+                                                                            }
+                                                                        }
 
 
-                                                        </tbody>
-                                                    </table>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div>No interviews for this day!</div>
+                                                    }
                                                 </div>
                                             </div>
-                                        }
-                                        else
-                                        {
-                                            <div>No interviews for this day!</div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-lg-6 col-sm-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p style="width:100%" class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
-                                        <div>
-                                            <div id="candidatesPieId" class="PieId"></div>
                                         </div>
                                     </div>
-                                </div>
 
-                            </div>
-                            <div class="col-md-6 col-lg-6 col-sm-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
-                                        <div>
-                                            <div id="meetingsCountId" class="PieId"></div>
+                                <div class="row">
+                                    <div class="col-md-6 col-lg-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <p style="width:100%" class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                                <div>
+                                                    <div id="candidatesPieId" class="PieId"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6 col-lg-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                                <div>
+                                                    <div id="meetingsCountId" class="PieId"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- END DASHBOARD CHART -->
+
+
+
                     </div>
-                </div>
-                <!-- END DASHBOARD CHART -->
-
-
-
-            </div>
             <!-- END PAGE CONTENT WRAPPER -->
         </div>
         <!-- END PAGE CONTENT -->

@@ -663,6 +663,10 @@ ul.panel-controls > li > button {
     .scroller {
         height: 300px;
     }
+
+.scroller-height {
+    height: 200px;
+}
 #progressTable_wrapper {
     padding: 10px;
 }
@@ -720,11 +724,10 @@ ul.panel-controls > li > button {
     padding-left: 15px;
 }
 .daily-interview {
-    -ms-flex: 0 0 33.333333%;
-    flex: 0 0 33.333333%;
-    max-width: 33.333333%;
+    -ms-flex: 0 0 63.333333%;
+    flex: 0 0 63.333333%;
+    max-width: 63.333333%;
     padding-right: 15px;
-
 }
 
 .daily-slot {
@@ -1514,7 +1517,9 @@ top:3px;
     }
 
     @media screen and (max-width: 767px) {
-     
+        .skill .table-responsive, .daily-interview .table-responsive {
+            border: 0px;
+        }
         #txtvideoUrls {
             word-break: break-word;
         }
