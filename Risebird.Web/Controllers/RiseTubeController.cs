@@ -1379,7 +1379,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     ViewBag.ProfileName = profileName;
                     ViewBag.CuratedGroupId = curatedGroupId;
-                    if (profileName == "CuratedUser")
+                    if (profileName == "CuratedUser" || profileName=="Client")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");

@@ -1219,6 +1219,9 @@ namespace Risebird.Business
                 {
                     CuratedGroupUserList = (IList<CuratedGroupUsers>)_irfRepository.GetCuratedGroupUsers(curatedGroupId).Result
                 };
+                var list = model.CuratedGroupUserList.Where(x => x.IsAdded).ToList();
+                list.AddRange(model.CuratedGroupUserList.Where(x => !x.IsAdded));
+                model.CuratedGroupUserList = (IList<CuratedGroupUsers>)list;
                 model.CuratedGroupName = model.CuratedGroupUserList.FirstOrDefault().CuratedGroupName;
                 model.CuratedGroupId = model.CuratedGroupUserList.FirstOrDefault().CuratedGroupId;
                 return model;
