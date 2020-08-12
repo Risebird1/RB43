@@ -346,10 +346,14 @@
         UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
         //candidatesPieId
         if (@Model.CandidatesCountObj.TotalCandidates!= 0) {
-            var candidateCountObj = [{ y: 8, label: "Proxy" },
-            { y: 31, label: "Selected" },
-            { y: 27, label: "Rejected" },
-            { y: 34, label: "Border Line" }]
+           var candidateCountObj = [{ y: @Model.CandidatesCountObj.Proxy, label: "Proxy" },
+            { y: @Model.CandidatesCountObj.Selected, label: "Selected" },
+            { y: @Model.CandidatesCountObj.Rejected, label: "Rejected" },
+            { y: @Model.CandidatesCountObj.BorderLine, label:"Border Line"},
+            { y: @Model.CandidatesCountObj.NoShowCount, label:"No Show"},
+            { y: @Model.CandidatesCountObj.ScheduledCount, label:"Scheduled"},
+            { y: @Model.CandidatesCountObj.DroppedCount, label:"Dropped"},
+            { y: @Model.CandidatesCountObj.Pending, label: "Pending" }]
 
             var chart = new CanvasJS.Chart("candidatesPieId", {
                 theme: "light2",
@@ -362,8 +366,8 @@
                     startAngle: 60,
                     innerRadius: 55,
                     indexLabelFontSize: 15,
-                    indexLabel: "{label}  {y}%",
-                    toolTipContent: "<b>{label} </b>({y}%)",
+                    indexLabel: "{label}  {y}",
+                    toolTipContent: "<b>{label} </b>({y})",
 
                     dataPoints: candidateCountObj
                 }]
