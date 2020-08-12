@@ -108,15 +108,17 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public Task<CandidatesCount> GetCandidatesCount()
+        public async Task<CandidatesCount> GetCandidatesCount()
         {
             try
             {
-                return _dashboardRespository.GetCandidatesCount();
+                var countObj = await _dashboardRespository.GetCandidatesCount();
+                countObj.TotalCandidates = (countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy + countObj.NoShowCount + countObj.DroppedCount + countObj.ScheduledCount + countObj.Pending);
+                return countObj;
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -164,7 +166,9 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.GetClientCandidatesCount(emailId);
+                var countObj = await _dashboardRespository.GetClientCandidatesCount(emailId);
+                countObj.TotalCandidates = (countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy + countObj.NoShowCount + countObj.DroppedCount + countObj.ScheduledCount + countObj.Pending);
+                return countObj;
             }
             catch (Exception ex)
             {
