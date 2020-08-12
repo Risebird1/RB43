@@ -1629,6 +1629,19 @@ namespace Risebird.Business
 
             }
         }
+        public IEnumerable<VideoDetails> GetallVideoSumaryDetails()
+        {
+            try
+            {
+                var result = _meetingRespository.GetallVideoSumaryDetails();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
 }

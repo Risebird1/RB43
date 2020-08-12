@@ -149,8 +149,8 @@
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
                                             }
-                                            <input type="button" onclick="openVideoDetailsModel()" value="button" />
-                                            @Html.ActionLink("Video Detail View", "VideoDetailView", "Risetube", new { interviewid = Model.imid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;margin-right:3px;" })
+
+                                            @*@Html.ActionLink("Video Detail View", "VideoDetailView", "Risetube", new { interviewid = Model.imid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;margin-right:3px;" })*@
                                             @if (ViewBag.actionstatus == "SkillChannel" && ViewBag.CuratedGroupId != null)
                                             {
                                                 <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
@@ -187,10 +187,6 @@
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
-
-
-
-
 
                                     <form action="@Url.Action("VideoPage", "risetube", new { id = Model.imid })" method="post" id="form">
                                         <div class="modal-body">
@@ -752,35 +748,30 @@
                                                     else
                                                     {
                                                         <div class="col-md-4 views tooltip1" style="text-align: end;">
-                                                            @if (Model.VideoLink != null)
-                                                            {
-                                                                <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
-                                                            }
-                                                            <span class="tooltiptext">
-                                                                <table>
-                                                                    <tr>
-                                                                        <td class="tooltiphead">
-                                                                            <span class="left-tooltext">Email</span>
-                                                                            <span class="right-tooltext">Counts</span>
-                                                                        </td>
-
-
-                                                                    </tr>
-
-                                                                    @foreach (var item in Model.VideoCountDetail)
+                                                            <input type="button" onclick="openVideoDetailsModel()" value="Video Detail View" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+                                                            @*@if (Model.VideoLink != null)
                                                                     {
+                                                                        <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
+                                                                    }
+                                                                <span class="tooltiptext">
+                                                                    <table>
                                                                         <tr>
-                                                                            <td>
-
-                                                                                <span class="left-tooltext">@item.UserName</span>
-                                                                                <span class="right-tooltext">@item.Count</span>
+                                                                            <td class="tooltiphead">
+                                                                                <span class="left-tooltext">Email</span>
+                                                                                <span class="right-tooltext">Counts</span>
                                                                             </td>
                                                                         </tr>
-                                                                    }
-
-                                                                </table>
-
-                                                            </span>
+                                                                        @foreach (var item in Model.VideoCountDetail)
+                                                                        {
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <span class="left-tooltext">@item.UserName</span>
+                                                                                    <span class="right-tooltext">@item.Count</span>
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    </table>
+                                                                </span>*@
                                                         </div>
                                                     }
                                                 </div>
@@ -1550,9 +1541,6 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-
-
-
             <div class="filheader">
                 <div class="filavatar">
                     <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 26"><path fill="rgb(255,255,255)" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
@@ -1562,19 +1550,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeSharePopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
-
-
             <div class="modal-body">
-
                 <div class="col-md-12">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
-
                     <div class="sharing">
                         <textarea class="form-control" rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                     </div>
                 </div>
-
-
                 <div class="col-md-12">
                     <div class=" text-right">
                         <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
@@ -1582,12 +1564,11 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
-<div id="PublicShareModel" class="modal modal-bg">
+<div id="PublicShareModel" class="modal modal-bg" style="z-index:10">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -2738,21 +2719,17 @@
     jQuery(document).ready(function ($) {
 
         if ($("#txtVideostatus").val() == "Public") {
-
-
             var modal = document.getElementById("PublicShareVideo");
             modal.style.display = "block";
         }
         $("#btnShare").on('click', function () {
             var modal = document.getElementById("MyShareModel");
-
             modal.style.display = "block";
         });
         $("#btnShare1").on('click', function () {
             var modal = document.getElementById("MyShareModel1");
             modal.style.display = "block";
             var getComment = document.getElementById("IreportModel_InterviewerComment").value;
-
             document.getElementById("comment").innerHTML = getComment;
 
         });
@@ -3049,7 +3026,7 @@
                     $.ajax({
                         type: "POST",
                         url: "/RiseTube/VedioShareDetails",
-                        data: { value: "Public", vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), Emailids: $("#txtpublicsharing").val(),currentUrl:$("#txtpublicshareurl").val() },
+                        data: { value: "Public", vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), Emailids: $("#txtpublicsharing").val(), currentUrl: $("#txtpublicshareurl").val() },
                         success: function (data) {
                             closepublicSharePopUp();
                         }
@@ -3088,8 +3065,8 @@
         var html = '';
         html += ' <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">';
         html += '       <tr>';
-        html += '          <th>Video Link</th>';
         html += '          <th>User Name</th>';
+        html += '          <th>Video Link</th>';
         html += '            <th><span class="pull-left">Total View</span>   <span class="pull-right"><button class="icon-btn"><span class="fa fa-eye"></span></button></span></th>';
         html += '           <th><span class="pull-left">Total Time</span> <span class="pull-right"><button class="icon-btn"><span class="fa fa-clock-o"></span></button></span></th>';
         html += '           <th>Action</th>';
@@ -3097,8 +3074,8 @@
         html += '       </tr>';
         for (var i = 0; i < data.length; i++) {
             html += '   <tr>';
-            html += '                    <td>' + data[i].videoUrl + '<input id="txt_'+i+'" value="' + data[i].videoUrl + '" /></td>';
             html += '                  <td>' + data[i].candidate + '</td>';
+            html += '                    <td>' + data[i].videoUrl + '<input id="txt_' + i + '" value="' + data[i].videoUrl + '" /></td>';
             html += '                  <td class="text-center count-view"><span class="label-num"><strong>' + data[i].count + '</strong></span></td>';
             if (data[i].timeSpend != null) {
                 html += '                <td class="text-center">' + data[i].timeSpend + '</td>';
@@ -3106,14 +3083,14 @@
                 html += '                <td class="text-center"></td>';
 
             }
-            html += '                <td class="text-center"><input type="button" value="Share" onclick="OpenSharePopup('+i+')" /></td>';
+            html += '                <td class="text-center"><input type="button" value="Share" onclick="OpenSharePopup(' + i + ')" /></td>';
             html += '             </tr>';
         }
         html += '    </table>';
         $("#divvideodetailsmodel").empty().html(html);
     }
-        function OpenSharePopup(index) {
-            var videourl = $("#txt_" + index).val();
+    function OpenSharePopup(index) {
+        var videourl = $("#txt_" + index).val();
         var modal = document.getElementById("PublicShareModel");
         modal.style.display = "block";
         $("#txtpublicsharetxt").val("Shared");

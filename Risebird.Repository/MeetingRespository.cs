@@ -2479,5 +2479,24 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+        public IEnumerable<VideoDetails> GetallVideoSumaryDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    VideoDetails interviewComments = new VideoDetails();
+                    DynamicParameters paramx = new DynamicParameters();
+                    var resultset = SqlMapper.Query<VideoDetails>(con, "usp_FetchAllVideoSumaryDetails", paramx,
+                                        commandType: CommandType.StoredProcedure);
+                    return resultset;
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

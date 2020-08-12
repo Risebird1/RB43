@@ -1795,7 +1795,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<IActionResult> VideoDetailView(int interviewid, int? Page)
+        public async Task<IActionResult> VideoDetailView(int? Page)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1804,11 +1804,10 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
                     //To get data from db for video displayes
-                    var model = _meetingService.GetVideoSumaryDetails(interviewid);
+                    var model = _meetingService.GetallVideoSumaryDetails();
                     foreach (var item in model)
                     {
                         item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
-                        item.interviewid = interviewid;
                     }
                     return View(model.ToPagedList(Page ?? 1, 12));
                 }

@@ -12,5 +12,7 @@ namespace Risebird.Entities.ViewModel
         public int Videoid { get; set; }
         public string VideoUrl { get; set; }
         public string TimeSpend { get; set; }
+        public string CandidateEmail { get; set; }
+
     }
 }

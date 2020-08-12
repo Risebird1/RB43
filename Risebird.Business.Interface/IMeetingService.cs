@@ -80,6 +80,6 @@ namespace Risebird.Business.Interface
         Task<InterviewReport> GetSharedInteviewReport(int interviewId, int irfId,int id);
         IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid);
         Task AddTimeSpend(int id, string emailaddress, string flag,TimeSpan TimeSpend);
-
+        IEnumerable<VideoDetails> GetallVideoSumaryDetails();
     }
 }
