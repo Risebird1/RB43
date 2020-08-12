@@ -159,7 +159,9 @@ textarea::-webkit-scrollbar-thumb {
 }
 .interview .card-header .fa-file-excel-o:before{font-size:35px;}
 
-
+.min-h {
+    min-height: 235px;
+}
 .select-css {
     display: block;
     line-height: 1.3;
@@ -661,8 +663,12 @@ ul.panel-controls > li > button {
 }
     .scrollbox table td{font-size:13px;}
     .scroller {
-        height: 300px;
+        height: 270px;
     }
+
+.scroller-height {
+    height: 200px;
+}
 #progressTable_wrapper {
     padding: 10px;
 }
@@ -707,7 +713,10 @@ ul.panel-controls > li > button {
     padding-left: 15px;
 }
 
-   
+    .skill [type="datetime-local"] {
+        background: #fff url(../img/blue-timdate.png) 97% 50% no-repeat !important;
+        background-size: 6% !important;
+    }
 
 .skill {
     -ms-flex: 0 0 36.666667%;
@@ -717,11 +726,10 @@ ul.panel-controls > li > button {
     padding-left: 15px;
 }
 .daily-interview {
-    -ms-flex: 0 0 33.333333%;
-    flex: 0 0 33.333333%;
-    max-width: 33.333333%;
+    -ms-flex: 0 0 63.333333%;
+    flex: 0 0 63.333333%;
+    max-width: 63.333333%;
     padding-right: 15px;
-
 }
 
 .daily-slot {
@@ -782,15 +790,112 @@ ul.panel-controls > li > button {
     border-width: 5px 5px 0;
     border-top-color: #333333;
 }
-
-
-.multiselect-selected-text {
-    text-transform: capitalize;
-    font-weight: normal;
-    letter-spacing: normal;
-    color: #807e7e;
-    font-size: 12px;
+.daily-interview .tooltip-inner {
+    min-width: 100px;
+    /* If max-width does not work, try using width instead */
+    width: auto;
+    background: #333333;
 }
+.daily-interview a.selected[title] {
+    color: green;
+}
+
+.daily-interview a.rejected[title] {
+    color: red;
+}
+
+.daily-interview a.borderline[title] {
+    color: hotpink;
+}
+
+.daily-interview a.proxy[title] {
+    color: black;
+}
+
+.daily-interview a.pending[title] {
+    color: orangered;
+}
+
+.daily-interview a.dropped[title] {
+    color: orange;
+}
+
+.daily-interview a.schedule[title] {
+    color: cornflowerblue;
+}
+
+.daily-interview a.noshow[title] {
+    color: gray;
+}
+.daily-interview .tooltip.top .tooltip-arrow {
+    bottom: 0;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px 5px 0;
+    border-top-color: #333333;
+}
+.daily-interview td a {
+    color: #504e4e;
+    text-decoration:none;
+}
+
+.daily-interview ul{
+ margin:0;
+padding:0;
+}
+.selected .tooltip-inner{color:red}
+.legend {
+    margin: 10px 0px 5px 0px;
+}
+.legend li {
+    display: inline-block;
+    list-style: none;
+    font-size: 13px;
+    margin: 0px 3px 0px 3px;
+}
+.legend li .color {
+    margin: 0px 5px 0 0px;
+    display: inline-block;
+    width: 18px;
+    height: 14px;
+    border-radius: 3px;
+    background: green;
+    content: "";
+}
+
+    .legend li .g {
+        background: green;
+    }
+.legend li .r {
+    background: red;
+}
+
+.legend li .b {
+    background: hotpink;
+}
+
+.legend li .pr {
+    background: black;
+}
+.legend li .pe {
+    background: orangered;
+}
+.legend li .sch {
+    background: cornflowerblue;
+}
+.legend li .dr {
+    background: orange;
+}
+.legend li .ns {
+    background: gray;
+}
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
 #statusModal.modal-bg{padding-top:30px;}
 #statusModal hr{margin:10px 0px;}
 #statusModal .pagination .page-item .page-link {
@@ -1511,7 +1616,20 @@ top:3px;
     }
 
     @media screen and (max-width: 767px) {
-     
+        .skill .table-responsive, .daily-interview .table-responsive {
+            border: 0px;
+        }
+        .daily-interview .table-responsive{margin-bottom:2px;}
+        .min-h {
+            min-height: 100%;
+        }
+        .legend li {
+            display: inline-block;
+            list-style: none;
+            font-size: 12px;
+            margin: 0px 3px 0px 3px;
+            width: 30%;
+        }
         #txtvideoUrls {
             word-break: break-word;
         }

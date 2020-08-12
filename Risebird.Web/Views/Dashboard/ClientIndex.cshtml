@@ -2,7 +2,7 @@
 @using Risebird.Entities.Enum
 @{
 
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
@@ -12,10 +12,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 
-<script type="text/javascript" src="~/js/plugins/jquery/jquery.min.js"></script>
 
-<script type="text/javascript" src="~/js/plugins/jquery/jquery-ui.min.js"></script>
-<script type="text/javascript" src="~/js/plugins/bootstrap/bootstrap.min.js"></script>
 <!-- END PLUGINS -->
 <!-- START THIS PAGE PLUGINS-->
 <script type='text/javascript' src='~/js/plugins/icheck/icheck.min.js'></script>
@@ -36,7 +33,9 @@
 
 <script type='text/javascript' src='~/js/plugins/bootstrap/bootstrap-datepicker.js'></script>
 <script type="text/javascript" src="~/js/plugins/daterangepicker/daterangepicker.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" defer>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
 
 <!-- END THIS PAGE PLUGINS-->
 <!-- START TEMPLATE -->
@@ -104,9 +103,145 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="skill">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title-box">
+                                    <h3>Interview Analysis</h3>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="panel-body">
+                                <div id="myFunnelChart" class="Funnelid"></div>
+
+
+
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="daily-interview">
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="panel-title-box">
+                                    <h3>Daily Interview Stats</h3>
+
+                                </div>
+                                <ul class="panel-controls" style="margin-top: 2px;">
+
+                                    <li>
+                                        <div class="col-md-12 col-sm-12 nopad interview-date">
+                                            <input id="interviewSlotsDate" name="interviewSlotsDate" type="date" class="form-control">
+                                        </div>
+                                    </li>
+                                    <li>
+
+                                        <button onclick="getInterviewSlots()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="slotsId">
+                                <div class="panel-body panel-body-table">
+                                    <div class="min-h">
+                                        @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
+                                        {
+
+                                            <div class="sb-container scroller-height">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th width="30%" class="text-center"><strong>Skill</strong></th>
+                                                                <th width="20%" class="text-center"><strong>Morning Count(s)</strong></th>
+                                                                <th width="20%" class="text-center"><strong>Evening Count(s)</strong></th>
+                                                                <th width="50%" class="text-center"><strong>Result</strong></th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                            @{
+                                                                foreach (var item in Model.DailyMeetingResultsSlots)
+                                                                {
+                                                                    <tr>
+                                                                        <td class="text-center"><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
+                                                                        <td class="text-center"><strong>@item.Morning</strong></td>
+                                                                        <td class="text-center"><strong>@item.Evening</strong></td>
+                                                                        <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
+
+                                                                    </tr>
+
+                                                                }
+                                                            }
+
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="legend">
+
+                                                <ul>
+                                                    <li><div class="g color"></div>Selected</li>
+                                                    <li><div class="r color"></div>Rejected</li>
+                                                    <li><div class="b color"></div>BorderLine</li>
+                                                    <li><div class="pr color"></div>Proxy</li>
+                                                    <li><div class="ns color"></div>NoShow</li>
+                                                    <li><div class="sch color"></div>Schedule</li>
+                                                    <li><div class="dr color"></div>Dropped</li>
+                                                    <li><div class="pe color"></div>Pending</li>
+
+                                                </ul>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div>No interviews for this day!</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p style="width:100%" class="card-text">Total Candidates : <span><strong>@Model.CandidatesCountObj.TotalCandidates</strong></span></p>
+                                        <div>
+                                            <div id="candidatesPieId" class="PieId"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="card-text">Total Meetings : <span><strong>@Model.MeetingResultCountObj.TotalMeetingsCount</strong></span></p>
+                                        <div>
+                                            <div id="meetingsCountId" class="PieId"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- END DASHBOARD CHART -->
 
-                
+
 
             </div>
             <!-- END PAGE CONTENT WRAPPER -->
@@ -125,7 +260,58 @@
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
+<script>
+
+    var chData= JSON.parse(('@Model.FunnelData').replace(/&quot;/g, '"'));
+    am4core.ready(function () {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        let chart = am4core.create("myFunnelChart", am4charts.SlicedChart);
+        chart.data = [{
+            "name": "Total Risebird Selections",
+            "value": chData.TotalRisebirdSelection
+        }, {
+            "name": "Completed",
+            "value": chData.TotalCompleted
+        }, {
+            "name": "Total Confirmations",
+            "value": chData.TotalConfirmations
+        }, {
+            "name": "Total Invites",
+                "value": chData.TotalCandidates
+        }, {
+            "name": "Total Candidates",
+            "value": chData.TotalCandidates
+        }];
+
+
+        chart.logo.disabled = true;
+        let series = chart.series.push(new am4charts.FunnelSeries());
+        series.dataFields.value = "value";
+        series.dataFields.category = "name";
+        series.labels.template.disabled = false;
+
+        series.colors.step = 16;
+        var fillModifier = new am4core.LinearGradientModifier();
+        fillModifier.brightnesses = [-0.1, -0.1, -0.1];
+        fillModifier.offsets = [0, 0.5, 1];
+
+
+        series.slices.template.fillModifier = fillModifier;
+        series.alignLabels = true;
+
+        chart.fontSize = 13;
+        series.labels.template.text = "{category}: [bold]{value}[/]";
+
+    });
+</script>
 <script>
     function getDate() {
         var today = new Date();
@@ -144,7 +330,7 @@
         today = yyyy + '-' + mm + '-' + dd;
         document.getElementById('interviewTrackingDate').value = today;
         //document.getElementById('statusTrackingDate').value = today;
-        //document.getElementById('interviewSlotsDate').value = today;
+        document.getElementById('interviewSlotsDate').value = today;
         //document.getElementById('progressTrackingDate').value = today;
     }
 
@@ -158,17 +344,69 @@
         var meetingsDataLabels = '@Model.MeetingsDataLabels';
         meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
         UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
-        
+        //candidatesPieId
+        if (@Model.CandidatesCountObj.TotalCandidates!= 0) {
+            var candidateCountObj = [{ y: 8, label: "Proxy" },
+            { y: 31, label: "Selected" },
+            { y: 27, label: "Rejected" },
+            { y: 34, label: "Border Line" }]
+
+            var chart = new CanvasJS.Chart("candidatesPieId", {
+                theme: "light2",
+                width: 350,//in pixels
+                height: 200,//in pixels
+                animationEnabled: true,
+                title: null,
+                data: [{
+                    type: "pie",
+                    startAngle: 60,
+                    innerRadius: 55,
+                    indexLabelFontSize: 15,
+                    indexLabel: "{label}  {y}%",
+                    toolTipContent: "<b>{label} </b>({y}%)",
+
+                    dataPoints: candidateCountObj
+                }]
+            });
+            chart.render();
+        }
+
+
+        //meetingsCountId
+        var meetingsCountObj = [{ y: @Model.MeetingResultCountObj.ProxyCount, label: "Proxy" },
+            { y: @Model.MeetingResultCountObj.SelectedCount, label: "Selected" },
+            { y: @Model.MeetingResultCountObj.RejectedCount, label: "Rejected" },
+            { y: @Model.MeetingResultCountObj.BorderLineCount, label:"Border Line"},
+            { y: @Model.MeetingResultCountObj.NoShowCount, label:"No Show"},
+            { y: @Model.MeetingResultCountObj.ScheduledCount, label:"Scheduled"},
+            { y: @Model.MeetingResultCountObj.DroppedCount, label:"Dropped"},
+            @*{ y: @Model.MeetingResultCountObj.StatusPendingCount, label:"Status Pending"}*@
+            @*{y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}*@]
+
+        var chart = new CanvasJS.Chart("meetingsCountId", {
+           theme: "light2",
+            width: 350,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: null,
+            data: [{
+                type: "pie",
+                startAngle: 60,
+                innerRadius: 55,
+                indexLabelFontSize: 15,
+                indexLabel: "{label}  {y}",
+                toolTipContent: "<b>{label} </b>({y})",
+
+                dataPoints: meetingsCountObj
+            }]
+        });
+        chart.render();
+
     }
-
-
-
-
 
 </script>
 <script>
     function changeInterviewTracking() {
-        debugger;
         document.getElementById('area-chart').innerHTML = '';
         var date = document.getElementById('interviewTrackingDate').value;
         $.ajax({
@@ -189,7 +427,8 @@
             labels: meetingsDataLabels,
             resize: true,
             hideHover: true,
-            //xLabels: 'day',
+            xLabels: 'hour',
+            yLabelFormat: function (y) { return y != Math.round(y) ? '' : y; },
             gridTextSize: '10px',
             //lineColors: ['#1caf9a', '#33414E'],
             gridLineColor: '#E5E5E5'
@@ -199,28 +438,12 @@
 
     }
 </script>
-
-
-@*<script>
-    function getInterviewStatus() {
-        var date = document.getElementById('statusTrackingDate').value;
-        $.ajax({
-            url: '/Dashboard/GetDateWiseInterviewStatus',
-            data: { 'date': date },
-            success: function (data) {
-                $('#statusTrackingId').html('');
-                $('#statusTrackingId').html(data);
-
-
-            }
-        });
-    }
-
+<script>
     function getInterviewSlots() {
         var date = document.getElementById('interviewSlotsDate').value;
         $.ajax({
-            url: '/Dashboard/GetDateWiseMeetingsSlots',
-            data: { 'date': date },
+            url: '/Dashboard/GetDateWiseClientMeetingsSlots',
+            data: { 'date': date , 'emailId': '@Model.EmailId'},
             success: function (data) {
                 $('#slotsId').html('');
                 $('#slotsId').html(data);
@@ -230,21 +453,51 @@
         });
     }
 
-    function getIRFProgress() {
-        var date = document.getElementById('ProgressDate_Date').value;
-        $.ajax({
-            url: '/Dashboard/GetDateWiseIRFProgress',
-            data: { 'date': date },
-            success: function (data) {
-                debugger;
-                $('#progressTableId').html('');
-                $('#progressTableId').html(data);
+</script>
+
+@*<script>
+        function getInterviewStatus() {
+            var date = document.getElementById('statusTrackingDate').value;
+            $.ajax({
+                url: '/Dashboard/GetDateWiseInterviewStatus',
+                data: { 'date': date },
+                success: function (data) {
+                    $('#statusTrackingId').html('');
+                    $('#statusTrackingId').html(data);
 
 
-            }
-        });
-    }
-</script>*@
+                }
+            });
+        }
+
+        function getInterviewSlots() {
+            var date = document.getElementById('interviewSlotsDate').value;
+            $.ajax({
+                url: '/Dashboard/GetDateWiseMeetingsSlots',
+                data: { 'date': date },
+                success: function (data) {
+                    $('#slotsId').html('');
+                    $('#slotsId').html(data);
+
+
+                }
+            });
+        }
+
+        function getIRFProgress() {
+            var date = document.getElementById('ProgressDate_Date').value;
+            $.ajax({
+                url: '/Dashboard/GetDateWiseIRFProgress',
+                data: { 'date': date },
+                success: function (data) {
+                    $('#progressTableId').html('');
+                    $('#progressTableId').html(data);
+
+
+                }
+            });
+        }
+    </script>*@
 
 
 <script src="~/Newassets/js/scrollBar.js"></script>
@@ -258,5 +511,12 @@
 <script type="text/javascript">
     $(".sb-container").scrollBox();
 </script>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 

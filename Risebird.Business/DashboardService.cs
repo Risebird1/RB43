@@ -134,5 +134,56 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IRFFunnel> GetClientFunnelData(string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetClientFunnelData(emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<ClientDailySlotsStatus>> GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetDateWiseClientMeetingsSlots(date, emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<CandidatesCount> GetClientCandidatesCount(string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetClientCandidatesCount(emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<MeetingResultCount> GetClientMeetingsResults(string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetClientMeetingsResults(emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
