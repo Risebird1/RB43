@@ -1228,7 +1228,6 @@ namespace Risebird.Web.Controllers
             {
                 return Json("Fail");
             }
-
         }
         [HttpPost]
         public JsonResult publicVedioShare(string value, string vedioid)
@@ -1851,6 +1850,61 @@ namespace Risebird.Web.Controllers
             }
             //End:SaveTime Spend on vedio page
             return Json("Succecss");
+        }
+        public JsonResult VideoDetailsJsonView(int interviewid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    //To get data from db for video displayes
+                    var model = _meetingService.GetVideoSumaryDetails(interviewid);
+                    foreach (var item in model)
+                    {
+                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
+                        item.interviewid = interviewid;
+                    }
+                    return Json(model);
+                }
+                else
+                {
+                    return Json("No Data");
+                }
+            }
+            else
+            {
+                return Json("No Data");
+            }
+        }
+        [HttpPost]
+        public JsonResult VedioShareDetails(string value, string vedioid, string name, string Emailids,string currentUrl)
+        {
+            //var modelList = _meetingService.VedioShare(value, vedioid);
+            string Name = string.Empty;
+            if (name != null && name.Length >= 2)
+                Name = Name + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+            else if (name != null && name.Length == 1)
+                Name += name?.ToCharArray()[0];
+            //send a email
+            var email = HttpContext.Session.GetString("email");
+            email = email.Replace("\"", "");
+            Mail _mail = new Mail
+            {
+                TO = Emailids,
+                CC = email,
+                Subject = "Risebird: Interview video is shared with you"
+            };
+            var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, Name, currentUrl);
+            if (result.Contains("Mail sent successfully"))
+            {
+                return Json("Success");
+            }
+            else
+            {
+                return Json("Fail");
+            }
         }
     }
 }

@@ -80,26 +80,21 @@
                                     <th>Video Link</th>
                                     <th>User Name</th>
                                     <th ><span class="pull-left">Total View</span>   <span class="pull-right"><button class="icon-btn"><span class="fa fa-eye"></span></button></span></th>
-                                    <th ><span class="pull-left">Total Time</span> <span class="pull-right"><button class="icon-btn"><span class="fa fa-clock-o"></span></button></th>
+                                    <th ><span class="pull-left">Total Time</span> <span class="pull-right"><button class="icon-btn"><span class="fa fa-clock-o"></span></button></span></th>
 
                                 </tr>
                                 @foreach (var item in Model)
                                 {
                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-
                                     <tr>
                                         <td>@item.VideoUrl</td>
                                         <td>@item.Candidate</td>
                                         <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
                                         <td class="text-center">@item.TimeSpend</td>
-
                                     </tr>
-
-
                                 }
                             </table>
                             <div style="clear:both"></div>
-
                             @Html.PagedListPager(Model, Page => Url.Action("VideoDetailView", new { Page = Page }))
                         </div>
 
