@@ -3,6 +3,7 @@
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetDateWiseClientMeetingsSlotsWithoutRoles'))
 BEGIN
     DROP PROCEDURE dbo.usp_GetDateWiseClientMeetingsSlotsWithoutRoles
+	END
 SET ANSI_NULLS ON
 GO
 
