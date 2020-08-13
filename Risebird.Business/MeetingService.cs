@@ -1396,6 +1396,7 @@ namespace Risebird.Business
                 //check whether an IRF exists for the given IRFId
                 var check = _meetingRespository.GetIRFbyId(irfId);
                 var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
+                var candidatedetails = _meetingRespository.GetCandidateSharedDetails(id);
 
                 if (!check)
                 {
@@ -1418,7 +1419,6 @@ namespace Risebird.Business
                     var skills = _meetingRespository.GetSkills();
                     var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
                     var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
-
                     var techSkillList = new List<TechSkillReport>();
 
 
@@ -1459,7 +1459,7 @@ namespace Risebird.Business
                     model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)genSkillList;
 
                     model.InterviewId = interviewId;
-                    model.CandidateName = interviewDetails.candidateName;
+                    model.CandidateName = candidatedetails.Name;
                     model.interviewDate = interviewDetails.interviewDate.ToString();
                     model.resumeLink = interviewDetails.resumeLink;
                     model.IRFId = irfId;
@@ -1482,11 +1482,13 @@ namespace Risebird.Business
 
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
-                reportModel.CandidateName = interviewDetails.candidateName;
+                reportModel.CandidateName = candidatedetails.Name;
                 reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
-                reportModel.CandidateEmail = interviewDetails.candidateEmail;
+                reportModel.CandidateEmail = candidatedetails.EmailId;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
                 reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
+                reportModel.InterviewerComment = candidatedetails.InterviewerComments;
+
                 var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
                 if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
@@ -1511,7 +1513,6 @@ namespace Risebird.Business
                         };
                         selectabilityList.Add(obj);
                     }
-
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityList;
                 }
 

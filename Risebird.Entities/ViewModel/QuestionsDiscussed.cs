@@ -8,5 +8,6 @@
         public string SkillName { get; set; }
         public int RatingId { get; set; }
         public int? Timing { get; set; }
+        public string QuestionStatus { get; set; }
     }
 }
