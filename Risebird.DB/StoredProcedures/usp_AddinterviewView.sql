@@ -25,7 +25,7 @@ begin
 Select @Count=Count from VideoCountDetails where Videoid=@Interviewid and Emailid=@EmailId   
 if(@Count=0)  
 begin  
-Insert into VideoCountDetails values(@Interviewid,0,1,GETDATE(),@EmailId)  
+Insert into VideoCountDetails values(@Interviewid,0,1,GETDATE(),@EmailId,'','')  
 End  
 else  
 begin  
@@ -37,7 +37,7 @@ begin
 Select @Count=Count from VideoCountDetails where Videoid=@Interviewid and Userid=@Id
 if(@Count=0)  
 begin  
-Insert into VideoCountDetails values(@Interviewid,@Id,1,GETDATE(),'')  
+Insert into VideoCountDetails values(@Interviewid,@Id,1,GETDATE(),'','','')  
 End  
 else  
 begin  
