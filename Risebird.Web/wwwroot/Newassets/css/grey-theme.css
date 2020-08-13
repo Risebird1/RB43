@@ -79,7 +79,7 @@ input[type='radio']:checked:after {
     background: #f5f5f5 url(../img/grey-timdate.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
 }
-.btnmeeting {
+.btnmeeting, .btnmeeting:hover{
     background: #929292;
     border: 2px #929292a8 double;
 }
@@ -125,7 +125,9 @@ input[type='radio']:checked:after {
     padding: 10px !important;
 }
 
-
+.edit-share {
+    background-image: url('../../img/editicon-grey.png')!important;
+}
 
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
     border-bottom: 2px #929292 solid !important;

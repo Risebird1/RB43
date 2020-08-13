@@ -45,29 +45,17 @@
                             <div class="row">
                                 <div class="card-header clearfix">
                                     <div class="pull-left">
-                                        <h4 class="card-title"></h4>
+                                        <h4 class="card-title">Interviewers</h4>
                                     </div>
 
                                     <div class="pull-right">
-                                        @*<div class="newsletter">
-                                                <div class="content">
-                                                    <div class="input-group" id="myForm">
-                                                        <div class="searchbox">
-                                                            <input id="searchinput" type="text" class="form-control txtsearch1" placeholder="Please enter interviewer's name or skill" value="@ViewBag.searchvalue">
-                                                            <span class="input-group-btn" id="searchGo">
-                                                                <button class="btn btn3" id="btnSearch" value="Search" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg></button>
-                                                            </span>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>*@
-                                        @*@foreach (var item in Model)
+                                       
+                                        @foreach (var item in Model)
                                         {
-                                            @Html.ActionLink("Back to List", "VideoPage", "Risetube", new { id = item.interviewid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
-                                            <a href="~/RiseTube/VideoPage" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-chevron-left"></span> Back to List</a>
+                                            @*Html.ActionLink("Back to List", "VideoPage", "Risetube", new { id = item.interviewid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })*@
+                                            @*<a href="~/RiseTube/VideoPage" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-chevron-left"></span> Back to List</a>*@
                                             break;
-                                        }*@
+                                        }
                                     </div>
 
 
@@ -80,9 +68,9 @@
                                     <th>Candidate Email</th>
                                     <th>Video Link</th>
                                     <th>User Name</th>
-                                    <th><span class="pull-left">Total View</span>   <span class="pull-right"><button class="icon-btn"><span class="fa fa-eye"></span></button></span></th>
-                                    <th><span class="pull-left">Total Time</span> <span class="pull-right"><button class="icon-btn"><span class="fa fa-clock-o"></span></button></span></th>
-                                    <th>Action</th>
+                                    <th><span class="text-center">Total View</span>   </th>
+                                    <th><span class="text-center">Total Time</span> </th>
+                                    <th class="text-center">Action</th>
 
                                 </tr>
 
@@ -95,7 +83,7 @@
                                         <td>@item.Candidate</td>
                                         <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
                                         <td class="text-center">@item.TimeSpend</td>
-                                        <td><input type="button" value="Share" onclick="OpenSharePopup('@item.VideoUrl')" /></td>
+                                        <td><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input type="button" value="Share" onclick="OpenSharePopup('@item.VideoUrl')" /></div></td>
                                     </tr>
                                 }
                             </table>
