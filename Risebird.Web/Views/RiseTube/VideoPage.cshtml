@@ -2094,7 +2094,7 @@
     });
     function abc() {
         var d1 = new Date();
-        var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds(); end
+        var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds(); 
         var currentUrl = window.location.href;;
         $.ajax({
             type: "GET",
@@ -3059,8 +3059,6 @@
         var time = 1;
         if (questiontime != '') {
             time = questiontime;
-            time = questiontime;
-            time = questiontime;
         }
         var vid = document.getElementsByClassName("vjs-tech");
         vid[0].currentTime = time;
@@ -3131,7 +3129,7 @@
         for (var i = 0; i < data.length; i++) {
             html += '   <tr>';
             html += '                  <td>' + data[i].candidate + '</td>';
-            html += '                    <td ><a href="' + data[i].videoUrl + '" target="_blank">' + data[i].videoUrl +'</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
+            html += '                    <td>' + data[i].videoUrl + '<input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             html += '                  <td class="text-center count-view"><span class="label-num"><strong>' + data[i].count + '</strong></span></td>';
             if (data[i].timeSpend != null) {
                 html += '                <td class="text-center">' + data[i].timeSpend + '</td>';
