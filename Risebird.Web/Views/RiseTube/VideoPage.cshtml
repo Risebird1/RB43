@@ -752,29 +752,7 @@
                                                             <i class="fa fa-video video-icon"></i>
 
                                                             <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Video Detail View" />
-                                                            @*@if (Model.VideoLink != null)
-                                                                    {
-                                                                        <b>Total Views:</b> @Model.TotalView <a>-View(s)</a>
-                                                                    }
-                                                                <span class="tooltiptext">
-                                                                    <table>
-                                                                        <tr>
-                                                                            <td class="tooltiphead">
-                                                                                <span class="left-tooltext">Email</span>
-                                                                                <span class="right-tooltext">Counts</span>
-                                                                            </td>
-                                                                        </tr>
-                                                                        @foreach (var item in Model.VideoCountDetail)
-                                                                        {
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <span class="left-tooltext">@item.UserName</span>
-                                                                                    <span class="right-tooltext">@item.Count</span>
-                                                                                </td>
-                                                                            </tr>
-                                                                        }
-                                                                    </table>
-                                                                </span>*@
+                                                          
                                                         </div>
                                                     }
                                                 </div>
@@ -2046,7 +2024,7 @@
 
 
                 </div>
-                <h5 class="modal-title pull-left">Interview Details</h5>
+                <h5 class="modal-title pull-left">Share Analytics</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeVideoDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
