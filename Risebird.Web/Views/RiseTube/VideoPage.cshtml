@@ -213,7 +213,7 @@
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateName"> Candidate Name </label>
                                                         <div class="col-md-12 col-sm-12">
-                                                            <input type="text" id="txtVedioId" value="@Model.imid" hidden />
+                                                            <input type="text" id="txtVideoId" value="@Model.imid" hidden />
                                                             <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
 
                                                                 @foreach (var item in Model.SubVideo_List.Select(x => x.candidateName).Distinct().ToList())
@@ -608,7 +608,7 @@
                                                         <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                         <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
 
-                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
+                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
 
 
                                                     </h1>
@@ -621,9 +621,9 @@
                                                             {
                                                                 <div class="btn2">
                                                                     <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click">
-                                                                         <label id="pTotalvediolike">@Model.TotalVedioLike</label>
+                                                                        <label id="pTotalvideolike">@Model.TotalVedioLike</label>
                                                                     </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1">
-                                                                        <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label>
+                                                                        <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
                                                                     </i>
                                                                 </div>
                                                             }
@@ -631,19 +631,19 @@
                                                             {
                                                                 <div class="btn3">
                                                                     <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px;padding-right:10px">
-                                                                       
-                                                                        <label id="pTotalvediolike">@Model.TotalVedioLike</label>
+
+                                                                        <label id="pTotalvideolike">@Model.TotalVedioLike</label>
                                                                     </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:10px">
-                                                                        <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label>
+                                                                        <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
                                                                     </i>
                                                                 </div>
                                                             }
                                                             else
                                                             { <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 10px">
 
-                                                                    <label id="pTotalvediolike">@Model.TotalVedioLike</label>
+                                                                    <label id="pTotalvideolike">@Model.TotalVedioLike</label>
                                                                 </i> <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px">
-                                                                    <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label>
+                                                                    <label id="pTotalvideodislike"> @Model.TotalVedioDisLike</label>
                                                                 </i>}
                                                         </div>
                                                     }
@@ -1100,7 +1100,7 @@
                                                                                             {
 
 
-                                                                                                <tr onclick="switchtoquestionVedio(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                                                                <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                     <td>
                                                                                                         @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
@@ -1531,7 +1531,7 @@
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input type="button" onclick="ShareVedioLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input type="button" onclick="ShareVideoLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1562,7 +1562,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class=" text-right">
-                        <input type="button" onclick="ShareVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input type="button" onclick="ShareVideoLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
                         <input style="background:#ff253a!important;line-height:13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1595,7 +1595,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class=" text-right">
-                        <input type="button" onclick="SharepublicVedioLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
+                        <input type="button" onclick="SharepublicVideoLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
                         <input style="background:#ff253a!important; line-height:13px;" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1715,7 +1715,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class='input-group date' id='datetimepicker3' onclick="datecal()">
                                     <input type='datetime-local' class="form-control" id="txtOnlinestart" />
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -1990,7 +1990,7 @@
                                                                 {
                                                                     for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
                                                                     {
-                                                                        <tr onclick="switchtoquestionVedio(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                                        <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                             <td>
                                                                                 @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
                                                                             </td>
@@ -2089,7 +2089,7 @@
     }
 
     function endcal() {
-      
+
 
         var maxDate = $('#txtOnlinestart').val();
         if (maxDate == '') {
@@ -2130,10 +2130,10 @@
     var d = new Date();
     var start = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
     $(window).bind('beforeunload', function () {
-        abc();
+        TimeCalculation();
         //return 'Are you sure you want to leave?';
     });
-    function abc() {
+    function TimeCalculation() {
         var d1 = new Date();
         var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds();
         var currentUrl = window.location.href;
@@ -2142,14 +2142,14 @@
         $.ajax({
             type: "GET",
             url: "/RiseTube/CalculateTimeSpend",
-            data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: start, timeend: end, CurrentTime: currentTime },
+            data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: start, timeend: end, CurrentTime: currentTime },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
         });
     }
     jQuery(document).ready(function ($) {
-         
+
         $(".tab_content").hide();
         $(".tab_content:first").show();
 
@@ -2262,7 +2262,7 @@
 
         }
 
-     
+
 
 
     });
@@ -2285,7 +2285,7 @@
                 } else {
                     alert(resultreturn);
                     document.getElementById("OnlineSubmitBtn").disabled = false;
-                    
+
                 }
             } else {
                 alert("Kindly fill the Subject field");
@@ -2848,8 +2848,8 @@
         $("#btnShare3").on('click', function () {
             $.ajax({
                 type: "POST",
-                url: "/RiseTube/publicVedioShare",
-                data: { value: "Public", vedioid: $("#txtVedioId").val() },
+                url: "/RiseTube/publicVideoShare",
+                data: { value: "Public", videoid: $("#txtVideoId").val() },
                 success: function (data) {
                     var modal = document.getElementById("PublicUrlShareModel");
                     modal.style.display = "block";
@@ -2884,7 +2884,7 @@
                 $.ajax({
                     type: "POST",
                     url: "/RiseTube/CandidateShortList",
-                    data: { vedioid: $("#txtVedioId").val() },
+                    data: { videoid: $("#txtVideoId").val() },
                     success: function (data) {
                         $("#btnShortlist").val("Shortlisted(" + data + ")");
                     }
@@ -2903,14 +2903,14 @@
             if ($("#txtComment").val().trim() != "") {
                 $.ajax({
                     type: "POST",
-                    url: "/RiseTube/VedioComment",
-                    data: { comment: $("#txtComment").val(), vedioid: $("#txtVedioId").val() },
+                    url: "/RiseTube/VideoComment",
+                    data: { comment: $("#txtComment").val(), videoid: $("#txtVideoId").val() },
                     success: function (response) {
                         $("#txtComment").val("");
                         $.ajax({
                             type: "POST",
-                            url: "/RiseTube/UpdateVedioComment",
-                            data: { vedioid: $("#txtVedioId").val() },
+                            url: "/RiseTube/UpdateVideoComment",
+                            data: { videoid: $("#txtVideoId").val() },
                             success: function (data) {
                                 var html = '';
                                 html += '  <div class="chat"><div class="chat-history"><ul class="posts" >';
@@ -2936,13 +2936,12 @@
                 $(this).val('Share');
                 $.ajax({
                     type: "POST",
-                    url: "/RiseTube/VedioShare",
-                    data: { value: "Private", vedioid: $("#txtVedioId").val() },
+                    url: "/RiseTube/VideoShare",
+                    data: { value: "Private", videoid: $("#txtVideoId").val() },
                     success: function (data) {
 
                     }
                 });
-
             }
             else {
                 $(this).attr('data-click-state', 1);
@@ -2950,8 +2949,8 @@
                 $(this).val('Shared');
                 $.ajax({
                     type: "POST",
-                    url: "/RiseTube/VedioShare",
-                    data: { value: "Public", vedioid: $("#txtVedioId").val() },
+                    url: "/RiseTube/VideoShare",
+                    data: { value: "Public", videoid: $("#txtVideoId").val() },
                     success: function (data) {
 
                     }
@@ -2971,11 +2970,11 @@
                 $('#toggle-click1').css('color', 'black');
                 $.ajax({
                     type: "POST",
-                    url: "/RiseTube/VedioLike",
-                    data: { value: "Liked", vedioid: $("#txtVedioId").val() },
+                    url: "/RiseTube/VideoLike",
+                    data: { value: "Liked", videoid: $("#txtVideoId").val() },
                     success: function (data) {
-                        $("#pTotalvediolike").text(data.totalVedioLike);
-                        $("#pTotalvediodislike").text(data.totalVedioDisLike);
+                        $("#pTotalvideolike").text(data.totalVedioLike);
+                        $("#pTotalvideodislike").text(data.totalVedioDisLike);
 
                     }
                 });
@@ -2992,11 +2991,11 @@
                 $('#toggle-click').css('color', 'black');
                 $.ajax({
                     type: "POST",
-                    url: "/RiseTube/VedioLike",
-                    data: { value: "Disliked", vedioid: $("#txtVedioId").val() },
+                    url: "/RiseTube/VideoLike",
+                    data: { value: "Disliked", videoid: $("#txtVideoId").val() },
                     success: function (data) {
-                        $("#pTotalvediolike").text(data.totalVedioLike);
-                        $("#pTotalvediodislike").text(data.totalVedioDisLike);
+                        $("#pTotalvideolike").text(data.totalVedioLike);
+                        $("#pTotalvideodislike").text(data.totalVedioDisLike);
 
                     }
                 });
@@ -3009,7 +3008,7 @@
             $.ajax({
                 type: "POST",
                 url: "/RiseTube/CandidateSuitable",
-                data: { vedioid: $("#txtVedioId").val(), Comment: $("#txtintrestecomment").val() },
+                data: { videoid: $("#txtVideoId").val(), Comment: $("#txtintrestecomment").val() },
                 success: function (data) {
                     if (data == "Success") {
                         $("#btnIntrest").css("background-color", "yellow", "height", "30px", "padding", "0px");
@@ -3065,22 +3064,22 @@
         var modal = document.getElementById("OnlineMeetingModel");
         modal.style.display = "block";
     }
-    function ShareVedioLinkToMail(resume) {
+    function ShareVideoLinkToMail(resume) {
         $.ajax({
             type: "POST",
-            url: "/RiseTube/ShareVedioLinkToMail",
-            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val(), resumeLink: resume },
+            url: "/RiseTube/ShareVideoLinkToMail",
+            data: { Emailids: $("#txtsharetext").val(), videoid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val(), resumeLink: resume },
             success: function (data) {
                 closeSharePopUp1();
             }
         });
     }
-    function ShareVedioLink() {
+    function ShareVideoLink() {
 
         $.ajax({
             type: "POST",
-            url: "/RiseTube/VedioShared",
-            data: { Emailids: $("#txtsharetext1").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
+            url: "/RiseTube/VideoShared",
+            data: { Emailids: $("#txtsharetext1").val(), videoid: $("#txtVideoId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
             success: function (data) {
                 if (data == "Success") {
                     alert("Interview shared successfully.");
@@ -3097,7 +3096,7 @@
         $.ajax({
             type: "POST",
             url: "/RiseTube/VideoDetailsJsonView",
-            data: { interviewid: $("#txtVedioId").val() },
+            data: { interviewid: $("#txtVideoId").val() },
             success: function (data) {
                 var modal = document.getElementById("VideoDetailsModel");
                 modal.style.display = "block";
@@ -3105,7 +3104,7 @@
             }
         });
     }
-    function switchtoquestionVedio(questiontime) {
+    function switchtoquestionVideo(questiontime) {
         var time = 1;
         if (questiontime != '') {
             time = questiontime;
@@ -3114,14 +3113,14 @@
         vid[0].currentTime = time;
         //time should be in seconds
     }
-    function SharepublicVedioLink() {
+    function SharepublicVideoLink() {
         if ($("#txtpublicsharing").val() != "") {
             if (window.confirm('Are you sure, you want to share this video?')) {
                 if ($("#txtpublicsharetxt").val() == "Public") {
                     $.ajax({
                         type: "POST",
-                        url: "/RiseTube/VedioShare",
-                        data: { value: "Public", vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), Emailids: $("#txtpublicsharing").val() },
+                        url: "/RiseTube/VideoShare",
+                        data: { value: "Public", videoid: $("#txtVideoId").val(), Name: $("#txthiddenCandidate").val(), Emailids: $("#txtpublicsharing").val() },
                         success: function (data) {
                             closepublicSharePopUp();
                         }
@@ -3129,8 +3128,8 @@
                 } else {
                     $.ajax({
                         type: "POST",
-                        url: "/RiseTube/VedioShareDetails",
-                        data: { value: "Public", vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), Emailids: $("#txtpublicsharing").val(), currentUrl: $("#txtpublicshareurl").val() },
+                        url: "/RiseTube/VideoShareDetails",
+                        data: { value: "Public", videoid: $("#txtVideoId").val(), Name: $("#txthiddenCandidate").val(), Emailids: $("#txtpublicsharing").val(), currentUrl: $("#txtpublicshareurl").val() },
                         success: function (data) {
                             closepublicSharePopUp();
                         }
@@ -3144,8 +3143,8 @@
             var currentUrl = window.location.href;
             $.ajax({
                 type: "POST",
-                url: "/RiseTube/VedioShareEmail",
-                data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl },
+                url: "/RiseTube/VideoShareEmail",
+                data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl },
                 success: function (data) {
                     closepublicSharePopUpvideo();
                     $("#divbackground").removeClass("blk-bg");

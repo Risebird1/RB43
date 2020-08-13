@@ -984,17 +984,17 @@ namespace Risebird.Web.Controllers
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
         }
         [HttpPost]
-        public JsonResult VedioLike(string value, string vedioid)
+        public JsonResult VideoLike(string value, string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            var modelList = _meetingService.VedioLike(value, vedioid, email);
+            var modelList = _meetingService.VedioLike(value, videoid, email);
             return Json(modelList);
         }
 
         [HttpPost]
-        public JsonResult VedioShare(string value, string vedioid, string name, string Emailids)
+        public JsonResult VideoShare(string value, string videoid, string name, string Emailids)
         {
-            _meetingService.VedioShare(value, vedioid);
+            _meetingService.VedioShare(value, videoid);
             string Name = string.Empty;
             if (name != null && name.Length >= 2)
                 Name = Name + name?.ToCharArray()[0] + name?.ToCharArray()[1];
@@ -1003,7 +1003,7 @@ namespace Risebird.Web.Controllers
             //send a email
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
-            string currenturl = Request.Host.ToString() + "/CommonPool/VideoPage/" + vedioid;
+            string currenturl = Request.Host.ToString() + "/CommonPool/VideoPage/" + videoid;
             Mail _mail = new Mail
             {
                 TO = Emailids,
@@ -1022,30 +1022,30 @@ namespace Risebird.Web.Controllers
 
         }
         [HttpPost]
-        public JsonResult publicVideoShare(string value, string vedioid)
+        public JsonResult publicVideoShare(string value, string videoid)
         {
-            _meetingService.VedioShare(value, vedioid);
+            _meetingService.VedioShare(value, videoid);
             return Json("Success");
         }
         [HttpPost]
-        public JsonResult VedioComment(string comment, string vedioid)
+        public JsonResult VideoComment(string comment, string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            _meetingService.VedioComment(comment, vedioid, email);
+            _meetingService.VedioComment(comment, videoid, email);
             return Json("Success");
         }
         [HttpPost]
-        public JsonResult UpdateVedioComment(string vedioid)
+        public JsonResult UpdateVideoComment(string videoid)
         {
             //store data in database
-            int id = Convert.ToInt32(vedioid);
+            int id = Convert.ToInt32(videoid);
             var comments = _meetingService.GetvedioComments(id);
             return Json(comments);
         }
-        public JsonResult CandidateShortList(string vedioid)
+        public JsonResult CandidateShortList(string videoid)
         {
             var email = HttpContext.Session.GetString("email");
-            var Shortlistcount = _meetingService.GetvedioShortList(vedioid, email);
+            var Shortlistcount = _meetingService.GetvedioShortList(videoid, email);
             int result = 0;
             if (Shortlistcount != null)
             {
@@ -1066,10 +1066,10 @@ namespace Risebird.Web.Controllers
             return Json(result);
         }
         [HttpPost]
-        public JsonResult CandidateSuitable(string vedioid, string Comment)
+        public JsonResult CandidateSuitable(string videoid, string Comment)
         {
             //store data in database
-            int id = Convert.ToInt32(vedioid);
+            int id = Convert.ToInt32(videoid);
             var email = HttpContext.Session.GetString("email");
             var Status = _meetingService.CandidateSuitable(id, email, Comment);
             if (Status != null)
@@ -1088,12 +1088,12 @@ namespace Risebird.Web.Controllers
             return Json("Success");
         }
         [HttpPost]
-        public JsonResult VedioShared(string Emailids, string vedioid, string Name, string skills)
+        public JsonResult VedioShared(string Emailids, string videoid, string Name, string skills)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
-            var modelList = _meetingService.VedioShared(Emailids, vedioid, email);
-            string currenturl = Request.Host.ToString() + Request.Path.ToString() + "/" + vedioid;
+            var modelList = _meetingService.VedioShared(Emailids, videoid, email);
+            string currenturl = Request.Host.ToString() + Request.Path.ToString() + "/" + videoid;
 
             if (!String.IsNullOrEmpty(modelList))
             {
@@ -1123,12 +1123,12 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-        public JsonResult ShareVedioLinkToMail(string Emailids, string vedioid, string Name, string comment, string skills, string resumeLink)
+        public JsonResult ShareVideoLinkToMail(string Emailids, string videoid, string Name, string comment, string skills, string resumeLink)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
 
-            string currenturl = vedioid;
+            string currenturl = videoid;
             if (resumeLink == null)
             {
                 resumeLink = string.Empty;
@@ -1146,18 +1146,18 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-        public JsonResult VedioShareEmail(string vedioid, string Emailid, string CurrentUrl)
+        public JsonResult VideoShareEmail(string videoid, string Emailid, string CurrentUrl)
         {
             //Start:Save View counts of vedio
             Emailid = Emailid.Replace("\"", "");
             if (CurrentUrl.Contains("SharedVideoPage"))
             {
-                vedioid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
-                _meetingService.AddTotalViewCount(Convert.ToInt32(vedioid), Emailid, "Shared");
+                videoid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
+                _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Shared");
             }
             else
             {
-                _meetingService.AddTotalViewCount(Convert.ToInt32(vedioid), Emailid, "Public");
+                _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
             }
             //End:Save View counts of vedio
             return Json("Succecss");
