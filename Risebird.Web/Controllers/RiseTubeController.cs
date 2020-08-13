@@ -515,7 +515,7 @@ namespace Risebird.Web.Controllers
                             {
                                 var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                 emailaddress = emailaddress.Replace("\"", "");
-                                _meetingService.AddTotalViewCount(id, emailaddress, "Public");
+                                await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
                                 //save into database to increase view count save into main table from where data is picked
                                 HttpContext.Session.SetString("UserLogedIn", "No");
                             }
@@ -917,7 +917,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                     emailaddress = emailaddress.Replace("\"", "");
-                                    _meetingService.AddTotalViewCount(id, emailaddress, "Public");
+                                    await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
                                     //save into database to increase view count save into main table from where data is picked
                                 }
                             }
@@ -1432,7 +1432,7 @@ namespace Risebird.Web.Controllers
                             {
                                 var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                 emailaddress = emailaddress.Replace("\"", "");
-                                _meetingService.AddTotalViewCount(id, emailaddress, "Public");
+                                await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
                                 //save into database to increase view count save into main table from where data is picked
                                 HttpContext.Session.SetString("UserLogedIn", "No");
                             }
@@ -1454,7 +1454,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                         emailaddress = emailaddress.Replace("\"", "");
-                                        _meetingService.AddTotalViewCount(id, emailaddress, "Public");
+                                        await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
                                         //save into database to increase view count save into main table from where data is picked
                                     }
                                 }
@@ -1671,13 +1671,13 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
-                    var result = _meetingService.AddSharedVideoDetails(_newobject.IreportModel);
+                    var result = await _meetingService.AddSharedVideoDetails(_newobject.IreportModel);
                     var Emailids = _newobject.IreportModel.SharedEmailAddress;
                     //Send A mail with video url
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
                     string currenturl = "https://" + Request.Host + Request.Path;
-                    currenturl = currenturl.Replace("Sharecreatedview", "SharedVideoPage") + "/" + result.Result;
+                    currenturl = currenturl.Replace("Sharecreatedview", "SharedVideoPage") + "/" + result;
                     if (Emailids != "" && Emailids != ";")
                     {
                         Mail _mail = new Mail

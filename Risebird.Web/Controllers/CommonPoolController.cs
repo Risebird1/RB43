@@ -448,7 +448,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                         emailaddress = emailaddress.Replace("\"", "");
-                                        _meetingService.AddTotalViewCount(id, emailaddress, "Public");
+                                        await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
                                         //save into database to increase view count save into main table from where data is picked
                                     }
                                 }
