@@ -45,7 +45,7 @@
                             <div class="row">
                                 <div class="card-header clearfix">
                                     <div class="pull-left">
-                                        <h4 class="card-title">Interviewers</h4>
+                                        <h4 class="card-title"></h4>
                                     </div>
 
                                     <div class="pull-right">
@@ -62,12 +62,12 @@
                                                     </div>
                                                 </div>
                                             </div>*@
-                                        @foreach (var item in Model)
+                                        @*@foreach (var item in Model)
                                         {
                                             @Html.ActionLink("Back to List", "VideoPage", "Risetube", new { id = item.interviewid }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
-                                            @*<a href="~/RiseTube/VideoPage" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-chevron-left"></span> Back to List</a>*@
+                                            <a href="~/RiseTube/VideoPage" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-chevron-left"></span> Back to List</a>
                                             break;
-                                        }
+                                        }*@
                                     </div>
 
 
@@ -91,7 +91,7 @@
                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
                                     <tr>
                                         <td>@item.CandidateEmail</td>
-                                        <td>@item.VideoUrl</td>
+                                        <td><a href="@item.VideoUrl" target="_blank">@item.VideoUrl</a></td>
                                         <td>@item.Candidate</td>
                                         <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
                                         <td class="text-center">@item.TimeSpend</td>
