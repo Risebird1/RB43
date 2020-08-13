@@ -1,0 +1,88 @@
+/****** Object:  StoredProcedure [dbo].[usp_GetClientMeetingsResults]    Script Date: 10-08-2020 6.18.31 PM ******/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetClientMeetingsResults'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetClientMeetingsResults
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_GetClientMeetingsResults]  
+@emailId varchar(50)
+AS  
+Begin
+	declare @profileId int, @roleId int, @userId int;
+	set @profileId = (select id from [Profile] where [Name]='Client')
+	set @userId  = (select id from UserList where EmailId=@emailId and idProfile=@profileId)
+	set @roleId  = (select RoleId from ClientUser where UserId=@userId)
+if(@roleId=1)
+	Begin
+		--declare @emailId varchar(100);
+		--set @emailId = 'ramanaidu.m@mphasis.com'
+		declare @commonClientHRTable table (imid int, icid int, InterviewStatus int, MeetingStatus int)
+				insert into @commonClientHRTable 
+				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus from InterviewMeetings inm 
+				left join InterviewComments inc on inc.InterviewId= inm.id
+				where inm.confirmationStatus=1 and inm.ClientHrContact=@emailId
+
+			select (select Count(imid) from @commonClientHRTable where InterviewStatus=1) as ProxyCount,
+			(select Count(imid) from @commonClientHRTable where InterviewStatus=2) as SelectedCount,
+			(select Count(imid) from @commonClientHRTable where InterviewStatus=3) as RejectedCount,
+			(select Count(imid) from @commonClientHRTable where InterviewStatus=4) as BorderLineCount,
+			(select Count(imid) from @commonClientHRTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
+			(select Count(imid) from @commonClientHRTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
+			(select Count(imid) from @commonClientHRTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount,
+			(select Count(imid) from @commonClientHRTable) as TotalMeetingsCount
+	End
+
+else if(@roleId=4)
+	Begin
+		--declare @emailId varchar(100);
+		--set @emailId = 'shweta_kadechkar@risebird.io'
+		declare @commonStaffiingAgencyTable table (imid int, icid int, InterviewStatus int, MeetingStatus int)
+				insert into @commonStaffiingAgencyTable 
+				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus from InterviewMeetings inm 
+				left join InterviewComments inc on inc.InterviewId= inm.id
+				where inm.confirmationStatus=1 and inm.staffingAgency=@emailId
+
+			select (select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=1) as ProxyCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=2) as SelectedCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=3) as RejectedCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=4) as BorderLineCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount,
+			(select Count(imid) from @commonStaffiingAgencyTable) as TotalMeetingsCount
+
+	End
+
+else
+		Begin
+
+			declare @commonTable table (imid int, icid int, InterviewStatus int, MeetingStatus int)
+				insert into @commonTable 
+				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus from InterviewMeetings inm join IRF on irf.IRFId=inm.IRFId join TransClientUser tcu on tcu.IRFId = irf.id
+				left join InterviewComments inc on inc.InterviewId= inm.id
+				where tcu.ClientUserId = @userId and inm.confirmationStatus=1
+
+			select (select Count(imid) from @commonTable where InterviewStatus=1) as ProxyCount,
+			(select Count(imid) from @commonTable where InterviewStatus=2) as SelectedCount,
+			(select Count(imid) from @commonTable where InterviewStatus=3) as RejectedCount,
+			(select Count(imid) from @commonTable where InterviewStatus=4) as BorderLineCount,
+			(select Count(imid) from @commonTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
+			(select Count(imid) from @commonTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
+			(select Count(imid) from @commonTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount,
+			(select Count(imid) from @commonTable) as TotalMeetingsCount
+
+
+
+		End
+End
+
+
+GO
+
+

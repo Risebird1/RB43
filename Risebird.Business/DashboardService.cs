@@ -46,15 +46,15 @@ namespace Risebird.Business
             }
         }
 
-        public Task<DashboardInterviewerCount> GetInterviewerCount()
+        public async Task<DashboardInterviewerCount> GetInterviewerCount()
         {
             try
             {
-                return _dashboardRespository.GetInterviewerCount();
+                return await _dashboardRespository.GetInterviewerCount();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -96,27 +96,29 @@ namespace Risebird.Business
             }
         }
 
-        public Task<MeetingResultCount> GetMeetingResultCount()
+        public async Task<MeetingResultCount> GetMeetingResultCount()
         {
             try
             {
-                return _dashboardRespository.GetMeetingResultCount();
+                return await _dashboardRespository.GetMeetingResultCount();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public Task<CandidatesCount> GetCandidatesCount()
+        public async Task<CandidatesCount> GetCandidatesCount()
         {
             try
             {
-                return _dashboardRespository.GetCandidatesCount();
+                var countObj = await _dashboardRespository.GetCandidatesCount();
+                countObj.TotalCandidates = (countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy + countObj.NoShowCount + countObj.DroppedCount + countObj.ScheduledCount + countObj.Pending);
+                return countObj;
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -134,5 +136,58 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IRFFunnel> GetClientFunnelData(string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetClientFunnelData(emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<ClientDailySlotsStatus>> GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetDateWiseClientMeetingsSlots(date, emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<CandidatesCount> GetClientCandidatesCount(string emailId)
+        {
+            try
+            {
+                var countObj = await _dashboardRespository.GetClientCandidatesCount(emailId);
+                countObj.TotalCandidates = (countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy + countObj.NoShowCount + countObj.DroppedCount + countObj.ScheduledCount + countObj.Pending);
+                return countObj;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<MeetingResultCount> GetClientMeetingsResults(string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetClientMeetingsResults(emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

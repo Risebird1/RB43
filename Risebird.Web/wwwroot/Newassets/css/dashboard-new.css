@@ -2633,18 +2633,14 @@ input[type='radio'] {
     }
 
 
-
-
-
 .PieId {
     height: 200px;
     width: 40%;
 }
-
-
-
-
-
+.Funnelid {
+    height: 525px;
+    width: 100%;
+}
 
 .checkbox.pull-left, .checkbox.pull-right, .radio.pull-left, .radio.pull-right {
     width: auto;

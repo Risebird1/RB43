@@ -44,7 +44,7 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
-        /// Method to show all list of video if confirmation status is 1 or Selected and video link not equals to null on index page
+        ///Video view of selected and borderline candidates
         /// </summary>
         /// <param name="Page"></param>
         /// <returns></returns>
@@ -1022,7 +1022,7 @@ namespace Risebird.Web.Controllers
 
         }
         [HttpPost]
-        public JsonResult publicVedioShare(string value, string vedioid)
+        public JsonResult publicVideoShare(string value, string vedioid)
         {
             _meetingService.VedioShare(value, vedioid);
             return Json("Success");

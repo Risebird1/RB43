@@ -99,14 +99,14 @@ namespace Risebird.Web.Controllers
                         filter.RFID = filter.RFID == null ? filter.RFID = model.IRFList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                         filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray());
                         filter.SubscriptionStatus = filter.SubscriptionStatus ?? (filter.SubscriptionStatus = model.IRFList.Select(x => x.SubscriptionStatus).ToArray());
-                        filter.ClientName = filter.ClientName == null ? filter.ClientName = model.IRFList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                        filter.ClientName = filter.ClientName == null ? filter.ClientName = model.IRFList.Select(x => x.ClientCompName).ToArray() : filter.ClientName = filter.ClientName;
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
                         model.IRFList = model.IRFList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && filter.RFID.Contains(c.IRFId)
                         && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                         && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
-                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientCompName) : c.ClientCompName == null)
                         && (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.JDTiltle) : c.JDTiltle == null)).ToList();
 
                         if (model.IRFList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
@@ -193,14 +193,14 @@ namespace Risebird.Web.Controllers
                     filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                     filter.ArchiveStatus = filter.ArchiveStatus ?? (filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray());
                     filter.SubscriptionStatus = filter.SubscriptionStatus ?? (filter.SubscriptionStatus = irfList.Select(x => x.SubscriptionStatus).ToArray());
-                    filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                    filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientCompName).ToArray() : filter.ClientName = filter.ClientName;
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
                     irfList = irfList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                     && filter.RFID.Contains(c.IRFId)
                     && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                     && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
-                    && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+                    && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientCompName) : c.ClientCompName == null)
                     && (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.JDTiltle) : c.JDTiltle == null)).ToList();
 
 
@@ -1616,7 +1616,6 @@ namespace Risebird.Web.Controllers
                                 return RedirectToAction("Index");
                             }
                         }
-
                     }
                     else
                     {
@@ -3938,8 +3937,8 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                if (profileName == "CuratedUser")
+                emailid = emailid.Replace("\"", ""); //"jaideep.marwaha@mphasis.com"
+                if (profileName == "CuratedUser" || profileName == "Client")
                 {
                     var model = new CuratedIndexVM
                     {
@@ -4016,7 +4015,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "CuratedUser")
+                if (profileName == "CuratedUser" || profileName == "Client")
                 {
 
                     var model = new CuratedIndexVM

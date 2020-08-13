@@ -1,0 +1,79 @@
+﻿@model Risebird.Entities.ViewModel.ClientDashboardVM
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" defer>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
+<div class="panel-body panel-body-table">
+    @if (Model.DailyMeetingResultsSlots != null && Model.DailyMeetingResultsSlots.Count() > 0)
+    {
+
+        <div class="sb-container scroller-height">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped ">
+                    <thead>
+                        <tr>
+                            <th width="30%" class="text-center"><strong>Skill</strong></th>
+                            <th width="20%" class="text-center"><strong>Morning Count(s)</strong></th>
+                            <th width="20%" class="text-center"><strong>Evening Count(s)</strong></th>
+                            <th width="50%" class="text-center"><strong>Result</strong></th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @{
+                            foreach (var item in Model.DailyMeetingResultsSlots)
+                            {
+
+                                <tr>
+                                    <td class="text-center"><strong>@(item.IRFnSkill.Split('(')[1].Split(')')[0])</strong></td>
+                                    <td class="text-center"><strong>@item.Morning</strong></td>
+                                    <td class="text-center"><strong>@item.Evening</strong></td>
+                                    <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
+
+                                </tr>
+
+                            }
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+
+
+        <div class="legend">
+
+            <ul>
+                <li><div class="g color"></div>Selected</li>
+                <li><div class="r color"></div>Rejected</li>
+                <li><div class="b color"></div>BorderLine</li>
+                <li><div class="pr color"></div>Proxy</li>
+                <li><div class="ns color"></div>NoShow</li>
+                <li><div class="sch color"></div>Schedule</li>
+                <li><div class="dr color"></div>Dropped</li>
+                <li><div class="pe color"></div>Pending</li>
+
+            </ul>
+        </div>
+    }
+    else
+    {
+        <div>No interviews for this day!</div>
+    }
+</div>
+
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

@@ -237,5 +237,90 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IRFFunnel> GetClientFunnelData(string emailId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<IRFFunnel>(con, "usp_GetClientFunnelData", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<ClientDailySlotsStatus>> GetDateWiseClientMeetingsSlots(DateTime date, string emailId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@dateValue", date);
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<ClientDailySlotsStatus>(con, "usp_GetDateWiseClientMeetingsSlots", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<CandidatesCount> GetClientCandidatesCount(string emailId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CandidatesCount>(con, "usp_GetClientCandidatesCount", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<MeetingResultCount> GetClientMeetingsResults(string emailId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingResultCount>(con, "usp_GetClientMeetingsResults", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

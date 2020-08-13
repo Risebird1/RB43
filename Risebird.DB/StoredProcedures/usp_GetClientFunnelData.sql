@@ -1,0 +1,125 @@
+/****** Object:  StoredProcedure [dbo].[usp_GetClientFunnelData]    Script Date: 06-08-2020 5.45.07 PM ******/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetClientFunnelData'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetClientFunnelData
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_GetClientFunnelData]  
+@emailId varchar(100)
+AS  
+Begin 
+
+declare @profileId int, @roleId int, @userId int;
+		set @profileId = (select id from [Profile] where [Name]='Client')
+		set @userId  = (select id from UserList where EmailId=@emailId and idProfile=@profileId)
+		set @roleId  = (select RoleId from ClientUser where UserId=@userId)
+
+	
+
+Begin
+
+if(@roleId=1)
+	Begin
+
+		declare @TotalHRCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int);
+		insert into @TotalHRCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus from InterviewMeetings im 
+		left join InterviewComments ic on ic.InterviewId=im.id
+		where ClientHrContact=@emailId and confirmationStatus=1 and ic.MeetingStatus=4
+
+			select
+
+			(select count(distinct candidateEmail) from InterviewMeetings im where im.ClientHrContact=@emailId and im.confirmationStatus=1) as TotalCandidates,
+			
+			(select count(id) from InterviewMeetings where ClientHrContact=@emailId and confirmationStatus=1) as TotalConfirmations,
+
+			(select count(id) from @TotalHRCompletedMeetings) as TotalCompleted,
+
+			
+			(select count(id) from @TotalHRCompletedMeetings tcm where tcm.InterviewStatus=2 or tcm.InterviewStatus=4) as TotalRisebirdSelection,
+
+			(select count(id) from @TotalHRCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,
+
+			(select count(id) from @TotalHRCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1) as TotalFinalSelections,
+
+			(select count(id) from @TotalHRCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1) as TotalOffered,
+
+			(select count(id) from @TotalHRCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1 and tcm.JoiningStatus=1) as TotalJoined
+	End
+else if(@roleId=4)
+	Begin 
+		
+
+		declare @TotalStaffingCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int);
+		insert into @TotalStaffingCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus from InterviewMeetings im 
+		left join InterviewComments ic on ic.InterviewId=im.id
+		where staffingAgency=@emailId and confirmationStatus=1 and ic.MeetingStatus=4
+
+			select
+
+			(select count(distinct candidateEmail) from InterviewMeetings im where im.staffingAgency=@emailId and im.confirmationStatus=1) as TotalCandidates,
+			
+			(select count(id) from InterviewMeetings where staffingAgency=@emailId and confirmationStatus=1) as TotalConfirmations,
+
+			(select count(id) from @TotalStaffingCompletedMeetings) as TotalCompleted,
+
+			
+			(select count(id) from @TotalStaffingCompletedMeetings tcm where tcm.InterviewStatus=2 or tcm.InterviewStatus=4) as TotalRisebirdSelection,
+
+			(select count(id) from @TotalStaffingCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,
+
+			(select count(id) from @TotalStaffingCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1) as TotalFinalSelections,
+
+			(select count(id) from @TotalStaffingCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1) as TotalOffered,
+
+			(select count(id) from @TotalStaffingCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1 and tcm.JoiningStatus=1) as TotalJoined
+	End
+else
+	Begin
+			
+			declare @listofIRFIds table (id int);
+			insert into @listofIRFIds select irf.id from IRF join TransClientUser tcu on tcu.IRFId = IRF.id where tcu.ClientUserId = @userId
+
+			declare @listofIRF table (id varchar(100));
+			insert into @listofIRF select irf.IRFId from IRF join TransClientUser tcu on tcu.IRFId = IRF.id where tcu.ClientUserId = @userId
+
+			
+			declare @TotalCompletedMeetings table (id int, MeetingStatus int, InterviewStatus int, IsApproved int, IsSelected int, OfferStatus int, JoiningStatus int);
+					insert into @TotalCompletedMeetings select im.id, ic.MeetingStatus, ic.InterviewStatus, ic.IsApproved, ic.IsSelected, ic.OfferStatus, ic.JoiningStatus from InterviewMeetings im 
+					left join InterviewComments ic on ic.InterviewId=im.id
+					where IRFId in (select id from @listofIRF) and confirmationStatus=1 and ic.MeetingStatus=4
+			select
+
+			
+			(select count(distinct cm.UserId) from TransClientUser tcu join irf on irf.id= tcu.IRFId
+				join Candidate ca on ca.IRFId=irf.id join CandidatesMaster cm on cm.id=ca.CandidateMasterId
+				where tcu.ClientUserId=@userId) as TotalCandidates,
+			
+			(select count(id) from InterviewMeetings where IRFId in (select id from @listofIRF) and confirmationStatus=1) as TotalConfirmations,
+
+			(select count(id) from @TotalCompletedMeetings) as TotalCompleted,
+
+			(select count(id) from @TotalCompletedMeetings tcm where tcm.InterviewStatus=2 or tcm.InterviewStatus=4) as TotalRisebirdSelection,
+
+			(select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1) as TotalApproved,
+
+			(select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1) as TotalFinalSelections,
+
+			(select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1) as TotalOffered,
+
+			(select count(id) from @TotalCompletedMeetings tcm where (tcm.InterviewStatus=2 or tcm.InterviewStatus=4) and tcm.IsApproved=1 and tcm.IsSelected=1 and tcm.OfferStatus=1 and tcm.JoiningStatus=1) as TotalJoined
+
+	End
+
+End
+
+End
+
+GO
+
+

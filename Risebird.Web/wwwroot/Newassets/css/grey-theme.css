@@ -2,7 +2,7 @@
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
 
-.navbar.navbar-transparent.bg-white,  {
+.navbar.navbar.bg-white, .navbar.navbar-transparent {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
 textarea::-webkit-scrollbar {
@@ -113,8 +113,14 @@ input[type='radio']:checked:after {
  .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
         background: #ecececb5 !important;
  }
-
-
+.skill [type="datetime-local"]{
+    background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 6% !important;
+}
+.interview-date [type="date"] {
+    background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
+    background-size: 9% !important;
+}
 [type="date"] {
     background: #f5f5f5 url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;

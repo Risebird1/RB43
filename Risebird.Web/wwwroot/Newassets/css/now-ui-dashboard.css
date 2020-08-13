@@ -586,7 +586,7 @@
 
 .btn-neutral {
     background-color: #FFFFFF;
-    color: #42a5f5;
+    /* color: #42a5f5;*/
 }
 
     .btn-neutral:hover,
@@ -705,16 +705,19 @@
         background-color: #FFFFFF;
         color: #42a5f5 !important;
         box-shadow: none;
+        outline: none;
     }
 
     .btn-neutral:hover,
     .btn-neutral:focus {
         color: #42a5f5;
+        outline:none;
     }
 
         .btn-neutral:hover:not(.nav-link),
         .btn-neutral:focus:not(.nav-link) {
             box-shadow: none !important;
+            outline: none;
         }
 
     .btn-neutral.btn-link {
