@@ -3938,7 +3938,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "CuratedUser")
+                if (profileName == "CuratedUser" || profileName == "Client")
                 {
                     var model = new CuratedIndexVM
                     {
@@ -4015,7 +4015,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "CuratedUser")
+                if (profileName == "CuratedUser" || profileName == "Client")
                 {
 
                     var model = new CuratedIndexVM

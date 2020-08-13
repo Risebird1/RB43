@@ -24,10 +24,10 @@ declare
 
 IF NOT EXISTS (SELECT 1 FROM CuratedGroupUsers  WHERE  CuratedGroupId = @CuratedGroupId)
 Begin
- 
+
 	select id as UserId, EmailId, @CuratedGroupId as CuratedGroupId,
 	(select [Name] from CuratedGroup where id =@CuratedGroupId) as CuratedGroupName
-	from UserList where idProfile = @ProfileId
+	from UserList where idProfile in (select id from [Profile] where ([Name]='CuratedUser' or [Name]='Client'))
 
 End
 
@@ -39,7 +39,7 @@ Begin
 	(select [Name] from CuratedGroup where id =@CuratedGroupId) as CuratedGroupName,
 	cgu.IsAdded from UserList ul 
 	left join (select * from CuratedGroupUsers where CuratedGroupId = @CuratedGroupId) cgu on cgu.UserId=ul.id
-	where ul.idProfile=@ProfileId
+	where ul.idProfile in (select id from [Profile] where ([Name]='CuratedUser' or [Name]='Client'))
 
 End
 

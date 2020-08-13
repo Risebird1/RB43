@@ -49,7 +49,7 @@ namespace Risebird.Business.Interface
         MeetingVM GetMeetingbyid(int id, string Email);
         Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid);
         MeetingVM VedioLike(string value, string vedioid, string email);
-        Task AddTotalViewCount(int id, string emailaddress);
+        Task AddTotalViewCount(int id, string emailaddress,string flag);
         //Task<string> VedioLikeAsync(string value, string vedioid, string email);
         string VedioShare(string value, string vedioid);
         string VedioShared(string value, string vedioid, string Userid);
@@ -75,5 +75,11 @@ namespace Risebird.Business.Interface
         bool SaveHRComment(int id, string comment);
         Task<List<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid);
         IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId);
+        Task<string> AddSharedVideoDetails(InterviewReport reportModel);
+        Task<int> SharedGetInterviewId(int videoid);
+        Task<InterviewReport> GetSharedInteviewReport(int interviewId, int irfId,int id);
+        IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid);
+        Task AddTimeSpend(int id, string emailaddress, string flag,TimeSpan TimeSpend, string CurrentTime);
+        IEnumerable<VideoDetails> GetallVideoSumaryDetails();
     }
 }
