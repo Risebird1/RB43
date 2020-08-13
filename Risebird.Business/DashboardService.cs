@@ -46,15 +46,15 @@ namespace Risebird.Business
             }
         }
 
-        public Task<DashboardInterviewerCount> GetInterviewerCount()
+        public async Task<DashboardInterviewerCount> GetInterviewerCount()
         {
             try
             {
-                return _dashboardRespository.GetInterviewerCount();
+                return await _dashboardRespository.GetInterviewerCount();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -96,15 +96,15 @@ namespace Risebird.Business
             }
         }
 
-        public Task<MeetingResultCount> GetMeetingResultCount()
+        public async Task<MeetingResultCount> GetMeetingResultCount()
         {
             try
             {
-                return _dashboardRespository.GetMeetingResultCount();
+                return await _dashboardRespository.GetMeetingResultCount();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
