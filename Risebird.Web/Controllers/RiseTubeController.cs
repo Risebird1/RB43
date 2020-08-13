@@ -1379,7 +1379,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     ViewBag.ProfileName = profileName;
                     ViewBag.CuratedGroupId = curatedGroupId;
-                    if (profileName == "CuratedUser")
+                    if (profileName == "CuratedUser" || profileName=="Client")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
@@ -1427,7 +1427,7 @@ namespace Risebird.Web.Controllers
                             {
                                 var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                 emailaddress = emailaddress.Replace("\"", "");
-                                _meetingService.AddTotalViewCount(id, emailaddress);
+                                await _meetingService.AddTotalViewCount(id, emailaddress);
                                 //save into database to increase view count save into main table from where data is picked
                                 HttpContext.Session.SetString("UserLogedIn", "No");
                             }
@@ -1449,7 +1449,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                                         emailaddress = emailaddress.Replace("\"", "");
-                                        _meetingService.AddTotalViewCount(id, emailaddress);
+                                        await _meetingService.AddTotalViewCount(id, emailaddress);
                                         //save into database to increase view count save into main table from where data is picked
                                     }
                                 }
