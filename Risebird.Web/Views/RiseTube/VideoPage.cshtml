@@ -2005,7 +2005,7 @@
             </button>
             <div class="modal-body">
                 <div class="row" id="divvideodetailsmodel" style="max-height:300px;overflow-y:auto">
-
+                    //bind in bindvideoDetailsData()
                 </div>
 
                 <div class="col-md-12 ">
@@ -3075,7 +3075,7 @@
         for (var i = 0; i < data.length; i++) {
             html += '   <tr>';
             html += '                  <td>' + data[i].candidate + '</td>';
-            html += '                    <td>' + data[i].videoUrl + '<input id="txt_' + i + '" value="' + data[i].videoUrl + '" /></td>';
+            html += '                    <td>' + data[i].videoUrl + '<input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             html += '                  <td class="text-center count-view"><span class="label-num"><strong>' + data[i].count + '</strong></span></td>';
             if (data[i].timeSpend != null) {
                 html += '                <td class="text-center">' + data[i].timeSpend + '</td>';
