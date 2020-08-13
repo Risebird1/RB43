@@ -2332,7 +2332,14 @@ namespace Risebird.Repository
 
                     foreach (var item in reportModel.QuestionsCollection)
                     {
-                        questionsDt.Rows.Add(resultset.FirstOrDefault(), item.Comment, item.RatingId, item.Timing, item.SkillName);
+                        if (String.IsNullOrEmpty(item.QuestionStatus))
+                        {
+                            questionsDt.Rows.Add(resultset.FirstOrDefault(), item.Comment, item.RatingId, item.Timing, item.SkillName);
+                        }
+                        else if (item.QuestionStatus != "true")
+                        {
+                            questionsDt.Rows.Add(resultset.FirstOrDefault(), item.Comment, item.RatingId, item.Timing, item.SkillName);
+                        }
                     }
 
                     SqlCommand cmdQuestions = new SqlCommand("usp_SharedQuestionsDiscussedBulkInsert", con)
@@ -2456,7 +2463,7 @@ namespace Risebird.Repository
                         if (userid == 0)
                         {
                             SqlMapper.Query<string>(
-                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress, CurrentTime= CurrentTime }, commandType: Text);
+                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress, CurrentTime = CurrentTime }, commandType: Text);
                         }
                         else
                         {
@@ -2498,6 +2505,25 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        public Candidate GetCandidateSharedDetails(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Candidate>(con, "usp_GetCandidateSharedDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }
