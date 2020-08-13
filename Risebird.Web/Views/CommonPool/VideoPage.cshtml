@@ -1957,7 +1957,27 @@ else
     });
 </script>
 <script>
-
+    var d = new Date();
+    var start = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    $(window).bind('beforeunload', function () {
+        abc();
+        //return 'Are you sure you want to leave?';
+    });
+    function abc() {
+        var d1 = new Date();
+        var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds();
+        var currentUrl = window.location.href;
+        var vid = document.getElementsByClassName("vjs-tech");
+        var currentTime = vid[0].currentTime;
+        $.ajax({
+            type: "GET",
+            url: "/RiseTube/CalculateTimeSpend",
+            data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: start, timeend: end, CurrentTime: currentTime },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+    }
 
     jQuery(document).ready(function ($) {
 
@@ -2629,7 +2649,7 @@ else
             });
 
         });
-         $("#btnShare4").on('click', function () {
+        $("#btnShare4").on('click', function () {
             var modal = document.getElementById("CreateAndShareModel");
             modal.style.display = "block";
         });
@@ -2884,7 +2904,7 @@ else
         vid[0].currentTime = time;
         //time should be in seconds
     }
-   function SharepublicVedioLink() {
+    function SharepublicVedioLink() {
         if ($("#txtpublicsharing").val() != "") {
             if (window.confirm('Are you sure, you want to share this video?')) {
                 if ($("#txtpublicsharetxt").val() == "Public") {
@@ -2911,10 +2931,11 @@ else
     }
     function SubmitEmail() {
         if ($("#txtvideoemailid").val() != "") {
+            var currentUrl = window.location.href;
             $.ajax({
                 type: "POST",
                 url: "/CommonPool/VedioShareEmail",
-                data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val() },
+                data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl },
                 success: function (data) {
                     closepublicSharePopUpvideo();
                     $("#divbackground").removeClass("blk-bg");
@@ -2933,8 +2954,8 @@ else
         document.execCommand("copy");
         temp.remove();
         $('#special_text').text('Copied');
-        }
-        function bindvideoDetailsData(data) {
+    }
+    function bindvideoDetailsData(data) {
         var html = '';
         html += '<div class="table-responsive"> <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">';
         html += '       <tr>';

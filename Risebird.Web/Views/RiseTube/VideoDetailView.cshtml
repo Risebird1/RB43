@@ -70,6 +70,7 @@
                                     <th>User Name</th>
                                     <th><span class="text-center">Total View</span>   </th>
                                     <th><span class="text-center">Total Time</span> </th>
+                                    <th><span class="text-center">Video Time</span> </th>
                                     <th class="text-center">Action</th>
 
                                 </tr>
@@ -83,6 +84,7 @@
                                         <td>@item.Candidate</td>
                                         <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
                                         <td class="text-center">@item.TimeSpend</td>
+                                        <td>@item.CurrentTime</td>
                                         <td><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input type="button" value="Share" onclick="OpenSharePopup('@item.VideoUrl')" /></div></td>
                                     </tr>
                                 }

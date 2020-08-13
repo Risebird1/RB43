@@ -1616,11 +1616,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task AddTimeSpend(int id, string emailaddress, string flag,TimeSpan TimeSpend)
+        public async Task AddTimeSpend(int id, string emailaddress, string flag,TimeSpan TimeSpend, string CurrentTime)
         {
             try
             {
-                await _meetingRespository.AddTimeSpend(id, emailaddress, flag, TimeSpend);
+                await _meetingRespository.AddTimeSpend(id, emailaddress, flag, TimeSpend, CurrentTime);
 
             }
             catch (Exception e)

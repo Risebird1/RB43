@@ -2436,7 +2436,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task AddTimeSpend(int id, string emailaddress, string flag, TimeSpan TimeSpend)
+        public async Task AddTimeSpend(int id, string emailaddress, string flag, TimeSpan TimeSpend, string CurrentTime)
         {
             try
             {
@@ -2455,12 +2455,12 @@ namespace Risebird.Repository
                         if (userid == 0)
                         {
                             SqlMapper.Query<string>(
-                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress }, commandType: Text);
+                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress, CurrentTime= CurrentTime }, commandType: Text);
                         }
                         else
                         {
                             SqlMapper.Query<string>(
-                                con, "Update VideoCountDetails set TimeSpend=@TimeSpend where Videoid=@id and Userid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = userid }, commandType: Text);
+                                con, "Update VideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Userid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = userid, CurrentTime = CurrentTime }, commandType: Text);
                         }
                     }
                 }

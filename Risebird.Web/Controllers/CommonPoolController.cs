@@ -1146,11 +1146,19 @@ namespace Risebird.Web.Controllers
             }
             return Json("");
         }
-        public JsonResult VedioShareEmail(string vedioid, string Emailid)
+        public JsonResult VedioShareEmail(string vedioid, string Emailid, string CurrentUrl)
         {
             //Start:Save View counts of vedio
             Emailid = Emailid.Replace("\"", "");
-            _meetingService.AddTotalViewCount(Convert.ToInt32(vedioid), Emailid, "Public");
+            if (CurrentUrl.Contains("SharedVideoPage"))
+            {
+                vedioid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
+                _meetingService.AddTotalViewCount(Convert.ToInt32(vedioid), Emailid, "Shared");
+            }
+            else
+            {
+                _meetingService.AddTotalViewCount(Convert.ToInt32(vedioid), Emailid, "Public");
+            }
             //End:Save View counts of vedio
             return Json("Succecss");
         }

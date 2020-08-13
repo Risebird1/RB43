@@ -1821,7 +1821,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        public JsonResult CalculateTimeSpend(string vedioid, string Emailid, string CurrentUrl, string timeStart, string timeend)
+        public JsonResult CalculateTimeSpend(string vedioid, string Emailid, string CurrentUrl, string timeStart, string timeend,string CurrentTime)
         {
             //Start:SaveTime Spend on vedio page
             if (String.IsNullOrEmpty(Emailid))
@@ -1840,12 +1840,12 @@ namespace Risebird.Web.Controllers
             if (CurrentUrl.Contains("SharedVideoPage"))
             {
                 vedioid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
-                _meetingService.AddTimeSpend(Convert.ToInt32(vedioid), Emailid, "Shared", TimeSpend);
+                _meetingService.AddTimeSpend(Convert.ToInt32(vedioid), Emailid, "Shared", TimeSpend, CurrentTime);
 
             }
             else
             {
-                _meetingService.AddTimeSpend(Convert.ToInt32(vedioid), Emailid, "Public", TimeSpend);
+                _meetingService.AddTimeSpend(Convert.ToInt32(vedioid), Emailid, "Public", TimeSpend, CurrentTime);
             }
             //End:SaveTime Spend on vedio page
             return Json("Succecss");

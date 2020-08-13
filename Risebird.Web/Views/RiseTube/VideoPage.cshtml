@@ -44,7 +44,7 @@
 <script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer />
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer ></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
 <script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
@@ -632,7 +632,7 @@
                                                             {
                                                                 <div class="btn3">
                                                                     <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px;padding-right:10px">
-                                                                        
+
                                                                         <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                     </i> <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:10px">
                                                                         <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label>
@@ -641,7 +641,7 @@
                                                             }
                                                             else
                                                             { <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 10px">
-                                                                  
+
                                                                     <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                 </i> <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px">
                                                                     <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label>
@@ -1778,7 +1778,7 @@
             <div class="filheader">
                 <div class="filavatar">
 
-                    
+
                     <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                 </div>
                 <h5 class="modal-title pull-left">Create / Edit View</h5>
@@ -1871,11 +1871,11 @@
 
 
                     </div>
-                  
 
 
 
-                   
+
+
                     <div class="col-md-12 ">
 
                         <div class="single-video-info-content ">
@@ -2040,11 +2040,11 @@
 
             <div class="filheader">
                 <div class="filavatar">
-                   
-               
+
+
                     <svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 1C4.58 1 1 4.58 1 9s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 2.75c1.24 0 2.25 1.01 2.25 2.25S10.24 8.25 9 8.25 6.75 7.24 6.75 6 7.76 3.75 9 3.75zM9 14.5c-1.86 0-3.49-.92-4.49-2.33C4.62 10.72 7.53 10 9 10c1.47 0 4.38.72 4.49 2.17-1 1.41-2.63 2.33-4.49 2.33z" /></svg>
-                
-                
+
+
                 </div>
                 <h5 class="modal-title pull-left">Interview Details</h5>
             </div>
@@ -2055,7 +2055,7 @@
                 <div class="col-md-12 sb-container scroller">
 
                     <div id="divvideodetailsmodel" class="pdr-20"></div>
-                  
+
                 </div>
 
                 <div class="col-md-12 ">
@@ -2081,8 +2081,8 @@
 <script src="~/Newassets/js/scrollBar.js"></script>
 <!-- Custom scripts for all pages-->
 
-    <script type="text/javascript">
-        $(".sb-container").scrollBox();
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
 </script>
 
 <script>
@@ -2094,12 +2094,14 @@
     });
     function abc() {
         var d1 = new Date();
-        var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds(); 
-        var currentUrl = window.location.href;;
+        var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds();
+        var currentUrl = window.location.href;
+        var vid = document.getElementsByClassName("vjs-tech");
+        var currentTime = vid[0].currentTime;
         $.ajax({
             type: "GET",
             url: "/RiseTube/CalculateTimeSpend",
-            data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: start, timeend: end },
+            data: { vedioid: $("#txtVedioId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: start, timeend: end, CurrentTime: currentTime },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
