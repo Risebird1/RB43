@@ -4088,5 +4088,20 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        public async Task<IActionResult> GetIRFInterviewerMembers(int irfId)
+        {
+            try
+            {
+                var model = await _irfService.GetIRFInterviewerMembers(irfId);
+                return PartialView("IRFInterviewerMembersPartial", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

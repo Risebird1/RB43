@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Risebird.Entities.ViewModel
+{
+    public class IRFInterviewerMembers
+    {
+        public int IRFId { get; set; }
+
+        public string Type { get; set; }
+        public string EmailId { get; set; }
+        public string ResumeLink { get; set; }
+        public int TotalInterviews { get; set; }
+        public int TotalQCInterviews { get; set; }
+        public string  MobileNumber { get; set; }
+    }
+}

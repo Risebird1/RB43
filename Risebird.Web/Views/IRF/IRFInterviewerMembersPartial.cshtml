@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.IRFInterviewerMembers>
+
+@if (Model != null && Model.Count() != 0)
+{
+    <div style="overflow-x:auto">
+        <table class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>EmailId</th>
+                    <th>ResumeLink</th>
+                    <th>Total Interviews</th>
+                    <th>Total QC</th>
+                    <th>Mobile Number</th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Type</td>
+                        <td>@item.EmailId</td>
+                        <td>@item.ResumeLink</td>
+                        <td>@item.TotalInterviews</td>
+                        <td>@item.TotalQCInterviews</td>
+                        <td>@item.MobileNumber</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div>
+        No interviewers/Quality Controllers for this Skill Channel
+    </div>
+}
+
+
