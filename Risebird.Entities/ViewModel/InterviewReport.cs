@@ -229,7 +229,8 @@ namespace Risebird.Entities.ViewModel
         public string WorkUnderPressure { get; set; }
         public string TimeManagement { get; set; }
 
-
+        public string SharedEmailAddress { get; set; }
+       
 
     }
 }

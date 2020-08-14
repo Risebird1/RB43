@@ -113,8 +113,10 @@ textarea::-webkit-scrollbar-thumb {
 .special-text svg {
     fill: rgb(83, 165, 245) !important;
 }
-
-.tabs.nav-pills li.nav-link.active {
+.edit-share {
+    background-image: url('../../img/editicon.png')!important;
+}
+    .tabs.nav-pills li.nav-link.active {
     color: #fff;
     background-color: #53a5f5 !important;
 }

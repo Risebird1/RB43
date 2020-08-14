@@ -1045,11 +1045,11 @@ namespace Risebird.Business
             }
 
         }
-        public async Task AddTotalViewCount(int id, string emailaddress)
+        public async Task AddTotalViewCount(int id, string emailaddress, string flag)
         {
             try
             {
-                await _meetingRespository.AddTotalViewCount(id, emailaddress);
+                await _meetingRespository.AddTotalViewCount(id, emailaddress, flag);
 
             }
             catch (Exception e)
@@ -1356,7 +1356,293 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> AddSharedVideoDetails(InterviewReport reportModel)
+        {
+            try
+            {
+                var result = _meetingRespository.AddSharedVideoDetails(reportModel);
+                return result.Result;
 
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public async Task<int> SharedGetInterviewId(int videoid)
+        {
+            try
+            {
+                var result = _meetingRespository.SharedGetInterviewId(videoid);
+                return result.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public async Task<InterviewReport> GetSharedInteviewReport(int interviewId, int irfId, int id)
+        {
+            try
+            {
+                var reportModel = new InterviewReport();
+                var irfDetails = _meetingRespository.GetIRFDetails(irfId);
+                var levels = _meetingRespository.GetLevels();
+                //check whether an IRF exists for the given IRFId
+                var check = _meetingRespository.GetIRFbyId(irfId);
+                var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
+                var candidatedetails = _meetingRespository.GetCandidateSharedDetails(id);
+
+                if (!check)
+                {
+                    return null;
+                }
+                // check whether a feedback for the interviewId has already been submitted
+                var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
+                if (interviewReport != null && interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                {
+                    //call Edit Feedbackform method
+                    reportModel = interviewReport.FirstOrDefault();
+                    EditSharedInterviewReport(reportModel, id);
+                }
+                else
+                {
+                    var model = interviewReport.Count() > 0 ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    model.IsEdited = model.InterviewId > 0;
+                    //get all values from database
+                    var levelTech = _meetingRespository.GetLevelTech();
+                    var skills = _meetingRespository.GetSkills();
+                    var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
+                    var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
+                    var techSkillList = new List<TechSkillReport>();
+
+
+                    //assign values to model
+                    foreach (var item in techSkillsDetails ?? new List<TransSkill>())
+                    {
+                        TechSkillReport obj = new TechSkillReport
+                        {
+                            InterviewId = interviewId,
+                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name,
+                            SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id,
+                            WeightageRequired = item.Weightage
+                        };
+
+                        techSkillList.Add(obj);
+                    }
+                    model.TechSkillReportCollection = (IList<TechSkillReport>)techSkillList;
+
+                    var genSkillList = new List<SkillGeneralReport>();
+
+                    foreach (var item in skillGeneralDetails ?? new List<TransSkillGeneral>())
+                    {
+                        SkillGeneralReport obj = new SkillGeneralReport
+                        {
+                            InterviewId = interviewId,
+                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            Type = item.Type,
+                            Name = item.Name,
+                            Value = item.Value,
+                            WeightageRequired = item.Weightage
+                        };
+                        genSkillList.Add(obj);
+                    }
+
+                    model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)genSkillList;
+
+                    model.InterviewId = interviewId;
+                    model.CandidateName = candidatedetails.Name;
+                    model.interviewDate = interviewDetails.interviewDate.ToString();
+                    model.resumeLink = interviewDetails.resumeLink;
+                    model.IRFId = irfId;
+
+                    model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
+                    model.currentEmployerName = interviewDetails.currentEmployerName;
+                    model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
+                    model.PreferredLocation = interviewDetails.preferredLocation;
+                    model.IsEdited = false;
+                    model.IsApproved = interviewDetails.IsApproved;
+                    model.IsSelected = interviewDetails.IsSelected;
+                    model.FinalComments = interviewDetails.FinalComments;
+                    model.ApprovalComments = interviewDetails.ApprovalComments;
+                    model.IsBiometricEnabled = interviewDetails.IsBiometricEnabled;
+                    model.JoiningBiometryScore = interviewDetails.JoiningBiometryScore;
+                    model.InterviewBiometryScore = interviewDetails.InterviewBiometryScore;
+                    reportModel = model;
+                }
+                // joinability and Selectability
+
+                //get candidateId
+                reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
+                reportModel.CandidateName = candidatedetails.Name;
+                reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
+                reportModel.CandidateEmail = candidatedetails.EmailId;
+                reportModel.CandidateVisa = interviewDetails.CandidateVisa;
+                reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
+                reportModel.InterviewerComment = candidatedetails.InterviewerComments;
+
+                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
+                if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                {
+                    reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
+
+                }
+                else
+                {
+                    var selectabilityDetails = _evaluatorRespository.GetTransSelectability(irfId);
+                    var selectabilityList = new List<SelectabilityEvaluatorReport>();
+                    foreach (var item in selectabilityDetails ?? new List<TransSelectability>())
+                    {
+                        SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport
+                        {
+                            CandidateId = reportModel.CandidateId,
+                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            Type = item.Type,
+                            Name = item.Name,
+                            Value = item.Value,
+                            WeightageRequired = item.Weightage
+                        };
+                        selectabilityList.Add(obj);
+                    }
+                    reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityList;
+                }
+
+                reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
+                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
+                if (joinabilityReport != null && joinabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                {
+                    reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;
+
+                }
+                else
+                {
+                    var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
+                    var joinabilityList = new List<JoinabilityHRReport>();
+                    foreach (var item in joinabilityDetails ?? new List<TransJoinability>())
+                    {
+                        JoinabilityHRReport obj = new JoinabilityHRReport
+                        {
+                            CandidateId = reportModel.CandidateId,
+                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            Type = item.Type,
+                            Name = item.Name,
+                            Value = item.Value,
+                            WeightageRequired = item.Weightage
+                        };
+                        joinabilityList.Add(obj);
+                    }
+
+                    reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityList;
+                }
+
+                reportModel.IRFName = irfDetails.IRFId;
+                reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
+                return reportModel;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        private InterviewReport EditSharedInterviewReport(InterviewReport model, int id)
+        {
+            var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetSharedTechSkillReport(id));
+            //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
+
+            if (techReportCollection.Count() == 0)
+            {
+                var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(model.IRFId);
+                var techSkillList = new List<TechSkillReport>();
+                var levelTech = _meetingRespository.GetLevelTech();
+                var skills = _meetingRespository.GetSkills();
+
+                //assign values to model
+                foreach (var item in techSkillsDetails ?? new List<TransSkill>())
+                {
+                    TechSkillReport obj = new TechSkillReport
+                    {
+                        InterviewId = model.InterviewId,
+                        RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                        RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                        SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name,
+                        SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id,
+                        WeightageRequired = item.Weightage
+                    };
+
+                    techSkillList.Add(obj);
+                }
+                model.TechSkillReportCollection = (IList<TechSkillReport>)techSkillList;
+            }
+            else
+            {
+                model.TechSkillReportCollection = techReportCollection;
+            }
+
+
+            model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetSharedQuestionsDiscussed(id));
+            model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)(_meetingRespository.GetSkillGeneralReport(model.InterviewId));
+            model.Proctoring = _meetingRespository.GetProctoringReport(model.InterviewId);
+            model.IsEdited = true;
+            model.JobLevelName = Enum.GetName(typeof(JobLevels), model.JobLevel);
+            var interviewMeetingsDetails = _meetingRespository.GetInterviewMeetingById(model.InterviewId).Result;
+            model.PreferredLocation = interviewMeetingsDetails.preferredLocation;
+            model.resumeLink = interviewMeetingsDetails.resumeLink;
+            model.currentEmployerName = model.currentEmployerName;
+            model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
+
+            return model;
+        }
+        public IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid)
+        {
+            try
+            {
+                var result=_meetingRespository.GetVideoSumaryDetails(Interviewid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task AddTimeSpend(int id, string emailaddress, string flag,TimeSpan TimeSpend, string CurrentTime)
+        {
+            try
+            {
+                await _meetingRespository.AddTimeSpend(id, emailaddress, flag, TimeSpend, CurrentTime);
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+            }
+        }
+        public IEnumerable<VideoDetails> GetallVideoSumaryDetails()
+        {
+            try
+            {
+                var result = _meetingRespository.GetallVideoSumaryDetails();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
 }
