@@ -1398,7 +1398,7 @@ namespace Risebird.Web.Controllers
                         var modelList1 = new List<MeetingVM>();
 
                         var irfList = _meetingService.GetCuratedGroupIRFs(curatedGroupId).ToArray();
-                        var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
+                        var dataResult = await _meetingService.GetRiseTubeMeetings(0, "CuratedUser", emailId);
                         modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
 
                         modelList1 = modelList1.Where(x => irfList.Contains(x.irfIntId)).ToList();
