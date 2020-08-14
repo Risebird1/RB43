@@ -607,9 +607,10 @@
                                                         <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                         <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                         <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
-
-                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
-
+                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                        {
+                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
+                                                        }
 
                                                     </h1>
                                                 }
@@ -751,8 +752,8 @@
                                                         <div class="col-md-4 views tooltip1" style="text-align: end;">
                                                             <i class="fa fa-video video-icon"></i>
 
-                                                            <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Video Detail View" />
-                                                          
+                                                            <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
+
                                                         </div>
                                                     }
                                                 </div>
@@ -1985,7 +1986,7 @@
                                                                                 @Html.HiddenFor(m => m.IreportModel.QuestionsCollection[i].QuestionStatus, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                                             </td>
                                                                             <td class="text-center remove-btn">
-                                                                            <input  type="button" value="" onclick="RemoveRow(@i)" /><i class="far fa-trash-alt"></i>
+                                                                                <input type="button" value="" onclick="RemoveRow(@i)" /><i class="far fa-trash-alt"></i>
 
 
 
@@ -2036,7 +2037,7 @@
 
 
                 </div>
-                <h5 class="modal-title pull-left">Share Analytics</h5>
+                <h5 class="modal-title pull-left">Share/View Details</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeVideoDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
@@ -2058,7 +2059,7 @@
     </div>
 </div>
 
-       
+
 <script>
     function datecal() {
         var dtToday = new Date();
@@ -3160,13 +3161,15 @@
         html += '          <th>Video Link</th>';
         html += '            <th><span class="pull-left">Total View</span>   <span class="pull-right"></span></th>';
         html += '           <th><span class="pull-left">Total Time</span> <span class="pull-right"></span></th>';
+        html += '           <th><span class="pull-left">Video Time</span> <span class="pull-right"></span></th>';
+
         html += '           <th class="text-center">Action</th>';
 
         html += '       </tr>';
         for (var i = 0; i < data.length; i++) {
             html += '   <tr>';
             html += '                  <td>' + data[i].candidate + '</td>';
-            html += '                    <td>' + data[i].videoUrl + '<input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
+            html += '                    <td><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">Click Here</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             html += '                  <td class="text-center count-view"><span class="label-num"><strong>' + data[i].count + '</strong></span></td>';
             if (data[i].timeSpend != null) {
                 html += '                <td class="text-center">' + data[i].timeSpend + '</td>';
@@ -3174,6 +3177,7 @@
                 html += '                <td class="text-center"></td>';
 
             }
+            html += '                  <td>' + data[i].currentTime + '</td>';
             html += '                <td class="text-center"><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input  type="button" value="Share" onclick="OpenSharePopup(' + i + ')" /></div></td>';
             html += '             </tr>';
         }
