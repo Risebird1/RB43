@@ -1386,6 +1386,11 @@ namespace Risebird.Web.Controllers
                     ViewBag.CuratedGroupId = curatedGroupId;
                     if (profileName == "CuratedUser" || profileName=="Client")
                     {
+                        var isClient = false;
+                        if(profileName == "Client")
+                        {
+                            isClient = true;
+                        }
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
 
@@ -1398,7 +1403,7 @@ namespace Risebird.Web.Controllers
                         var modelList1 = new List<MeetingVM>();
 
                         var irfList = _meetingService.GetCuratedGroupIRFs(curatedGroupId).ToArray();
-                        var dataResult = await _meetingService.GetRiseTubeMeetings(0, "CuratedUser", emailId);
+                        var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId, isClient);
                         modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
 
                         modelList1 = modelList1.Where(x => irfList.Contains(x.irfIntId)).ToList();
@@ -1643,6 +1648,14 @@ namespace Risebird.Web.Controllers
                         }
                         ViewBag.VideoStatus = "Private";
 
+                        if (profileName == "Client")
+                        {
+                            NewModel.IsClientCurated = true;
+                        }
+                        else
+                        {
+                            NewModel.IsClientCurated = false;
+                        }
                         return View("VideoPage", NewModel);
                     }
                     else
