@@ -2,7 +2,7 @@
 @using Risebird.Entities.Enum
 @{
 
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
@@ -12,10 +12,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 
-<script type="text/javascript" src="~/js/plugins/jquery/jquery.min.js"></script>
 
-<script type="text/javascript" src="~/js/plugins/jquery/jquery-ui.min.js"></script>
-<script type="text/javascript" src="~/js/plugins/bootstrap/bootstrap.min.js"></script>
 <!-- END PLUGINS -->
 <!-- START THIS PAGE PLUGINS-->
 <script type='text/javascript' src='~/js/plugins/icheck/icheck.min.js'></script>
@@ -36,8 +33,9 @@
 
 <script type='text/javascript' src='~/js/plugins/bootstrap/bootstrap-datepicker.js'></script>
 <script type="text/javascript" src="~/js/plugins/daterangepicker/daterangepicker.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" defer>
 
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
 <!-- END THIS PAGE PLUGINS-->
 <!-- START TEMPLATE -->
 
@@ -277,7 +275,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="panel-title-box">
-                                    <h3>Daily Interview Slots</h3>
+                                    <h3>Daily Interview Stats</h3>
 
                                 </div>
                                 <ul class="panel-controls" style="margin-top: 2px;">
@@ -302,9 +300,10 @@
                                                 <table class="table table-bordered table-striped ">
                                                     <thead>
                                                         <tr>
-                                                            <th width="20%">Morning Counts</th>
-                                                            <th width="30%">Evening Counts</th>
-                                                            <th width="50%">Skill Channel ID</th>
+                                                            <th width="30%" class="text-center"><strong>Skill Channel ID</strong></th>
+                                                            <th width="20%" class="text-center"><strong>Morning Count(s)</strong></th>
+                                                            <th width="20%" class="text-center"><strong>Evening Count(s)</strong></th>
+                                                            <th width="50%" class="text-center"><strong>Result</strong></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -313,9 +312,10 @@
                                                             foreach (var item in Model.DailyInterviewSlots)
                                                             {
                                                                 <tr>
+                                                                    <td class="text-center"><strong>@item.IRFnSkill</strong></td>
                                                                     <td class="text-center"><span class="label-num"><strong>@item.Morning</strong></span></td>
                                                                     <td class="text-center"><span class="label-num"><strong>@item.Evening</strong></span></td>
-                                                                    <td><strong>@item.IRFnSkill</strong></td>
+                                                                    <td class="text-center"><a class="selected" href="#" data-toggle="tooltip" title="Selected : @item.Selected"><span><strong>@item.Selected</strong> </span></a> / <a class="rejected" href="#" data-toggle="tooltip" title="Rejected : @item.Rejected"><span><strong>@item.Rejected</strong></span></a> / <a class="borderline" href="#" data-toggle="tooltip" title="BorderLine : @item.BorderLine"><span><strong>@item.BorderLine</strong></span></a> / <a class="proxy" href="#" data-toggle="tooltip" title="Proxy : @item.Proxy"><span><strong>@item.Proxy</strong></span></a> /  <a class="noshow" href="#" data-toggle="tooltip" title="NoShow : @item.NoShowCount"><span><strong>@item.NoShowCount </strong> </span></a> / <a class="schedule" href="#" data-toggle="tooltip" title="Scheduled : @item.ScheduledCount"><span><strong>@item.ScheduledCount </strong> </span></a> / <a class="dropped" href="#" data-toggle="tooltip" title="Dropped : @item.DroppedCount"><span><strong>@item.DroppedCount</strong></span></a> / <a class="pending" href="#" data-toggle="tooltip" title="Pending : @item.Pending"><span><strong>@item.Pending</strong></span></a></td>
                                                                 </tr>
 
                                                             }
@@ -325,6 +325,22 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+
+
+                                        </div>
+                                        <div class="legend">
+
+                                            <ul>
+                                                <li><div class="g color"></div>Selected</li>
+                                                <li><div class="r color"></div>Rejected</li>
+                                                <li><div class="b color"></div>BorderLine</li>
+                                                <li><div class="pr color"></div>Proxy</li>
+                                                <li><div class="ns color"></div>NoShow</li>
+                                                <li><div class="sch color"></div>Schedule</li>
+                                                <li><div class="dr color"></div>Dropped</li>
+                                                <li><div class="pe color"></div>Pending</li>
+
+                                            </ul>
                                         </div>
                                     }
                                     else
@@ -338,109 +354,7 @@
 
                     </div>
 
-                    <div class="daily-slot">
 
-                        <!-- START SALES BLOCK -->
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="panel-title-box">
-                                    <h3>Daily Interview Status</h3>
-
-                                </div>
-                                <ul class="panel-controls panel-controls-title">
-                                    <li>
-                                        <div class="col-md-12 col-sm-12 nopad interview-date">
-                                            <input id="statusTrackingDate" name="statusTrackingDate" type="date" class="form-control">
-                                        </div>
-                                    </li>
-                                    <li>
-                                        @*<a href="#"><span class="fa fa-cog"></span></a>*@
-                                        <button onclick="getInterviewStatus()" class="panel-fullscreen"><span class="fa fa-eye"></span></button>
-                                    </li>
-                                </ul>
-
-                            </div>
-
-                            <div id="statusTrackingId">
-
-                                <div class="panel-body">
-                                    @if (Model.TotalCompletedMeetings != 0)
-                                    {
-                                        <div class="stacked">
-                                            <div class="sb-container scroller">
-                                                <div>
-
-                                                    @{
-                                                        var borderLine = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 4).Count();
-                                                        <div class="progress-list">
-                                                            <div class="pull-left"><strong>Border Line</strong></div>
-                                                            <div class="pull-right">
-                                                                @borderLine / @Model.TotalCompletedMeetings
-                                                            </div>
-                                                            <div class="progress progress-small progress-striped active">
-                                                                <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(borderLine * 100 / Model.TotalCompletedMeetings)%;">
-                                                                    @(borderLine * 100 / Model.TotalCompletedMeetings)%
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        var proxy = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 1).Count();
-                                                        <div class="progress-list">
-                                                            <div class="pull-left"><strong>Proxy</strong></div>
-                                                            <div class="pull-right">
-                                                                @proxy / @Model.TotalCompletedMeetings
-                                                            </div>
-                                                            <div class="progress progress-small progress-striped active">
-                                                                <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(proxy * 100 / Model.TotalCompletedMeetings)%;">
-                                                                    @(proxy * 100 / Model.TotalCompletedMeetings)%
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        var rejected = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 3).Count();
-                                                        <div class="progress-list">
-                                                            <div class="pull-left"><strong class="text-danger">Rejected</strong></div>
-                                                            <div class="pull-right">
-                                                                @rejected / @Model.TotalCompletedMeetings
-                                                            </div>
-                                                            <div class="progress progress-small progress-striped active">
-                                                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(rejected * 100 / Model.TotalCompletedMeetings)%;">
-                                                                    @(rejected * 100 / Model.TotalCompletedMeetings)%
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        var selected = Model.Meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus == 2).Count();
-                                                        <div class="progress-list">
-                                                            <div class="pull-left"><strong class="text-warning">Selected</strong></div>
-                                                            <div class="pull-right">
-                                                                @selected / @Model.TotalCompletedMeetings
-                                                            </div>
-                                                            <div class="progress progress-small progress-striped active">
-                                                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: @(selected * 100 / Model.TotalCompletedMeetings)%;">
-                                                                    @(selected * 100 / Model.TotalCompletedMeetings)%
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    }
-
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div>No completed interviews for this date!</div>
-                                    }
-                                </div>
-
-                            </div>
-                        </div>
-                        <!-- END SALES BLOCK -->
-
-                    </div>
                 </div>
 
                 <!-- START WIDGETS -->
@@ -537,8 +451,9 @@
 
         today = yyyy + '-' + mm + '-' + dd;
         document.getElementById('interviewTrackingDate').value = today;
-        document.getElementById('statusTrackingDate').value = today;
+        //document.getElementById('statusTrackingDate').value = today;
         document.getElementById('interviewSlotsDate').value = today;
+        document.getElementById('ProgressDate').value = today;
         //document.getElementById('progressTrackingDate').value = today;
     }
 
@@ -636,10 +551,15 @@
         chart.render();
 
         //candidatesPieId
-        var candidateCountObj = [{ y: 8, label: "Proxy" },
-            { y: 31, label: "Selected" },
-            { y: 27, label: "Rejected" },
-            { y: 34, label:"Border Line"}]
+        var candidateCountObj = [{ y: @Model.CandidatesCountObj.Proxy, label: "Proxy" },
+            { y: @Model.CandidatesCountObj.Selected, label: "Selected" },
+            { y: @Model.CandidatesCountObj.Rejected, label: "Rejected" },
+            { y: @Model.CandidatesCountObj.BorderLine, label:"Border Line"},
+            { y: @Model.CandidatesCountObj.NoShowCount, label:"No Show"},
+            { y: @Model.CandidatesCountObj.ScheduledCount, label:"Scheduled"},
+            { y: @Model.CandidatesCountObj.DroppedCount, label:"Dropped"},
+            { y: @Model.CandidatesCountObj.Pending, label: "Pending" }]
+          
 
         var chart = new CanvasJS.Chart("candidatesPieId", {
            theme: "light2",
@@ -652,8 +572,8 @@
                 startAngle: 60,
                 innerRadius: 55,
                 indexLabelFontSize: 15,
-                indexLabel: "{label}  {y}%",
-                toolTipContent: "<b>{label} </b>({y}%)",
+                indexLabel: "{label}  {y}",
+                toolTipContent: "<b>{label} </b>({y})",
 
                 dataPoints: candidateCountObj
             }]
@@ -691,7 +611,7 @@
             yLabelFormat: function (y) { return y != Math.round(y) ? '' : y; },
             gridTextSize: '10px',
             //lineColors: ['#1caf9a', '#33414E'],
-            gridLineColor: '#E5E5E5'  
+            gridLineColor: '#E5E5E5'
         };
         config.element = 'area-chart';
         Morris.Area(config);
@@ -757,6 +677,11 @@
 <script type="text/javascript">
     $(".sb-container").scrollBox();
 </script>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 @*<script>
         $(".widget-remove").on("click", function () {

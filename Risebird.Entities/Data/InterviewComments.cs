@@ -78,5 +78,7 @@ namespace Risebird.Entities.Data
         [Display(Name = "Upload Aadhar File")]
         public IFormFile AadharFile { get; set; }
         public string AadharFileLink { get; set; }
+        [Display(Name = "Candidate Available")]
+        public bool CandidateAvailable { get; set; }
     }
 }

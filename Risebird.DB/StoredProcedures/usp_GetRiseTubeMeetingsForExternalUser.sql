@@ -59,7 +59,7 @@ join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
 inner join QCFeedbackReport QCF on im.id=QCF.InterviewId      
 inner join Subscribers su on IRF.id=su.IRFId    
 join tblsharedVideo ts on ts.VideoId=ic.InterviewId
-where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and IRF.Clientid=@clientid and ts.Userid=@id      
+where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and IRF.Clientid=@clientid and ts.Userid=@id   and ic.CandidateAvailable=1   
 END      
          
 End          

@@ -1583,6 +1583,7 @@ namespace Risebird.Repository
             parameters.Add("@JoiningStatus", entity.JoiningStatus);
             parameters.Add("@ThumbnailImage", entity.ThumbnailImage);
             parameters.Add("@AadharFileLink", entity.AadharFileLink);
+            parameters.Add("@CandidateAvailable", entity.CandidateAvailable);
             return parameters;
         }
 
@@ -1706,18 +1707,28 @@ namespace Risebird.Repository
 
             return null;
         }
-        public async Task AddTotalViewCount(int id, string emailaddress)
+        public async Task AddTotalViewCount(int id, string emailaddress, string flag)
         {
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@Interviewid", id);
                 parameters.Add("@EmailId", emailaddress);
-
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if (flag == "Public")
                 {
-                    await SqlMapper.QueryAsync<string>(con, "usp_AddinterviewView", parameters,
-                       commandType: CommandType.StoredProcedure);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<string>(con, "usp_AddinterviewView", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<string>(con, "usp_SharedAddinterviewView", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    }
                 }
             }
             catch (SqlException ex)
@@ -2264,6 +2275,255 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> AddSharedVideoDetails(InterviewReport reportModel)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    InterviewComments interviewComments = new InterviewComments();
+                    DynamicParameters parameters = new DynamicParameters();
+                    DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@InterviewId", reportModel.InterviewId);
+                    paramx.Add("@TechSkillComments", reportModel.TechSkillComments);
+                    paramx.Add("@CandidateName", reportModel.CandidateName);
+                    paramx.Add("@CandidateEmail", reportModel.CandidateEmail);
+                    paramx.Add("@InterviewerComment", reportModel.InterviewerComment);
 
+                    //paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
+                    //paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
+                    // paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
+
+                    var resultset = SqlMapper.Query<int>(con, "usp_AddSharedInterviewVideo", paramx,
+                                        commandType: CommandType.StoredProcedure);
+
+                    DataTable techReportDt = new DataTable();
+                    techReportDt.Columns.Add("InterviewId", typeof(int));
+                    techReportDt.Columns.Add("RequiredLevelId", typeof(int));
+                    techReportDt.Columns.Add("SkillId", typeof(int));
+                    techReportDt.Columns.Add("ActualLevelId", typeof(int));
+                    techReportDt.Columns.Add("WeightageRequired", typeof(int));
+                    techReportDt.Columns.Add("WeightageActual", typeof(int));
+
+                    foreach (var item in reportModel.TechSkillReportCollection)
+                    {
+                        techReportDt.Rows.Add(resultset.FirstOrDefault(), item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
+                    }
+
+                    SqlCommand cmdTechReport = new SqlCommand("usp_SharedTechSkillReportBulkInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
+                    cmdTechReport.Parameters["@TechSkillReportBulkData"].Value = techReportDt;
+                    con.Open();
+                    if (cmdTechReport.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    DataTable questionsDt = new DataTable();
+                    questionsDt.Columns.Add("InterviewId", typeof(int));
+                    questionsDt.Columns.Add("Comment", typeof(string));
+                    questionsDt.Columns.Add("RatingId", typeof(int));
+                    questionsDt.Columns.Add("Timing", typeof(int));
+                    questionsDt.Columns.Add("SkillName", typeof(string));
+
+
+                    foreach (var item in reportModel.QuestionsCollection)
+                    {
+                        if (String.IsNullOrEmpty(item.QuestionStatus))
+                        {
+                            questionsDt.Rows.Add(resultset.FirstOrDefault(), item.Comment, item.RatingId, item.Timing, item.SkillName);
+                        }
+                        else if (item.QuestionStatus != "true")
+                        {
+                            questionsDt.Rows.Add(resultset.FirstOrDefault(), item.Comment, item.RatingId, item.Timing, item.SkillName);
+                        }
+                    }
+
+                    SqlCommand cmdQuestions = new SqlCommand("usp_SharedQuestionsDiscussedBulkInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    var result = resultset.FirstOrDefault();
+                    return resultset.FirstOrDefault().ToString();
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public async Task<int> SharedGetInterviewId(int videoid)
+        {
+            try
+            {
+                var query = "Select InterviewId from SharedInterviewComments where id=@Id";
+                var Parameters = new DynamicParameters();
+                Parameters.Add("@Id", videoid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, Parameters);
+                    return results.FirstOrDefault();
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public IEnumerable<TechSkillReport> GetSharedTechSkillReport(int id)
+        {
+            try
+            {
+                var query = "select a.*, Skill.[Name] as SkillName from (select SharedTechSkillReport.*, [LevelTech].[Name] as RequiredLevel from SharedTechSkillReport inner join [LevelTech] on SharedTechSkillReport.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TechSkillReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<QuestionsDiscussed> GetSharedQuestionsDiscussed(int id)
+        {
+            try
+            {
+                var query = "Select * from SharedQuestionsDiscussed where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<QuestionsDiscussed>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    VideoDetails interviewComments = new VideoDetails();
+                    DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@InterviewId", Interviewid);
+                    var resultset = SqlMapper.Query<VideoDetails>(con, "usp_FetchVideoSumaryDetails", paramx,
+                                        commandType: CommandType.StoredProcedure);
+                    return resultset;
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task AddTimeSpend(int id, string emailaddress, string flag, TimeSpan TimeSpend, string CurrentTime)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Interviewid", id);
+                parameters.Add("@EmailId", emailaddress);
+                if (flag == "Public")
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var query = "Select id from USerList where Emailid = @emailaddress";
+                        var dynamicParameters = new DynamicParameters();
+                        dynamicParameters.Add("@emailaddress", emailaddress);
+                        var results = con.Query<int>(query, dynamicParameters);
+                        int userid = results.FirstOrDefault();
+                        if (userid == 0)
+                        {
+                            SqlMapper.Query<string>(
+                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress, CurrentTime = CurrentTime }, commandType: Text);
+                        }
+                        else
+                        {
+                            SqlMapper.Query<string>(
+                                con, "Update VideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Userid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = userid, CurrentTime = CurrentTime }, commandType: Text);
+                        }
+                    }
+                }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        SqlMapper.Query<string>(
+                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress }, commandType: Text);
+
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+        public IEnumerable<VideoDetails> GetallVideoSumaryDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    VideoDetails interviewComments = new VideoDetails();
+                    DynamicParameters paramx = new DynamicParameters();
+                    var resultset = SqlMapper.Query<VideoDetails>(con, "usp_FetchAllVideoSumaryDetails", paramx,
+                                        commandType: CommandType.StoredProcedure);
+                    return resultset;
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public Candidate GetCandidateSharedDetails(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Candidate>(con, "usp_GetCandidateSharedDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

@@ -146,7 +146,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
+                                                                    @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
