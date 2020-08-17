@@ -192,6 +192,7 @@ namespace Risebird.Entities.ViewModel
         public string HRMobileNumber { get; set; }
         public string HRComment { get; set; }
         public bool MoveToCP { get; set; }
+        public bool IsClientCurated { get; set; }
     }
     public class VedioComments
     {
