@@ -10227,9 +10227,7 @@ select.selectpicker {
     /*IE9 and below*/
 }
 
-    .bootstrap-select > .dropdown-menu {
-        overflow: visible !important;
-    }
+ 
 
     .bootstrap-select .dropdown-item.active,
     .bootstrap-select .dropdown-item:active {
@@ -10387,7 +10385,7 @@ select.selectpicker {
 }
 
 .bootstrap-select .dropdown-toggle .filter-option {
-    position: absolute;
+    /* position: absolute;*/
     top: 0;
     left: 0;
     padding-top: inherit;
@@ -10398,6 +10396,7 @@ select.selectpicker {
     width: 100%;
     text-align: left;
     outline: none;
+    font-size: 13px;
 }
 
 .bootstrap-select .dropdown-toggle .filter-option-inner {
