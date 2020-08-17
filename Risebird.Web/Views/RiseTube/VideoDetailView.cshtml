@@ -80,7 +80,7 @@
                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
                                     <tr>
                                         <td>@item.CandidateEmail</td>
-                                        <td><a href="@item.VideoUrl" target="_blank">@item.VideoUrl</a></td>
+                                        <td><a href="@item.VideoUrl" target="_blank" title="@item.VideoUrl">Click Here</a></td>
                                         <td>@item.Candidate</td>
                                         <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
                                         <td class="text-center">@item.TimeSpend</td>

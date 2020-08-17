@@ -32,11 +32,22 @@
     padding: 3px 4px;
     font-size: 12px;
 }
-
-
-.text-areadiv #comment::-webkit-input-placeholder { /* Edge */
-    line-height: 40px !important
+.remove-btn input{
+    border: 0px;
+    background: none;
+    text-align: center;
 }
+
+    .remove-btn i {
+        position: relative;
+        top: 0px;
+        left: -10px;
+        color: #c53737;
+        font-size: 17px
+    }
+    .text-areadiv #comment::-webkit-input-placeholder { /* Edge */
+        line-height: 40px !important
+    }
 
 .text-areadiv #comment:-ms-input-placeholder { /* Internet Explorer 10-11 */
     line-height: 40px !important
