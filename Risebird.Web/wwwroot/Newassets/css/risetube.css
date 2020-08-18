@@ -971,6 +971,7 @@ textarea::-webkit-scrollbar-thumb {
         border-bottom-left-radius: 5px;
         border-top-right-radius: 0em;
         border-bottom-right-radius: 0em;
+        margin:0px;
     }
 
         #myForm input[type=email]:focus, #myForm input[type=text]:focus {
