@@ -10,7 +10,7 @@ body {
             height: 100px;*/
     display: none;
     position: center !important;
-    background-color: White;
+ 
     z-index: 999;
     /*opacity: 0.5;*/
     filter: alpha(opacity = 50);
@@ -248,12 +248,6 @@ table {
 
 
 
-
-
-.dataTables_length, .dataTables_filter {
-    margin: 10px 0px
-}
-
     .dataTables_length label {
         font-size: 14px;
     }
@@ -448,10 +442,6 @@ div.dataTables_wrapper div.dataTables_filter label{position:relative;}
 }
 
 
-
-.mdc-card {
-    border-top: 3px #53a5f5 solid;
-}
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #42a5f5;
