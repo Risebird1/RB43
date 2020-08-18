@@ -2525,5 +2525,52 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> AddVedioShare(string value, string vedioid, string Emailids)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@isShared", value);
+                parameters.Add("@VedioId", vedioid);
+                parameters.Add("@Emails", Emailids);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddInterviewShareDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "";
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return "";
+        }
+        public async Task<int> CheckVedioShare(string vedioid, string Emailid)
+        {
+            try
+            {
+                var query = "Select id from InterviewShareDetails where Interviewid=@interviewid and Emailid=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", vedioid);
+                dynamicParameters.Add("@Emailid", Emailid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return 0;
+        }
     }
 }

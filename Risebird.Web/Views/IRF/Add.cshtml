@@ -172,6 +172,10 @@
                                         @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
 
                                     </div>
+                                    <div class="form-group">
+                                        @Html.RadioButtonFor(m => m.Type, "B2B", new { Checked = "checked" }) <span class="radio-field">B2B</span>
+                                        @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
+                                    </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
@@ -1072,7 +1076,7 @@
                 var options = createid + " option[value='" + interviewerskill[j] + "']";
                 $("#" + options).attr('selected', 'selected');
                 $("#" + SkillLabel + " option[value='1']").attr('selected', 'selected');
-               
+
                 if (j < (interviewerskill.length - 1)) {
                     AddRow();
                 }

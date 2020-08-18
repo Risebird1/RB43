@@ -88,6 +88,6 @@ namespace Risebird.Entities.Data
 
         public int iscIntId { get; set; }
         public string IRFnSkill { get; set; }
-
+        public string BussinessType { get; set; }
     }
 }

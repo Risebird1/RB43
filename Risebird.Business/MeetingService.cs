@@ -1643,6 +1643,37 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string AddVedioShare(string value, string vedioid, string Emailids)
+        {
+            try
+            {
+                var meeting = _meetingRespository.AddVedioShare(value, vedioid, Emailids);
+                return "";
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+        }
+        public int CheckVedioShare(string vedioid, string Emailid)
+        {
+            try
+            {
+                var meeting = _meetingRespository.CheckVedioShare(vedioid, Emailid);
+                return meeting.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
     }
 
 }

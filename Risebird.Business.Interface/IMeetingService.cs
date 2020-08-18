@@ -81,5 +81,8 @@ namespace Risebird.Business.Interface
         IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid);
         Task AddTimeSpend(int id, string emailaddress, string flag,TimeSpan TimeSpend, string CurrentTime);
         IEnumerable<VideoDetails> GetallVideoSumaryDetails();
+        string AddVedioShare(string value, string vedioid,string Emailids);
+        int CheckVedioShare(string vedioid, string Emailid);
+
     }
 }

@@ -116,6 +116,7 @@ namespace Risebird.Entities.ViewModel
         public int? PriorityLevel { get; set; }
         public SelectList PriorityLevelList { get; set; }
         public List<InterviewerIds> InterviewerIds { get; set; }
+        public string Type { get; set; }
 
     }
     public class InterviewerIds
