@@ -310,10 +310,6 @@ table {
 }
 
 
-.mdc-card {
-    border-top: 3px #53a5f5 solid;
-}
-
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #42a5f5;
     font-family: Roboto, sans-serif;
@@ -466,7 +462,7 @@ table {
 .mdc-card .modal .form-control, .modal .form-control, .mdc-card .form-control {
     border: 0;
     border-radius: 0px 0px 0 0;
-
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;

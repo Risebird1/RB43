@@ -971,6 +971,7 @@ textarea::-webkit-scrollbar-thumb {
         border-bottom-left-radius: 5px;
         border-top-right-radius: 0em;
         border-bottom-right-radius: 0em;
+        margin:0px;
     }
 
         #myForm input[type=email]:focus, #myForm input[type=text]:focus {
@@ -1083,9 +1084,6 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 
-.mdc-card {
-    border-top: 3px #53a5f5 solid;
-}
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     font-family: Roboto, sans-serif;

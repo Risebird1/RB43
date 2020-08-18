@@ -3,8 +3,16 @@
     ViewData["Title"] = "InterviewerAdd";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        $("#select").select2({ multiple: true });
+    });
 
+</script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -49,7 +57,7 @@
                                 </div>
                                 <div style="width: 100%;">&nbsp;</div>
 
-                                <div class="form-horizontal">
+                                <div class="form-horizontal w-full">
                                     <div class="clearfix">
                                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
@@ -92,7 +100,7 @@
                                         <div class="form-group col-lg-4  col-md-4 col-sm-4 px-1 pull-left">
                                             @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.DropDownListFor(m => m.SelectedSkillIds, new SelectList(Model.PrimarySkills, "Value", "Text", Model.SelectedSkillIds), new { @class = "form-control", @multiple = "multiple" })
+                                            @Html.DropDownListFor(m => m.SelectedSkillIds, new SelectList(Model.PrimarySkills, "Value", "Text", Model.SelectedSkillIds), new { @id = "select", @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
 
                                         </div>
@@ -152,7 +160,7 @@
                                             @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                             @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                 
+
                                         </div>
 
 
@@ -198,6 +206,8 @@
     </div>
 
 </div>
+
+
 
 <script>
     function RadioChanged(val) {
