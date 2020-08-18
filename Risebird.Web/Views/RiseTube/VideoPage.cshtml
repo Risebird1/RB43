@@ -481,11 +481,23 @@
                                                                                     @if (videolist.VideoLink.Contains(".mp4"))
                                                                                     {
                                                                                         @if (videolist.ThumbnailImage != null)
-                                                                                        {<img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                        {
+                                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
                                                                                         <video controls style=" background:black!important;width:100%; height:100% ">
                                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                                         </video>
-                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a> }
+                                                                                        @if (Model.IsClientCurated)
+                                                                                        {
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                        }
+
+                                                                                    }
                                                                                     else
                                                                                     {
                                                                                         @if (videolist.ThumbnailImage != null)
@@ -495,7 +507,7 @@
 
 
                                                                                     @*
-                                                                                        <div class="time">3:50</div>
+        <div class="time">3:50</div>
                                                                                     *@
                                                                                 </div>
                                                                                 <div class="video-card-body">

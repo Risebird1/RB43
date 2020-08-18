@@ -193,6 +193,8 @@ namespace Risebird.Entities.ViewModel
         public string HRComment { get; set; }
         public bool MoveToCP { get; set; }
         public bool IsClientCurated { get; set; }
+        public int CuratedGroupId { get; set; }
+        public string ActionStatus { get; set; }
     }
     public class VedioComments
     {
