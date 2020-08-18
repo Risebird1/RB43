@@ -1655,11 +1655,20 @@ textarea::-webkit-scrollbar-thumb {
 .showinter {
     padding: 5px 0;
 }
-
+.k{line-height:48px;}
 .views {
+    right: 0px;
+    position: absolute;
     padding: 10px 10px 0px 10px;
 }
-
+.limebtn {
+    position: absolute;
+    left:30px;
+}
+.yellow-btn {
+    position: absolute;
+    left: 30px;
+}
 .tab-space {
     padding: 0px 0 30px 0px;
 }
@@ -1875,11 +1884,19 @@ textarea::-webkit-scrollbar-thumb {
     .tabs {
         display: none;
     }
+    .k .fa{font-size:20px!important}
+
     #VideoDetailsModel .modal-lg {
         max-width: 700px !important;
     }
-
-
+    .limebtn {
+        position: absolute;
+        left: 0px !important;
+    }
+    .yellow-btn {
+        position: absolute;
+        left: 0px !important;
+    }
     #CreateAndShareModel .tabs {
         display: inline-flex;
     }
@@ -2003,7 +2020,7 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .share {
-        width: 20%;
+        width: 25%;
     }
 
     .shortlist {
@@ -2052,6 +2069,9 @@ textarea::-webkit-scrollbar-thumb {
         text-align: center !important;
         margin: 0px auto !important;
     }
+    .limebtn {
+        left: -20px !important;
+    }
 
     .expected-salari {
         width: 16%;
@@ -2078,7 +2098,7 @@ textarea::-webkit-scrollbar-thumb {
         width: 98%;
         margin: 0;
         position: absolute;
-        top: 9px;
+        top: 0px;
         right: 0;
     }
 
@@ -2129,22 +2149,23 @@ textarea::-webkit-scrollbar-thumb {
     }
 
     .counts-liks {
-        position: relative
+        position: relative;
+        width:100%;
     }
 
     .showinter {
-        width: 35%;
+        width: 40%;
         float: left;
         padding: 0px !important;
     }
 
     .shortlist {
         margin: 0;
-        width: 40%;
+        /* width: 40%;*/
     }
 
     .share {
-        width: 50%;
+        /* width: 50%;*/
     }
 
     .views {
@@ -2184,12 +2205,33 @@ textarea::-webkit-scrollbar-thumb {
     .single-video-left .comment-area textarea {
         width: 72%;
     }
-
+    .shortlist {
+        margin: 0;
+       
+    }
+    .limebtn {
+      left:0px!important;
+    }
+    .share {
+        width: 30%!important;
+    }
+    .views {
+        padding: 0px 10px 0px 10px;
+        right: 4px;
+        top: 23px !important;
+    }
     .share-btn {
         position: relative;
-        left: 50px;
+        /* left: 50px;*/
     }
-    #myForm .searchbox {
+    .yellow-btn {
+        position: absolute;
+        width: 100%;
+    }
+    .lime-btn {
+        width: 100%;
+    }
+        #myForm .searchbox {
         margin-right: 10px !important;
     }
     #myForm .searchbox input[type=email] {
@@ -2221,9 +2263,14 @@ textarea::-webkit-scrollbar-thumb {
         top: 25px;
         right: 0;
     }
+
+    .single-video-info-content {
+        margin-top: 20px;
+    }
+
     .share-btn {
         position: relative;
-        left:0px;
+        left: 0px;
     }
     .video-card-list .video-card-image {
         height: 70px!important;width:90px!important;
@@ -2247,5 +2294,22 @@ textarea::-webkit-scrollbar-thumb {
 
     .video-info span {
         font-size: 13px;
+    }
+
+    .views {
+        padding: 0px 10px 0px 10px;
+        right: 4px;
+        top: 49px !important;
+    }
+    .share {
+        width: 50% !important;
+    }
+    .shortlist {
+        width: 50% !important;
+
+    }
+    .limebtn {
+        left: 20px !important;
+        top: -13px;
     }
 }
