@@ -1655,11 +1655,16 @@ textarea::-webkit-scrollbar-thumb {
 .showinter {
     padding: 5px 0;
 }
-
+.k{line-height:48px;}
 .views {
+    right: 0px;
+    position: absolute;
     padding: 10px 10px 0px 10px;
 }
-
+.limebtn {
+    position: absolute;
+    left:30px;
+}
 .tab-space {
     padding: 0px 0 30px 0px;
 }
@@ -1875,6 +1880,8 @@ textarea::-webkit-scrollbar-thumb {
     .tabs {
         display: none;
     }
+    .k .fa{font-size:20px!important}
+
     #VideoDetailsModel .modal-lg {
         max-width: 700px !important;
     }
@@ -2078,7 +2085,7 @@ textarea::-webkit-scrollbar-thumb {
         width: 98%;
         margin: 0;
         position: absolute;
-        top: 9px;
+        top: 0px;
         right: 0;
     }
 
@@ -2221,9 +2228,14 @@ textarea::-webkit-scrollbar-thumb {
         top: 25px;
         right: 0;
     }
+
+    .single-video-info-content {
+        margin-top: 20px;
+    }
+
     .share-btn {
         position: relative;
-        left:0px;
+        left: 0px;
     }
     .video-card-list .video-card-image {
         height: 70px!important;width:90px!important;
