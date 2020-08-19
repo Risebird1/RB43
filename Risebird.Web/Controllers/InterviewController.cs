@@ -6776,6 +6776,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+       
     }
 
 }

@@ -1377,17 +1377,17 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    
+
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     ViewBag.actionstatus = "Risetube";
                     ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
                     ViewBag.ProfileName = profileName;
                     ViewBag.CuratedGroupId = curatedGroupId;
-                    if (profileName == "CuratedUser" || profileName=="Client")
+                    if (profileName == "CuratedUser" || profileName == "Client")
                     {
                         var isClient = false;
-                        if(profileName == "Client")
+                        if (profileName == "Client")
                         {
                             isClient = true;
                         }
@@ -1410,7 +1410,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.actionstatus = "SkillChannel";
                         if (actionstatus.ToUpper() == "ALL")
                         {
-                            if(id == 0)
+                            if (id == 0)
                             {
                                 id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
                             }
@@ -1418,7 +1418,7 @@ namespace Risebird.Web.Controllers
                         else if (actionstatus.ToUpper() == "SHORTLIST")
                         {
                             modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
-                            if(id == 0)
+                            if (id == 0)
                             {
                                 id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
 
@@ -1850,7 +1850,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        public JsonResult CalculateTimeSpend(string videoid, string Emailid, string CurrentUrl, string timeStart, string timeend,string CurrentTime)
+        public JsonResult CalculateTimeSpend(string videoid, string Emailid, string CurrentUrl, string timeStart, string timeend, string CurrentTime)
         {
             //Start:SaveTime Spend on vedio page
             if (String.IsNullOrEmpty(Emailid))
@@ -1907,7 +1907,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public JsonResult VideoShareDetails(string value, string videoid, string name, string Emailids,string currentUrl)
+        public JsonResult VideoShareDetails(string value, string videoid, string name, string Emailids, string currentUrl)
         {
             //var modelList = _meetingService.VedioShare(value, vedioid);
             string Name = string.Empty;
@@ -1932,6 +1932,54 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Fail");
+            }
+        }
+
+        [HttpPost]
+        public JsonResult VideoShareIntrest(string currentUrl)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                string videoid = currentUrl.Split("/")[currentUrl.Split("/").Count() - 1].ToString();
+                string urlType = "";
+                if (currentUrl.Contains("SharedVideoPage"))
+                {
+                    urlType = "Shared";
+                }
+                else
+                {
+                    urlType = "RiseTube";
+                }
+                //save into db
+                var model = _meetingService.AddVideoIntrestDetails(videoid, urlType, emailid);
+
+            }
+            return Json("Success");
+        }
+        public IActionResult VideoIntrestDetails(int interviewid, string status,int? Page)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
+                {
+                    var model = _meetingService.GetVideoIntrestDetails(interviewid);
+                    ViewBag.InterviewId = interviewid;
+                    ViewBag.Status = status;
+                    return View(model.ToPagedList(Page ?? 1, 12));
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }

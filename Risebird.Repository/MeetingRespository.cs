@@ -2572,5 +2572,48 @@ namespace Risebird.Repository
 
             return 0;
         }
+        public string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    VideoDetails interviewComments = new VideoDetails();
+                    DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@videoid", videoid);
+                    paramx.Add("@UrlType", UrlType);
+                    paramx.Add("@Emailid", Emailid);
+
+                    var resultset = SqlMapper.Query<string>(con, "usp_AddInterviewIntrestDetails", paramx,
+                                        commandType: CommandType.StoredProcedure);
+                    return resultset.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public IEnumerable<VideoDetails> GetVideoIntrestDetails(int interviewid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var resultset = SqlMapper.Query<VideoDetails>(con, "usp_GetVideoIntrestDetails", dynamicParameters,
+                                       commandType: CommandType.StoredProcedure);
+                    return resultset;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

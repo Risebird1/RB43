@@ -1674,6 +1674,32 @@ namespace Risebird.Business
                 return 0;
             }
         }
+        public string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid)
+        {
+            try
+            {
+                var result = _meetingRespository.AddVideoIntrestDetails(videoid, UrlType,Emailid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public IEnumerable<VideoDetails> GetVideoIntrestDetails(int interviewid)
+        {
+            try
+            {
+                var result = _meetingRespository.GetVideoIntrestDetails(interviewid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
 }

@@ -379,11 +379,11 @@
 
                                                         <td>
 
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control selectpicker", @onchange = "TechSkillChanged()" })
+                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
                                                         </td>
 
                                                         <td>
@@ -1450,7 +1450,7 @@
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#SkillTable tr").length - 1;
-
+        debugger;
         $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
