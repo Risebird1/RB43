@@ -20,7 +20,27 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
-
+.pt30 {
+    padding-top: 30px;
+}
+.bg-w {
+    background: rgb(255, 255, 255);
+}
+.card-title-space {
+    margin-top: 20px;
+    margin-bottom: 0px;
+}
+.client .mdc-card {
+    background: #f8faff;box-shadow:none; border:0px;
+    border-radius:0px;
+}
+.content.client {
+    margin-top: 0px;
+    padding: 0px 10px 0px;
+}
+.bl-bg {
+    background: #f8faff
+}
 .mdc-card .modal textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
@@ -237,7 +257,7 @@ td:hover.wordwrap {
     font-size: 10pt;
     display: none;
     position: center !important;
-    background-color: White;
+
     z-index: 999;
     filter: alpha(opacity = 50);
 }
@@ -503,9 +523,6 @@ modal-content .modal-body {
         overflow-x: hidden;
     }
 
-.mdc-card {
-    border-top: 3px #53a5f5 solid;
-}
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #42a5f5 !important;

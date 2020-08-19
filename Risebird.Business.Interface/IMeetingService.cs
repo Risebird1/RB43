@@ -47,7 +47,7 @@ namespace Risebird.Business.Interface
         string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId, string type);
 
         MeetingVM GetMeetingbyid(int id, string Email);
-        Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid);
+        Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false);
         MeetingVM VedioLike(string value, string vedioid, string email);
         Task AddTotalViewCount(int id, string emailaddress,string flag);
         //Task<string> VedioLikeAsync(string value, string vedioid, string email);

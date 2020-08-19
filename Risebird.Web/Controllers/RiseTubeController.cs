@@ -1371,13 +1371,13 @@ namespace Risebird.Web.Controllers
             return Json("Succecss");
         }
 
-        public async Task<IActionResult> VideoPageCurated(int curatedGroupId, string actionstatus)
+        public async Task<IActionResult> VideoPageCurated(int curatedGroupId, string actionstatus, int id = 0)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    int id = 0;
+                    
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     ViewBag.actionstatus = "Risetube";
                     ViewBag.ResultStatus = "VideoPresent";
@@ -1386,6 +1386,11 @@ namespace Risebird.Web.Controllers
                     ViewBag.CuratedGroupId = curatedGroupId;
                     if (profileName == "CuratedUser" || profileName=="Client")
                     {
+                        var isClient = false;
+                        if(profileName == "Client")
+                        {
+                            isClient = true;
+                        }
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
 
@@ -1398,29 +1403,43 @@ namespace Risebird.Web.Controllers
                         var modelList1 = new List<MeetingVM>();
 
                         var irfList = _meetingService.GetCuratedGroupIRFs(curatedGroupId).ToArray();
-                        var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
+                        var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId, isClient);
                         modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
 
                         modelList1 = modelList1.Where(x => irfList.Contains(x.irfIntId)).ToList();
                         ViewBag.actionstatus = "SkillChannel";
                         if (actionstatus.ToUpper() == "ALL")
                         {
-                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            if(id == 0)
+                            {
+                                id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            }
                         }
                         else if (actionstatus.ToUpper() == "SHORTLIST")
                         {
                             modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
-                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            if(id == 0)
+                            {
+                                id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+
+                            }
                         }
                         else if (actionstatus.ToUpper() == "INTRESTED")
                         {
                             modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
-                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            if (id == 0)
+                            {
+                                id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            }
                         }
                         else if (actionstatus.ToUpper() == "ACCEPT")
                         {
                             modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Accepted").ToList();
-                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            if (id == 0)
+                            {
+                                id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+
+                            }
                         }
 
                         //Start:Save View counts of vedio
@@ -1643,6 +1662,16 @@ namespace Risebird.Web.Controllers
                         }
                         ViewBag.VideoStatus = "Private";
 
+                        if (profileName == "Client")
+                        {
+                            NewModel.IsClientCurated = true;
+                        }
+                        else
+                        {
+                            NewModel.IsClientCurated = false;
+                        }
+                        NewModel.ActionStatus = actionstatus;
+                        NewModel.CuratedGroupId = curatedGroupId;
                         return View("VideoPage", NewModel);
                     }
                     else

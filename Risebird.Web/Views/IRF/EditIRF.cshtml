@@ -5,7 +5,15 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script type="text/javascript">
+    $(document).ready(function () { $(".selectpicker").select2(); });
+
+
+</script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -79,18 +87,18 @@
                                 <div class="col-md-3 col-sm-3 pr-r">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control select-css" })
+                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control select-css selectpicker" })
 
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
-                            
-                                    <div class="mdc-form-field  m10-b" >
+
+                                    <div class="mdc-form-field  m10-b">
 
                                         <div class="mdc-checkbox">
-                                            @Html.CheckBoxFor(m => m.IsBiometricEnabled, new { @class = "mdc-checkbox__native-control"})
+                                            @Html.CheckBoxFor(m => m.IsBiometricEnabled, new { @class = "mdc-checkbox__native-control" })
 
 
                                             <div class="mdc-checkbox__background">
@@ -108,15 +116,15 @@
                                         </div>
                                         @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; " })
                                     </div>
-                                
-                             
+
+
                                 </div>
 
                             </div>
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
-                                        <h2 class="mt-0" >Job Details</h2>
+                                        <h2 class="mt-0">Job Details</h2>
                                     </div><!--end of multiple location-->
                                 </div><!--end of col-md-12-->
                                 <div class="col-md-4 col-sm-4 pr-1">
@@ -128,7 +136,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control select-css" })
+                                        @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control select-css " })
 
                                         @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
                                     </div>
@@ -268,13 +276,13 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                        @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control select-css" })
+                                        @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control select-css selectpicker" })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
                                     </div>
 
-                                    <div class="form-group mb-0" >
+                                    <div class="form-group mb-0">
                                         @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "form-control select-css" })
+                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "form-control select-css selectpicker" })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
                                     </div>
@@ -338,7 +346,7 @@
                                         @{
                                             if (!String.IsNullOrEmpty(Model.JDLink))
                                             {
-                                   <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
+                                                <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
                                             }
                                         }
                                     </div>
@@ -371,11 +379,11 @@
 
                                                         <td>
 
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
+                                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css selectpicker" })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
+                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control selectpicker", @onchange = "TechSkillChanged()" })
                                                         </td>
 
                                                         <td>
@@ -388,7 +396,7 @@
 
                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                 <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                               
+
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -432,11 +440,11 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Joinability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css" })
+                                                            @Html.DropDownListFor(m => m.Joinability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css selectpicker" })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Joinability[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control select-css" })
+                                                            @Html.DropDownListFor(m => m.Joinability[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control select-css selectpicker" })
 
                                                         </td>
                                                         <td>
@@ -495,11 +503,11 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Selectability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css" })
+                                                            @Html.DropDownListFor(m => m.Selectability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css selectpicker" })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control select-css" })
+                                                            @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control select-css selectpicker" })
 
                                                         </td>
                                                         <td>
@@ -514,7 +522,7 @@
 
                                                                 <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                 <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
- 
+
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -554,11 +562,11 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css" })
+                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css selectpicker" })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control select-css" })
+                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control select-css selectpicker" })
 
                                                         </td>
                                                         <td>
@@ -576,7 +584,7 @@
                                                             <div>
                                                                 <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                 <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                              
+
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -614,7 +622,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control select-css", @onchange = "ClientUserChanged(this.value, this.id)" })
+                                                            @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control select-css selectpicker", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                         </td>
                                                         <td>
 
@@ -625,7 +633,7 @@
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'Role')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                           
+
                                                         </td>
                                                     </tr>
 
@@ -659,7 +667,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                            @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css selectpicker", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -708,7 +716,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control select-css", @onchange = "QCChanged(this.value, this.id)" })
+                                                            @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control select-css selectpicker", @onchange = "QCChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -719,7 +727,7 @@
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                           
+
                                                         </td>
                                                     </tr>
                                                 }
@@ -729,7 +737,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css", @onchange = "QCChanged(this.value, this.id)" })
+                                                                @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css selectpicker", @onchange = "QCChanged(this.value, this.id)" })
                                                             </td>
 
                                                             <td>
@@ -740,7 +748,7 @@
                                                                 <div>
                                                                     <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                     <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-       
+
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -776,7 +784,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css selectpicker", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -788,7 +796,7 @@
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                           
+
                                                         </td>
                                                     </tr>
 
@@ -799,7 +807,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                                @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control selectpicker", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
                                                             </td>
 
                                                             <td>
@@ -840,7 +848,7 @@
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">User</th>
-                                                    <th width="10%"  class="table_heading text-center">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -849,13 +857,13 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control select-css" })
+                                                            @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control select-css selectpicker" })
                                                         </td>
 
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                        
+
                                                         </td>
                                                     </tr>
 
@@ -866,7 +874,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.ResumeEvaluatorCollection[i].UserId, (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control select-css" })
+                                                                @Html.DropDownListFor(m => m.ResumeEvaluatorCollection[i].UserId, (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control select-css selectpicker" })
                                                             </td>
 
                                                             <td class="action text-center">
@@ -911,7 +919,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "form-control select-css" })
+                                                            @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "form-control select-css selectpicker" })
                                                         </td>
 
                                                         <td class="action text-center">
@@ -930,7 +938,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.HRCollection[i].UserId, (SelectList)ViewBag.HRs, new { @class = "form-control select-css" })
+                                                                @Html.DropDownListFor(m => m.HRCollection[i].UserId, (SelectList)ViewBag.HRs, new { @class = "form-control select-css selectpicker" })
                                                             </td>
 
                                                             <td class="action text-center">
@@ -975,7 +983,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("RecruiterCollection[0].UserId", (SelectList)ViewBag.Recruiters, new { @class = "form-control select-css", @onchange = "RecruiterChanged(this.value, this.id)" })
+                                                            @Html.DropDownList("RecruiterCollection[0].UserId", (SelectList)ViewBag.Recruiters, new { @class = "form-control select-css selectpicker", @onchange = "RecruiterChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -988,7 +996,7 @@
 
                                                             <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                         
+
 
                                                         </td>
                                                     </tr>
@@ -1000,7 +1008,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.RecruiterCollection[i].UserId, (SelectList)ViewBag.Recruiters, new { @class = "form-control select-css", @onchange = "RecruiterChanged(this.value, this.id)" })
+                                                                @Html.DropDownListFor(m => m.RecruiterCollection[i].UserId, (SelectList)ViewBag.Recruiters, new { @class = "form-control select-css selectpicker", @onchange = "RecruiterChanged(this.value, this.id)" })
                                                             </td>
 
                                                             <td>
@@ -1013,7 +1021,7 @@
                                                                 <div>
                                                                     <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                     <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                    </div>
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     }
@@ -1063,7 +1071,7 @@
         </div>
     </div>
 
- 
+
 </div>
 <script>
     //$(document).ready(function () {
@@ -1110,7 +1118,7 @@
 
 </script>
 <script>
-    
+
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";
@@ -1629,12 +1637,12 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-    
+
 
     }
 
     function AddRowClient() {
-        
+
         document.getElementById("btnUpload").disabled = false;
 
         var $ttc = $("#ClientTable").find("tbody tr:last");
@@ -1724,7 +1732,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-        
+
 
     }
     //EmergencyInterviewerTable
@@ -1815,7 +1823,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-        
+
 
     }
 
@@ -1862,7 +1870,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-        
+
 
     }
 
@@ -1910,7 +1918,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-        
+
 
     }
 
@@ -1955,7 +1963,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-     
+
 
     }
 

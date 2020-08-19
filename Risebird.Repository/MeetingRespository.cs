@@ -78,11 +78,11 @@ namespace Risebird.Repository
         /// Risetube meeting
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid)
+        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false)
         {
             try
             {
-                if (profile == "CuratedUser")
+                if (profile == "CuratedUser" || IsClientCurated)
                 {
                     Emailid = Emailid.Replace("\"", "");
                     using (SqlConnection con = new SqlConnection(connectionString))

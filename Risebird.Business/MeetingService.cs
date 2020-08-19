@@ -59,11 +59,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid)
+        public async Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false)
         {
             try
             {
-                var result = await _meetingRespository.GetRiseTubeMeetings(clientId, profile, Emailid);
+                var result = await _meetingRespository.GetRiseTubeMeetings(clientId, profile, Emailid, IsClientCurated);
                 return result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
