@@ -9,11 +9,7 @@
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-<script type="text/javascript">
-    $(document).ready(function () { $(".selectpicker").select2(); });
 
-
-</script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -87,7 +83,7 @@
                                 <div class="col-md-3 col-sm-3 pr-r">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control select-css selectpicker" })
+                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control select-css " })
 
                                     </div>
                                 </div>
@@ -272,13 +268,13 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                        @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control select-css selectpicker" })
+                                        @Html.DropDownListFor(m => m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control select-css " })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
                                     </div>
 
                                     <div class="form-group mb-0">
                                         @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "form-control select-css selectpicker" })
+                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "form-control select-css " })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
                                     </div>
@@ -375,11 +371,11 @@
 
                                                         <td>
 
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control selectpicker", @onchange = "TechSkillChanged()" })
+                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control ", @onchange = "TechSkillChanged()" })
                                                         </td>
 
                                                         <td>
@@ -436,11 +432,11 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Joinability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownListFor(m => m.Joinability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Joinability[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownListFor(m => m.Joinability[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control select-css " })
 
                                                         </td>
                                                         <td>
@@ -499,11 +495,11 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Selectability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownListFor(m => m.Selectability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control select-css " })
 
                                                         </td>
                                                         <td>
@@ -558,11 +554,11 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control select-css " })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control select-css " })
 
                                                         </td>
                                                         <td>
@@ -618,7 +614,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control select-css selectpicker", @onchange = "ClientUserChanged(this.value, this.id)" })
+                                                            @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control select-css ", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                         </td>
                                                         <td>
 
@@ -663,7 +659,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css selectpicker", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                            @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -712,7 +708,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control select-css selectpicker", @onchange = "QCChanged(this.value, this.id)" })
+                                                            @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -733,7 +729,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css selectpicker", @onchange = "QCChanged(this.value, this.id)" })
+                                                                @Html.DropDownListFor(m => m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control select-css ", @onchange = "QCChanged(this.value, this.id)" })
                                                             </td>
 
                                                             <td>
@@ -780,7 +776,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css selectpicker", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control select-css ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -803,7 +799,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control selectpicker", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                                @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
                                                             </td>
 
                                                             <td>
@@ -853,7 +849,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control select-css " })
                                                         </td>
 
                                                         <td class="action text-center">
@@ -870,7 +866,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.ResumeEvaluatorCollection[i].UserId, (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control select-css selectpicker" })
+                                                                @Html.DropDownListFor(m => m.ResumeEvaluatorCollection[i].UserId, (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control select-css " })
                                                             </td>
 
                                                             <td class="action text-center">
@@ -915,7 +911,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "form-control select-css selectpicker" })
+                                                            @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "form-control select-css " })
                                                         </td>
 
                                                         <td class="action text-center">
@@ -934,7 +930,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.HRCollection[i].UserId, (SelectList)ViewBag.HRs, new { @class = "form-control select-css selectpicker" })
+                                                                @Html.DropDownListFor(m => m.HRCollection[i].UserId, (SelectList)ViewBag.HRs, new { @class = "form-control select-css " })
                                                             </td>
 
                                                             <td class="action text-center">
@@ -979,7 +975,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("RecruiterCollection[0].UserId", (SelectList)ViewBag.Recruiters, new { @class = "form-control select-css selectpicker", @onchange = "RecruiterChanged(this.value, this.id)" })
+                                                            @Html.DropDownList("RecruiterCollection[0].UserId", (SelectList)ViewBag.Recruiters, new { @class = "form-control select-css ", @onchange = "RecruiterChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -1004,7 +1000,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownListFor(m => m.RecruiterCollection[i].UserId, (SelectList)ViewBag.Recruiters, new { @class = "form-control select-css selectpicker", @onchange = "RecruiterChanged(this.value, this.id)" })
+                                                                @Html.DropDownListFor(m => m.RecruiterCollection[i].UserId, (SelectList)ViewBag.Recruiters, new { @class = "form-control select-css ", @onchange = "RecruiterChanged(this.value, this.id)" })
                                                             </td>
 
                                                             <td>
