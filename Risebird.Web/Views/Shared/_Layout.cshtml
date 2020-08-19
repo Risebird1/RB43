@@ -88,7 +88,7 @@
         <source src="~/audio/done-for-you.ogg" type="audio/ogg" />
     </audio>
 
-   
+
 
     <div class="wrapper ">
         @Html.AntiForgeryToken()
@@ -110,7 +110,7 @@
                     <div>
                         <button class="close" title="Minimize"> <i class='fa fa-minus'></i> </button>
                     </div>
-                 
+
 
                 </div>
                 <div class="modal-body nopad">
@@ -119,7 +119,7 @@
                         <div class="clearfix"></div>
                         <div class="right-in" style="width:100%">
                             <div class="container-chat">
-                                <div class=" col-md-4 chatlist pull-left nopad">                                  
+                                <div class=" col-md-4 chatlist pull-left nopad">
                                     <div class="scroll-box-wrap">
                                         <div class="col-md-12 scroll-box-list" id="divchatboxmenu"></div>
                                     </div>
@@ -154,7 +154,7 @@
                                                 <div class="chat-with"><lable id="lblChatname"></lable></div>
 
                                             </div>
-                                          
+
                                         </div>
 
 
@@ -220,16 +220,16 @@
                 success: function (data) {
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].messageInfo == "Send") {
-                          
-                            flagdisplay = false;                           
+
+                            flagdisplay = false;
                             $('#chatAudio')[0].play();
                         }
                     }
-                   
+
                 }
             });
         }
-       
+
         function OpenChatPopUp() {
             flag = false;
             $.ajax({
@@ -253,7 +253,7 @@
                             html += '<svg class="bi bi-circle-fill bugger" width=".6em" height=".6em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">';
                             html += '<circle cx="8" cy="8" r="8"/>';
                             html += '</svg>';
-                           
+
                         }
                         html += '</div>';
                         html += '</div>';
@@ -261,10 +261,10 @@
                         html += '<input type="text" hidden value="' + data.result[i].whoSend + '" id="txtWhoSend_' + i + '" />';
                     }
                     $("#txtself").val(data.self);
-                   
+
                     $("#divchatboxmenu").empty().html(html);
                     setTimeout(OpenChatPopUp(), 5000);
-                   
+
                     flag = true;
                 }
             });
@@ -367,7 +367,7 @@
 
 
         $(document).ready(function () {
-           
+
             var $content, $modal, $apnData, $modalCon;
             $content = $(".min");
             $(".mdlFire").click(function (e) {
@@ -553,8 +553,8 @@
     <script src="~/Newassets/js/plugins/jquery.validate.min.js"></script>
     <!--  Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
     <script src="~/Newassets/js/plugins/jquery.bootstrap-wizard.js"></script>
-    <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
-    <script src="~/Newassets/js/plugins/bootstrap-selectpicker.js"></script>
+
+    <!-- <script src="~/Newassets/js/plugins/bootstrap-selectpicker.js"></script>-->
     <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
     <script src="~/Newassets/js/plugins/bootstrap-datetimepicker.js"></script>
     <!--  DataTables.net Plugin, full documentation here: https://datatables.net/    -->
@@ -570,7 +570,7 @@
     <script src="~/Newassets/js/plugins/jquery-jvectormap.js"></script>
     <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
     <script src="~/Newassets/js/plugins/nouislider.min.js"></script>
-    <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+
     <!--  Google Maps Plugin    -->
     <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script> -->
     <!-- Chart JS -->
@@ -581,7 +581,7 @@
     <script src="~/Newassets/js/now-ui-dashboard.min.js?v=1.4.1" type="text/javascript"></script>
     <script type="text/javascript" src="~/js/settings.js"></script>
 
-  
+
 
     @RenderSection("Scripts", required: false)
 </body>
