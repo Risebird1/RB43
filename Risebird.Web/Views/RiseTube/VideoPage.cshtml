@@ -770,13 +770,13 @@
                                                             else
                                                             {
                                                                 
-                                                                <div class="row">
-                                                                    <div class="col-md-6 col-sm-6">
-                                                                        <div class="sharing-btn">
-                                                                            <i class="fa fa-share-alt"></i> <input type="button" value="Intrested" onclick="SendIntrestUrl()" />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                        
+                                                    <div class="interest-btn">
+                                                      
+                                                     
+                                                        <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
+                                                    </div>
+                                                                 
 
                                                             }
                                                         }
@@ -1666,21 +1666,30 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Your Email Id</h5>
+          
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Your Email Id</h5>
             </div>
+
+
+
             <div class="modal-body">
-                <div class="row" style="padding:10px">
-                    <label class="label-field desp-label" for="Please Enter Your Email"> Please Enter Email</label>
-                    <div class="form-control text-areadiv">
+              
+                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                    <div class="text-areadiv">
                         <input type="text" id="txtvideoemailid" class="form-control" />
                     </div>
-                </div>
-                <div class="row">
+           
+            
                     <div class="col-md-12 text-right">
-                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
                     </div>
-                </div>
+              
             </div>
         </div>
     </div>
@@ -3207,7 +3216,7 @@
         html += '           <th class="text-center">Total Time</th>';
         html += '           <th class="text-center">Video Time</th>';
         html += '           <th class="text-center">Action</th>';
-        html += '           <th class="text-center">Intrest</th>';
+        html += '           <th class="text-center">Interest</th>';
 
         html += '       </tr>';
         for (var i = 0; i < data.length; i++) {
@@ -3224,7 +3233,7 @@
             html += '                  <td class="text-center">' + data[i].currentTime + '</td>';
             html += '                <td class="text-center"><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input  type="button" value="Share" onclick="OpenSharePopup(' + i + ')" /></div></td>';
             if (data[i].isIntrested == "Intrested") {
-                html += '                <td class="text-center"><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input  type="button" value="Intrested" /></div></td>';
+                html += '                <td class="text-center"><div class="interest-btn"><input class="view-video"  type="button" value="Intrested" /></div></td>';
             } else {
                 html += '                <td class="text-center"></td>';
 
