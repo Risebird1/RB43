@@ -763,7 +763,7 @@ namespace Risebird.CommonHelper
                 return "Mail sent failed.";
             }
         }
-        public string VideoAccessRequest(Mail model, string url,string Emailid)
+        public string VideoAccessRequest(Mail model, string url, string Emailid)
         {
             try
             {
@@ -776,8 +776,39 @@ namespace Risebird.CommonHelper
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
                 var anchrTag = "<a href=" + url + ">Please Click to see the video</a>";
-                object[] parameters = new object[] { anchrTag ,Emailid};
+                object[] parameters = new object[] { anchrTag, Emailid };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RequestForAccess.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+        public string ShowIntrestInterview(Mail model, string Email)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { Email };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewIntrestShowen.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 mailMessage.Subject = model.Subject;

@@ -772,8 +772,6 @@
                                                                 
                                                         
                                                     <div class="interest-btn">
-                                                      
-                                                     
                                                         <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
                                                     </div>
                                                                  
@@ -3256,10 +3254,11 @@
     }
     function SendIntrestUrl(index) {
         var videourl = window.location.href;
+        Var CandidateEmail = $("#txtOnlineEmail").val();
         $.ajax({
             type: "POST",
             url: "/RiseTube/VideoShareIntrest",
-            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val() },
+            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val(),CandidateEmail:CandidateEmail },
             success: function (data) {
                 alter("Your intrest is recorded successfully.");
             }

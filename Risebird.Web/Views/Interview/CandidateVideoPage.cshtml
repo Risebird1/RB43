@@ -162,7 +162,7 @@
 
                                             else
                                             {
-                                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                                @Html.ActionLink("Back to List", "CandidateInterviews", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
                                             }
                                             @*<a href="/RiseTube/VideoDetailView" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Video Detail View</a>*@
 
@@ -246,8 +246,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @if (ViewBag.ProfileName != "CuratedUser")
-                                                {
+                                               
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus"> Selection Status </label>
@@ -362,32 +361,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                }
-                                                else
-                                                {
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="IsShortListed"> Shortlisted </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
-
-                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.ShortListstatus).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-
-                                                                            <option value="@item">@item</option>
-
-                                                                        }
-                                                                    }
-
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                       
-                                                    </div>
-                                                }
-
                                                 <div class="form-group col-md-12 col-sm-12 ">
                                                     <div>
                                                         <div class="col-md-12 col-sm-12 ">
@@ -495,7 +468,7 @@
                                                     </h1>
                                                 }
                                                 <div class="row counts-liks">
-                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                    @if (ViewBag.VideoStatus != "Public")
                                                     {
                                                         <div class="k col-md-6">
                                                             @if (Model.IsLike == "Liked")
@@ -529,40 +502,7 @@
                                                         </div>
                                                     }
 
-                                                    @if (Model.VideoLink != null)
-                                                    {
-                                                        @if (ViewBag.VideoStatus != "Public")
-                                                        {
-                                                            @if (ViewBag.ProfileName == "CuratedUser")
-                                                            {
-                                                                <div class="col-md-3 share">
-                                                                    <div class="btn-group">
-                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            <img src="../../img/share-tweet-icon.png" style=" width: 28px;padding-left:4px;"> Share
-                                                                        </button>
-                                                                        <div class="dropdown-menu">
-
-                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly "><input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
-
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-                                                                <div class="col-md-3 shortlist" style="text-align: end;">
-                                                                    @if (Model.IsShortlisted > 0)
-                                                                    {<i class="fa fa-check"></i>
-                                                                        <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
-                                                                    }
-                                                                    else
-                                                                    { <i class="fa fa-check"></i>
-                                                                        <input type="button" class="share-wrap btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
-
-                                                                    }
-                                                                </div>
-                                                            }
-
-                                                        }
-                                                    }
+                                                  
                                                     <div class="col-md-2 showinter" style="text-align: end;">
                                                         @if (Model.VideoLink != null)
                                                         {
