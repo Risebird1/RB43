@@ -193,5 +193,6 @@ namespace Risebird.Entities.ViewModel
         public string ProgressStatus { get; set; }
         public int idProgress { get; set; }
         public string Comment { get; set; }
+        public string BussinessType { get; set; }
     }
 }
