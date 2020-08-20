@@ -1687,11 +1687,11 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public IEnumerable<VideoDetails> GetVideoIntrestDetails(int interviewid)
+        public IEnumerable<VideoDetails> GetVideoIntrestDetails()
         {
             try
             {
-                var result = _meetingRespository.GetVideoIntrestDetails(interviewid);
+                var result = _meetingRespository.GetVideoIntrestDetails();
                 return result;
             }
             catch (Exception ex)

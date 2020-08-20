@@ -1936,7 +1936,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VideoShareIntrest(string currentUrl)
+        public JsonResult VideoShareIntrest(string currentUrl,string Emailid)
         {
             if (HttpContext.Session.GetString("email") != null)
             {
@@ -1954,11 +1954,25 @@ namespace Risebird.Web.Controllers
                 }
                 //save into db
                 var model = _meetingService.AddVideoIntrestDetails(videoid, urlType, emailid);
-
+            }
+            else
+            {
+                string videoid = currentUrl.Split("/")[currentUrl.Split("/").Count() - 1].ToString();
+                string urlType = "";
+                if (currentUrl.Contains("SharedVideoPage"))
+                {
+                    urlType = "Shared";
+                }
+                else
+                {
+                    urlType = "RiseTube";
+                }
+                //save into db
+                var model = _meetingService.AddVideoIntrestDetails(videoid, urlType, Emailid);
             }
             return Json("Success");
         }
-        public IActionResult VideoIntrestDetails(int interviewid, string status,int? Page)
+        public IActionResult VideoIntrestDetails(int? Page)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1966,9 +1980,11 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin")
                 {
-                    var model = _meetingService.GetVideoIntrestDetails(interviewid);
-                    ViewBag.InterviewId = interviewid;
-                    ViewBag.Status = status;
+                    var model = _meetingService.GetVideoIntrestDetails();
+                    foreach (var item in model)
+                    {
+                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
+                    }
                     return View(model.ToPagedList(Page ?? 1, 12));
                 }
                 else

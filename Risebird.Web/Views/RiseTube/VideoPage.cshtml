@@ -160,7 +160,7 @@
                                                 @if (profileName == "Admin")
                                                 {
 
-                                                    @Html.ActionLink("Interview Details", "VideoIntrestDetails", "Risetube", new { interviewid = Model.imid,status="RiseTube" }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;margin-right:3px;" })
+                                                    @Html.ActionLink("Interview Details", "VideoIntrestDetails", "Risetube", new { interviewid = Model.imid, status = "RiseTube" }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;margin-right:3px;" })
                                                 }
                                             }
                                             @if (ViewBag.actionstatus == "SkillChannel" && ViewBag.CuratedGroupId != null)
@@ -767,6 +767,18 @@
                                                                 }
 
                                                             }
+                                                            else
+                                                            {
+                                                                
+                                                                <div class="row">
+                                                                    <div class="col-md-6 col-sm-6">
+                                                                        <div class="sharing-btn">
+                                                                            <i class="fa fa-share-alt"></i> <input type="button" value="Intrested" onclick="SendIntrestUrl()" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            }
                                                         }
                                                     </div>
                                                     @if (ViewBag.VideoStatus == "Public")
@@ -983,6 +995,7 @@
                                                                             </div>
                                                                         }
                                                                     }
+
                                                                 </div>
 
 
@@ -3194,7 +3207,7 @@
         html += '           <th class="text-center">Total Time</th>';
         html += '           <th class="text-center">Video Time</th>';
         html += '           <th class="text-center">Action</th>';
-        html += '           <th class="text-center">IsIntrested</th>';
+        html += '           <th class="text-center">Intrest</th>';
 
         html += '       </tr>';
         for (var i = 0; i < data.length; i++) {
@@ -3210,9 +3223,12 @@
             }
             html += '                  <td class="text-center">' + data[i].currentTime + '</td>';
             html += '                <td class="text-center"><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input  type="button" value="Share" onclick="OpenSharePopup(' + i + ')" /></div></td>';
-            html += '                <td class="text-center"><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input  type="button" value="Intrested" onclick="SendIntrestUrl(' + i + ')" /></div></td>';
+            if (data[i].isIntrested == "Intrested") {
+                html += '                <td class="text-center"><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input  type="button" value="Intrested" /></div></td>';
+            } else {
+                html += '                <td class="text-center"></td>';
 
-            html += '             </tr>';
+            } html += '             </tr>';
         }
         html += '    </table></div>';
         $("#divvideodetailsmodel").empty().html(html);
@@ -3230,13 +3246,13 @@
         //document.getElementById("IreportModel_QuestionsCollection_"+index+"__QuestionStatus").value = "true";
     }
     function SendIntrestUrl(index) {
-        var videourl = $("#txt_" + index).val();
+        var videourl = window.location.href;
         $.ajax({
             type: "POST",
             url: "/RiseTube/VideoShareIntrest",
-            data: { CurrentUrl: videourl },
+            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val() },
             success: function (data) {
-
+                alter("Your intrest is recorded successfully.");
             }
         });
     }

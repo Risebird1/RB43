@@ -6025,7 +6025,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.actionstatus = "Risetube";
                     ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser"|| profileName== "Candidate")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");

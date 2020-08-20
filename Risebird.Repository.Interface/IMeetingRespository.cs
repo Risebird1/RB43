@@ -108,7 +108,7 @@ namespace Risebird.Repository.Interface
         Task<string> AddVedioShare(string value, string vedioid, string Emailids);
         Task<int> CheckVedioShare(string vedioid, string Emailid);
         string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid);
-        IEnumerable<VideoDetails> GetVideoIntrestDetails(int interviewid);
+        IEnumerable<VideoDetails> GetVideoIntrestDetails();
 
     }
 }

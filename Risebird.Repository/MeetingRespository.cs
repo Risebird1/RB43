@@ -2576,17 +2576,44 @@ namespace Risebird.Repository
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                
+                if (UrlType == "Shared")
                 {
-                    VideoDetails interviewComments = new VideoDetails();
-                    DynamicParameters paramx = new DynamicParameters();
-                    paramx.Add("@videoid", videoid);
-                    paramx.Add("@UrlType", UrlType);
-                    paramx.Add("@Emailid", Emailid);
+                    var query = "Update SharedVideoCountDetails set IsIntrested='Intrested' where Videoid=@Videoid and Emailid=@Emailid";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@Videoid", videoid);
+                    dynamicParameters.Add("@Emailid", Emailid);
 
-                    var resultset = SqlMapper.Query<string>(con, "usp_AddInterviewIntrestDetails", paramx,
-                                        commandType: CommandType.StoredProcedure);
-                    return resultset.FirstOrDefault();
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<int>(query, dynamicParameters);
+                        return "Success";
+                    }
+                }
+                else{
+                    var id = 0;
+                    var queryfind = "Seelct id from UserList where Emailid=@Emailid";
+                    var dynamicParametersfinal = new DynamicParameters();
+                    dynamicParametersfinal.Add("@Emailid", Emailid);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<int>(queryfind, dynamicParametersfinal);
+                        id = results.FirstOrDefault();
+                    }
+
+
+                    var query = "Update VideoCountDetails set IsIntrested='Intrested' where Videoid=@interviewid and Emailid=@Emailid or Userid=@id";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@Videoid", videoid);
+                    dynamicParameters.Add("@Emailid", Emailid);
+                    dynamicParameters.Add("@id", id);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<int>(query, dynamicParameters);
+                        return "Success";
+                    }
                 }
             }
             catch (Exception ex)
@@ -2595,12 +2622,11 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public IEnumerable<VideoDetails> GetVideoIntrestDetails(int interviewid)
+        public IEnumerable<VideoDetails> GetVideoIntrestDetails()
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var resultset = SqlMapper.Query<VideoDetails>(con, "usp_GetVideoIntrestDetails", dynamicParameters,
