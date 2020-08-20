@@ -6506,7 +6506,7 @@ namespace Risebird.Web.Controllers
                     int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "Candidate")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
@@ -6776,7 +6776,33 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
-       
+        public JsonResult VideoDetailsJsonView(int interviewid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Candidate")
+                {
+                    //To get data from db for video displayes
+                    var model = _meetingService.GetVideoSumaryDetails(interviewid);
+                    foreach (var item in model)
+                    {
+                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
+                        item.interviewid = interviewid;
+                    }
+                    return Json(model);
+                }
+                else
+                {
+                    return Json("No Data");
+                }
+            }
+            else
+            {
+                return Json("No Data");
+            }
+        }
     }
 
 }
