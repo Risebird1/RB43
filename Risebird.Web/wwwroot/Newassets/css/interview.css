@@ -35,6 +35,21 @@
     height: 60px;
     background-position: 50% 0%;
 }
+.client-change .on-off {
+    color: #393a3c;
+}
+.client-change .material-toggle input:checked ~ label:after {
+    left: 15px;
+    background-color: #53a5f5;
+    border-color: #53a5f5;
+}
+
+
+.client-change .material-toggle input:checked ~ label:before {
+    background-color: #53a5f563;
+}
+
+
 .on-off {
     float: left;
     color: #929ba2;

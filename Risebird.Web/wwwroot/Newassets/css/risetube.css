@@ -134,7 +134,30 @@
     padding: 0px 0px;
     border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
 }
+.interest-btn {
+    background-image: url(../../img/heart-icon.png);
+    background-repeat: no-repeat !important;
+    background-size: inherit;
+    background-position: 20% 40% !important;
+    border: none;
+    background-color: white !important;
+    font-weight: normal;
+    font-size: 13px !important;
+    padding: 5px 0px;
+}
+    .interest-btn .view-video {
+        color: green;font-weight:bold;
+}
 
+
+#VideoDetailsModel .interest-btn {
+    background-size: 14%;
+    background-position: 8% 47% !important;
+}
+    #VideoDetailsModel .interest-btn .view-video {
+        text-align: center;
+        padding: 0px 0px 0px 15px
+    }
 
 .public-share {
     background-image: url('../../img/share-3b.png');
@@ -238,15 +261,22 @@
     color: #fff;
     font-size: 13px;
     border: 0px;
-    padding: 2px;
+    padding: 0px;
     text-align: center;
     border-radius: 3px;
 }
-.createshare_right {
-    width: 41.666667%;
-    float: left;
-    padding: 0px 10px;
-}
+    .sharing-btn .fa {
+        font-size: 12px;
+        position: relative;
+        left: -2px;
+        top: -1px;
+    }
+
+    .createshare_right {
+        width: 41.666667%;
+        float: left;
+        padding: 0px 10px;
+    }
 
 
 .share-wrap {
@@ -1697,7 +1727,7 @@ textarea::-webkit-scrollbar-thumb {
 #toggle-click {
     color: blue;
     font-size: 24px;
-    padding-right: 10px
+
 }
 
 #toggle-click1 {
