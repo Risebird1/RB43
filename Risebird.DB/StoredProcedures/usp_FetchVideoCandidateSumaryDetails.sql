@@ -17,6 +17,7 @@ Select vc.Emailid as Candidate,vc.Count,vc.Videoid,'SharedVideoPage' as VideoUrl
  where ic.Interviewid=@InterviewId          
 union          
 Select ul.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested from VideoCountDetails vc join userlist ul on vc.Userid=ul.id right join InterviewShareDetails ias on ias.Emailid=ul.EmailId where vc.Videoid=@InterviewId and vc.Userid!=0          
-END      
+END 
+GO
 
 

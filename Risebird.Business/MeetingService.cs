@@ -830,6 +830,7 @@ namespace Risebird.Business
 
                 reportModel.IRFName = irfDetails.IRFId;
                 reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
+                reportModel.joiningTime = interviewDetails.joiningTime;
                 return reportModel;
             }
 

@@ -19,3 +19,4 @@ GO
  Select @id=id from UserList where Emailid=@Emailid  
  Insert into InterviewIntrestDetails values(@videoid,@UrlType,@id,Getdate())  
  END
+ GO

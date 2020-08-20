@@ -18,5 +18,5 @@ union
 Select ul.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested from VideoCountDetails vc join userlist ul on vc.Userid=ul.id where vc.Userid!=0 and vc.IsIntrested='Intrested'         
 
 END  
-
+GO
   

@@ -141,6 +141,15 @@ BEGIN
     ALTER TABLE IRF
 	ADD idProgress int not null default 1
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BussinessType')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+	ADD BussinessType varchar(4) NULL
+END
 
 
 END
