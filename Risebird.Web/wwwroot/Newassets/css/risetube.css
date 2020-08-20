@@ -11,7 +11,12 @@
     width: 650px;
     height: 95px;
 }
-
+.mobile-view{
+    display:none;
+}
+.desktop-view {
+    display: block;
+}
 .text-areadiv #comment {
     height: 55px;
 }
@@ -1697,7 +1702,7 @@ textarea::-webkit-scrollbar-thumb {
 #toggle-click {
     color: blue;
     font-size: 24px;
-    padding-right: 10px
+   
 }
 
 #toggle-click1 {
@@ -2004,8 +2009,14 @@ textarea::-webkit-scrollbar-thumb {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
     }
- 
 
+    .mobile-view {
+        display: block;
+    }
+
+    .desktop-view {
+        display: none;
+    }
    
     .single-video-left .comment-area textarea {
         width: 87%
@@ -2233,8 +2244,8 @@ textarea::-webkit-scrollbar-thumb {
         margin-right: 10px !important;
     }
     #myForm .searchbox input[type=email] {
-        width: 200px;
-        height: 18px;
+          width: 270px;
+    height: 35px
       
     }
 
@@ -2251,6 +2262,10 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 @media screen and (max-width: 375px) {
+    .mdc-button--outlined.card-title-space{margin:0px;}
+    .newsletter .input-group.card-title-space {
+        margin: 0px;
+    }
     .comment-area .talk-bubble {
         width: 75%;
     }
@@ -2310,4 +2325,10 @@ textarea::-webkit-scrollbar-thumb {
         left: 20px !important;
         top: -13px;
     }
+
+    #myForm .searchbox input[type=email] {
+        width: 250px!important;
+        height: 35px!important;
+    }
+
 }

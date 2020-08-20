@@ -45,210 +45,237 @@
 
 
 
-<div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
+    <div class="main-panel" id="main-panel">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <a class="navbar-brand">Risetube</a>
                 </div>
-                <a class="navbar-brand"></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                </button>
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
-        </div>
-    </nav>
-    <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
-    </div>
+        </nav>
+        <!-- End Navbar -->
+        <!--  <div class="panel-header panel-header-sm"> </div>-->
 
-    <div class="content video">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mdc-card card">
+        <div class="pt30">
+            <div class="col-md-12 nopad">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
 
-                    <div class="mdc-card-wrapper__text-section">
-                        <div class="loader text-center">
-                            <img src="~/Newassets/img/lazyload.gif" />
-                        </div>
-                        <div class="dataloading">
-                            <div class="row">
+                        <div class="mobile-view"> <h4 class="card-title">Risetube</h4></div>
+                    </div>
 
+                    <div class="pull-right">
+                        <div>
+                            <div class="newsletter">
 
-
-                                <div class="card-header">
-                                    <div class="pull-left"> <h4 id="risetubeid" class="card-title">RiseTube</h4></div>
-
-                                    <div class="pull-right">
-                                        <div>
-                                            <div class="newsletter">
-
-                                                <div class="content">
-                                                    <div class="input-group" id="myForm">
-                                                        <div class="searchbox">
-                                                            <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name Of candidate">
-                                                            <span class="input-group-btn">
-                                                                <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4" data-toggle="modal" data-target="#filterModal">
-
-                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                                <div class="mdc-button__ripple"></div>
-                                            </button>
-
-
-
+                                <div class="content">
+                                    <div class="input-group card-title-space" id="myForm">
+                                        <div class="searchbox">
+                                            <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name Of candidate">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
-                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="filheader">
-                                            <div class="filavatar">
-                                                <span class="fa fa-filter"></span>
+
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
+
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="content video client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+                            <div class="dataloading">
+                                
+                                <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="fa fa-filter"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                             </div>
-                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
-                                        </div>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                        <form action="@Url.Action("Index","risetube")" method="post" id="form">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <form action="@Url.Action("Index","risetube")" method="post" id="form">
 
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                Start Date
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                End Date
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    @if (ViewBag.ProfileName != "CuratedUser")
-                                                    {
+                                                <div class="modal-body">
+                                                    <div class="row">
                                                         <div class="col-md-6 col-sm-6 border-rv">
-
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateName">
-                                                                    Candidate Name
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                    Start Date
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.CandidateList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-
-                                                                        @foreach (var item in ViewBag.PrimarySkillList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
+                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
-                                                                    Selection Status
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                    End Date
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
+                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
-                                                                    Client HR
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.ClientHrContactList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <input type="text" id="txtsearch" name="SearchFillter" value="@ViewBag.searchvalue" hidden />
-
                                                         </div>
+                                                        @if (ViewBag.ProfileName != "CuratedUser")
+                                                        {
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateName">
+                                                                        Candidate Name
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.CandidateList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+
+                                                                            @foreach (var item in ViewBag.PrimarySkillList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
+                                                                        Selection Status
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
+                                                                        Client HR
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.ClientHrContactList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <input type="text" id="txtsearch" name="SearchFillter" value="@ViewBag.searchvalue" hidden />
+
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.ClientNameList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="OfferStatus">
+                                                                        Offer Status
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.OfferStatusList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+
+
+                                                            </div>
+                                                        }
                                                         <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.ClientNameList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="OfferStatus">
-                                                                    Offer Status
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
+                                                                    Candidate Location
                                                                 </label>
                                                                 <div class="col-md-12 col-sm-12">
-                                                                    <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.OfferStatusList)
+                                                                    <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.preferredLocationList)
                                                                         {
                                                                             @if (item != null && item != "")
                                                                             {
@@ -258,230 +285,208 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
+                                                            @if (ViewBag.ProfileName != "CuratedUser")
+                                                            {
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
+                                                                        Approval Status
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.NextLevelApprovalStatusList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="IsShortListed">
+                                                                        Shortlisted
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.IsShortListed)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            @if (ViewBag.ProfileName != "CuratedUser")
+                                                            {
 
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
+                                                                        Joining Status
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.JoiningStatusList)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+
+
+                                                            }
+                                                            else
+                                                            {
+
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested">
+                                                                        Interested
+                                                                    </label>
+                                                                    <div class="col-md-12 col-sm-12">
+                                                                        <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
+                                                                            @foreach (var item in ViewBag.IsIntrested)
+                                                                            {
+                                                                                @if (item != null && item != "")
+                                                                                {
+                                                                                    <option value="@item">@item</option>
+                                                                                }
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+
+                                                            }
+                                                        </div>
+                                                        <div class="form-group col-md-6 col-sm-6">
+
+
+                                                            <div>
+                                                                <div class="col-md-12 col-sm-12 mc-button-area text-right">
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                        Reset Filter
+                                                                    </button>
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                        Apply Filter
+                                                                    </button>
+                                                                </div>
+
+                                                            </div>
 
 
                                                         </div>
-                                                    }
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
-                                                                Candidate Location
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in ViewBag.preferredLocationList)
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        @if (ViewBag.ProfileName != "CuratedUser")
-                                                        {
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
-                                                                    Approval Status
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.NextLevelApprovalStatusList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                        else
-                                                        {
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="IsShortListed">
-                                                                    Shortlisted
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.IsShortListed)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        @if (ViewBag.ProfileName != "CuratedUser")
-                                                        {
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
-                                                                    Joining Status
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.JoiningStatusList)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-
-
-                                                        }
-                                                        else
-                                                        {
-
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="IsIntrested">
-                                                                    Interested
-                                                                </label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in ViewBag.IsIntrested)
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-
-                                                        }
-                                                    </div>
-                                                    <div class="form-group col-md-6 col-sm-6">
-
-
-                                                        <div>
-                                                            <div class="col-md-12 col-sm-12 mc-button-area text-right">
-
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
-                                                                    Reset Filter
-                                                                </button>
-
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
-                                                                    Apply Filter
-                                                                </button>
-                                                            </div>
-
-                                                        </div>
-
 
                                                     </div>
 
                                                 </div>
-
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
+
                                 </div>
 
-                            </div>
-
-                            <div class="video-block section-padding" id="VideoList">
-                                <div class="row">
-                                    @foreach (var item in Model)
-                                    {
-                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                        <div class="col-xl-3 col-sm-6 mb-3">
-                                            <div class="video-card">
-                                                <div class="video-card-image">
-                                                    @if (item.VideoLink.Contains(".mp4"))
-                                                    {
-                                                        @if (item.ThumbnailImage != null)
+                                <div class="video-block section-padding" id="VideoList">
+                                    <div class="row">
+                                        @foreach (var item in Model)
+                                        {
+                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                            <div class="col-xl-3 col-sm-6 mb-3">
+                                                <div class="video-card">
+                                                    <div class="video-card-image">
+                                                        @if (item.VideoLink.Contains(".mp4"))
                                                         {
-                                                            <img src="@item.ThumbnailImage" class="thumbnailImage" />
-                                                        }
-                                                        <video controls class="video-thumb">
-                                                            <source src="@item.VideoLink" type="video/mp4">
-                                                        </video>
-                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
-                                                    }
-                                                    else
-                                                    {
-                                                        @if (item.ThumbnailImage != null)
-                                                        {
-                                                            <img src="@item.ThumbnailImage" class="thumb-height" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <img src="~/RiseTube/img/video-icon.png" class="thumb-height" />
-                                                        }
-                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
-                                                    }
-
-
-                                                </div>
-                                                <div class="video-card-body">
-                                                    <div class="video-title">
-                                                        @if (@item.candidateName.Length > 20)
-                                                        {
-                                                            <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="candidate">@item.candidateName</span>}
-
-
-
-
-                                                        @if (@item.JDTiltle.Length > 20)
-                                                        {
-                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">(@item.JDTiltle.Split("|")[0])</span></a>}
-
-                                                        else
-                                                        {
-                                                            <span>@item.JDTiltle</span>}
-
-
-
-
-                                                    </div>
-
-                                                    <div class="video-page text-success">
-                                                        @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
-
-                                                    </div>
-                                                    <div class="video-view">
-                                                        &nbsp;<i class="fas fa-calendar-alt"></i>
-                                                        <span>@item.interviewDate</span>
-                                                        <span class="divider-g">
-                                                            @if (item.InterviewStatus == 4)
+                                                            @if (item.ThumbnailImage != null)
                                                             {
-                                                                <span style="color:palevioletred">Border Line</span>
+                                                                <img src="@item.ThumbnailImage" class="thumbnailImage" />
                                                             }
-
-                                                            else if (item.InterviewStatus == 2)
+                                                            <video controls class="video-thumb">
+                                                                <source src="@item.VideoLink" type="video/mp4">
+                                                            </video>
+                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            @if (item.ThumbnailImage != null)
                                                             {
-                                                                <span style="color:green">Selected</span>
-
+                                                                <img src="@item.ThumbnailImage" class="thumb-height" />
                                                             }
-                                                        </span>
+                                                            else
+                                                            {
+                                                                <img src="~/RiseTube/img/video-icon.png" class="thumb-height" />
+                                                            }
+                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
+                                                        }
+
 
                                                     </div>
+                                                    <div class="video-card-body">
+                                                        <div class="video-title">
+                                                            @if (@item.candidateName.Length > 20)
+                                                            {
+                                                                <a data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@item.candidateName</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="candidate">@item.candidateName</span>}
 
 
 
-                                                    <div class="video-info">
 
-                                                       
+                                                            @if (@item.JDTiltle.Length > 20)
+                                                            {
+                                                                <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">(@item.JDTiltle.Split("|")[0])</span></a>}
+
+                                                            else
+                                                            {
+                                                                <span>@item.JDTiltle</span>}
+
+
+
+
+                                                        </div>
+
+                                                        <div class="video-page text-success">
+                                                            @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
+
+                                                        </div>
+                                                        <div class="video-view">
+                                                            &nbsp;<i class="fas fa-calendar-alt"></i>
+                                                            <span>@item.interviewDate</span>
+                                                            <span class="divider-g">
+                                                                @if (item.InterviewStatus == 4)
+                                                                {
+                                                                    <span style="color:palevioletred">Border Line</span>
+                                                                }
+
+                                                                else if (item.InterviewStatus == 2)
+                                                                {
+                                                                    <span style="color:green">Selected</span>
+
+                                                                }
+                                                            </span>
+
+                                                        </div>
+
+
+
+                                                        <div class="video-info">
+
+
                                                             <span> Notice Period: </span>
                                                             @if (item.joiningTime.Length > 20)
                                                             {
@@ -499,102 +504,102 @@
                                                                     </button>
                                                                 </span>
                                                             }
-                                                     
 
-                                                    </div>
 
-                                                    <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                        <span>Expected Salary:</span> @if (@item.expectedPerHourRate.Length > 5)
-                                                        {
-                                                            <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
+                                                        </div>
 
-                                                        else
-                                                        {
-                                                            <span>@item.expectedPerHourRate</span>}
-                                                    </div>
-
-                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-
-                                                        <span>Location:</span>
-                                                        <span>
-                                                            @if (@item.preferredLocation.Length > 3)
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                            <span>Expected Salary:</span> @if (@item.expectedPerHourRate.Length > 5)
                                                             {
-                                                                <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
+                                                                <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
+
                                                             else
-                                                            {<span>@item.preferredLocation</span>}
-                                                        </span>
+                                                            {
+                                                                <span>@item.expectedPerHourRate</span>}
+                                                        </div>
+
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+
+                                                            <span>Location:</span>
+                                                            <span>
+                                                                @if (@item.preferredLocation.Length > 3)
+                                                                {
+                                                                    <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
+                                                                else
+                                                                {<span>@item.preferredLocation</span>}
+                                                            </span>
+
+                                                        </div>
 
                                                     </div>
-
                                                 </div>
                                             </div>
-                                        </div>
-                                    }
+                                        }
 
 
+                                    </div>
                                 </div>
+                                <hr>
+                                @foreach (var item in Model)
+                                {
+                                    <p>
+                                        @item.PageNumber of @item.interviewVediosequence
+                                    </p>
+                                    break;
+                                }
+                                @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page = Page }))
                             </div>
-                            <hr>
-                            @foreach (var item in Model)
-                            {
-                                <p>
-                                    @item.PageNumber of @item.interviewVediosequence
-                                </p>
-                                break;
-                            }
-                            @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page = Page }))
+
+
+
+
                         </div>
-
-
-
-
                     </div>
+
                 </div>
-
             </div>
-        </div>
 
-        <div id="myCallModal" class="modal modal-wrap modal-bg">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-
+            <div id="myCallModal" class="modal modal-wrap modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
 
 
 
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <span class="publicsharing-icon">
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon">
 
 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                            </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left"> Call Candidate !</h5>
                         </div>
-                        <h5 class="modal-title pull-left"> Call Candidate !</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                    </button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
 
 
 
 
-                    <div class="modal-body">
+                        <div class="modal-body">
 
-                        <h5 class="modal-title text-center mt-20" id="callingLabel"></h5>
+                            <h5 class="modal-title text-center mt-20" id="callingLabel"></h5>
 
-                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
+                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
     display: block;" class="btn btn-fill btn-danger" value="Hang Up">
 
+                        </div>
+
                     </div>
 
                 </div>
-
             </div>
         </div>
-        </div>
 
-</div>
+    </div>
 
 
 
