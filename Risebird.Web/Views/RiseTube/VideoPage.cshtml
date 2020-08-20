@@ -769,7 +769,7 @@
                                                             }
                                                             else
                                                             {
-                                                                
+
                                                                 <div class="row">
                                                                     <div class="col-md-6 col-sm-6">
                                                                         <div class="sharing-btn">
@@ -789,7 +789,6 @@
                                                     {
                                                         <div class="col-md-4 views tooltip1" style="text-align: end;">
                                                             <i class="fa fa-video video-icon"></i>
-
                                                             <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
 
                                                         </div>
@@ -3250,7 +3249,7 @@
         $.ajax({
             type: "POST",
             url: "/RiseTube/VideoShareIntrest",
-            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val() },
+            data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val() },
             success: function (data) {
                 alter("Your intrest is recorded successfully.");
             }

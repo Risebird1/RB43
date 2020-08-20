@@ -729,7 +729,7 @@
                                                         <div class="col-md-4 views tooltip1" style="text-align: end;">
                                                             <i class="fa fa-video video-icon"></i>
 
-                                                            @*<input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />*@
+                                                            <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
 
                                                         </div>
                                                     }
@@ -2339,7 +2339,7 @@
     function openVideoDetailsModel() {
         $.ajax({
             type: "POST",
-            url: "/RiseTube/VideoDetailsJsonView",
+            url: "/Interview/VideoDetailsJsonView",
             data: { interviewid: $("#txtVideoId").val() },
             success: function (data) {
                 var modal = document.getElementById("VideoDetailsModel");
