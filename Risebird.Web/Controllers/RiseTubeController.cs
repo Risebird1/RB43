@@ -1970,6 +1970,7 @@ namespace Risebird.Web.Controllers
                 //save into db
                 var model = _meetingService.AddVideoIntrestDetails(videoid, urlType, Emailid);
             }
+            //Send Email
             return Json("Success");
         }
         public IActionResult VideoIntrestDetails(int? Page)

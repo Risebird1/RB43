@@ -1700,6 +1700,32 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<string> FetchShareEmails(int Interviewid)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchShareEmails(Interviewid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid)
+        {
+            try
+            {
+                var result = _meetingRespository.GetVideoCandidateSumaryDetails(Interviewid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
 }

@@ -6605,8 +6605,10 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Candidate")
                     {
                         //To get data from db for video displayes
-                        //only candidate video share data
-                        var model = _meetingService.GetVideoSumaryDetails(interviewid);
+                        //only candidate video share data//InterviewShareDetails
+                        var model = _meetingService.GetVideoCandidateSumaryDetails(interviewid);
+                        //from m in model join e from emails where m.Candidate=e
+                        // model.Where(x => x.CandidateEmail == emails).ToList();
                         foreach (var item in model)
                         {
                             item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();

@@ -85,6 +85,8 @@ namespace Risebird.Business.Interface
         int CheckVedioShare(string vedioid, string Emailid);
         string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid);
         IEnumerable<VideoDetails> GetVideoIntrestDetails();
+        IEnumerable<string> FetchShareEmails(int Interviewid);
+        IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid);
 
     }
 }
