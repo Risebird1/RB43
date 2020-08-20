@@ -3,9 +3,11 @@
     ViewData["Title"] = "Curated Group Users";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
 
-
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js"></script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -31,7 +33,7 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content curated-group">
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
@@ -60,58 +62,60 @@
                                 </div>
 
                             </div>
-
+                           
                             <div id="tableID">
-                                <div class="table-responsive-sm">
-                                    <table class="table table-bordered mbn" id="IRFList">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center" style="font-size:15px!important;">EmailId</th>
-                                                <th class="text-center" style="font-size:15px!important;">Add</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @for (int i = 0; i < Model.CuratedGroupUserList.Count(); i++)
-                                            {
+                                <div class="scrollbox-curated">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered mbn" id="IRFList">
+                                            <thead>
                                                 <tr>
-
-                                                    <td class="text-center" width="60%">@Model.CuratedGroupUserList[i].EmailId</td>
-                                                    <td class="text-center" width="40%">
-
-
-                                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
-                                                            <div class="mdc-checkbox">
-                                                                @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control" })
-
-
-                                                                <div class="mdc-checkbox__background">
-                                                                    <svg class="mdc-checkbox__checkmark"
-                                                                         viewBox="0 0 24 24">
-                                                                        <path class="mdc-checkbox__checkmark-path"
-                                                                              fill="none"
-                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                    </svg>
-                                                                    <div class="mdc-checkbox__mixedmark"></div>
-                                                                </div>
-                                                                <div class="mdc-checkbox__ripple"></div>
-
-
-                                                            </div>
-                                                        </div>
-
-
-
-                                                    </td>
-                                                    @Html.HiddenFor(m => m.CuratedGroupUserList[i].UserId)
-                                                    @Html.HiddenFor(m => m.CuratedGroupUserList[i].CuratedGroupId)
-
+                                                    <th class="text-center" style="font-size:15px!important;">EmailId</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Add</th>
                                                 </tr>
-                                            }
+                                            </thead>
+                                            <tbody>
+                                                @for (int i = 0; i < Model.CuratedGroupUserList.Count(); i++)
+                                                {
+                                                    <tr>
 
-                                        </tbody>
-                                    </table>
+                                                        <td class="text-center" width="60%">@Model.CuratedGroupUserList[i].EmailId</td>
+                                                        <td class="text-center" width="40%">
 
-                                    @Html.HiddenFor(m => m.CuratedGroupId)
+
+                                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control" })
+
+
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark"
+                                                                             viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </td>
+                                                        @Html.HiddenFor(m => m.CuratedGroupUserList[i].UserId)
+                                                        @Html.HiddenFor(m => m.CuratedGroupUserList[i].CuratedGroupId)
+
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+
+                                        @Html.HiddenFor(m => m.CuratedGroupId)
+                                    </div>
                                 </div>
                             </div>
 
@@ -157,7 +161,7 @@
                 [-1],
                 ["All"]
             ],
-            order:[],
+            order: [],
             responsive: false,
             language: {
                 search: "_INPUT_",
@@ -167,4 +171,16 @@
         });
         var table = $('#IRFList').DataTable();
     });
+</script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+<script>
+    (function ($) {
+        $(window).on("load", function () {
+            $(".scrollbox-curated").mCustomScrollbar();
+        });
+    })(jQuery);
 </script>
