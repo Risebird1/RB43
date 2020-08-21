@@ -2525,5 +2525,163 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> AddVedioShare(string email, string vedioid, string Emailids)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@Userid", email);
+                parameters.Add("@VedioId", vedioid);
+                parameters.Add("@Emails", Emailids);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryFirstAsync(con, "usp_AddInterviewShareDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "";
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return "";
+        }
+        public async Task<int> CheckVedioShare(string vedioid, string Emailid)
+        {
+            try
+            {
+                var query = "Select id from InterviewShareDetails where Interviewid=@interviewid and Emailid=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", vedioid);
+                dynamicParameters.Add("@Emailid", Emailid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return 0;
+        }
+        public string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid)
+        {
+            try
+            {
+                
+                if (UrlType == "Shared")
+                {
+                    var query = "Update SharedVideoCountDetails set IsIntrested='Intrested' where Videoid=@Videoid and Emailid=@Emailid";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@Videoid", videoid);
+                    dynamicParameters.Add("@Emailid", Emailid);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<int>(query, dynamicParameters);
+                        return "Success";
+                    }
+                }
+                else{
+                    var id = 0;
+                    var queryfind = "Seelct id from UserList where Emailid=@Emailid";
+                    var dynamicParametersfinal = new DynamicParameters();
+                    dynamicParametersfinal.Add("@Emailid", Emailid);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<int>(queryfind, dynamicParametersfinal);
+                        id = results.FirstOrDefault();
+                    }
+
+
+                    var query = "Update VideoCountDetails set IsIntrested='Intrested' where Videoid=@interviewid and Emailid=@Emailid or Userid=@id";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@Videoid", videoid);
+                    dynamicParameters.Add("@Emailid", Emailid);
+                    dynamicParameters.Add("@id", id);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<int>(query, dynamicParameters);
+                        return "Success";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public IEnumerable<VideoDetails> GetVideoIntrestDetails()
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var resultset = SqlMapper.Query<VideoDetails>(con, "usp_GetVideoIntrestDetails", dynamicParameters,
+                                       commandType: CommandType.StoredProcedure);
+                    return resultset;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public IEnumerable<string> FetchShareEmails(int Interviewid)
+        {
+            try
+            {
+                var query = "Select Emailid from InterviewShareDetails where Intervewid=@Videoid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Videoid", Interviewid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid,string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    VideoDetails interviewComments = new VideoDetails();
+                    DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@InterviewId", Interviewid);
+                    paramx.Add("@Userid", emailid);
+
+                    var resultset = SqlMapper.Query<VideoDetails>(con, "usp_FetchVideoCandidateSumaryDetails", paramx,
+                                        commandType: CommandType.StoredProcedure);
+                    return resultset;
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

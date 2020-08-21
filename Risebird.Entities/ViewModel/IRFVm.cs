@@ -116,6 +116,7 @@ namespace Risebird.Entities.ViewModel
         public int? PriorityLevel { get; set; }
         public SelectList PriorityLevelList { get; set; }
         public List<InterviewerIds> InterviewerIds { get; set; }
+        public string Type { get; set; }
 
     }
     public class InterviewerIds
@@ -192,5 +193,6 @@ namespace Risebird.Entities.ViewModel
         public string ProgressStatus { get; set; }
         public int idProgress { get; set; }
         public string Comment { get; set; }
+        public string BussinessType { get; set; }
     }
 }

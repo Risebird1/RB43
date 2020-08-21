@@ -830,6 +830,7 @@ namespace Risebird.Business
 
                 reportModel.IRFName = irfDetails.IRFId;
                 reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
+                reportModel.joiningTime = interviewDetails.joiningTime;
                 return reportModel;
             }
 
@@ -1635,6 +1636,89 @@ namespace Risebird.Business
             try
             {
                 var result = _meetingRespository.GetallVideoSumaryDetails();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public string AddVedioShare(string email, string vedioid, string Emailids)
+        {
+            try
+            {
+                var meeting = _meetingRespository.AddVedioShare(email, vedioid, Emailids);
+                return "";
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+        }
+        public int CheckVedioShare(string vedioid, string Emailid)
+        {
+            try
+            {
+                var meeting = _meetingRespository.CheckVedioShare(vedioid, Emailid);
+                return meeting.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid)
+        {
+            try
+            {
+                var result = _meetingRespository.AddVideoIntrestDetails(videoid, UrlType,Emailid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public IEnumerable<VideoDetails> GetVideoIntrestDetails()
+        {
+            try
+            {
+                var result = _meetingRespository.GetVideoIntrestDetails();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public IEnumerable<string> FetchShareEmails(int Interviewid)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchShareEmails(Interviewid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid)
+        {
+            try
+            {
+                var result = _meetingRespository.GetVideoCandidateSumaryDetails(Interviewid, emailid);
                 return result;
             }
             catch (Exception ex)

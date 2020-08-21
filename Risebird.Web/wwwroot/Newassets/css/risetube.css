@@ -25,18 +25,37 @@
     width: 100%;
     height: 406px;
 }
-
-.count-view .label-num {
-    background: #ccc;
-    width: 26px;
-    height: 26px;
-    border-radius: 100%;
-    display: inline-table;
-    line-height: 27px;
-    color: #423f3f;
-    padding: 3px 4px;
-    font-size: 12px;
+.candidateinterest-btn {
+    background-image: url(../../img/heart-icon.png);
+    background-repeat: no-repeat !important;
+    background-size: inherit;
+    background-position: 12% 50% !important;
+    font-weight: normal;
+    font-size: 13px !important;
+    padding: 0px 0px 0px 0px;
+    width: 123px;
+    background-color: #68b50e99 !important;
+    height: 35px;
+    border-radius: 3px;
+    border: 1px #008000c7 solid;
 }
+    .candidateinterest-btn .view-video {
+        padding-left: 35px;
+        line-height: 25px;
+        color:green
+    }
+
+    .count-view .label-num {
+        background: #ccc;
+        width: 26px;
+        height: 26px;
+        border-radius: 100%;
+        display: inline-table;
+        line-height: 27px;
+        color: #423f3f;
+        padding: 3px 4px;
+        font-size: 12px;
+    }
 .remove-btn input{
     border: 0px;
     background: none;
@@ -139,7 +158,30 @@
     padding: 0px 0px;
     border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
 }
+.interest-btn {
+    background-image: url(../../img/heart-icon.png);
+    background-repeat: no-repeat !important;
+    background-size: inherit;
+    background-position: 20% 40% !important;
+    border: none;
+    background-color: white !important;
+    font-weight: normal;
+    font-size: 13px !important;
+    padding: 5px 0px;
+}
+    .interest-btn .view-video {
+        color: green;font-weight:bold;
+}
 
+
+#VideoDetailsModel .interest-btn {
+    background-size: 14%;
+    background-position: 8% 47% !important;
+}
+    #VideoDetailsModel .interest-btn .view-video {
+        text-align: center;
+        padding: 0px 0px 0px 15px
+    }
 
 .public-share {
     background-image: url('../../img/share-3b.png');
@@ -243,15 +285,22 @@
     color: #fff;
     font-size: 13px;
     border: 0px;
-    padding: 2px;
+    padding: 0px;
     text-align: center;
     border-radius: 3px;
 }
-.createshare_right {
-    width: 41.666667%;
-    float: left;
-    padding: 0px 10px;
-}
+    .sharing-btn .fa {
+        font-size: 12px;
+        position: relative;
+        left: -2px;
+        top: -1px;
+    }
+
+    .createshare_right {
+        width: 41.666667%;
+        float: left;
+        padding: 0px 10px;
+    }
 
 
 .share-wrap {
@@ -1702,7 +1751,7 @@ textarea::-webkit-scrollbar-thumb {
 #toggle-click {
     color: blue;
     font-size: 24px;
-   
+
 }
 
 #toggle-click1 {

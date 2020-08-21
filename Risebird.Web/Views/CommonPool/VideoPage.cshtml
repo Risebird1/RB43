@@ -600,41 +600,51 @@ else
                                                         </div>
                                                     }
 
-                                                    <div class="col-md-2 showinter" style="text-align: end;">
-                                                        @if (Model.VideoLink != null)
+                                                <div class="col-md-2 showinter" style="text-align: end;">
+                                                    @if (Model.VideoLink != null)
+                                                    {
+                                                        @if (ViewBag.VideoStatus != "Public")
                                                         {
-                                                            @if (ViewBag.VideoStatus != "Public")
                                                             {
-                                                                {
-                                                                    <div class="btn-group">
-                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style="        width: 28px;
+                                                                <div class="btn-group">
+                                                                    <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                        <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style="        width: 28px;
         padding-left: 4px;
 ">  Share
-                                                                        </button>
-                                                                        <div class="dropdown-menu">
-                                                                            <span class="tooltip--right" data-tooltip="To convey the act to generate    `sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+                                                                    </button>
+                                                                    <div class="dropdown-menu">
+                                                                        <span class="tooltip--right" data-tooltip="To convey the act to generate    `sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
 
-                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
-                                                                                <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
-                                                                            </span>
-                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user through email ">
-                                                                                <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
-                                                                            </span>
-                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
-                                                                                <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
-                                                                            </span>
-                                                                            <span class="tooltip--right" data-tooltip="Create / Edit View and Share"><input type="button" class="form-control btninterest sharebtn1 edit-share" id="btnShare4" value="Create / Edit View" Shortvalue="1" /></span>
+                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
+                                                                            <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
+                                                                        </span>
+                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user through email ">
+                                                                            <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+                                                                        </span>
+                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                            <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                        </span>
+                                                                        <span class="tooltip--right" data-tooltip="Create / Edit View and Share"><input type="button" class="form-control btninterest sharebtn1 edit-share" id="btnShare4" value="Create / Edit View" Shortvalue="1" /></span>
 
-                                                                        </div>
                                                                     </div>
+                                                                </div>
 
-
-                                                                }
 
                                                             }
+
                                                         }
-                                                    </div>
+                                                        else
+                                                        {
+
+                                                            <div class="interest-btn">
+
+
+                                                                <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
+                                                            </div>
+
+                                                        }
+                                                    }
+                                                </div>
                                                     @if (ViewBag.VideoStatus == "Public")
                                                     {
                                                         <div class="col-md-6"></div>
@@ -1494,8 +1504,7 @@ else
         </div>
     </div>
 </div>
-<div id="PublicShareVideo" class="modal" style="display: none;position: fixed;z-index: 10000000;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="PublicShareVideo" class="modal modal-bg">
 
 
     @if (ViewBag.VedioStatus == "Public")
@@ -1518,25 +1527,23 @@ else
 
 
             <div class="modal-body">
-                <div class="col-md-12">
+          
 
 
-                    <label class="label-field desp-label" for="Please Enter Your Email"> Please Enter Your Email Id</label>
+                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Your Email Id</label>
                     <div class="form-control text-areadiv">
                         <input type="text" id="txtvideoemailid" class="form-control" />
 
                     </div>
-                </div>
+             
 
-                <div class="row">
+              
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
                     </div>
-                </div>
+               
             </div>
-            <div class="modal-footer" style="padding: 5px;
-        background-color: #fff;
-        color: white;"></div>
+        
         </div>
 
     </div>
@@ -3023,11 +3030,12 @@ else
         html += '       <tr>';
         html += '          <th>User Name</th>';
         html += '          <th>Video Link</th>';
-        html += '            <th><span class="pull-left">Total View</span>   <span class="pull-right"></span></th>';
-        html += '           <th><span class="pull-left">Total Time</span> <span class="pull-right"></span></th>';
-        html += '           <th><span class="pull-left">Video Time</span> <span class="pull-right"></span></th>';
+        html += '            <th class="text-center">Total View</th>';
+        html += '           <th class="text-center">Total Time</th>';
+        html += '           <th class="text-center">Video Time</th>';
 
         html += '           <th class="text-center">Action</th>';
+        html += '           <th class="text-center">Interested</th>';
 
         html += '       </tr>';
         for (var i = 0; i < data.length; i++) {
@@ -3043,6 +3051,13 @@ else
             }
             html += '                  <td>' + data[i].currentTime + '</td>';
             html += '                <td class="text-center"><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input  type="button" value="Share" onclick="OpenSharePopup(' + i + ')" /></div></td>';
+            if (data[i].isIntrested == "Intrested") {
+                html += '                <td class="text-center"><div class="interest-btn"><input class="view-video"  type="button" value="Intrested" /></div></td>';
+            } else {
+                html += '                <td class="text-center"></td>';
+
+            }
+
             html += '             </tr>';
         }
         html += '    </table></div>';
@@ -3058,6 +3073,18 @@ else
     function RemoveRow(index) {
         document.getElementById("quetxt_" + index).style.display = "none";
         $("#IreportModel_QuestionsCollection_" + index + "__QuestionStatus").val("true");
+    }
+    function SendIntrestUrl(index) {
+        var videourl = window.location.href;
+        var CandidateEmail = $("#txtOnlineEmail").val();
+        $.ajax({
+            type: "POST",
+            url: "/RiseTube/VideoShareIntrest",
+            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val(),CandidateEmail:CandidateEmail ,clienthr:$("#txtclienthr").val() },
+            success: function (data) {
+                alter("Your intrest is recorded successfully.");
+            }
+        });
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
