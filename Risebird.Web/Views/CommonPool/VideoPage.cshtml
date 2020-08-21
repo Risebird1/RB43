@@ -538,11 +538,17 @@ else
                                                             else
                                                             {
                                                                 <a onclick="">   @Model.candidateName <span class="dot"></span></a>
+
                                                             }
                                                         }
                                                         else
                                                         {
                                                             @Model.candidateName
+                                                             <div class="interest-btn">
+
+
+                                                                <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
+                                                            </div>
                                                         }
 
                                                         @if (@Model.JDTiltle.Length > 5)
@@ -633,16 +639,7 @@ else
                                                             }
 
                                                         }
-                                                        else
-                                                        {
-
-                                                            <div class="interest-btn">
-
-
-                                                                <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
-                                                            </div>
-
-                                                        }
+                                                       
                                                     }
                                                 </div>
                                                     @if (ViewBag.VideoStatus == "Public")
