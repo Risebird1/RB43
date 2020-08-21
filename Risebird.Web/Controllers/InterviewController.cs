@@ -6204,7 +6204,7 @@ namespace Risebird.Web.Controllers
                 {
                     TO = Candidateemail,
                     CC = Emailid,
-                    Subject = "Risebird: Request for access your Interview video"
+                    Subject = $"Risebird: {Emailid} Requesting access of your Interview Video"
                 };
                 var result = _notificationHelper.VideoAccessRequest(_mail, CurrentUrl, Emailid);
                 return Json("Fail");
