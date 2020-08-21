@@ -2592,7 +2592,7 @@ namespace Risebird.Repository
                 }
                 else{
                     var id = 0;
-                    var queryfind = "Seelct id from UserList where Emailid=@Emailid";
+                    var queryfind = "Select id from UserList where Emailid=@Emailid";
                     var dynamicParametersfinal = new DynamicParameters();
                     dynamicParametersfinal.Add("@Emailid", Emailid);
 
