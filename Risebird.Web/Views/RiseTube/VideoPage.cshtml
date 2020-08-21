@@ -148,7 +148,7 @@
                         {
                             @if (ViewBag.actionstatus != "SkillChannel")
                             {
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space"  data-toggle="modal" data-target="#filterModal">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space" data-toggle="modal" data-target="#filterModal">
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
@@ -166,7 +166,7 @@
 
                             else
                             {
-                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button"})
+                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                             }
                             @*<a href="/RiseTube/VideoDetailView" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Video Detail View</a>*@
 
@@ -187,7 +187,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        
+
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
@@ -596,53 +596,56 @@
                                             <div class=" col-md-8 video-contop">
                                                 @if (Model.JDTiltle != null)
                                                 {
-                                                    <h1 class="title video-title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                        <input hidden value="@Model.candidateEmail" id="txtOnlineEmail" />
-                                                        @if (ViewBag.VideoStatus != "Public")
+                                                <h1 class="title video-title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                    <input hidden value="@Model.candidateEmail" id="txtOnlineEmail" />
+                                                    @if (ViewBag.VideoStatus != "Public")
+                                                    {
+                                                        @if (Model.IsOnline == 1)
                                                         {
-                                                            @if (Model.IsOnline == 1)
-                                                            {
-                                                                <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <a onclick="">   @Model.candidateName <span class="dot"></span></a>
-                                                            }
+                                                            <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
                                                         }
                                                         else
                                                         {
-                                                            @Model.candidateName
+                                                            <a onclick="">   @Model.candidateName <span class="dot"></span></a>
                                                         }
+                                                    }
+                                                    else
+                                                    {
+                                                        @Model.candidateName
+                                                        <div class="interest-btn">
+                                                            <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
+                                                        </div>
+                                                    }
 
-                                                        @if (@Model.JDTiltle.Length > 5)
-                                                        {
+                                                    @if (@Model.JDTiltle.Length > 5)
+                                                    {
 
-                                                            <a href="#" data-tooltip="@Model.JDTiltle">
-                                                                <span class="job_title join-time"> (@Model.JDTiltle.Split("|")[0])</span>
-                                                            </a>}
-                                                        else
-                                                        {
-                                                            <span>@Model.JDTiltle</span>}
-                                                        &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span>
-
-
+                                                        <a href="#" data-tooltip="@Model.JDTiltle">
+                                                            <span class="job_title join-time"> (@Model.JDTiltle.Split("|")[0])</span>
+                                                        </a>}
+                                                    else
+                                                    {
+                                                        <span>@Model.JDTiltle</span>}
+                                                    &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span>
 
 
 
 
-                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
-                                                        <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
-                                                        <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
-                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser" && Model.IsClientCurated == false)
-                                                        {
-                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
-                                                        }
-                                                        @if (ViewBag.VideoStatus != "Public" && (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated == true) && Model.IsIntrested == "Interest Accepted")
-                                                        {
-                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
-                                                        }
 
-                                                    </h1>
+
+                                                    <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                    <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
+                                                    <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
+                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser" && Model.IsClientCurated == false)
+                                                    {
+                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
+                                                    }
+                                                    @if (ViewBag.VideoStatus != "Public" && (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated == true) && Model.IsIntrested == "Interest Accepted")
+                                                    {
+                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
+                                                    }
+
+                                                </h1>
                                                 }
                                                 <div class="row counts-liks">
                                                     @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
@@ -771,16 +774,7 @@
                                                                 }
 
                                                             }
-                                                            else
-                                                            {
-                                                                
-                                                        
-                                                    <div class="interest-btn">
-                                                        <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
-                                                    </div>
-                                                                 
-
-                                                            }
+                                                           
                                                         }
                                                     </div>
                                                     @if (ViewBag.VideoStatus == "Public")
@@ -916,7 +910,7 @@
                                                                                 @Html.TextBoxFor(m => m.IreportModel.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                             </div>
                                                                         </div>
-                                                                        
+
                                                                         <div class="col-md-6 col-sm-6">
                                                                             <div class="form-group">
                                                                                 @Html.LabelFor(model => model.IreportModel.joiningTime, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -1669,7 +1663,7 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-          
+
 
 
             <div class="filheader">
@@ -1682,17 +1676,17 @@
 
 
             <div class="modal-body">
-              
-                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
-                    <div class="text-areadiv">
-                        <input type="text" id="txtvideoemailid" class="form-control" />
-                    </div>
-           
-            
-                    <div class="col-md-12 text-right">
-                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
-                    </div>
-              
+
+                <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                <div class="text-areadiv">
+                    <input type="text" id="txtvideoemailid" class="form-control" />
+                </div>
+
+
+                <div class="col-md-12 text-right">
+                    <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                </div>
+
             </div>
         </div>
     </div>
@@ -3248,7 +3242,7 @@
     function OpenSharePopup(index) {
         var videourl = $("#txt_" + index).val();
         var modal = document.getElementById("PublicShareModel");
-        modal.style.display = "block";
+        modal.style.display = "block"; 
         $("#txtpublicsharetxt").val("Shared");
         $("#txtpublicshareurl").val(videourl);
     }
@@ -3260,14 +3254,16 @@
     function SendIntrestUrl() {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        $.ajax({
-            type: "POST",
-            url: "/RiseTube/VideoShareIntrest",
-            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val(),CandidateEmail:CandidateEmail ,clienthr:$("#txtclienthr").val() },
-            success: function (data) {
-                alter("Your intrest is recorded successfully.");
-            }
-        });
+        if (window.confirm("Are you sure, you want to show intrest on this Candidate Interview?")) {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VideoShareIntrest",
+                data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
+                success: function (data) {
+                    alter("Your intrest has been recorded successfully.");
+                }
+            });
+        }
     }
 </script>
 <script src="~/RiseTube/js/custom.js"></script>
