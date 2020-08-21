@@ -1794,7 +1794,7 @@
                         $("#divbackground").removeClass("blk-bg");
                     } else {
                         //open popup to raise for request
-                        alert("Candidate has been notified for your access request and post access provided by candidate, you will be notified over email.");
+                        alert("Candidate has not provided you to view his interview video, but Candidate has been notified for your access request and post access provided by candidate, you will be notified over email.");
                     }
                 }
             });
@@ -1851,13 +1851,13 @@
     function SendIntrestUrl() {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        if (window.confirm("Are you sure, you want to show intrest on this intreview?")) {
+        if (window.confirm("Are you sure, you want to show intrest on this Candidate Interview?")) {
             $.ajax({
                 type: "POST",
                 url: "/RiseTube/VideoShareIntrest",
                 data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
                 success: function (data) {
-                    alter("Your intrest is recorded successfully.");
+                    alter("Your intrest has been recorded successfully.");
                 }
             });
         }
