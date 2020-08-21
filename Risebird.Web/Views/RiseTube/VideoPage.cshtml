@@ -3244,9 +3244,9 @@
         $("#IreportModel_QuestionsCollection_" + index + "__QuestionStatus").val("true");
         //document.getElementById("IreportModel_QuestionsCollection_"+index+"__QuestionStatus").value = "true";
     }
-    function SendIntrestUrl(index) {
+    function SendIntrestUrl() {
         var videourl = window.location.href;
-        Var CandidateEmail = $("#txtOnlineEmail").val();
+        var CandidateEmail = $("#txtOnlineEmail").val();
         $.ajax({
             type: "POST",
             url: "/RiseTube/VideoShareIntrest",
