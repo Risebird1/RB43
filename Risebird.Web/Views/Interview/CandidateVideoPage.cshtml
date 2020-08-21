@@ -284,7 +284,7 @@
                                                                     <div class="dropdown-menu">
 
                                                                         <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
-                                                                            <input type="button" class="share-wrap btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
+                                                                            <input type="button" class="share-wrap btninterest sharebtn1 public-share" id="btnShare2" value="Secure Share" Shortvalue="1" />
                                                                         </span>
                                                                     </div>
                                                                 </div>
@@ -846,7 +846,7 @@
                 <div class="filavatar">
                     <span><img class="sharing-icon" src="~/Newassets/img/share-3w.png"></span>
                 </div>
-                <h5 class="modal-title pull-left">Public Share</h5>
+                <h5 class="modal-title pull-left">Secure Share</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closepublicSharePopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
@@ -1242,30 +1242,7 @@
         objSelect.legendText = "Selectability Score";
         arr.push(objSelect.y);
 
-        //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        //document.getElementById("totScore").innerHTML = totalScore;
-
-
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
+        
 
         am4core.ready(function () {
 
@@ -1815,7 +1792,7 @@
                         $("#divbackground").removeClass("blk-bg");
                     } else {
                         //open popup to raise for request
-                        alert("Your request raised successfully.");
+                        alert("Candidate has been notified for your access request and post access provided by candidate, you will be notified over email.");
                     }
                 }
             });
@@ -1826,14 +1803,7 @@
         var modal = document.getElementById("PublicShareVideo");
         modal.style.display = "none";
     }
-    function copyToClipboard(element) {
-        var temp = $("<input>");
-        $("body").append(temp);
-        temp.val($(element).text()).select();
-        document.execCommand("copy");
-        temp.remove();
-        $('#special_text').text('Copied');
-    }
+   
     function bindvideoDetailsData(data) {
         var html = '';
         html += '<div class="table-responsive"> <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">';
@@ -1892,341 +1862,3 @@
 <script src="~/RiseTube/js/custom.js"></script>
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-    pfName = pfName.Replace("\"", "");
-    @if (pfName == "Client")
-    {
-        <script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-
-
-        <script>
-
-            var enjoyhint_instance = new EnjoyHint({});
-
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btnvideo': 'Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn2': 'Click here to like the Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn3': 'Click here to unlike Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-
-
-                {
-                    'next .sharebtn1': 'Share the video by clicking here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .item1': 'Interview Report Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemchart': 'Check candidate overall score here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemcomment': 'Check interviewer comments here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item2': 'Candidate Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item3': 'Tech Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item6': 'Joinability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item7': 'Selectability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .post': 'Collaborative decision making.Write your comment and click post',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .videosidelist': 'Same skill Candidates Video ',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
-                }
-
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 10000)
-        </script>
-    }
-}
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-    pfName = pfName.Replace("\"", "");
-    @if (pfName == "ExternalUser")
-    {
-        <script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
-            localStorage.setItem('risetube', true)
-            localStorage.setItem('subscribe', false)
-            var enjoyhint_instance = new EnjoyHint({});
-
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Shared Candidates Video will be playing over here and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btnvideo': 'Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .sharebtn1': 'Share the video by clicking here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .item1': 'Interview Report Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemchart': 'Check candidate overall score here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemcomment': 'Check interviewer comments here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item2': 'Candidate Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item3': 'Tech Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item6': 'Joinability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item7': 'Selectability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .post': 'Collaborative decision making. Write your comment and click post',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .videosidelist': 'Other Shared Candidates Video ',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .supportmenu': 'Click on Support Menu to see its features'
-                },
-
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 10000)
-        </script>
-    }
-}
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-    pfName = pfName.Replace("\"", "");
-    @if (pfName == "CuratedUser")
-    {
-        <script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
-            localStorage.setItem('risetube', true)
-            localStorage.setItem('subscribe', false)
-            var enjoyhint_instance = new EnjoyHint({});
-
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-
-                {
-                    'next .btnvideo': 'Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .shortlist': 'Click here to Shortlist the Candidate',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .showinter': 'Click here to Send interest to the Candidate',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-
-
-                {
-                    'next .item1': 'Interview Report Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemchart': 'Check candidate overall score here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemcomment': 'Check interviewer comments here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item2': 'Candidate Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item3': 'Tech Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item6': 'Joinability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item7': 'Selectability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .videosidelist': 'Similar skill Candidates Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .skillchannelmenu': 'Click on Skill Channel menu and to see its remaining features',
-                },
-
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 10000)
-        </script>
-    }
-}

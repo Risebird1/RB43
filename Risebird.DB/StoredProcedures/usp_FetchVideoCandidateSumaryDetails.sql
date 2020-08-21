@@ -8,7 +8,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE Procedure usp_FetchVideoCandidateSumaryDetails        
-@InterviewId int        
+@InterviewId int,
+@Userid varchar(200)
 AS        
 BEGIN        
 Select ias.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested 

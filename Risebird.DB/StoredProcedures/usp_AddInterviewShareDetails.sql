@@ -12,14 +12,16 @@ GO
 
  
    CREATE Procedure usp_AddInterviewShareDetails  
- @isShared varchar(10),  
- @VedioId int,  
- @Emails varchar(Max)  
- AS  
- BEGIN  
- Insert Into InterviewShareDetails  SELECT @VedioId as Interviewid,value as Emailid,Getdate() as SharedOn  FROM STRING_SPLIT(@Emails, ';') as B  
-WHERE  NOT EXISTS (SELECT 1   
-                   FROM   InterviewShareDetails A  
-                   WHERE  A.Emailid = B.value and A.Interviewid=@VedioId)  
+ @Userid varchar(100),      
+ @VedioId int,      
+ @Emails varchar(Max)      
+ AS      
+ BEGIN   
+ Declare @id int  
+ Select @id=id from userlist where EmailId=@Userid  
+ Insert Into InterviewShareDetails  SELECT @VedioId as Interviewid,value as Emailid,Getdate() as SharedOn,@id as SharedBy  FROM STRING_SPLIT(@Emails, ';') as B      
+WHERE  NOT EXISTS (SELECT 1       
+                   FROM   InterviewShareDetails A      
+                   WHERE  A.Emailid = B.value and A.Interviewid=@VedioId)   
  END  
-
+ GO
