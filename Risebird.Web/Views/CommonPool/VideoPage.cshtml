@@ -120,50 +120,63 @@
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
-                <a class="navbar-brand"></a>
+                <a class="navbar-brand">Common Pool</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm"> </div>
-    <div class="content">
-        <div class="row">
+    <!--  <div class="panel-header panel-header-sm"> </div>-->
+
+
+    <div class="pt30">
+        <div class="col-md-12 nopad">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+
+                    <div class="mobile-view"> <h4 class="card-title">Common Pool</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
+                        @if (ViewBag.VideoStatus != "Public")
+                        {
+                            @if (ViewBag.actionstatus != "SkillChannel")
+                            {
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space"  data-toggle="modal" data-target="#filterModal">
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <div class="mdc-button__ripple"></div>
+                                </button>
+                            }
+
+                            @if (ViewBag.actionstatus == "SkillChannel")
+                            {
+                                <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back to List</a>
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Back to List", "Index", "CommonPool", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                            }
+                        }
+                        <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="content client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        <div class="row">
-                            <div class="card-header">
-                                <div class="pull-left">
-                                    <h4 class="card-title">Common Pool</h4>
-                                </div>
-                                <div class="pull-right">
-                                    <div>
-                                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
-                                        @if (ViewBag.VideoStatus != "Public")
-                                        {
-                                            @if (ViewBag.actionstatus != "SkillChannel")
-                                            {
-                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
-                                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                                    <div class="mdc-button__ripple"></div>
-                                                </button>
-                                            }
-                                           
-                                            @if (ViewBag.actionstatus == "SkillChannel")
-                                            {
-                                                <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
-                                            }
-                                            else
-                                            {
-                                                @Html.ActionLink("Back to List", "Index", "CommonPool", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
-                                            }
-                                        }
-                                        <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
@@ -525,11 +538,17 @@ else
                                                             else
                                                             {
                                                                 <a onclick="">   @Model.candidateName <span class="dot"></span></a>
+
                                                             }
                                                         }
                                                         else
                                                         {
                                                             @Model.candidateName
+                                                             <div class="interest-btn">
+
+
+                                                                <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
+                                                            </div>
                                                         }
 
                                                         @if (@Model.JDTiltle.Length > 5)
@@ -620,16 +639,7 @@ else
                                                             }
 
                                                         }
-                                                        else
-                                                        {
-
-                                                            <div class="interest-btn">
-
-
-                                                                <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
-                                                            </div>
-
-                                                        }
+                                                       
                                                     }
                                                 </div>
                                                     @if (ViewBag.VideoStatus == "Public")
@@ -3064,14 +3074,16 @@ else
     function SendIntrestUrl(index) {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        $.ajax({
-            type: "POST",
-            url: "/RiseTube/VideoShareIntrest",
-            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val(),CandidateEmail:CandidateEmail ,clienthr:$("#txtclienthr").val() },
-            success: function (data) {
-                alter("Your intrest is recorded successfully.");
-            }
-        });
+        if (window.confirm("Are you sure, you want to show intrest on this intreview?")) {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VideoShareIntrest",
+                data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
+                success: function (data) {
+                    alter("Your intrest is recorded successfully.");
+                }
+            });
+        }
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")

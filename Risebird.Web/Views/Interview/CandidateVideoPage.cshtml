@@ -1851,14 +1851,16 @@
     function SendIntrestUrl() {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        $.ajax({
-            type: "POST",
-            url: "/RiseTube/VideoShareIntrest",
-            data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail,clienthr:$("#txtclienthr").val() },
-            success: function (data) {
-                alter("Your intrest is recorded successfully.");
-            }
-        });
+        if (window.confirm("Are you sure, you want to show intrest on this intreview?")) {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VideoShareIntrest",
+                data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
+                success: function (data) {
+                    alter("Your intrest is recorded successfully.");
+                }
+            });
+        }
     }
 </script>
 <script src="~/RiseTube/js/custom.js"></script>

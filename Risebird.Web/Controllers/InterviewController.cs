@@ -6195,7 +6195,6 @@ namespace Risebird.Web.Controllers
             if (ispresent > 0)
             {
                 _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
-               
                 return Json("Success");
             }
             else
