@@ -2592,7 +2592,7 @@ namespace Risebird.Repository
                 }
                 else{
                     var id = 0;
-                    var queryfind = "Seelct id from UserList where Emailid=@Emailid";
+                    var queryfind = "Select id from UserList where Emailid=@Emailid";
                     var dynamicParametersfinal = new DynamicParameters();
                     dynamicParametersfinal.Add("@Emailid", Emailid);
 
@@ -2605,7 +2605,7 @@ namespace Risebird.Repository
 
                     var query = "Update VideoCountDetails set IsIntrested='Intrested' where Videoid=@interviewid and Emailid=@Emailid or Userid=@id";
                     var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("@Videoid", videoid);
+                    dynamicParameters.Add("@interviewid", videoid);
                     dynamicParameters.Add("@Emailid", Emailid);
                     dynamicParameters.Add("@id", id);
 
