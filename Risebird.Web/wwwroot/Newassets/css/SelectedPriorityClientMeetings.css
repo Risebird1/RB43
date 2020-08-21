@@ -34,6 +34,12 @@ textarea::-webkit-scrollbar-thumb {
     background: #f8faff;box-shadow:none; border:0px;
     border-radius:0px;
 }
+
+.client .bg-w {
+        background: #fff!important;
+    }
+
+
 .content.client {
     margin-top: 0px;
     padding: 0px 10px 0px;
