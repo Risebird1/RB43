@@ -20,25 +20,25 @@
     width: 100%;
     height: 406px;
 }
-.candidateinterest-btn {
-    background-image: url(../../img/heart-icon.png);
-    background-repeat: no-repeat !important;
-    background-size: inherit;
-    background-position: 12% 50% !important;
-    font-weight: normal;
-    font-size: 13px !important;
-    padding: 0px 0px 0px 0px;
-    width: 123px;
-    background-color: #68b50e99 !important;
-    height: 35px;
-    border-radius: 3px;
-    border: 1px #008000c7 solid;
-}
+
     .candidateinterest-btn .view-video {
-        padding-left: 35px;
+        padding-left: 0px;
         line-height: 25px;
-        color:green
+        color: GREEN;
+        TEXT-ALIGN: CENTER;
+        FLOAT: NONE;
+        MARGIN: 0PX AUTO;
+        background-position: 12% 50% !important;
+        font-weight: normal;
+        font-size: 13px !important;
+        padding: 0px 0px 0px 0px;
+        width: 123px;
+        background-color: #01dc01c7 !important;
+        height: 35px;
+        border-radius: 3px;
+        border: 1px #0e960ec7 SOLID;
     }
+
 
     .count-view .label-num {
         background: #ccc;
