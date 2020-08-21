@@ -3077,14 +3077,16 @@ else
     function SendIntrestUrl(index) {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        $.ajax({
-            type: "POST",
-            url: "/RiseTube/VideoShareIntrest",
-            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val(),CandidateEmail:CandidateEmail ,clienthr:$("#txtclienthr").val() },
-            success: function (data) {
-                alter("Your intrest is recorded successfully.");
-            }
-        });
+        if (window.confirm("Are you sure, you want to show intrest on this Candidate Profile?")) {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VideoShareIntrest",
+                data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
+                success: function (data) {
+                    alter("Your intrest has been recorded successfully.");
+                }
+            });
+        }
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
