@@ -1936,7 +1936,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VideoShareIntrest(string currentUrl,string Emailid,string CandidateEmail)
+        public JsonResult VideoShareIntrest(string currentUrl, string Emailid, string CandidateEmail,string clienthr)
         {
             if (HttpContext.Session.GetString("email") != null)
             {
@@ -1971,11 +1971,21 @@ namespace Risebird.Web.Controllers
                 var model = _meetingService.AddVideoIntrestDetails(videoid, urlType, Emailid);
             }
             //Send Email
-            if (Emailid != "" && Emailid != ";")
+            if (currentUrl.Contains("CandidateVideoPage"))
             {
                 Mail _mail = new Mail
                 {
                     TO = CandidateEmail,
+                    CC = "Talent@risebird.io",
+                    Subject = "Risebird:An User is shows intrested in your interview"
+                };
+                var result = _notificationHelper.ShowIntrestInterview(_mail, Emailid);
+            }
+            else
+            {
+                Mail _mail = new Mail
+                {
+                    TO = clienthr,//Client HR
                     CC = "Talent@risebird.io",
                     Subject = "Risebird:An User is shows intrested in your interview"
                 };

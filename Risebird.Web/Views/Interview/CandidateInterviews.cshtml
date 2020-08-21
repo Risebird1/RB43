@@ -637,6 +637,9 @@
             }
         });
     }
+    function CallCandidatePage(index) {
+        window.location.href = "@Url.Action("CandidateVideoPage", "Interview")/" +index;
+    }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {

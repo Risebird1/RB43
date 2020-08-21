@@ -438,7 +438,7 @@
                                                             <div class="single-video ">
                                                                 @if (Model.VideoLink != null && Model.VideoLink != "")
                                                                 {
-
+                                                                    <input type="text" id="txtclienthr" value="@Model.ClientHrContact" hidden />
                                                                     @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
                                                                     {
                                                                         <video controls class="vjs-tech video-width btnvideo">
@@ -3250,7 +3250,7 @@
         $.ajax({
             type: "POST",
             url: "/RiseTube/VideoShareIntrest",
-            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val(),CandidateEmail:CandidateEmail },
+            data: { CurrentUrl: videourl,Emailid: $("#txtvideoemailid").val(),CandidateEmail:CandidateEmail ,clienthr:$("#txtclienthr").val() },
             success: function (data) {
                 alter("Your intrest is recorded successfully.");
             }

@@ -2525,18 +2525,18 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<string> AddVedioShare(string value, string vedioid, string Emailids)
+        public async Task<string> AddVedioShare(string email, string vedioid, string Emailids)
         {
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@isShared", value);
+                parameters.Add("@Userid", email);
                 parameters.Add("@VedioId", vedioid);
                 parameters.Add("@Emails", Emailids);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddInterviewShareDetails", parameters,
+                    var result = await SqlMapper.QueryFirstAsync(con, "usp_AddInterviewShareDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "";
                 }
@@ -2661,7 +2661,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid)
+        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid,string emailid)
         {
             try
             {
@@ -2670,6 +2670,8 @@ namespace Risebird.Repository
                     VideoDetails interviewComments = new VideoDetails();
                     DynamicParameters paramx = new DynamicParameters();
                     paramx.Add("@InterviewId", Interviewid);
+                    paramx.Add("@Userid", emailid);
+
                     var resultset = SqlMapper.Query<VideoDetails>(con, "usp_FetchVideoCandidateSumaryDetails", paramx,
                                         commandType: CommandType.StoredProcedure);
                     return resultset;

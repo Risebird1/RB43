@@ -1644,11 +1644,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string AddVedioShare(string value, string vedioid, string Emailids)
+        public string AddVedioShare(string email, string vedioid, string Emailids)
         {
             try
             {
-                var meeting = _meetingRespository.AddVedioShare(value, vedioid, Emailids);
+                var meeting = _meetingRespository.AddVedioShare(email, vedioid, Emailids);
                 return "";
 
             }
@@ -1714,11 +1714,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid)
+        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid)
         {
             try
             {
-                var result = _meetingRespository.GetVideoCandidateSumaryDetails(Interviewid);
+                var result = _meetingRespository.GetVideoCandidateSumaryDetails(Interviewid, emailid);
                 return result;
             }
             catch (Exception ex)
