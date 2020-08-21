@@ -72,7 +72,7 @@ delete from TransSkillGeneral where IRFId=@id
 delete from TransTechSkill where IRFId=@id  
   
 delete from TransSelectability where IRFId=@id  
-delete from TransEmergencyInterviewerProfile where IRFId=@id  
+delete from TransEmergencyInterviewer where IRFId=@id  
 delete from TransResumeEvaluator where IRFId=@id  
 delete from TransHR where IRFId=@id  
 delete from TransRecruiter where IRFId=@id  

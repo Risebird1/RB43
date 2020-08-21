@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+    
     public class InterviewController : Controller
     {
         private readonly IMeetingService _meetingService;
@@ -132,7 +132,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
+        [Authorize]
         [HttpGet]
         public FileContentResult InterviewsExporttoExcel()
         {
@@ -364,7 +364,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-
+        [Authorize]
         public async Task<IActionResult> MultipleCandidateInvites()
         {
             try
@@ -409,6 +409,7 @@ namespace Risebird.Web.Controllers
         /// Export selected candidates data to excel
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public FileContentResult MultipleCandidateInvitesExporttoExcel()
         {
@@ -490,8 +491,9 @@ namespace Risebird.Web.Controllers
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
-
         }
+
+        [Authorize]
         [HttpPost]
         public IActionResult SelectedPriorityClientMeetings(SelectedPriorityViewFilter filter)
         {
@@ -627,6 +629,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult ClientSelectedMeetings(SelectedPriorityViewFilter filter)
         {
@@ -748,6 +751,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Index(InterviewFilter filter)
         {
@@ -821,6 +825,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         public async Task<IActionResult> ResetInterviewFilter()
         {
             try
@@ -843,6 +848,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         public async Task<IActionResult> ResetMyInterviewFilter()
         {
             try
@@ -865,6 +871,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         public async Task<IActionResult> ResetSelectedPriorityClientMeetingsfilters()
         {
             try
@@ -884,8 +891,9 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SelectedPriorityClientMeetings");
             }
-
         }
+
+        [Authorize]
         public async Task<IActionResult> ResetClientSelectedMeetingsfilters()
         {
             try
@@ -907,6 +915,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [Authorize]
         public async Task<IActionResult> ResetClientMeetingsFilter()
         {
             try
@@ -928,6 +938,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [Authorize]
         public async Task<IActionResult> ResetAllPriorityClientMeetingsFilter()
         {
             try
@@ -950,6 +961,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult ClientMeetings(InterviewFilter filter)
         {
@@ -1070,6 +1082,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [Authorize]
         public async Task<IActionResult> GetFilteredInterviews(string filterValue)
         {
             try
@@ -1557,6 +1571,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> GetFilteredOpenInterviews(string filterValue)
         {
             try
@@ -1846,6 +1861,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> MyInterview(MyInterviewFilter filter)
         {
@@ -1936,6 +1952,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> GetFilteredMyInterviews(string filterValue)
         {
             try
@@ -2105,18 +2122,7 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-                        //                        var list = new SelectList(new[]
-                        //{
-                        //    new { ID = "All", Name = "All"},
-                        //    new { ID = "Today", Name = "Today"},
-                        //    new { ID = "Tomorrow", Name = "Tomorrow"  },
-                        //    new { ID = "Yesterday", Name = "Yesterday"  },
-                        //    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-
-                        //},
-                        //"ID", "Name", "All");
-
-                        //                        ViewData["list"] = list;
+              
 
                         if (HttpContext.Session.GetString("ClientMeetingsfilters") != null)
                         {
@@ -2370,17 +2376,7 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
-                        //                        var list = new SelectList(new[]
-                        //{
-                        //    new { ID = "Today", Name = "Today"},
-                        //    new { ID = "Tomorrow", Name = "Tomorrow"  },
-                        //    new { ID = "Yesterday", Name = "Yesterday"  },
-                        //    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-                        //    new { ID = "All", Name = "All"},
-                        //},
-                        //"ID", "Name", "All");
-
-                        //                        ViewData["list"] = list;
+                     
 
                         if (HttpContext.Session.GetString("ClientSelectedMeetingsfilters") != null)
                         {
@@ -2409,61 +2405,7 @@ namespace Risebird.Web.Controllers
                             && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                             && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
 
-                            //if (selectedMeeting.Count == 0 && filter.StartDate != null && filter.EndDate != null)
-                            //{
-                            //    selectedMeeting = _meetingService.GetClientMeetingList(emailid);
-                            //    selectedMeeting = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                            //    foreach (var m in selectedMeeting)
-                            //    {
-                            //        if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
-                            //        {
-                            //            m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                            //        }
-                            //        else
-                            //        {
-                            //            continue;
-                            //        }
-
-                            //        if (m.L2InterviewStatus.HasValue)
-                            //        {
-                            //            m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
-                            //        }
-                            //        if (m.L2InterviewStatus.HasValue)
-                            //        {
-                            //            m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                            //        }
-                            //        if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
-                            //        {
-                            //            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                            //        }
-                            //        if (m.PreparationStatus.HasValue)
-                            //        {
-                            //            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                            //        }
-                            //        if (m.OfferStatus.HasValue && m.OfferStatus != -1)
-                            //        {
-                            //            m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
-                            //        }
-                            //        if (m.MeetingStatus.HasValue)
-                            //        {
-                            //            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                            //        }
-                            //        if (m.QCStatus.HasValue)
-                            //        {
-                            //            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                            //        }
-                            //        if (m.IsApproved.HasValue)
-                            //        {
-                            //            m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
-                            //        }
-                            //        if (m.IsSelected.HasValue)
-                            //        {
-                            //            m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
-                            //        }
-                            //        selectedMeeting.Add(m);
-                            //    }
-                            //    selectedMeeting = selectedMeeting.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                            //}
+                          
                         }
                         return View(selectedMeeting);
                     }
@@ -2500,7 +2442,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                        var meetings = _meetingService.GetClientMeetingList(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
                         if (filterValue == "Today")
@@ -3396,32 +3338,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        //[Authorize]
-        //[HttpGet]
-        //public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
-        //{
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //        {
-        //            AssignYourselfVM assinAssignYourselfVm = new AssignYourselfVM();
-        //            assinAssignYourselfVm.id = id;
-        //            assinAssignYourselfVm.InterviewDate = InterviewDate;
-        //            assinAssignYourselfVm.CandidateEmail = CandidateEmail;
-        //            return View(assinAssignYourselfVm);
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("SignOut", "Session");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return null;
-        //    }
-        //}
-
+       
         [Authorize]
         //[HttpPost]
         public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
@@ -4045,7 +3962,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-
+        [Authorize]
         public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled)
         {
             var result = _meetingService.SaveQCFeedback(imid, qcStatus, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
@@ -4144,6 +4061,7 @@ namespace Risebird.Web.Controllers
         /// Export selected candidates data to excel
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public FileContentResult AllPriorityExporttoExcel()
         {
@@ -4396,6 +4314,7 @@ namespace Risebird.Web.Controllers
         /// Export selected candidates data to excel
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public FileContentResult AllExporttoExcel()
         {
@@ -4593,6 +4512,7 @@ namespace Risebird.Web.Controllers
         /// Export selected candidates data to excel
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         public FileContentResult SelectedPriorityExporttoExcel()
         {
@@ -4852,6 +4772,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         [HttpGet]
         public FileContentResult MyInterviewsExporttoExcel()
         {
@@ -5996,7 +5917,7 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-
+        [Authorize]
         public bool SaveHRComment(int id, string comment)
         {
             var result = _meetingService.SaveHRComment(id, comment);
@@ -6147,8 +6068,8 @@ namespace Risebird.Web.Controllers
                     //Start: Share button functionaly
                     ViewBag.ResultStatus = "VideoPresent";
                     MeetingVM model = _meetingService.GetMeetingbyid(id, "");
-                    var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
-                    if (status == "Public")
+                    
+                    if (model != null)
                     {
 
 
@@ -6235,6 +6156,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [Authorize]
         [HttpPost]
         public JsonResult VideoShare(string value, string videoid, string name, string Emailids)
         {
@@ -6249,7 +6171,7 @@ namespace Risebird.Web.Controllers
             {
                 TO = Emailids,
                 CC = email,
-                Subject = "Risebird: Interview video is shared with you"
+                Subject = $"Risebird: {email} Interview video is shared with you"
             };
             var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, name, currenturl);
             if (result.Contains("Mail sent successfully"))
@@ -6261,6 +6183,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+      
         [HttpPost]
         public JsonResult VideoShareEmail(string videoid, string Emailid, string CurrentUrl, string Candidateemail)
         {
@@ -6288,6 +6211,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
+        [Authorize]
         public JsonResult VideoDetailsJsonView(int interviewid)
         {
             try
