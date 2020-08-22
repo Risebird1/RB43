@@ -31,7 +31,7 @@ namespace Risebird.CommonHelper.Interface
         string CancelInterviewerInvite(string iscName, string primarySkill, string interviewerMailId, string hrEmailId);
         string MeetingInvite(DateTime startTime, DateTime endTime, string TimeZone, string accountMail, string accountPass, string Message, string subject, string sender, string candidateMail, string additionMail, string meetingURL);
         string VideoAccessRequest(Mail model, string url,string Emailid);
-        string ShowIntrestInterview(Mail model, string Email);
+        string ShowIntrestInterview(Mail model, string Email, string videourl);
 
     }
 }
