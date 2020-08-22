@@ -775,7 +775,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
-                var anchrTag = "<a href=" + url + ">Please Click to see the your interview video</a>";
+                var anchrTag = "<a href=" + url + ">Candidate Interview Video</a>";
                 object[] parameters = new object[] { Emailid,anchrTag  };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RequestForAccess.html");
                 string msgBody = string.Format(rawEmail, parameters);
