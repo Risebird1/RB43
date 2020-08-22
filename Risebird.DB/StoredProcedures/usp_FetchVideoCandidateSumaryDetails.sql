@@ -13,8 +13,9 @@ CREATE Procedure usp_FetchVideoCandidateSumaryDetails
 AS        
 BEGIN        
 Select ias.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested 
-from InterviewShareDetails ias inner join userlist ul on ul.id=ias.SharedBy
-left join VideoCountDetails vc on vc.Videoid=ias.Interviewid and vc.Emailid=ias.Emailid
+from InterviewShareDetails ias
+inner join userlist ul on ul.id=ias.SharedBy
+left join VideoCountDetails vc on vc.Videoid=ias.Interviewid 
 Where ul.emailid=@Userid and ias.Interviewid=@InterviewId
 END 
 GO

@@ -3048,8 +3048,8 @@ else
             }
             html += '                  <td>' + data[i].currentTime + '</td>';
             html += '                <td class="text-center"><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input  type="button" value="Share" onclick="OpenSharePopup(' + i + ')" /></div></td>';
-            if (data[i].isIntrested == "Intrested") {
-                html += '                <td class="text-center"><div class="interest-btn"><input class="view-video"  type="button" value="Intrested" /></div></td>';
+            if (data[i].isIntrested == "Interested") {
+                html += '                <td class="text-center"><div><input class="view-video"  type="button" value="Intrested" /></div></td>';
             } else {
                 html += '                <td class="text-center"></td>';
 
@@ -3074,7 +3074,7 @@ else
     function SendIntrestUrl(index) {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        if (window.confirm("Are you sure, you want to show intrest on this Candidate Profile?")) {
+        if (window.confirm("Are you sure, you want to show intrest on this Candidate Interview?")) {
             $.ajax({
                 type: "POST",
                 url: "/RiseTube/VideoShareIntrest",

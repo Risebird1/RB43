@@ -1977,9 +1977,9 @@ namespace Risebird.Web.Controllers
                 {
                     TO = CandidateEmail,
                     CC = "Talent@risebird.io",
-                    Subject = "Risebird:An User is shows intrested in your interview"
+                    Subject = $"Risebird:{Emailid} shown interest in your Risebird interview video"
                 };
-                var result = _notificationHelper.ShowIntrestInterview(_mail, Emailid);
+                var result = _notificationHelper.ShowIntrestInterview(_mail, Emailid, currentUrl);
             }
             else
             {
@@ -1987,9 +1987,9 @@ namespace Risebird.Web.Controllers
                 {
                     TO = clienthr,//Client HR
                     CC = "Talent@risebird.io",
-                    Subject = "Risebird:An User is shows intrested in your interview"
+                    Subject = $"Risebird:{Emailid} shown interest in {CandidateEmail} candidate interview video"
                 };
-                var result = _notificationHelper.ShowIntrestInterview(_mail, Emailid);
+                var result = _notificationHelper.ShowIntrestInterview(_mail, Emailid, currentUrl);
             }
             return Json("Success");
         }
