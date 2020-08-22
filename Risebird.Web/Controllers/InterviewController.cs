@@ -6202,8 +6202,7 @@ namespace Risebird.Web.Controllers
                 //send email to candidate
                 Mail _mail = new Mail
                 {
-                    TO = Candidateemail,
-                    CC = Emailid,
+                    TO = Candidateemail,                   
                     Subject = $"Risebird: {Emailid} is requesting access of your Interview Video"
                 };
                 var result = _notificationHelper.VideoAccessRequest(_mail, CurrentUrl, Emailid);
