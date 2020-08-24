@@ -1983,7 +1983,7 @@ else
 </script>
 <script>
     var d = new Date();
-    var start = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    var starttime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
     $(window).bind('beforeunload', function () {
         TimeCalculation();
         //return 'Are you sure you want to leave?';
@@ -1997,7 +1997,7 @@ else
         $.ajax({
             type: "GET",
             url: "/RiseTube/CalculateTimeSpend",
-            data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: start, timeend: end, CurrentTime: currentTime },
+            data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: starttime, timeend: end, CurrentTime: currentTime },
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
