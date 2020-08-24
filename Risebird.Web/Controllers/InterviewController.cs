@@ -6169,8 +6169,7 @@ namespace Risebird.Web.Controllers
             string currenturl = Request.Host.ToString() + "/Interview/CandidateVideoPage/" + videoid;
             Mail _mail = new Mail
             {
-                TO = Emailids,
-                CC = email,
+                TO = Emailids,             
                 Subject = $"Risebird: {email} Interview video is shared with you"
             };
             var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, name, currenturl);
