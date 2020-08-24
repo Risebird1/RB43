@@ -1850,6 +1850,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [HttpGet]
         public JsonResult CalculateTimeSpend(string videoid, string Emailid, string CurrentUrl, string timeStart, string timeend, string CurrentTime)
         {
             //Start:SaveTime Spend on vedio page
@@ -1866,6 +1867,8 @@ namespace Risebird.Web.Controllers
                 Emailid = Emailid.Replace("\"", "");
             }
             var TimeSpend = Convert.ToDateTime(timeend) - Convert.ToDateTime(timeStart);
+            var time = TimeSpan.FromSeconds(Convert.ToDouble(CurrentTime));
+            CurrentTime = time.ToString("hh")+":"+ time.ToString("mm")+":"+ time.ToString("ss");
             if (CurrentUrl.Contains("SharedVideoPage"))
             {
                 videoid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
@@ -1885,7 +1888,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" )
                 {
                     //To get data from db for video displayes
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);
@@ -1894,6 +1897,15 @@ namespace Risebird.Web.Controllers
                         item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
                         item.interviewid = interviewid;
                     }
+                    return Json(model);
+                }else if (profileName == "Candidate" || profileName == "Client")
+                {
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    //To get data from db for video displayes
+                    //only candidate video share data//InterviewShareDetails
+                    var model = _meetingService.GetVideoCandidateSumaryDetails(interviewid, email);
+
                     return Json(model);
                 }
                 else
