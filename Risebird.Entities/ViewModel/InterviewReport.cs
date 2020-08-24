@@ -96,6 +96,8 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Uploaded Candidate Resume")]
         public string resumeLink { get; set; }
+        [Display(Name = "Verified Aadhar Information")]
+        public string AadharFileLink { get; set; }
         [Display(Name = "Interview Date")]
         public string interviewDate { get; set; }
 

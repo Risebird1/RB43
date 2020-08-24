@@ -1847,13 +1847,13 @@
     function SendIntrestUrl() {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        if (window.confirm("Are you sure, you want to show intrest on this Candidate Interview?")) {
+        if (window.confirm("Are you sure, you want to show interest on this Candidate Interview?")) {
             $.ajax({
                 type: "POST",
                 url: "/RiseTube/VideoShareIntrest",
                 data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
                 success: function (data) {
-                    alter("Your intrest has been recorded successfully.");
+                    alter("Your interest has been recorded successfully.");
                 }
             });
         }
