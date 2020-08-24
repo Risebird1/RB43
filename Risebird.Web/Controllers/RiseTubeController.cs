@@ -1867,6 +1867,8 @@ namespace Risebird.Web.Controllers
                 Emailid = Emailid.Replace("\"", "");
             }
             var TimeSpend = Convert.ToDateTime(timeend) - Convert.ToDateTime(timeStart);
+            var time = TimeSpan.FromSeconds(Convert.ToDouble(CurrentTime));
+            CurrentTime = time.ToString("hh")+":"+ time.ToString("mm")+":"+ time.ToString("ss");
             if (CurrentUrl.Contains("SharedVideoPage"))
             {
                 videoid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
