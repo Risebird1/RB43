@@ -511,25 +511,9 @@
                                                             {
                                                                 <span style="color:green">Selected</span>
 
-                                                                }
-                                                            </span>
-
-                                                    </div>
-
-
-
-                                                    <div class="video-info">
-
-
-                                                            <span> Notice Period: </span>
-                                                            @if (item.joiningTime.Length > 20)
-                                                            {
-                                                                <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
                                                             }
-                                                            else
-                                                            {
-                                                                <span> @item.joiningTime</span>
-                                                            }
+
+
                                                             @if (item.MobileNumber != null)
                                                             {
                                                                 <span>
@@ -538,6 +522,27 @@
                                                                     </button>
                                                                 </span>
                                                             }
+                                                        </span>
+
+                                                    </div>
+
+
+                                                    <div class="video-info">
+
+
+                                                        <span> Notice Period: </span>
+                                                        @if (item.joiningTime.Length > 20)
+                                                        {
+                                                            <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span> @item.joiningTime</span>
+                                                        }
+                                                        <div class="video-info  nopad pull-right">
+                                                            <span>Tech Skill Score:</span>
+                                                            <span>@(item.TechSkillScore/4)</span>
+                                                        </div>
 
 
                                                     </div>
