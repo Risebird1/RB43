@@ -2316,18 +2316,18 @@
                         url: "/MeetingInvite/SendMeetingInvite",
                         data: { Subject: $("#txtOnlineSubject").val(), candidateEmailId: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(),TimeZoneDetails:$("#txtOnlineTimeZone").val(),AdditionalUser:$("#txtOnlineMEmailids").val() },
                         success: function (data) {
-                            alert(data);
+                            swal.fire(data);
                             closeOnlineMeetingModel();
                                document.getElementById("OnlineSubmitBtn").disabled = false;
                         }
                     });
                 } else {
-                    alert(resultreturn);
+                    swal.fire(resultreturn);
                     document.getElementById("OnlineSubmitBtn").disabled = false;
 
                 }
             } else {
-                alert("Kindly fill the Subject field");
+                swal.fire("Kindly fill the Subject field");
                    document.getElementById("OnlineSubmitBtn").disabled = false;
             }
         }
@@ -3058,7 +3058,7 @@
                 }
             });
         } else {
-            alert("Please Enter Comment");
+            swal.fire("Please Enter Comment");
         }
     }
     function closeCommentPopUp() {
@@ -3121,11 +3121,11 @@
             data: { Emailids: $("#txtsharetext1").val(), videoid: $("#txtVideoId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
             success: function (data) {
                 if (data == "Success") {
-                    alert("Interview shared successfully.");
+                    swal.fire("Interview shared successfully.");
                     closeSharePopUp();
 
                 } else {
-                    alert("Fail to share Interview.");
+                    swal.fire("Fail to share Interview.");
 
                 }
             }
@@ -3154,7 +3154,7 @@
     }
     function SharepublicVideoLink() {
         if ($("#txtpublicsharing").val() != "") {
-            if (window.confirm('Are you sure, you want to share this video?')) {
+            if (Swal.fire('Are you sure, you want to share this video?')) {
                 if ($("#txtpublicsharetxt").val() == "Public") {
                     $.ajax({
                         type: "POST",
@@ -3242,7 +3242,7 @@
     function OpenSharePopup(index) {
         var videourl = $("#txt_" + index).val();
         var modal = document.getElementById("PublicShareModel");
-        modal.style.display = "block"; 
+        modal.style.display = "block";
         $("#txtpublicsharetxt").val("Shared");
         $("#txtpublicshareurl").val(videourl);
     }
@@ -3254,13 +3254,13 @@
     function SendIntrestUrl() {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        if (window.confirm("Are you sure, you want to show intrest on this Candidate Interview?")) {
+        if (Swal.fire("Are you sure, you want to show intrest on this Candidate Interview?")) {
             $.ajax({
                 type: "POST",
                 url: "/RiseTube/VideoShareIntrest",
                 data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
                 success: function (data) {
-                    alter("Your intrest has been recorded successfully.");
+                    swal.fire("Your intrest has been recorded successfully.");
                 }
             });
         }

@@ -33,23 +33,19 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
-                <a class="navbar-brand">Edit Skill Channel</a>
+                <a class="navbar-brand"> /  &nbsp; Edit Skill Channel</a>
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
+     
 
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
-        <div class="row">
+    <div class="content client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="irfForm" onsubmit="return CheckTotalWeightage()">
@@ -58,8 +54,8 @@
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                             <div class="row">
-                                <div class="card-header">
-                                    <h4 class="card-title">Edit IRF</h4>
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Skill Channel</h4></div>
                                 </div>
                                 <div style="width: 100%;">&nbsp;</div>
                                 <div class="col-md-3 col-sm-3 pr-1">
@@ -158,15 +154,15 @@
                                     </div>
                                     <div class="form-group">
                                         <!--  <div class="switch-btn col-md-12">
-          <span class="on-off">B2C</span>
-          <div class="material-toggle">
+                                            <span class="on-off">B2C</span>
+                                            <div class="material-toggle">
 
-              <input class="switch" id="MoveToB2B" type="checkbox" checked="checked" value="false" name="B2B">
-              <label for="MoveToB2B" class=""></label>
+                                                <input class="switch" id="MoveToB2B" type="checkbox" checked="checked" value="false" name="B2B">
+                                                <label for="MoveToB2B" class=""></label>
 
-          </div>
-          <span class="on-off">B2B</span>
-      </div>-->
+                                            </div>
+                                            <span class="on-off">B2B</span>
+                                        </div>-->
 
                                         @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
                                         @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
@@ -174,104 +170,104 @@
 
 
                                     </div>
-        </div>
-        <div class="col-md-4 col-sm-4 px-1">
-            <div class="form-group">
-                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
-                <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></span>
-                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
-                <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></span>
-                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
-                @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
-                <div class="spinner">
-                    <button type="button" class="up button">&rsaquo;</button>
-                    <button type="button" class="down button">&lsaquo;</button>
-                </div>
-            </div>
-            <div class="form-group  mb-0">
-                @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
-                @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
-                <div class="spinner">
-                    <button type="button" class="up-1 button">&rsaquo;</button>
-                    <button type="button" class="down-1 button">&lsaquo;</button>
-                </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 px-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
+                                        <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></span>
+                                        @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
+                                        <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></span>
+                                        @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                        @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "input form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
+                                        <div class="spinner">
+                                            <button type="button" class="up button">&rsaquo;</button>
+                                            <button type="button" class="down button">&lsaquo;</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group  mb-0">
+                                        @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
+                                        <div class="spinner">
+                                            <button type="button" class="up-1 button">&rsaquo;</button>
+                                            <button type="button" class="down-1 button">&lsaquo;</button>
+                                        </div>
 
-            </div>
+                                    </div>
 
-            <div class="form-group">
-                Upload Company Details
+                                    <div class="form-group">
+                                        Upload Company Details
 
-                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                    <div class="mdc-radio mdc-radio--touch">
-                        <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="Upload" onclick="RadioCompanyChanged(this.value)">
-                        <div class="mdc-radio__background">
-                            <div class="mdc-radio__outer-circle"></div>
-                            <div class="mdc-radio__inner-circle"></div>
-                        </div>
-                        <div class="mdc-radio__ripple"></div>
-                    </div>
-                </div>
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="Upload" onclick="RadioCompanyChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
 
-                Provide Company Details
+                                        Provide Company Details
 
-                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                    <div class="mdc-radio mdc-radio--touch">
-                        <input class="mdc-radio__native-control" type="radio" id="JcompanydetailsD" name="companydetails" value="Link" onclick="RadioCompanyChanged(this.value)">
-                        <div class="mdc-radio__background">
-                            <div class="mdc-radio__outer-circle"></div>
-                            <div class="mdc-radio__inner-circle"></div>
-                        </div>
-                        <div class="mdc-radio__ripple"></div>
-                    </div>
-                </div>
-
-
-                None
-
-                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                    <div class="mdc-radio mdc-radio--touch">
-                        <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
-                        <div class="mdc-radio__background">
-                            <div class="mdc-radio__outer-circle"></div>
-                            <div class="mdc-radio__inner-circle"></div>
-                        </div>
-                        <div class="mdc-radio__ripple"></div>
-                    </div>
-                </div>
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="JcompanydetailsD" name="companydetails" value="Link" onclick="RadioCompanyChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
 
 
+                                        None
 
-            </div>
-            <div class="form-group" style="display:none" id="linkcdDiv">
-                @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
 
-            </div>
-            <div class="" style="display:none" id="uploadcdDiv">
-                @Html.LabelFor(model => model.CompanyDetailFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
-            </div>
-            <div class="">
-                @{
-                    if (!String.IsNullOrEmpty(Model.CompanyDetails))
-                    {
-                        <a id="companydetailsId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Company Details</a>
-                    }
-                }
-            </div>
+                                    </div>
+                                    <div class="form-group" style="display:none" id="linkcdDiv">
+                                        @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                        @Html.EditorFor(model => model.CompanyDetails, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.CompanyDetails, "", new { @class = "text-danger" })
+
+                                    </div>
+                                    <div class="" style="display:none" id="uploadcdDiv">
+                                        @Html.LabelFor(model => model.CompanyDetailFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
+
+                                    </div>
+                                    <div class="">
+                                        @{
+                                            if (!String.IsNullOrEmpty(Model.CompanyDetails))
+                                            {
+                                                <a id="companydetailsId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.CompanyDetails.ToString().Replace(" ","%20")>Uploaded Company Details</a>
+                                            }
+                                        }
+                                    </div>
 
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
@@ -304,79 +300,79 @@
                                         @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "form-control select-css selectpicker" })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
-            </div>
-            <div class="form-group mb-0">
+                                    </div>
+                                    <div class="form-group mb-0">
 
-                Upload JD
+                                        Upload JD
 
-                <div class="mdc-touch-target-wrapper" style="top: 4px;  position: relative;">
-                    <div class="mdc-radio mdc-radio--touch">
-                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
-                        <div class="mdc-radio__background">
-                            <div class="mdc-radio__outer-circle"></div>
-                            <div class="mdc-radio__inner-circle"></div>
-                        </div>
-                        <div class="mdc-radio__ripple"></div>
-                    </div>
-                </div>
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px;  position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
 
 
 
-                Provide JD link
+                                        Provide JD link
 
-                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                    <div class="mdc-radio mdc-radio--touch">
-                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
-                        <div class="mdc-radio__background">
-                            <div class="mdc-radio__outer-circle"></div>
-                            <div class="mdc-radio__inner-circle"></div>
-                        </div>
-                        <div class="mdc-radio__ripple"></div>
-                    </div>
-                </div>
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
 
-                None
+                                        None
 
-                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                    <div class="mdc-radio mdc-radio--touch">
-                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="None" checked="checked" onclick="RadioChanged(this.value)">
-                        <div class="mdc-radio__background">
-                            <div class="mdc-radio__outer-circle"></div>
-                            <div class="mdc-radio__inner-circle"></div>
-                        </div>
-                        <div class="mdc-radio__ripple"></div>
-                    </div>
-                </div>
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="None" checked="checked" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
 
-            </div>
-            <div class="form-group mb-0" style="display:none" id="linkDiv">
-                @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group mb-0" style="display:none" id="linkDiv">
+                                        @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                        @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
 
-            </div>
-            <div class="" style="display:none" id="uploadDiv">
-                @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    </div>
+                                    <div class="" style="display:none" id="uploadDiv">
+                                        @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                        @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
-            </div>
-            <div class="upload">
-                @{
-                    if (!String.IsNullOrEmpty(Model.JDLink))
-                    {
-                        <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
-                    }
-                }
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="multiple_row">
-                <h2>Tech Skill Metric</h2>
-            </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
+                                    </div>
+                                    <div class="upload">
+                                        @{
+                                            if (!String.IsNullOrEmpty(Model.JDLink))
+                                            {
+                                                <a style="text-decoration:none;" id="audioId" target="_blank" rel="tooltip" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Tech Skill Metric</h2>
+                                    </div><!--end of multiple location-->
+                                </div><!--end of col-md-12-->
 
 
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
