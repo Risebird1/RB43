@@ -389,18 +389,18 @@
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
                                                         <div class="col-md-12 col-sm-12">
                                                             <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in ViewBag.CandidateAvailable)
+                                                                @*@foreach (var item in ViewBag.CandidateAvailable)
                                                                 {
                                                                     @if (item == 1)
-                                                                    {
-                                                                        <option value="@item">Available</option>
-                                                                    }
+                                                                    {*@
+                                                                        <option value="1">Available</option>
+                                                                    @*}
                                                                     else
-                                                                    {
-                                                                        <option value="@item">NotAvailable</option>
+                                                                    {*@
+                                                                        <option value="0">NotAvailable</option>
 
-                                                                    }
-                                                                }
+                                                                    @*}
+                                                                }*@
 
                                                             </select>
                                                         </div>

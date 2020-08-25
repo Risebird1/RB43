@@ -430,18 +430,11 @@
                                                     <div class="col-md-12 col-sm-12">
                                                         <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
 
-                                                            @foreach (var item in Model.SubVideo_List.Select(x => x.CandidateAvailable).Distinct().ToList())
-                                                            {
-                                                                @if (item == 1)
-                                                                {
-                                                                    <option value="@item">Available</option>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <option value="@item">NotAvailable</option>
+                                                            <option value="1">Available</option>
+                                                          
+                                                            <option value="0">NotAvailable</option>
 
-                                                                }
-                                                            }
+                                                           
 
                                                         </select>
                                                     </div>
@@ -637,7 +630,7 @@
                                                         else
                                                         {
                                                             @Model.candidateName
-                                                            <div class="interest-btn">
+                                                            <div class="interest-btn pull-right">
                                                                 <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
                                                             </div>
                                                         }
