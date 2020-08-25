@@ -124,7 +124,7 @@
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
-                <a class="navbar-brand">Risetube</a>
+                <a class="navbar-brand card-title">Risetube</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
         </div>
@@ -633,7 +633,7 @@
 
 
 
-                                                    <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                    <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                     <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                     <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
                                                     @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser" && Model.IsClientCurated == false)
@@ -690,7 +690,7 @@
                                                             {
                                                                 <div class="col-md-2 share">
                                                                     <div class="btn-group">
-                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                        <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
                                                                             <img src="../../img/share-tweet-icon.png" style=" width: 28px;padding-left:4px;"> Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
@@ -749,7 +749,7 @@
                                                                 else
                                                                 {
                                                                     <div class="btn-group">
-                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                        <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
                                                                             <img class="tweet-icon" src="../../img/share-tweet-icon.png">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
@@ -2340,18 +2340,18 @@
                         url: "/MeetingInvite/SendMeetingInvite",
                         data: { Subject: $("#txtOnlineSubject").val(), candidateEmailId: $("#txtOnlineEmail").val(), startdate: $("#txtOnlinestart").val(), enddate: $("#txtOnlineend").val(), Message: $("#txtOnlineBody").val(),TimeZoneDetails:$("#txtOnlineTimeZone").val(),AdditionalUser:$("#txtOnlineMEmailids").val() },
                         success: function (data) {
-                            alert(data);
+                            swal.fire(data);
                             closeOnlineMeetingModel();
                                document.getElementById("OnlineSubmitBtn").disabled = false;
                         }
                     });
                 } else {
-                    alert(resultreturn);
+                    swal.fire(resultreturn);
                     document.getElementById("OnlineSubmitBtn").disabled = false;
 
                 }
             } else {
-                alert("Kindly fill the Subject field");
+                swal.fire("Kindly fill the Subject field");
                    document.getElementById("OnlineSubmitBtn").disabled = false;
             }
         }
@@ -3082,7 +3082,7 @@
                 }
             });
         } else {
-            alert("Please Enter Comment");
+            swal.fire("Please Enter Comment");
         }
     }
     function closeCommentPopUp() {
@@ -3145,11 +3145,11 @@
             data: { Emailids: $("#txtsharetext1").val(), videoid: $("#txtVideoId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
             success: function (data) {
                 if (data == "Success") {
-                    alert("Interview shared successfully.");
+                    swal.fire("Interview shared successfully.");
                     closeSharePopUp();
 
                 } else {
-                    alert("Fail to share Interview.");
+                    swal.fire("Fail to share Interview.");
 
                 }
             }
@@ -3178,7 +3178,7 @@
     }
     function SharepublicVideoLink() {
         if ($("#txtpublicsharing").val() != "") {
-            if (window.confirm('Are you sure, you want to share this video?')) {
+            if (Swal.fire('Are you sure, you want to share this video?')) {
                 if ($("#txtpublicsharetxt").val() == "Public") {
                     $.ajax({
                         type: "POST",
@@ -3266,7 +3266,7 @@
     function OpenSharePopup(index) {
         var videourl = $("#txt_" + index).val();
         var modal = document.getElementById("PublicShareModel");
-        modal.style.display = "block"; 
+        modal.style.display = "block";
         $("#txtpublicsharetxt").val("Shared");
         $("#txtpublicshareurl").val(videourl);
     }
@@ -3278,13 +3278,13 @@
     function SendIntrestUrl() {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        if (window.confirm("Are you sure, you want to show intrest on this Candidate Interview?")) {
+        if (Swal.fire("Are you sure, you want to show intrest on this Candidate Interview?")) {
             $.ajax({
                 type: "POST",
                 url: "/RiseTube/VideoShareIntrest",
                 data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
                 success: function (data) {
-                    alter("Your intrest has been recorded successfully.");
+                    swal.fire("Your intrest has been recorded successfully.");
                 }
             });
         }
