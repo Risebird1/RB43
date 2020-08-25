@@ -165,7 +165,7 @@
     border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
 }
 .interest-btn {
-    background-image: url(../../img/heart-icon.png);
+    /*background-image: url(../../img/heart-icon.png);*/
     background-repeat: no-repeat !important;
     background-size: inherit;
     background-position: 20% 40% !important;

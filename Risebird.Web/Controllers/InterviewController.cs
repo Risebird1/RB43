@@ -6240,7 +6240,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public JsonResult ChangeCandiateStatus(int videoid, string Status)
+        public JsonResult ChangeCandidateStatus(int videoid, string Status)
         {
             try
             {
