@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using GleamTech.VideoUltimate;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Azure.CognitiveServices.Vision.Face;
+using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
@@ -15,6 +18,8 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -35,6 +40,9 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly IAzureFaceApi _azureFaceApi;
         private readonly IConfiguration _configuration;
+
+        private readonly string _SentimentApiKey;
+        private readonly string _SentimentEndpoint; 
         public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration)
         {
             _meetingService = meetingService;
@@ -47,6 +55,9 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _azureFaceApi = azureFaceApi;
             _configuration = configuration;
+            _SentimentApiKey = _configuration["SentimentCreds:SentimentApiKey"];
+            _SentimentEndpoint = _configuration["SentimentCreds:SentimentEndpoint"];
+
         }
 
 
@@ -3871,7 +3882,7 @@ namespace Risebird.Web.Controllers
                              select new { ID = (int)s, Name = s.GetDescription() };
             model.QCStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
 
-            var trainingStatuses = from TrainingStatus s in Enum.GetValues(typeof(TrainingStatus))
+            var trainingStatuses = from Entities.Enum.TrainingStatus s in Enum.GetValues(typeof(Entities.Enum.TrainingStatus))
                                    select new { ID = (int)s, Name = s.GetDescription() };
             model.TrainingStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
 
@@ -6007,6 +6018,54 @@ namespace Risebird.Web.Controllers
 
         }
 
+
+        //[HttpPost]
+        public async Task AnalyseSentiment(string videoUrl, int imid)
+        {
+
+            FaceClient faceClient = new FaceClient(new ApiKeyServiceClientCredentials(_SentimentApiKey))
+            {
+                Endpoint = _SentimentEndpoint
+            };
+
+            using (var videoFrameReader = new VideoFrameReader(@"E:\EmotionAnalysisFiles\WIN_20200819_14_24_35_Pro.mp4"))
+            {
+                foreach (var frame in videoFrameReader)
+                {
+                    using (frame)
+                    {
+                        //byte[] data = new byte[0];
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            Image.GetThumbnailImageAbort myCallback =
+                                        new Image.GetThumbnailImageAbort(ThumbnailCallback);
+                            var img = frame.GetThumbnailImage(1280, 720, myCallback, IntPtr.Zero);
+                            img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                            ms.Seek(0, 0);
+
+                            var faces = (await faceClient.Face.DetectWithStreamAsync(ms,
+                                        returnFaceId: false,
+                                        returnFaceLandmarks: false,
+                                        returnFaceAttributes: new FaceAttributeType[1] { FaceAttributeType.Emotion })).ToArray();
+                            //var result = faceClient.Face.DetectWithStreamAsync(ms).Result;
+
+                            //data = ms.ToArray();
+                        }
+                        //return data;
+
+                        //Do something with current frame bitmap
+                        //faceClient.Face.DetectWithStreamAsync((frame.GetThumbnailImage()));//)
+
+                    }
+                }
+            }
+            return;
+        }
+
+        public bool ThumbnailCallback()
+        {
+            return false;
+        }
     }
 
 }
