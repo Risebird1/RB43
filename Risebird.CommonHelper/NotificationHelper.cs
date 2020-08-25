@@ -769,7 +769,7 @@ namespace Risebird.CommonHelper
             {
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+               
                 var toMails = model.TO.Split(";");
                 foreach (var mails in toMails)
                 {
