@@ -154,7 +154,7 @@
                                                 }
 
 
-   
+
                                                 <button class="mdc-fab app-fab--absolute eleven" aria-label="Call HR">
                                                     <span onclick="ModalButtonClick('@item.HRCoordinatorEmailId','@item.HRMobileNumber')" title="Call HR" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
                                                 </button>
@@ -162,8 +162,22 @@
                                                 {
 
                                                     <button class="mdc-fab app-fab--absolute  twelve" aria-label="Interview">
-                                                        <span  onclick="javascript:CallCandidatePage(@item.id);" title="Candidate Interview Video" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
+                                                        <span onclick="javascript:CallCandidatePage(@item.id);" title="Candidate Interview Video" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
                                                     </button>
+
+                                                    @if (item.CandidateAvailable == 0)
+                                                    {
+
+                                                        <button class="mdc-fab app-fab--absolute  twelve" aria-label="Interview">
+                                                            <span onclick="javascript:ChangeCandiateStatus(@item.id,'Available');" title="Candidate Available" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute  twelve" aria-label="Interview">
+                                                            <span onclick="javascript:ChangeCandiateStatus(@item.id,'NotAvailable');" title="Candidate Not Available" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
+                                                        </button>
+                                                    }
                                                 }
                                                 <button class="mdc-fab app-fab--absolute trash-btn twelve" aria-label="Cancel interview request">
                                                     <span onclick="javascript:CancelInterview(@jsonObject);" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
@@ -419,7 +433,7 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
-  
+
 
 </script>
 <script>
@@ -639,6 +653,16 @@
     }
     function CallCandidatePage(index) {
         window.location.href = "@Url.Action("CandidateVideoPage", "Interview")/" +index;
+    }
+    function ChangeCandiateStatus(interviewid,status) {
+         $.ajax({
+            type: "POST",
+            url: "/Interview/ChangeCandiateStatus",
+            data: { videoid: interviewid, Status: status },
+            success: function (data) {
+
+            }
+        });
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
