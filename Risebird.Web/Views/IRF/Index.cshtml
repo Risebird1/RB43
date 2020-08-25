@@ -58,7 +58,7 @@
 
 
         <div class="pt30">
-            <div class="col-md-12 nopad">
+            <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
                     <div class="pull-left">
                         <h4 class="card-title"></h4>
@@ -1229,7 +1229,7 @@
         $(".sidebar-wrapper").addCss('width','260px');
 });
 </script>
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "FALSE")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
     pfName = pfName.Replace("\"", "");

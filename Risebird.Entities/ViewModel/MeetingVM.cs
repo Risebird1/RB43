@@ -195,6 +195,9 @@ namespace Risebird.Entities.ViewModel
         public bool IsClientCurated { get; set; }
         public int CuratedGroupId { get; set; }
         public string ActionStatus { get; set; }
+        public int CandidateAvailable { get; set; }
+
+        public int TechSkillScore { get; set; }
     }
     public class VedioComments
     {

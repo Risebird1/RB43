@@ -57,7 +57,7 @@
                             <span class="navbar-toggler-bar bar3"></span>
                         </button>
                     </div>
-                    <a class="navbar-brand">Risetube</a>
+                    <a id="risetubeid" class="navbar-brand">Risetube</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -73,9 +73,9 @@
             <div class="col-md-12 nopad">
                 <div class="card-header bg-w clearfix">
                     <div class="pull-left">
-                        <h4 class="card-title"></h4>
+                        <h4  class="card-title"></h4>
 
-                        <div class="mobile-view"> <h4 class="card-title">Risetube</h4></div>
+                        <div class="mobile-view"> <h4  class="card-title">Risetube</h4></div>
                     </div>
 
                     <div class="pull-right">
@@ -489,6 +489,16 @@
                                                                     <span style="color:green">Selected</span>
 
                                                                 }
+
+
+                                                                @if (item.MobileNumber != null)
+                                                                {
+                                                                    <span>
+                                                                        <button class="call-btn" aria-label="Call">
+                                                                            <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
                                                             </span>
 
                                                         </div>
@@ -507,14 +517,17 @@
                                                             {
                                                                 <span> @item.joiningTime</span>
                                                             }
-                                                            @if (item.MobileNumber != null)
-                                                            {
-                                                                <span>
-                                                                    <button class="call-btn" aria-label="Call">
-                                                                        <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                    </button>
-                                                                </span>
-                                                            }
+
+
+
+                                                            <div class="video-info  nopad pull-right">
+                                                                <span>Tech Skill Score:</span>
+                                                                <span>@(item.TechSkillScore/4)</span>
+                                                            </div>
+
+
+
+
 
 
                                                         </div>
@@ -528,6 +541,7 @@
                                                             {
                                                                 <span>@item.expectedPerHourRate</span>}
                                                         </div>
+
 
                                                         <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
 

@@ -2682,5 +2682,31 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public string UpdateCandidateStatus(int videoid, string Status)
+        {
+            try
+            {
+                int CandidateAvailable = 0;
+                if (Status== "Available")
+                {
+                    CandidateAvailable = 1;
+                }
+                var query = "Update InterviewComments set CandidateAvailable=@CandidateAvailable where Interviewid=@interviewid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", videoid);
+                dynamicParameters.Add("@CandidateAvailable", CandidateAvailable);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
     }
 }
