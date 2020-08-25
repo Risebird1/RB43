@@ -668,10 +668,10 @@
     function ChangeCandiateStatus(interviewid,status) {
          $.ajax({
             type: "POST",
-            url: "/Interview/ChangeCandiateStatus",
+            url: "/Interview/ChangeCandidateStatus",
             data: { videoid: interviewid, Status: status },
             success: function (data) {
-
+                window.location = "/Interview/CandidateInterviews";
             }
         });
     }
