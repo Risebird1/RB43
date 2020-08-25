@@ -413,9 +413,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-
                                                                             <option value="@item">@item</option>
-
                                                                         }
                                                                     }
 
@@ -429,13 +427,8 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
                                                     <div class="col-md-12 col-sm-12">
                                                         <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
-
-                                                            <option value="1">Available</option>
-                                                          
-                                                            <option value="0">NotAvailable</option>
-
-                                                           
-
+                                                                    <option value="1">Available</option>
+                                                                    <option value="0">NotAvailable</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -651,17 +644,17 @@
 
 
 
-                                                    <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
-                                                    <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
-                                                    <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
-                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser" && Model.IsClientCurated == false)
-                                                    {
-                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
-                                                    }
-                                                    @if (ViewBag.VideoStatus != "Public" && (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated == true) && Model.IsIntrested == "Interest Accepted")
-                                                    {
-                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
-                                                    }
+                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                        <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
+                                                        <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
+                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser" && Model.IsClientCurated == false)
+                                                        {
+                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
+                                                        }
+                                                        @if (ViewBag.VideoStatus != "Public" && (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated == true) && Model.IsIntrested == "Interest Accepted")
+                                                        {
+                                                            <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
+                                                        }
 
                                                     </h1>
                                                 }

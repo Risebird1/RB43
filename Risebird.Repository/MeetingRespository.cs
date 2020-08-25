@@ -2455,7 +2455,7 @@ namespace Risebird.Repository
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        var query = "Select id from USerList where Emailid = @emailaddress";
+                        var query = "Select id from UserList where Emailid = @emailaddress";
                         var dynamicParameters = new DynamicParameters();
                         dynamicParameters.Add("@emailaddress", emailaddress);
                         var results = con.Query<int>(query, dynamicParameters);
@@ -2463,7 +2463,7 @@ namespace Risebird.Repository
                         if (userid == 0)
                         {
                             SqlMapper.Query<string>(
-                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress, CurrentTime = CurrentTime }, commandType: Text);
+                            con, "Update VideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress, CurrentTime = CurrentTime }, commandType: Text);
                         }
                         else
                         {
