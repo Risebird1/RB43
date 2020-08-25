@@ -27,7 +27,7 @@ IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientNam
 ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.AadharFileLink,
 ic.ThumbnailImage as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,
 (Select top 1 status from SuitableCandidate where InterviewId= ic.InterviewId order by InterstedOn desc) as IsIntrested,
-(Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId order by ShortListedOn desc) as ShortListstatus,ts.Sharedon as SharedOn     
+(Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId order by ShortListedOn desc) as ShortListstatus,ts.Sharedon as SharedOn,ic.CandidateAvailable     
 from InterviewMeetings im          
 inner join IRF on im.IRFId = IRF.IRFId        
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId 
@@ -50,7 +50,7 @@ ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id 
 as ThumbnailImage,QCF.InterviewId as QCInterview,
 (Select top 1 status from SuitableCandidate where InterviewId= ic.InterviewId order by InterstedOn desc) as IsIntrested,
 (Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId  order by ShortListedOn desc) as ShortListstatus,
-ts.Sharedon as SharedOn from InterviewMeetings im          
+ts.Sharedon as SharedOn,ic.CandidateAvailable from InterviewMeetings im          
 inner join IRF on im.IRFId = IRF.IRFId        
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId  
 left join UserList ul on ul.EmailId = im.candidateEmail

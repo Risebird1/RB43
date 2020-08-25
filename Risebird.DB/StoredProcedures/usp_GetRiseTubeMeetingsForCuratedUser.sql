@@ -25,7 +25,7 @@ im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometrySc
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,
 IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage   
-as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,ic.AadharFileLink,(Select top 1 status from SuitableCandidate where InterviewId= ic.InterviewId  order by InterstedOn desc)  as IsIntrested ,(Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId  order by ShortListedOn desc)  as ShortListstatus  
+as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,ic.AadharFileLink,(Select top 1 status from SuitableCandidate where InterviewId= ic.InterviewId  order by InterstedOn desc)  as IsIntrested ,(Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId  order by ShortListedOn desc)  as ShortListstatus,ic.CandidateAvailable  
 from InterviewMeetings im        
 inner join IRF on im.IRFId = IRF.IRFId      
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId   
@@ -50,7 +50,7 @@ IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientNam
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage   
 as ThumbnailImage,QCF.InterviewId as QCInterview,ic.AadharFileLink,
 (Select top 1 status from SuitableCandidate where InterviewId= ic.InterviewId order by InterstedOn desc) as IsIntrested ,
-(Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId order by ShortListedOn desc) as ShortListstatus 
+(Select top 1 status from RiseTubeVedioShortList where InterviewId= ic.InterviewId order by ShortListedOn desc) as ShortListstatus,ic.CandidateAvailable 
 from InterviewMeetings im        
 inner join IRF on im.IRFId = IRF.IRFId      
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId   
