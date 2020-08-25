@@ -624,6 +624,7 @@ namespace Risebird.Web.Controllers
                         if(model.CandidateAvailable!=1)
                         {
                             model = new MeetingVM();
+                            ViewBag.ResultStatus = "VideoNotPresent";
                         }
 
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
