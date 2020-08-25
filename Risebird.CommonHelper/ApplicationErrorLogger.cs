@@ -47,7 +47,7 @@ namespace Risebird.CommonHelper
                 {
                     var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
 
-                    var exception = new LogData(date, Guid.NewGuid().ToString())
+                https://localhost:44329/RiseTubevar exception = new LogData(date, Guid.NewGuid().ToString())
                     {
                         LogeLevel = (int)logLevelInfo,
                         UserEmailId = userEmailid,

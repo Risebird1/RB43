@@ -633,7 +633,7 @@
 
 
 
-                                                    <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                    <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                     <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                     <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
                                                     @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser" && Model.IsClientCurated == false)
@@ -690,7 +690,7 @@
                                                             {
                                                                 <div class="col-md-2 share">
                                                                     <div class="btn-group">
-                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                        <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
                                                                             <img src="../../img/share-tweet-icon.png" style=" width: 28px;padding-left:4px;"> Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
@@ -749,7 +749,7 @@
                                                                 else
                                                                 {
                                                                     <div class="btn-group">
-                                                                        <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                        <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
                                                                             <img class="tweet-icon" src="../../img/share-tweet-icon.png">  Share
                                                                         </button>
                                                                         <div class="dropdown-menu">
@@ -3293,7 +3293,7 @@
 <script src="~/RiseTube/js/custom.js"></script>
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "false")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
     pfName = pfName.Replace("\"", "");
