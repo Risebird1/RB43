@@ -742,6 +742,9 @@ ul.panel-controls > li > button {
     float: right;
     padding: 2px;
     border: 0px;
+    position: relative;
+    top: -6px;
+    right: 6px;
 }
 
 .skill {
@@ -1661,6 +1664,8 @@ top:3px;
         .min-h {
             min-height: 100%;
         }
+
+        .call-btn{top:-4px!important;}
         .legend li {
             display: inline-block;
             list-style: none;
