@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
-    
+
     public class InterviewController : Controller
     {
         private readonly IMeetingService _meetingService;
@@ -2122,7 +2122,7 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-              
+
 
                         if (HttpContext.Session.GetString("ClientMeetingsfilters") != null)
                         {
@@ -2376,7 +2376,7 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
-                     
+
 
                         if (HttpContext.Session.GetString("ClientSelectedMeetingsfilters") != null)
                         {
@@ -2405,7 +2405,7 @@ namespace Risebird.Web.Controllers
                             && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                             && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
 
-                          
+
                         }
                         return View(selectedMeeting);
                     }
@@ -3338,7 +3338,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-       
+
         [Authorize]
         //[HttpPost]
         public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
@@ -5153,7 +5153,6 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetCandidateInterviews(emailid, status);
-
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
@@ -5184,9 +5183,6 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-
-
-
                         return View(myInterview);
                     }
                     else
@@ -6068,7 +6064,7 @@ namespace Risebird.Web.Controllers
                     //Start: Share button functionaly
                     ViewBag.ResultStatus = "VideoPresent";
                     MeetingVM model = _meetingService.GetMeetingbyid(id, "");
-                    
+
                     if (model != null)
                     {
 
@@ -6078,7 +6074,7 @@ namespace Risebird.Web.Controllers
                         {
                             IRListModel = new InterviewReport();
                         }
-                       
+
                         MeetingVM NewModel = new MeetingVM
                         {
                             SubVideo_List = new List<MeetingVM>()
@@ -6163,9 +6159,9 @@ namespace Risebird.Web.Controllers
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
             var modelList = _meetingService.AddVedioShare(email, videoid, Emailids);
-           
+
             //send a email
-          
+
             string currenturl = Request.Host.ToString() + "/Interview/CandidateVideoPage/" + videoid;
             Mail _mail = new Mail
             {
@@ -6182,7 +6178,7 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
-      
+
         [HttpPost]
         public JsonResult VideoShareEmail(string videoid, string Emailid, string CurrentUrl, string Candidateemail)
         {
@@ -6190,7 +6186,7 @@ namespace Risebird.Web.Controllers
             Emailid = Emailid.Replace("\"", "");
             //Check Video is shared with current user or not
             var ispresent = _meetingService.CheckVedioShare(videoid, Emailid);
-           
+
             if (ispresent > 0)
             {
                 _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Public");
@@ -6201,7 +6197,7 @@ namespace Risebird.Web.Controllers
                 //send email to candidate
                 Mail _mail = new Mail
                 {
-                    TO = Candidateemail,                   
+                    TO = Candidateemail,
                     Subject = $"Risebird: {Emailid} is requesting access of your Interview Video"
                 };
                 var result = _notificationHelper.VideoAccessRequest(_mail, CurrentUrl, Emailid);
@@ -6224,7 +6220,7 @@ namespace Risebird.Web.Controllers
                         //To get data from db for video displayes
                         //only candidate video share data//InterviewShareDetails
                         var model = _meetingService.GetVideoCandidateSumaryDetails(interviewid, email);
-                        
+
                         return Json(model);
                     }
                     else
@@ -6239,10 +6235,38 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                //save into log 
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("No Data");
             }
         }
+
+        public JsonResult ChangeCandiateStatus(int videoid, string Status)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Candidate")
+                    {
+                        //To update candidate status
+                       var model = _meetingService.UpdateCandidateStatus(videoid, Status);
+                    }
+                    return Json("Success");
+                }
+                else
+                {
+                    return Json("Fail");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Fail");
+            }
+        }
+
 
     }
 
