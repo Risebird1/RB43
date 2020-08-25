@@ -2682,7 +2682,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public string UpdateCandiateStatus(int videoid, string Status)
+        public string UpdateCandidateStatus(int videoid, string Status)
         {
             try
             {
