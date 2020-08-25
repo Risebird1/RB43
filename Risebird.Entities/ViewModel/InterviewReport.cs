@@ -119,6 +119,7 @@ namespace Risebird.Entities.ViewModel
         public string FinalComments { get; set; }
         public bool IsQC { get; set; }
         public bool IsBiometricEnabled { get; set; }
+        [Display(Name = "Voice Biometric Score")]
         public double InterviewBiometryScore { get; set; }
         public double JoiningBiometryScore { get; set; }
 
