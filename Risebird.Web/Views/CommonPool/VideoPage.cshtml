@@ -120,7 +120,7 @@
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
-                <a class="navbar-brand">Common Pool</a>
+                <a class="navbar-brand card-title">Common Pool</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
         </div>
@@ -561,7 +561,7 @@ else
                                                         else
                                                         {
                                                             <span>@Model.JDTiltle</span>} &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
-                                                            <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                            <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                             <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                             <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
                                                             @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
@@ -613,7 +613,7 @@ else
                                                         {
                                                             {
                                                                 <div class="btn-group">
-                                                                    <button type="button" class="share-btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                    <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
                                                                         <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style="        width: 28px;
         padding-left: 4px;
 ">  Share
@@ -3086,7 +3086,7 @@ else
         }
     }
 </script>
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "false")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
     pfName = pfName.Replace("\"", "");
