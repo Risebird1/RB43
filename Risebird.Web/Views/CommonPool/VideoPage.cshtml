@@ -19,6 +19,8 @@
     string[] CandidateLocation = new string[] { };
     string[] IsShortListed = new string[] { };
     string[] IsIntrested = new string[] { };
+    string[] CandidateAvailable = new string[] { };
+
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters") != null)
 {
@@ -37,6 +39,8 @@
     CandidateLocation = filter.CandidateLocation != null ? filter.CandidateLocation : new string[] { };
     IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
     IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
+    CandidateAvailable = filter.CandidateAvailable != null ? filter.CandidateAvailable : new string[] { };
+
 }
 
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
@@ -356,9 +360,30 @@
                                                             </select>
                                                         </div>
                                                     </div>
+
                                                 </div>
 
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
+                                                    <div class="col-md-12 col-sm-12">
+                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
 
+                                                            @foreach (var item in Model.SubVideo_List.Select(x => x.CandidateAvailable).Distinct().ToList())
+                                                            {
+                                                               @if (item == 1)
+                                                                    {
+                                                                        <option value="@item">Available</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@item">NotAvailable</option>
+
+                                                                    }
+                                                            }
+
+                                                        </select>
+                                                    </div>
+                                                </div>
 
                                                 <div class="col-md-12 col-sm-12 text-right">
                                                     <div class="form-group">
@@ -2541,6 +2566,12 @@ else
                     selectedClass: 'active1',
                     buttonWidth: '270px',
                     maxHeight: 200
+          });
+              $("#CandidateAvailable").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
                 });
 
     });
@@ -2568,6 +2599,7 @@ else
             var candidateLocation=  @Html.Raw(Json.Serialize(CandidateLocation));
              var IsShortListed =  @Html.Raw(Json.Serialize(IsShortListed));
             var IsIntrested =  @Html.Raw(Json.Serialize(IsIntrested));
+            var CandidateAvailable=@Html.Raw(Json.Serialize(CandidateAvailable));
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -2581,6 +2613,8 @@ else
             $("#CandidateLocation").val(candidateLocation);
               $("#IsShortListed").val(IsShortListed);
             $("#IsIntrested").val(IsIntrested);
+            $("#CandidateAvailable").val(CandidateAvailable);
+
     }
 
 
