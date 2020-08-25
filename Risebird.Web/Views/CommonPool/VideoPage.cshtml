@@ -19,6 +19,8 @@
     string[] CandidateLocation = new string[] { };
     string[] IsShortListed = new string[] { };
     string[] IsIntrested = new string[] { };
+    string[] CandidateAvailable = new string[] { };
+
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters") != null)
 {
@@ -37,6 +39,8 @@
     CandidateLocation = filter.CandidateLocation != null ? filter.CandidateLocation : new string[] { };
     IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
     IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
+    CandidateAvailable = filter.CandidateAvailable != null ? filter.CandidateAvailable : new string[] { };
+
 }
 
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
@@ -145,7 +149,7 @@
                         {
                             @if (ViewBag.actionstatus != "SkillChannel")
                             {
-                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space"  data-toggle="modal" data-target="#filterModal">
+                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space" data-toggle="modal" data-target="#filterModal">
                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <div class="mdc-button__ripple"></div>
                                 </button>
@@ -176,7 +180,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        
+
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
@@ -356,9 +360,30 @@
                                                             </select>
                                                         </div>
                                                     </div>
+
                                                 </div>
 
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
+                                                    <div class="col-md-12 col-sm-12">
+                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
 
+                                                            @*@foreach (var item in Model.SubVideo_List.Select(x => x.CandidateAvailable).Distinct().ToList())
+                                                                {
+                                                                   @if (item == 1)
+                                                                        {*@
+                                                            <option value="1">Available</option>
+                                                            @*}
+                                                                else
+                                                                {*@
+                                                            <option value="0">NotAvailable</option>
+
+                                                            @*}
+                                                                }*@
+
+                                                        </select>
+                                                    </div>
+                                                </div>
 
                                                 <div class="col-md-12 col-sm-12 text-right">
                                                     <div class="form-group">
@@ -544,7 +569,7 @@ else
                                                         else
                                                         {
                                                             @Model.candidateName
-                                                             <div class="interest-btn">
+                                                            <div class="interest-btn pull-right">
 
 
                                                                 <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
@@ -606,42 +631,42 @@ else
                                                         </div>
                                                     }
 
-                                                <div class="col-md-2 showinter" style="text-align: end;">
-                                                    @if (Model.VideoLink != null)
-                                                    {
-                                                        @if (ViewBag.VideoStatus != "Public")
+                                                    <div class="col-md-2 showinter" style="text-align: end;">
+                                                        @if (Model.VideoLink != null)
                                                         {
+                                                            @if (ViewBag.VideoStatus != "Public")
                                                             {
-                                                                <div class="btn-group">
-                                                                    <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                        <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style="        width: 28px;
+                                                                {
+                                                                    <div class="btn-group">
+                                                                        <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
+                                                                            <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style="        width: 28px;
         padding-left: 4px;
 ">  Share
-                                                                    </button>
-                                                                    <div class="dropdown-menu">
-                                                                        <span class="tooltip--right" data-tooltip="To convey the act to generate    `sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act to generate    `sharing url ">   <input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
 
-                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
-                                                                            <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
-                                                                        </span>
-                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user through email ">
-                                                                            <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
-                                                                        </span>
-                                                                        <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
-                                                                            <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
-                                                                        </span>
-                                                                        <span class="tooltip--right" data-tooltip="Create / Edit View and Share"><input type="button" class="form-control btninterest sharebtn1 edit-share" id="btnShare4" value="Create / Edit View" Shortvalue="1" /></span>
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing publicly">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" />
+                                                                            </span>
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user through email ">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 email-share" id="btnShare1" value="Email Share" Shortvalue="1" />
+                                                                            </span>
+                                                                            <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                                <input type="button" class="form-control btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                            </span>
+                                                                            <span class="tooltip--right" data-tooltip="Create / Edit View and Share"><input type="button" class="form-control btninterest sharebtn1 edit-share" id="btnShare4" value="Create / Edit View" Shortvalue="1" /></span>
 
+                                                                        </div>
                                                                     </div>
-                                                                </div>
 
+
+                                                                }
 
                                                             }
 
                                                         }
-                                                       
-                                                    }
-                                                </div>
+                                                    </div>
                                                     @if (ViewBag.VideoStatus == "Public")
                                                     {
                                                         <div class="col-md-6"></div>
@@ -1261,7 +1286,7 @@ else
                         }
                         else
                         {
-                            <div>No Selected Candidate Yet on this Channel.</div>
+                            <div>This Candidate video is not available.</div>
                         }
                     </div>
                 </div>
@@ -1541,23 +1566,23 @@ else
 
 
             <div class="modal-body">
-          
 
 
-                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Your Email Id</label>
-                    <div class="form-control text-areadiv">
-                        <input type="text" id="txtvideoemailid" class="form-control" />
 
-                    </div>
-             
+                <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Your Email Id</label>
+                <div class="form-control text-areadiv">
+                    <input type="text" id="txtvideoemailid" class="form-control" />
 
-              
-                    <div class="col-md-12 text-right">
-                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
-                    </div>
-               
+                </div>
+
+
+
+                <div class="col-md-12 text-right">
+                    <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
+                </div>
+
             </div>
-        
+
         </div>
 
     </div>
@@ -2549,6 +2574,12 @@ else
                     selectedClass: 'active1',
                     buttonWidth: '270px',
                     maxHeight: 200
+          });
+              $("#CandidateAvailable").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
                 });
 
     });
@@ -2576,6 +2607,7 @@ else
             var candidateLocation=  @Html.Raw(Json.Serialize(CandidateLocation));
              var IsShortListed =  @Html.Raw(Json.Serialize(IsShortListed));
             var IsIntrested =  @Html.Raw(Json.Serialize(IsIntrested));
+            var CandidateAvailable=@Html.Raw(Json.Serialize(CandidateAvailable));
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -2589,6 +2621,8 @@ else
             $("#CandidateLocation").val(candidateLocation);
               $("#IsShortListed").val(IsShortListed);
             $("#IsIntrested").val(IsIntrested);
+            $("#CandidateAvailable").val(CandidateAvailable);
+
     }
 
 
@@ -3094,13 +3128,13 @@ else
     function SendIntrestUrl(index) {
         var videourl = window.location.href;
         var CandidateEmail = $("#txtOnlineEmail").val();
-        if (Swal.fire("Are you sure, you want to show intrest on this Candidate Interview?")) {
+        if (Swal.fire("Are you sure, you want to show interest on this Candidate Interview?")) {
             $.ajax({
                 type: "POST",
                 url: "/RiseTube/VideoShareIntrest",
                 data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
                 success: function (data) {
-                    alter("Your intrest has been recorded successfully.");
+                    alter("Your interest has been recorded successfully.");
                 }
             });
         }
