@@ -740,6 +740,9 @@ ul.panel-controls > li > button {
     float: right;
     padding: 2px;
     border: 0px;
+    position: relative;
+    top: -6px;
+    right: 6px;
 }
 
 .skill {
