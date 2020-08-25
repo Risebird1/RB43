@@ -6251,7 +6251,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Candidate")
                     {
                         //To update candidate status
-                       // var model = _meetingService.UpdateCandiateStatus(videoid, Status);
+                       var model = _meetingService.UpdateCandidateStatus(videoid, Status);
                     }
                     return Json("Success");
                 }

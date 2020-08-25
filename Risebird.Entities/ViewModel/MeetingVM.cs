@@ -197,6 +197,7 @@ namespace Risebird.Entities.ViewModel
         public string ActionStatus { get; set; }
         public int CandidateAvailable { get; set; }
 
+        public int TechSkillScore { get; set; }
     }
     public class VedioComments
     {
