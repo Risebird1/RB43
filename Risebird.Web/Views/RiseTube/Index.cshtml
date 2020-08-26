@@ -527,7 +527,7 @@
 
 
                                                         <span class="notice"> Notice Period: </span>
-                                                        @if (item.joiningTime.Length > 15)
+                                                        @if (item.joiningTime.Length > 20)
                                                         {
                                                             <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
                                                         }
@@ -701,8 +701,8 @@
         });
 
         $(".joining-time").each(function () {
-            if ($(this).text().length > 12) {
-                $(this).text($(this).text().substr(0, 12) + "...")
+            if ($(this).text().length > 20) {
+                $(this).text($(this).text().substr(0, 20) + "...")
 
                 $('[role="data-tooltip"]').css("visibility", "visible");
 

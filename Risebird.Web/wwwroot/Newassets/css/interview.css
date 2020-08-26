@@ -745,10 +745,15 @@ ul.panel-controls > li > button {
     padding: 1px;
     border: 0px;
     position: relative;
-    top: -7px;
+    top: -4px;
     right: 6px;
+    width:21px;
+    height:21px;
 }
-
+    .call-btn svg {
+        position: relative;
+        top: -2px;
+    }
 .skill {
     -ms-flex: 0 0 36.666667%;
     flex: 0 0 36.666667%;
