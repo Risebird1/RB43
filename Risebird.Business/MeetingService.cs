@@ -1644,6 +1644,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> InsertVideoSentiment(List<VideoSentiment> sentimentData)
+        {
+            try
+            {
+                return await _meetingRespository.InsertVideoSentiment(sentimentData);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 
 }

@@ -448,19 +448,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task InsertBlobImage(string filename, string containerName, Image img)
-        {
-            CloudBlockBlob blob;
-            blob = GetCloudBlockBlobClient(containerName, filename);
-            
-            using (MemoryStream ms = new MemoryStream())
-            {
-                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                ms.Seek(0, 0);
-                await blob.UploadFromStreamAsync(ms).ConfigureAwait(false);
-            }
-
-        }
+        
 
         ///// <summary>
         ///// upload video using Azure's media services
