@@ -1727,6 +1727,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public string UpdateCandidateStatus(int videoid, string Status)
+        {
+            try
+            {
+                return _meetingRespository.UpdateCandidateStatus(videoid, Status);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
     }
 
 }

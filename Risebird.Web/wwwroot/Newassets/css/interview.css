@@ -348,10 +348,12 @@ input[type=number] {
 
 
 
-.interview .card-header .fa-file-excel-o:before {
+ .fa-file-excel-o:before {
     font-size: 35px;
 }
-
+.mdc-button--raised .fa-file-excel-o:before {
+    font-size: 13px;
+}
 
 .select-css {
     display: block;
@@ -740,6 +742,9 @@ ul.panel-controls > li > button {
     float: right;
     padding: 2px;
     border: 0px;
+    position: relative;
+    top: -6px;
+    right: 6px;
 }
 
 .skill {
@@ -1274,6 +1279,7 @@ padding:0;
 
     .navbar .navbar-wrapper .navbar-brand {
         margin-right: 0.5rem;
+        font-size: 14px;
     }
 
 .control-label {
@@ -1658,6 +1664,8 @@ top:3px;
         .min-h {
             min-height: 100%;
         }
+
+        .call-btn{top:-4px!important;}
         .legend li {
             display: inline-block;
             list-style: none;

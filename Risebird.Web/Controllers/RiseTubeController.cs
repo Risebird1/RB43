@@ -90,7 +90,6 @@ namespace Risebird.Web.Controllers
                         {
                             modelList = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
                         }
-
                         ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
                         ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
                         ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
@@ -98,6 +97,8 @@ namespace Risebird.Web.Controllers
                         ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
                         ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
                         ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
+                        ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
+
                         ViewBag.NextLevelApprovalStatusList =
                             from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
                             select (s.GetDescription());
@@ -137,6 +138,7 @@ namespace Risebird.Web.Controllers
                             filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
                             filter.IsShortListed = filter.IsShortListed == null ? filter.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter.IsShortListed = filter.IsShortListed;
                             filter.IsIntrested = filter.IsIntrested == null ? filter.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter.IsIntrested = filter.IsIntrested;
+                            filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
 
                             modelList = modelList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
@@ -156,7 +158,12 @@ namespace Risebird.Web.Controllers
                             ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
                             ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
                             ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
+                            ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
 
+                        }
+                        else
+                        {
+                            modelList = modelList.Where(x => x.CandidateAvailable == 1).ToList();
                         }
                         if (profileName == "CuratedUser")
                         {
@@ -305,6 +312,7 @@ namespace Risebird.Web.Controllers
                         filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
                         filter.IsShortListed = filter.IsShortListed == null ? filter.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter.IsShortListed = filter.IsShortListed;
                         filter.IsIntrested = filter.IsIntrested == null ? filter.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter.IsIntrested = filter.IsIntrested;
+                        filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
 
                         modelList = modelList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
@@ -327,6 +335,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.OfferStatusList = modelList.Select(x => x.OfferStatusStatDesc).ToArray();
                         ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
                         ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
+                        ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
 
                         if (profileName == "CuratedUser")
                         {
@@ -606,7 +615,7 @@ namespace Risebird.Web.Controllers
                             filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
                             filter.IsShortListed = filter.IsShortListed == null ? filter.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter.IsShortListed = filter.IsShortListed;
                             filter.IsIntrested = filter.IsIntrested == null ? filter.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter.IsIntrested = filter.IsIntrested;
-
+                            filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
                             modelList = modelList.Where(c =>
                            (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
                           && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
@@ -616,7 +625,12 @@ namespace Risebird.Web.Controllers
                              && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                               && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
                                 && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
-                        && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
+                        && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)
+                        && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == 0)).ToList();
+                        }
+                        else
+                        {
+                            modelList = modelList.Where(x => x.CandidateAvailable == 1).ToList();
                         }
                         if (profileName == "CuratedUser")
                         {
@@ -745,6 +759,7 @@ namespace Risebird.Web.Controllers
                         {
                             GetStatusList(IRListModel, model.irfIntId);
                         }
+
                         ViewBag.VideoStatus = "Private";
                         return View(NewModel);
                     }
@@ -761,8 +776,11 @@ namespace Risebird.Web.Controllers
                     var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
                     if (status == "Public")
                     {
-
-
+                        if (model.CandidateAvailable != 1)
+                        {
+                            model = new MeetingVM();
+                            ViewBag.ResultStatus = "VideoNotPresent";
+                        }
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
                         if (IRListModel == null)
                         {
@@ -854,7 +872,7 @@ namespace Risebird.Web.Controllers
                             GetStatusList(IRListModel, model.irfIntId);
                         }
                         //desible Like and dilisk button and share button and comment opetion
-                        return View(NewModel);
+                            return View(NewModel);
                         //END: Share button functionaly
                     }
                     else
@@ -999,6 +1017,7 @@ namespace Risebird.Web.Controllers
                         filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
                         filter.IsShortListed = filter.IsShortListed == null ? filter.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter.IsShortListed = filter.IsShortListed;
                         filter.IsIntrested = filter.IsIntrested == null ? filter.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter.IsIntrested = filter.IsIntrested;
+                        filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
 
                         modelList = modelList.Where(c =>
                            (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
@@ -1009,7 +1028,8 @@ namespace Risebird.Web.Controllers
                              && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                               && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
                                 && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
-                        && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
+                        && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)
+                        && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == 0)).ToList();
                         MeetingVM NewModel = new MeetingVM();
                         if (profileName == "CuratedUser")
                         {
@@ -1536,6 +1556,7 @@ namespace Risebird.Web.Controllers
                             filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
                             filter.IsShortListed = filter.IsShortListed == null ? filter.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter.IsShortListed = filter.IsShortListed;
                             filter.IsIntrested = filter.IsIntrested == null ? filter.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter.IsIntrested = filter.IsIntrested;
+                            filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
 
                             modelList = modelList.Where(c =>
                            (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
@@ -1546,7 +1567,7 @@ namespace Risebird.Web.Controllers
                              && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                               && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
                                 && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
-                        && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
+                        && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == 0)).ToList();
                         }
 
                         foreach (var itemmodel in modelList)
@@ -1868,7 +1889,7 @@ namespace Risebird.Web.Controllers
             }
             var TimeSpend = Convert.ToDateTime(timeend) - Convert.ToDateTime(timeStart);
             var time = TimeSpan.FromSeconds(Convert.ToDouble(CurrentTime));
-            CurrentTime = time.ToString("hh")+":"+ time.ToString("mm")+":"+ time.ToString("ss");
+            CurrentTime = time.ToString("hh") + ":" + time.ToString("mm") + ":" + time.ToString("ss");
             if (CurrentUrl.Contains("SharedVideoPage"))
             {
                 videoid = CurrentUrl.Split("/")[CurrentUrl.Split("/").Count() - 1].ToString();
@@ -1888,7 +1909,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" )
+                if (profileName == "Admin" || profileName == "HR")
                 {
                     //To get data from db for video displayes
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);
@@ -1898,7 +1919,8 @@ namespace Risebird.Web.Controllers
                         item.interviewid = interviewid;
                     }
                     return Json(model);
-                }else if (profileName == "Candidate" || profileName == "Client")
+                }
+                else if (profileName == "Candidate" || profileName == "Client")
                 {
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
@@ -1948,7 +1970,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult VideoShareIntrest(string currentUrl, string Emailid, string CandidateEmail,string clienthr)
+        public JsonResult VideoShareIntrest(string currentUrl, string Emailid, string CandidateEmail, string clienthr)
         {
             if (HttpContext.Session.GetString("email") != null)
             {

@@ -2455,7 +2455,7 @@ namespace Risebird.Repository
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        var query = "Select id from USerList where Emailid = @emailaddress";
+                        var query = "Select id from UserList where Emailid = @emailaddress";
                         var dynamicParameters = new DynamicParameters();
                         dynamicParameters.Add("@emailaddress", emailaddress);
                         var results = con.Query<int>(query, dynamicParameters);
@@ -2463,7 +2463,7 @@ namespace Risebird.Repository
                         if (userid == 0)
                         {
                             SqlMapper.Query<string>(
-                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress, CurrentTime = CurrentTime }, commandType: Text);
+                            con, "Update VideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress, CurrentTime = CurrentTime }, commandType: Text);
                         }
                         else
                         {
@@ -2680,6 +2680,32 @@ namespace Risebird.Repository
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public string UpdateCandidateStatus(int videoid, string Status)
+        {
+            try
+            {
+                int CandidateAvailable = 0;
+                if (Status== "Available")
+                {
+                    CandidateAvailable = 1;
+                }
+                var query = "Update InterviewComments set CandidateAvailable=@CandidateAvailable where Interviewid=@interviewid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", videoid);
+                dynamicParameters.Add("@CandidateAvailable", CandidateAvailable);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
             }
         }
     }

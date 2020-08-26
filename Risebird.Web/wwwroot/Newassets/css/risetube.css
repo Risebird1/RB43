@@ -25,24 +25,30 @@
     width: 100%;
     height: 406px;
 }
+.candidateinterest-btn {
+    position: relative;
+    left: 70%;
+}
 
-    .candidateinterest-btn .view-video {
-        padding-left: 0px;
-        line-height: 25px;
-        color: GREEN;
-        TEXT-ALIGN: CENTER;
-        FLOAT: NONE;
-        MARGIN: 0PX AUTO;
-        background-position: 12% 50% !important;
-        font-weight: normal;
-        font-size: 13px !important;
-        padding: 0px 0px 0px 0px;
-        width: 123px;
-        background-color: #01dc01c7 !important;
-        height: 35px;
-        border-radius: 3px;
-        border: 1px #0e960ec7 SOLID;
-    }
+.candidateinterest-btn .view-video {
+    padding-left: 0px;
+    line-height: 25px;
+    color: GREEN;
+    TEXT-ALIGN: CENTER;
+    FLOAT: NONE;
+    MARGIN: 0PX AUTO;
+    background-position: 12% 50% !important;
+    font-weight: normal;
+    font-size: 13px !important;
+    padding: 0px 0px 0px 0px;
+    width: 123px;
+    background-color: #01dc01c7 !important;
+    height: 35px;
+    border-radius: 3px;
+    position:relative;
+    top:-10px;
+    border-bottom: 1px #0e960ec7 SOLID;
+}
 
 
     .count-view .label-num {
@@ -159,7 +165,7 @@
     border-bottom: 1px rgba(0, 0, 0, 0.14) solid !important;
 }
 .interest-btn {
-    background-image: url(../../img/heart-icon.png);
+    /*background-image: url(../../img/heart-icon.png);*/
     background-repeat: no-repeat !important;
     background-size: inherit;
     background-position: 20% 40% !important;
@@ -1936,6 +1942,9 @@ textarea::-webkit-scrollbar-thumb {
     .tabs {
         display: none;
     }
+    .video-contop {
+        margin-top: 0;
+    }
     .k .fa{font-size:20px!important}
 
     #VideoDetailsModel .modal-lg {
@@ -2058,6 +2067,10 @@ textarea::-webkit-scrollbar-thumb {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
     }
+    .candidateinterest-btn {
+        position: relative;
+        left: auto;
+    }
     .video .mdc-button--outlined.card-title-space {
         margin: 20px 0px 10px 0px;
     }
@@ -2078,12 +2091,16 @@ textarea::-webkit-scrollbar-thumb {
         float: left;
     }
     .mdc-button--outlined.card-title-space {
-        margin: 0px 0px 10px 0px;
+        margin:20px 0px 0px 0px;
     }
 
     .mdc-button--raised.card-title-space {
-        margin: 0px 0px 10px 0px;
+        margin: 20px 0px 0px 0px;
     }
+    .excel-file.card-title-space {
+        margin: 20px 0px 0px 0px;
+    }
+
     .newsletter .mdc-button--outlined.card-title-space {
         margin-top: 20px;
     }
