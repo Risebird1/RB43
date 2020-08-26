@@ -482,10 +482,17 @@
 
                                                         else
                                                         {
-                                                            <span>@item.JDTiltle</span>}
+                                                            <span class="designation">@item.JDTiltle</span>}
 
 
-
+                                                        @if (item.MobileNumber != null)
+                                                        {
+                                                            <span>
+                                                                <button class="call-btn" aria-label="Call">
+                                                                    <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                </button>
+                                                            </span>
+                                                        }
 
                                                     </div>
 
@@ -496,6 +503,35 @@
                                                     <div class="video-view">
                                                         &nbsp;<i class="fas fa-calendar-alt"></i>
                                                         <span>@item.interviewDate</span>
+
+
+
+                                                        <span class="video-info pull-right">
+                                                            <span>Tech Skill Score:</span>
+                                                            <span>
+                                                                <span>@(item.TechSkillScore)%</span>
+                                                            </span>
+
+
+
+                                                    </div>
+
+
+                                                    <div class="video-info col-sm-8 col-md-8 col-lg-8 pull-left nopad">
+
+
+                                                        <span class="notice"> Notice Period: </span>
+                                                        @if (item.joiningTime.Length > 15)
+                                                        {
+                                                            <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="join"> @item.joiningTime</span>
+                                                        }
+                                                    </div>
+
+                                                    <div class="video-info col-sm-4 col-md-4 col-lg-4 pull-right nopad text-center">
                                                         <span class="divider-g">
                                                             @if (item.InterviewStatus == 4)
                                                             {
@@ -509,36 +545,8 @@
                                                             }
 
 
-                                                            @if (item.MobileNumber != null)
-                                                            {
-                                                                <span>
-                                                                    <button class="call-btn" aria-label="Call">
-                                                                        <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                    </button>
-                                                                </span>
-                                                            }
+
                                                         </span>
-
-                                                    </div>
-
-
-                                                    <div class="video-info">
-
-
-                                                        <span> Notice Period: </span>
-                                                        @if (item.joiningTime.Length > 20)
-                                                        {
-                                                            <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span> @item.joiningTime</span>
-                                                        }
-                                                        <div class="video-info  nopad pull-right">
-                                                            <span>Tech Skill Score:</span>
-                                                            <span>@(item.TechSkillScore/4)</span>
-                                                        </div>
-
 
                                                     </div>
 
@@ -552,7 +560,7 @@
                                                             <span>@item.expectedPerHourRate</span>}
                                                     </div>
 
-                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
 
                                                         <span>Location:</span>
                                                         <span>
@@ -653,88 +661,88 @@
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 @*<script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>*@
-<!-- Core plugin JavaScript-->
-<script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
-<!-- Owl Carousel -->
-<script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
-<!-- Custom scripts for all pages-->
-<script src="~/RiseTube/js/custom.js"></script>
-<script>
-    $(document).ready(function () {
+                                                                <!-- Core plugin JavaScript-->
+                                                                <script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
+                                                                <!-- Owl Carousel -->
+                                                                <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
+                                                                <!-- Custom scripts for all pages-->
+                                                                <script src="~/RiseTube/js/custom.js"></script>
+                                                                <script>
+                                                                    $(document).ready(function () {
 
-        $(".candidate-name").each(function () {
-            if ($(this).text().length > 15) {
-                $(this).text($(this).text().substr(0, 15) + "...")
+                                                                        $(".candidate-name").each(function () {
+                                                                            if ($(this).text().length > 15) {
+                                                                                $(this).text($(this).text().substr(0, 15) + "...")
 
-                $('[role="data-tooltip"]').css("visibility", "visible");
+                                                                                $('[role="data-tooltip"]').css("visibility", "visible");
 
-            }
-
-
-            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-        });
-
-        $(".join-time").each(function () {
-            if ($(this).text().length > 10) {
-                $(this).text($(this).text().substr(0, 10) + "...")
-
-                $('[role="data-tooltip"]').css("visibility", "visible");
-
-            }
+                                                                            }
 
 
-            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-        });
+                                                                            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+                                                                        });
 
-        $(".joining-time").each(function () {
-            if ($(this).text().length > 20) {
-                $(this).text($(this).text().substr(0, 20) + "...")
+                                                                        $(".join-time").each(function () {
+                                                                            if ($(this).text().length > 10) {
+                                                                                $(this).text($(this).text().substr(0, 10) + "...")
 
-                $('[role="data-tooltip"]').css("visibility", "visible");
+                                                                                $('[role="data-tooltip"]').css("visibility", "visible");
 
-            }
-
-
-            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-        });
+                                                                            }
 
 
+                                                                            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+                                                                        });
 
-        $(".expected-salary").each(function () {
-            if ($(this).text().length > 5) {
-                $(this).text($(this).text().substr(0, 5) + "...")
+                                                                        $(".joining-time").each(function () {
+                                                                            if ($(this).text().length > 15) {
+                                                                                $(this).text($(this).text().substr(0, 15) + "...")
 
-                $('[role="data-tooltip"]').css("visibility", "visible");
+                                                                                $('[role="data-tooltip"]').css("visibility", "visible");
 
-            }
+                                                                            }
 
 
-            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+                                                                            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+                                                                        });
 
 
 
+                                                                        $(".expected-salary").each(function () {
+                                                                            if ($(this).text().length > 5) {
+                                                                                $(this).text($(this).text().substr(0, 5) + "...")
+
+                                                                                $('[role="data-tooltip"]').css("visibility", "visible");
+
+                                                                            }
 
 
-        });
+                                                                            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
 
 
-        $(".expected-time").each(function () {
-            if ($(this).text().length > 3) {
-                $(this).text($(this).text().substr(0, 3) + "...")
-
-                $('[role="data-tooltip"]').css("visibility", "visible");
-
-            }
 
 
-            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-        });
+
+                                                                        });
 
 
-    });
-</script>
+                                                                        $(".expected-time").each(function () {
+                                                                            if ($(this).text().length > 3) {
+                                                                                $(this).text($(this).text().substr(0, 3) + "...")
 
-<script type="text/javascript">
+                                                                                $('[role="data-tooltip"]').css("visibility", "visible");
+
+                                                                            }
+
+
+                                                                            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+                                                                        });
+
+
+                                                                    });
+                                                                </script>
+
+                                                                <script type="text/javascript">
 
     $(document).ready(function () {
             $("#btnSearch").click(function () {
@@ -917,171 +925,171 @@
     }
 
 
-</script>
+                                                                </script>
 
-<script type="text/javascript">
-    //// script for loader starts here
-    $(".dataloading").hide();
-    $("#VideoList").hide();
-    var loader;
-    function ShowProgress() {
-        $(".dataloading").hide();
-        $("#VideoList").hide();
-        loader = document.getElementsByClassName("loader")[0];
-        loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
-        loader.style.left = left + "px";
-    };
-    ShowProgress();
+                                                                <script type="text/javascript">
+                                                                    //// script for loader starts here
+                                                                    $(".dataloading").hide();
+                                                                    $("#VideoList").hide();
+                                                                    var loader;
+                                                                    function ShowProgress() {
+                                                                        $(".dataloading").hide();
+                                                                        $("#VideoList").hide();
+                                                                        loader = document.getElementsByClassName("loader")[0];
+                                                                        loader.style.display = "block";
+                                                                        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+                                                                        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+                                                                        loader.style.top = top + "px";
+                                                                        loader.style.left = left + "px";
+                                                                    };
+                                                                    ShowProgress();
 
-    window.onload = function () {
-        setTimeout(function () {
-            loader.style.display = "none";
-            $(".dataloading").show();
-            $("#VideoList").show();
-        }, 500);
-    };
-    //// script for loader ends here
-</script>
+                                                                    window.onload = function () {
+                                                                        setTimeout(function () {
+                                                                            loader.style.display = "none";
+                                                                            $(".dataloading").show();
+                                                                            $("#VideoList").show();
+                                                                        }, 500);
+                                                                    };
+                                                                    //// script for loader ends here
+                                                                </script>
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"CuratedUser\"")
+                                                                @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"CuratedUser\"")
 {
 
-    <script src="~/Newassets/js/enjoyhint.min.js"></script>
-    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-    <script>
-        localStorage.setItem('risetube', true)
-        var enjoyhint_instance = new EnjoyHint({});
+                                                                    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+                                                                    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+                                                                    <script>
+                                                                        localStorage.setItem('risetube', true)
+                                                                        var enjoyhint_instance = new EnjoyHint({});
 
-        var enjoyhint_script_steps = [
-            {
-                'next #risetubeid': 'Risetube! Selected Candidates Video will be available over here  and click on continue to know its features',
-                'nextButton': { className: "myNext", text: "Continue" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .btn3': 'Enter Skill or Candidate name and Search result',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'click .supportmenu': 'Click on Support Menu to see its features'
-            }
+                                                                        var enjoyhint_script_steps = [
+                                                                            {
+                                                                                'next #risetubeid': 'Risetube! Selected Candidates Video will be available over here  and click on continue to know its features',
+                                                                                'nextButton': { className: "myNext", text: "Continue" },
+                                                                                'skipButton': { className: "mySkip", text: "Skip" }
+                                                                            },
+                                                                            {
+                                                                                'next .btn3': 'Enter Skill or Candidate name and Search result',
+                                                                                'nextButton': { className: "myNext", text: "Next" },
+                                                                                'skipButton': { className: "mySkip", text: "Skip" }
+                                                                            },
+                                                                            {
+                                                                                'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
+                                                                                'nextButton': { className: "myNext", text: "Next" },
+                                                                                'skipButton': { className: "mySkip", text: "Skip" }
+                                                                            },
+                                                                            {
+                                                                                'click .supportmenu': 'Click on Support Menu to see its features'
+                                                                            }
 
-        ];
-        setTimeout(function () {
-            enjoyhint_instance.set(enjoyhint_script_steps);
-            enjoyhint_instance.run();
-        }, 10000)
-    </script>
+                                                                        ];
+                                                                        setTimeout(function () {
+                                                                            enjoyhint_instance.set(enjoyhint_script_steps);
+                                                                            enjoyhint_instance.run();
+                                                                        }, 10000)
+                                                                    </script>
 }
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
+                                                                @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
 {
 
-    <script src="~/Newassets/js/enjoyhint.min.js"></script>
-    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-    <script>
+                                                                    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+                                                                    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+                                                                    <script>
 
-        var enjoyhint_instance = new EnjoyHint({});
+                                                                        var enjoyhint_instance = new EnjoyHint({});
 
-        var enjoyhint_script_steps = [
-            {
-                'next #risetubeid': 'Risetube! Selected Candidate Videos will be available over here  and click on continue to know its features',
-                'nextButton': { className: "myNext", text: "Continue" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .btn3': 'Enter Skill or Candidate name and Search result',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'click .video-card': 'Click here to see the Candidate Video',
-            }
+                                                                        var enjoyhint_script_steps = [
+                                                                            {
+                                                                                'next #risetubeid': 'Risetube! Selected Candidate Videos will be available over here  and click on continue to know its features',
+                                                                                'nextButton': { className: "myNext", text: "Continue" },
+                                                                                'skipButton': { className: "mySkip", text: "Skip" }
+                                                                            },
+                                                                            {
+                                                                                'next .btn3': 'Enter Skill or Candidate name and Search result',
+                                                                                'nextButton': { className: "myNext", text: "Next" },
+                                                                                'skipButton': { className: "mySkip", text: "Skip" }
+                                                                            },
+                                                                            {
+                                                                                'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
+                                                                                'nextButton': { className: "myNext", text: "Next" },
+                                                                                'skipButton': { className: "mySkip", text: "Skip" }
+                                                                            },
+                                                                            {
+                                                                                'click .video-card': 'Click here to see the Candidate Video',
+                                                                            }
 
-        ];
-        setTimeout(function () {
-            enjoyhint_instance.set(enjoyhint_script_steps);
-            enjoyhint_instance.run();
-        }, 10000)
-    </script>
+                                                                        ];
+                                                                        setTimeout(function () {
+                                                                            enjoyhint_instance.set(enjoyhint_script_steps);
+                                                                            enjoyhint_instance.run();
+                                                                        }, 10000)
+                                                                    </script>
 }
 
-<script>
-    var candidate = "";
-    var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
-        });
-    });
+                                                                <script>
+                                                                    var candidate = "";
+                                                                    var span = document.getElementById("callPopUp");
+                                                                    // When the user clicks on <span> (x), close the modal
+                                                                    span.onclick = function () {
+                                                                        hangUp();
+                                                                        var modal = document.getElementById("myCallModal");
+                                                                        modal.style.display = "none";
+                                                                    }
+                                                                    $(document).ready(function () {
+                                                                        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+                                                                            // Set up the Twilio Client Device with the token
+                                                                            Twilio.Device.setup(data.token);
+                                                                        });
+                                                                    });
 
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
+                                                                    /* Callback to let us know Twilio Client is ready */
+                                                                    Twilio.Device.ready(function (device) {
 
-    });
+                                                                    });
 
-    function callCandidate(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
+                                                                    function callCandidate(phoneNumber) {
+                                                                        var params = { "phoneNumber": phoneNumber };
+                                                                        Twilio.Device.connect(params);
+                                                                    }
+                                                                    function hangUp() {
+                                                                        Twilio.Device.disconnectAll();
+                                                                    }
 
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-    });
+                                                                    Twilio.Device.connect(function (connection) {
+                                                                        var appendText = "In call with " + "<b>" + candidate + "</b>";
+                                                                        document.getElementById("callingLabel").innerHTML = appendText;
+                                                                    });
 
-    function afterTimeOut() {
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
+                                                                    function afterTimeOut() {
+                                                                        var modal = document.getElementById("myCallModal");
+                                                                        modal.style.display = "none";
+                                                                    }
 
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
+                                                                    Twilio.Device.disconnect(function (connection) {
+                                                                        var appendText = "Call disconnected! ";
+                                                                        document.getElementById("callingLabel").innerHTML = appendText;
+                                                                        setTimeout(afterTimeOut, 2000);
 
-    });
+                                                                    });
 
-    function CallButtonClick(name, phoneNumber) {
-        candidate = name;
-        // Get the modal
-        var modal = document.getElementById("myCallModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + candidate + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        callCandidate(phoneNumber);
-    }
-    function closeCallPopUp() {
-        hangUp();
-        var modal = document.getElementById("myCallModal");
-        modal.style.display = "none";
-    }
+                                                                    function CallButtonClick(name, phoneNumber) {
+                                                                        candidate = name;
+                                                                        // Get the modal
+                                                                        var modal = document.getElementById("myCallModal");
+                                                                        // When the user clicks the button, open the modal
+                                                                        modal.style.display = "block";
+                                                                        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+                                                                        document.getElementById("callingLabel").innerHTML = appendText;
+                                                                        callCandidate(phoneNumber);
+                                                                    }
+                                                                    function closeCallPopUp() {
+                                                                        hangUp();
+                                                                        var modal = document.getElementById("myCallModal");
+                                                                        modal.style.display = "none";
+                                                                    }
 
 
-</script>
+                                                                </script>
 
 
