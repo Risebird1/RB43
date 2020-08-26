@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -31,6 +32,7 @@ namespace Risebird.CommonHelper.Interface
         Task<bool> CheckBlobContainerFile(string vhdName, string containerName);
         string GetBlobData(string containerName, string fileName);
         void InsertBatchInTable(string tableName, TableBatchOperation tableBatchOperation);
+        Task InsertBlobImage(string filename, string containerName, Image img);
         //string UploadVideo(string filename);
         //Task<string> UploadVideoAsset(string filePath);
 

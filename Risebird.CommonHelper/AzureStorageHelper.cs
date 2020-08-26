@@ -9,6 +9,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 using Risebird.CommonHelper.Interface;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 namespace Risebird.CommonHelper
@@ -445,6 +446,20 @@ namespace Risebird.CommonHelper
             {
                 throw ex;
             }
+        }
+
+        public async Task InsertBlobImage(string filename, string containerName, Image img)
+        {
+            CloudBlockBlob blob;
+            blob = GetCloudBlockBlobClient(containerName, filename);
+            
+            using (MemoryStream ms = new MemoryStream())
+            {
+                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                ms.Seek(0, 0);
+                await blob.UploadFromStreamAsync(ms).ConfigureAwait(false);
+            }
+
         }
 
         ///// <summary>
