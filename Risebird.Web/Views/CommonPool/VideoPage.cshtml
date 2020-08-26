@@ -368,18 +368,12 @@
                                                     <div class="col-md-12 col-sm-12">
                                                         <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
 
-                                                            @*@foreach (var item in Model.SubVideo_List.Select(x => x.CandidateAvailable).Distinct().ToList())
-                                                                {
-                                                                   @if (item == 1)
-                                                                        {*@
-                                                            <option value="1">Available</option>
-                                                            @*}
-                                                                else
-                                                                {*@
-                                                            <option value="0">NotAvailable</option>
-
-                                                            @*}
-                                                                }*@
+                                                            @foreach (var item in Model.SubVideo_List.Select(x => x.CandidateAvailable).Distinct().ToList())
+                                                            {
+                                                               
+                                                                    <option value="@item">@item</option>
+                                                               
+                                                            }
 
                                                         </select>
                                                     </div>

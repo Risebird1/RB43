@@ -427,8 +427,15 @@
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
                                                     <div class="col-md-12 col-sm-12">
                                                         <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
-                                                                    <option value="1">Available</option>
-                                                                    <option value="0">NotAvailable</option>
+                                                            <option value="Available">Available</option>
+                                                            <option value="NotAvailable">NotAvailable</option>
+                                                            @*@foreach (var item in Model.SubVideo_List.Select(x => x.CandidateAvailable).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }*@
                                                         </select>
                                                     </div>
                                                 </div>
@@ -874,18 +881,18 @@
                                                                             </div>
                                                                             @if (@Model.IreportModel.IsBiometricEnabled)
                                                                             {
-                                                                        <div class="form-group">
-                                                                            @Html.LabelFor(model => model.IreportModel.InterviewBiometryScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label bolder" })
-                                                                            @if (@Model.IreportModel.InterviewBiometryScore == 0)
-                                                                            {
-                                                                            <label>Not Yet Verified</label>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                @Html.TextBoxFor(m => m.IreportModel.InterviewBiometryScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                            }
+                                                                                <div class="form-group">
+                                                                                    @Html.LabelFor(model => model.IreportModel.InterviewBiometryScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label bolder" })
+                                                                                    @if (@Model.IreportModel.InterviewBiometryScore == 0)
+                                                                                    {
+                                                                                        <label>Not Yet Verified</label>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.InterviewBiometryScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    }
 
-                                                                        </div>
+                                                                                </div>
                                                                             }
                                                                         </div>
                                                                     </div>
