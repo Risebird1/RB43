@@ -30,25 +30,25 @@
     left: 70%;
 }
 
-.candidateinterest-btn .view-video {
-    padding-left: 0px;
-    line-height: 25px;
-    color: GREEN;
-    TEXT-ALIGN: CENTER;
-    FLOAT: NONE;
-    MARGIN: 0PX AUTO;
-    background-position: 12% 50% !important;
-    font-weight: normal;
-    font-size: 13px !important;
-    padding: 0px 0px 0px 0px;
-    width: 123px;
-    background-color: #01dc01c7 !important;
-    height: 35px;
-    border-radius: 3px;
-    position:relative;
-    top:-10px;
-    border-bottom: 1px #0e960ec7 SOLID;
-}
+    .candidateinterest-btn .view-video{
+        padding-left: 0px;
+        line-height: 25px;
+        color: GREEN;
+        TEXT-ALIGN: CENTER;
+        FLOAT: NONE;
+        MARGIN: 0PX AUTO;
+        background-position: 12% 50% !important;
+        font-weight: normal;
+        font-size: 13px !important;
+        padding: 0px 0px 0px 0px;
+        width: 123px;
+        background-color: #0fd20fc7!important;
+        height: 35px;
+        border-radius: 3px;
+        position: relative;
+        top: -10px;
+        border-bottom: 1px #0e960ec7 SOLID;
+    }
 
 
     .count-view .label-num {
@@ -174,10 +174,27 @@
     font-weight: normal;
     font-size: 13px !important;
     padding: 5px 0px;
+    margin-left:10px;
 }
     .interest-btn .view-video {
-        color: green;font-weight:bold;
-}
+        padding-left: 0px;
+        line-height: 25px;
+        color: GREEN;
+        TEXT-ALIGN: CENTER;
+        FLOAT: NONE;
+        MARGIN: 0PX AUTO;
+        background-position: 12% 50% !important;
+        font-weight: normal;
+        font-size: 13px !important;
+        padding: 0px 0px 0px 0px;
+        width: 123px;
+        background-color: #0fd20fc7 !important;
+        height: 35px;
+        border-radius: 3px;
+        position: relative;
+        top: -7px;
+        border-bottom: 1px #0e960ec7 SOLID;
+    }
 
 
 #VideoDetailsModel .interest-btn {
@@ -487,6 +504,14 @@
 
 .showinter .btn {
     margin-top: 0px;
+}
+.join {
+    float: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 81px;
+    line-height: 22px;
 }
 
 .share-btn {
@@ -970,7 +995,7 @@ textarea::-webkit-scrollbar-thumb {
     font-weight: 600;
     font-size: 11.5px;
 }
-
+.notice{float:left; line-height:22px;}
 .comment-area .talk-bubble {
     width: 89%;
     margin: 0;
@@ -978,7 +1003,7 @@ textarea::-webkit-scrollbar-thumb {
     padding: 0;
     border-radius: 0px;
 }
-
+.videodetail .sharing-btn{padding:4px 2px;}
 .video-width {
     background: black !important;
     width: 100%;
