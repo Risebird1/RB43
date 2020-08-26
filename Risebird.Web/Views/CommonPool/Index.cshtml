@@ -471,8 +471,8 @@
 
                                                         </div>
                                                         <div class="video-view">
-                                                            &nbsp;<i class="fas fa-calendar-alt"></i> <span>@item.interviewDate</span>
-
+                                                            &nbsp;<i class="fas fa-calendar-alt"></i>
+                                                            <span>@item.interviewDate</span>
                                                             <span class="divider-g">
                                                                 @if (item.InterviewStatus == 4)
                                                                 {
@@ -484,39 +484,44 @@
                                                                     <span style="color:green">Selected</span>
 
                                                                 }
+
+
+                                                                @if (item.MobileNumber != null)
+                                                                {
+                                                                    <span>
+                                                                        <button class="call-btn" aria-label="Call">
+                                                                            <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
                                                             </span>
 
                                                         </div>
 
 
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
 
 
-
-                                                        <div class="video-info">
-
-                                                            <span> Notice Period: </span>
-                                                            @if (item.joiningTime.Length > 20)
+                                                            <span class="notice"> Notice Period: </span>
+                                                            @if (item.joiningTime.Length > 12)
                                                             {
                                                                 <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
                                                             }
                                                             else
                                                             {
-                                                                <span> @item.joiningTime</span>
+                                                                <span class="join"> @item.joiningTime</span>
                                                             }
-                                                            @if (item.MobileNumber != null)
-                                                            {
-                                                                <span>
-                                                                    <button class="call-btn" aria-label="Call">
-                                                                        <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                    </button>
-                                                                </span>
-                                                            }
-
+                                                        </div>
+                                                        <div class="video-info  col-sm-6 col-md-5 col-lg-5 nopad pull-right">
+                                                            <span>Tech Skill Score:</span>
+                                                            <span>@(item.TechSkillScore/4)</span>
                                                         </div>
 
 
-                                                        <div class="video-info col-sm-6 col-md-6 col-lg-7 nopad pull-left">
-                                                            <span>Expected Salary:</span>  @if (@item.expectedPerHourRate.Length > 5)
+
+
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                            <span>Expected Salary:</span> @if (@item.expectedPerHourRate.Length > 5)
                                                             {
                                                                 <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
 
@@ -525,7 +530,7 @@
                                                                 <span>@item.expectedPerHourRate</span>}
                                                         </div>
 
-                                                        <div class="video-info col-sm-6 col-md-6 col-lg-5 nopad pull-left">
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
 
                                                             <span>Location:</span>
                                                             <span>
@@ -852,8 +857,8 @@
         });
 
         $(".joining-time").each(function () {
-            if ($(this).text().length > 20) {
-                $(this).text($(this).text().substr(0, 20) + "...")
+            if ($(this).text().length > 12) {
+                $(this).text($(this).text().substr(0, 12) + "...")
 
                 $('[role="data-tooltip"]').css("visibility", "visible");
 
