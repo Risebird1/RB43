@@ -30,25 +30,25 @@
     left: 70%;
 }
 
-.candidateinterest-btn .view-video {
-    padding-left: 0px;
-    line-height: 25px;
-    color: GREEN;
-    TEXT-ALIGN: CENTER;
-    FLOAT: NONE;
-    MARGIN: 0PX AUTO;
-    background-position: 12% 50% !important;
-    font-weight: normal;
-    font-size: 13px !important;
-    padding: 0px 0px 0px 0px;
-    width: 123px;
-    background-color: #01dc01c7 !important;
-    height: 35px;
-    border-radius: 3px;
-    position:relative;
-    top:-10px;
-    border-bottom: 1px #0e960ec7 SOLID;
-}
+    .candidateinterest-btn .view-video{
+        padding-left: 0px;
+        line-height: 25px;
+        color: GREEN;
+        TEXT-ALIGN: CENTER;
+        FLOAT: NONE;
+        MARGIN: 0PX AUTO;
+        background-position: 12% 50% !important;
+        font-weight: normal;
+        font-size: 13px !important;
+        padding: 0px 0px 0px 0px;
+        width: 123px;
+        background-color: #0fd20fc7!important;
+        height: 35px;
+        border-radius: 3px;
+        position: relative;
+        top: -10px;
+        border-bottom: 1px #0e960ec7 SOLID;
+    }
 
 
     .count-view .label-num {
@@ -174,10 +174,27 @@
     font-weight: normal;
     font-size: 13px !important;
     padding: 5px 0px;
+    margin-left:10px;
 }
     .interest-btn .view-video {
-        color: green;font-weight:bold;
-}
+        padding-left: 0px;
+        line-height: 25px;
+        color: GREEN;
+        TEXT-ALIGN: CENTER;
+        FLOAT: NONE;
+        MARGIN: 0PX AUTO;
+        background-position: 12% 50% !important;
+        font-weight: normal;
+        font-size: 13px !important;
+        padding: 0px 0px 0px 0px;
+        width: 123px;
+        background-color: #0fd20fc7 !important;
+        height: 35px;
+        border-radius: 3px;
+        position: relative;
+        top: -7px;
+        border-bottom: 1px #0e960ec7 SOLID;
+    }
 
 
 #VideoDetailsModel .interest-btn {
