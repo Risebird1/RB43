@@ -7,50 +7,50 @@
 
 
 
-<div class="main-panel" id="main-panel">
-    <!-- Navbar -->
+    <div class="main-panel" id="main-panel">
+        <!-- Navbar -->
 
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
+        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <a class="navbar-brand breadcrumscolor" href="/Interview/Index">Interview Forms</a>
+                    <a class="navbar-brand"> / &nbsp;Edit Interview</a>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/Interview/Index">Interview Forms</a>
-                  <a class="navbar-brand">&nbsp; Edit Interview</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                </button>
+
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
+        </nav>
+        <!-- End Navbar -->
 
+        <div class="mt50">
         </div>
-    </nav>
-    <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
-    </div>
 
 
-
-    <div class="content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mdc-card card">
-                    <div class="mdc-card-wrapper__text-section">
-                        @using (Html.BeginForm("Edit", "Interview", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                        {
-                            @Html.AntiForgeryToken()
+        <div class="content client">
+            <div class="row bg-white">
+                <div class="col-md-12">
+                    <div class="mdc-card card bg-white">
+                        <div class="mdc-card-wrapper__text-section">
+                            @using (Html.BeginForm("Edit", "Interview", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
 
 
 
                             <div class="row">
-                                <div class="card-header">
-                                    <h4 class="card-title">Edit Interview</h4>
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Add Interviewer</h4></div>
                                 </div>
                                 <div style="width: 100%;">&nbsp;</div>
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -60,7 +60,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownListFor(model => model.IRFId, Model.IRFList, new { @class = "select-css form-control", @onchange = "IRFChanged(this.value)" })
-                                        
+
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -106,7 +106,7 @@
                                         @Html.LabelFor(model => model.ClientHrContact, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownListFor(model => model.ClientHrContact, Model.ClientHrContactList, new { @class = "select-css form-control" })
 
-                                       
+
                                         @Html.ValidationMessageFor(model => model.ClientHrContact, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -227,7 +227,7 @@
                                         @Html.LabelFor(model => model.staffingAgency, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownListFor(model => model.staffingAgency, Model.StaffingAgencyList, new { @class = "select-css form-control" })
 
-                                       
+
                                         @Html.ValidationMessageFor(model => model.staffingAgency, "", new { @class = "text-danger" })
 
                                     </div>
@@ -256,24 +256,24 @@
                             </div>
 
 
-                            <div class="card-footer ">
-                                <div class="row">
+                                <div class="card-footer ">
+                                    <div class="row">
 
-                                    <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Update Interview">Save</button>
+                                        <div class="col-md-12 mc-button-area">
+                                            @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Update Interview">Save</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
     </div>
-
-
-</div>
 
 
 <script src="~/Newassets/js/interview.js"></script>
