@@ -740,10 +740,10 @@ ul.panel-controls > li > button {
     background: #0ea93d;
     border-radius: 100%;
     float: right;
-    padding: 2px;
+    padding: 1px;
     border: 0px;
     position: relative;
-    top: -6px;
+    top: -7px;
     right: 6px;
 }
 

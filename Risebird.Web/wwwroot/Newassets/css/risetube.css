@@ -475,7 +475,14 @@
 .showinter .btn {
     margin-top: 0px;
 }
-
+.join {
+    float: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 81px;
+    line-height: 22px;
+}
 .share-btn {
     color: #32363a;
     font-family: Roboto, sans-serif;
@@ -957,7 +964,7 @@ textarea::-webkit-scrollbar-thumb {
     font-weight: 600;
     font-size: 11.5px;
 }
-
+.notice{float:left; line-height:22px;}
 .comment-area .talk-bubble {
     width: 89%;
     margin: 0;
