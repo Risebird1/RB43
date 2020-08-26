@@ -990,7 +990,7 @@ textarea::-webkit-scrollbar-thumb {
     padding: 0;
     border-radius: 0px;
 }
-
+.videodetail .sharing-btn{padding:4px 2px;}
 .video-width {
     background: black !important;
     width: 100%;
