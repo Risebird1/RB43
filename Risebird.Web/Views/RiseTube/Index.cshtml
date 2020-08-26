@@ -487,7 +487,7 @@
 
                                                         else
                                                         {
-                                                            <span>@item.JDTiltle</span>}
+                                                            <span class="designation">@item.JDTiltle</span>}
 
 
 
@@ -527,19 +527,20 @@
                                                     </div>
 
 
-                                                    <div class="video-info">
+                                                    <div class="col-sm-6 col-md-7 col-lg-7 nopad pull-left">
 
 
-                                                        <span> Notice Period: </span>
-                                                        @if (item.joiningTime.Length > 20)
+                                                        <span class="notice"> Notice Period: </span>
+                                                        @if (item.joiningTime.Length > 12)
                                                         {
                                                             <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
                                                         }
                                                         else
                                                         {
-                                                            <span> @item.joiningTime</span>
+                                                            <span class="join"> @item.joiningTime</span>
                                                         }
-                                                        <div class="video-info  nopad pull-right">
+                                                    </div>
+                                                        <div class="video-info  col-sm-6 col-md-5 col-lg-5 nopad pull-right">
                                                             <span>Tech Skill Score:</span>
                                                             <span>@(item.TechSkillScore/4)</span>
                                                         </div>
@@ -692,8 +693,8 @@
         });
 
         $(".joining-time").each(function () {
-            if ($(this).text().length > 20) {
-                $(this).text($(this).text().substr(0, 20) + "...")
+            if ($(this).text().length > 12) {
+                $(this).text($(this).text().substr(0, 12) + "...")
 
                 $('[role="data-tooltip"]').css("visibility", "visible");
 
