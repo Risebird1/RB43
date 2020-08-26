@@ -743,17 +743,19 @@ ul.panel-controls > li > button {
     padding: 1px;
     border: 0px;
     position: relative;
-    top: -7px;
+    top: -2px;
     right: 6px;
+    width: 21px;
+    height: 21px;
 }
-
-.skill {
-    -ms-flex: 0 0 36.666667%;
-    flex: 0 0 36.666667%;
-    max-width: 36.666667%;
-    padding-right: 15px;
-    padding-left: 15px;
-}
+    .call-btn svg{position:relative; top:-2px;}
+    .skill {
+        -ms-flex: 0 0 36.666667%;
+        flex: 0 0 36.666667%;
+        max-width: 36.666667%;
+        padding-right: 15px;
+        padding-left: 15px;
+    }
 
     .skill [type="datetime-local"] {
         background: #fff url(../img/blue-timdate.png) 97% 50% no-repeat !important;
