@@ -6,76 +6,76 @@
 
 
 
-<div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
+    <div class="main-panel" id="main-panel">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <a class="navbar-brand breadcrumscolor" href="/User/ClientUsers">Client User</a>
+                    <a class="navbar-brand">/ &nbsp; Add Client User</a>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/User/ClientUsers">Client User</a>
-                <a class="navbar-brand">/ &nbsp; Add Client User</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                </button>
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
+        </nav>
+        <!-- End Navbar -->
+        <div class="mt50">
         </div>
-    </nav>
-    <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
-    </div>
-    <div class="content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mdc-card card">
-                    
-                    <div class="mdc-card-wrapper__text-section">
+        <div class="content client">
+            <div class="row bg-white">
+                <div class="col-md-12">
+                    <div class="mdc-card card bg-white">
 
-                        @using (Html.BeginForm("AddClientUser", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                        {
+                        <div class="mdc-card-wrapper__text-section">
 
-                            @Html.AntiForgeryToken()
+                            @using (Html.BeginForm("AddClientUser", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
 
-                        <div class="row">
-                            <div class="card-header">
-                                <h4 class="card-title">Add Client User</h4>
-                            </div>
-                            <div style="width: 100%;">&nbsp;</div>
-                            <div class="form-horizontal">
-                                <div class="col-md-4 col-sm-4 pr-1 pull-left">
-                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.AntiForgeryToken()
 
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Clients, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(x => Model.SelectedClient, Model.Clients, "Select Client", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                        @Html.ValidationMessageFor(model => model.SelectedClient, "", new { @class = "text-danger" })
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Add Client User</h4></div>
+                                </div>
+                                <div style="width: 100%;">&nbsp;</div>
+                                <div class="form-horizontal">
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Clients, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(x => Model.SelectedClient, Model.Clients, "Select Client", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.SelectedClient, "", new { @class = "text-danger" })
+
+                                        </div>
 
                                     </div>
 
-                                </div>
+                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
 
-                                <div class="col-md-4 col-sm-4 px-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.ClientRoles, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(x => Model.SelectedClientRole, Model.ClientRoles, "Select Client Role", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.SelectedClientRole, "", new { @class = "text-danger" })
 
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.ClientRoles, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(x => Model.SelectedClientRole, Model.ClientRoles, "Select Client Role", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                        @Html.ValidationMessageFor(model => model.SelectedClientRole, "", new { @class = "text-danger" })
+                                        </div>
 
                                     </div>
 
-                                </div>
+
+                                    <div class="col-md-4 col-sm-4 pl-1 pull-left">
 
 
-                                <div class="col-md-4 col-sm-4 pl-1 pull-left">
-
-                                  
 
 
                                         <div class="form-group">
@@ -94,19 +94,19 @@
 
 
 
-                                 
-
-                                </div>
-
-                                <div class="col-md-4 col-sm-4 pr-1 pull-left">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
 
 
                                     </div>
-                                </div>
+
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                    </div>
 
 
                                     <div class="col-md-4 col-sm-4 px-1 pull-left">
@@ -135,30 +135,30 @@
 
                                 </div>
 
-                        </div>
-                            <div class="card-footer">
-                                <div class="row">
-                                    <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "Clientusers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                            </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-md-12 mc-button-area">
+                                            @Html.ActionLink("Back to List", "Clientusers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        }
+                            }
+
+                        </div>
+
+
 
                     </div>
-
-
-
+                    <!--  end card  -->
                 </div>
-                <!--  end card  -->
+                <!-- end col-md-12 -->
             </div>
-            <!-- end col-md-12 -->
+            <!-- end row -->
         </div>
-        <!-- end row -->
-    </div>
 
-</div>
+    </div>
 
 
