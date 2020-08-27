@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GleamTech.VideoUltimate" Version="2.3.5" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Risebird.Entities\Risebird.Entities.csproj" />
   </ItemGroup>
 

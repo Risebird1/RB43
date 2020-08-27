@@ -1,5 +1,4 @@
-﻿using GleamTech.VideoUltimate;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -21,8 +20,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -42,8 +43,11 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
 
         private readonly string _SentimentApiKey;
-        private readonly string _SentimentEndpoint; 
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration)
+        private readonly string _SentimentEndpoint;
+
+        private readonly HttpClient _httpClient;
+        private readonly CancellationToken _cancellationToken;
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -57,6 +61,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _SentimentApiKey = _configuration["SentimentCreds:SentimentApiKey"];
             _SentimentEndpoint = _configuration["SentimentCreds:SentimentEndpoint"];
+            _httpClient = factory.GetHttpClient();
 
         }
 
@@ -6017,10 +6022,36 @@ namespace Risebird.Web.Controllers
             return result;
 
         }
+        public async Task<JsonResult> AnalyseSentiment(string videoUrl, int imid)
+        {
+            try
+            {
+
+                SentimentDTO obj = new SentimentDTO();
+                obj.imid = imid;
+                obj.VideoUrl = videoUrl;
+
+                var functionKey = "Q/8CUsLsbKYeqRMFNPT5QnKsNWzoudpVayC1bN7tQbYK0SEAw1wboQ==";
+                var path = $"SentimentAnalysis";
+                var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, obj, functionKey,"",_cancellationToken);
+                var result = response.Content.ReadAsStringAsync().Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json("Successful");
+                }
+                return Json("Failed");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
 
 
         //[HttpPost]
-        //public async Task<bool> AnalyseSentiment(string videoUrl, int imid)
+        //public async Task<bool> AnalyseSentimentMethod(string videoUrl, int imid)
         //{
         //    try
         //    {
@@ -6102,10 +6133,10 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-        public bool ThumbnailCallback()
-        {
-            return false;
-        }
+        //public bool ThumbnailCallback()
+        //{
+        //    return false;
+        //}
     }
 
 }
