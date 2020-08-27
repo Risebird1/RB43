@@ -1,40 +1,22 @@
 ﻿using GleamTech.VideoUltimate;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.CognitiveServices.Vision.Face;
-using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Risebird.Business.Interface;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
     public class SentimentAnalysis
     {
-        private readonly AuthenticationService _authenticationService;
-        private readonly IAzureStorageHelper _azureStorageHelper;
-        private readonly IMeetingService _meetingService;
-
-        public SentimentAnalysis(AuthenticationService authenticationService, IAzureStorageHelper azureStorageHelper, IMeetingService meetingService)
-        {
-            _authenticationService = authenticationService;
-            _meetingService = meetingService;
-            _azureStorageHelper = azureStorageHelper;
-        }
-
-        [FunctionName("SentimentAnalysis")]
+         [FunctionName("SentimentAnalysis")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "SentimentAnalysis")] HttpRequest req,
             ILogger log)

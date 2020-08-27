@@ -17,8 +17,6 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -6031,9 +6029,9 @@ namespace Risebird.Web.Controllers
                 obj.imid = imid;
                 obj.VideoUrl = videoUrl;
 
-                var functionKey = "Q/8CUsLsbKYeqRMFNPT5QnKsNWzoudpVayC1bN7tQbYK0SEAw1wboQ==";
+                //var functionKey = "Q/8CUsLsbKYeqRMFNPT5QnKsNWzoudpVayC1bN7tQbYK0SEAw1wboQ==";
                 var path = $"SentimentAnalysis";
-                var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, obj, functionKey,"",_cancellationToken);
+                var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, obj, "","",_cancellationToken);
                 var result = response.Content.ReadAsStringAsync().Result;
 
                 if (response.IsSuccessStatusCode)
