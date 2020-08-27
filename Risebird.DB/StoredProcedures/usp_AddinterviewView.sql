@@ -11,39 +11,39 @@ CREATE Procedure [dbo].[usp_AddinterviewView]
 @Interviewid int,    
 @EmailId varchar(100)    
 AS      
-BEGIN      
-DECLARE @ViewCount int        
-DECLARE @Id int      
-DECLARE @Count int      
-Set @Count=0      
-select @Id=id from UserList where Emailid=@EmailId      
-Select @ViewCount=TotalView from InterviewComments where InterviewId=@Interviewid        
-Update InterviewComments set TotalView=((IsNull(@ViewCount,0))+1) where InterviewId=@Interviewid        
-      
-if(@Id=null)    
-begin    
-Select @Count=Count from VideoCountDetails where Videoid=@Interviewid and Emailid=@EmailId       
-if(@Count=0)      
-begin      
-Insert into VideoCountDetails values(@Interviewid,0,1,GETDATE(),@EmailId,'','','')      
-End      
+BEGIN        
+DECLARE @ViewCount int          
+DECLARE @Id int =0       
+DECLARE @Count int        
+Set @Count=0        
+select  @Id=id from UserList where Emailid=@EmailId        
+Select @ViewCount=TotalView from InterviewComments where InterviewId=@Interviewid          
+Update InterviewComments set TotalView=((IsNull(@ViewCount,0))+1) where InterviewId=@Interviewid          
+if(@Id=Null or @Id='' or @Id=0)      
+begin   
+Select @Count=Count from VideoCountDetails where Videoid=@Interviewid and Emailid=@EmailId         
+if(@Count=0 or @Count='')        
+begin        
+Insert into VideoCountDetails values(@Interviewid,0,1,GETDATE(),@EmailId,'','','')        
+End        
+else  
+ begin        
+Update VideoCountDetails set Count=(@Count+1) where Videoid=@Interviewid and Emailid=@EmailId        
+end        
+end      
 else      
 begin      
-Update VideoCountDetails set Count=(@Count+1) where Videoid=@Interviewid and Emailid=@EmailId      
-end      
-end    
-else    
-begin    
-Select @Count=Count from VideoCountDetails where Videoid=@Interviewid and Userid=@Id    
-if(@Count=0)      
-begin      
-Insert into VideoCountDetails values(@Interviewid,@Id,1,GETDATE(),'','','','')      
+Select @Count=Count from VideoCountDetails where Videoid=@Interviewid and Userid=@Id      
+if(@Count=0)        
+begin        
+Insert into VideoCountDetails values(@Interviewid,@Id,1,GETDATE(),'','','','')        
+End        
+else        
+begin        
+Update VideoCountDetails set Count=(@Count+1) where Videoid=@Interviewid and Userid=@Id        
+end        
+END      
 End      
-else      
-begin      
-Update VideoCountDetails set Count=(@Count+1) where Videoid=@Interviewid and Userid=@Id      
-end      
-END    
-End    
+
 
 
