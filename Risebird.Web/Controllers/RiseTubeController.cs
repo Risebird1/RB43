@@ -84,7 +84,7 @@ namespace Risebird.Web.Controllers
                         else if (profileName == "CuratedUser")
                         {
                             var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
-                            modelList = dataResult.ToList().Where(x => x.CuratedLink).OrderByDescending(y => y.Score).ToList();
+                            modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
                         }
                         else
                         {
@@ -283,7 +283,7 @@ namespace Risebird.Web.Controllers
                         else if (profileName == "CuratedUser")
                         {
                             var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
-                            modelList = dataResult.ToList().Where(x => x.CuratedLink).OrderByDescending(y => y.Score).ToList();
+                            modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
                         }
                         else
                         {
@@ -478,7 +478,7 @@ namespace Risebird.Web.Controllers
                         else if (profileName == "CuratedUser")
                         {
                             var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
-                            modelList1 = dataResult.ToList().Where(x => x.CuratedLink).OrderByDescending(y => y.Score).ToList();
+                            modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
                             if (!String.IsNullOrEmpty(irfid))
                             {
                                 int irf = Convert.ToInt32(irfid);
@@ -915,7 +915,7 @@ namespace Risebird.Web.Controllers
                         {
                             var emailaddress = HttpContext.Session.GetString("email")?.Trim();
                             emailaddress = emailaddress.Replace("\"", "");
-                            _meetingService.AddTotalViewCount(id, emailaddress, "Public");
+                            await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
                             //save into database to increase view count save into main table from where data is picked
                             HttpContext.Session.SetString("UserLogedIn", "No");
                         }
@@ -980,7 +980,7 @@ namespace Risebird.Web.Controllers
                         else if (profileName == "CuratedUser")
                         {
                             var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
-                            modelList = dataResult.ToList().Where(x => x.CuratedLink).OrderByDescending(y => y.Score).ToList();
+                            modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
                         }
                         else
                         {
@@ -1922,7 +1922,7 @@ namespace Risebird.Web.Controllers
                     }
                     return Json(model);
                 }
-                else if (profileName == "Candidate" || profileName == "Client")
+                else if (profileName == "Candidate" || profileName == "Client" || profileName == "CuratedUser")
                 {
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
