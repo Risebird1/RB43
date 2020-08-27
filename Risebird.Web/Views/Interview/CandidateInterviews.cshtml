@@ -666,6 +666,18 @@
         window.location.href = "@Url.Action("CandidateVideoPage", "Interview")/" +index;
     }
     function ChangeCandiateStatus(interviewid,status) {
+
+    if(Swal.fire({
+               html: "Are you sure, you want to share video?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "OK",
+               
+
+             closeOnConfirm: false,
+            
+            })){
+  
          $.ajax({
             type: "POST",
             url: "/Interview/ChangeCandidateStatus",
@@ -674,6 +686,7 @@
                 window.location = "/Interview/CandidateInterviews";
             }
         });
+    }
     }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")

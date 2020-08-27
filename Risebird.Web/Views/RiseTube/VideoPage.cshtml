@@ -3223,10 +3223,29 @@
         var vid = document.getElementsByClassName("vjs-tech");
         vid[0].currentTime = time;
         //time should be in seconds
-    }
-    function SharepublicVideoLink() {
+        }
+
+
+
+
+
+
+
+
+        function SharepublicVideoLink() {
+     
         if ($("#txtpublicsharing").val() != "") {
-            if (Swal.fire('Are you sure, you want to share this video?')) {
+        
+            if (Swal.fire({
+                title: "Are you sure, you want to share video?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "OK",
+               
+            
+            })) {
+                
+
                 if ($("#txtpublicsharetxt").val() == "Public") {
                     $.ajax({
                         type: "POST",
@@ -3236,7 +3255,10 @@
                             closepublicSharePopUp();
                         }
                     });
-                } else {
+                }
+
+
+                else {
                     $.ajax({
                         type: "POST",
                         url: "/RiseTube/VideoShareDetails",
@@ -3248,7 +3270,10 @@
                 }
             }
         }
-    }
+        }
+
+
+
     function SubmitEmail() {
         if ($("#txtvideoemailid").val() != "") {
             var currentUrl = window.location.href;

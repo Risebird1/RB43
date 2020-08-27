@@ -484,7 +484,7 @@
 
 
 
-                                                        @if (@item.JDTiltle.Length > 30)
+                                                        @if (@item.JDTiltle.Length > 20)
                                                         {
                                                         <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>}
 
@@ -511,23 +511,23 @@
 
                                                     </div>
                                                       <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                        &nbsp;<i class="fas fa-calendar-alt"></i>
+                                                      <i class="fas fa-calendar-alt"></i>
                                                         <span>@item.interviewDate</span>
                                                     </div>
                                                     <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-                                                        <span>Tech Skill Score:</span>
-                                                        <span>
-                                                            <span>@(item.TechSkillScore)%</span>
-                                                        </span>
+                                                        <span class="pull-left">Tech SkillScore:</span>
+                                                     
+                                                        <span class="pull-left">@(item.TechSkillScore)%</span>
+                                                       
 
                                                     </div>
 
 
-                                                      <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                      <div class="video-info col-sm-7 col-md-7 col-lg-7 nopad pull-left">
 
 
                                                         <span class="notice"> Notice Period: </span>
-                                                        @if (item.joiningTime.Length > 15)
+                                                        @if (item.joiningTime.Length > 13)
                                                         {
                                                         <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
                                                         }
@@ -537,7 +537,7 @@
                                                         }
                                                     </div>
 
-                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                    <div class="video-info col-sm-5 col-md-5 col-lg-5 nopad pull-left">
                                                         <span>Status:</span>
                                                         @if (item.InterviewStatus == 4)
                                                             {
@@ -702,8 +702,8 @@
         });
 
         $(".joining-time").each(function () {
-            if ($(this).text().length > 15) {
-                $(this).text($(this).text().substr(0, 15) + "...")
+            if ($(this).text().length > 13) {
+                $(this).text($(this).text().substr(0, 13) + "...")
 
                 $('[role="data-tooltip"]').css("visibility", "visible");
 
