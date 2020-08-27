@@ -1324,7 +1324,7 @@ namespace Risebird.Web.Controllers
             email = email.Replace("\"", "");
             var modelList = _meetingService.VedioShared(Emailids, videoid, email);
             string currenturl = Request.Host.ToString() + Request.Path.ToString() + "/" + videoid;
-
+            var resultset = _meetingService.AddVedioShare(email, videoid, Emailids);
             if (!String.IsNullOrEmpty(modelList))
             {
                 Mail _mail1 = new Mail
