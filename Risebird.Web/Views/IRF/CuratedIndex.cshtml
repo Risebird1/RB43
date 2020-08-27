@@ -31,7 +31,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a id="risetubeid" class="navbar-brand">Risebird Verified</a>
+                <a class="navbar-brand">Risebird Verified</a>
             </div>
         </div>
     </nav>
@@ -163,7 +163,7 @@
                     <div class="col-md-12">
                         @foreach (var item in Model.CuratedData)
                         {
-                            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                            <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6 pull-left" style="margin-top: 15px;">
                                 <div class="card-content-holder border card-blue">
                                     <div class="card-header">
                                         <div class="row">
@@ -208,7 +208,7 @@
                                             </div>
 
                                             <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
-
+                                                <input type="text" hidden value="@item.SubId" id="subs" / >
                                                 @if (item.SubId != null)
                                                 {
                                                     <button class="mdc-fab app-fab--absolute allcur " aria-label="All">
@@ -554,6 +554,15 @@
                 var enjoyhint_instance = new EnjoyHint({});
 
                 var enjoyhint_script_steps = [
+          
+
+                {
+                        'next .allcur ': 'All Selected Candidiate',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+
+
                     {
                         'next .allshort': 'Shortlisted Candidates Video',
                         'nextbutton': { classname: "mynext", text: "Next" },
@@ -570,7 +579,7 @@
                         'skipbutton': { classname: "myskip", text: "Skip" }
                     },
                     {
-                        'click .risetubemenu': 'Click on Risetube menu to see its remaining feature'
+                        'click .subc ': 'Subscribe/Unsubscribe'
                     }
 
 
@@ -580,48 +589,89 @@
                     enjoyhint_instance.run();
                 }, 5000)
             }
-
+          
             var getData = localStorage.getItem('subscribe');
-
+              debugger;
             if (getData == "true") {
 
+
+
                 var enjoyhint_instance = new EnjoyHint({});
-
+             if( $('#subs').val()!=''){
                 var enjoyhint_script_steps = [
+           
+                {
+                        'next .allcur ': 'All Selected Candidiate',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+                  {
+                        'next .allshort': 'Shortlisted Candidates Video',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
                     {
-                        'click .allcur': 'Click here to see the Selected Candidates Video and navigate over Risetube menu',
-
+                        'next .allintsent': 'Interest Sent Candidates Video',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+                    {
+                        'next .allintac': 'Interest Accepted Candidates Video',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+          
+                    {
+                        'click .subc ': 'Subscribe/Unscribe'
                     }
-                ];
+                ];}
+            else{
+
+            var enjoyhint_script_steps = [
+           
+               
+                    {
+                        'click .subc ': 'Subscribe/Unscribe'
+                    }
+                ]
+            }
+
                 setTimeout(function () {
                     enjoyhint_instance.set(enjoyhint_script_steps);
                     enjoyhint_instance.run();
                 }, 5000)
             }
-
+       
             if (getData == null) {
 
                 var enjoyhint_instance = new EnjoyHint({});
 
                 var enjoyhint_script_steps = [
-                    {
-                        'next .card-title': 'List of Skill Based Channel',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
+             {
+                        'next .allcur ': 'All Selected Candidiate',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
                     },
-                    {
-                        'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'next .first': 'Skill Channel Name and Primary Skill',
-                        'nextButton': { className: "myNext", text: "Next" },
-                        'skipButton': { className: "mySkip", text: "Skip" }
-                    },
-                    {
-                        'click .subc': 'Click here to Subscribe/Unsubscribe Skill Channel',
 
+
+
+                  {
+                        'next .allshort': 'Shortlisted Candidates Video',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+                    {
+                        'next .allintsent': 'Interest Sent Candidates Video',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+                    {
+                        'next .allintac': 'Interest Accepted Candidates Video',
+                        'nextbutton': { classname: "mynext", text: "Next" },
+                        'skipbutton': { classname: "myskip", text: "Skip" }
+                    },
+                    {
+                        'click .subc ': 'Subscribe/Unscribe'
                     }
                 ];
                 setTimeout(function () {
