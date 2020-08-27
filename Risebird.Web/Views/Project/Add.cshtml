@@ -105,72 +105,73 @@
 
                                 <div style="width:100%">&nbsp;</div>
                                 <div id="tableID">
-                                    <table class="table table-bordered mbn" id="IRFList">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center" style="font-size:15px!important;">IRF ID</th>
-                                                <th class="text-center" style="font-size:15px!important;">Primary Skills</th>
-                                                <th class="text-center" style="font-size:15px!important;">Client</th>
-                                                <th class="text-center" style="font-size:15px!important;">Add</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @for (int i = 0; i < Model.ProjectIRFMappings.Count(); i++)
-                                            {
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered mbn" id="IRFList">
+                                            <thead>
                                                 <tr>
-
-                                                    <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
-                                                    <td class="text-center" width="30%">@Model.ProjectIRFMappings[i].PrimarySkills</td>
-                                                    <td class="text-center" width="20%">@Model.ProjectIRFMappings[i].Client</td>
-                                                    <td class="text-center" width="20%">
-                                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
-                                                            <div class="mdc-checkbox">
-                                                                @Html.CheckBoxFor(m => m.ProjectIRFMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
-
-
-                                                                <div class="mdc-checkbox__background">
-                                                                    <svg class="mdc-checkbox__checkmark"
-                                                                         viewBox="0 0 24 24">
-                                                                        <path class="mdc-checkbox__checkmark-path"
-                                                                              fill="none"
-                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                    </svg>
-                                                                    <div class="mdc-checkbox__mixedmark"></div>
-                                                                </div>
-                                                                <div class="mdc-checkbox__ripple"></div>
-
-
-                                                            </div>
-                                                        </div>
-
-
-
-                                                    </td>
-                                                    @Html.HiddenFor(m => m.ProjectIRFMappings[i].IRFId)
-
+                                                    <th class="text-center" style="font-size:15px!important;">IRF ID</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Primary Skills</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Client</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Add</th>
                                                 </tr>
-                                            }
+                                            </thead>
+                                            <tbody>
+                                                @for (int i = 0; i < Model.ProjectIRFMappings.Count(); i++)
+                                                {
+                                                    <tr>
 
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                        <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
+                                                        <td class="text-center" width="30%">@Model.ProjectIRFMappings[i].PrimarySkills</td>
+                                                        <td class="text-center" width="20%">@Model.ProjectIRFMappings[i].Client</td>
+                                                        <td class="text-center" width="20%">
+                                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.ProjectIRFMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
 
 
-                                <div class="card-footer ">
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark"
+                                                                             viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
 
-                                    <div class="row">
-                                        <div class="col-md-12 mc-button-area">
-                                            @Html.ActionLink("Back to List", "Index", "Project", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </td>
+                                                        @Html.HiddenFor(m => m.ProjectIRFMappings[i].IRFId)
+
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </div></div>
+
+
+                                    <div class="card-footer ">
+
+                                        <div class="row">
+                                            <div class="col-md-12 mc-button-area">
+                                                @Html.ActionLink("Back to List", "Index", "Project", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    }
+
+
+
                                 </div>
-
-                            }
-
-
-
-                        </div>
 
 
 

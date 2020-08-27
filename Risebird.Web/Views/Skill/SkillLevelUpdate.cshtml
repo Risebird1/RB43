@@ -28,12 +28,12 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
-        <div class="row">
+    <div class="content client">
+        <div class="row bg-white">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bg-white">
                    
                     <div class="mdc-card-wrapper__text-section">
                         @using (Html.BeginForm("EditSkillLevel", "Skill", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -43,8 +43,8 @@
 
                         <div class="row">
 
-                            <div class="card-header">
-                                <h4 class="card-title">Update Skill Level</h4>
+                            <div class="col-md-12">
+                                <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Update Skill Level</h4></div>
                             </div>
                             <div style="width: 100%;">&nbsp;</div>
                             <div class="form-horizontal w-full">
