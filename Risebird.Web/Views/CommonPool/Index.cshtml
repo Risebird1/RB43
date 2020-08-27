@@ -456,14 +456,14 @@
                                                             else
                                                             {
                                                                 <span class="candidate">@item.candidateName</span>}
-
-                                                            @if (@item.JDTiltle.Length > 20)
+                                                             @if (@item.JDTiltle.Length > 30)
                                                             {
-                                                                <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">(@item.JDTiltle.Split("|")[0])</span></a>}
+                                                                <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>}
 
                                                             else
                                                             {
                                                                 <span class="designation">@item.JDTiltle</span>}
+
 
 
 
@@ -484,24 +484,20 @@
                                                             @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
 
                                                         </div>
-                                                        <div class="video-view">
+                                                         <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
                                                             &nbsp;<i class="fas fa-calendar-alt"></i>
                                                             <span>@item.interviewDate</span>
-
-
-
-
-
-                                                            <span class="video-info pull-right">
-                                                                <span>Tech Skill Score:</span>
+                                                        </div>
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                            <span>Tech Skill Score:</span>
+                                                            <span>
                                                                 <span>@(item.TechSkillScore)%</span>
                                                             </span>
-
 
                                                         </div>
 
 
-                                                        <div class="video-info col-sm-8 col-md-8 col-lg-8 pull-left nopad">
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
 
 
                                                             <span class="notice"> Notice Period: </span>
@@ -515,22 +511,22 @@
                                                             }
                                                         </div>
 
-                                                        <div class="video-info col-sm-4 col-md-4 col-lg-4 pull-right nopad text-center">
-                                                            <span class="divider-g">
-                                                                @if (item.InterviewStatus == 4)
-                                                                {
-                                                                    <span style="color:palevioletred">Border Line</span>
-                                                                }
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                            <span>Status:</span>
+                                                            @if (item.InterviewStatus == 4)
+                                                            {
+                                                                <span style="color:palevioletred">Border Line</span>
+                                                            }
 
-                                                                else if (item.InterviewStatus == 2)
-                                                                {
-                                                                    <span style="color:green">Selected</span>
+                                                            else if (item.InterviewStatus == 2)
+                                                            {
+                                                                <span style="color:green">Selected</span>
 
-                                                                }
+                                                            }
 
 
 
-                                                            </span>
+
 
                                                         </div>
                                                         <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
@@ -547,7 +543,7 @@
 
                                                             <span>Location:</span>
                                                             <span>
-                                                                @if (@item.preferredLocation.Length > 3)
+                                                                @if (@item.preferredLocation.Length > 10)
                                                                 {
                                                                     <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
                                                                 else
@@ -555,7 +551,6 @@
                                                             </span>
 
                                                         </div>
-
 
                                                     </div>
                                                 </div>

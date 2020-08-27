@@ -487,6 +487,19 @@
     margin-top: 20px;
 }
 
+.notice {
+    float: left;
+    line-height: 22px;
+}
+
+.join {
+    float: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100px;
+    line-height: 22px;
+}
 
 
 .showinter .btn {
