@@ -2105,6 +2105,8 @@ textarea::-webkit-scrollbar-thumb {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
     }
+    .mob-pad{padding:0px!important; display:block!important}
+
     .candidateinterest-btn {
         position: relative;
         left: auto;
@@ -2122,6 +2124,12 @@ textarea::-webkit-scrollbar-thumb {
     .pt30 .form-group.card-title-space {
         margin-top: 0px;
     }
+
+    .pt30 .selectedmeeting .form-group.card-title-space {
+        margin-top: 20px;
+    }
+
+
     .pt30 .pull-right.newsletter {
         float: right
     }
@@ -2416,13 +2424,14 @@ textarea::-webkit-scrollbar-thumb {
         width: 50%;
         margin: 0;
         position: absolute;
-        top: 25px;
+        top: 17px;
         right: 0;
     }
+      
 
-    .single-video-info-content {
-        margin-top: 20px;
-    }
+        .single-video-info-content {
+            margin-top: 20px;
+        }
 
     .share-btn {
         position: relative;
@@ -2454,8 +2463,8 @@ textarea::-webkit-scrollbar-thumb {
 
     .views {
         padding: 0px 10px 0px 10px;
-        right: 4px;
-        top: 49px !important;
+        right: -15px;
+        top: 35px !important;
     }
     .share {
         width: 50% !important;

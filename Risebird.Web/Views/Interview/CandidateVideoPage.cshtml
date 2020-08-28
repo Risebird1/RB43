@@ -249,7 +249,7 @@
                                                                         <span class="tooltip--right" data-tooltip="Share video url securily">
                                                                             <input type="button" class="share-wrap btninterest sharebtn1 public-share" id="btnShare2" value="Secure Share" Shortvalue="1" />
                                                                         </span>
-                                                                        <span class="tooltip--right" data-tooltip="To generate public sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+                                                                        <span class="tooltip--right" data-tooltip="To generate secure sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Secure Share Url" Shortvalue="1" /></span>
                                                                     </div>
                                                                 </div>
 
@@ -989,7 +989,7 @@
                 <div class="filavatar">
                     <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
                 </div>
-                <h5 class="modal-title pull-left">Public Share Url</h5>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
@@ -1859,7 +1859,16 @@
     }
     function SharepublicVideoLink() {
         if ($("#txtpublicsharing").val() != "") {
-            if (Swal.fire('Are you sure, you want to share this video?')) {
+             if(Swal.fire({
+               title: "Are you sure, you want to share video?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "OK",
+               
+
+             closeOnConfirm: false,
+            
+            })) {
                 $.ajax({
                     type: "POST",
                     url: "/Interview/VideoShare",
