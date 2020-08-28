@@ -42,15 +42,12 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
+        
 
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, IUserRepository userRepository, IUserService userService)
-
-        private readonly string _SentimentApiKey;
-        private readonly string _SentimentEndpoint;
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -64,8 +61,6 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _userRepository = userRepository;
             _userService = userService;
-            _SentimentApiKey = _configuration["SentimentCreds:SentimentApiKey"];
-            _SentimentEndpoint = _configuration["SentimentCreds:SentimentEndpoint"];
             _httpClient = factory.GetHttpClient();
 
         }
