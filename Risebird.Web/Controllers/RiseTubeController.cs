@@ -1911,7 +1911,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "CuratedUser")
                 {
                     //To get data from db for video displayes
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);
@@ -1922,7 +1922,7 @@ namespace Risebird.Web.Controllers
                     }
                     return Json(model);
                 }
-                else if (profileName == "Candidate" || profileName == "Client")
+                else if (profileName == "Candidate" || profileName == "Client" )
                 {
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
