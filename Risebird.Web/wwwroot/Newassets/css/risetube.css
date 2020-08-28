@@ -2105,6 +2105,8 @@ textarea::-webkit-scrollbar-thumb {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
     }
+    .mob-pad{padding:0px!important; display:block!important}
+
     .candidateinterest-btn {
         position: relative;
         left: auto;
@@ -2461,8 +2463,8 @@ textarea::-webkit-scrollbar-thumb {
 
     .views {
         padding: 0px 10px 0px 10px;
-        right: 4px;
-        top: 44px !important;
+        right: -15px;
+        top: 35px !important;
     }
     .share {
         width: 50% !important;
