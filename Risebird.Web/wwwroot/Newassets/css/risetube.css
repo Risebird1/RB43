@@ -2422,13 +2422,10 @@ textarea::-webkit-scrollbar-thumb {
         width: 50%;
         margin: 0;
         position: absolute;
-        top: 25px;
+        top: 17px;
         right: 0;
     }
-        .k .btn3 {
-            top: -25px;
-            position: relative;
-        }
+      
 
         .single-video-info-content {
             margin-top: 20px;
