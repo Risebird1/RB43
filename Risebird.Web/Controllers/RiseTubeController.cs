@@ -1174,7 +1174,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("VideoPagefilters");
-                    return Json("Success");
+                    return RedirectToAction("VideoPage");
                 }
                 else
                 {
