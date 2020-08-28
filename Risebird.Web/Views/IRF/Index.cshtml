@@ -1229,7 +1229,7 @@
         $(".sidebar-wrapper").addCss('width','260px');
 });
 </script>
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "FALSE")
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
     pfName = pfName.Replace("\"", "");

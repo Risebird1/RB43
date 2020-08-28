@@ -540,7 +540,7 @@
 
 
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "false")
 {
     var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
     pfName = pfName.Replace("\"", "");

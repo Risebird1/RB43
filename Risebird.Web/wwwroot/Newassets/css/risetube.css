@@ -2122,6 +2122,12 @@ textarea::-webkit-scrollbar-thumb {
     .pt30 .form-group.card-title-space {
         margin-top: 0px;
     }
+
+    .pt30 .selectedmeeting .form-group.card-title-space {
+        margin-top: 20px;
+    }
+
+
     .pt30 .pull-right.newsletter {
         float: right
     }
