@@ -105,6 +105,6 @@ namespace Risebird.Repository.Interface
         Task AddTimeSpend(int id, string emailaddress, string flag, TimeSpan TimeSpend, string CurrentTime);
         IEnumerable<VideoDetails> GetallVideoSumaryDetails();
         Candidate GetCandidateSharedDetails(int id);
-        Task<bool> InsertVideoSentiment(List<VideoSentiment> sentimentData);
+        Task<bool> InsertVideoSentiment(List<VideoSentimentService> sentimentData);
     }
 }

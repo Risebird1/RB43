@@ -2526,37 +2526,47 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> InsertVideoSentiment(List<VideoSentiment> sentimentData)
+        public async Task<bool> InsertVideoSentiment(List<VideoSentimentService> sentimentData)
         {
             try
             {
-
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if(sentimentData!=null && sentimentData.Count()>0)
                 {
-                    DataTable sentimentDt = new DataTable();
-                    sentimentDt.Columns.Add("InterviewId", typeof(int));
-                    sentimentDt.Columns.Add("ImageUrl", typeof(string));
-                    sentimentDt.Columns.Add("EmotionType", typeof(int));
-                    sentimentDt.Columns.Add("Value", typeof(double));
-
-                    foreach (var item in sentimentData)
+                    using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        sentimentDt.Rows.Add(item.InterviewId, item.ImageUrl, item.EmotionType, item.Value);
+                        var query = "delete from VideoSentiment where InterviewId = @id";
+                        var dynamicParameters = new DynamicParameters();
+                        dynamicParameters.Add("@id", sentimentData.FirstOrDefault().InterviewId);
+                        con.Query(query, dynamicParameters);
+
+                        DataTable sentimentDt = new DataTable();
+                        sentimentDt.Columns.Add("InterviewId", typeof(int));
+                        sentimentDt.Columns.Add("ImageUrl", typeof(string));
+                        sentimentDt.Columns.Add("EmotionType", typeof(int));
+                        sentimentDt.Columns.Add("Value", typeof(double));
+
+                        foreach (var item in sentimentData)
+                        {
+                            sentimentDt.Rows.Add(item.InterviewId, item.ImageUrl, item.EmotionType, item.Value);
+                        }
+
+                        SqlCommand cmdSentiment = new SqlCommand("usp_VideoSentimentBulkInsert", con)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
+                        cmdSentiment.Parameters.Add(new SqlParameter("@VideoSentimentBulkData", SqlDbType.Structured));
+                        cmdSentiment.Parameters["@VideoSentimentBulkData"].Value = sentimentDt;
+                        con.Open();
+                        if (cmdSentiment.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
                     }
 
-                    SqlCommand cmdSentiment = new SqlCommand("usp_VideoSentimentBulkInsert", con)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
-                    cmdSentiment.Parameters.Add(new SqlParameter("@VideoSentimentBulkData", SqlDbType.Structured));
-                    cmdSentiment.Parameters["@VideoSentimentBulkData"].Value = sentimentDt;
-                    con.Open();
-                    if (cmdSentiment.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
                 }
                 return true;
+
+
             }
             catch (SqlException ex)
             {

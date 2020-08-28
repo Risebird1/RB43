@@ -1645,7 +1645,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> InsertVideoSentiment(List<VideoSentiment> sentimentData)
+        public async Task<bool> InsertVideoSentiment(List<VideoSentimentService> sentimentData)
         {
             try
             {

@@ -17,6 +17,7 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -6020,25 +6021,23 @@ namespace Risebird.Web.Controllers
             return result;
 
         }
-        public async Task<JsonResult> AnalyseSentiment(string videoUrl, int imid)
+
+        [HttpGet]
+        public async Task<IActionResult> AnalyseSentiment(int imid)
         {
             try
+
             {
 
                 SentimentDTO obj = new SentimentDTO();
                 obj.imid = imid;
-                obj.VideoUrl = videoUrl;
-
-                //var functionKey = "Q/8CUsLsbKYeqRMFNPT5QnKsNWzoudpVayC1bN7tQbYK0SEAw1wboQ==";
-                var path = $"SentimentAnalysis";
-                var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, obj, "","",_cancellationToken);
-                var result = response.Content.ReadAsStringAsync().Result;
-
-                if (response.IsSuccessStatusCode)
+                if (TempData["SuccessErrorMessageSentiment"] != null)
                 {
-                    return Json("Successful");
+                    ViewBag.Message = TempData["SuccessErrorMessageSentiment"].ToString();
+                    TempData.Remove("SuccessErrorMessageSentiment");
                 }
-                return Json("Failed");
+                return View(obj);
+                
             }
             catch (Exception ex)
             {
@@ -6047,94 +6046,52 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AnalyseSentiment(SentimentDTO model)
+        {
+            try
+            {
+                //var path = $"SentimentAnalysis";
+                var path = $"http://localhost:7071/api/SentimentAnalysis";
+                string videoFilepath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.TruncatedVideoFile.FileName);
+                
+                using (var stream = new FileStream(videoFilepath, FileMode.Create))
+                {
+                    await model.TruncatedVideoFile.CopyToAsync(stream);
+                }
 
-        //[HttpPost]
-        //public async Task<bool> AnalyseSentimentMethod(string videoUrl, int imid)
-        //{
-        //    try
-        //    {
-        //        int frameCount = 1;
-        //        var sentimentData = new List<VideoSentiment>();
-        //        FaceClient faceClient = new FaceClient(new ApiKeyServiceClientCredentials(_SentimentApiKey))
-        //        {
-        //            Endpoint = _SentimentEndpoint
-        //        };
+                model.VideoFilepath = videoFilepath;
 
-        //        using (var videoFrameReader = new VideoFrameReader(@"E:\EmotionAnalysisFiles\WIN_20200819_14_24_35_Pro.mp4"))
-        //        {
-        //            foreach (var frame in videoFrameReader)
-        //            {
-        //                using (frame)
-        //                {
-        //                    //byte[] data = new byte[0];
-        //                    using (MemoryStream ms = new MemoryStream())
-        //                    {
-        //                        Image.GetThumbnailImageAbort myCallback =
-        //                                    new Image.GetThumbnailImageAbort(ThumbnailCallback);
-        //                        var img = frame.GetThumbnailImage(1280, 720, myCallback, IntPtr.Zero);
-        //                        img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-        //                        ms.Seek(0, 0);
-
-        //                        var faces = (await faceClient.Face.DetectWithStreamAsync(ms,
-        //                                    returnFaceId: false,
-        //                                    returnFaceLandmarks: false,
-        //                                    returnFaceAttributes: new FaceAttributeType[1] { FaceAttributeType.Emotion })).ToArray();
-
-        //                        if (faces != null)
-        //                        {
-        //                            var array = new double[8];
-        //                            array[0] = faces.FirstOrDefault().FaceAttributes.Emotion.Anger;
-        //                            array[1] = faces.FirstOrDefault().FaceAttributes.Emotion.Contempt;
-        //                            array[2] = faces.FirstOrDefault().FaceAttributes.Emotion.Disgust;
-        //                            array[3] = faces.FirstOrDefault().FaceAttributes.Emotion.Fear;
-        //                            array[4] = faces.FirstOrDefault().FaceAttributes.Emotion.Happiness;
-        //                            array[5] = faces.FirstOrDefault().FaceAttributes.Emotion.Neutral;
-        //                            array[6] = faces.FirstOrDefault().FaceAttributes.Emotion.Sadness;
-        //                            array[7] = faces.FirstOrDefault().FaceAttributes.Emotion.Surprise;
-
-        //                            var largest = array[0];
-        //                            var index = 0;
-        //                            for (int i = 1; i < 8; i++)
-        //                            {
-        //                                if (array[i] > largest)
-        //                                {
-        //                                    largest = array[i];
-        //                                    index = i;
-        //                                }
-        //                            }
-
-        //                            var sentimentType = index + 1;
-        //                            var sentimentValue = largest;
-        //                            var fileName = imid + "_Frame_" + frameCount;
-        //                            var imageUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "frameimages", ms);
-        //                            frameCount = frameCount + 1;
-        //                            sentimentData.Add(new VideoSentiment { InterviewId = imid, ImageUrl = imageUrl, EmotionType = sentimentType, Value = sentimentValue });
-
-        //                        }
-        //                        //var result = faceClient.Face.DetectWithStreamAsync(ms).Result;
-
-        //                        //data = ms.ToArray();
-        //                    }
-        //                    //return data;
+                var response =_httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken).Result;
+                var result = response.Content.ReadAsStringAsync().Result;
+                result = result.Replace("\"[", "[").Replace("]\"", "]").Replace("\\", "");
 
 
-        //                }
-        //            }
-        //        }
+                var sentimentData = JsonConvert.DeserializeObject<List<VideoSentimentService>>(result);
+                
+                System.IO.File.Delete(videoFilepath);
+                //return await _meetingService.InsertVideoSentiment(sentimentData);
 
-        //        return await _meetingService.InsertVideoSentiment(sentimentData);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return false;
-        //    }
-        //}
+                if (_meetingService.InsertVideoSentiment(sentimentData).Result)
+                {
+                    TempData["SuccessErrorMessageInterview"] = "Successfull!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageInterview"] = "Failed!";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Failed!";
+                return RedirectToAction("Index");
+            }
+        }
 
-        //public bool ThumbnailCallback()
-        //{
-        //    return false;
-        //}
+     
     }
 
 }
