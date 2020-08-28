@@ -7562,6 +7562,11 @@ input.theatre-btn:focus {
     color: #22446b;
     font-weight: 600;
 }
+.pt30 .card-title strong {
+    color: #22446b;
+    font-weight: 600;
+}
+.pt30 .card-title{margin-bottom:0px;}
 
 .card .card-header:not([data-background-color]) {
     background-color: transparent;
@@ -11270,7 +11275,9 @@ div.dataTables_scrollFoot table {
         padding:10px 0px !important;
         margin: 0px !important;
     }
-
+    .pt30 .card-title {
+        margin-right: 10px;
+    }
 
     .card-blue .card-footer .stats-bttm-btn {
         padding: 0px 0px 0px 0px !important;
@@ -11339,7 +11346,16 @@ div.dataTables_scrollFoot table {
     }
 
     .navbar .navbar-brand {
-        font-size: 13px !important;
+        font-size: 10px !important;
+    }
+    .swal2-popup .swal2-title {
+        font-size: 1.3em!important;
+    }
+
+    .candidatevideo [data-tooltip]:before {
+        background: #908f8f;
+        color: #fff !important;
+        border: 1px #fff solid !important;
     }
 
     div.dataTables_wrapper div.dataTables_length,

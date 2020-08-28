@@ -713,7 +713,7 @@ namespace Risebird.CommonHelper
                 return "Broadcast failed.";
             }
         }
-        public string MeetingInvite(DateTime startTime, DateTime endTime, string TimeZone, string accountMail, string accountPass, string Message, string subject, string sender, string candidateMail, string additionalMail, string meetingURL )
+        public string MeetingInvite(DateTime startTime, DateTime endTime, string TimeZone, string accountMail, string accountPass, string Message, string subject, string sender, string candidateMail, string additionalMail, string meetingURL)
         {
             try
             {
@@ -738,10 +738,10 @@ namespace Risebird.CommonHelper
                 //smtpClient.Credentials = credentials;
 
                 //smtpClient.Send(mailMessage);
-               
 
-                var  mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");              
+
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 mailMessage.To.Add(new MailAddress(sender, null));
                 object[] parameters = new object[] { accountMail, accountPass };
                 mailMessage.Subject = $"Confidential: Team Meeting Account detail for meeting schedule at {startTime} with {candidateMail}";
@@ -763,6 +763,68 @@ namespace Risebird.CommonHelper
                 return "Mail sent failed.";
             }
         }
+        public string VideoAccessRequest(Mail model, string url, string Emailid)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+               
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                var anchrTag = "<a href=" + url + ">Candidate Interview Video</a>";
+                object[] parameters = new object[] { Emailid,anchrTag  };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RequestForAccess.html");
+                string msgBody = string.Format(rawEmail, parameters);
 
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+        public string ShowIntrestInterview(Mail model, string Email, string videoURL)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { Email, "<a href=" + videoURL + ">" };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewInterestShown.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
     }
 }

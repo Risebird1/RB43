@@ -95,9 +95,9 @@ namespace Risebird.Web
                     if(!resultValue.Contains("failed"))
                     {
                         var resultset = _notificationHelper.MeetingInvite(startdate, enddate, TimeZoneDetails, accountEmail, resultValue,Message, Subject, loggedinUser, candidateEmailId, AdditionalUser, meetingURL);
-                        if (resultset == "Mail sent Successfully.")
+                        if (resultset == "Mail sent successfully.")
                         {
-                            return Json("Invite Successfully Send");
+                            return Json("Invite sent successfully");
                         }
                         else
                         {

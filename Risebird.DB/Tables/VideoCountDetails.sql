@@ -18,7 +18,20 @@ CREATE TABLE [dbo].[VideoCountDetails](
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-End
+END
+else
+BEGIN
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsIntrested')
+      AND Object_ID = Object_ID(N'VideoCountDetails'))
+BEGIN
+    ALTER TABLE VideoCountDetails
+    Add IsIntrested  varchar(20) NULL
+END
+END
 GO
 
 

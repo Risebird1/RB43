@@ -57,7 +57,7 @@
                         </button>
                         
                     </div>
-                    <a class="navbar-brand">
+                    <a class="navbar-brand first">
                         All Interview Priority View
                     </a>
 
@@ -71,10 +71,11 @@
 
 
         <div class="pt30">
-            <div class="col-md-12 nopad">
+            <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
                     <div class="pull-left">
                         <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title">All Interview Priority View</h4></div>
                     </div>
 
                     <div class="pull-right">
@@ -403,7 +404,7 @@
                                         <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                    <th>Interview Date</th>
+                                                    <th id='start'>Interview Date</th>
                                                     <th>Candidate Name</th>
                                                     <th>Client HR</th>
                                                     <th class="itemInterviewLink">Interview Link</th>
@@ -515,7 +516,7 @@
                                                         {
                                                             <td>
 
-                                                                <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink>Aadhar</a>
+                                                                <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink.ToString().Replace(" ","%20")>Aadhar</a>
                                                             </td>
                                                         }
                                                         else

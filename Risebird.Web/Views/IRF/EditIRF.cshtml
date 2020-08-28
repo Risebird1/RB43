@@ -9,6 +9,15 @@
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".selectpicker").select2();
+    });
+
+
+</script>
+
+
 
 
 <div class="main-panel" id="main-panel">
@@ -24,23 +33,19 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
-                <a class="navbar-brand">Edit Skill Channel</a>
+                <a class="navbar-brand"> /  &nbsp; Edit Skill Channel</a>
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
+     
 
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
-        <div class="row">
+    <div class="content client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="irfForm" onsubmit="return CheckTotalWeightage()">
@@ -49,8 +54,8 @@
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                             <div class="row">
-                                <div class="card-header">
-                                    <h4 class="card-title">Edit IRF</h4>
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Skill Channel</h4></div>
                                 </div>
                                 <div style="width: 100%;">&nbsp;</div>
                                 <div class="col-md-3 col-sm-3 pr-1">
@@ -83,7 +88,7 @@
                                 <div class="col-md-3 col-sm-3 pr-r">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control select-css " })
+                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control select-css" })
 
                                     </div>
                                 </div>
@@ -147,7 +152,24 @@
                                         @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control  text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
                                     </div>
+                                    <div class="form-group">
+                                        <!--  <div class="switch-btn col-md-12">
+                                            <span class="on-off">B2C</span>
+                                            <div class="material-toggle">
 
+                                                <input class="switch" id="MoveToB2B" type="checkbox" checked="checked" value="false" name="B2B">
+                                                <label for="MoveToB2B" class=""></label>
+
+                                            </div>
+                                            <span class="on-off">B2B</span>
+                                        </div>-->
+
+                                        @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
+                                        @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
+
+
+
+                                    </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
@@ -181,6 +203,7 @@
                                         </div>
 
                                     </div>
+
                                     <div class="form-group">
                                         Upload Company Details
 
@@ -371,11 +394,11 @@
 
                                                         <td>
 
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css " })
+                                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control ", @onchange = "TechSkillChanged()" })
+                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
                                                         </td>
 
                                                         <td>

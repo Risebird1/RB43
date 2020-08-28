@@ -96,6 +96,8 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Uploaded Candidate Resume")]
         public string resumeLink { get; set; }
+        [Display(Name = "Verified Aadhar Information")]
+        public string AadharFileLink { get; set; }
         [Display(Name = "Interview Date")]
         public string interviewDate { get; set; }
 
@@ -117,6 +119,7 @@ namespace Risebird.Entities.ViewModel
         public string FinalComments { get; set; }
         public bool IsQC { get; set; }
         public bool IsBiometricEnabled { get; set; }
+        [Display(Name = "Voice Biometric Score")]
         public double InterviewBiometryScore { get; set; }
         public double JoiningBiometryScore { get; set; }
 

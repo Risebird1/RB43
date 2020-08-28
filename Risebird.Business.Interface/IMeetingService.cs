@@ -81,6 +81,14 @@ namespace Risebird.Business.Interface
         IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid);
         Task AddTimeSpend(int id, string emailaddress, string flag,TimeSpan TimeSpend, string CurrentTime);
         IEnumerable<VideoDetails> GetallVideoSumaryDetails();
+        string AddVedioShare(string email, string vedioid,string Emailids);
+        int CheckVedioShare(string vedioid, string Emailid);
+        string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid);
+        IEnumerable<VideoDetails> GetVideoIntrestDetails();
+        IEnumerable<string> FetchShareEmails(int Interviewid);
+        IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid);
+        string UpdateCandidateStatus(int videoid, string Status);
+
         Task<bool> InsertVideoSentiment(List<VideoSentimentService> sentimentData);
     }
 }

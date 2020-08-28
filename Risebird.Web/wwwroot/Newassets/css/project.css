@@ -216,7 +216,7 @@ table {
     overflow: hidden !important;
     text-overflow: ellipsis;
 }
-
+.mt50{margin-top:50px;}
 .multiple_row > h2 {
     font-size: 18px;
     background-color: #5f95b1;
@@ -226,14 +226,14 @@ table {
     margin-top: 35px;
     margin-bottom: 35px;
 }
-
-.statusImg {
-    -ms-flex: 0 0 12.666667%;
-    flex: 0 0 12.666667%;
-    max-width: 12.666667%;
-    float: left;
-    padding: 0px 15px;
-}
+    .multiple_row > h2:first-child{margin-top:0px!important;}
+    .statusImg {
+        -ms-flex: 0 0 12.666667%;
+        flex: 0 0 12.666667%;
+        max-width: 12.666667%;
+        float: left;
+        padding: 0px 15px;
+    }
 
 .statusInfo {
     -ms-flex: 0 0 82.333333%;
