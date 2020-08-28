@@ -32,7 +32,7 @@
 
 
         <div class="pt30">
-            <div class="col-md-12 nopad">
+            <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
                     <div class="pull-left">
                         <div class="desktop-view">
@@ -41,7 +41,7 @@
                         </div>
 
                     <div class="pull-right">
-                        <div>
+                        <div class="selectedmeeting">
                             <div class="form-group card-title-space" style="float:left; margin-right: 30px;width:100px;">
                                 @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control", onchange = "FilterInterviews(this.value);" })
                             </div>
