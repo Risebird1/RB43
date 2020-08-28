@@ -1234,6 +1234,7 @@ namespace Risebird.Web.Controllers
             //send a email
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
+            var resultset = _meetingService.AddVedioShare(email, videoid, Emailids);
             string currenturl = Request.Host.ToString() + "/RiseTube/VideoPage/" + videoid;
             Mail _mail = new Mail
             {
