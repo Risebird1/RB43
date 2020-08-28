@@ -2419,10 +2419,14 @@ textarea::-webkit-scrollbar-thumb {
         top: 25px;
         right: 0;
     }
+        .k .btn3 {
+            top: -25px;
+            position: relative;
+        }
 
-    .single-video-info-content {
-        margin-top: 20px;
-    }
+        .single-video-info-content {
+            margin-top: 20px;
+        }
 
     .share-btn {
         position: relative;
@@ -2455,7 +2459,7 @@ textarea::-webkit-scrollbar-thumb {
     .views {
         padding: 0px 10px 0px 10px;
         right: 4px;
-        top: 49px !important;
+        top: 44px !important;
     }
     .share {
         width: 50% !important;
