@@ -20,31 +20,40 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
+                <a class="navbar-brand">
+                    Scheduled Interviews
+                </a>
 
             </div>
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
-    </div>
-    <div class="content">
-        <div class="row">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="mobile-view">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
+                        <h4 class="card-title">Scheduled Interviews</h4>
+                    </div>
+
+
+                </div>
+                </div>
+            </div>
+        </div>
+    <div class="content client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
 
-                        <div class="row">
-                            <div class="card-header">
-                                <div class="pull-left">
-                                    <h4 class="card-title">Scheduled Interviews</h4>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="row">
                             @foreach (var item in Model)
                             {
                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                            <div class="desktop-view w-full"> <div style="height:20px;"></div></div>
                                 <div class="col-lg-4 col-sm-6" style="margin-top: 15px;">
                                     <div class="card card-stats border  card-blue">
 
@@ -183,16 +192,20 @@
                                                         <button class="mdc-fab app-fab--absolute  sixteen" aria-label="Interview">
                                                             <span onclick="javascript:ChangeCandiateStatus(@item.id,'NotAvailable');" title="Candidate Not Available" class="mdc-fab__icon material-icons">
                                                             
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z" /></svg>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z" /></svg>
                                                             
                                                             </span>
                                                             
                                                         </button>
                                                     }
                                                 }
+
+                                                @if (DateTime.Now <= item.interviewDate )
+                                                {
                                                 <button class="mdc-fab app-fab--absolute trash-btn seventeen" aria-label="Cancel interview request">
                                                     <span onclick="javascript:CancelInterview(@jsonObject);" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
                                                 </button>
+                                                }
 
                                             </div>
                                         </div>
@@ -653,6 +666,8 @@
     }
     function interestConfirmPass() {
         var id = $("#txtConfirmPass").val();
+
+
         $.ajax({
             type: "POST",
             url: "/Interview/Intrestreaction",
@@ -669,7 +684,18 @@
     }
     function ChangeCandiateStatus(interviewid,status) {
 
-    if(window.confirm('are you sure')){
+    if(Swal.fire({
+               title: "Are you sure, you want to hide the your profile?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "OK",  
+                closeOnConfirm: false,
+     closeOnConfirm: false, //It does close the popup when I click on close button
+    closeOnCancel: false,
+
+    timer: 1000,
+            
+            })){
   
          $.ajax({
             type: "POST",

@@ -743,8 +743,8 @@ ul.panel-controls > li > button {
     padding: 1px;
     border: 0px;
     position: relative;
-    top: -2px;
-    right: 0px;
+    top: 0px;
+    right: 8px;
     width: 21px;
     height: 21px;
 }
