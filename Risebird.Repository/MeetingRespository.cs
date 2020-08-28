@@ -2758,5 +2758,30 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IEnumerable<VideoSentiment>> GetSentimentAnalysis(int imid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", imid);
+                    return await SqlMapper.QueryAsync<VideoSentiment>(con, "usp_GetSentimentAnalysis", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
     }
 }

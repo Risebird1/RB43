@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -2053,6 +2054,21 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public async Task<SentimentPercentage> GetSentimentAnalysis(int imid)
+        {
+            try
+            {
+                var data = await _meetingService.GetSentimentAnalysis(imid);
+                //var data = await _meetingService.GetSentimentAnalysis(2379);
+                return data;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

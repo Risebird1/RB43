@@ -820,6 +820,7 @@
                                                                 <li class="nav-link item5" rel="link5">General Skill Report</li>
                                                                 <li class="nav-link item6" rel="link6"> Joinability Report</li>
                                                                 <li class="nav-link item7" rel="link7"> Selectability Report</li>
+                                                                <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
                                                             </ul>
                                                             <hr />
                                                             <div class="tab_container tab-space">
@@ -1052,7 +1053,7 @@
                                                                 </div>
 
                                                                 <h3 class="d_active tab_drawer_heading" rel="link3">Tech Skill</h3>
-                                                         
+
                                                                 <div class="tab-pane tab_content" id="link3">
                                                                     <div>
                                                                         <div class="table-responsive-sm">
@@ -1436,6 +1437,15 @@
 
                                                                     <!-- #tab7 -->
                                                                 </div>
+
+                                                                <h3 class="tab_drawer_heading" rel="link8"> Sentiment Analysis</h3>
+
+                                                                <div id="link8" class="tab_content">
+                                                                    
+
+                                                                    
+                                                                </div>
+
                                                             </div>
                                                         </div>
                                                         @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
@@ -2174,7 +2184,46 @@
     </div>
 </div>
 
+<script>
+    function GetSentimentAnalysis(imid) {
+        document.getElementById('link8').innerHTML = '';
+        $.ajax({
+            url: '/RiseTube/GetSentimentAnalysis',
+            data: { 'imid': imid },
+            success: function (data) {
+                var sentimentObj = [{ y: data.anger, label: "Anger" },
+                { y:data.contempt, label: "Contempt" },
+                { y: data.disgust, label: "Disgust" },
+                { y: data.fear, label:"Fear"},
+                { y: data.happiness, label:"Happiness"},
+                { y: data.neutral, label:"Neutral"},
+                { y: data.sadness, label:"Sadness"},
+                { y: data.surprise, label: "Surprise" }]
+            
 
+        var chart = new CanvasJS.Chart("link8", {
+           theme: "light2",
+            width: 350,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: null,
+            data: [{
+                type: "pie",
+                startAngle: 60,
+                innerRadius: 55,
+                indexLabelFontSize: 15,
+                indexLabel: "{label}  {y}%",
+                toolTipContent: "<b>{label} </b>({y}%)",
+
+                dataPoints: sentimentObj
+            }]
+        });
+        chart.render();
+            }
+        });
+    }
+
+</script>
 <script>
     function datecal() {
         var dtToday = new Date();

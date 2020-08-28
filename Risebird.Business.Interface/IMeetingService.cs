@@ -90,5 +90,6 @@ namespace Risebird.Business.Interface
         string UpdateCandidateStatus(int videoid, string Status);
 
         Task<bool> InsertVideoSentiment(List<VideoSentimentService> sentimentData);
+        Task<SentimentPercentage> GetSentimentAnalysis(int imid);
     }
 }
