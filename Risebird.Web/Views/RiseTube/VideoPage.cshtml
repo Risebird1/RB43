@@ -2789,15 +2789,16 @@
 
     });
     function ResetFilter() {
+                    window.location.href = "/risetube/VideoPage/@Model.imid";
 
-             $.ajax({
+             @*$.ajax({
             type: "POST",
             url: "/Risetube/ResetVideoPageFilter",
                  success: function (data) {
 
                     window.location.href = "/risetube/VideoPage/@Model.imid";
                  }
-                });
+                });*@
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
