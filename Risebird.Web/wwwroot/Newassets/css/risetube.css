@@ -86,11 +86,14 @@
 .text-areadiv #comment::placeholder {
     line-height: 40px !important
 }
-
+#toggle-click, #toggle-click1 {
+    font-size: 18px !important;
+}
 
 .counts-liks .dropdown-menu {
     z-index: 1;
     padding: 0;
+    transform: translate3d(0px, 38px, 0px) !important;
 }
 
 .modal .label-field {
@@ -1881,7 +1884,10 @@ textarea::-webkit-scrollbar-thumb {
     .designation {
         font-size: 16px;
     }
-
+    .mob-pad {
+        padding: 0px!important;
+        display: block !important
+    }
     .expected-salari {
         white-space: nowrap;
         /* overflow: hidden; */
@@ -1939,7 +1945,7 @@ textarea::-webkit-scrollbar-thumb {
         height: 600px;
     }
     #wrapper #content-wrapper .container-wrap {
-        padding: 0px 0px 30px 15px;
+        padding: 0px 0px 30px 15px!important;
     }
     .mdc-card-wrapper__text-section {
         padding: 10px !important;
@@ -2105,7 +2111,7 @@ textarea::-webkit-scrollbar-thumb {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
     }
-    .mob-pad{padding:0px!important; display:block!important}
+
 
     .candidateinterest-btn {
         position: relative;
