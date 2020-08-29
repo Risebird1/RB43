@@ -697,7 +697,7 @@
                                                                 <div>
                                                                     <div>
                                                                         <ul class="nav nav-pills nav-pills-primary tabs">
-                                                                            <li class="nav-link active item1" rel="link1">Report Details</li>
+                                                                            <li class="nav-link active item1" rel="link1">Report Summary</li>
                                                                             <li class="nav-link item2" rel="link2">Candidate Details</li>
                                                                             <li class="nav-link item3" rel="link3"> Tech Skill Report</li>
                                                                             <li class="nav-link item4" rel="link4"> Questions Discussed</li>
@@ -707,7 +707,7 @@
                                                                         </ul>
                                                                         <hr />
                                                                         <div class="tab_container tab-space">
-                                                                            <h3 class="d_active tab_drawer_heading" rel="link1">Report Details</h3>
+                                                                            <h3 class="d_active tab_drawer_heading" rel="link1">Report Summary</h3>
                                                                             <div id="link1" class="tab_content">
                                                                                 <div class="row">
                                                                                     <div class="left-chart">
@@ -884,53 +884,70 @@
                                                                                             }
                                                                                         </div>
                                                                                     }
-                                                                                    @if (Model.IsIntrested == "Interest Accepted" && (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated))
+                                                                                    @if ((ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated))
                                                                                     {
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                                    @{
-                                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                                    }
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                                    @{
-                                                                                                        if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
-                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                                    }
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="row">
-                                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                                            {
+                                                                                        @if (Model.IsIntrested == "Interest Accepted")
+                                                                                        {
+                                                                                            <div class="row">
                                                                                                 <div class="col-md-6 col-sm-6">
-                                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    </div>
                                                                                                 </div>
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="row">
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                                        @{
+                                                                                                            if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                                        @{
+                                                                                                            if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
+                                                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="row">
+                                                                                                @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                                                {
+                                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                                    </div>
+                                                                                                }
+                                                                                            </div>
+                                                                                        }
+
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <div class="row">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                            @{
+                                                                                                if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                                { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
                                                                                             }
                                                                                         </div>
-                                                                                    }
+                                                                                    </div>
                                                                                 }
 
                                                                             </div>
@@ -3459,7 +3476,7 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .item1': 'Interview Report Details',
+                    'next .item1': 'Interview Report Summary',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3565,7 +3582,7 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .item1': 'Interview Report Details',
+                    'next .item1': 'Interview Report Summary',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3690,7 +3707,7 @@
 
 
                 {
-                    'next .item1': 'Interview Report Details',
+                    'next .item1': 'Interview Report Summary',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
