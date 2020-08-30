@@ -170,14 +170,14 @@
                                                                     <input type="text" id="txtVideoId" value="@Model.imid" hidden />
                                                                     @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
                                                                     {
-                                                                        <video controls class="vjs-tech video-width btnvideo">
-                                                                            <source src="@Model.VideoLink" type="video/mp4">
-                                                                            <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
-                                                                        </video>
+                                                            <video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">
+                                                                <source src="@Model.VideoLink" type="video/mp4">
+                                                                <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
+                                                            </video>
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
                                                                     {
-                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
 
                                                                         </video>
@@ -211,7 +211,7 @@
                                                             @if (ViewBag.VideoStatus == "Public")
                                                             {
                                                                 @Model.candidateName <span class="candidateinterest-btn pull-right">
-                                                                    <input class="view-video" type="button" value="Show Interest" title="Click here to show your interest to Candidate Video Interview" onclick="SendIntrestUrl()" />
+                                                                    <input class="view-video" type="button" value="Show Interest" title ="Click to show your interest for this candidate interview" onclick="SendIntrestUrl()" />
                                                                 </span>
                                                             }
 

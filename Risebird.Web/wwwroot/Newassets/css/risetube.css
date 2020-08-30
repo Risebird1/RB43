@@ -174,10 +174,10 @@
     background-position: 20% 40% !important;
     border: none;
     background-color: white !important;
-    font-weight: normal;
+    font-weight: bold;
     font-size: 13px !important;
     padding: 5px 0px;
-    margin-left:10px;
+    margin-left: 10px;
 }
     .interest-btn .view-video {
         padding-left: 0px;
