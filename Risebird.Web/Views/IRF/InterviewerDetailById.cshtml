@@ -120,14 +120,14 @@
                                                             {
                                                                 @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
                                                                 {
-                                                                    <video controls class="vjs-tech video-width btnvideo">
+                                                                    <video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">
                                                                         <source src="@Model.VideoLink" type="video/mp4">
                                                                         <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
                                                                     </video>
                                                                 }
                                                                 else if (Model.VideoLink.Contains("/manifest"))
                                                                 {
-                                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
                                                                         <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
 
                                                                     </video>
