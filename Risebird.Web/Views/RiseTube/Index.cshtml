@@ -75,7 +75,7 @@
     <div class="pt30 videocon">
         <div class="col-md-12 nopad">
             <div class="card-header bg-w clearfix">
-                <div class="pull-left">
+                <div class="pull-left risetubeheader">
                     <h4 class="card-title"></h4>
 
                     <div class="mobile-view"> <h4 class="card-title risetubeid">Risetube</h4></div>
@@ -440,7 +440,7 @@
                                                         {
                                                             <img src="@item.ThumbnailImage" class="thumbnailImage" />
                                                         }
-                                                        <video controls class="video-thumb">
+                                                        <video controls class="video-thumb" controlsList="nodownload">
                                                             <source src="@item.VideoLink" type="video/mp4">
                                                         </video>
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
@@ -952,7 +952,7 @@
 
         var enjoyhint_script_steps = [
             {
-                'next #risetubeid': 'Risetube! Selected Candidates Video will be available over here  and click on continue to know its features',
+                'next .risetubeheader': 'Risetube! Selected Candidates Video will be available over here  and click on continue to know its features',
                 'nextButton': { className: "myNext", text: "Continue" },
                 'skipButton': { className: "mySkip", text: "Skip" }
             },
@@ -974,7 +974,7 @@
         setTimeout(function () {
             enjoyhint_instance.set(enjoyhint_script_steps);
             enjoyhint_instance.run();
-        }, 10000)
+        }, 3000)
     </script>
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
@@ -988,7 +988,7 @@
 
         var enjoyhint_script_steps = [
             {
-                'next #risetubeid': 'Risetube! Selected Candidate Videos will be available over here  and click on continue to know its features',
+                'next .risetubeheader': 'Risetube! Selected Candidate Videos will be available over here  and click on continue to know its features',
                 'nextButton': { className: "myNext", text: "Continue" },
                 'skipButton': { className: "mySkip", text: "Skip" }
             },
@@ -1010,7 +1010,7 @@
         setTimeout(function () {
             enjoyhint_instance.set(enjoyhint_script_steps);
             enjoyhint_instance.run();
-        }, 10000)
+        }, 3000)
     </script>
 }
 

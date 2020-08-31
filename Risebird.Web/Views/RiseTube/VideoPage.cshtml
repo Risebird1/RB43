@@ -472,14 +472,14 @@
                                                                     <input type="text" id="txtclienthr" value="@Model.ClientHrContact" hidden />
                                                                     @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
                                                                     {
-                                                                        <video controls class="vjs-tech video-width btnvideo">
+                                                                        <video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">
                                                                             <source src="@Model.VideoLink" type="video/mp4">
                                                                             <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
                                                                         </video>
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
                                                                     {
-                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
 
                                                                         </video>
@@ -515,7 +515,7 @@
                                                                     {
                                                                         @Model.candidateName
                                                                         <div class="interest-btn pull-right">
-                                                                            <input class="view-video" type="button" value="Intrested" onclick="SendIntrestUrl()" />
+                                                                            <input class="view-video" type="button" value="Show Interest" title ="Click to show your interest for this candidate interview" onclick="SendIntrestUrl()" />
                                                                         </div>
                                                                     }
 
@@ -697,7 +697,7 @@
                                                                 <div>
                                                                     <div>
                                                                         <ul class="nav nav-pills nav-pills-primary tabs">
-                                                                            <li class="nav-link active item1" rel="link1">Report Details</li>
+                                                                            <li class="nav-link active item1" rel="link1">Report Summary</li>
                                                                             <li class="nav-link item2" rel="link2">Candidate Details</li>
                                                                             <li class="nav-link item3" rel="link3"> Tech Skill Report</li>
                                                                             <li class="nav-link item4" rel="link4"> Questions Discussed</li>
@@ -707,7 +707,7 @@
                                                                         </ul>
                                                                         <hr />
                                                                         <div class="tab_container tab-space">
-                                                                            <h3 class="d_active tab_drawer_heading" rel="link1">Report Details</h3>
+                                                                            <h3 class="d_active tab_drawer_heading" rel="link1">Report Summary</h3>
                                                                             <div id="link1" class="tab_content">
                                                                                 <div class="row">
                                                                                     <div class="left-chart">
@@ -884,53 +884,70 @@
                                                                                             }
                                                                                         </div>
                                                                                     }
-                                                                                    @if (Model.IsIntrested == "Interest Accepted" && (ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated))
+                                                                                    @if ((ViewBag.ProfileName == "CuratedUser" || Model.IsClientCurated))
                                                                                     {
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                                    @{
-                                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                                    }
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                                    @{
-                                                                                                        if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
-                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                                    }
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="row">
-                                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                                            {
+                                                                                        @if (Model.IsIntrested == "Interest Accepted")
+                                                                                        {
+                                                                                            <div class="row">
                                                                                                 <div class="col-md-6 col-sm-6">
-                                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    </div>
                                                                                                 </div>
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="row">
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                                        @{
+                                                                                                            if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div class="col-md-6 col-sm-6">
+                                                                                                    <div class="form-group">
+                                                                                                        @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                                        @{
+                                                                                                            if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
+                                                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="row">
+                                                                                                @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                                                {
+                                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                                    </div>
+                                                                                                }
+                                                                                            </div>
+                                                                                        }
+
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <div class="row">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                            @{
+                                                                                                if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                                { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
                                                                                             }
                                                                                         </div>
-                                                                                    }
+                                                                                    </div>
                                                                                 }
 
                                                                             </div>
@@ -1390,7 +1407,7 @@
                                                                                         @if (videolist.ThumbnailImage != null)
                                                                                         {
                                                                                             <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                        <video controls style=" background:black!important;width:100%; height:100% ">
+                                                                                        <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                                         </video>
                                                                                         @if (Model.IsClientCurated)
@@ -2828,15 +2845,16 @@
 
     });
     function ResetFilter() {
+                    window.location.href = "/risetube/VideoPage/@Model.imid";
 
-             $.ajax({
+             @*$.ajax({
             type: "POST",
             url: "/Risetube/ResetVideoPageFilter",
                  success: function (data) {
 
                     window.location.href = "/risetube/VideoPage/@Model.imid";
                  }
-                });
+                });*@
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -3458,7 +3476,7 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .item1': 'Interview Report Details',
+                    'next .item1': 'Interview Report Summary',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3564,7 +3582,7 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .item1': 'Interview Report Details',
+                    'next .item1': 'Interview Report Summary',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3618,6 +3636,12 @@
 
                 },
                 {
+                    'next .tooltip1': 'Share and View Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
                     'next .post': 'Collaborative decision making. Write your comment and click post',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
@@ -3635,7 +3659,7 @@
             setTimeout(function () {
                 enjoyhint_instance.set(enjoyhint_script_steps);
                 enjoyhint_instance.run();
-            }, 10000)
+            }, 3000)
         </script>
     }
 }
@@ -3664,6 +3688,12 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
+                
+                {
+                    'next .sharebtn1': 'Share the video by clicking here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
                 {
                     'next .shortlist': 'Click here to Shortlist the Candidate',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3677,7 +3707,7 @@
 
 
                 {
-                    'next .item1': 'Interview Report Details',
+                    'next .item1': 'Interview Report Summary',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3689,7 +3719,7 @@
 
                 },
                 {
-                    'next .itemcomment': 'Check interviewer comments here',
+                    'next .itemcomment': 'Check interviewer comments, Job Level and Voice BioMetric Score(Optional)',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3707,7 +3737,7 @@
 
                 },
                 {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
+                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interest you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3732,19 +3762,25 @@
 
                 },
                 {
+                    'next .tooltip1': 'Share and View Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
                     'next .videosidelist': 'Similar skill Candidates Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'click .skillchannelmenu': 'Click on Skill Channel menu and to see its remaining features',
+                    'click .risetubemenu': 'Click on Risetube menu and to see its features',
                 },
 
             ];
             setTimeout(function () {
                 enjoyhint_instance.set(enjoyhint_script_steps);
                 enjoyhint_instance.run();
-            }, 10000)
+            }, 3000)
         </script>
     }
 }
