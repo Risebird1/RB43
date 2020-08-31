@@ -1939,6 +1939,26 @@
                         <div class="row">
 
                             <div class="col-md-12 col-sm-12">
+                                <div class="col-md-6 col-sm-6 pull-left nopad">
+                                    <div class="form-group">
+                                        <label class="control-label  desp-label">
+                                            View Name
+                                        </label>
+                                        <div>
+                                            @Html.TextBoxFor(m => m.IreportModel.ViewName, new { @class = "form-control text-box single-line" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 pull-left nopad">
+                                    <div>
+                                        <label class="control-label  desp-label">
+                                           Set Logo
+                                        </label>
+                                        <div>
+                                            @Html.TextBoxFor(m => m.IreportModel.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".jpg,.png", @maxRequestLength="61440" })
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="createshare_left">
 
                                     <div>
@@ -3363,6 +3383,7 @@
         html += '       <tr>';
         html += '          <th>User Name</th>';
         html += '          <th class="text-center">Video Link</th>';
+        html += '          <th class="text-center">View Name</th>';
         html += '            <th class="text-center">Total View</th>';
         html += '           <th class="text-center">Total Time</th>';
         html += '           <th class="text-center">Video Time</th>';
@@ -3374,6 +3395,7 @@
             html += '   <tr>';
             html += '                  <td>' + data[i].candidate + '</td>';
             html += '                    <td class="text-center"><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">Click Here</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
+            html += '                <td class="text-center">' + data[i].ViewName + '</td>';
             html += '                  <td class="text-center count-view"><span class="label-num"><strong>' + data[i].count + '</strong></span></td>';
             if (data[i].timeSpend != null) {
                 html += '                <td class="text-center">' + data[i].timeSpend + '</td>';
