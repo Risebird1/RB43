@@ -1767,8 +1767,13 @@ textarea::-webkit-scrollbar-thumb {
 }
 .tab-space {
     padding: 0px 0 30px 0px;
+    min-height:250px;
 }
-
+#link8 .canvasjs-chart-container {
+    text-align: center!important;
+    cursor: auto;
+    width: 400px;
+}
 .shortlist .fa-check {
     line-height: 40px;
     float: left;
@@ -1918,6 +1923,8 @@ textarea::-webkit-scrollbar-thumb {
         margin: 0px 10px 10px 10px;
         width: calc(100% - 10px) !important;
     }
+ 
+
     .video-card-list .video-card-image {
         width: 100px!important;
     }
@@ -1974,11 +1981,20 @@ textarea::-webkit-scrollbar-thumb {
     .expected-timing {
         width: 50%;
     }
+
+    #link8 .canvasjs-chart-container {
+        left: -130px;
+    }
+
+
 }
 
 @media screen and (max-width: 768px) {
     .tabs {
         display: none;
+    }
+    .tab-space {
+        min-height: 500px;
     }
     .video-contop {
         margin-top: 0;
@@ -2104,6 +2120,12 @@ textarea::-webkit-scrollbar-thumb {
 @media screen and (max-width: 767px) {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
+    }
+ 
+
+    #link8 .canvasjs-chart-container {
+        text-align: left !important;
+        left: 35px;
     }
     .candidateinterest-btn {
         position: relative;
@@ -2347,6 +2369,12 @@ textarea::-webkit-scrollbar-thumb {
     .single-video-left .comment-area textarea {
         width: 72%;
     }
+
+    #link8 .canvasjs-chart-container {
+        text-align: left !important;
+        left: 35px;
+    }
+
     .newsletter .input-group.card-title-space {
         margin-top: 0px;
     }
@@ -2402,7 +2430,10 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 @media screen and (max-width: 375px) {
-
+    #link8 .canvasjs-chart-container {
+        text-align: left !important;
+        left: -15px;
+    }
     .newsletter .mdc-button--outlined.card-title-space {
         margin-top: 0px;
     }
