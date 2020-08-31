@@ -746,6 +746,7 @@ namespace Risebird.Web.Controllers
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
+                        NewModel.IsBiometricEnabled = model.IsBiometricEnabled;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -1668,6 +1669,7 @@ namespace Risebird.Web.Controllers
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
+                        NewModel.IsBiometricEnabled = model.IsBiometricEnabled;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -2061,8 +2063,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var data = await _meetingService.GetSentimentAnalysis(imid);
-                //var data = await _meetingService.GetSentimentAnalysis(2379);
+                //var data = await _meetingService.GetSentimentAnalysis(imid);
+                var data = await _meetingService.GetSentimentAnalysis(2379);
                 return data;
             }
             catch (Exception ex)
