@@ -6318,7 +6318,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 model.VideoFilepath = videoFilepath;
-
+                _httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
                 var response =_httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken).Result;
                 var result = response.Content.ReadAsStringAsync().Result;
                 result = result.Replace("\"[", "[").Replace("]\"", "]").Replace("\\", "");

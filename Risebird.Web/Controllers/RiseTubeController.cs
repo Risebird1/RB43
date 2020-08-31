@@ -2063,8 +2063,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                //var data = await _meetingService.GetSentimentAnalysis(imid);
-                var data = await _meetingService.GetSentimentAnalysis(2379);
+                var data = await _meetingService.GetSentimentAnalysis(imid);
+                //var data = await _meetingService.GetSentimentAnalysis(2379);
                 return data;
             }
             catch (Exception ex)

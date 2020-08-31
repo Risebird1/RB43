@@ -2194,35 +2194,39 @@
             url: '/RiseTube/GetSentimentAnalysis',
             data: { 'imid': imid },
             success: function (data) {
-                var sentimentObj = [{ y: data.anger, label: "Anger" },
-                { y:data.contempt, label: "Contempt" },
-                { y: data.disgust, label: "Disgust" },
-                { y: data.fear, label:"Fear"},
-                { y: data.happiness, label:"Happiness"},
-                { y: data.neutral, label:"Neutral"},
-                { y: data.sadness, label:"Sadness"},
-                { y: data.surprise, label: "Surprise" }]
-            
 
-        var chart = new CanvasJS.Chart("link8", {
-           theme: "light2",
-            width: 350,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: null,
-            data: [{
-                type: "pie",
-                startAngle: 60,
-                innerRadius: 55,
-                indexLabelFontSize: 15,
-                indexLabel: "{label}  {y}%",
-                toolTipContent: "<b>{label} </b>({y}%)",
+                if (data.anger != "NaN") {
+                    var sentimentObj = [{ y: data.anger, label: "Anger" },
+                    { y: data.contempt, label: "Contempt" },
+                    { y: data.disgust, label: "Disgust" },
+                    { y: data.fear, label: "Fear" },
+                    { y: data.happiness, label: "Happiness" },
+                    { y: data.neutral, label: "Neutral" },
+                    { y: data.sadness, label: "Sadness" },
+                    { y: data.surprise, label: "Surprise" }]
 
-                dataPoints: sentimentObj
-            }]
-        });
-        chart.render();
-            }
+
+                    var chart = new CanvasJS.Chart("link8", {
+                        theme: "light2",
+                        width: 350,//in pixels
+                        height: 200,//in pixels
+                        animationEnabled: true,
+                        title: null,
+                        data: [{
+                            type: "pie",
+                            startAngle: 60,
+                            innerRadius: 55,
+                            indexLabelFontSize: 15,
+                            indexLabel: "{label}  {y}%",
+                            toolTipContent: "<b>{label} </b>({y}%)",
+
+                            dataPoints: sentimentObj
+                        }]
+                    });
+                    chart.render();
+                }
+                }
+                
         });
     }
 
