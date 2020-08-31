@@ -4,12 +4,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link href="~/Newassets/css/admin.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -33,12 +27,12 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
-        <div class="row">
+    <div class="content client">
+        <div class="row bg-white">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bg-white">
                    
                     <div class="mdc-card-wrapper__text-section">
 
@@ -48,9 +42,14 @@
                             @Html.AntiForgeryToken()
 
                         <div class="row">
-                            <div class="card-header">
-                                <h4 class="card-title">Add General Skill</h4>
+                          
+                            <div class="col-md-12">
+
+                                <div class="mobile-view">
+                                    <h4 class="card-title" style="margin:0px;">Add General Skill</h4>
+                                </div>
                             </div>
+
                             <div style="width: 100%;">&nbsp;</div>
                             <div class="form-horizontal w-full">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })

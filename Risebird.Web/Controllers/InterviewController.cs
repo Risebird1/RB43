@@ -5193,6 +5193,15 @@ namespace Risebird.Web.Controllers
                                 item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
 
                             }
+
+                            if (item.interviewDate <= DateTime.Now)
+                            {
+                                item.CancelationStatus = "N";
+                            }
+                            else
+                            {
+                                item.CancelationStatus = "Y";
+                            }
                         }
                         return View(myInterview);
                     }

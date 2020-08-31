@@ -237,7 +237,7 @@
                                             {
                                                 if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
                                                 {
-                                                    <video width="320" height="240" style="width:100%" controls>
+                                                    <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
                                                         <source src=@Url.Content(Model.VideoLink) type="video/mp4">
                                                         <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
@@ -247,7 +247,7 @@
 
                                                 else if (Url.Content(Model.VideoLink).Contains("manifest"))
                                                 {
-                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
                                                         <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
 
                                                     </video>

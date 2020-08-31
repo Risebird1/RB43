@@ -1236,6 +1236,7 @@ namespace Risebird.Web.Controllers
             //send a email
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
+            var resultset = _meetingService.AddVedioShare(email, videoid, Emailids);
             string currenturl = Request.Host.ToString() + "/RiseTube/VideoPage/" + videoid;
             Mail _mail = new Mail
             {
@@ -1914,7 +1915,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" )
                 {
                     //To get data from db for video displayes
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);

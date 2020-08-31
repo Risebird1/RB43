@@ -86,11 +86,14 @@
 .text-areadiv #comment::placeholder {
     line-height: 40px !important
 }
-
+#toggle-click, #toggle-click1 {
+    font-size: 18px !important;
+}
 
 .counts-liks .dropdown-menu {
     z-index: 1;
     padding: 0;
+    transform: translate3d(0px, 38px, 0px) !important;
 }
 
 .modal .label-field {
@@ -171,10 +174,10 @@
     background-position: 20% 40% !important;
     border: none;
     background-color: white !important;
-    font-weight: normal;
+    font-weight: bold;
     font-size: 13px !important;
     padding: 5px 0px;
-    margin-left:10px;
+    margin-left: 10px;
 }
     .interest-btn .view-video {
         padding-left: 0px;
@@ -1949,7 +1952,7 @@ textarea::-webkit-scrollbar-thumb {
         height: 600px;
     }
     #wrapper #content-wrapper .container-wrap {
-        padding: 0px 0px 30px 15px;
+        padding: 0px 0px 30px 15px!important;
     }
     .mdc-card-wrapper__text-section {
         padding: 10px !important;
@@ -2147,6 +2150,12 @@ textarea::-webkit-scrollbar-thumb {
     .pt30 .form-group.card-title-space {
         margin-top: 0px;
     }
+
+    .pt30 .selectedmeeting .form-group.card-title-space {
+        margin-top: 20px;
+    }
+
+
     .pt30 .pull-right.newsletter {
         float: right
     }
@@ -2450,13 +2459,10 @@ textarea::-webkit-scrollbar-thumb {
         width: 50%;
         margin: 0;
         position: absolute;
-        top: 25px;
+        top: 17px;
         right: 0;
     }
-        .k .btn3 {
-            top: -25px;
-            position: relative;
-        }
+      
 
         .single-video-info-content {
             margin-top: 20px;
@@ -2492,8 +2498,8 @@ textarea::-webkit-scrollbar-thumb {
 
     .views {
         padding: 0px 10px 0px 10px;
-        right: 4px;
-        top: 44px !important;
+        right: -15px;
+        top: 35px !important;
     }
     .share {
         width: 50% !important;
