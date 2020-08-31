@@ -6318,7 +6318,9 @@ namespace Risebird.Web.Controllers
             try
             {
                 //var path = $"SentimentAnalysis";
-                var path = $"http://localhost:7071/api/SentimentAnalysis";
+                var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                var functionKey = "7yhRh9u6D0a8B4hmpgcrTBEJhyeOBSsrA5sRl9nz/52UimFiwvvXHA==";
+              
                 string videoFilepath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.TruncatedVideoFile.FileName);
                 
                 using (var stream = new FileStream(videoFilepath, FileMode.Create))
@@ -6328,7 +6330,7 @@ namespace Risebird.Web.Controllers
 
                 model.VideoFilepath = videoFilepath;
                 _httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
-                var response =_httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken).Result;
+                var response =_httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken).Result;
                 var result = response.Content.ReadAsStringAsync().Result;
                 result = result.Replace("\"[", "[").Replace("]\"", "]").Replace("\\", "");
 
