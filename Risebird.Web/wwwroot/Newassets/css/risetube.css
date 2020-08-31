@@ -1886,7 +1886,10 @@ textarea::-webkit-scrollbar-thumb {
     .designation {
         font-size: 16px;
     }
-
+    .mob-pad {
+        padding: 0px !important;
+        display: block !important
+    }
     .expected-salari {
         white-space: nowrap;
         /* overflow: hidden; */
