@@ -694,27 +694,28 @@
 
                                                                         <input class="view-video" type="button" onclick="openVideoDetailsModel()" value="Share/View Details" />
 
-                                                                    </div>
-                                                                }
-                                                            </div>
-                                                            <div class="single-video-info-content ">
-                                                                <div>
-                                                                    <div>
-                                                                        <ul class="nav nav-pills nav-pills-primary tabs">
-                                                                            <li class="nav-link active item1" rel="link1">Report Summary</li>
-                                                                            <li class="nav-link item2" rel="link2">Candidate Details</li>
-                                                                            <li class="nav-link item3" rel="link3"> Tech Skill Report</li>
-                                                                            <li class="nav-link item4" rel="link4"> Questions Discussed</li>
-                                                                            <li class="nav-link item5" rel="link5">General Skill Report</li>
-                                                                            <li class="nav-link item6" rel="link6"> Joinability Report</li>
-                                                                            <li class="nav-link item7" rel="link7"> Selectability Report</li>
-                                                                        </ul>
-                                                                        <hr />
-                                                                        <div class="tab_container tab-space">
-                                                                            <h3 class="d_active tab_drawer_heading" rel="link1">Report Summary</h3>
-                                                                            <div id="link1" class="tab_content">
-                                                                                <div class="row">
-                                                                                    <div class="left-chart">
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="single-video-info-content ">
+                                                    <div>
+                                                        <div>
+                                                            <ul class="nav nav-pills nav-pills-primary tabs">
+                                                                <li class="nav-link active item1" rel="link1">Report Summary</li>
+                                                                <li class="nav-link item2" rel="link2">Candidate Details</li>
+                                                                <li class="nav-link item3" rel="link3"> Tech Skill Report</li>
+                                                                <li class="nav-link item4" rel="link4"> Questions Discussed</li>
+                                                                <li class="nav-link item5" rel="link5">General Skill Report</li>
+                                                                <li class="nav-link item6" rel="link6"> Joinability Report</li>
+                                                                <li class="nav-link item7" rel="link7"> Selectability Report</li>
+                                                                <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
+                                                            </ul>
+                                                            <hr />
+                                                            <div class="tab_container tab-space">
+                                                                <h3 class="d_active tab_drawer_heading" rel="link1">Report Summary</h3>
+                                                                <div id="link1" class="tab_content">
+                                                                    <div class="row">
+                                                                        <div class="left-chart">
 
                                                                                         <div class="chart-box itemchart">
                                                                                             <p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>
@@ -1339,41 +1340,53 @@
                                                                                     </div>
                                                                                 </div>
 
-                                                                                <!-- #tab7 -->
+                                                                    <!-- #tab7 -->
+                                                                </div>
+                                                                @if (Model.IsBiometricEnabled)
+                                                                {
+                                                                    <h3 class="tab_drawer_heading" rel="link8"> Sentiment Analysis</h3>
+
+                                                                    <div id="link8" class="tab_content text-center">
+
+
+
+                                                                    </div>
+                                                                }
+
+
+                                                            </div>
+                                                        </div>
+                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                        {
+                                                            <div>
+                                                                <form>
+                                                                    <div class="form-group comment-area">
+                                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                                            <div class="talktext">
+                                                                                <textarea class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
                                                                             </div>
+                                                                        </div>
+                                                                        <div class="button-group pull-right"> <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a> </div>
+                                                                    </div>
+                                                                </form>
+                                                                <div id="divcomments">
+                                                                    <div class="chat">
+                                                                        <div class="chat-history">
+                                                                            <ul class="posts">
+                                                                                @foreach (var itemvalue in Model.Comments)
+                                                                                {
+                                                                                    <li>
+                                                                                        <div class="message-data"> <span class="message-data-name"> <b>@itemvalue.UserName </b></span> </div>
+                                                                                        <div class="message my-message  borders comment-tri-right left-tp"> @itemvalue.Comment</div>
+                                                                                    </li>
+                                                                                }
+                                                                            </ul>
                                                                         </div>
                                                                     </div>
-                                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
-                                                                    {
-                                                                        <div>
-                                                                            <form>
-                                                                                <div class="form-group comment-area">
-                                                                                    <div class="talk-bubble tri-right border-bubble right-in">
-                                                                                        <div class="talktext">
-                                                                                            <textarea class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="button-group pull-right"> <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a> </div>
-                                                                                </div>
-                                                                            </form>
-                                                                            <div id="divcomments">
-                                                                                <div class="chat">
-                                                                                    <div class="chat-history">
-                                                                                        <ul class="posts">
-                                                                                            @foreach (var itemvalue in Model.Comments)
-                                                                                            {
-                                                                                                <li>
-                                                                                                    <div class="message-data"> <span class="message-data-name"> <b>@itemvalue.UserName </b></span> </div>
-                                                                                                    <div class="message my-message  borders comment-tri-right left-tp"> @itemvalue.Comment</div>
-                                                                                                </li>
-                                                                                            }
-                                                                                        </ul>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    }
                                                                 </div>
+                                                            </div>
+                                                        }
+                                                    </div>
 
                                                             </div>
                                                         </div>
@@ -1956,7 +1969,7 @@
                                 <div class="col-md-6 col-sm-6 pull-left nopad">
                                     <div>
                                         <label class="control-label  desp-label">
-                                           Set Logo
+                                           Company Logo
                                         </label>
                                         <div>
                                             @Html.TextBoxFor(m => m.IreportModel.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".jpg,.png", @maxRequestLength="61440" })
@@ -2253,7 +2266,50 @@
     </div>
 </div>
 
+<script>
+    function GetSentimentAnalysis(imid) {
+        document.getElementById('link8').innerHTML = '';
+        $.ajax({
+            url: '/RiseTube/GetSentimentAnalysis',
+            data: { 'imid': imid },
+            success: function (data) {
 
+                if (data.anger != "NaN") {
+                    var sentimentObj = [{ y: data.anger, label: "Anger" },
+                    { y: data.contempt, label: "Contempt" },
+                    { y: data.disgust, label: "Disgust" },
+                    { y: data.fear, label: "Fear" },
+                    { y: data.happiness, label: "Happiness" },
+                    { y: data.neutral, label: "Neutral" },
+                    { y: data.sadness, label: "Sadness" },
+                    { y: data.surprise, label: "Surprise" }]
+
+
+                    var chart = new CanvasJS.Chart("link8", {
+                        theme: "light2",
+                        width: 350,//in pixels
+                        height: 200,//in pixels
+                        animationEnabled: true,
+                        title: null,
+                        data: [{
+                            type: "pie",
+                            startAngle: 60,
+                            innerRadius: 55,
+                            indexLabelFontSize: 15,
+                            indexLabel: "{label}  {y}%",
+                            toolTipContent: "<b>{label} </b>({y}%)",
+
+                            dataPoints: sentimentObj
+                        }]
+                    });
+                    chart.render();
+                }
+                }
+                
+        });
+    }
+
+</script>
 <script>
     function datecal() {
         var dtToday = new Date();

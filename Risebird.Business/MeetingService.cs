@@ -1742,6 +1742,31 @@ namespace Risebird.Business
                 return "";
             }
         }
+
+        public async Task<SentimentPercentage> GetSentimentAnalysis(int imid)
+        {
+            try
+            {
+                var percentObj = new SentimentPercentage();
+                var data = await _meetingRespository.GetSentimentAnalysis(imid);
+                var total = data.Select(x => x.Value).Sum();
+                percentObj.Anger = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Anger)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Contempt = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Contempt)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Disgust = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Disgust)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Fear = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Fear)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Happiness = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Happiness)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Neutral = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Neutral)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Sadness = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Sadness)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Surprise = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Surprise)).Select(x => x.Value).Sum()) * 100)/(total);
+                return percentObj;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 
 }

@@ -20,6 +20,7 @@ CREATE PROCEDURE [dbo].[usp_AddMeeting]
 @interviewDate varchar(200),
 @interviewSlot varchar(100),
 @interviewDuration int,
+@candidateName varchar(200),
 @candidateEmail varchar(200),
 @hrRiseBirdAssinged varchar(200),
 @resumeLink varchar(MAX),
@@ -27,10 +28,12 @@ CREATE PROCEDURE [dbo].[usp_AddMeeting]
 @ClientHrContact varchar(200),
 @comfirmationStatus varchar(100),
 @interviewer varchar(200),
-@prefferedLocation varchar(200),
+@preferredLocation varchar(200),
 @expectedPerHourRate varchar(200),
 @joiningTime varchar(200),
-@staffingAgenecy varchar(200)
+@staffingAgency varchar(200),
+@currentEmployerName varchar(200),
+@MobileNumber nvarchar(200)
 AS
 Begin
 
@@ -41,40 +44,51 @@ INSERT INTO [dbo].[InterviewMeetings]
            ,[interviewDate]
            ,[interviewSlot]
            ,[interviewDuration]
+		   ,[candidateName]
            ,[candidateEmail]
            ,[ClientHrContact]
            ,[resumeLink]
-           ,[comfirmationStatus]
+           ,[confirmationStatus]
            ,[zoomLink]
+		   ,[interviewer]
            ,[risebirdHR]
 		   ,[PreferredLocation]
 		   ,[ExpectedPerHourRate]
 		   ,[joiningTime]
-		   ,[staffingAgenecy]		   
+		   ,[staffingAgency]
+		   ,[currentEmployerName]		   
            ,[sCreatedBy]
            ,[dtCreatedOn]
+		   ,[MobileNumber]
            )
      VALUES
            (@IRFId,
 @interviewDate,
 @interviewSlot,
 @interviewDuration,
+@candidateName,
 @candidateEmail,
 @ClientHrContact,
 @resumeLink,
 @comfirmationStatus,
 @zoomLink,
+@interviewer,
 @hrRiseBirdAssinged,
-@prefferedLocation,
+@preferredLocation,
 @expectedPerHourRate,
 @joiningTime,
-@staffingAgenecy,
+@staffingAgency,
+@currentEmployerName,
 'System',
-GETUTCDATE()  
+GETUTCDATE(),
+@MobileNumber
 )
 
 End
 END
+
+
+
 
 
 GO
