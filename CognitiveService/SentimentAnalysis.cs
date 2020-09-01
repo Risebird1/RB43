@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dapper;
 using GleamTech.VideoUltimate;
 using Microsoft.Azure.CognitiveServices.Vision.Face;
 using Microsoft.Azure.CognitiveServices.Vision.Face.Models;
@@ -105,8 +108,44 @@ namespace CognitiveService
                     
                 }
 
-                var resultObj = JsonConvert.SerializeObject(sentimentData);
-                return req.CreateResponse(HttpStatusCode.OK, resultObj);
+                if (sentimentData != null && sentimentData.Count() > 0)
+                {
+                    var connectionString = "Server=tcp:risebirdportal.database.windows.net,1433;Initial Catalog=productDBdev1;Persist Security Info=False;User ID=talent;Password=rise_123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var query = "delete from VideoSentiment where InterviewId = @id";
+                        var dynamicParameters = new DynamicParameters();
+                        dynamicParameters.Add("@id", sentimentData.FirstOrDefault().InterviewId);
+                        con.Query(query, dynamicParameters);
+
+                        DataTable sentimentDt = new DataTable();
+                        sentimentDt.Columns.Add("InterviewId", typeof(int));
+                        sentimentDt.Columns.Add("ImageUrl", typeof(string));
+                        sentimentDt.Columns.Add("EmotionType", typeof(int));
+                        sentimentDt.Columns.Add("Value", typeof(double));
+
+                        foreach (var item in sentimentData)
+                        {
+                            sentimentDt.Rows.Add(item.InterviewId, item.ImageUrl, item.EmotionType, item.Value);
+                        }
+
+                        SqlCommand cmdSentiment = new SqlCommand("usp_VideoSentimentBulkInsert", con)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
+                        cmdSentiment.Parameters.Add(new SqlParameter("@VideoSentimentBulkData", SqlDbType.Structured));
+                        cmdSentiment.Parameters["@VideoSentimentBulkData"].Value = sentimentDt;
+                        con.Open();
+                        if (cmdSentiment.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+
+                }
+                
+
+                return req.CreateResponse(HttpStatusCode.OK, "Successful");
             }
             catch (Exception ex)
             {

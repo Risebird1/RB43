@@ -6323,24 +6323,15 @@ namespace Risebird.Web.Controllers
               
                 model.VideoFileName = model.imid + "_" + model.TruncatedVideoFile.FileName;
                 await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos", model.TruncatedVideoFile);
+                HttpClient httpClient = new HttpClient();
+                httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
-                _httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
-                var response =_httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken).Result;
-                var result = response.Content.ReadAsStringAsync().Result;
-                result = result.Replace("\"[", "[").Replace("]\"", "]").Replace("\\", "");
+                _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
 
-                var sentimentData = JsonConvert.DeserializeObject<List<VideoSentimentService>>(result);
+                TempData["SuccessErrorMessageInterview"] = "Sentiment analysis started successfully!";
+                return RedirectToAction("Index");
+
                 
-                if (_meetingService.InsertVideoSentiment(sentimentData).Result)
-                {
-                    TempData["SuccessErrorMessageInterview"] = "Successfull!";
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    TempData["SuccessErrorMessageInterview"] = "Failed!";
-                    return RedirectToAction("Index");
-                }
             }
             catch (Exception ex)
             {
