@@ -3387,7 +3387,6 @@
         html += '       <tr>';
         html += '          <th>User Name</th>';
         html += '          <th class="text-center">Video Link</th>';
-        html += '          <th class="text-center">View Name</th>';
         html += '            <th class="text-center">Total View</th>';
         html += '           <th class="text-center">Total Time</th>';
         html += '           <th class="text-center">Video Time</th>';
@@ -3398,11 +3397,10 @@
         for (var i = 0; i < data.length; i++) {
             html += '   <tr>';
             html += '                  <td>' + data[i].candidate + '</td>';
-            html += '                    <td class="text-center"><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">Click Here</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             if (data[i].ViewName != null && data[i].ViewName != "") {
-                html += '                <td class="text-center">' + data[i].ViewName + '</td>';
+                html += '                    <td><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">' + data[i].ViewName + '</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             } else {
-                html += '                <td class="text-center"></td>';
+                html += '                    <td><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">Click Here</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             }
             html += '                  <td class="text-center count-view"><span class="label-num"><strong>' + data[i].count + '</strong></span></td>';
             if (data[i].timeSpend != null) {

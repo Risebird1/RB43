@@ -77,14 +77,21 @@
                                 @foreach (var item in Model)
                                 {
                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                    <tr>
-                                        <td>@item.CandidateEmail</td>
-                                        <td>@item.Candidate</td>
-                                        <td class="text-center"><a href="@item.VideoUrl" target="_blank" title="@item.VideoUrl">Click Here</a></td>
-                                        <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
-                                        <td class="text-center">@item.TimeSpend</td>
-                                        <td>@item.CurrentTime</td>
-                                    </tr>
+                            <tr>
+                                <td>@item.CandidateEmail</td>
+                                <td>@item.Candidate</td>
+                                @if (!String.IsNullOrEmpty(item.ViewName))
+                                {
+                                    <td class="text-center"><a href="@item.VideoUrl" target="_blank" title="@item.VideoUrl">@item.ViewName</a></td>
+                                }
+                                else
+                                {
+                                    <td class="text-center"><a href="@item.VideoUrl" target="_blank" title="@item.VideoUrl">Click Here</a></td>
+                                }
+                                <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
+                                <td class="text-center">@item.TimeSpend</td>
+                                <td>@item.CurrentTime</td>
+                            </tr>
                                 }
                             </table>
                             <div style="clear:both"></div>
