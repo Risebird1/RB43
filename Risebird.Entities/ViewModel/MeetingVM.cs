@@ -199,6 +199,7 @@ namespace Risebird.Entities.ViewModel
 
         public int TechSkillScore { get; set; }
         public string LogoUrl { get; set; }
+        public int? VideoSentimentImid { get; set; }
     }
     public class VedioComments
     {

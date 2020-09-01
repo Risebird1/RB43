@@ -494,7 +494,25 @@ namespace Risebird.Repository
             try
             {
                 //Set the parameters to be passed to store procedure
-                DynamicParameters parameters = SetStoredProcedureParameterForMeeting(meeting);
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", meeting.IRFId); // Normal parametersmeters           
+                parameters.Add("@interviewDate", meeting.interviewDate);
+                parameters.Add("@interviewSlot", meeting.interviewSlot);
+                parameters.Add("@interviewDuration", meeting.interviewDuration);
+                parameters.Add("@candidateName", meeting.candidateName);
+                parameters.Add("@candidateEmail", meeting.candidateEmail);
+                parameters.Add("@hrRiseBirdAssinged", meeting.risebirdHR);
+                parameters.Add("@resumeLink", meeting.resumeLink);
+                parameters.Add("@zoomLink", meeting.zoomLink);
+                parameters.Add("@ClientHrContact", meeting.ClientHrContact);
+                parameters.Add("@comfirmationStatus", meeting.confirmationStatus);
+                parameters.Add("@interviewer", meeting.interviewer);
+                parameters.Add("@preferredLocation", meeting.preferredLocation);
+                parameters.Add("@expectedPerHourRate", meeting.expectedPerHourRate);
+                parameters.Add("@joiningTime", meeting.joiningTime);
+                parameters.Add("@staffingAgency", meeting.staffingAgency);
+                parameters.Add("@currentEmployerName", meeting.currentEmployerName);
+                parameters.Add("@MobileNumber", meeting.MobileNumber);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddMeeting", parameters,
@@ -2711,5 +2729,32 @@ namespace Risebird.Repository
                 return "";
             }
         }
+
+       
+        public async Task<IEnumerable<VideoSentiment>> GetSentimentAnalysis(int imid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", imid);
+                    return await SqlMapper.QueryAsync<VideoSentiment>(con, "usp_GetSentimentAnalysis", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
     }
 }
