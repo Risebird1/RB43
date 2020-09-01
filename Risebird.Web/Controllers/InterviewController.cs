@@ -6317,7 +6317,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                //var path = $"SentimentAnalysis";
+                //var path = $"http://localhost:7071/api/SentimentAnalysis";
                 var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
                 var functionKey = "7yhRh9u6D0a8B4hmpgcrTBEJhyeOBSsrA5sRl9nz/52UimFiwvvXHA==";
               
@@ -6338,7 +6338,6 @@ namespace Risebird.Web.Controllers
                 var sentimentData = JsonConvert.DeserializeObject<List<VideoSentimentService>>(result);
                 
                 System.IO.File.Delete(videoFilepath);
-                //return await _meetingService.InsertVideoSentiment(sentimentData);
 
                 if (_meetingService.InsertVideoSentiment(sentimentData).Result)
                 {

@@ -87,7 +87,7 @@ namespace CognitiveService
                                     var sentimentType = index + 1;
                                     var sentimentValue = largest;
 
-                                    var fileName = data.imid + "_Frame_" + frameCount;
+                                    var fileName = data.imid + "_Frame_" + frameCount + ".png";
                                     var imageUrl = await InsertBlobCloudCompare(fileName, "frameimages", dest);
                                     sentimentData.Add(new VideoSentimentService { InterviewId = data.imid, EmotionType = sentimentType, Value = sentimentValue, ImageUrl = imageUrl });
                                     frameCount = frameCount + 1;
@@ -99,70 +99,7 @@ namespace CognitiveService
 
                         }
                     }
-                    //Parallel.ForEach(videoFrameReader,async (frame, state) =>
-                    //{
-                    //    using (frame)
-                    //    {
-                    //        //byte[] data = new byte[0];
-                    //        using (MemoryStream ms = new MemoryStream())
-                    //        {
-                    //            Image.GetThumbnailImageAbort myCallback =
-                    //                        new Image.GetThumbnailImageAbort(ThumbnailCallback);
-                    //            var img = frame.GetThumbnailImage(1280, 720, myCallback, IntPtr.Zero);
-                    //            img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                    //            ms.Seek(0, 0);
-                    //            MemoryStream dest = new MemoryStream();
-                    //            ms.CopyTo(dest);
-                    //            dest.Seek(0, 0);
-                    //            ms.Seek(0, 0);
-
-                    //            var faces = (await faceClient.Face.DetectWithStreamAsync(ms,
-                    //                        returnFaceId: false,
-                    //                        returnFaceLandmarks: false,
-                    //                        returnFaceAttributes: new FaceAttributeType[1] { FaceAttributeType.Emotion })).ToArray();
-
-                    //            if (faces != null)
-                    //            {
-                    //                var array = new double[8];
-                    //                array[0] = faces.FirstOrDefault().FaceAttributes.Emotion.Anger;
-                    //                array[1] = faces.FirstOrDefault().FaceAttributes.Emotion.Contempt;
-                    //                array[2] = faces.FirstOrDefault().FaceAttributes.Emotion.Disgust;
-                    //                array[3] = faces.FirstOrDefault().FaceAttributes.Emotion.Fear;
-                    //                array[4] = faces.FirstOrDefault().FaceAttributes.Emotion.Happiness;
-                    //                array[5] = faces.FirstOrDefault().FaceAttributes.Emotion.Neutral;
-                    //                array[6] = faces.FirstOrDefault().FaceAttributes.Emotion.Sadness;
-                    //                array[7] = faces.FirstOrDefault().FaceAttributes.Emotion.Surprise;
-
-                    //                var largest = array[0];
-                    //                var index = 0;
-                    //                for (int i = 1; i < 8; i++)
-                    //                {
-                    //                    if (array[i] > largest)
-                    //                    {
-                    //                        largest = array[i];
-                    //                        index = i;
-                    //                    }
-                    //                }
-
-                    //                var sentimentType = index + 1;
-                    //                var sentimentValue = largest;
-
-                    //                var fileName = data.imid + "_Frame_" + frameCount;
-                    //                var imageUrl = await InsertBlobCloudCompare(fileName, "frameimages", dest);
-                    //                sentimentData.Add(new VideoSentimentService { InterviewId = data.imid, EmotionType = sentimentType, Value = sentimentValue, ImageUrl = imageUrl });
-                    //                frameCount = frameCount + 1;
-                    //                if(frameCount==3)
-                    //                {
-                    //                    state.Break();
-                    //                }
-                    //            }
-
-                    //        }
-
-
-
-                    //    }
-                    //});
+                    
                 }
 
                 var resultObj = JsonConvert.SerializeObject(sentimentData);

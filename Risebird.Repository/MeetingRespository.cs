@@ -494,7 +494,25 @@ namespace Risebird.Repository
             try
             {
                 //Set the parameters to be passed to store procedure
-                DynamicParameters parameters = SetStoredProcedureParameterForMeeting(meeting);
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", meeting.IRFId); // Normal parametersmeters           
+                parameters.Add("@interviewDate", meeting.interviewDate);
+                parameters.Add("@interviewSlot", meeting.interviewSlot);
+                parameters.Add("@interviewDuration", meeting.interviewDuration);
+                parameters.Add("@candidateName", meeting.candidateName);
+                parameters.Add("@candidateEmail", meeting.candidateEmail);
+                parameters.Add("@hrRiseBirdAssinged", meeting.risebirdHR);
+                parameters.Add("@resumeLink", meeting.resumeLink);
+                parameters.Add("@zoomLink", meeting.zoomLink);
+                parameters.Add("@ClientHrContact", meeting.ClientHrContact);
+                parameters.Add("@comfirmationStatus", meeting.confirmationStatus);
+                parameters.Add("@interviewer", meeting.interviewer);
+                parameters.Add("@preferredLocation", meeting.preferredLocation);
+                parameters.Add("@expectedPerHourRate", meeting.expectedPerHourRate);
+                parameters.Add("@joiningTime", meeting.joiningTime);
+                parameters.Add("@staffingAgency", meeting.staffingAgency);
+                parameters.Add("@currentEmployerName", meeting.currentEmployerName);
+                parameters.Add("@MobileNumber", meeting.MobileNumber);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddMeeting", parameters,
