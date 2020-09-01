@@ -6319,7 +6319,7 @@ namespace Risebird.Web.Controllers
             {
                 //var path = $"http://localhost:7071/api/SentimentAnalysis";
                 var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
-                var functionKey = "7yhRh9u6D0a8B4hmpgcrTBEJhyeOBSsrA5sRl9nz/52UimFiwvvXHA==";
+                var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
               
                 string videoFilepath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.TruncatedVideoFile.FileName);
                 

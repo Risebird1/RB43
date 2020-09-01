@@ -108,7 +108,7 @@ namespace CognitiveService
             catch (Exception ex)
             {
 
-                throw;
+                return req.CreateResponse(HttpStatusCode.BadRequest, ex.Message); ;
             }
 
         
