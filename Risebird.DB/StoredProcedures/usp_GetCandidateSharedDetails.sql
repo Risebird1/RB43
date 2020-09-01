@@ -10,6 +10,6 @@ Create Procedure usp_GetCandidateSharedDetails
 @id int
 AS
 BEGIN
-Select CandidateName as Name,CandidateEmail as EmailId,InterviewerComment as InterviewerComments from SharedInterviewcomments where id=@id
+Select CandidateName as Name,CandidateEmail as EmailId,InterviewerComment as InterviewerComments,LogoUrl from SharedInterviewcomments where id=@id
 
 END

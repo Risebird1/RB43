@@ -82,6 +82,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewStatusDesc { get; set; }
         public string MeetingStatusDesc { get; set; }
         public string InterviewerComments { get; set; }
+        public string LogoUrl { get; set; }
 
     }
 }

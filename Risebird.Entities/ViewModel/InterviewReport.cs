@@ -233,7 +233,8 @@ namespace Risebird.Entities.ViewModel
         public string TimeManagement { get; set; }
 
         public string SharedEmailAddress { get; set; }
-                public string ViewName { get; set; }
+        public string ViewName { get; set; }
+        public string LogoUrl { get; set; }
 
     }
 }

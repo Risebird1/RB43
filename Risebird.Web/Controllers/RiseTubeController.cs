@@ -9,6 +9,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1826,6 +1827,7 @@ namespace Risebird.Web.Controllers
                 NewModel.IsIntrested = model.IsIntrested;
                 NewModel.IsOnline = model.IsOnline;
                 NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
+                NewModel.LogoUrl = IRListModel.LogoUrl;
                 var videodetailscount = await _meetingService.GetTotalViewCount(id);
                 NewModel.VideoCountDetail = videodetailscount.ToList();
                 if (NewModel.IreportModel.QuestionsCollection == null)
