@@ -6321,24 +6321,16 @@ namespace Risebird.Web.Controllers
                 var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
                 var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
               
-                string videoFilepath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.TruncatedVideoFile.FileName);
-                
-                using (var stream = new FileStream(videoFilepath, FileMode.Create))
-                {
-                    await model.TruncatedVideoFile.CopyToAsync(stream);
-                }
+                model.VideoFileName = model.imid + "_" + model.TruncatedVideoFile.FileName;
+                await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos", model.TruncatedVideoFile);
 
-                model.VideoFilepath = videoFilepath;
                 _httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
                 var response =_httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken).Result;
                 var result = response.Content.ReadAsStringAsync().Result;
                 result = result.Replace("\"[", "[").Replace("]\"", "]").Replace("\\", "");
 
-
                 var sentimentData = JsonConvert.DeserializeObject<List<VideoSentimentService>>(result);
                 
-                System.IO.File.Delete(videoFilepath);
-
                 if (_meetingService.InsertVideoSentiment(sentimentData).Result)
                 {
                     TempData["SuccessErrorMessageInterview"] = "Successfull!";

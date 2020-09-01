@@ -28,7 +28,9 @@ namespace CognitiveService
             string requestBody = await req.Content.ReadAsStringAsync();
             SentimentDTO data = JsonConvert.DeserializeObject<SentimentDTO>(requestBody);
 
-
+            var videoBlob = GetBlobData("sentimentvideos", data.VideoFileName);
+            var videoStream = videoBlob.OpenReadAsync().Result;
+            videoStream.Seek(0, 0);
             try
             {
                 int frameCount = 1;
@@ -37,8 +39,9 @@ namespace CognitiveService
                 {
                     Endpoint = "https://sentimentapiresource.cognitiveservices.azure.com/"
                 };
-                //var videoFrameReader = new VideoFrameReader(@"E:\EmotionAnalysisFiles\WIN_20200819_14_24_35_Pro.mp4")
-                using (var videoFrameReader = new VideoFrameReader(data.VideoFilepath))
+
+
+                using (var videoFrameReader = new VideoFrameReader(videoStream))
                 {
                     foreach (var frame in videoFrameReader)
                     {
@@ -156,14 +159,49 @@ namespace CognitiveService
 
             return blob.Uri.ToString();
         }
+        
+        public static CloudBlob GetBlobData(string containerName, string fileName)
+        {
+            try
+            {
+                CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
+                CloudBlob blob = blobContainer.GetBlobReference(fileName);
+                
+                return blob;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        public static CloudBlobContainer GetCloudBlobContainer(string containerName)
+        {
+            CloudStorageAccount account = GetStorageAccount();
+            CloudBlobClient blobClient = account.CreateCloudBlobClient();
+            CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
+            if (!blobContainer.ExistsAsync().Result)
+            {
+                blobContainer.CreateIfNotExistsAsync();
+                var permission = new BlobContainerPermissions();
+                permission.PublicAccess = BlobContainerPublicAccessType.Container;
+                blobContainer.SetPermissionsAsync(permission);
+            }
+            return blobContainer;
+        }
 
+        public static CloudStorageAccount GetStorageAccount()
+        {
+            StorageCredentials creds = new StorageCredentials("risebirdportal", "2AKmR4SJlNvtr0BY5h7gVJANY7vBcCqph7KWywH9cqLcel/cxT0fKLXyGUVrSj3Xj89HUf2Z0QuWmQ8Zd5SqeQ==");
+            CloudStorageAccount account = new CloudStorageAccount(creds, useHttps: true);
+            return account;
+        }
     }
 
 
     public class SentimentDTO
     {
         public int imid { get; set; }
-        public string VideoFilepath { get; set; }
+        public string VideoFileName { get; set; }
     }
 
     [Serializable]

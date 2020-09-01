@@ -10,11 +10,10 @@ namespace Risebird.Entities.ViewModel
     public class SentimentDTO
     {
         public int imid { get; set; }
-        //public string VideoUrl { get; set; }
 
         [Display(Name = "Video File")]
 
         public IFormFile TruncatedVideoFile { get; set; }
-        public string VideoFilepath { get; set; }
+        public string VideoFileName { get; set; }
     }
 }
