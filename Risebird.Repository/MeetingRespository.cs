@@ -2307,6 +2307,9 @@ namespace Risebird.Repository
                     paramx.Add("@CandidateName", reportModel.CandidateName);
                     paramx.Add("@CandidateEmail", reportModel.CandidateEmail);
                     paramx.Add("@InterviewerComment", reportModel.InterviewerComment);
+                    paramx.Add("@ViewName", reportModel.ViewName);
+                    paramx.Add("@LogoUrl", reportModel.VideoLink);
+
 
                     //paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
                     //paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
