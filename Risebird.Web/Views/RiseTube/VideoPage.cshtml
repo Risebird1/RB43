@@ -708,7 +708,11 @@
                                                                 <li class="nav-link item5" rel="link5">General Skill Report</li>
                                                                 <li class="nav-link item6" rel="link6"> Joinability Report</li>
                                                                 <li class="nav-link item7" rel="link7"> Selectability Report</li>
-                                                                <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
+                                                                @if (Model.IsBiometricEnabled)
+                                                                {
+                                                                    <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
+
+                                                                }
                                                             </ul>
                                                             <hr />
                                                             <div class="tab_container tab-space">
