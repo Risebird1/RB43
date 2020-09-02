@@ -48,7 +48,7 @@ namespace CognitiveService
                 {
                     foreach (var frame in videoFrameReader)
                     {
-                        if(videoFrameReader.CurrentFrameNumber == 0 || videoFrameReader.CurrentFrameNumber % 8 != 0)
+                        if(videoFrameReader.CurrentFrameNumber == 0 || videoFrameReader.CurrentFrameNumber % videoFrameReader.FrameRate != 0)
                         {
                             continue;
                         }
