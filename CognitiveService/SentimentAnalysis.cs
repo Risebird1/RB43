@@ -48,6 +48,10 @@ namespace CognitiveService
                 {
                     foreach (var frame in videoFrameReader)
                     {
+                        if(videoFrameReader.CurrentFrameNumber == 0 || videoFrameReader.CurrentFrameNumber % 8 != 0)
+                        {
+                            continue;
+                        }
                         using (frame)
                         {
                             using (MemoryStream ms = new MemoryStream())
