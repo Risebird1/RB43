@@ -67,7 +67,7 @@ namespace CognitiveService
                                             returnFaceLandmarks: false,
                                             returnFaceAttributes: new FaceAttributeType[1] { FaceAttributeType.Emotion }));
 
-                                if (faces.Count() != 0)
+                                if (faces!= null && faces.Count() != 0)
                                 {
                                     var array = new double[8];
                                     array[0] = faces.FirstOrDefault().FaceAttributes.Emotion.Anger;
