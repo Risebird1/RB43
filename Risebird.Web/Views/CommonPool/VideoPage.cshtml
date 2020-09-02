@@ -1720,6 +1720,26 @@ else
                     <div class="row">
 
                         <div class="col-md-12 col-sm-12">
+                            <div class="col-md-6 col-sm-6 pull-left">
+                                <div class="form-group">
+                                    <label class="control-label  desp-label">
+                                        View Name
+                                    </label>
+                                    <div>
+                                        @Html.TextBoxFor(m => m.IreportModel.ViewName, new { @class = "form-control text-box single-line" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 pull-left">
+                                <div>
+                                    <label class="control-label  desp-label">
+                                        Company Logo
+                                    </label>
+                                    <div>
+                                        @Html.TextBoxFor(m => m.IreportModel.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".jpg,.png", @maxRequestLength = "61440" })
+                                    </div>
+                                </div>
+                            </div>
                             <div class="createshare_left">
 
                                 <div>
@@ -3087,7 +3107,11 @@ else
         for (var i = 0; i < data.length; i++) {
             html += '   <tr>';
             html += '                  <td>' + data[i].candidate + '</td>';
-            html += '                    <td><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">Click Here</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
+            if (data[i].viewName != null && data[i].viewName != "") {
+                html += '                    <td><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">' + data[i].viewName+'</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
+            } else {
+                html += '                    <td><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">Click Here</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
+            }
             html += '                  <td class="text-center count-view"><span class="label-num"><strong>' + data[i].count + '</strong></span></td>';
             if (data[i].timeSpend != null) {
                 html += '                <td class="text-center">' + data[i].timeSpend + '</td>';

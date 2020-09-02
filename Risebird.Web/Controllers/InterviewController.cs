@@ -15,9 +15,12 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -37,8 +40,12 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
+        
 
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, IUserRepository userRepository, IUserService userService)
+
+        private readonly HttpClient _httpClient;
+        private readonly CancellationToken _cancellationToken;
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory, IUserRepository userRepository, IUserService userService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -52,6 +59,8 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _userRepository = userRepository;
             _userService = userService;
+            _httpClient = factory.GetHttpClient();
+
         }
 
 
@@ -3793,7 +3802,7 @@ namespace Risebird.Web.Controllers
                              select new { ID = (int)s, Name = s.GetDescription() };
             model.QCStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
 
-            var trainingStatuses = from TrainingStatus s in Enum.GetValues(typeof(TrainingStatus))
+            var trainingStatuses = from Entities.Enum.TrainingStatus s in Enum.GetValues(typeof(Entities.Enum.TrainingStatus))
                                    select new { ID = (int)s, Name = s.GetDescription() };
             model.TrainingStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
 
@@ -6277,6 +6286,60 @@ namespace Risebird.Web.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> AnalyseSentiment(int imid)
+        {
+            try
+
+            {
+
+                SentimentDTO obj = new SentimentDTO();
+                obj.imid = imid;
+                if (TempData["SuccessErrorMessageSentiment"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageSentiment"].ToString();
+                    TempData.Remove("SuccessErrorMessageSentiment");
+                }
+                return View(obj);
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AnalyseSentiment(SentimentDTO model)
+        {
+            try
+            {
+                //var path = $"http://localhost:7071/api/SentimentAnalysis";
+                var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+              
+                model.VideoFileName = model.imid + "_" + model.TruncatedVideoFile.FileName;
+                await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos", model.TruncatedVideoFile);
+                HttpClient httpClient = new HttpClient();
+                httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
+
+                TempData["SuccessErrorMessageInterview"] = "Sentiment analysis started successfully!";
+                return RedirectToAction("Index");
+
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Failed!";
+                return RedirectToAction("Index");
+            }
+        }
+
+     
     }
 
 }

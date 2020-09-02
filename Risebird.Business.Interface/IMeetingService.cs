@@ -89,5 +89,7 @@ namespace Risebird.Business.Interface
         IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid);
         string UpdateCandidateStatus(int videoid, string Status);
 
+       
+        Task<SentimentPercentage> GetSentimentAnalysis(int imid);
     }
 }
