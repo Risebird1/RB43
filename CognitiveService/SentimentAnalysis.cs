@@ -65,9 +65,9 @@ namespace CognitiveService
                                 var faces = (await faceClient.Face.DetectWithStreamAsync(ms,
                                             returnFaceId: false,
                                             returnFaceLandmarks: false,
-                                            returnFaceAttributes: new FaceAttributeType[1] { FaceAttributeType.Emotion })).ToArray();
+                                            returnFaceAttributes: new FaceAttributeType[1] { FaceAttributeType.Emotion }));
 
-                                if (faces != null)
+                                if (faces!= null && faces.Count() != 0)
                                 {
                                     var array = new double[8];
                                     array[0] = faces.FirstOrDefault().FaceAttributes.Emotion.Anger;
