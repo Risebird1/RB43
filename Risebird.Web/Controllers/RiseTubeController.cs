@@ -1831,6 +1831,7 @@ namespace Risebird.Web.Controllers
                 NewModel.IsOnline = model.IsOnline;
                 NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                 NewModel.LogoUrl = IRListModel.LogoUrl;
+                NewModel.ClientHrContact = model.ClientHrContact;
                 var videodetailscount = await _meetingService.GetTotalViewCount(id);
                 NewModel.VideoCountDetail = videodetailscount.ToList();
                 if (NewModel.IreportModel.QuestionsCollection == null)
