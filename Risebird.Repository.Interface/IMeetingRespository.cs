@@ -112,7 +112,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<string> FetchShareEmails(int Interviewid);
         IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid);
         string UpdateCandidateStatus(int videoid, string Status);
-
         Task<IEnumerable<VideoSentiment>> GetSentimentAnalysis(int imid);
+        Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetings();
+
     }
 }

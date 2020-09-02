@@ -1766,6 +1766,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<MeetingVM>> GetSharedRiseTubeMeetings()
+        {
+            try
+            {
+                var result = await _meetingRespository.GetSharedRiseTubeMeetings();
+                return result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
     }
 

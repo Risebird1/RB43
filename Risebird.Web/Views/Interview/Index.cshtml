@@ -796,14 +796,7 @@
 
     });
          function ResetFilter() {
-
-             $.ajax({
-            type: "POST",
-            url: "/Interview/Index",
-                 success: function (data) {
-                    window.location.href = "/Interview/ResetInterviewFilter";
-                 }
-                });
+             window.location.href = "/Interview/ResetInterviewFilter";
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -826,13 +819,6 @@
             $("#InterviewStatus").val(interviewStatus);
             $("#Interviewer").val(interviewer);
             var form = $("#form").serialize();
-             $.ajax({
-            type: "POST",
-            url: "/Interview/Index",
-            data: form,
-                 success: function (data) {
-                 }
-                });
     }
 
 
