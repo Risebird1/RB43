@@ -2048,7 +2048,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Success");
         }
-        public IActionResult VideoIntrestDetails(int? Page)
+        public IActionResult VideoIntrestDetails()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2061,7 +2061,7 @@ namespace Risebird.Web.Controllers
                     {
                         item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
                     }
-                    return View(model.ToPagedList(Page ?? 1, 12));
+                    return View(model);
                 }
                 else
                 {

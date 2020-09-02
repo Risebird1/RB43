@@ -1,10 +1,11 @@
 ﻿@*@model IEnumerable<Risebird.Entities.ViewModel.InterviewerVM>*@
-@model X.PagedList.IPagedList<Risebird.Entities.ViewModel.VideoDetails>
+@model IEnumerable<Risebird.Entities.ViewModel.VideoDetails>
+
+
 @{
     ViewData["Title"] = "Interview Deatils";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@using X.PagedList.Mvc.Core;
 
 
 <div class="main-panel" id="main-panel">
@@ -24,7 +25,7 @@
         </div>
     </nav>
     <!-- End Navbar -->
-  
+
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -38,7 +39,7 @@
 
                     @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button", @style = "margin-top: 2px;" })
 
-                   
+
 
                 </div>
             </div>
@@ -60,42 +61,43 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-                         
-                            
-                            <div style="clear:both;padding:10px"></div>
-                            <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
-                                <tr>
-                                    <th>Candidate Email</th>
-                                    <th>User</th>
-                                    <th class="text-center">Video Link</th>
-                                    <th class="text-center">Total View </th>
-                                    <th class="text-center">Total Time </th>
-                                    <th class="text-center">Video Time </th>
+                                <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Candidate Email</th>
+                                            <th>User</th>
+                                            <th class="text-center">Video Link</th>
+                                            <th class="text-center">Total View </th>
+                                            <th class="text-center">Total Time </th>
+                                            <th class="text-center">Video Time </th>
 
-                                </tr>
-
-                                @foreach (var item in Model)
-                                {
-                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                            <tr>
-                                <td>@item.CandidateEmail</td>
-                                <td>@item.Candidate</td>
-                                @if (!String.IsNullOrEmpty(item.ViewName))
-                                {
-                                    <td class="text-center"><a href="@item.VideoUrl" target="_blank" title="@item.VideoUrl">@item.ViewName</a></td>
-                                }
-                                else
-                                {
-                                    <td class="text-center"><a href="@item.VideoUrl" target="_blank" title="@item.VideoUrl">Click Here</a></td>
-                                }
-                                <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
-                                <td class="text-center">@item.TimeSpend</td>
-                                <td>@item.CurrentTime</td>
-                            </tr>
-                                }
-                            </table>
+                                        </tr>
+                                    </thead>
+                                   
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                            <tr>
+                                                <td>@item.CandidateEmail</td>
+                                                <td>@item.Candidate</td>
+                                                @if (!String.IsNullOrEmpty(item.ViewName))
+                                                {
+                                                    <td class="text-center"><a href="@item.VideoUrl" target="_blank" title="@item.VideoUrl">@item.ViewName</a></td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="text-center"><a href="@item.VideoUrl" target="_blank" title="@item.VideoUrl">Click Here</a></td>
+                                                }
+                                                <td class="text-center count-view"><span class="label-num"><strong>@item.Count</strong></span></td>
+                                                <td class="text-center">@item.TimeSpend</td>
+                                                <td>@item.CurrentTime</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
                             <div style="clear:both"></div>
-                            @Html.PagedListPager(Model, Page => Url.Action("VideoIntrestDetails", new { Page = Page }))
+
                         </div>
 
 
@@ -139,3 +141,34 @@
     </div>
 </div>
 
+<script>
+    $(document).ready(function () {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").hide();
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+        });
+        var table = $('#meeting').DataTable();
+    });
+  
+
+
+    
+</script>
