@@ -9,17 +9,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE Procedure usp_GetVideoIntrestDetails      
+Create Procedure usp_GetVideoIntrestDetails      
 AS        
 BEGIN          
               
-Select vc.Emailid as Candidate,vc.Count,vc.Videoid,'SharedVideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail from SharedVideoCountDetails vc join SharedInterviewComments ic on vc.videoid=ic.id
-  
+Select vc.Emailid as Candidate,vc.Count,vc.Videoid,'SharedVideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail,ic.ViewName,vc.OnDate  from SharedVideoCountDetails vc join SharedInterviewComments ic on vc.videoid=ic.id
 join interviewmeetings im on ic.interviewid=im.id  where vc.IsIntrested='Intrested' or vc.IsIntrested='Interested'          
 union            
-Select ul.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail from VideoCountDetails vc join userlist ul on vc.Userid=ul.id join interviewmeetings im on vc.Videoid=im.id where vc.Userid!=0 and (vc.IsIntrested='Intrested'  or vc.IsIntrested='Interested')             
+Select ul.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail,'' as ViewName,vc.OnDate  from VideoCountDetails vc join userlist ul on vc.Userid=ul.id join interviewmeetings im on vc.Videoid=im.id where vc.Userid!=0 and (vc.IsIntrested='Intrested'  or vc.IsIntrested='Interested')             
 union  
-Select vc.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail from VideoCountDetails vc join interviewmeetings im on vc.Videoid=im.id where  vc.Userid=0 and (vc.IsIntrested='Intrested'  or vc.IsIntrested='Interested' )            
+Select vc.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail,'' as ViewName,vc.OnDate  from VideoCountDetails vc join interviewmeetings im on vc.Videoid=im.id where  vc.Userid=0 and (vc.IsIntrested='Intrested'  or vc.IsIntrested='Interested' )            
+order by OnDate Desc
 END    
 GO
   

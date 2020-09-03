@@ -1461,6 +1461,7 @@ namespace Risebird.Business
 
                     model.InterviewId = interviewId;
                     model.CandidateName = candidatedetails.Name;
+                    model.LogoUrl = candidatedetails.LogoUrl;
                     model.interviewDate = interviewDetails.interviewDate.ToString();
                     model.resumeLink = interviewDetails.resumeLink;
                     model.IRFId = irfId;
@@ -1486,6 +1487,7 @@ namespace Risebird.Business
                 reportModel.CandidateName = candidatedetails.Name;
                 reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = candidatedetails.EmailId;
+                reportModel.LogoUrl = candidatedetails.LogoUrl;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
                 reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
                 reportModel.InterviewerComment = candidatedetails.InterviewerComments;
@@ -1738,19 +1740,6 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "";
-            }
-        }
-
-        public async Task<bool> InsertVideoSentiment(List<VideoSentimentService> sentimentData)
-        {
-            try
-            {
-                return await _meetingRespository.InsertVideoSentiment(sentimentData);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
             }
         }
 

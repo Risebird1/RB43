@@ -12,9 +12,6 @@ namespace Risebird.Entities.ViewModel
         public string ImageUrl { get; set; }
         public int EmotionType { get; set; }
         public double Value { get; set; }
-        //public string BlobFileName { get; set; }
-        //public MemoryStream ImageStream { get; set; }
-        //public string ImageString { get; set; }
-
+      
     }
 }

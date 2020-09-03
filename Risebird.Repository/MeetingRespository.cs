@@ -2307,6 +2307,9 @@ namespace Risebird.Repository
                     paramx.Add("@CandidateName", reportModel.CandidateName);
                     paramx.Add("@CandidateEmail", reportModel.CandidateEmail);
                     paramx.Add("@InterviewerComment", reportModel.InterviewerComment);
+                    paramx.Add("@ViewName", reportModel.ViewName);
+                    paramx.Add("@LogoUrl", reportModel.VideoLink);
+
 
                     //paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
                     //paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
@@ -2495,7 +2498,7 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         SqlMapper.Query<string>(
-                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress }, commandType: Text);
+                            con, "Update SharedVideoCountDetails set TimeSpend=@TimeSpend,CurrentVideoTime=@CurrentTime where Videoid=@id and Emailid=@emailaddress", new { TimeSpend = TimeSpend.ToString(), id = id, emailaddress = emailaddress, CurrentTime = CurrentTime }, commandType: Text);
 
                     }
                 }
@@ -2727,55 +2730,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> InsertVideoSentiment(List<VideoSentimentService> sentimentData)
-        {
-            try
-            {
-                if(sentimentData!=null && sentimentData.Count()>0)
-                {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var query = "delete from VideoSentiment where InterviewId = @id";
-                        var dynamicParameters = new DynamicParameters();
-                        dynamicParameters.Add("@id", sentimentData.FirstOrDefault().InterviewId);
-                        con.Query(query, dynamicParameters);
-
-                        DataTable sentimentDt = new DataTable();
-                        sentimentDt.Columns.Add("InterviewId", typeof(int));
-                        sentimentDt.Columns.Add("ImageUrl", typeof(string));
-                        sentimentDt.Columns.Add("EmotionType", typeof(int));
-                        sentimentDt.Columns.Add("Value", typeof(double));
-
-                        foreach (var item in sentimentData)
-                        {
-                            sentimentDt.Rows.Add(item.InterviewId, item.ImageUrl, item.EmotionType, item.Value);
-                        }
-
-                        SqlCommand cmdSentiment = new SqlCommand("usp_VideoSentimentBulkInsert", con)
-                        {
-                            CommandType = CommandType.StoredProcedure
-                        };
-                        cmdSentiment.Parameters.Add(new SqlParameter("@VideoSentimentBulkData", SqlDbType.Structured));
-                        cmdSentiment.Parameters["@VideoSentimentBulkData"].Value = sentimentDt;
-                        con.Open();
-                        if (cmdSentiment.ExecuteNonQuery() != 0)
-                        {
-                            con.Close();
-                        }
-                    }
-
-                }
-                return true;
-
-
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
-        }
-
+       
         public async Task<IEnumerable<VideoSentiment>> GetSentimentAnalysis(int imid)
         {
             try

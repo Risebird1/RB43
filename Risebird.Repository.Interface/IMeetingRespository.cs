@@ -113,7 +113,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid);
         string UpdateCandidateStatus(int videoid, string Status);
 
-        Task<bool> InsertVideoSentiment(List<VideoSentimentService> sentimentData);
         Task<IEnumerable<VideoSentiment>> GetSentimentAnalysis(int imid);
     }
 }

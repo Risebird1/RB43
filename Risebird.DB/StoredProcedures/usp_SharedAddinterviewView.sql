@@ -10,23 +10,23 @@ Create Procedure [dbo].[usp_SharedAddinterviewView]
 @Interviewid int,    
 @EmailId varchar(100)    
 AS      
-BEGIN      
-DECLARE @ViewCount int        
-DECLARE @Count int      
-Set @Count=0      
-Select @ViewCount=TotalView from SharedInterviewComments where Id=@Interviewid        
-Update SharedInterviewComments set TotalView=((IsNull(@ViewCount,0))+1) where Id=@Interviewid        
+BEGIN        
+DECLARE @ViewCount int          
+DECLARE @Count int        
+Set @Count=0        
+Select @ViewCount=TotalView from SharedInterviewComments where Id=@Interviewid          
+Update SharedInterviewComments set TotalView=((IsNull(@ViewCount,0))+1) where Id=@Interviewid          
+        
       
-    
-Select @Count=Count from SharedVideoCountDetails where Videoid=@Interviewid and Emailid=@EmailId       
-if(@Count=0)      
-begin      
-Insert into SharedVideoCountDetails values(@Interviewid,0,1,GETDATE(),@EmailId,'','')      
-End      
-else      
-begin      
-Update SharedVideoCountDetails set Count=(@Count+1) where Videoid=@Interviewid and Emailid=@EmailId      
-end      
-End    
-  
+Select @Count=Count from SharedVideoCountDetails where Videoid=@Interviewid and Emailid=@EmailId         
+if(@Count=0)        
+begin        
+Insert into SharedVideoCountDetails values(@Interviewid,0,1,GETDATE(),@EmailId,'','','')        
+End        
+else        
+begin        
+Update SharedVideoCountDetails set Count=(@Count+1) where Videoid=@Interviewid and Emailid=@EmailId        
+end        
+End   
+GO
   

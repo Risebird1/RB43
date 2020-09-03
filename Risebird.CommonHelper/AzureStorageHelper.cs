@@ -9,7 +9,6 @@ using Microsoft.WindowsAzure.Storage.Table;
 using Risebird.CommonHelper.Interface;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 namespace Risebird.CommonHelper
@@ -39,15 +38,15 @@ namespace Risebird.CommonHelper
             _configuration = configuration;
             accountName = _configuration["StorageSettings:StorageName"];
             accountKey = _configuration["StorageSettings:SecretKey"];
-            _AADTenantDomain = _configuration["AzureMediaServicesEmotion:AMSAADTenantDomain"];
-            _RESTAPIEndpoint = _configuration["AzureMediaServicesEmotion:AMSRESTAPIEndpoint"];
-            _AMSClientId = _configuration["AzureMediaServicesEmotion:AMSClientId"];
-            _AMSClientSecret = _configuration["AzureMediaServicesEmotion:AMSClientSecret"];
-            _AADTenantId = _configuration["AzureMediaServicesEmotion:AADTenantId"];
-            _ARMEndpoint = _configuration["AzureMediaServicesEmotion:ARMEndpoint"];
-            _AMSSubscriptionId = _configuration["AzureMediaServicesEmotion:AMSSubscriptionId"];
-            _AMSResourceGroup = _configuration["AzureMediaServicesEmotion:AMSResourceGroup"];
-            _AMSAccountName = _configuration["AzureMediaServicesEmotion:AMSAccountName"];
+            _AADTenantDomain = _configuration["AzureMediaServices:AMSAADTenantDomain"];
+            _RESTAPIEndpoint = _configuration["AzureMediaServices:AMSRESTAPIEndpoint"];
+            _AMSClientId = _configuration["AzureMediaServices:AMSClientId"];
+            _AMSClientSecret = _configuration["AzureMediaServices:AMSClientSecret"];
+            _AADTenantId = _configuration["AzureMediaServices:AADTenantId"];
+            _ARMEndpoint = _configuration["AzureMediaServices:ARMEndpoint"];
+            _AMSSubscriptionId = _configuration["AzureMediaServices:AMSSubscriptionId"];
+            _AMSResourceGroup = _configuration["AzureMediaServices:AMSResourceGroup"];
+            _AMSAccountName = _configuration["AzureMediaServices:AMSAccountName"];
         }
 
         /// <summary>
@@ -447,8 +446,6 @@ namespace Risebird.CommonHelper
                 throw ex;
             }
         }
-
-        
 
         ///// <summary>
         ///// upload video using Azure's media services
