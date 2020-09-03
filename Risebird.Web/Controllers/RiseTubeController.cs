@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Rewrite.Internal.IISUrlRewrite;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -23,7 +24,6 @@ namespace Risebird.Web.Controllers
     //[Authorize]
     public class RiseTubeController : Controller
     {
-        static string EmailCurrentUser = "";
         private readonly IMeetingService _meetingService;
         private readonly IUserService _userService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
@@ -874,7 +874,7 @@ namespace Risebird.Web.Controllers
                         var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                         if (menus != null)
                         {
-                            menus = menus.Where(x => x.functionName != "Support").ToList();
+                            menus = menus.Where(x => x.functionName != "Support" && x.functionName != "CommonPool").ToList();
                             HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                         }
                         if (IRListModel != null)
@@ -1388,8 +1388,6 @@ namespace Risebird.Web.Controllers
         }
         public JsonResult VideoShareEmail(string videoid, string Emailid, string CurrentUrl)
         {
-            //Set Email for further uses
-            EmailCurrentUser = Emailid;
             //Start:Save View counts of vedio
             Emailid = Emailid.Replace("\"", "");
             if (CurrentUrl.Contains("SharedVideoPage"))
@@ -1852,7 +1850,7 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "CommonPool").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 if (IRListModel != null)
@@ -2213,7 +2211,7 @@ namespace Risebird.Web.Controllers
                     var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                     if (menus != null)
                     {
-                        menus = menus.Where(x => x.functionName != "Support").ToList();
+                        menus = menus.Where(x => x.functionName != "Support" && x.functionName != "CommonPool").ToList();
                         HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                     }
                     for (int i = 0; i < modelList.Count; i++)
@@ -2494,12 +2492,11 @@ namespace Risebird.Web.Controllers
                 NewModel.IreportModel.IsQC = isQC;
                 ViewBag.VideoStatus = "Public";
                 //ViewBag.VideoStatus = "Private";
-                ViewBag.CurrentUserAddress = EmailCurrentUser;
 
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "CommonPool").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 if (IRListModel != null)

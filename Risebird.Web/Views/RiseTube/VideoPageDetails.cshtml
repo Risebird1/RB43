@@ -961,9 +961,6 @@
     </div>
 </div>
 
-
-@if (String.IsNullOrEmpty(ViewBag.CurrentUserAddress))
-{
     <div id="PublicShareVideo" class="modal modal-bg">
         @if (ViewBag.VedioStatus == "Public")
         {
@@ -990,11 +987,7 @@
             </div>
         </div>
     </div>
-}
-else
-{
-    <input type="text" id="txtvideoemailid" class="form-control" value="@ViewBag.CurrentUserAddress" hidden />
-}
+
 
 
 <script>

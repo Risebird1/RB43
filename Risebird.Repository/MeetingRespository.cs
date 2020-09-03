@@ -2729,8 +2729,6 @@ namespace Risebird.Repository
                 return "";
             }
         }
-
-       
         public async Task<IEnumerable<VideoSentiment>> GetSentimentAnalysis(int imid)
         {
             try
