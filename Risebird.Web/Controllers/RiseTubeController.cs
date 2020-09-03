@@ -874,7 +874,7 @@ namespace Risebird.Web.Controllers
                         var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                         if (menus != null)
                         {
-                            menus = menus.Where(x => x.functionName != "Support" && x.functionName != "CommonPool").ToList();
+                            menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
                             HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                         }
                         if (IRListModel != null)
@@ -1850,7 +1850,7 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "CommonPool").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 if (IRListModel != null)
@@ -2211,7 +2211,7 @@ namespace Risebird.Web.Controllers
                     var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                     if (menus != null)
                     {
-                        menus = menus.Where(x => x.functionName != "Support" && x.functionName != "CommonPool").ToList();
+                        menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
                         HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                     }
                     for (int i = 0; i < modelList.Count; i++)
@@ -2496,7 +2496,7 @@ namespace Risebird.Web.Controllers
                 var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 if (menus != null)
                 {
-                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "CommonPool").ToList();
+                    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                 }
                 if (IRListModel != null)
