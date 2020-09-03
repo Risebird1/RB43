@@ -23,9 +23,7 @@ textarea::-webkit-scrollbar-thumb {
 .pt30 {
     padding-top: 30px;
 }
-.bg-w {
-    background: rgb(255, 255, 255);
-}
+
 .card-title-space {
     margin-top: 20px;
     margin-bottom: 0px;
@@ -35,9 +33,7 @@ textarea::-webkit-scrollbar-thumb {
     border-radius:0px;
 }
 
-.client .bg-w {
-        background: #fff!important;
-    }
+
 
 
 .content.client {

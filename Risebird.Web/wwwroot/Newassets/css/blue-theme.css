@@ -39,22 +39,49 @@ textarea::-webkit-scrollbar {
 
     background-color: var(#acacad, #565656)!important;
 }
-.video-card-image {
-    border: 3px #ccc solid;
+
+.video-card {
+    background-color: #fff !important;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12) !important;
 }
 
 textarea::-webkit-scrollbar-thumb {
     background-color: #acacad !important;
     border: 1px solid #acacad !important;
 }
-
-
-
+.bg-w{background:#fff!important;}
+.bl-bg {
+    background: #f8faff;
+}
+.card-header.bg-w {
+    background: #fff!important;
+}
 .share-btn {
     color: #000 !important
 }
+.single-video-right .video-card-image {
+    border: 2px #ccc solid;
+}
+.video-info span {
+    color: #606060;
+}
+.video-title .video-title .video-title a, .video-title .candidate {
+    color: #000;
+}
+#myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
+    background: #fff !important;
+}
+    .client .row.bg-white {
+    background-color: #fff !important;
+}
+.nav svg {
 
-.mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+    fill: #97d1f9;
+}
+.control-label {
+    color: #5f5c5c !important;
+}
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
     border-color: #53a5f5 !important;
     background-color: #53a5f5 !important;
 }
@@ -67,7 +94,9 @@ textarea::-webkit-scrollbar-thumb {
 .mdc-card button.dropdown-toggle:focus {
     border-bottom: 2px #42a5f5 solid !important;
 }
-
+.multiselect-container.dropdown-menu {
+    background-color: #fff !important;
+}
 
 [type="datetime-local"] {
     background: #f5f5f5 url(../img/blue-timdate.png) 97% 50% no-repeat !important;

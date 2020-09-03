@@ -850,7 +850,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 }
 
 .video-title .video-title .video-title a, .video-title .candidate {
-    color: #000;
+  
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
@@ -886,17 +886,15 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 
 
 .video-card {
-    border-radius: 4px;
-    background-color: #fff;
-    background-color: var(--mdc-theme-surface, #fff);
-    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+    border-radius: 2px;
+
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
 }
 
 .video-card-body {
-    padding: 8px 3px;
+    padding: 4px 3px 8px 3px;
     height: 100px;
 }
 

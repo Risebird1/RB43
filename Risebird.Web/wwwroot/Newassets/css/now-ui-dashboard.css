@@ -2665,9 +2665,11 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 }
 
 .bg-white {
-    background-color: #FFFFFF !important;
+    background-color: #FFFFFF;
 }
-
+.navbar-brand.card-title {
+    margin-bottom: 0px;
+}
 .dropdown-menu {
     border: 0;
     box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.2);
@@ -10947,7 +10949,7 @@ svg {
     float: left;
     margin: 0px 10px 0px 5px;
     margin-top: 3px;
-    fill: #97d1f9;
+  
 }
 
 

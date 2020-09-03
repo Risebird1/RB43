@@ -117,18 +117,50 @@ input[type='radio']:checked:after {
     background: #ea6e24 !important;
 }
 
-.mdc-card {
-    border-top: 3px #ea6b26 solid !important;
+.multiselect-container.dropdown-menu {
+    background-color: #fff !important;
 }
 
 .card-blue .card-header h6 {
     color: #ea6e24 !important;
 }
-
+.video-card {
+    background-color: #fff !important;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12) !important;
+}
+.video-info span {
+    color: #606060;
+}
+.video-title .video-title .video-title a, .video-title .candidate {
+    color: #000;
+}
+.single-video-right .video-card-image {
+    border: 2px #ccc solid;
+}
+#myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
+    background: #fff!important;
+}
+.bg-w {
+    background: #fff!important;
+}
+.client .row.bg-white {
+    background-color: #fff !important;
+}
+.nav svg {
+    fill: #fff;
+}
+.control-label {
+    color: #5f5c5c !important;
+}
 .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
     background: #ffb23630 !important;
 }
-
+.bl-bg {
+    background: #f8faff;
+}
+.card-header.bg-w {
+    background: #fff !important;
+}
 .click {
     color: #ea6e24 !important;
     text-decoration: underline !important;

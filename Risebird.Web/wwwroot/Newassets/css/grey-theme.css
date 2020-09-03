@@ -105,11 +105,43 @@ input[type='radio']:checked:after {
 .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
     background: #929292 !important;
 }
-
-.mdc-card {
-    border-top: 3px #b5b5b5 solid !important;
+.multiselect-container.dropdown-menu {
+    background-color: #fff !important;
 }
-
+.bg-w {
+    background: #fff!important;
+}
+.bl-bg {
+    background: #f8faff;
+}
+.card-header.bg-w {
+    background: #fff !important;
+}
+.single-video-right .video-card-image {
+    border: 2px #ccc solid;
+}
+.video-info span {
+    color: #606060;
+}
+.video-card {
+    background-color: #fff !important;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12) !important;
+}
+.video-title .video-title .video-title a, .video-title .candidate {
+    color: #000;
+}
+#myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
+    background: #fff !important;
+}
+.client .row.bg-white {
+    background-color: #fff !important;
+}
+.nav svg {
+    fill: #fff;
+}
+.control-label {
+    color: #5f5c5c !important;
+}
  .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
         background: #ecececb5 !important;
  }

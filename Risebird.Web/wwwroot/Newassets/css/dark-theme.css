@@ -1,5 +1,5 @@
 body {
-    background: #1a1a1a !important;
+    background: #151515 !important;
     color: #a9a5a5 !important
 }
 
@@ -66,25 +66,48 @@ hr {
     background: #181818;
     color: #5f5c5c !important;
 }
+.multiselect-container.dropdown-menu {
+    background-color: #131313 !important;
+}
+    .multiselect-container.dropdown-menu:before{border:0px;}
 
+.video-info span {
+    color: #9A9A9A;
+}
+.video-title .video-title .video-title a, .video-title .candidate {
+    color: #9A9A9A;
+}
+.control-label {
+    color: #9A9A9A !important;
+}
+.nav svg {
+    fill: #fff;
+}
 .video-card {
+    border: 1px #1f1e1e solid;
+    background-color: #161616 !important;
     box-shadow: none !important;
 }
-
 .video-card-image {
     box-shadow: none !important;
 }
+.card-header.bg-w {
+    background: rgb(21 21 21)!important;
 
+}
+.bl-bg {
+    background: #151515;
+}
 .tab_container {
     background: #000000 !important;
 }
 
 #toggle-click1 {
-    color: #9A9A9A;
+    color: #9A9A9A!important;
 }
 
 #toggle-click {
-    color: #FFF;
+    color: #fff!important;
 }
 
 .chart-box, .card {
@@ -158,21 +181,38 @@ hr {
     font-weight: normal;
     font-size: 14px !important;
 }
-
-#IRFList a, #ProjectList a {
+.pt30 .card-title strong {
+    color: #9a9a9a;
+}
+    #IRFList a, #ProjectList a {
     color: #f7eaea75 !important;
 }
-
+#myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
+    background: #161616;
+    border: solid 1px #cccccc3b;
+    box-shadow:none!important;
+}
 #myForm .searchbox .input-group-btn .btn {
     background: #1a1a1a !important;
     border-color: #1a1a1a !important;
 }
-
+.stats .card-chart .card-header {
+    border-top: 0px;
+    background-color: #000000 !important;
+}
+.client .row.bg-white {
+    background-color: #0c0c0c !important;
+}
 .mdc-button--outlined:not(:disabled) {
-    border-color: #fff !important;
+    border-color: #524c4cab !important;
     color: #fff !important;
 }
-
+.mdc-card.card.bl-bg{border:0px!important}
+#myForm .searchbox .input-group-btn {
+    border: 1px #524c4cab solid;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
 .card .card-footer {
     background-color: #1a1a1a !important;
     border: 0;
@@ -195,6 +235,7 @@ table {
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #121212 !important;
+    border: 1px #524c4cab solid !important;
 }
 
 .mdc-fab {
@@ -208,7 +249,7 @@ table {
 
 .mdc-card {
     background-color: rgb(0, 0, 0) !important;
-    border-top: 3px #121212 solid !important;
+    border:0px !important;
 }
 
     .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
@@ -271,9 +312,11 @@ table {
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
     background: #181818;
-    color: #9A9A9A;
+    color: #9A9A9A!important;
 }
-
+.vjs-tech {
+    border: 2px #524c4cab solid;
+}
 .select-css, .select-css[aria-disabled=true] {
     background-image: url(../../img/dark-drop.png) !important;
 }
@@ -543,7 +586,9 @@ div.dataTables_wrapper div.dataTables_info {
 .info .info-title {
     color: #9a9a9a !important
 }
-
+.single-video-right .video-card-image {
+    border: 2px #524c4cab solid;
+}
 input[type="radio"]:checked:before {
     background: #787878 !important;
 }
@@ -572,5 +617,12 @@ input[type="radio"]:checked {
         background-color: #1a1a1a !important;
         color: #fff;
         border: none !important;
+    }
+}
+
+
+@media screen and (max-width: 767px) {
+    .pt30 .card-title {
+        color:#fff;
     }
 }
