@@ -361,12 +361,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_userService.DeleteClientUser(id))
                     {
-                        TempData["SuccessErrorMessageClientUser"] = "Client User is deleted Successfully";
+                        //TempData["SuccessErrorMessageClientUser"] = "Client User is deleted Successfully";
                         return Json(new { url = Url.Action("ClientUsers", "User") });
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageClientUser"] = "Deletion of Client User Failed";
+                        //TempData["SuccessErrorMessageClientUser"] = "Deletion of Client User Failed";
                         return Json(new { url = Url.Action("ClientUsers", "User") });
                     }
                 }
