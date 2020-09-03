@@ -1,6 +1,7 @@
 body {
     background: #ebecf1;
 }
+
 .can-details a, .callatag {
     color: #007bff !important;
 }
@@ -9,12 +10,14 @@ body {
     .can-details a:focus {
         color: #f96332 !important;
     }
+
 .navbar.navbar.bg-white, .navbar.navbar-transparent {
-    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%)!important;
+    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%) !important;
 }
+
 input[type='radio']:checked:after {
-    background-color: #42a5f5!important;
-    top: 1px!important;
+    background-color: #42a5f5 !important;
+    top: 1px !important;
 }
 
 
@@ -22,6 +25,7 @@ input[type='radio']:checked:after {
     background-color: #42a5f5 !important;
     top: -1px !important;
 }
+
 .sidebar[data-color="blue"]:after, .off-canvas-sidebar[data-color="blue"]:after {
     background: #2CA8FF;
 }
@@ -29,18 +33,22 @@ input[type='radio']:checked:after {
 .filavatar {
     background: #42a5f5 !important;
 }
+
 .mdc-card .modal .form-control, .modal .form-control {
     background: #fff;
 }
+
 .toscore {
     color: #000 !important;
 }
-textarea::-webkit-scrollbar {
 
-    background-color: var(#acacad, #565656)!important;
+textarea::-webkit-scrollbar {
+    background-color: var(#acacad, #565656) !important;
 }
-.video-card-image {
-    border: 3px #ccc solid;
+
+.video-card {
+    background-color: #fff !important;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12) !important;
 }
 
 textarea::-webkit-scrollbar-thumb {
@@ -48,10 +56,48 @@ textarea::-webkit-scrollbar-thumb {
     border: 1px solid #acacad !important;
 }
 
+.bg-w {
+    background: #fff !important;
+}
 
+.bl-bg {
+    background: #f8faff;
+}
+
+.card-header.bg-w {
+    background: #fff !important;
+}
 
 .share-btn {
     color: #000 !important
+}
+
+.single-video-right .video-card-image {
+    border: 2px #ccc solid;
+}
+
+.video-info span {
+    color: #606060;
+}
+
+.video-title .video-title .video-title a, .video-title .candidate {
+    color: #000;
+}
+
+#myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
+    background: #fff !important;
+}
+
+.client .row.bg-white {
+    background-color: #fff !important;
+}
+
+.nav svg {
+    fill: #97d1f9;
+}
+
+.control-label {
+    color: #5f5c5c !important;
 }
 
 .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
@@ -68,6 +114,9 @@ textarea::-webkit-scrollbar-thumb {
     border-bottom: 2px #42a5f5 solid !important;
 }
 
+.multiselect-container.dropdown-menu {
+    background-color: #fff !important;
+}
 
 [type="datetime-local"] {
     background: #f5f5f5 url(../img/blue-timdate.png) 97% 50% no-repeat !important;
@@ -83,8 +132,9 @@ textarea::-webkit-scrollbar-thumb {
     background: #53a5f5;
     border: 2px #53a5f54d double;
 }
-    .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
-    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+
+.mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
+    background: #fff url(blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
     padding: 10px !important;
 }
@@ -95,17 +145,17 @@ textarea::-webkit-scrollbar-thumb {
     padding: 10px !important;
 }
 
-.skill [type="datetime-local"]{
-    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+.skill [type="datetime-local"] {
+    background: #fff url(blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 6% !important;
 }
 
 .interview-date [type="date"] {
-    background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
+    background: #fff url(blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 9% !important;
 }
 
-    .file-lable {
+.file-lable {
     color: #000;
     font-size: 14px !important;
 }
@@ -113,16 +163,18 @@ textarea::-webkit-scrollbar-thumb {
 .special-text svg {
     fill: rgb(83, 165, 245) !important;
 }
+
 .edit-share {
-    background-image: url('../../img/editicon.png')!important;
+    background-image: url('../../img/editicon.png') !important;
 }
-    .tabs.nav-pills li.nav-link.active {
+
+.tabs.nav-pills li.nav-link.active {
     color: #fff;
     background-color: #53a5f5 !important;
 }
 
 .private-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(66, 165, 245)"   d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
+    background-image: url('svg>') !important;
 }
 
 .publicurl-share {
@@ -130,7 +182,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .email-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(66, 165, 245)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') !important;
+    background-image: url('svg>') !important;
 }
 
 .public-share {
@@ -154,14 +206,15 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .theme-settings .ts-button {
-    background: #1091f9!important;
+    background: #1091f9 !important;
 }
 
 .theme-settings .ts-body {
-    background: #1091f9!important;
+    background: #1091f9 !important;
 }
+
 input[type="radio"]:checked:before {
-    background: #53a5f5!important;
+    background: #53a5f5 !important;
 }
 
 input[type="radio"]:checked {
@@ -169,7 +222,7 @@ input[type="radio"]:checked {
 }
 
 .text-areadiv1 textarea {
-    background: #f5f5f5!important;
+    background: #f5f5f5 !important;
 }
 
 [data-tooltip]:before {
@@ -177,6 +230,7 @@ input[type="radio"]:checked {
     color: #fff !important;
     border: 1px #fff solid !important;
 }
+
 [data-tooltip]:after {
     border-top: 8px solid hsl(0deg 0% 50%) !important;
     border-right: 7px solid white !important;
