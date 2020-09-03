@@ -2729,8 +2729,6 @@ namespace Risebird.Repository
                 return "";
             }
         }
-
-       
         public async Task<IEnumerable<VideoSentiment>> GetSentimentAnalysis(int imid)
         {
             try
@@ -2755,6 +2753,25 @@ namespace Risebird.Repository
             return null;
 
         }
-
+        public async Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetings()
+        {
+            try
+            {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUser", null,
+                                 commandType: CommandType.StoredProcedure);
+                    }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

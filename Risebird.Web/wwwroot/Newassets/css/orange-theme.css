@@ -3,7 +3,7 @@
 }
 
 .navbar.navbar.bg-white, .navbar.navbar-transparent {
-    background: linear-gradient(to right, #f7792e 0%, #fb8a44ed 60%, #ea7933 100%)!important;
+    background: linear-gradient(to right, #f7792e 0%, #fb8a44ed 60%, #ea7933 100%) !important;
 }
 
 textarea::-webkit-scrollbar {
@@ -24,9 +24,11 @@ input[type='radio']:checked:after {
     background-color: #ea6e24 !important;
     top: -1px !important;
 }
+
 .edit-share {
     background-image: url('../../img/editicon-orange.png') !important;
 }
+
 .can-details a, .callatag {
     color: #ea6e24 !important;
 }
@@ -117,16 +119,61 @@ input[type='radio']:checked:after {
     background: #ea6e24 !important;
 }
 
-.mdc-card {
-    border-top: 3px #ea6b26 solid !important;
+.multiselect-container.dropdown-menu {
+    background-color: #fff !important;
 }
 
 .card-blue .card-header h6 {
     color: #ea6e24 !important;
 }
 
+.video-card {
+    background-color: #fff !important;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12) !important;
+}
+
+.video-info span {
+    color: #606060;
+}
+
+.video-title .video-title .video-title a, .video-title .candidate {
+    color: #000;
+}
+
+.single-video-right .video-card-image {
+    border: 2px #ccc solid;
+}
+
+#myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
+    background: #fff !important;
+}
+
+.bg-w {
+    background: #fff !important;
+}
+
+.client .row.bg-white {
+    background-color: #fff !important;
+}
+
+.nav svg {
+    fill: #fff;
+}
+
+.control-label {
+    color: #5f5c5c !important;
+}
+
 .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
     background: #ffb23630 !important;
+}
+
+.bl-bg {
+    background: #f8faff;
+}
+
+.card-header.bg-w {
+    background: #fff !important;
 }
 
 .click {
@@ -146,6 +193,7 @@ input[type='radio']:checked:after {
     background: #f5f5f5 url(../img/orange-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
+
 .btnmeeting, .btnmeeting:hover {
     background: #ea6e28;
     border: 2px #ea6e2894 double;
@@ -168,6 +216,7 @@ input[type='radio']:checked:after {
     background-size: 7% !important;
     padding: 10px !important;
 }
+
 .skill [type="datetime-local"] {
     background: #fff url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 6% !important;
@@ -177,6 +226,7 @@ input[type='radio']:checked:after {
     background: #fff url(../img/orange-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 9% !important;
 }
+
 .date-time {
     background: #f5f5f5;
 }
@@ -242,7 +292,7 @@ input[type='radio']:checked:after {
 }
 
 .private-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(234, 110, 36)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
+    background-image: url('svg>') !important;
 }
 
 .public-share {
@@ -254,7 +304,7 @@ input[type='radio']:checked:after {
 }
 
 .email-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(234, 110, 36)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') !important;
+    background-image: url('svg>') !important;
 }
 
 .msger-send-btn {
