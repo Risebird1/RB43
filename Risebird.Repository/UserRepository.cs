@@ -238,7 +238,7 @@ namespace Risebird.Repository
             try
             {
                 //Set the parameters to be passed to store procedure
-                DynamicParameters parameters = SetStoredProcedureParameterForClientUser(client);
+                DynamicParameters parameters = SetStoredProcedureParameterForClientUser(client, true);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -344,7 +344,7 @@ namespace Risebird.Repository
             }
         }
 
-        private DynamicParameters SetStoredProcedureParameterForClientUser(ClientUserVM entity)
+        private DynamicParameters SetStoredProcedureParameterForClientUser(ClientUserVM entity, bool isAdd=false)
         {
             var parameters = new DynamicParameters();
 
@@ -359,7 +359,11 @@ namespace Risebird.Repository
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
-            parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
+            if(isAdd)
+            {
+                parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
+
+            }
 
             return parameters;
         }

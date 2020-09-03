@@ -12,8 +12,6 @@ namespace Risebird.Entities.ViewModel
         public int imid { get; set; }
 
         [Display(Name = "Video File")]
-
-        public IFormFile TruncatedVideoFile { get; set; }
         public string VideoFileName { get; set; }
     }
 }
