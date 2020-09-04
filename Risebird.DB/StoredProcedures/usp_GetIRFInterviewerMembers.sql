@@ -22,13 +22,13 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
 
 	insert into @commonTable 
 
-		select ti.IRFId, 'Interviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
+		select tip.IRFId, 'Interviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
 		(select count(id) from InterviewMeetings where interviewer=ul.EmailId and IRFId = irf.IRFId and confirmationStatus=1) as TotalInterviews,
 		0 as TotalQCInterviews, ul.MobileNumber 
-		from TransInterviewer ti join InterviewerProfile ipr on ipr.UserId = ti.UserId
-		join UserList ul on ul.id = ti.UserId
-		join IRF on irf.id = ti.IRFId
-		where ti.IRFId = @IRFId
+		from TransInterviewerProfile tip join InterviewerProfile ipr on ipr.UserId = tip.UserId
+		join UserList ul on ul.id = tip.UserId
+		join IRF on irf.id = tip.IRFId
+		where tip.IRFId = @IRFId
 
 	insert into @commonTable 
 
