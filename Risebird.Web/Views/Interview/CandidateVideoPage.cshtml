@@ -122,35 +122,39 @@
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
-                <a class="navbar-brand"></a>
+                <a class="navbar-brand card-title">RiseTube</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm"> </div>
-    <div class="content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mdc-card card">
-                    <div class="mdc-card-wrapper__text-section">
-                        <div class="row">
-                            <div class="card-header">
-                                <div class="pull-left">
-                                    <h4 class="card-title">RiseTube</h4>
-                                </div>
-                                <div class="pull-right">
-                                    <div>
-                                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
-                                        @if (ViewBag.VideoStatus != "Public")
-                                        {
-                                            @Html.ActionLink("Back to List", "CandidateInterviews", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
-                                        }
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">RiseTube</h4></div>
+                </div>
 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="pull-right">
+                    <div>
+                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
+                        @if (ViewBag.VideoStatus != "Public")
+                        {
+                            @Html.ActionLink("Back to List", "CandidateInterviews", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row bg-white">
+            <div class="col-md-12">
+                <div class="mdc-card card bg-white">
+                    <div class="mdc-card-wrapper__text-section">
+                        
 
                         @if (ViewBag.ResultStatus == "VideoPresent")
                         {
@@ -197,7 +201,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class=" col-md-12 video-contop">
+                                            <div class=" col-md-12">
                                                 @if (Model.JDTiltle != null)
                                                 {<div class="col-md-7 nopad pull-left">
                                                         <h1 class="title video-title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
@@ -758,7 +762,7 @@
                                                                         <textarea class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
                                                                     </div>
                                                                 </div>
-                                                                <div class="button-group pull-right"> <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a> </div>
+                                                                <div class="button-group pull-left" style="margin-left:10px;"> <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a> </div>
                                                             </div>
                                                         </form>
                                                         <div id="divcomments">

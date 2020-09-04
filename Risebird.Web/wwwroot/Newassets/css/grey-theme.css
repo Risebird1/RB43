@@ -1,3 +1,11 @@
+body {
+    background: #ebecf1;
+}
+
+.main-panel {
+    background: #ebecf1;
+}
+
 .navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
@@ -18,7 +26,12 @@ input[type='radio']:checked:after {
     background-color: #929292 !important;
     top: 1px !important;
 }
-
+.qc-feedback .card-footer {
+    background: #fff
+}
+.qc-feedback .mdc-form-field > label, .qc-feedback label {
+    color: #000;
+}
 #broadcastModal input[type='radio']:checked:after {
     background-color: #929292 !important;
     top:-1px !important;
@@ -112,7 +125,11 @@ input[type='radio']:checked:after {
     background: #fff!important;
 }
 .bl-bg {
-    background: #f8faff;
+    background: #ebecf1;
+}
+
+.client .mdc-card {
+    background: #ebecf1;
 }
 .card-header.bg-w {
     background: #fff !important;

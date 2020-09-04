@@ -24,6 +24,9 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
+                <a class="navbar-brand">
+                    Open Interviews
+                </a>
 
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,12 +37,25 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Open Interviews</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control card-title-space", onchange = "FilterInterviews(this.value);" })
+
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="content">
-        <div class="row">
+    <div class="content client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
                         <div class="toolbar">
@@ -49,37 +65,7 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-                            <div class="toolbar">
-
-                                <div class="row">
-
-
-                                    <div class="card-header">
-                                        <div class="pull-left">
-                                            <h4 class="card-title">Open Interviews</h4>
-                                        </div>
-
-
-
-
-
-                                        <div class="pull-right first">
-                                            @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control", onchange = "FilterInterviews(this.value);" })
-
-                                        </div>
-
-                                    </div>
-
-
-
-
-
-
-
-                                </div>
-
-
-                            </div>
+                       
 
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <div id="tableID" class="second">

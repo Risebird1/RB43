@@ -916,7 +916,7 @@ textarea::-webkit-scrollbar-thumb {
 
 .share {
     border: none;
-    background-color: white;
+
     font-weight: bold;
     font-size: 13px !important;
     padding: 0px 0px;
@@ -1170,11 +1170,18 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .control-label {
-    color: #5f5c5c !important;
+    color: #5f5c5c;
     font-weight: 500;
 }
-
-
+.qc-feedback .mdc-checkbox .mdc-checkbox__background {
+    top: 15px;
+}
+.qc-feedback .modal-content {
+    border-radius: 0px;
+}
+.qc-feedback .mdc-form-field > label, .qc-feedback label {
+    font-weight: 400;
+}
 .mdc-card-wrapper__text-section {
     padding: 16px;
 }
@@ -1260,7 +1267,7 @@ textarea::-webkit-scrollbar-thumb {
 .dropdown-toggle {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: white !important;
+    background: white;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -1612,7 +1619,7 @@ textarea::-webkit-scrollbar-thumb {
     font-weight: bold;
     font-size: 13px !important;
 }
-
+.single-video{margin-bottom:15px;}
 
 .single-video .fa-check:before {
     content: "\f00c";

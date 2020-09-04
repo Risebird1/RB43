@@ -427,7 +427,7 @@
 
                                                     </div>
                                                 }
-                                                <div class="form-group">
+                                                <div class="form-group col-md-6 border-rv">
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
                                                     <div class="col-md-12 col-sm-12">
                                                         <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
@@ -443,7 +443,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="form-group col-md-12 col-sm-12 ">
+                                                <div class="form-group col-md-6 col-sm-6">
                                                     <div>
                                                         <div class="col-md-12 col-sm-12 ">
                                                             <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
@@ -1677,7 +1677,7 @@
                 <div class="col-md-12 ">
                     <div class="text-right">
                         <input type="button" onclick="ShareVideoLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="        background: #53a5f5!important;
+                        <input style="color:#fff;
         line-height: 13px;" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1709,7 +1709,7 @@
                 <div class="col-md-12">
                     <div class=" text-right">
                         <input type="button" onclick="ShareVideoLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="        background: #53a5f5!important;
+                        <input style="color:#fff;
         line-height: 13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1743,7 +1743,7 @@
                 <div class="col-md-12">
                     <div class=" text-right">
                         <input type="button" onclick="SharepublicVideoLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="        background: #53a5f5!important;
+                        <input style=" color:#fff;
         line-height: 13px;" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1780,7 +1780,7 @@
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input style="        background: #53a5f5!important;
+                        <input style=" color:#fff;
         line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1920,7 +1920,7 @@
                 <div class="col-md-12 ">
                     <div class="text-right">
                         <input type="button" id="OnlineSubmitBtn" onclick="SubmitMeeting()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
-                        <input style="        background: #53a5f5!important;
+                        <input style="color:#fff;
         line-height: 13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -2217,7 +2217,7 @@
                             <div class="text-right">
                                 <input type="submit" value="Submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
                                 @*<input type="button" onclick="SubmitSharedVideo()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">*@
-                                <input style="        background: #53a5f5!important;
+                                <input style="color:#fff;
         line-height: 13px;" type="button" onclick="closeCreateAndShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                             </div>
                         </div>
@@ -2705,7 +2705,7 @@
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             chart.fontSize = 13;
-
+           
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;

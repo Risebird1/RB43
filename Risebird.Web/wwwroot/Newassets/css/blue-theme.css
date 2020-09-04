@@ -1,6 +1,11 @@
 body {
-    background: #ebecf1;
+    background: #f8faff;
 }
+
+.main-panel {
+    background: #f8faff;
+}
+
 .can-details a, .callatag {
     color: #007bff !important;
 }
@@ -17,6 +22,15 @@ input[type='radio']:checked:after {
     top: 1px!important;
 }
 
+.qc-feedback .card-footer {
+    background: #fff
+}
+.client .mdc-card {
+    background: #f8faff;
+}
+    .qc-feedback .mdc-form-field > label, .qc-feedback label {
+  color:#000;
+}
 
 #broadcastModal input[type='radio']:checked:after {
     background-color: #42a5f5 !important;

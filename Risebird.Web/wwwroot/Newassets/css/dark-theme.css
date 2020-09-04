@@ -249,7 +249,8 @@ table {
 
 .mdc-card {
     background-color: rgb(0, 0, 0) !important;
-    border:0px !important;
+    border: 0px !important;
+    min-height: 350px;
 }
 
     .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
@@ -280,6 +281,7 @@ table {
     background: #181818 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
     padding: 10px !important;
+    color: #9A9A9A !important;
 }
 
 [type="date"].form-control {
@@ -403,13 +405,18 @@ select * {
 }
 
 .main-panel {
-    background-color: #1a1a1a;
+    background-color: #151515!important;
 }
 
 .card .card-header .card-title, .card .card-header h4.card-title {
     color: #fff
 }
-
+.qc-feedback .mdc-form-field > label, .qc-feedback label {
+    color: #9A9A9A;
+}
+.btnShortlist {
+    color: rgb(154, 154, 154);
+}
 .table-bordered td {
     border: 1px solid #464343;
     color: #9A9A9A;
@@ -604,6 +611,7 @@ input[type="radio"]:checked {
 [data-tooltip]:before {
     background: #121212 !important;
     color: #8a8181 !important;
+    border:0px!important;
 }
 
 [data-tooltip]:after {
