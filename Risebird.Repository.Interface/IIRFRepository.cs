@@ -120,6 +120,6 @@ namespace Risebird.Repository.Interface
         Task<bool> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM curatedUsers);
         Task<IEnumerable<CuratedUserGroupData>> GetCuratedGroupsForCuratedUser(string emailId);
         string pickInterviewerSills(string Interviewerids);
-
+        Task<IEnumerable<IRFInterviewerMembers>> GetIRFInterviewerMembers(int irfId);
     }
 }

@@ -67,5 +67,6 @@ namespace Risebird.Business.Interface
         CuratedGroupUsersVM GetCuratedGroupUsers(int curatedGroupId);
         bool AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model);
         IEnumerable<CuratedUserGroupData> GetCuratedGroupsForCuratedUser(string emailId);
+        Task<IEnumerable<IRFInterviewerMembers>> GetIRFInterviewerMembers(int irfId);
     }
 }
