@@ -49,7 +49,7 @@ namespace Risebird.Business.Interface
         MeetingVM GetMeetingbyid(int id, string Email);
         Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false);
         MeetingVM VedioLike(string value, string vedioid, string email);
-        Task AddTotalViewCount(int id, string emailaddress,string flag);
+        Task AddTotalViewCount(int id, string emailaddress, string flag);
         //Task<string> VedioLikeAsync(string value, string vedioid, string email);
         string VedioShare(string value, string vedioid);
         string VedioShared(string value, string vedioid, string Userid);
@@ -77,11 +77,11 @@ namespace Risebird.Business.Interface
         IEnumerable<int> GetCuratedGroupIRFs(int curatedGroupId);
         Task<string> AddSharedVideoDetails(InterviewReport reportModel);
         Task<int> SharedGetInterviewId(int videoid);
-        Task<InterviewReport> GetSharedInteviewReport(int interviewId, int irfId,int id);
+        Task<InterviewReport> GetSharedInteviewReport(int interviewId, int irfId, int id);
         IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid);
-        Task AddTimeSpend(int id, string emailaddress, string flag,TimeSpan TimeSpend, string CurrentTime);
+        Task AddTimeSpend(int id, string emailaddress, string flag, TimeSpan TimeSpend, string CurrentTime);
         IEnumerable<VideoDetails> GetallVideoSumaryDetails();
-        string AddVedioShare(string email, string vedioid,string Emailids);
+        string AddVedioShare(string email, string vedioid, string Emailids);
         int CheckVedioShare(string vedioid, string Emailid);
         string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid);
         IEnumerable<VideoDetails> GetVideoIntrestDetails();

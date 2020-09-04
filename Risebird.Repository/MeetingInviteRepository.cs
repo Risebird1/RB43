@@ -68,7 +68,7 @@ namespace Risebird.Repository
         /// <param name="whom"></param>
         /// <param name="Subject"></param>
         /// <returns></returns>
-        public async Task<string> InsertMeetingInvite(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject,string timeZone)
+        public async Task<string> InsertMeetingInvite(DateTime starttime, DateTime endtime, string Emailaddress, string Accountemail, string Linkurl, string whom, string Subject, string timeZone)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace Risebird.Repository
                     parameters.Add("@TimeZone", timeZone);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_InsertMeeting", parameters,
                             commandType: CommandType.StoredProcedure);
-                    if(result!= null)
+                    if (result != null)
                     {
                         return result.FirstOrDefault();
                     }

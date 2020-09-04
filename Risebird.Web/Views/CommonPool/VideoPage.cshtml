@@ -178,7 +178,7 @@
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card bl-bg">
+                <div class="mdc-card card bg-w">
                     <div class="mdc-card-wrapper__text-section">
 
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
@@ -520,7 +520,7 @@
                                                                             {
                                                                                 <div class="btn-group">
                                                                                     <button type="button" class="share-btn sharebtn1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#000">
-                                                                                        <img src="https://www.freepnglogos.com/uploads/share-png/share-tweet-icon-16.png" style="        width: 28px;
+                                                                                        <img src="../../img/share-tweet-icon.png" style="        width: 28px;
         padding-left: 4px;
 ">  Share
                                                                                     </button>
@@ -1355,7 +1355,7 @@ else
                 <div class="col-md-12">
                     <div class="text-right">
                         <input type="button" onclick="SendNotification()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Interested">
-                        <input style="        background: #53a5f5!important;
+                        <input style="color:#fff;
         line-height: 13px;" type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1404,7 +1404,7 @@ else
                 <div class="col-md-12">
                     <div class="text-right">
                         <input type="button" onclick="ShareVideoLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="        background: #53a5f5!important;
+                        <input style="color:#fff;
         line-height: 13px;" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1444,7 +1444,7 @@ else
 
                 <div class="col-md-12 text-right">
                     <input type="button" onclick="ShareVideoLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                    <input style="        background: #53a5f5!important;
+                    <input style="color:#fff;
         line-height: 13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                 </div>
 
@@ -1484,7 +1484,7 @@ else
                 <div class="row">
                     <div class="col-md-12 text-right">
                         <input type="button" onclick="SharepublicVideoLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="        background: #53a5f5!important;
+                        <input style=" color:#fff;
         line-height: 13px;" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1929,7 +1929,7 @@ else
                                                                                 @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
                                                                                 @Html.HiddenFor(m => m.IreportModel.QuestionsCollection[i].QuestionStatus, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                                             </td>
-                                                                            <td><input type="button" value="Delete" onclick="RemoveRow(@i)" /></td>
+                                                                            <td class="text-center remove-btn"><input type="button" value="" onclick="RemoveRow(@i)" /><i class="far fa-trash-alt"></i></td>
 
                                                                         </tr>
                                                                     }
@@ -1951,7 +1951,7 @@ else
                         <div class="text-right">
                             <input type="submit" value="Submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
                             @*<input type="button" onclick="SubmitSharedVideo()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">*@
-                            <input style="        background: #53a5f5!important;
+                            <input style="color:#fff;
         line-height: 13px;" type="button" onclick="closeCreateAndShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                         </div>
                     </div>
@@ -2379,8 +2379,8 @@ else
             categoryAxis.renderer.labels.template.valign = "top";
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
-            chart.fontSize = 13;
-
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+            chart.stroke = am4core.color("#396478");
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -2398,6 +2398,7 @@ else
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
+
             series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
             series.columns.template.fillOpacity = .8;
 
@@ -2742,6 +2743,11 @@ else
         }
         $('#txtOnlineend').attr('min', maxDate);
     }
+</script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
 </script>
 <script>
 
