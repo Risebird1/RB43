@@ -916,7 +916,7 @@ textarea::-webkit-scrollbar-thumb {
 
 .share {
     border: none;
-    background-color: white;
+
     font-weight: bold;
     font-size: 13px !important;
     padding: 0px 0px;
@@ -952,10 +952,13 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .mn-section {
-    position: absolute;
-    width: calc(100% - 30px);
+    /* width: calc(100% - 30px);*/
 }
-
+.single-video-right .video-card {
+    background: none !important;
+    box-shadow: none !important;
+    border: 0px !important
+}
 .comment-area {
     width: 100%;
     float: left;
@@ -994,8 +997,8 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .video-info span {
-    color: #606060;
-    font-weight: 600;
+  
+    font-weight: 500;
     font-size: 11.5px;
 }
 .notice{float:left; line-height:22px;}
@@ -1011,6 +1014,8 @@ textarea::-webkit-scrollbar-thumb {
     background: black !important;
     width: 100%;
     height: 406px;
+    border: 2px #524c4cab solid;
+    margin-bottom: 10px;
 }
 
 .comment-area .talktext {
@@ -1055,8 +1060,7 @@ textarea::-webkit-scrollbar-thumb {
 
 
     #myForm input[type=email], #myForm input[type=text] {
-        background: #fff;
-        border: solid 1px #ccc;
+    
         padding: 0px 10px 0px 20px;
         height: 35px;
         width: 265px;
@@ -1113,7 +1117,9 @@ textarea::-webkit-scrollbar-thumb {
             margin: 0;
             border: 1px #53a5f5 solid;
         }
-
+.single-video-right .video-card {
+    box-shadow:none
+}
 
 .newsletter .input-group {
     margin-bottom: 0px;
@@ -1124,7 +1130,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .video-block {
-    margin-top: 15px;
+    margin-top: 0px;
 }
 
 
@@ -1164,11 +1170,18 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .control-label {
-    color: #5f5c5c !important;
+    color: #5f5c5c;
     font-weight: 500;
 }
-
-
+.qc-feedback .mdc-checkbox .mdc-checkbox__background {
+    top: 15px;
+}
+.qc-feedback .modal-content {
+    border-radius: 0px;
+}
+.qc-feedback .mdc-form-field > label, .qc-feedback label {
+    font-weight: 400;
+}
 .mdc-card-wrapper__text-section {
     padding: 16px;
 }
@@ -1254,7 +1267,7 @@ textarea::-webkit-scrollbar-thumb {
 .dropdown-toggle {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: white !important;
+    background: white;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -1374,13 +1387,13 @@ textarea::-webkit-scrollbar-thumb {
 .title.name-video-primary-info-renderer {
     display: block;
     max-height: initial;
-    overflow: hidden;
+    
     font-size: 1.0rem;
     font-weight: 600;
     line-height: 2.4rem;
     color: black;
 }
-
+#create_pdf{margin-right:5px;}
 .card-text {
     text-align: left;
     background: #e3e3e37a;
@@ -1408,7 +1421,9 @@ textarea::-webkit-scrollbar-thumb {
     .single-video-left .comment-area textarea:focus {
         border-bottom: 2px rgb(80, 158, 235) solid;
     }
-
+.multiselect-container > li > a > label {
+    padding: 3px 10px 3px 20px !important;
+}
 .mdc-card .modal .modal-header, .modal .modal-header {
     background: #42a5f5 !important;
     padding-top: 10px !important;
@@ -1604,7 +1619,7 @@ textarea::-webkit-scrollbar-thumb {
     font-weight: bold;
     font-size: 13px !important;
 }
-
+.single-video{margin-bottom:15px;}
 
 .single-video .fa-check:before {
     content: "\f00c";
