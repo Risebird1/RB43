@@ -129,9 +129,9 @@
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
                 <a class="navbar-brand card-title">Risetube</a>
-                @if(!String.IsNullOrEmpty(Model.LogoUrl))
+                @if (!String.IsNullOrEmpty(Model.LogoUrl))
                 {
-                    <img src="@Model.LogoUrl" style="width:40px;height:40px"/>
+                    <img src="@Model.LogoUrl" style="width:60px;height:60px"/>
                 }
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
@@ -191,7 +191,7 @@
 
 
     <div class="content client">
-        <div class="row bl-bg">
+        <div class="row bg-w">
             <div class="col-md-12">
                 <div class="mdc-card card bg-w">
                     <div class="mdc-card-wrapper__text-section">
@@ -427,7 +427,7 @@
 
                                                     </div>
                                                 }
-                                                <div class="form-group col-md-6 border-rv">
+                                                <div class="form-group">
                                                     <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
                                                     <div class="col-md-12 col-sm-12">
                                                         <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
@@ -443,7 +443,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="form-group col-md-6 col-sm-6">
+                                                <div class="form-group col-md-12 col-sm-12 ">
                                                     <div>
                                                         <div class="col-md-12 col-sm-12 ">
                                                             <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
@@ -519,7 +519,7 @@
                                                                     {
                                                                         @Model.candidateName
                                                                         <div class="interest-btn pull-right">
-                                                                            <input class="view-video" type="button" value="Show Interest" title ="Click to show your interest for this candidate interview" onclick="SendIntrestUrl()" />
+                                                                            <input class="view-video" type="button" value="Show Interest" title="Click to show your interest for this candidate interview" onclick="SendIntrestUrl()" />
                                                                         </div>
                                                                     }
 
@@ -708,7 +708,11 @@
                                                                 <li class="nav-link item5" rel="link5">General Skill Report</li>
                                                                 <li class="nav-link item6" rel="link6"> Joinability Report</li>
                                                                 <li class="nav-link item7" rel="link7"> Selectability Report</li>
-                                                                <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
+                                                                @if (Model.IsBiometricEnabled)
+                                                                {
+                                                                    <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
+
+                                                                }
                                                             </ul>
                                                             <hr />
                                                             <div class="tab_container tab-space">
@@ -1340,53 +1344,53 @@
                                                                                     </div>
                                                                                 </div>
 
-                                                                    <!-- #tab7 -->
-                                                                </div>
-                                                                @if (Model.IsBiometricEnabled)
-                                                                {
-                                                                    <h3 class="tab_drawer_heading" rel="link8"> Sentiment Analysis</h3>
+                                                                                <!-- #tab7 -->
+                                                                            </div>
+                                                                            @if (Model.IsBiometricEnabled)
+                                                                            {
+                                                                                <h3 class="tab_drawer_heading" rel="link8"> Sentiment Analysis</h3>
 
-                                                                    <div id="link8" class="tab_content text-center">
+                                                                                <div id="link8" class="tab_content text-center">
 
 
 
+                                                                                </div>
+                                                                            }
+
+
+                                                                        </div>
                                                                     </div>
-                                                                }
-
-
-                                                            </div>
-                                                        </div>
-                                                        @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
-                                                        {
-                                                            <div>
-                                                                <form>
-                                                                    <div class="form-group comment-area">
-                                                                        <div class="talk-bubble tri-right border-bubble right-in">
-                                                                            <div class="talktext">
-                                                                                <textarea class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
+                                                                    @if (ViewBag.VideoStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                                    {
+                                                                        <div>
+                                                                            <form>
+                                                                                <div class="form-group comment-area">
+                                                                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                                                                        <div class="talktext">
+                                                                                            <textarea class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="button-group pull-right"> <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a> </div>
+                                                                                </div>
+                                                                            </form>
+                                                                            <div id="divcomments">
+                                                                                <div class="chat">
+                                                                                    <div class="chat-history">
+                                                                                        <ul class="posts">
+                                                                                            @foreach (var itemvalue in Model.Comments)
+                                                                                            {
+                                                                                                <li>
+                                                                                                    <div class="message-data"> <span class="message-data-name"> <b>@itemvalue.UserName </b></span> </div>
+                                                                                                    <div class="message my-message  borders comment-tri-right left-tp"> @itemvalue.Comment</div>
+                                                                                                </li>
+                                                                                            }
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="button-group pull-right"> <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a> </div>
-                                                                    </div>
-                                                                </form>
-                                                                <div id="divcomments">
-                                                                    <div class="chat">
-                                                                        <div class="chat-history">
-                                                                            <ul class="posts">
-                                                                                @foreach (var itemvalue in Model.Comments)
-                                                                                {
-                                                                                    <li>
-                                                                                        <div class="message-data"> <span class="message-data-name"> <b>@itemvalue.UserName </b></span> </div>
-                                                                                        <div class="message my-message  borders comment-tri-right left-tp"> @itemvalue.Comment</div>
-                                                                                    </li>
-                                                                                }
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
+                                                                    }
                                                                 </div>
-                                                            </div>
-                                                        }
-                                                    </div>
 
                                                             </div>
                                                         </div>
@@ -1677,7 +1681,7 @@
                 <div class="col-md-12 ">
                     <div class="text-right">
                         <input type="button" onclick="ShareVideoLinkToMail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="color:#fff;
+                        <input style="        background: #53a5f5!important;
         line-height: 13px;" type="button" onclick="closeSharePopUp1()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1709,7 +1713,7 @@
                 <div class="col-md-12">
                     <div class=" text-right">
                         <input type="button" onclick="ShareVideoLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style="color:#fff;
+                        <input style="        background: #53a5f5!important;
         line-height: 13px;" type="button" onclick="closeSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1743,8 +1747,7 @@
                 <div class="col-md-12">
                     <div class=" text-right">
                         <input type="button" onclick="SharepublicVideoLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
-                        <input style=" color:#fff;
-        line-height: 13px;" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closepublicSharePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -1780,14 +1783,14 @@
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input style=" color:#fff;
-        line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <div id="PublicShareVideo" class="modal modal-bg">
     @if (ViewBag.VedioStatus == "Public")
@@ -1797,30 +1800,20 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-
-
-
             <div class="filheader">
                 <div class="filavatar">
                     <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
                 </div>
                 <h5 class="modal-title pull-left">Your Email Id</h5>
             </div>
-
-
-
             <div class="modal-body">
-
                 <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
                 <div class="text-areadiv">
                     <input type="text" id="txtvideoemailid" class="form-control" />
                 </div>
-
-
                 <div class="col-md-12 text-right">
                     <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
                 </div>
-
             </div>
         </div>
     </div>
@@ -1920,8 +1913,7 @@
                 <div class="col-md-12 ">
                     <div class="text-right">
                         <input type="button" id="OnlineSubmitBtn" onclick="SubmitMeeting()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
-                        <input style="color:#fff;
-        line-height: 13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -1939,8 +1931,6 @@
 
                 <div class="filheader">
                     <div class="filavatar">
-
-
                         <span><svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                     </div>
                     <h5 class="modal-title pull-left">Create / Edit View</h5>
@@ -1969,15 +1959,14 @@
                                 <div class="col-md-6 col-sm-6 pull-left">
                                     <div>
                                         <label class="control-label  desp-label">
-                                           Company Logo
+                                            Company Logo
                                         </label>
                                         <div>
-                                            @Html.TextBoxFor(m => m.IreportModel.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".jpg,.png", @maxRequestLength="61440" })
+                                            @Html.TextBoxFor(m => m.IreportModel.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".jpg,.png", @maxRequestLength = "61440" })
                                         </div>
                                     </div>
                                 </div>
                                 <div class="createshare_left">
-
                                     <div>
                                         <div class="form-group">
                                             <label class="control-label  desp-label">
@@ -1989,8 +1978,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
                                     <div>
                                         <div class="col-md-6 col-sm-6 pull-left nopad">
                                             <div class="form-group">
@@ -2014,14 +2001,8 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
                                     </div>
                                 </div>
-
-
-
-
                                 <div class="createshare_right">
 
                                     <div class="form-group">
@@ -2038,26 +2019,9 @@
                                             </a>
                                         </div>
                                     </div>
-
-
                                 </div>
-
-
                             </div>
-
-
-
-
-
-
-
-
                         </div>
-
-
-
-
-
                         <div class="col-md-12 ">
 
                             <div class="single-video-info-content ">
@@ -2190,11 +2154,6 @@
                                                                                 </td>
                                                                                 <td class="text-center remove-btn">
                                                                                     <input type="button" value="" onclick="RemoveRow(@i)" /><i class="far fa-trash-alt"></i>
-
-
-
-
-
                                                                                 </td>
 
                                                                             </tr>
@@ -2217,8 +2176,7 @@
                             <div class="text-right">
                                 <input type="submit" value="Submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
                                 @*<input type="button" onclick="SubmitSharedVideo()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">*@
-                                <input style="color:#fff;
-        line-height: 13px;" type="button" onclick="closeCreateAndShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                                <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeCreateAndShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                             </div>
                         </div>
                     }
@@ -2237,11 +2195,7 @@
 
             <div class="filheader">
                 <div class="filavatar">
-
-
                     <svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 1C4.58 1 1 4.58 1 9s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 2.75c1.24 0 2.25 1.01 2.25 2.25S10.24 8.25 9 8.25 6.75 7.24 6.75 6 7.76 3.75 9 3.75zM9 14.5c-1.86 0-3.49-.92-4.49-2.33C4.62 10.72 7.53 10 9 10c1.47 0 4.38.72 4.49 2.17-1 1.41-2.63 2.33-4.49 2.33z" /></svg>
-
-
                 </div>
                 <h5 class="modal-title pull-left">Share/View Details</h5>
             </div>
@@ -2250,15 +2204,12 @@
             </button>
             <div class="modal-body">
                 <div class="col-md-12 sb-container scroller">
-
                     <div id="divvideodetailsmodel" class="pdr-20"></div>
-
                 </div>
 
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input style="        background: #53a5f5!important;
-        line-height: 13px;" type="button" onclick="closeVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -2304,8 +2255,8 @@
                     });
                     chart.render();
                 }
-                }
-                
+            }
+
         });
     }
 
@@ -2705,7 +2656,7 @@
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             chart.fontSize = 13;
-           
+
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -3772,7 +3723,7 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
-                
+
                 {
                     'next .sharebtn1': 'Share the video by clicking here',
                     'nextButton': { className: "myNext", text: "Next" },

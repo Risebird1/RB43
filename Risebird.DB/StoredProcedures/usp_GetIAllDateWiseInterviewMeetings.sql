@@ -23,16 +23,16 @@ im.PreferredLocation, im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime,
 im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,      
 IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,
 ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, ic.AadharFileLink, cm.id as CandidateId     
-,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline, im.HRCoordinatorEmailId, im.HRComment, vs.InterviewId as VideoSentimentImid
+,ulc.Isonline as IsOnline,ulh.Isonline as IsHrOnline,uli.Isonline  as IsInterviewerOnline, im.HRCoordinatorEmailId, im.HRComment, cl.[Name] as Client
 from     
 InterviewMeetings im      
-left join VideoSentiment vs on vs.InterviewId = im.id
 inner join IRF on im.IRFId = IRF.IRFId      
 left join UserList ulc on im.candidateEmail= ulc.EmailId    
 left join UserList ulh on im.ClientHrContact= ulh.EmailId    
 left join UserList uli on im.interviewer= uli.EmailId    
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId      
-join CandidatesMaster cm on ulc.id = cm.UserId) Meetings      
+join CandidatesMaster cm on ulc.id = cm.UserId
+left join Client cl on cl.id = irf.ClientId) Meetings      
 join Candidate ca on Meetings.CandidateId = ca.CandidateMasterId and Meetings.irfIntId= ca.IRFId
 where interviewDate >= @startDate AND interviewDate < @endDate    
    

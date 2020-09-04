@@ -6309,27 +6309,39 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
-
+        
         [HttpPost]
-        public async Task<IActionResult> AnalyseSentiment(SentimentDTO model)
+        public async Task<IActionResult> AnalyseSentiment(IFormCollection formCollection, int sentimentImid)
         {
             try
             {
-                //var path = $"http://localhost:7071/api/SentimentAnalysis";
-                var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
-                var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
-              
-                model.VideoFileName = model.imid + "_" + model.TruncatedVideoFile.FileName;
-                await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos", model.TruncatedVideoFile);
-                HttpClient httpClient = new HttpClient();
-                httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+                var file = formCollection.Files[0];
+                if(file != null)
+                {
+                    var model = new SentimentDTO();
+                    model.imid = sentimentImid;
+                    //var path = $"http://localhost:7071/api/SentimentAnalysis";
+                    var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                    var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
 
-                _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
+                    model.VideoFileName = model.imid + "_" + file.FileName;
+                    await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos",file);
+                    HttpClient httpClient = new HttpClient();
+                    httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
-                TempData["SuccessErrorMessageInterview"] = "Sentiment analysis started successfully!";
+                    httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
+
+                    TempData["SuccessErrorMessageInterview"] = "Sentiment analysis started successfully!";
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageInterview"] = "Failed!";
+
+                }
+
                 return RedirectToAction("Index");
 
-                
+
             }
             catch (Exception ex)
             {
@@ -6339,7 +6351,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-     
+
     }
 
 }
