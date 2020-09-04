@@ -499,7 +499,7 @@
                     "value": chData.totalCandidates
                     }];
 
-
+                
                 chart.logo.disabled = true;
                 let series = chart.series.push(new am4charts.FunnelSeries());
                 series.dataFields.value = "value";
@@ -514,7 +514,7 @@
 
                 series.slices.template.fillModifier = fillModifier;
                 series.alignLabels = true;
-              
+              series.labels.template.fill = am4core.color("#828080");
                 chart.fontSize = 13;
                 series.labels.template.text = "{category}: [bold]{value}[/]";
 

@@ -2597,7 +2597,7 @@ namespace Risebird.Repository
         {
             try
             {
-                
+
                 if (UrlType == "Shared")
                 {
                     var query = "Update SharedVideoCountDetails set IsIntrested='Interested' where Videoid=@Videoid and Emailid=@Emailid";
@@ -2611,7 +2611,8 @@ namespace Risebird.Repository
                         return "Success";
                     }
                 }
-                else{
+                else
+                {
                     var id = 0;
                     var queryfind = "Select id from UserList where Emailid=@Emailid";
                     var dynamicParametersfinal = new DynamicParameters();
@@ -2681,7 +2682,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid,string emailid)
+        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid)
         {
             try
             {
@@ -2708,7 +2709,7 @@ namespace Risebird.Repository
             try
             {
                 int CandidateAvailable = 0;
-                if (Status== "Available")
+                if (Status == "Available")
                 {
                     CandidateAvailable = 1;
                 }
@@ -2757,11 +2758,11 @@ namespace Risebird.Repository
         {
             try
             {
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUser", null,
-                                 commandType: CommandType.StoredProcedure);
-                    }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUser", null,
+                             commandType: CommandType.StoredProcedure);
+                }
             }
             catch (SqlException ex)
             {

@@ -769,14 +769,14 @@ namespace Risebird.CommonHelper
             {
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-               
+
                 var toMails = model.TO.Split(";");
                 foreach (var mails in toMails)
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
                 var anchrTag = "<a href=" + url + ">Candidate Interview Video</a>";
-                object[] parameters = new object[] { Emailid,anchrTag  };
+                object[] parameters = new object[] { Emailid, anchrTag };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "RequestForAccess.html");
                 string msgBody = string.Format(rawEmail, parameters);
 

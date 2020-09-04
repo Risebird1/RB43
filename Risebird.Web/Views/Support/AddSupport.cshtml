@@ -27,9 +27,9 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
+    <div class="content client">
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
@@ -41,9 +41,7 @@
                             @Html.AntiForgeryToken()
 
                         <div class="row">
-                            <div class="card-header">
-                                <h4 class="card-title"> Add Support HR</h4>
-                            </div>
+                           
                             <div style="width: 100%;">&nbsp;</div>
                             <div class="form-horizontal">
                                 <div class="col-md-4 col-sm-4 pr-1 pull-left">
@@ -121,7 +119,7 @@
 
 
                                             </div>
-                                            @Html.LabelFor(model => model.OnVoiceCall, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.LabelFor(model => model.OnVoiceCall, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px;" })
                                         </div>
 
                                     </div>
@@ -144,7 +142,7 @@
 
 
                                             </div>
-                                            @Html.LabelFor(model => model.OnWhatsapp, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.LabelFor(model => model.OnWhatsapp, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px;" })
                                         </div>
 
 
@@ -169,7 +167,7 @@
 
 
                                             </div>
-                                            @Html.LabelFor(model => model.OnEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.LabelFor(model => model.OnEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "padding:0px;" })
                                         </div>
 
                                     </div>

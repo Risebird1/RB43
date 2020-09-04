@@ -26,6 +26,7 @@ namespace Risebird.Entities.ViewModel
         public string[] IsIntrested { get; set; }
         public string[] CandidateAvailable { get; set; }
 
+        public string[] Client { get; set; }
 
 
     }

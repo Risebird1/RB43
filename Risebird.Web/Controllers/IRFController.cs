@@ -1516,7 +1516,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.LoggedEmail = emailid;
-                    if(String.IsNullOrEmpty(model.Type))
+                    if (String.IsNullOrEmpty(model.Type))
                     {
                         model.Type = "B2B";
                     }
@@ -4092,5 +4092,20 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        public async Task<IActionResult> GetIRFInterviewerMembers(int irfId)
+        {
+            try
+            {
+                var model = await _irfService.GetIRFInterviewerMembers(irfId);
+                return PartialView("IRFInterviewerMembersPartial", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

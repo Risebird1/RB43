@@ -132,7 +132,7 @@ table {
     background-image: url('../../img/drop.png');
     background-repeat: no-repeat !important;
     /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
-    background-position: right .7em top 50%, 0 0 !important;
+    background-position: right 1.2em top 50%, 0 0 !important;
     /* icon size, then gradient */
     background-size: .65em auto, 100% !important;
 }
@@ -216,7 +216,7 @@ table {
     overflow: hidden !important;
     text-overflow: ellipsis;
 }
-.mt50{margin-top:50px;}
+.mt50{margin-top:60px;}
 .multiple_row > h2 {
     font-size: 18px;
     background-color: #5f95b1;
@@ -288,10 +288,7 @@ table {
     border-right: 1px dotted #ccc;
 }
 
-.control-label {
-    color: #5f5c5c !important;
-    font-weight: 500;
-}
+
 
 
 .mdc-card-wrapper__text-section {
@@ -448,7 +445,7 @@ table {
 .card-blue .card-footer {
     text-align: center;
     padding: 8px 0px 8px 0px;
-}blue-theme
+}
 
  .card-blue .card-footer .stats-bttm-btn {
         padding: 0px 25px 0px 0px;

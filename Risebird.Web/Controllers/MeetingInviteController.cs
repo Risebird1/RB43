@@ -50,7 +50,7 @@ namespace Risebird.Web
                     loggedinUser = HttpContext.Session.GetString("email")?.Trim();
                     loggedinUser = loggedinUser.Replace("\"", "");
                 }
-              
+
                 var selectTimeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneDetails);
 
                 OnlineMeeting _meeting = new OnlineMeeting();
@@ -90,11 +90,11 @@ namespace Risebird.Web
                 {
                     var urllinkdetails = result.ToString().Split("onlineMeeting")[result.ToString().Split("onlineMeeting").Length - 1];
                     var deatils = urllinkdetails.Split("https")[1].Replace(":", "https:").Replace("}}", "").Replace(@"\", "");
-                    var meetingURL = deatils.Remove(deatils.Length - 2, 2);                   
-                    var resultValue = await _meetingInviteService.InsertMeetingInvite(startdate, enddate, loggedinUser, accountEmail, meetingURL.ToString(), candidateEmailId+";"+ AdditionalUser, Subject, TimeZoneDetails);
-                    if(!resultValue.Contains("failed"))
+                    var meetingURL = deatils.Remove(deatils.Length - 2, 2);
+                    var resultValue = await _meetingInviteService.InsertMeetingInvite(startdate, enddate, loggedinUser, accountEmail, meetingURL.ToString(), candidateEmailId + ";" + AdditionalUser, Subject, TimeZoneDetails);
+                    if (!resultValue.Contains("failed"))
                     {
-                        var resultset = _notificationHelper.MeetingInvite(startdate, enddate, TimeZoneDetails, accountEmail, resultValue,Message, Subject, loggedinUser, candidateEmailId, AdditionalUser, meetingURL);
+                        var resultset = _notificationHelper.MeetingInvite(startdate, enddate, TimeZoneDetails, accountEmail, resultValue, Message, Subject, loggedinUser, candidateEmailId, AdditionalUser, meetingURL);
                         if (resultset == "Mail sent successfully.")
                         {
                             return Json("Invite sent successfully");
@@ -103,7 +103,7 @@ namespace Risebird.Web
                         {
                             return Json("Fail To send invite");
                         }
-                    }                   
+                    }
                 }
                 return Json("Fail To send invite");
             }
@@ -111,7 +111,7 @@ namespace Risebird.Web
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Fail To send invite");
-            }           
+            }
         }
     }
 }

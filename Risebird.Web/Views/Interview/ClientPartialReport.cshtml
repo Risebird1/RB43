@@ -249,7 +249,7 @@
                                                 if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
                                                 {
                                                 <p></p>
-                                                <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
+                                                <video width="320" height="240" style="width:100%" class="vjs-tech" controls controlsList="nodownload">
                                                     <source src=@Url.Content(Model.VideoLink) type="video/mp4">
                                                     <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
@@ -1337,7 +1337,7 @@
             $("#ProctoringCount").css("border-color", "red");
         }
         else {
-            $("#ProctoringCount").css("border-color", "#E3E3E3");
+            $("#ProctoringCount").css("border-color", "");
         }
     }
 

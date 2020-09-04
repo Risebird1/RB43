@@ -10,7 +10,7 @@ namespace Risebird.CommonHelper
     public static class HttpClientExtensions
     {
         public static async Task<HttpResponseMessage> SendRequestAsync(this HttpClient httpClient, HttpMethod method,
-            string path, object requestBody, string functionKey,string accountEmail, CancellationToken ct)
+            string path, object requestBody, string functionKey, string accountEmail, CancellationToken ct)
         {
             var request = new HttpRequestMessage(method, path);
 

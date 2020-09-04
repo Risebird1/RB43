@@ -48,7 +48,7 @@ namespace Risebird.Entities.ViewModel
         public IList<Attendee> attendees { get; set; }
         public bool isOnlineMeeting { get; set; }
         public string onlineMeetingProvider { get; set; }
-       
+
     }
 
     public class MetingResponse

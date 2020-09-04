@@ -201,12 +201,12 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid =  emailid.Replace("\"", "");
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
                         var model = new ClientDashboardVM();
                         var funnelData = await _dashboardService.GetClientFunnelData(emailid);
-                        var slotsDetails= await _dashboardService.GetDateWiseClientMeetingsSlots(DateTime.Now.Date, emailid);
+                        var slotsDetails = await _dashboardService.GetDateWiseClientMeetingsSlots(DateTime.Now.Date, emailid);
                         model = GetDateWiseClientInterviews(DateTime.Now.Date, emailid);
                         model.MeetingResultCountObj = await _dashboardService.GetClientMeetingsResults(emailid);
                         model.CandidatesCountObj = await _dashboardService.GetClientCandidatesCount(emailid);
@@ -240,7 +240,7 @@ namespace Risebird.Web.Controllers
                 var model = new ClientDashboardVM();
                 model.Meetings = _dashboardService.GetDateWiseClientMeetings(date, emailId).Result;
                 var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
-              
+
                 var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
                 List<object> iData = new List<object>();
 
