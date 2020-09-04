@@ -3052,7 +3052,14 @@
                 success: function (data) {
                     var modal = document.getElementById("PublicUrlShareModel");
                     modal.style.display = "block";
-                    $("#txtvideoUrls").text(window.location.href);
+                    var urlcurrent = window.location.href;
+                    if (urlcurrent.includes("VideoPageCurated")) {
+                        urlcurrent = urlcurrent.split("?")[0].replace("VideoPageCurated", "VideoPage") + "/" + $("#txtVideoId").val();
+                        $("#txtvideoUrls").text(urlcurrent);
+                    } else {
+                        $("#txtvideoUrls").text(window.location.href);
+
+                    }
                 }
             });
 
