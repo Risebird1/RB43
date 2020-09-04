@@ -15,7 +15,9 @@ body {
         color: #f96332 !important;
     }
 .navbar.navbar.bg-white, .navbar.navbar-transparent {
-    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%)!important;
+    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%) !important;
+    border: 0px !important;
+    border-radius: 0px;
 }
 input[type='radio']:checked:after {
     background-color: #42a5f5!important;
@@ -146,6 +148,7 @@ textarea::-webkit-scrollbar-thumb {
 .interview-date [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 9% !important;
+    box-shadow: none;
 }
 
     .file-lable {

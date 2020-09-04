@@ -1,6 +1,6 @@
 body {
     background: #151515 !important;
-    color: #a9a5a5 !important
+    color: #9a9a9a !important
 }
 
 .can-details a, .callatag {
@@ -28,9 +28,25 @@ input[type='radio']:checked:after {
 
 .navbar.navbar.bg-white, .navbar.navbar-transparent {
     background: linear-gradient(to right, #0c0c0c 0%, #0b0b0b 60%, #1a1a1a 100%) !important;
+    border: 0px !important;
+    border-radius: 0px;
 }
-
-
+.dashboard .panel .panel-body {
+    background: #181818!important;
+}
+.dashboard .panel-default > .panel-heading {
+    background-color: #252424!important;
+}
+.dashboard .panel .panel-heading .panel-title-box h3 {
+    color: #fff!important;font-weight:500!important;
+}
+.dashboard ul.panel-controls > li > button {
+    background: #252424;
+    color: #fff;
+}
+.dashboard .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #252424 !important;
+}
 .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
     background: #121212 !important;
 }
@@ -201,7 +217,7 @@ hr {
     background-color: #000000 !important;
 }
 .client .row.bg-white {
-    background-color: #0c0c0c !important;
+    background-color: #151515 !important;
 }
 .mdc-button--outlined:not(:disabled) {
     border-color: #524c4cab !important;
@@ -268,8 +284,11 @@ table {
 }
 
 .interview-date [type="date"].form-control {
-    background: #fff url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
+    background: #252424 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 9% !important;
+    color: #fff;
+    box-shadow: none;
+    border-color: #fff;
 }
 
 [type="date"] {
@@ -425,7 +444,7 @@ select * {
 .table-bordered th {
     border: 1px solid #464343 !important;
     background: #121212;
-    color: #f7eaea75;
+    color: #9a9a9a;
 }
 
 div.dataTables_wrapper div.dataTables_info {

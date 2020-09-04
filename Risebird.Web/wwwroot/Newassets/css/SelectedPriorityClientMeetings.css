@@ -137,13 +137,13 @@ textarea::-webkit-scrollbar-thumb {
 
 .spinner {
     top: 30px;
-    width: 0.8rem;
+    width: 1.1rem;
     position: absolute;
     background: whitesmoke;
     border-radius: 0;
     display: none;
     height: 2rem;
-    right: 10px;
+    right: 13px;
 }
 
 .js .spinner {
@@ -176,11 +176,13 @@ textarea::-webkit-scrollbar-thumb {
 .up, .up-1, .up-2, .up-3, .up-4, .up-5, .up-6, .up-7, .up-8 {
     transform: rotate(-90deg);
     top: -.5rem;
+    right:-.3rem;
 }
 
 .down, .down-1, .down-2, .down-3, .down-4, .down-5, .down-6, .down-7, .down-8 {
     transform: rotate(-90deg);
     top: -2rem;
+    right: -.3rem;
 }
 
 .spinner-wrap {
