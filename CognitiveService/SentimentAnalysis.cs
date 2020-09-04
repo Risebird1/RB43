@@ -112,7 +112,7 @@ namespace CognitiveService
 
                 if (sentimentData != null && sentimentData.Count() > 0)
                 {
-                    var connectionString = "Server=tcp:risebirdportal.database.windows.net,1433;Initial Catalog=productDBdev1;Persist Security Info=False;User ID=talent;Password=rise_123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                    var connectionString = "Server=tcp:risebirdprod.database.windows.net,1433;Initial Catalog=productProdDB;Persist Security Info=False;User ID=risebirdadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var query = "delete from VideoSentiment where InterviewId = @id";
