@@ -2,7 +2,7 @@
 
 @if (Model != null && Model.Count() != 0)
 {
-    <div style="overflow-x:auto">
+    <div class="sb-container scroller">
         <table class="table table-bordered table-striped" style="width:100%">
             <thead>
                 <tr>
@@ -45,5 +45,9 @@ else
         No interviewers/Quality Controllers for this Skill Channel
     </div>
 }
-
-    <script src="~/js/CallTwilio.js"></script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=1" />
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script src="~/js/CallTwilio.js"></script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
