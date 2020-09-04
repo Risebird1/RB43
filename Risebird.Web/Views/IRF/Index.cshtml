@@ -1111,14 +1111,14 @@
         });
 
         function ResetFilter() {
-
-            $.ajax({
-                type: "POST",
-                url: "/IRF/Index",
-                success: function (data) {
-                    window.location.href = "/IRF/ResetIRFFilter";
-                }
-            });
+            window.location.href = "/IRF/ResetIRFFilter";
+            //$.ajax({
+            //    type: "POST",
+            //    url: "/IRF/Index",
+            //    success: function (data) {
+            //        window.location.href = "/IRF/ResetIRFFilter";
+            //    }
+            //});
         }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -1140,13 +1140,13 @@
             $("#PrimarySkill").val(primarySkill);
 
             var form = $("#form").serialize();
-            $.ajax({
-                type: "POST",
-                url: "/IRF/Index",
-                data: form,
-                success: function (data) {
-                }
-            });
+            //$.ajax({
+            //    type: "POST",
+            //    url: "/IRF/Index",
+            //    data: form,
+            //    success: function (data) {
+            //    }
+            //});
         }
 
 </script>
