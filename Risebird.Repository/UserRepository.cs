@@ -344,7 +344,7 @@ namespace Risebird.Repository
             }
         }
 
-        private DynamicParameters SetStoredProcedureParameterForClientUser(ClientUserVM entity, bool isAdd=false)
+        private DynamicParameters SetStoredProcedureParameterForClientUser(ClientUserVM entity, bool isAdd = false)
         {
             var parameters = new DynamicParameters();
 
@@ -359,7 +359,7 @@ namespace Risebird.Repository
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
-            if(isAdd)
+            if (isAdd)
             {
                 parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
 

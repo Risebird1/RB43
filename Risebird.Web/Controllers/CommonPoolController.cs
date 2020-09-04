@@ -545,7 +545,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList= modelList.Where(x => x.CandidateAvailable == "Available").ToList();
+                            modelList = modelList.Where(x => x.CandidateAvailable == "Available").ToList();
                         }
 
 
@@ -633,7 +633,7 @@ namespace Risebird.Web.Controllers
                     var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
                     if (status == "Public")
                     {
-                        if(model.CandidateAvailable!= "Available")
+                        if (model.CandidateAvailable != "Available")
                         {
                             model = new MeetingVM();
                             ViewBag.ResultStatus = "VideoNotPresent";

@@ -5,22 +5,21 @@
 @using System.Security.Principal
 @inject IHttpContextAccessor HttpContextAccessor
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-@if (HttpContextAccessor.HttpContext.Session.GetString("Currenttheme") != null)
+
+
+@if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")))
 {
 
-    @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")))
-    {
-
-        <link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/dark-theme.css" />
-    }
-    else
-    {
+    <link rel="stylesheet" type="text/css" id="theme" href="~/Newassets/css/dark-theme.css" />
+}
+else
+{
      
-        <link rel="stylesheet" type="text/css" id="theme" href="@HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")" />
-
-    }
+    <link rel="stylesheet" type="text/css" id="theme" href="@HttpContextAccessor.HttpContext.Session.GetString("Currenttheme")" />
 
 }
+
+
 <div class="sidebar" data-color="blue">
     <!--
         Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"

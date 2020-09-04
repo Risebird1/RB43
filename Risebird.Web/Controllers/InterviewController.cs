@@ -15,7 +15,6 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -40,7 +39,7 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
-        
+
 
 
         private readonly HttpClient _httpClient;
@@ -6191,7 +6190,7 @@ namespace Risebird.Web.Controllers
             string currenturl = Request.Host.ToString() + "/Interview/CandidateVideoPage/" + videoid;
             Mail _mail = new Mail
             {
-                TO = Emailids,             
+                TO = Emailids,
                 Subject = $"Risebird: {email} Interview video is shared with you"
             };
             var result = _notificationHelper.SharedVideoNofiticationExternal(_mail, name, currenturl);
@@ -6277,7 +6276,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Candidate")
                     {
                         //To update candidate status
-                       var model = _meetingService.UpdateCandidateStatus(videoid, Status);
+                        var model = _meetingService.UpdateCandidateStatus(videoid, Status);
                     }
                     return Json("Success");
                 }
@@ -6309,7 +6308,7 @@ namespace Risebird.Web.Controllers
                     TempData.Remove("SuccessErrorMessageSentiment");
                 }
                 return View(obj);
-                
+
             }
             catch (Exception ex)
             {
@@ -6317,14 +6316,14 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> AnalyseSentiment(IFormCollection formCollection, int sentimentImid)
         {
             try
             {
                 var file = formCollection.Files[0];
-                if(file != null)
+                if (file != null)
                 {
                     var model = new SentimentDTO();
                     model.imid = sentimentImid;
@@ -6333,7 +6332,7 @@ namespace Risebird.Web.Controllers
                     var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
 
                     model.VideoFileName = model.imid + "_" + file.FileName;
-                    await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos",file);
+                    await _azureStorageHelper.InsertBlob(model.VideoFileName, "sentimentvideos", file);
                     HttpClient httpClient = new HttpClient();
                     httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 

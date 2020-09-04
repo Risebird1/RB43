@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -9,7 +7,7 @@ namespace Risebird.Entities.ViewModel
     {
         public int InterviewId { get; set; }
         public string ImageUrl { get; set; }
-      
+
         public int EmotionType { get; set; }
         public double Value { get; set; }
     }
