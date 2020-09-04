@@ -3,45 +3,7 @@
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
-@*@{
-    ViewData["Title"] = "VideoPage";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    dynamic filter = null;
-    string strtDte = String.Empty;
-    string endDte = String.Empty;
-    string[] ClientHR = new string[] { };
-    string[] ClientName = new string[] { };
-    string[] ApprovalStatus = new string[] { };
-    string[] JoiningStatus = new string[] { };
-    string[] OfferStatus = new string[] { };
-    string[] InterviewStatus = new string[] { };
-    string[] CandidateName = new string[] { };
-    string[] CandidateLocation = new string[] { };
-    string[] IsShortListed = new string[] { };
-    string[] IsIntrested = new string[] { };
-    string[] CandidateAvailable = new string[] { };
 
-}*@
-@*@if (HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters") != null)
-{
-    filter = JsonConvert.DeserializeObject
-<InterviewFilter>
-(HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters"));
-    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
-    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
-    InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
-    CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
-    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
-    ApprovalStatus = filter.ApprovalStatus != null ? filter.ApprovalStatus : new string[] { };
-    JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
-    OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
-    CandidateLocation = filter.CandidateLocation != null ? filter.CandidateLocation : new string[] { };
-    IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
-    IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
-    CandidateAvailable = filter.CandidateAvailable != null ? filter.CandidateAvailable : new string[] { };
-
-}*@
 <link href="~/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css" rel="stylesheet" />
 <script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
@@ -961,9 +923,6 @@
     </div>
 </div>
 
-
-@if (String.IsNullOrEmpty(ViewBag.CurrentUserAddress))
-{
     <div id="PublicShareVideo" class="modal modal-bg">
         @if (ViewBag.VedioStatus == "Public")
         {
@@ -990,11 +949,7 @@
             </div>
         </div>
     </div>
-}
-else
-{
-    <input type="text" id="txtvideoemailid" class="form-control" value="@ViewBag.CurrentUserAddress" hidden />
-}
+
 
 
 <script>

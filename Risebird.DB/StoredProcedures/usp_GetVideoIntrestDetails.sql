@@ -16,10 +16,10 @@ BEGIN
 Select vc.Emailid as Candidate,vc.Count,vc.Videoid,'SharedVideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail,ic.ViewName,vc.OnDate  from SharedVideoCountDetails vc join SharedInterviewComments ic on vc.videoid=ic.id
 join interviewmeetings im on ic.interviewid=im.id  where vc.IsIntrested='Intrested' or vc.IsIntrested='Interested'          
 union            
-Select ul.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail,'' as ViewName,vc.OnDate  from VideoCountDetails vc join userlist ul on vc.Userid=ul.id join interviewmeetings im on vc.Videoid=im.id where vc.Userid!=0 and (vc.IsIntrested='Intrested'  or vc.IsIntrested='Interested')             
+Select ul.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail,IsNull(ir.BussinessType,'') as ViewName,vc.OnDate  from VideoCountDetails vc join userlist ul on vc.Userid=ul.id join interviewmeetings im on vc.Videoid=im.id join IRF ir on im.IRFId=ir.IRFId where vc.Userid!=0 and (vc.IsIntrested='Intrested'  or vc.IsIntrested='Interested')             
 union  
-Select vc.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail,'' as ViewName,vc.OnDate  from VideoCountDetails vc join interviewmeetings im on vc.Videoid=im.id where  vc.Userid=0 and (vc.IsIntrested='Intrested'  or vc.IsIntrested='Interested' )            
+Select vc.EmailId as Candidate,vc.Count,vc.Videoid,'VideoPage' as VideoUrl,vc.Timespend as TimeSpend,vc.CurrentVideoTime as CurrentTime,vc.Isintrested as IsIntrested,im.candidateEmail as CandidateEmail,IsNull(ir.BussinessType,'') as ViewName,vc.OnDate  from VideoCountDetails vc join interviewmeetings im on vc.Videoid=im.id join IRF ir on im.IRFId=ir.IRFId where vc.Userid=0 and (vc.IsIntrested='Intrested'  or vc.IsIntrested='Interested' )            
 order by OnDate Desc
-END    
+END   
 GO
   
