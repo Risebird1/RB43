@@ -1,0 +1,2016 @@
+﻿@model Risebird.Entities.ViewModel.MeetingVM
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+
+<link href="~/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+<script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
+<script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
+    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
+</script>
+
+<script>
+    function dropDwnToolTips(id) {
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+    function getOption(id) {
+        selectElement = document.querySelector('#droplevel');
+        output =
+            selectElement.options[selectElement.selectedIndex].text;
+
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = output
+        }
+
+
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+        if ('@ViewBag.ProfileName' == "CuratedUser" || '@Model.IsClientCurated' =='True' ) {
+            document.getElementsByClassName('minmaxCon')[0].style.display = "none";
+        }
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
+
+
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+<!-- Custom styles for this template-->
+<link href="~/RiseTube/css/osahan.css" rel="stylesheet">
+<!-- Owl Carousel -->
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
+<div class="main-panel bg-white" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
+                </div>
+                <a class="navbar-brand card-title">Risetube</a>
+                @if (!String.IsNullOrEmpty(Model.LogoUrl))
+                {
+                    <img src="@Model.LogoUrl" style="width:40px;height:40px" />
+                }
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <!--  <div class="panel-header panel-header-sm"> </div>-->
+
+    <div class="pt30 videocon">
+        <div class="col-md-12 nopad">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+
+                    <div class="mobile-view"> <h4 class="card-title">Risetube</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="content client">
+        <div class="row bg-w">
+            <div class="col-md-12">
+                <div class="mdc-card card bg-w">
+                    <div class="mdc-card-wrapper__text-section">
+
+                        @if (ViewBag.ResultStatus == "VideoPresent")
+                        {
+                            <div id="wrapper">
+                                <!-- Sidebar -->
+                                <div id="content-wrapper">
+                                    <div class="container-wrap pb-0">
+                                        <div class="video-block section-padding">
+                                            <div class="row mn-section">
+                                                <div class=" col-8 player-main mob-pad" id="player">
+                                                    <div class="single-video-left">
+                                                        <div>
+                                                            <div class="single-video ">
+                                                                @if (Model.VideoLink != null && Model.VideoLink != "")
+                                                                {
+                                                                    <input type="text" id="txtclienthr" value="@Model.ClientHrContact" hidden />
+                                                                    @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
+                                                                    {
+                                                                        <video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">
+                                                                            <source src="@Model.VideoLink" type="video/mp4">
+                                                                            <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
+                                                                        </video>
+                                                                    }
+                                                                    else if (Model.VideoLink.Contains("/manifest"))
+                                                                    {
+                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                                                            <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
+
+                                                                        </video>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink" allowfullscreen></iframe>
+                                                                    }
+                                                                }
+                                                                else
+                                                                { <span> Video deleted !!!</span>}
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div>
+                                                            @if (Model.JDTiltle != null)
+                                                            {
+                                                                <h1 class="title video-title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                                    <input hidden value="@Model.candidateEmail" id="txtOnlineEmail" />
+
+                                                                    @Model.candidateName
+                                                                    <div class="interest-btn pull-right">
+                                                                        <input class="view-video" type="button" value="Show Interest" title="Click to show your interest for this candidate interview" onclick="SendIntrestUrl()" />
+                                                                    </div>
+
+
+                                                                    @if (@Model.JDTiltle.Length > 5)
+                                                                    {
+
+                                                                        <a href="#" data-tooltip="@Model.JDTiltle">
+                                                                            <span class="job_title join-time"> (@Model.JDTiltle.Split("|")[0])</span>
+                                                                        </a>}
+                                                                    else
+                                                                    {
+                                                                        <span>@Model.JDTiltle</span>}
+                                                                    &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span class="date-calendar">@Model.interviewDate</span>
+
+                                                                    <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                                    <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
+                                                                    <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
+                                                                </h1>
+                                                            }
+                                                            <div class="row counts-liks">
+
+                                                                <div class="col-md-2 showinter" style="text-align: end;">
+
+                                                                </div>
+                                                                <div class="col-md-6"></div>
+                                                            </div>
+                                                            <div class="single-video-info-content ">
+                                                                <div>
+                                                                    <div>
+                                                                        <ul class="nav nav-pills nav-pills-primary tabs">
+                                                                            <li class="nav-link active item1" rel="link1">Report Summary</li>
+                                                                            <li class="nav-link item2" rel="link2">Candidate Details</li>
+                                                                            <li class="nav-link item3" rel="link3"> Tech Skill Report</li>
+                                                                            <li class="nav-link item4" rel="link4"> Questions Discussed</li>
+                                                                            <li class="nav-link item5" rel="link5">General Skill Report</li>
+                                                                            <li class="nav-link item6" rel="link6"> Joinability Report</li>
+                                                                            <li class="nav-link item7" rel="link7"> Selectability Report</li>
+                                                                            <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
+                                                                        </ul>
+                                                                        <hr />
+                                                                        <div class="tab_container tab-space">
+                                                                            <h3 class="d_active tab_drawer_heading" rel="link1">Report Summary</h3>
+                                                                            <div id="link1" class="tab_content">
+                                                                                <div class="row">
+                                                                                    <div class="left-chart">
+
+                                                                                        <div class="chart-box itemchart">
+                                                                                            <p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>
+                                                                                            <div class="col-lg-12 col-md-12 col-sm-12 nopad">
+                                                                                                <div id="scoreChart" style="height: 200px; width: 100%;"></div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        @if (Model.FeedbackAudioLink != null)
+                                                                                        {
+                                                                                            <div class="audio-wrap">
+
+                                                                                                <h1>Audio Feedback</h1>
+                                                                                                <audio src='@Model.FeedbackAudioLink' controls></audio>
+
+
+
+                                                                                                <!--end of col-md-12-->
+
+                                                                                            </div>
+
+                                                                                        }
+
+
+                                                                                    </div>
+                                                                                    <div class="interviewer-comment itemcomment">
+
+                                                                                        <div class="form-group" style="margin-bottom:0px; ">
+                                                                                            @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
+
+
+                                                                                            <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
+                                                                                                <a href="#" data-tooltip="@Model.InterviewerComment">
+                                                                                                    <div class="talktext">
+
+
+                                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;", @readonly = "readonly" })
+
+                                                                                                    </div>
+                                                                                                </a>
+                                                                                            </div>
+
+
+
+                                                                                            @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                                                            @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                                                        </div>
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label bolder" })
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                                        </div>
+                                                                                        @if (@Model.IreportModel.IsBiometricEnabled)
+                                                                                        {
+                                                                                            <div class="form-group">
+                                                                                                @Html.LabelFor(model => model.IreportModel.InterviewBiometryScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label bolder" })
+                                                                                                @if (@Model.IreportModel.InterviewBiometryScore == 0)
+                                                                                                {
+                                                                                                    <label>Not Yet Verified</label>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.InterviewBiometryScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                }
+
+                                                                                            </div>
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                            <!-- #tab1 -->
+                                                                            <h3 class="tab_drawer_heading" rel="link2">Candidate Details</h3>
+                                                                            <div id="link2" class="tab_content">
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                            @Html.ValidationMessageFor(model => model.IreportModel.expectedPerHourRate, "", new { @class = "text-danger" })
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.joiningTime, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.joiningTime, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+
+                                                                            </div>
+
+                                                                            <h3 class="d_active tab_drawer_heading" rel="link3">Tech Skill</h3>
+
+                                                                            <div class="tab-pane tab_content" id="link3">
+                                                                                <div>
+                                                                                    <div class="table-responsive-sm">
+                                                                                        <table class="table table-bordered mbn" id="SkillTable">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th width="20%" class="desktop-view">Required Level</th>
+                                                                                                    <th width="30%">Skill Name</th>
+                                                                                                    <th width="25%">Actual Level</th>
+                                                                                                    <th width="15%" class="desktop-view">Required Weightage</th>
+                                                                                                    <th width="15%">Actual Weightage</th>
+                                                                                                </tr>
+                                                                                            </thead>
+
+
+                                                                                            <tbody>
+                                                                                                @if (Model.IreportModel.TechSkillReportCollection != null)
+                                                                                                {
+                                                                                                    @for (int i = 0; i < Model.IreportModel.TechSkillReportCollection.Count(); i++)
+                                                                                                    {
+                                                                                                        <tr>
+
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
+
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", @value = "title", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+
+                                                                                                            <td>
+                                                                                                                @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
+
+                                                                                                            </td>
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly", @value = "title" })
+                                                                                                            </td>
+                                                                                                            @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevelId)
+                                                                                                            @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].SkillId)
+
+
+                                                                                                        </tr>
+
+                                                                                                    }
+                                                                                                }
+
+
+
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+
+
+                                                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
+                                                                                            <div class="talktext">
+
+                                                                                                @Html.TextAreaFor(m => m.IreportModel.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- #tab3 -->
+                                                                            <h3 class="tab_drawer_heading" rel="link4">  Questions Discussed</h3>
+                                                                            <div id="link4" class="tab_content">
+                                                                                <div>
+                                                                                    <div class="table-responsive-sm ">
+                                                                                        @if (Model.IreportModel.QuestionsList != null)
+                                                                                        {
+                                                                                            <table class="table table-bordered mbn disQus" id="QuestionsTable">
+                                                                                                <thead>
+                                                                                                    <tr>
+                                                                                                        <th width="40%">Questions</th>
+                                                                                                        <th width="20%">SkillName</th>
+                                                                                                        <th width="20%">Rating</th>
+                                                                                                        <th width="10%">Time(In Seconds)</th>
+                                                                                                    </tr>
+                                                                                                </thead>
+                                                                                                <tbody>
+                                                                                                    @if (Model.IreportModel.QuestionsCollection == null || Model.IreportModel.QuestionsCollection.Count() == 0)
+                                                                                                    {
+                                                                                                        <tr>
+                                                                                                            <td>
+                                                                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+
+                                                                                                            </td>
+
+                                                                                                            <td>
+                                                                                                                @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
+
+                                                                                                            </td>
+
+                                                                                                            <td>
+                                                                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" @*min="1" *@>
+
+
+                                                                                                            </td>
+
+
+                                                                                                        </tr>
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
+                                                                                                        {
+
+
+                                                                                                            <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                                                                                <td>
+                                                                                                                    @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+
+
+                                                                                                                </td>
+                                                                                                                <td>
+                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                </td>
+                                                                                                                <td>
+
+                                                                                                                    @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
+
+
+                                                                                                                </td>
+
+                                                                                                                <td>
+
+                                                                                                                    @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
+
+                                                                                                                </td>
+
+
+                                                                                                            </tr>
+
+
+                                                                                                        }
+
+                                                                                                    }
+
+
+
+
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+
+                                                                            <h3 class="tab_drawer_heading" rel="link5">General Skill Report</h3>
+                                                                            <div id="link5" class="tab_content">
+                                                                                <div>
+                                                                                    <div class="table-responsive-sm">
+                                                                                        <table class="table table-bordered mbn" id="SkillGeneralTable">
+                                                                                            <thead>
+                                                                                                <tr>
+
+                                                                                                    <th width="20%" class="desktop-view">Required Level</th>
+                                                                                                    <th width="30%">Type</th>
+                                                                                                    <th width="25%">Value</th>
+                                                                                                    <th width="15%">Actual Level</th>
+                                                                                                    <th width="10%" class="desktop-view">Required Weightage</th>
+                                                                                                    <th width="10%">Actual Weightage</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @if (Model.IreportModel.SkillGeneralReportCollection != null)
+                                                                                                {
+                                                                                                    @for (int i = 0; i < Model.IreportModel.SkillGeneralReportCollection.Count(); i++)
+                                                                                                    {
+                                                                                                        <tr>
+
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+
+                                                                                                            <td>
+                                                                                                                @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "dropques form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+
+                                                                                                            </td>
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                            </td>
+                                                                                                            @Html.HiddenFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevelId)
+
+
+                                                                                                        </tr>
+
+                                                                                                    }
+
+                                                                                                }
+
+
+                                                                                            </tbody>
+                                                                                        </table>
+
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+
+                                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
+                                                                                                <div class="talktext">
+
+
+                                                                                                    @Html.TextAreaFor(m => m.IreportModel.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <h3 class="tab_drawer_heading" rel="link6"> Joinability Report</h3>
+                                                                            <div id="link6" class="tab_content">
+                                                                                <div>
+                                                                                    <div class="table-responsive-sm">
+
+                                                                                        <table class="table table-bordered mbn" id="JoinabilityTable">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th width="20%" class="desktop-view">Required Level</th>
+                                                                                                    <th width="30%">Type</th>
+                                                                                                    <th width="25%">Value</th>
+                                                                                                    <th width="15%">Actual Level</th>
+                                                                                                    <th width="10%" class="desktop-view">Required Weightage</th>
+                                                                                                    <th width="10%">Actual Weightage</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @if (Model.IreportModel.JoinabilityHRReportCollection != null)
+                                                                                                {
+                                                                                                    @for (int i = 0; i < Model.IreportModel.JoinabilityHRReportCollection.Count(); i++)
+                                                                                                    {
+                                                                                                        <tr>
+
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+
+                                                                                                            <td>
+                                                                                                                @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
+
+                                                                                                            </td>
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                            </td>
+
+                                                                                                            @Html.HiddenFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevelId)
+
+                                                                                                        </tr>
+
+                                                                                                    }
+                                                                                                }
+
+
+
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+
+                                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
+                                                                                                <div class="talktext">
+
+                                                                                                    @Html.TextAreaFor(m => m.IreportModel.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <h3 class="tab_drawer_heading" rel="link7"> Selectability Report</h3>
+                                                                            <div id="link7" class="tab_content">
+                                                                                <div>
+                                                                                    <div class="table-responsive-sm">
+
+                                                                                        <table class="table table-bordered mbn" id="SelectabilityTable">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th width="20%" class="desktop-view">Required Level</th>
+                                                                                                    <th width="30%">Type</th>
+                                                                                                    <th width="25%">Value</th>
+                                                                                                    <th width="15%">Actual Level</th>
+                                                                                                    <th width="10%" class="desktop-view">Required Weightage</th>
+                                                                                                    <th width="10%">Actual Weightage</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @if (Model.IreportModel.SelectabilityEvaluatorReportCollection != null)
+                                                                                                {
+                                                                                                    @for (int i = 0; i < Model.IreportModel.SelectabilityEvaluatorReportCollection.Count(); i++)
+                                                                                                    {
+                                                                                                        <tr>
+
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Name, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Value, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                            </td>
+
+                                                                                                            <td>
+                                                                                                                @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
+
+                                                                                                            </td>
+                                                                                                            <td class="desktop-view">
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                                @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                            </td>
+
+                                                                                                            @Html.HiddenFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevelId)
+
+                                                                                                        </tr>
+
+                                                                                                    }
+                                                                                                }
+
+
+
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+
+
+                                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%!important;">
+                                                                                                <div class="talktext">
+
+                                                                                                    @Html.TextAreaFor(m => m.IreportModel.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+
+
+                                                                                                </div>
+                                                                                            </div>
+
+
+                                                                                        </div>
+
+
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <!-- #tab7 -->
+                                                                            </div>
+                                                                            @if (Model.IsBiometricEnabled)
+                                                                            {
+                                                                                <h3 class="tab_drawer_heading" rel="link8"> Sentiment Analysis</h3>
+
+                                                                                <div id="link8" class="tab_content text-center">
+
+
+
+                                                                                </div>
+                                                                            }
+
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4  side-player scroll" id="sd-player">
+                                                    @if (Model.SubVideo_List.Count > 0)
+                                                    {
+                                                        <div id="style-2" class="single-video-right">
+                                                            <div>
+                                                                <div>
+                                                                    <div>
+                                                                        @foreach (var videolist in Model.SubVideo_List)
+                                                                        {
+                                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                            <div class="video-card video-card-list videosidelist">
+                                                                                <div class="video-card-image">
+                                                                                    @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                    {
+                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                        {
+                                                                                            <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                        <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                        </video>
+                                                                                        @if (Model.IsClientCurated)
+                                                                                        {
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                                        }
+
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                        {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                                        else
+                                                                                        { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+
+
+                                                                                    @*
+                                                                                        <div class="time">3:50</div>
+                                                                                    *@
+                                                                                </div>
+                                                                                <div class="video-card-body">
+                                                                                    <div class="video-title">
+                                                                                        @if (@videolist.candidateName.Length > 11)
+                                                                                        {
+                                                                                            <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <span class="candidate">@videolist.candidateName</span>}
+
+                                                                                        @if (@videolist.JDTiltle.Length > 10)
+                                                                                        {
+                                                                                            <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
+
+                                                                                        else
+                                                                                        {
+                                                                                            <span>@videolist.JDTiltle</span>}
+
+                                                                                    </div>
+                                                                                    <div class="video-page text-success">
+                                                                                        &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
+                                                                                        <span class="divider-g">
+                                                                                            @if (videolist.InterviewStatus == 4)
+                                                                                            {
+                                                                                                <span style="color:palevioletred">Border Line</span>
+                                                                                            }
+
+                                                                                            else if (videolist.InterviewStatus == 2)
+                                                                                            {
+                                                                                                <span style="color:green">Selected</span>
+
+                                                                                            }
+                                                                                        </span>
+
+                                                                                    </div>
+
+
+                                                                                    <div class="video-info">
+                                                                                        <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
+                                                                                        {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                                    else
+                                                                                    {
+                                                                                        <span id="join_time"> @videolist.joiningTime</span>}
+                                                                                    </div>
+
+                                                                                    <div class="video-info">
+                                                                                        <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                                        {
+                                                                                            <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+
+                                                                                        else
+                                                                                        {
+                                                                                            <span>@videolist.expectedPerHourRate</span>}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.container-fluid -->
+                            </div>
+                            <!-- /.content-wrapper -->
+                        }
+                        else
+                        {
+                            <div>No Selected Candidate Yet on this Channel.</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Call Candidate !</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+
+
+            <div class="modal-body">
+
+                <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
+
+
+                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
+    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    <div id="PublicShareVideo" class="modal modal-bg">
+        @if (ViewBag.VedioStatus == "Public")
+        {
+            <div class="blk-bg"></div>
+        }
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                    </div>
+                    <h5 class="modal-title pull-left">Your Email Id</h5>
+                </div>
+                <div class="modal-body">
+                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                    <div class="text-areadiv">
+                        <input type="text" id="txtvideoemailid" class="form-control" />
+                    </div>
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+<script>
+    function GetSentimentAnalysis(imid) {
+        document.getElementById('link8').innerHTML = '';
+        $.ajax({
+            url: '/RiseTube/GetSentimentAnalysis',
+            data: { 'imid': imid },
+            success: function (data) {
+
+                if (data.anger != "NaN") {
+                    var sentimentObj = [{ y: data.anger, label: "Anger" },
+                    { y: data.contempt, label: "Contempt" },
+                    { y: data.disgust, label: "Disgust" },
+                    { y: data.fear, label: "Fear" },
+                    { y: data.happiness, label: "Happiness" },
+                    { y: data.neutral, label: "Neutral" },
+                    { y: data.sadness, label: "Sadness" },
+                    { y: data.surprise, label: "Surprise" }]
+
+                    var chart = new CanvasJS.Chart("link8", {
+                        theme: "light2",
+                        width: 350,//in pixels
+                        height: 200,//in pixels
+                        animationEnabled: true,
+                        title: null,
+                        data: [{
+                            type: "pie",
+                            startAngle: 60,
+                            innerRadius: 55,
+                            indexLabelFontSize: 15,
+                            indexLabel: "{label}  {y}%",
+                            toolTipContent: "<b>{label} </b>({y}%)",
+
+                            dataPoints: sentimentObj
+                        }]
+                    });
+                    chart.render();
+                }
+            }
+        });
+    }
+
+</script>
+
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+<!-- Bootstrap core JavaScript-->
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<!-- Core plugin JavaScript-->
+<script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Owl Carousel -->
+<script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+<!-- Custom scripts for all pages-->
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+<script>
+    var d = new Date();
+    var starttime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+    $(window).bind('beforeunload', function () {
+        TimeCalculation();
+        //return 'Are you sure you want to leave?';
+    });
+    function TimeCalculation() {
+        var d1 = new Date();
+        var end = d1.getHours() + ":" + d1.getMinutes() + ":" + d1.getSeconds();
+        var currentUrl = window.location.href;
+        var vid = document.getElementsByClassName("vjs-tech");
+        var currentTime = vid[0].currentTime;
+        $.ajax({
+            type: "GET",
+            url: "/RiseTube/CalculateTimeSpend",
+            data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, timeStart: starttime, timeend: end, CurrentTime: currentTime },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+    }
+    jQuery(document).ready(function ($) {
+
+        $(".tab_content").hide();
+        $(".tab_content:first").show();
+
+        /* if in tab mode */
+        $("ul.tabs li").click(function () {
+
+            $(".tab_content").hide();
+            var activeTab = $(this).attr("rel");
+            $("#" + activeTab).fadeIn();
+
+            $("ul.tabs li").removeClass("active");
+            $(this).addClass("active");
+
+            $(".tab_drawer_heading").removeClass("d_active");
+            $(".tab_drawer_heading[rel^='" + activeTab + "']").addClass("d_active");
+
+        });
+        /* if in drawer mode */
+        $(".tab_drawer_heading").click(function () {
+
+            $(".tab_content").hide();
+            var d_activeTab = $(this).attr("rel");
+            $("#" + d_activeTab).fadeIn();
+
+            $(".tab_drawer_heading").removeClass("d_active");
+            $(this).addClass("d_active");
+
+            $("ul.tabs li").removeClass("active");
+            $("ul.tabs li[rel^='" + d_activeTab + "']").addClass("active");
+        });
+
+
+        /* Extra class "tab_last"
+           to add border to right side
+           of last tab */
+        $('ul.tabs li').last().addClass("tab_last");
+    })
+
+</script>
+<script>
+
+    jQuery(document).ready(function ($) {
+        var main = function () {
+            $('.btn').click(function () {
+                var post = $('.status-box').val();
+                $('<li>').text(post).prependTo('.posts');
+                $('.status-box').val('');
+                $('.counter').text('450');
+                $('.btn').addClass('disabled');
+            });
+            $('.status-box').keyup(function () {
+                var postLength = $(this).val().length;
+                var charactersLeft = 450 - postLength + "   " + "CharacterLeft";
+                $('.counter').text(charactersLeft);
+                if (charactersLeft < 0) {
+                    $('.btn').addClass('disabled');
+                } else if (charactersLeft === 450) {
+                    $('.btn').addClass('disabled');
+                } else {
+                    $('.btn').removeClass('disabled');
+                }
+            });
+        }
+        $('.btn').addClass('disabled');
+        $(document).ready(main)
+</script>
+<script>
+            $('form').submit(function () {
+                if ($(this).valid()) {
+                    $(':submit', this).attr('disabled', 'disabled');
+                }
+            });
+
+    function QuestionChanged(id , val ) {
+        var index = id.charAt(20);
+        var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetQuestionSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        //Perform Ajax request.
+        var count = '@ViewBag.QuestionsDiscussedCount';
+        //Get Question Skills
+        if (count == null || parseInt(count) == 0) {
+            var val = $("#QuestionsCollection_0__Comment").val();
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetQuestionSkills",
+                data: { 'id': val },
+                success: function (data) {
+                    $("#QuestionsCollection_0__SkillName").val(data);
+                }
+            });
+        }
+    });
+
+</script>
+
+<script>
+
+    window.onload = function () {
+        if (localStorage.getItem('isTheaterMode') == "true") {
+            getThMode();
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        }
+        else {
+            closeThMode();
+        }
+        var totalScore = 0;
+        var arr = [];
+        var obj = { y: "", legendText: "", label: "" }
+        //TechSkills actual weightage total
+        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
+        var techTotal = 0;
+        for (i = 0; i < (techItems.length / 2); i++) {
+            techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
+        }
+        obj.y = parseInt(techTotal) / 4;
+        obj.label = "Tech Skills Score";
+        obj.legendText = "Tech Skills Score";
+        arr.push(obj.y);
+
+        //SkillsGeneral actual weightage total
+        var objGen = { y: "", legendText: "", label: "" }
+        var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
+        var genTotal = 0;
+        for (i = 0; i < genSkillsItems.length; i++) {
+            var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+            genTotal = parseInt(genTotal) + parseInt(weightage);
+        }
+        objGen.y = parseInt(genTotal) / 4;
+        objGen.label = "General Skills Score";
+        objGen.legendText = "General Skills Score";
+        arr.push(objGen.y);
+
+        //Joinability actual weightage total
+        var objJoin = { y: "", legendText: "", label: "" }
+        var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
+        var joinabilityTotal = 0;
+        for (i = 0; i < joinabilityItems.length; i++) {
+            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+        }
+        objJoin.y = parseInt(joinabilityTotal) / 4;
+        objJoin.label = "Joinability Score";
+        objJoin.legendText = "Joinability Score";
+        arr.push(objJoin.y);
+
+        //Selectability actual weightage total
+        var objSelect = { y: "", legendText: "", label: "" }
+        var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+        var selectabilityTotal = 0;
+        for (i = 0; i < selectabilityItems.length; i++) {
+            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+        }
+        objSelect.y = parseInt(selectabilityTotal) / 4;
+        objSelect.label = "Selectability Score";
+        objSelect.legendText = "Selectability Score";
+        arr.push(objSelect.y);
+
+        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+        document.getElementById("totScore").innerHTML = totalScore;
+        //var chart = new CanvasJS.Chart("scoreChart", {
+        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
+        //    width: 400,//in pixels
+        //    height: 200,//in pixels
+        //    animationEnabled: true,
+        //    title: {
+        //        text: "Score Chart"
+        //    },
+        //    data: [{
+        //        type: "column",
+        //        //startAngle: 60,
+        //        //innerRadius: 55,
+        //        indexLabelFontSize: 8,
+        //        indexLabel: "{label}  {y}",
+        //        toolTipContent: "<b>{label} </b>({y})",
+        //        dataPoints: arr
+
+        //    }]
+        //});
+        //chart.render();
+
+        am4core.ready(function () {
+
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
+
+            // Create chart instance
+            var chart = am4core.create("scoreChart", am4charts.XYChart);
+
+            // Add data
+            chart.data = [{
+                "country": "Tech",
+                "visits": arr[0]
+
+            }, {
+                "country": "General",
+                "visits": arr[1]
+            }, {
+                "country": "Joinability",
+                "visits": arr[2]
+            }, {
+                "country": "Selectability",
+                "visits": arr[3]
+            }];
+
+            // Create axes
+            chart.logo.disabled = true;
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "country";
+            categoryAxis.renderer.inside = true;
+            categoryAxis.renderer.labels.template.valign = "top";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+            chart.fontSize = 13;
+
+            categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy;
+                }
+                return dy;
+            });
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            categoryAxis.renderer.grid.template.disabled = true;
+            valueAxis.renderer.grid.template.disabled = true;
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "visits";
+            series.dataFields.categoryX = "country";
+            series.name = "Visits";
+            series.colorField = "color";
+            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+            series.columns.template.fillOpacity = .8;
+
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 0;
+            columnTemplate.strokeOpacity = 1;
+            chart.colors.list = [
+                am4core.color("#07BEF3"),
+                am4core.color("#00F96B"),
+                am4core.color("#F64042"),
+                am4core.color("#ffbc50")
+            ];
+            series.columns.template.events.once("inited", function (event) {
+                event.target.fill = chart.colors.getIndex(event.target.dataItem.index);
+            });
+        });
+        if (isTheaterMode === true) {
+            getThMode();
+        }
+        checkAnotherMode();
+        checktheatre();
+        getThMode();
+        closeThMode();
+        checkMode();
+
+    }
+    function checktheatre() {
+        var mode = localStorage.getItem('isTheaterMode');
+        if (mode == true) {
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        } else {
+            document.getElementById("1").value = "THEATER-MODE-ON";
+        }
+    }
+
+    function getThMode() {
+        var ele = document.getElementById('player');
+
+        ele.classList.remove("col-8");
+        ele.classList.add("col-12");
+        document.getElementById("1").value = "THEATER-MODE-ON";
+        localStorage.setItem('isTheaterMode', true);
+    }
+
+    function closeThMode() {
+        var ele = document.getElementById('player');
+
+        ele.classList.remove("col-12");
+        ele.classList.add("col-8");
+        localStorage.setItem('isTheaterMode', false);
+    }
+
+    function checkMode() {
+        var val = window.localStorage.getItem('isTheaterMode');
+
+        if (val == true) {
+            getThMode();
+        } else {
+
+            closeThMode();
+        }
+    }
+    if (localStorage.getItem('isTheaterMode') == true) {
+        var ele = document.getElementById('player');
+        ele.classList.remove("col-8");
+        ele.classList.add("col-12");
+    }
+    if (localStorage.getItem('isTheaterMode') == false) {
+        var ele = document.getElementById('player');
+        ele.classList.remove("col-12");
+        ele.classList.add("col-8");
+    }
+
+    function toggle(button) {
+        if (document.getElementById("1").value == "THEATER-MODE-ON") {
+            this.getThMode();
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        }
+        else {
+            this.closeThMode();
+            document.getElementById("1").value = "THEATER-MODE-ON";
+        }
+    }
+    function checkAnotherMode() {
+        if (localStorage.getItem('isTheaterMode') == "true") {
+            this.getThMode();
+        }
+        else {
+            this.closeThMode();
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        }
+    }
+</script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script type="text/javascript">
+
+        $(document).ready(function () {
+        $("#ClientHR").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+            $("#CandidateName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+
+        $("#InterviewStatus").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+            buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+            $("#ClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#ApprovalStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#JoiningStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#OfferStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+            $("#CandidateLocation").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '100%',
+                maxHeight: 200
+            });
+             $("#IsShortListed").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                 buttonWidth: '100%',
+                    maxHeight: 200
+         });
+          $("#IsIntrested").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+              buttonWidth: '100%',
+                    maxHeight: 200
+          });
+            $("#CandidateAvailable").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+                });
+
+    });
+</script>
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+
+    function ModalButtonClick(mobileNumber, candidateName) {
+        candidate = candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+<style>
+    [role="tooltip"] {
+        visibility: hidden;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $(".candidate-name").each(function () {
+            if ($(this).text().length > 11) {
+                $(this).text($(this).text().substr(0, 11) + "...")
+                $('[role="data-tooltip"]').css("visibility", "visible");
+            }
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+        $(".join-time").each(function () {
+            if ($(this).text().length > 10) {
+                $(this).text($(this).text().substr(0, 10) + "...")
+                $('[role="data-tooltip"]').css("visibility", "visible");
+            }
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+    });
+</script>
+<script>
+
+    jQuery(document).ready(function ($) {
+        if ($("#txtVideostatus").val() == "Public") {
+            var modal = document.getElementById("PublicShareVideo");
+            modal.style.display = "block";
+        }
+        $("#btnComment").on('click', function () {
+            if ($("#txtComment").val().trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VideoComment",
+                    data: { comment: $("#txtComment").val(), videoid: $("#txtVideoId").val() },
+                    success: function (response) {
+                        $("#txtComment").val("");
+                        $.ajax({
+                            type: "POST",
+                            url: "/RiseTube/UpdateVideoComment",
+                            data: { videoid: $("#txtVideoId").val() },
+                            success: function (data) {
+                                var html = '';
+                                html += '  <div class="chat"><div class="chat-history"><ul class="posts" >';
+                                for (var i = 0; i < data.length; i++) {
+
+                                    html += '                <li>';
+                                    html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message borders comment-tri-right left-tp"> ' + data[i].comment; '</div>'
+                                    html += '    </li>';
+                                }
+
+                                html += '    </ul></div></div>';
+                                $("#divcomments").empty().html(html);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        $('#btnSearch').on('click', function () {
+            if ($(this).attr('data-click-state') == 1) {
+                $(this).attr('data-click-state', 0);
+                $(this).css('background-color', 'blue');
+                $(this).val('Share');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VideoShare",
+                    data: { value: "Private", videoid: $("#txtVideoId").val() },
+                    success: function (data) {
+
+                    }
+                });
+            }
+            else {
+                $(this).attr('data-click-state', 1);
+                $(this).css('background-color', 'green');
+                $(this).val('Shared');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VideoShare",
+                    data: { value: "Public", videoid: $("#txtVideoId").val() },
+                    success: function (data) {
+
+                    }
+                });
+
+            }
+        });
+      
+    });
+    function switchtoquestionVideo(questiontime) {
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
+
+    function SubmitEmail() {
+        if ($("#txtvideoemailid").val() != "") {
+            var currentUrl = window.location.href;
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VideoShareEmail",
+                data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl },
+                success: function (data) {
+                    closepublicSharePopUpvideo();
+                    $("#divbackground").removeClass("blk-bg");
+                }
+            });
+        }
+    }
+    function closepublicSharePopUpvideo() {
+        var modal = document.getElementById("PublicShareVideo");
+        modal.style.display = "none";
+    }
+   
+    function RemoveRow(index) {
+        document.getElementById("quetxt_" + index).style.display = "none";
+        $("#IreportModel_QuestionsCollection_" + index + "__QuestionStatus").val("true");
+        //document.getElementById("IreportModel_QuestionsCollection_"+index+"__QuestionStatus").value = "true";
+    }
+    function SendIntrestUrl() {
+        var videourl = window.location.href;
+        var CandidateEmail = $("#txtOnlineEmail").val();
+        if (Swal.fire("Are you sure, you want to show interest on this Candidate Interview?")) {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/VideoShareIntrest",
+                data: { CurrentUrl: videourl, Emailid: $("#txtvideoemailid").val(), CandidateEmail: CandidateEmail, clienthr: $("#txtclienthr").val() },
+                success: function (data) {
+                    swal.fire("Your interest has been recorded successfully.");
+                }
+            });
+        }
+    }
+</script>
+<script src="~/RiseTube/js/custom.js"></script>
+<script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "Client")
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+
+
+        <script>
+
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btnvideo': 'Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btn2': 'Click here to like the Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btn3': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+
+                {
+                    'next .sharebtn1': 'Share the video by clicking here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item1': 'Interview Report Summary',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemchart': 'Check candidate overall score here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemcomment': 'Check interviewer comments here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item2': 'Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item3': 'Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+
+                {
+                    'next .item5': 'General Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item6': 'Joinability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item7': 'Selectability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .post': 'Collaborative decision making.Write your comment and click post',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .videosidelist': 'Same skill Candidates Video ',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
+                }
+
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 10000)
+        </script>
+    }
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "ExternalUser")
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
+            localStorage.setItem('risetube', true)
+            localStorage.setItem('subscribe', false)
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Shared Candidates Video will be playing over here and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btnvideo': 'Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .sharebtn1': 'Share the video by clicking here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item1': 'Interview Report Summary',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemchart': 'Check candidate overall score here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemcomment': 'Check interviewer comments here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item2': 'Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item3': 'Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item5': 'General Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item6': 'Joinability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item7': 'Selectability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .tooltip1': 'Share and View Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .post': 'Collaborative decision making. Write your comment and click post',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .videosidelist': 'Other Shared Candidates Video ',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .supportmenu': 'Click on Support Menu to see its features'
+                },
+
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 3000)
+        </script>
+    }
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "CuratedUser")
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
+            localStorage.setItem('risetube', true)
+            localStorage.setItem('subscribe', false)
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+                {
+                    'next .btnvideo': 'Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+                {
+                    'next .sharebtn1': 'Share the video by clicking here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .shortlist': 'Click here to Shortlist the Candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .showinter': 'Click here to Send interest to the Candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+
+                {
+                    'next .item1': 'Interview Report Summary',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemchart': 'Check candidate overall score here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .itemcomment': 'Check interviewer comments, Job Level and Voice BioMetric Score(Optional)',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item2': 'Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item3': 'Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interest you',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+
+                {
+                    'next .item5': 'General Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item6': 'Joinability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item7': 'Selectability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .tooltip1': 'Share and View Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .videosidelist': 'Similar skill Candidates Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .risetubemenu': 'Click on Risetube menu and to see its features',
+                },
+
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 3000)
+        </script>
+    }
+}

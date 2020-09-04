@@ -68,7 +68,7 @@ namespace Risebird.Repository.Interface
         //Task<IEnumerable<MeetingVM>> GetClientHRContactList();
 
         Task<MeetingVM> GetMeetingbyid(int id, string Email);
-        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid);
+        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false);
         //string VedioLikeAsync(string value, string vedioid, string email);
         Task<MeetingVM> VedioLikeAsync(string value, string vedioid, string email);
         Task AddTotalViewCount(int id, string emailaddress, string flag);
@@ -105,7 +105,15 @@ namespace Risebird.Repository.Interface
         Task AddTimeSpend(int id, string emailaddress, string flag, TimeSpan TimeSpend, string CurrentTime);
         IEnumerable<VideoDetails> GetallVideoSumaryDetails();
         Candidate GetCandidateSharedDetails(int id);
-
+        Task<string> AddVedioShare(string email, string vedioid, string Emailids);
+        Task<int> CheckVedioShare(string vedioid, string Emailid);
+        string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid);
+        IEnumerable<VideoDetails> GetVideoIntrestDetails();
+        IEnumerable<string> FetchShareEmails(int Interviewid);
+        IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid);
+        string UpdateCandidateStatus(int videoid, string Status);
+        Task<IEnumerable<VideoSentiment>> GetSentimentAnalysis(int imid);
+        Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetings();
 
     }
 }

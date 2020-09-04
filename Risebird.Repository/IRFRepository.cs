@@ -2234,6 +2234,8 @@ namespace Risebird.Repository
             parameters.Add("@IsBiometricEnabled", entity.IsBiometricEnabled);
             parameters.Add("@PriorityLevel", entity.PriorityLevel);
             parameters.Add("@CompanyDetails", entity.CompanyDetails);
+            parameters.Add("@Type", entity.Type);
+
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;

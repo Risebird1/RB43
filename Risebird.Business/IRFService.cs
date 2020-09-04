@@ -459,6 +459,7 @@ namespace Risebird.Business
                 model.TotalBudget = IRF.TotalBudget;
                 model.IsBiometricEnabled = IRF.IsBiometricEnabled;
                 model.PriorityLevel = IRF.PriorityLevel;
+                model.Type = IRF.BussinessType;
                 var skillCount = transTechSkills.Count();
                 return model;
 

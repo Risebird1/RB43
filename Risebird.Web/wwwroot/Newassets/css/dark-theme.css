@@ -1,5 +1,5 @@
 body {
-    background: #1a1a1a !important;
+    background: #151515 !important;
     color: #a9a5a5 !important
 }
 
@@ -67,7 +67,33 @@ hr {
     color: #5f5c5c !important;
 }
 
+.multiselect-container.dropdown-menu {
+    background-color: #131313 !important;
+}
+
+    .multiselect-container.dropdown-menu:before {
+        border: 0px;
+    }
+
+.video-info span {
+    color: #9A9A9A;
+}
+
+.video-title .video-title .video-title a, .video-title .candidate {
+    color: #9A9A9A;
+}
+
+.control-label {
+    color: #9A9A9A !important;
+}
+
+.nav svg {
+    fill: #fff;
+}
+
 .video-card {
+    border: 1px #1f1e1e solid;
+    background-color: #161616 !important;
     box-shadow: none !important;
 }
 
@@ -75,16 +101,24 @@ hr {
     box-shadow: none !important;
 }
 
+.card-header.bg-w {
+    background: rgb(21 21 21) !important;
+}
+
+.bl-bg {
+    background: #151515;
+}
+
 .tab_container {
     background: #000000 !important;
 }
 
 #toggle-click1 {
-    color: #9A9A9A;
+    color: #9A9A9A !important;
 }
 
 #toggle-click {
-    color: #FFF;
+    color: #fff !important;
 }
 
 .chart-box, .card {
@@ -159,8 +193,18 @@ hr {
     font-size: 14px !important;
 }
 
+.pt30 .card-title strong {
+    color: #9a9a9a;
+}
+
 #IRFList a, #ProjectList a {
     color: #f7eaea75 !important;
+}
+
+#myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
+    background: #161616;
+    border: solid 1px #cccccc3b;
+    box-shadow: none !important;
 }
 
 #myForm .searchbox .input-group-btn .btn {
@@ -168,9 +212,28 @@ hr {
     border-color: #1a1a1a !important;
 }
 
+.stats .card-chart .card-header {
+    border-top: 0px;
+    background-color: #000000 !important;
+}
+
+.client .row.bg-white {
+    background-color: #0c0c0c !important;
+}
+
 .mdc-button--outlined:not(:disabled) {
-    border-color: #fff !important;
+    border-color: #524c4cab !important;
     color: #fff !important;
+}
+
+.mdc-card.card.bl-bg {
+    border: 0px !important
+}
+
+#myForm .searchbox .input-group-btn {
+    border: 1px #524c4cab solid;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
 .card .card-footer {
@@ -195,6 +258,7 @@ table {
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #121212 !important;
+    border: 1px #524c4cab solid !important;
 }
 
 .mdc-fab {
@@ -208,7 +272,7 @@ table {
 
 .mdc-card {
     background-color: rgb(0, 0, 0) !important;
-    border-top: 3px #121212 solid !important;
+    border: 0px !important;
 }
 
     .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
@@ -216,6 +280,7 @@ table {
         background-size: 7% !important;
         padding: 10px !important;
     }
+
 .edit-share {
     background-image: url('../../img/editicon-dark.png') !important;
 }
@@ -250,13 +315,16 @@ table {
     background: #181818 url(../img/dark-timdate.png) 94% 50% no-repeat !important;
     background-size: 5% !important;
 }
-.btnmeeting, .btnmeeting:hover{
+
+.btnmeeting, .btnmeeting:hover {
     background: #232222;
     border: 2px #929292a8 double;
 }
+
 .view-video {
-  color:  #9A9A9A
+    color: #9A9A9A
 }
+
 .spinner, .spinner .button {
     background: #181818;
 }
@@ -271,7 +339,11 @@ table {
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
     background: #181818;
-    color: #9A9A9A;
+    color: #9A9A9A !important;
+}
+
+.vjs-tech {
+    border: 2px #524c4cab solid;
 }
 
 .select-css, .select-css[aria-disabled=true] {
@@ -383,7 +455,7 @@ div.dataTables_wrapper div.dataTables_info {
 }
 
 #supportList_filter input[type=search] {
-    background: #000 url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center !important;
+    background: #000 url(search-icon.png) no-repeat 9px center !important;
     border: solid 1px #7b756f !important;
 }
 
@@ -419,7 +491,7 @@ div.dataTables_wrapper div.dataTables_info {
     }
 
 .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
-    background: #000 url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center !important;
+    background: #000 url(search-icon.png) no-repeat 9px center !important;
     border-color: #7b756f !important;
     color: #7b756f !important;
 }
@@ -467,7 +539,7 @@ div.dataTables_wrapper div.dataTables_info {
     color: #a9a5a5 !important;
     background-color: #181818 !important;
     border-bottom: 1px #77737359 solid !important;
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
+    background-image: url('svg>') !important;
 }
 
 .edit-share {
@@ -488,7 +560,7 @@ div.dataTables_wrapper div.dataTables_info {
     color: #a9a5a5 !important;
     background-color: #181818 !important;
     border-bottom: 1px #77737359 solid !important;
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') !important;
+    background-image: url('svg>') !important;
 }
 
 .dropdown-menu:after {
@@ -544,6 +616,10 @@ div.dataTables_wrapper div.dataTables_info {
     color: #9a9a9a !important
 }
 
+.single-video-right .video-card-image {
+    border: 2px #524c4cab solid;
+}
+
 input[type="radio"]:checked:before {
     background: #787878 !important;
 }
@@ -572,5 +648,12 @@ input[type="radio"]:checked {
         background-color: #1a1a1a !important;
         color: #fff;
         border: none !important;
+    }
+}
+
+
+@media screen and (max-width: 767px) {
+    .pt30 .card-title {
+        color: #fff;
     }
 }

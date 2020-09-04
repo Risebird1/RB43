@@ -59,11 +59,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid)
+        public async Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false)
         {
             try
             {
-                var result = await _meetingRespository.GetRiseTubeMeetings(clientId, profile, Emailid);
+                var result = await _meetingRespository.GetRiseTubeMeetings(clientId, profile, Emailid, IsClientCurated);
                 return result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
@@ -830,6 +830,7 @@ namespace Risebird.Business
 
                 reportModel.IRFName = irfDetails.IRFId;
                 reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
+                reportModel.joiningTime = interviewDetails.joiningTime;
                 return reportModel;
             }
 
@@ -1460,6 +1461,7 @@ namespace Risebird.Business
 
                     model.InterviewId = interviewId;
                     model.CandidateName = candidatedetails.Name;
+                    model.LogoUrl = candidatedetails.LogoUrl;
                     model.interviewDate = interviewDetails.interviewDate.ToString();
                     model.resumeLink = interviewDetails.resumeLink;
                     model.IRFId = irfId;
@@ -1485,6 +1487,7 @@ namespace Risebird.Business
                 reportModel.CandidateName = candidatedetails.Name;
                 reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = candidatedetails.EmailId;
+                reportModel.LogoUrl = candidatedetails.LogoUrl;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
                 reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
                 reportModel.InterviewerComment = candidatedetails.InterviewerComments;
@@ -1643,6 +1646,140 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string AddVedioShare(string email, string vedioid, string Emailids)
+        {
+            try
+            {
+                var meeting = _meetingRespository.AddVedioShare(email, vedioid, Emailids);
+                return "";
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+        }
+        public int CheckVedioShare(string vedioid, string Emailid)
+        {
+            try
+            {
+                var meeting = _meetingRespository.CheckVedioShare(vedioid, Emailid);
+                return meeting.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
+            }
+        }
+        public string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid)
+        {
+            try
+            {
+                var result = _meetingRespository.AddVideoIntrestDetails(videoid, UrlType,Emailid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public IEnumerable<VideoDetails> GetVideoIntrestDetails()
+        {
+            try
+            {
+                var result = _meetingRespository.GetVideoIntrestDetails();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public IEnumerable<string> FetchShareEmails(int Interviewid)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchShareEmails(Interviewid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid)
+        {
+            try
+            {
+                var result = _meetingRespository.GetVideoCandidateSumaryDetails(Interviewid, emailid);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public string UpdateCandidateStatus(int videoid, string Status)
+        {
+            try
+            {
+                return _meetingRespository.UpdateCandidateStatus(videoid, Status);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+
+        public async Task<SentimentPercentage> GetSentimentAnalysis(int imid)
+        {
+            try
+            {
+                var percentObj = new SentimentPercentage();
+                var data = await _meetingRespository.GetSentimentAnalysis(imid);
+                var total = data.Select(x => x.Value).Sum();
+                percentObj.Anger = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Anger)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Contempt = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Contempt)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Disgust = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Disgust)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Fear = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Fear)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Happiness = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Happiness)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Neutral = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Neutral)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Sadness = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Sadness)).Select(x => x.Value).Sum()) * 100)/(total);
+                percentObj.Surprise = ((data.Where(x => x.EmotionType == Convert.ToInt16(SentimentType.Surprise)).Select(x => x.Value).Sum()) * 100)/(total);
+                return percentObj;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<MeetingVM>> GetSharedRiseTubeMeetings()
+        {
+            try
+            {
+                var result = await _meetingRespository.GetSharedRiseTubeMeetings();
+                return result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 
 }

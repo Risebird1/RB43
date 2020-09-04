@@ -7,10 +7,16 @@
 
 
 
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 
 
 
-<div class="main-panel" id="main-panel">
+
+
+<div class="main-panel " id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
@@ -35,7 +41,7 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content ">
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
@@ -171,6 +177,24 @@
 
                                         @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
 
+                                    </div>
+                                    <div class="form-group">
+
+                                        <!--   <div class="switch-btn col-md-12">
+           <span class="on-off">B2C</span>
+           <div class="material-toggle">
+
+               <input class="switch" id="MoveToB2B" type="checkbox" checked="checked" value="false" name="B2B">
+               <label for="MoveToB2B" class=""></label>
+
+           </div>
+           <span class="on-off">B2B</span>
+       </div>-->
+
+
+
+                                        @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
+                                        @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
@@ -362,11 +386,11 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control" })
+                                                        @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "select-css form-control " })
 
                                                     </td>
                                                     <td>
-                                                        @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "select-css form-control", @onchange = "TechSkillChanged()" })
+                                                        @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "select-css form-control ", @onchange = "TechSkillChanged()" })
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
@@ -414,11 +438,11 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("Joinability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control" })
+                                                        @Html.DropDownList("Joinability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control " })
 
                                                     </td>
                                                     <td>
-                                                        @Html.DropDownList("Joinability[0].Type", (SelectList)Model.JoinabilityTypeList, new { @class = "select-css form-control" })
+                                                        @Html.DropDownList("Joinability[0].Type", (SelectList)Model.JoinabilityTypeList, new { @class = "select-css form-control " })
 
 
                                                     </td>
@@ -470,11 +494,11 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("Selectability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control" })
+                                                        @Html.DropDownList("Selectability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control " })
 
                                                     </td>
                                                     <td>
-                                                        @Html.DropDownList("Selectability[0].Type", (SelectList)Model.SelectabilityTypeList, new { @class = "select-css form-control" })
+                                                        @Html.DropDownList("Selectability[0].Type", (SelectList)Model.SelectabilityTypeList, new { @class = "select-css form-control  " })
 
                                                     </td>
                                                     <td>
@@ -525,11 +549,11 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control" })
+                                                        @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "select-css form-control " })
 
                                                     </td>
                                                     <td>
-                                                        @Html.DropDownList("SkillGeneral[0].Type", (SelectList)Model.SkillGeneralTypeList, new { @class = "select-css form-control" })
+                                                        @Html.DropDownList("SkillGeneral[0].Type", (SelectList)Model.SkillGeneralTypeList, new { @class = "select-css form-control " })
 
                                                     </td>
                                                     <td>
@@ -577,7 +601,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "select-css form-control", @onchange = "ClientUserChanged(this.value, this.id)" })
+                                                        @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "select-css form-control ", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                     </td>
                                                     <td>
 
@@ -625,7 +649,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                        @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select -css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                     </td>
 
                                                     <td>
@@ -672,7 +696,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "select-css form-control", @onchange = "QCChanged(this.value, this.id)" })
+                                                        @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "select-css form-control ", @onchange = "QCChanged(this.value, this.id)" })
                                                     </td>
 
                                                     <td>
@@ -713,7 +737,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                        @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "select-css form-control ", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
                                                     </td>
 
                                                     <td>
@@ -757,7 +781,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "select-css form-control" })
+                                                        @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "select-css form-control " })
                                                     </td>
 
                                                     <td class="action text-center">
@@ -794,7 +818,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "select-css form-control" })
+                                                        @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "select-css form-control " })
                                                     </td>
 
                                                     <td class="action text-center">
@@ -831,7 +855,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("RecruiterCollection[0].UserId", (SelectList)ViewBag.Recruiters, new { @class = "select-css form-control", @onchange = "RecruiterChanged(this.value, this.id)" })
+                                                        @Html.DropDownList("RecruiterCollection[0].UserId", (SelectList)ViewBag.Recruiters, new { @class = "select-css form-control ", @onchange = "RecruiterChanged(this.value, this.id)" })
                                                     </td>
 
                                                     <td>
@@ -1072,7 +1096,7 @@
                 var options = createid + " option[value='" + interviewerskill[j] + "']";
                 $("#" + options).attr('selected', 'selected');
                 $("#" + SkillLabel + " option[value='1']").attr('selected', 'selected');
-               
+
                 if (j < (interviewerskill.length - 1)) {
                     AddRow();
                 }

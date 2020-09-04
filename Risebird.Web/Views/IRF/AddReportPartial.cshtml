@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!--     Fonts and icons     -->
+<!--  Fonts and icons-->
 <!-- CSS Files -->
 
 
@@ -72,12 +72,12 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
-        <div class="row">
+    <div class="content client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
 
                         @if (ViewBag.ProfileName == "client" && (Model.InterviewStatus == 2 || Model.InterviewStatus == 4))
@@ -237,7 +237,7 @@
                                             {
                                                 if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
                                                 {
-                                                    <video width="320" height="240" style="width:100%" controls>
+                                                    <video width="320" height="240" style="width:100%" controls controlsList="nodownload">
                                                         <source src=@Url.Content(Model.VideoLink) type="video/mp4">
                                                         <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
@@ -247,7 +247,7 @@
 
                                                 else if (Url.Content(Model.VideoLink).Contains("manifest"))
                                                 {
-                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
                                                         <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
 
                                                     </video>
@@ -275,7 +275,7 @@
                                             <div class="card-body">
                                                 <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
                                                 <div id="scoreChart" style="height: 200px; width: 100%;"></div>
- 
+
                                             </div>
                                         </div>
 
@@ -420,7 +420,7 @@
                                                         {
                                                             <tr>
                                                                 <td>
-                                                                  
+
                                                                     @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques select-css form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
@@ -430,7 +430,7 @@
                                                                     @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                 </td>
                                                                 <td>
-                                                                    
+
                                                                     @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control", @disabled = "disabled" })
 
 
@@ -980,7 +980,7 @@
                                                         </td>
                                                         <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                           
+
 
                                                         </td>
 
@@ -1023,7 +1023,7 @@
 
                     <div class="filheader">
                         <div class="filavatar">
-                            <span class="reportbtn-icon fas fa-thumbs-up"></span>                        
+                            <span class="reportbtn-icon fas fa-thumbs-up"></span>
                         </div>
                         <h5 class="modal-title pull-left">Approved For Next Round</h5>
                     </div>
@@ -1059,7 +1059,7 @@
 
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                 
+
                     <div class="filheader">
                         <div class="filavatar">
                             <span class="reportbtn-icon fas fa-check"></span>
@@ -1070,7 +1070,7 @@
                         <span aria-hidden="true" id="selectPopUp" style="cursor:pointer;">&times;</span>
                     </button>
 
-                   
+
 
 
                     <div class="modal-body">

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -10,10 +8,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
-using System.Runtime.Serialization.Json;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -100,9 +95,9 @@ namespace Risebird.Web
                     if(!resultValue.Contains("failed"))
                     {
                         var resultset = _notificationHelper.MeetingInvite(startdate, enddate, TimeZoneDetails, accountEmail, resultValue,Message, Subject, loggedinUser, candidateEmailId, AdditionalUser, meetingURL);
-                        if (resultset == "Mail sent Successfully.")
+                        if (resultset == "Mail sent successfully.")
                         {
-                            return Json("Invite Successfully Send");
+                            return Json("Invite sent successfully");
                         }
                         else
                         {

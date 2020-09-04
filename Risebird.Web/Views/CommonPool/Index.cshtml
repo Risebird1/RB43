@@ -22,6 +22,7 @@
     string[] CandidateLocation = new string[] { };
     string[] IsShortListed = new string[] { };
     string[] IsIntrested = new string[] { };
+    string[] CandidateAvailable = new string[] { };
 
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("CommonPoolfilters") != null)
@@ -40,6 +41,8 @@
     CandidateLocation = filter.CandidateLocation != null ? filter.CandidateLocation : new string[] { };
     IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
     IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
+    CandidateAvailable = filter.CandidateAvailable != null ? filter.CandidateAvailable : new string[] { };
+
 }
 
 
@@ -57,7 +60,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand"></a>
+                <a id="commonpoolid" class="navbar-brand">Common Pool</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -67,56 +70,56 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
-    </div>
 
-    <div class="content video">
-        <div class="row">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Common Pool</h4></div>
+                </div>
+
+                <div class="pull-right newsletter">
+                    <div>
+                        <div class="newsletter">
+
+                            <div class="content">
+                                <div class="input-group card-title-space" id="myForm">
+                                    <div class="searchbox">
+                                        <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name Of candidate">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
+
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content video client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-                            <div class="row">
 
-
-
-                                <div class="card-header">
-                                    <div class="pull-left"> <h4 id="commonpoolid" class="card-title">Common Pool</h4></div>
-
-                                    <div class="pull-right">
-                                        <div>
-                                            <div class="newsletter">
-
-                                                <div class="content">
-                                                    <div class="input-group" id="myForm">
-                                                        <div class="searchbox">
-                                                            <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control txtsearch1" placeholder="Please enter Skills (or) Name Of candidate">
-                                                            <span class="input-group-btn">
-                                                                <button class="btn btn3" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4" data-toggle="modal" data-target="#filterModal">
-
-                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                                <div class="mdc-button__ripple"></div>
-                                            </button>
-
-
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
                             <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
@@ -370,6 +373,18 @@
                                                         </div>
                                                     }
                                                     <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="Available">Available</option>
+                                                                    <option value="NotAvailable">NotAvailable</option>
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
                                                         <div class="form-group col-md-12">
 
 
@@ -456,67 +471,81 @@
                                                         else
                                                         {
                                                             <span class="candidate">@item.candidateName</span>}
-
                                                         @if (@item.JDTiltle.Length > 20)
                                                         {
-                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">(@item.JDTiltle.Split("|")[0])</span></a>}
+                                                            <a href="#" data-tooltip="@item.JDTiltle"> <span class="join-time  designation">@item.JDTiltle</span></a>}
 
                                                         else
                                                         {
-                                                            <span>@item.JDTiltle</span>}
+                                                            <span class="designation">@item.JDTiltle</span>}
+
+
+
+
+
+                                                        @if (item.MobileNumber != null)
+                                                        {
+                                                            <span>
+                                                                <button class="call-btn" aria-label="Call">
+                                                                    <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="15" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                                </button>
+                                                            </span>
+                                                        }
+
+
                                                     </div>
 
                                                     <div class="video-page text-success">
                                                         @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
 
                                                     </div>
-                                                    <div class="video-view">
-                                                        &nbsp;<i class="fas fa-calendar-alt"></i> <span>@item.interviewDate</span>
-
-                                                        <span class="divider-g">
-                                                            @if (item.InterviewStatus == 4)
-                                                            {
-                                                                <span style="color:palevioletred">Border Line</span>
-                                                            }
-
-                                                            else if (item.InterviewStatus == 2)
-                                                            {
-                                                                <span style="color:green">Selected</span>
-
-                                                            }
-                                                        </span>
+                                                    <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                        <span>@item.interviewDate</span>
+                                                    </div>
+                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                        <span class="pull-left">Tech Skill Score:</span>
+                                                     
+                                                        <span class="pull-left">@(item.TechSkillScore)%</span>
+                                                      
 
                                                     </div>
 
 
+                                                    <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
 
 
-
-                                                    <div class="video-info">
-                                                    
-                                                            <span> Notice Period: </span>
-                                                            @if (item.joiningTime.Length > 20)
-                                                            {
-                                                                <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <span> @item.joiningTime</span>
-                                                            }
-                                                            @if (item.MobileNumber != null)
-                                                            {
-                                                                <span>
-                                                                    <button class="call-btn" aria-label="Call">
-                                                                        <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                                    </button>
-                                                                </span>
-                                                            }
-                                                       
+                                                        <span class="notice"> Notice Period: </span>
+                                                        @if (item.joiningTime.Length > 12)
+                                                        {
+                                                            <a href="#" data-tooltip="@item.joiningTime"> <span class="joining-time"> @item.joiningTime</span></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="join"> @item.joiningTime</span>
+                                                        }
                                                     </div>
 
+                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                        <span>Status:</span>
+                                                        @if (item.InterviewStatus == 4)
+                                                        {
+                                                            <span style="color:palevioletred">Border Line</span>
+                                                        }
 
-                                                    <div class="video-info col-sm-6 col-md-6 col-lg-7 nopad pull-left">
-                                                        <span>Expected Salary:</span>  @if (@item.expectedPerHourRate.Length > 5)
+                                                        else if (item.InterviewStatus == 2)
+                                                        {
+                                                            <span style="color:green">Selected</span>
+
+                                                        }
+
+
+
+
+
+                                                    </div>
+                                                    <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                        <span>Expected Salary:</span> @if (@item.expectedPerHourRate.Length > 5)
                                                         {
                                                             <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
 
@@ -525,11 +554,11 @@
                                                             <span>@item.expectedPerHourRate</span>}
                                                     </div>
 
-                                                    <div class="video-info col-sm-6 col-md-6 col-lg-5 nopad pull-left">
+                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
 
                                                         <span>Location:</span>
                                                         <span>
-                                                            @if (@item.preferredLocation.Length > 3)
+                                                            @if (@item.preferredLocation.Length > 10)
                                                             {
                                                                 <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
                                                             else
@@ -537,7 +566,6 @@
                                                         </span>
 
                                                     </div>
-
 
                                                 </div>
                                             </div>
@@ -606,7 +634,7 @@
             </div>
         </div>
 
-        </div>
+    </div>
 
 </div>
 
@@ -741,9 +769,16 @@
                     selectedClass: 'active1',
               buttonWidth: '100%',
                     maxHeight: 200
-                });
+          });
+         $("#CandidateAvailable").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '100%',
+                    maxHeight: 200
+         });
 
-            $(document).ready(function(){
+
+
   $("#search").on("keyup", function() {
     var value = $(this).val().toLowerCase();
       $("#VideoList div").filter(function () {
@@ -751,19 +786,9 @@
       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     });
   });
-});
-
-
     });
          function ResetFilter() {
-
-             $.ajax({
-            type: "POST",
-            url: "/commonpool/Index",
-                 success: function (data) {
-                    window.location.href = "/commonpool/ResetCommonPoolFilter";
-                 }
-                });
+              window.location.href = "/commonpool/ResetCommonPoolFilter";
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -778,7 +803,9 @@
             var clientName =  @Html.Raw(Json.Serialize(ClientName));
             var candidateLocation =  @Html.Raw(Json.Serialize(CandidateLocation));
             var IsShortListed =  @Html.Raw(Json.Serialize(IsShortListed));
-            var IsIntrested=  @Html.Raw(Json.Serialize(IsIntrested));
+            var IsIntrested =  @Html.Raw(Json.Serialize(IsIntrested));
+            var CandidateAvailable=@Html.Raw(Json.Serialize(CandidateAvailable));
+
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
             $("#PrimarySkill").val(primarySkillsArr);
@@ -792,7 +819,8 @@
             $("#CandidateLocation").val(candidateLocation);
             $("#IsShortListed").val(IsShortListed);
             $("#IsIntrested").val(IsIntrested);
-           
+            $("#CandidateAvailable").val(CandidateAvailable);
+
     }
 
 
@@ -852,8 +880,8 @@
         });
 
         $(".joining-time").each(function () {
-            if ($(this).text().length > 20) {
-                $(this).text($(this).text().substr(0, 20) + "...")
+            if ($(this).text().length > 12) {
+                $(this).text($(this).text().substr(0, 12) + "...")
 
                 $('[role="data-tooltip"]').css("visibility", "visible");
 
@@ -967,69 +995,69 @@
     </script>
 }
 
-    <script>
-        var candidate = "";
-        var span = document.getElementById("callPopUp");
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            hangUp();
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
-        $(document).ready(function () {
-            $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-                // Set up the Twilio Client Device with the token
-                Twilio.Device.setup(data.token);
-            });
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
         });
+    });
 
-        /* Callback to let us know Twilio Client is ready */
-        Twilio.Device.ready(function (device) {
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
 
-        });
+    });
 
-        function callCandidate(phoneNumber) {
-            var params = { "phoneNumber": phoneNumber };
-            Twilio.Device.connect(params);
-        }
-        function hangUp() {
-            Twilio.Device.disconnectAll();
-        }
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
 
-        Twilio.Device.connect(function (connection) {
-            var appendText = "In call with " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-        });
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
 
-        function afterTimeOut() {
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
+    function afterTimeOut() {
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
 
-        Twilio.Device.disconnect(function (connection) {
-            var appendText = "Call disconnected! ";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            setTimeout(afterTimeOut, 2000);
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
 
-        });
+    });
 
-        function CallButtonClick(name, phoneNumber) {
-            candidate = name;
-            // Get the modal
-            var modal = document.getElementById("myCallModal");
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-            var appendText = "Calling... " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            callCandidate(phoneNumber);
-        }
-        function closeCallPopUp() {
-            hangUp();
-            var modal = document.getElementById("myCallModal");
-            modal.style.display = "none";
-        }
+    function CallButtonClick(name, phoneNumber) {
+        candidate = name;
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(phoneNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
 
 
-    </script>
+</script>
 
 

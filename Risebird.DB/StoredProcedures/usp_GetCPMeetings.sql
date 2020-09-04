@@ -19,7 +19,8 @@ im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewO
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, 
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, 
-IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,QCF.InterviewId as QCInterview
+IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage as ThumbnailImage,QCF.InterviewId as QCInterview,
+ sum(tsr.WeightageActual) as TechSkillScore,(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END) as CandidateAvailable
 from InterviewMeetings im  
 inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
 inner join UserList ulc on ulc.EmailId = im.candidateEmail
@@ -29,8 +30,15 @@ inner join IRF on im.IRFId = IRF.IRFId
 inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id
 inner join dbo.UserList ul on ul.id = tc.ClientUserId
 inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
+inner join TechSkillReport tsr  on tsr.InterviewId= im.id
 where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.CandidateAvailable=1 and ic.VideoLink is not null and QCF.QCStatus=1 and ic.MoveToCP=1 and IRF.ClientId= @clientid
-
+group by 
+im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,
+im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,
+im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,
+im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore, 
+ca.Phone , ca.ResumeLink , 
+IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, ic.CandidateAvailable, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage ,QCF.InterviewId
    
 End   
 GO

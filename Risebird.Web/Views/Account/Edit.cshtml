@@ -6,46 +6,46 @@
 
 
 
-<div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
+    <div class="main-panel" id="main-panel">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <a class="navbar-brand">Edit Account</a>
                 </div>
-                <a class="navbar-brand">Edit Account</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                </button>
+
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
-
+        </nav>
+        <!-- End Navbar -->
+        <div class="mt50">
         </div>
-    </nav>
-    <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
-    </div>
-    <div class="content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mdc-card card">
-              
+        <div class="content client">
+            <div class="row bg-white">
+                <div class="col-md-12">
+                    <div class="mdc-card card bg-white">
 
-                    <div class="mdc-card-wrapper__text-section">
 
-                        @using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
-                        {
-                           
+                        <div class="mdc-card-wrapper__text-section">
+
+                            @using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+                            {
+
 
                             <div class="row">
-                                <div class="card-header">
-                                    <h4 class="card-title">Edit Account</h4>
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Account</h4></div>
                                 </div>
                                 <div style="width: 100%;">&nbsp;</div>
                                 <div class="col-md-4 col-sm-4 pr-1">
@@ -77,109 +77,109 @@
 
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                        @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
-                                <div class="col-md-4 col-sm-4 px-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
-                            </div>
-
-                           
-                            <div id="tableID">
-                                <div class="table-responsive-sm">
-                                    <table class="table table-bordered mbn" id="ProjectList">
-                                        <thead>
-                                            <tr>
-                                                @*<th>IRF Id</th>*@
-                                                <th width="40%" class="text-center" style="font-size:15px!important;">Project Name</th>
-                                                <th width="30%" class="text-center" style="font-size:15px!important;">Client</th>
-                                                <th class="text-center" style="font-size:15px!important;">Add</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @for (int i = 0; i < Model.AccountProjectMappings.Count(); i++)
-                                            {
-                                                <tr>
-                                                   
-                                                    <td class="text-center"> <a style="color:#007bff;" id="@("irflink_"+i)" target="_blank" title="Project" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
-                                                 
-                                                    <td class="text-center">@Model.AccountProjectMappings[i].Client</td>
-                                                    <td class="text-center">
-
-                                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
-                                                            <div class="mdc-checkbox">
-                                                                @Html.CheckBoxFor(m => m.AccountProjectMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
-
-
-                                                                <div class="mdc-checkbox__background">
-                                                                    <svg class="mdc-checkbox__checkmark"
-                                                                         viewBox="0 0 24 24">
-                                                                        <path class="mdc-checkbox__checkmark-path"
-                                                                              fill="none"
-                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                    </svg>
-                                                                    <div class="mdc-checkbox__mixedmark"></div>
-                                                                </div>
-                                                                <div class="mdc-checkbox__ripple"></div>
-
-
-                                                            </div>
-                                                        </div>
-
-
-
-                                                    </td>
-                                                    @Html.HiddenFor(m => m.AccountProjectMappings[i].ProjectId)
-
-                                                </tr>
-                                            }
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            @Html.HiddenFor(m => m.id)
-
-                            <div class="card-footer">
                                 <div class="row">
+                                    <div class="col-md-4 col-sm-4 pr-1">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                    <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "Index", "Account", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
+                                            @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
+                                            @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 px-1">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
+                                            @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                        }
-
-                    </div>
 
 
-                            <!-- end content-->
+                                <div id="tableID">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered mbn" id="ProjectList">
+                                            <thead>
+                                                <tr>
+                                                    @*<th>IRF Id</th>*@
+                                                    <th width="40%" class="text-center" style="font-size:15px!important;">Project Name</th>
+                                                    <th width="30%" class="text-center" style="font-size:15px!important;">Client</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Add</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int i = 0; i < Model.AccountProjectMappings.Count(); i++)
+                                                {
+                                                    <tr>
+
+                                                        <td class="text-center"> <a style="color:#007bff;" id="@("irflink_"+i)" target="_blank" title="Project" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
+
+                                                        <td class="text-center">@Model.AccountProjectMappings[i].Client</td>
+                                                        <td class="text-center">
+
+                                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.AccountProjectMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
+
+
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark"
+                                                                             viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </td>
+                                                        @Html.HiddenFor(m => m.AccountProjectMappings[i].ProjectId)
+
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                @Html.HiddenFor(m => m.id)
+
+                                <div class="card-footer">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area">
+                                            @Html.ActionLink("Back to List", "Index", "Account", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+
                         </div>
-                <!--  end card  -->
-            </div>
-            <!-- end col-md-12 -->
-        </div>
-        <!-- end row -->
-    </div>
 
-</div>
+
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+                <!-- end col-md-12 -->
+            </div>
+            <!-- end row -->
+        </div>
+
+    </div>
 
 
 @if (ViewBag.Message != null)

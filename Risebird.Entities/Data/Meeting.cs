@@ -3,7 +3,7 @@
 namespace Risebird.Entities.Data
 {
     public class Meeting
-    {
+    {  public string CancelationStatus { get; set; }
         public int id { get; set; }
         public string ClientName { get; set; }
         public string ClientCompName { get; set; }
@@ -88,6 +88,7 @@ namespace Risebird.Entities.Data
 
         public int iscIntId { get; set; }
         public string IRFnSkill { get; set; }
-
+        public string BussinessType { get; set; }
+        public int CandidateAvailable { get; set; }
     }
 }

@@ -91,7 +91,19 @@ y-axis
 	height: auto;
 }
 
-	.mCSB_scrollTools a + .mCSB_draggerContainer{ margin: 20px 0; }
+.curated-group .mCSB_scrollTools {
+	position: absolute;
+	width: 35px;
+	height: auto;
+	left: auto;
+	top: 58px;
+	right: 0;
+	bottom: 0;
+}
+	.scrollbox-curated{height:400px;}
+	.mCSB_scrollTools a + .mCSB_draggerContainer {
+		margin: 20px 0;
+	}
 
 	.mCSB_scrollTools .mCSB_draggerRail{
 		width: 2px;

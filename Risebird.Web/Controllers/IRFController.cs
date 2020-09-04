@@ -712,6 +712,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.InterviewerFromSearch = "";
                     ViewBag.InterviewerSkills = "";
                 }
+                model.Type = "B2B";
                 return View(model);
             }
             else
@@ -1515,7 +1516,10 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model.LoggedEmail = emailid;
-
+                    if(String.IsNullOrEmpty(model.Type))
+                    {
+                        model.Type = "B2B";
+                    }
                     return View(model);
                 }
                 else

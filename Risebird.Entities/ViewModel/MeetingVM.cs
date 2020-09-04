@@ -192,6 +192,14 @@ namespace Risebird.Entities.ViewModel
         public string HRMobileNumber { get; set; }
         public string HRComment { get; set; }
         public bool MoveToCP { get; set; }
+        public bool IsClientCurated { get; set; }
+        public int CuratedGroupId { get; set; }
+        public string ActionStatus { get; set; }
+        public string CandidateAvailable { get; set; }
+
+        public int TechSkillScore { get; set; }
+        public string LogoUrl { get; set; }
+        public int? VideoSentimentImid { get; set; }
     }
     public class VedioComments
     {

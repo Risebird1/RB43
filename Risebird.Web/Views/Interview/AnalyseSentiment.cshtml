@@ -1,0 +1,145 @@
+﻿@model Risebird.Entities.ViewModel.SentimentDTO
+
+
+@{
+    ViewData["Title"] = "Upload Video for Sentiment Analysis";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<div class="main-panel" id="main-panel">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Upload Video for Sentiment Analysis
+                </a>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        <form action="/Interview/AnalyseSentiment" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                            @Html.AntiForgeryToken()
+                            <div class="canvas_div_pdf">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <ul style="padding:0px;">
+                                    <li style="list-style:none;font-size: 15px; line-height: 18px;">Kindly ensure the duration of the video file does not exceed 90 seconds.</li>
+                                </ul>
+                                
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+
+                                        @Html.LabelFor(model => model.TruncatedVideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.TruncatedVideoFile, new { type = "file", @class = "form-control" })
+
+                                    </div>
+                                    
+
+                                </div>
+ 
+                                @Html.HiddenFor(m => m.imid)
+
+                                <div class="card-footer ">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area">
+                                          
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                       
+
+
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</div>
+
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+
+                        window.location.reload();
+                    }
+                )
+
+            }
+            
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+
+                        window.location.reload();
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}

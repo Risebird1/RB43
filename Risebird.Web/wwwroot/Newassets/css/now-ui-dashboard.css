@@ -172,6 +172,7 @@
         overflow: hidden;
         position: relative;
         line-height: normal;
+        border:0px;
     }
 
         .btn.btn-icon[class*="btn-outline-"],
@@ -2615,16 +2616,16 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 
 
 .navbar.bg-white:not(.navbar-transparent) a:not(.dropdown-item):not(.btn) {
-    color: #888;
+    color: #fff;
 }
 
     .navbar.bg-white:not(.navbar-transparent) a:not(.dropdown-item):not(.btn).disabled {
         opacity: .5;
-        color: #888;
+        color: #fff;
     }
 
 .navbar.bg-white:not(.navbar-transparent) .button-bar {
-    background: #888;
+    background: #fff;
 }
 
 .navbar.bg-white:not(.navbar-transparent) .nav-item.active .nav-link:not(.btn),
@@ -7561,6 +7562,11 @@ input.theatre-btn:focus {
     color: #22446b;
     font-weight: 600;
 }
+.pt30 .card-title strong {
+    color: #22446b;
+    font-weight: 600;
+}
+.pt30 .card-title{margin-bottom:0px;}
 
 .card .card-header:not([data-background-color]) {
     background-color: transparent;
@@ -9255,6 +9261,7 @@ Copyright (c) 2015 Daniel Eden
     bottom: 2px;
     /* please don't change 'position' */
     position: absolute;
+    display:none;
 }
 
 .ps__thumb-y {
@@ -10225,9 +10232,7 @@ select.selectpicker {
     /*IE9 and below*/
 }
 
-    .bootstrap-select > .dropdown-menu {
-        overflow: visible !important;
-    }
+ 
 
     .bootstrap-select .dropdown-item.active,
     .bootstrap-select .dropdown-item:active {
@@ -10385,7 +10390,7 @@ select.selectpicker {
 }
 
 .bootstrap-select .dropdown-toggle .filter-option {
-    position: absolute;
+    /* position: absolute;*/
     top: 0;
     left: 0;
     padding-top: inherit;
@@ -10396,6 +10401,7 @@ select.selectpicker {
     width: 100%;
     text-align: left;
     outline: none;
+    font-size: 13px;
 }
 
 .bootstrap-select .dropdown-toggle .filter-option-inner {
@@ -11269,7 +11275,9 @@ div.dataTables_scrollFoot table {
         padding:10px 0px !important;
         margin: 0px !important;
     }
-
+    .pt30 .card-title {
+        margin-right: 10px;
+    }
 
     .card-blue .card-footer .stats-bttm-btn {
         padding: 0px 0px 0px 0px !important;
@@ -11338,7 +11346,16 @@ div.dataTables_scrollFoot table {
     }
 
     .navbar .navbar-brand {
-        font-size: 0.7em !important;
+        font-size: 10px !important;
+    }
+    .swal2-popup .swal2-title {
+        font-size: 1.3em!important;
+    }
+
+    .candidatevideo [data-tooltip]:before {
+        background: #908f8f;
+        color: #fff !important;
+        border: 1px #fff solid !important;
     }
 
     div.dataTables_wrapper div.dataTables_length,

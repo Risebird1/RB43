@@ -41,37 +41,34 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Interviewer Skills Channel</h4></div>
+                </div>
+                <div class="pull-right">
+
+                    <button style="display: none;margin-top: 2px;" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space filter" data-toggle="modal" data-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
+
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "InterviewerSkills" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Interviewer Skills </font></span></button>
+
+
+
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="content">
-        <div class="row">
+    <div class="content client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        <div class="row">
-
-                            <div class="card-header">
-                                <div class="pull-left">
-                                    <h4 class="card-title">Interviewer Skills Channel</h4>
-                                </div>
-                                <div class="pull-right">
-
-                                    <button style="display: none;margin-top: 2px;" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" data-toggle="modal" data-target="#filterModal">
-                                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                        <div class="mdc-button__ripple"></div>
-                                    </button>
-
-                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "InterviewerSkills" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Interviewer Skills </font></span></button>
-
-
-
-                                </div>
-
-
-                            </div>
-
-
-                        </div>
+                        
 
                         <div class="row">
                             @foreach (var item in Model.InterviewerSkillsChannelModelList)

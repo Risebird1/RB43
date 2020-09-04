@@ -47,7 +47,7 @@ namespace Risebird.Business.Interface
         string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId, string type);
 
         MeetingVM GetMeetingbyid(int id, string Email);
-        Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid);
+        Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false);
         MeetingVM VedioLike(string value, string vedioid, string email);
         Task AddTotalViewCount(int id, string emailaddress,string flag);
         //Task<string> VedioLikeAsync(string value, string vedioid, string email);
@@ -81,5 +81,15 @@ namespace Risebird.Business.Interface
         IEnumerable<VideoDetails> GetVideoSumaryDetails(int Interviewid);
         Task AddTimeSpend(int id, string emailaddress, string flag,TimeSpan TimeSpend, string CurrentTime);
         IEnumerable<VideoDetails> GetallVideoSumaryDetails();
+        string AddVedioShare(string email, string vedioid,string Emailids);
+        int CheckVedioShare(string vedioid, string Emailid);
+        string AddVideoIntrestDetails(string videoid, string UrlType, string Emailid);
+        IEnumerable<VideoDetails> GetVideoIntrestDetails();
+        IEnumerable<string> FetchShareEmails(int Interviewid);
+        IEnumerable<VideoDetails> GetVideoCandidateSumaryDetails(int Interviewid, string emailid);
+        string UpdateCandidateStatus(int videoid, string Status);
+        Task<SentimentPercentage> GetSentimentAnalysis(int imid);
+        Task<List<MeetingVM>> GetSharedRiseTubeMeetings();
+
     }
 }
