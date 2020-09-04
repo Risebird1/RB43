@@ -1355,7 +1355,7 @@ else
                 <div class="col-md-12">
                     <div class="text-right">
                         <input type="button" onclick="SendNotification()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Interested">
-                        <input style="        background: #53a5f5!important;
+                        <input style="color:#fff;
         line-height: 13px;" type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1929,7 +1929,7 @@ else
                                                                                 @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
                                                                                 @Html.HiddenFor(m => m.IreportModel.QuestionsCollection[i].QuestionStatus, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                                             </td>
-                                                                            <td><input type="button" value="Delete" onclick="RemoveRow(@i)" /></td>
+                                                                            <td class="text-center remove-btn"><input type="button" value="" onclick="RemoveRow(@i)" /><i class="far fa-trash-alt"></i></td>
 
                                                                         </tr>
                                                                     }
@@ -2742,6 +2742,11 @@ else
         }
         $('#txtOnlineend').attr('min', maxDate);
     }
+</script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
 </script>
 <script>
 
