@@ -98,23 +98,25 @@
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> <span class="navbar-toggler-bar navbar-kebab"></span> </button>
         </div>
+
+
     </nav>
     <!-- End Navbar -->
     <!--  <div class="panel-header panel-header-sm"> </div>-->
 
     <div class="pt30 videocon">
         <div class="col-md-12 nopad">
-            <div class="card-header bg-w clearfix">
+            <div class="card-header bg-w clearfix" style=" margin-top: 27px;">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
 
                     <div class="mobile-view"> <h4 class="card-title">Risetube</h4></div>
                 </div>
-
+               
                 <div class="pull-right">
                     <div>
                         <input type="text" hidden id="txtVideostatus" value="@ViewBag.VideoStatus" />
-
+                        @Html.ActionLink("Back to List", "SharedIndex", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button", @style = "margin-top: 2px;" })
                     </div>
                 </div>
             </div>
@@ -923,32 +925,32 @@
     </div>
 </div>
 
-    <div id="PublicShareVideo" class="modal modal-bg">
-        @if (ViewBag.VedioStatus == "Public")
-        {
-            <div class="blk-bg"></div>
-        }
-        <!-- Modal content -->
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="filheader">
-                    <div class="filavatar">
-                        <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
-                    </div>
-                    <h5 class="modal-title pull-left">Your Email Id</h5>
+<div id="PublicShareVideo" class="modal modal-bg">
+    @if (ViewBag.VedioStatus == "Public")
+    {
+        <div class="blk-bg"></div>
+    }
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
                 </div>
-                <div class="modal-body">
-                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
-                    <div class="text-areadiv">
-                        <input type="text" id="txtvideoemailid" class="form-control" />
-                    </div>
-                    <div class="col-md-12 text-right">
-                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
-                    </div>
+                <h5 class="modal-title pull-left">Your Email Id</h5>
+            </div>
+            <div class="modal-body">
+                <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                <div class="text-areadiv">
+                    <input type="text" id="txtvideoemailid" class="form-control" />
+                </div>
+                <div class="col-md-12 text-right">
+                    <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
 
@@ -1378,76 +1380,76 @@
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script type="text/javascript">
 
-        $(document).ready(function () {
+    $(document).ready(function () {
         $("#ClientHR").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
 
-            $("#CandidateName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
+        $("#CandidateName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
 
         $("#InterviewStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
             buttonWidth: '100%',
-                    maxHeight: 200
-                });
+            maxHeight: 200
+        });
 
-            $("#ClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ApprovalStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#JoiningStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#OfferStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#CandidateLocation").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-             $("#IsShortListed").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                 buttonWidth: '100%',
-                    maxHeight: 200
-         });
-          $("#IsIntrested").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-              buttonWidth: '100%',
-                    maxHeight: 200
-          });
-            $("#CandidateAvailable").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '100%',
-                    maxHeight: 200
-                });
+        $("#ClientName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#ApprovalStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#JoiningStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#OfferStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CandidateLocation").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#IsShortListed").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#IsIntrested").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CandidateAvailable").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
 
     });
 </script>
@@ -1604,7 +1606,7 @@
 
             }
         });
-      
+
     });
     function switchtoquestionVideo(questiontime) {
         var time = 1;
@@ -1634,7 +1636,7 @@
         var modal = document.getElementById("PublicShareVideo");
         modal.style.display = "none";
     }
-   
+
     function RemoveRow(index) {
         document.getElementById("quetxt_" + index).style.display = "none";
         $("#IreportModel_QuestionsCollection_" + index + "__QuestionStatus").val("true");
