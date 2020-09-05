@@ -87,6 +87,7 @@ namespace Risebird.Web.Controllers
                         {
                             var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
                             modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                            modelList.ForEach(x => x.IsClientCurated = true);
                         }
                         else
                         {
@@ -286,6 +287,7 @@ namespace Risebird.Web.Controllers
                         {
                             var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
                             modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                            modelList.ForEach(x => x.IsClientCurated = true);
                         }
                         else
                         {
