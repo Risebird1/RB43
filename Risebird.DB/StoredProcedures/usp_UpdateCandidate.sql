@@ -29,7 +29,7 @@ CREATE PROCEDURE [dbo].[usp_UpdateCandidate]
 @CurrentSalary decimal(10,2),
 @ExpectedSalary decimal(10,2),
 @Notice decimal(10,2),
-@CostEstimate varchar(200)
+@CostEstimate nvarchar(200)
 AS
 Begin
 declare
