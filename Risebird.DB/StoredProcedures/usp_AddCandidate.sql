@@ -27,7 +27,7 @@ CREATE PROCEDURE [dbo].[usp_AddCandidate]
 @ExpectedSalary decimal(10,2),
 @Notice decimal(10,2),
 @AddedByUserId int,
-@CostEstimate int
+@CostEstimate nvarchar(200)
 
 AS
 Begin
@@ -96,8 +96,8 @@ values(@IRFId,
 @ExpectedSalary,
 @Notice,
 @AddedByUserId,
-@CostEstimate,
-(select id from CandidatesMaster where UserId=@UserId)
+(select id from CandidatesMaster where UserId=@UserId),
+@CostEstimate
 )
 
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))

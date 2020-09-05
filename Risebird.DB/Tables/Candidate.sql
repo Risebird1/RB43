@@ -32,7 +32,7 @@ CREATE TABLE [dbo].[Candidate](
 	[AddedByUserId] [int] NULL,
 	[VoiceItUserId] [nvarchar](max) NULL,
 	[Status] [int] NULL,
-    [CostEstimate] [varchar](200) NULL,
+    [CostEstimate] [nvarchar](200) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -289,7 +289,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'Candidate'))
 BEGIN
     ALTER TABLE Candidate
-    Add CostEstimate VARCHAR(200) NULL
+    Add [CostEstimate] [nvarchar](200) NULL
 END
 
 End
