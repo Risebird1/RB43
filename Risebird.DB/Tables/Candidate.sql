@@ -32,6 +32,7 @@ CREATE TABLE [dbo].[Candidate](
 	[AddedByUserId] [int] NULL,
 	[VoiceItUserId] [nvarchar](max) NULL,
 	[Status] [int] NULL,
+    [CostEstimate] [varchar](200) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -281,7 +282,15 @@ BEGIN
     ALTER TABLE Candidate
     Add InviteDate [datetime] NULL
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CostEstimate')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add CostEstimate VARCHAR(200) NULL
+END
 
 End
 
