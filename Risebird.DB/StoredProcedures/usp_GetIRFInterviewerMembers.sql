@@ -22,35 +22,43 @@ declare @commonTable table (IRFId int, [Type] varchar(25), EmailId varchar(100),
 
 	insert into @commonTable 
 
-		select tip.IRFId, 'Interviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
-		(select count(id) from InterviewMeetings where interviewer=ul.EmailId and IRFId = irf.IRFId and confirmationStatus=1) as TotalInterviews,
+		select ti.IRFId, 'Interviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
+		count(im.id) as TotalInterviews,
 		0 as TotalQCInterviews, ul.MobileNumber 
-		from TransInterviewerProfile tip join InterviewerProfile ipr on ipr.UserId = tip.UserId
-		join UserList ul on ul.id = tip.UserId
-		join IRF on irf.id = tip.IRFId
-		where tip.IRFId = @IRFId
-
+		from TransInterviewer ti join Interviewer ipr on ipr.UserId = ti.UserId
+		join UserList ul on ul.id = ti.UserId
+		join IRF on irf.id = ti.IRFId
+		join InterviewMeetings im on im.IRFId=irf.IRFId 
+		where irf.id=@IRFId and im.interviewer=ul.EmailId and im.confirmationStatus=1
+		group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber           --6
+		
 	insert into @commonTable 
 
 		select tqc.IRFId, 'QCInterviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
 		0 as TotalInterviews,
-		(select count(id) from InterviewMeetings where QCInterviewer=ul.EmailId and IRFId = irf.IRFId and confirmationStatus=1) as TotalQCInterviews,
-		 ul.MobileNumber 
-		from TransQualityController tqc join InterviewerProfile ipr on ipr.UserId = tqc.UserId
+		count(im.id) as TotalQCInterviews,
+		ul.MobileNumber 
+		from TransQualityController tqc join Interviewer ipr on ipr.UserId = tqc.UserId
 		join UserList ul on ul.id = tqc.UserId
 		join IRF on irf.id = tqc.IRFId
-		where tqc.IRFId = @IRFId
+		join InterviewMeetings im on im.IRFId=irf.IRFId 
+		where tqc.IRFId = @IRFId and im.QCInterviewer=ul.EmailId and im.confirmationStatus=1
+		group by tqc.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber
+
+		
 
 	insert into @commonTable 
+		
 		select tei.IRFId, 'Emergency Interviewer' as [Type] ,ul.EmailId, ipr.ResumeLink,
-		(select count(id) from InterviewMeetings where interviewer=ul.EmailId and IRFId = irf.IRFId and confirmationStatus=1) as TotalInterviews,
+		count(im.id) as TotalInterviews,
 		0 as TotalQCInterviews,  
 		ul.MobileNumber 
-		from TransEmergencyInterviewer tei join InterviewerProfile ipr on ipr.UserId = tei.UserId
+		from TransEmergencyInterviewer tei join Interviewer ipr on ipr.UserId = tei.UserId
 		join UserList ul on ul.id = tei.UserId
 		join IRF on irf.id = tei.IRFId
-		where tei.IRFId = @IRFId
-
+		join InterviewMeetings im on im.IRFId=irf.IRFId 
+		where  tei.IRFId = @IRFId and im.interviewer=ul.EmailId and im.confirmationStatus=1
+		group by tei.IRFId, ul.EmailId, ipr.ResumeLink, ul.MobileNumber 
 
 select * from @commonTable		 
 
