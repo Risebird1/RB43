@@ -201,7 +201,7 @@ namespace Risebird.Entities.ViewModel
         public string LogoUrl { get; set; }
         public int? VideoSentimentImid { get; set; }
         public string Client { get; set; }
-
+        public string CostEstimate { get; set; }
     }
     public class VedioComments
     {

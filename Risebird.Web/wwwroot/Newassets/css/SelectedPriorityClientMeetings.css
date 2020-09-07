@@ -23,30 +23,24 @@ textarea::-webkit-scrollbar-thumb {
 .pt30 {
     padding-top: 30px;
 }
-.bg-w {
-    background: rgb(255, 255, 255);
-}
+
 .card-title-space {
     margin-top: 20px;
     margin-bottom: 0px;
 }
 .client .mdc-card {
-    background: #f8faff;box-shadow:none; border:0px;
+  box-shadow:none; border:0px;
     border-radius:0px;
 }
 
-.client .bg-w {
-        background: #fff!important;
-    }
+
 
 
 .content.client {
     margin-top: 0px;
     padding: 0px 10px 0px;
 }
-.bl-bg {
-    background: #f8faff
-}
+
 .mdc-card .modal textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
@@ -143,13 +137,13 @@ textarea::-webkit-scrollbar-thumb {
 
 .spinner {
     top: 30px;
-    width: 0.8rem;
+    width: 1.1rem;
     position: absolute;
     background: whitesmoke;
     border-radius: 0;
     display: none;
     height: 2rem;
-    right: 10px;
+    right: 13px;
 }
 
 .js .spinner {
@@ -182,11 +176,13 @@ textarea::-webkit-scrollbar-thumb {
 .up, .up-1, .up-2, .up-3, .up-4, .up-5, .up-6, .up-7, .up-8 {
     transform: rotate(-90deg);
     top: -.5rem;
+    right:-.3rem;
 }
 
 .down, .down-1, .down-2, .down-3, .down-4, .down-5, .down-6, .down-7, .down-8 {
     transform: rotate(-90deg);
     top: -2rem;
+    right: -.3rem;
 }
 
 .spinner-wrap {
@@ -381,13 +377,7 @@ table {
     border-radius: 16px;
 }
 
-.client #jdlinkId {
 
-    color: #1d3b5e;
-    padding: 4px 10px;
-    border-radius: 16px;
-    border: 1px #79c0f3 solid;
-}
 
 .client #videoId {
 
@@ -430,7 +420,7 @@ table {
     height: auto;
     border-radius: 10px;
     margin: 5px 0px;
-    background-color: #eff7ff;
+   
 }
 
 /* Modal */
@@ -516,14 +506,14 @@ modal-content .modal-body {
     height: auto;
     border-radius: 7px;
     margin: 5px 0px;
-    background-color: #fff;
+
 }
 
 
     .talk-bubble textarea {
         resize: none;
         border: 0;
-        background: #fff;
+    
         padding: 5px;
         width: 100%;
         overflow-x: hidden;
@@ -531,7 +521,7 @@ modal-content .modal-body {
 
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-    background: #42a5f5 !important;
+    background: #42a5f5;
     font-family: Roboto, sans-serif;
     font-size: 12px;
     text-decoration: none;
@@ -629,10 +619,10 @@ modal-content .modal-body {
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke;
+ 
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    border-bottom: 1px rgba(0, 0, 0, 0.29) solid!important;
 }
 
     .mdc-card .form-control:focus {

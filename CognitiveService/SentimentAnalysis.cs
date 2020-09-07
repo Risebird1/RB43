@@ -1,13 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Dapper;
 using GleamTech.VideoUltimate;
 using Microsoft.Azure.CognitiveServices.Vision.Face;
@@ -19,14 +9,24 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace CognitiveService
 {
-   
+
     public static class SentimentAnalysis
     {
         [FunctionName("SentimentAnalysis")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequestMessage req, TraceWriter log)
         {
             string requestBody = await req.Content.ReadAsStringAsync();
             SentimentDTO data = JsonConvert.DeserializeObject<SentimentDTO>(requestBody);
@@ -48,7 +48,7 @@ namespace CognitiveService
                 {
                     foreach (var frame in videoFrameReader)
                     {
-                        if(videoFrameReader.CurrentFrameNumber % videoFrameReader.FrameRate == 0)
+                        if (videoFrameReader.CurrentFrameNumber % videoFrameReader.FrameRate == 0)
                         {
                             using (frame)
                             {
@@ -107,7 +107,7 @@ namespace CognitiveService
 
                         }
                     }
-                    
+
                 }
 
                 if (sentimentData != null && sentimentData.Count() > 0)
@@ -145,7 +145,7 @@ namespace CognitiveService
                     }
 
                 }
-                
+
 
                 return req.CreateResponse(HttpStatusCode.OK, "Successful");
             }
@@ -155,7 +155,7 @@ namespace CognitiveService
                 return req.CreateResponse(HttpStatusCode.BadRequest, ex.Message); ;
             }
 
-        
+
         }
 
         public static bool ThumbnailCallback()
@@ -200,14 +200,14 @@ namespace CognitiveService
 
             return blob.Uri.ToString();
         }
-        
+
         public static CloudBlob GetBlobData(string containerName, string fileName)
         {
             try
             {
                 CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
                 CloudBlob blob = blobContainer.GetBlobReference(fileName);
-                
+
                 return blob;
             }
             catch (Exception)

@@ -26,7 +26,8 @@ CREATE PROCEDURE [dbo].[usp_AddCandidate]
 @CurrentSalary decimal(10,2),
 @ExpectedSalary decimal(10,2),
 @Notice decimal(10,2),
-@AddedByUserId int
+@AddedByUserId int,
+@CostEstimate nvarchar(200)
 
 AS
 Begin
@@ -78,7 +79,8 @@ insert into Candidate
 [ExpectedSalary],
 [Notice],
 [AddedByUserId],
-[CandidateMasterId]
+[CandidateMasterId],
+[CostEstimate]
 )
 values(@IRFId,
 @ResumeLink,
@@ -94,7 +96,8 @@ values(@IRFId,
 @ExpectedSalary,
 @Notice,
 @AddedByUserId,
-(select id from CandidatesMaster where UserId=@UserId)
+(select id from CandidatesMaster where UserId=@UserId),
+@CostEstimate
 )
 
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))
@@ -130,7 +133,8 @@ insert into Candidate
 [ExpectedSalary],
 [Notice],
 [AddedByUserId],
-[CandidateMasterId]
+[CandidateMasterId],
+[CostEstimate]
 )
 values(@IRFId,
 @ResumeLink,
@@ -146,8 +150,9 @@ values(@IRFId,
 @ExpectedSalary,
 @Notice,
 @AddedByUserId,
-(select id from CandidatesMaster where UserId=@CandidateUserId)
-)
+(select id from CandidatesMaster where UserId=@CandidateUserId),
+@CostEstimate)
+
 
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))
 

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Rewrite.Internal.IISUrlRewrite;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -11,7 +10,6 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,6 +87,7 @@ namespace Risebird.Web.Controllers
                         {
                             var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
                             modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                            modelList.ForEach(x => x.IsClientCurated = true);
                         }
                         else
                         {
@@ -288,6 +287,7 @@ namespace Risebird.Web.Controllers
                         {
                             var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
                             modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                            modelList.ForEach(x => x.IsClientCurated = true);
                         }
                         else
                         {
@@ -2096,7 +2096,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var profileName = "CuratedUser";
-               // if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
+                // if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                 {
                     if (TempData["SuccessErrorMessageInterview"] != null)
                     {
@@ -2260,7 +2260,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var profileName = "CuratedUser";
-               // if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
+                // if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                 {
                     if (TempData["SuccessErrorMessageInterview"] != null)
                     {

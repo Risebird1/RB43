@@ -2580,7 +2580,7 @@ namespace Risebird.Repository
                 parameters.Add("@ExpectedSalary", obj.ExpectedSalary);
                 parameters.Add("@Notice", obj.Notice);
                 parameters.Add("@AddedByUserId", obj.AddedByUserId);
-
+                parameters.Add("@CostEstimate", obj.CostEstimate);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -2732,9 +2732,8 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@CurrentSalary", obj.CurrentSalary);
                 dynamicParameters.Add("@ExpectedSalary", obj.ExpectedSalary);
                 dynamicParameters.Add("@Notice", obj.Notice);
-
                 dynamicParameters.Add("@id", obj.id);
-
+                dynamicParameters.Add("@CostEstimate", obj.CostEstimate);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

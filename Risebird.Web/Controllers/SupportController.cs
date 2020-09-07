@@ -22,7 +22,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
         }
 
-        [Authorize]
+       
         public IActionResult Index(string controllerName = null, string actMethod = null)
         {
             try
@@ -53,15 +53,28 @@ namespace Risebird.Web.Controllers
                     {
                         model.BackController = controllerName;
                         model.BackMethod = actMethod;
-                        //TempData["actMethod"] = actMethod;
-                        //TempData["controllerName"] = controllerName;
-                    }
+                                           }
                     return View(model);
 
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Session");
+
+                    var model = new SupportList();
+                    model.Supports = _supportService.GetAllSupportHR();
+                  
+                    if (TempData["SuccessErrorMessageSupport"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageSupport"].ToString();
+                        TempData.Remove("SuccessErrorMessageSupport");
+                    }
+
+                    if (controllerName != null && actMethod != null)
+                    {
+                        model.BackController = controllerName;
+                        model.BackMethod = actMethod;                       
+                    }
+                    return View(model);
                 }
             }
             catch (Exception ex)

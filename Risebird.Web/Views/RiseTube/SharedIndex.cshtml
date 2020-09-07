@@ -93,12 +93,14 @@
                             </div>
 
                         </div>
-
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Risetube", actMethod ="SharedIndex" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
+                        </button>
                         @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
 
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
-                        </button>*@
+            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+            <div class="mdc-button__ripple"></div>
+        </button>*@
                     </div>
                 </div>
             </div>
@@ -155,24 +157,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateLocation">
-                                                                Candidate Location
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in ViewBag.preferredLocationList)
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    
 
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
@@ -263,8 +248,18 @@
                                                         {
                                                             <span class="designation">@item.JDTiltle</span>
                                                         }
+                                                        <div class="video-info  col-sm-6 col-md-5 col-lg-5 nopad pull-right">
+                                                            <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
+                                                            {
+                                                                <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>}
 
+                                                            else
+                                                            {
+                                                                <span>@item.CostEstimate</span>
+                                                                }
+                                                        </div>
 
+                                                       
                                                     </div>
                                                     <div class="video-page text-success">
                                                         @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@

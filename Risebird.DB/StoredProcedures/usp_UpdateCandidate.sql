@@ -28,8 +28,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateCandidate]
 @TotalExperience decimal(10,2),
 @CurrentSalary decimal(10,2),
 @ExpectedSalary decimal(10,2),
-@Notice decimal(10,2)
-
+@Notice decimal(10,2),
+@CostEstimate nvarchar(200)
 AS
 Begin
 declare
@@ -50,7 +50,8 @@ Phone=@Phone,
 TotalExperience =@TotalExperience,
 CurrentSalary=@CurrentSalary,
 ExpectedSalary=@ExpectedSalary,
-Notice=@Notice
+Notice=@Notice,
+CostEstimate=@CostEstimate
 where id=@id
 
 End

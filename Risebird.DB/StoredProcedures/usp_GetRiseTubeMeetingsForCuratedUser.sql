@@ -22,7 +22,7 @@ select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,    
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,     
-ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,    
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,  ca.CostEstimate, 
 IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,    
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage       
 as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,
@@ -49,7 +49,7 @@ group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDurati
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,    
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,     
-ca.Phone, ca.ResumeLink ,  
+ca.Phone, ca.ResumeLink ,  ca.CostEstimate,
 IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,    
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage       
 ,cl.CuratedLink, QCF.InterviewId ,suit.Status ,rtvsl.Status ,ic.CandidateAvailable
@@ -60,7 +60,7 @@ select distinct im.id as imid, im.IRFId, im.interviewDate, im.interviewSlot, im.
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,   
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,    
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,     
-ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,    
+ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,    ca.CostEstimate,
 IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,    
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage       
 as ThumbnailImage,QCF.InterviewId as QCInterview,    
@@ -85,7 +85,7 @@ group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDurati
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,    
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,     
-ca.Phone, ca.ResumeLink ,  
+ca.Phone, ca.ResumeLink ,  ca.CostEstimate,
 IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,    
 ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage       
 , QCF.InterviewId ,suit.Status ,rtvsl.Status ,ic.CandidateAvailable
