@@ -2774,5 +2774,81 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<QuestionDetails>> FetchQuestionDetails(int interviewid)
+        {
+            try
+            {
+                var finalquery = "Select Id,Question,InterviewId,VideoTitle,VideoLink,Priority from VideoQuestionDetails Where InterViewid=@InterViewid";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@InterViewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<QuestionDetails>(finalquery, finaldynamicParameters);
+                    if (results.Count() == 0)
+                    {
+                        var query = "Select 0 as Id,Comment as Question,InterviewId,'' as VideoTitle,'' as VideoLink,0 as Priority from QuestionsDiscussed Where InterViewid=@InterViewid";
+                        var dynamicParameters = new DynamicParameters();
+                        finaldynamicParameters.Add("@InterViewid", interviewid);
+                        results = con.Query<QuestionDetails>(query, dynamicParameters);
+                    }
+                    return results;
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string UpdateQuestionDetails(List<QuestionDetails> _question)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable questionsDt = new DataTable();
+                    questionsDt.Columns.Add("id", typeof(int));
+                    questionsDt.Columns.Add("Interviewid", typeof(int));
+                    questionsDt.Columns.Add("Question", typeof(string));
+                    questionsDt.Columns.Add("Priority", typeof(int));
+                    questionsDt.Columns.Add("VideoTitle", typeof(string));
+                    questionsDt.Columns.Add("VideoLink", typeof(string));
+
+
+                    foreach (var item in _question)
+                    {
+                        questionsDt.Rows.Add(item.Id, item.InterviewId, item.Question, item.Priority, item.VideoTitle, item.VideoLink);
+                    }
+
+                    SqlCommand cmdQuestions = new SqlCommand("usp_AddorEditQuestionsDetails", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDetailsBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@QuestionsDetailsBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
     }
 }

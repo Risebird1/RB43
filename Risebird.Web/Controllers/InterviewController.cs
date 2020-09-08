@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -21,6 +22,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace Risebird.Web.Controllers
 {
@@ -6357,8 +6359,82 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+        public IActionResult UploadInterviewVideoes(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    //fetch question details
+                    var model1 = _meetingService.FetchQuestionDetails(id);
+                    Question model = new Question();
+                    model.questionset = model1.Result;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
 
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadInterviewVideoes(IFormCollection model)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    List<QuestionDetails> _question = new List<QuestionDetails>();
+                    var norows = model.Keys.Count - 1 + model.Files.Count;
+                    int Interviewid = 0;
+                    for (int i = 0; i < norows / 6; i++)
+                    {
+                        _question.Add(new QuestionDetails { Question = model["questionset[" + i + "].Question"][0], VideoLink = model["questionset[" + i + "].VideoLink"][0], VideoTitle = model["questionset[" + i + "].VideoTitle"][0], Priority = Convert.ToInt32(model["questionset[" + i + "].Priority"][0]), Id = Convert.ToInt32(model["questionset[" + i + "].Id"][0]), InterviewId = Convert.ToInt32(model["questionset[" + i + "].InterviewId"][0]) });
+                        Interviewid = Convert.ToInt32(model["questionset[" + i + "].InterviewId"][0]);
+                    }
 
+                    IFormFileCollection files1 = model.Files;
+                    foreach (IFormFile item in files1)
+                    {
+                        await _azureStorageHelper.InsertBlob(item.FileName, "videos", item);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                        var blob = containerRef.GetBlockBlobReference(item.FileName);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        var rowvalue = Convert.ToInt32(item.Name.Split("[")[1].Split("]")[0]);
+                        if (uploadedvideoFileURL == null)
+                        {
+                            _question[rowvalue].VideoLink = "";
+                        }
+                        else
+                        {
+                            _question[rowvalue].VideoLink = uploadedvideoFileURL;
+                        }
+                    }
+                    var model1 = _meetingService.UpdateQuestionDetails(_question);
+
+                    return RedirectToAction("UploadInterviewVideoes",new { id= Interviewid });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
-
 }
