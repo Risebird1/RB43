@@ -24,7 +24,11 @@ textarea::-webkit-scrollbar-thumb {
     border: 1px solid #acacad !important;
 }
 
-input[type='radio']:checked:after {
+
+.upload-label {
+    background: #e2e2e2;
+}
+    input [type='radio']:checked:after {
     background-color: #929292 !important;
     top: 1px !important;
 }
@@ -158,9 +162,19 @@ input[type='radio']:checked:after {
 .nav svg {
     fill: #fff;
 }
-.control-label {
+.control-label, .control-labeled {
     color: #5f5c5c !important;
 }
+
+.show-interest {
+    color: #000;
+}
+
+.swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
+    background: #9a9a9a !important;
+    border-color: #9a9a9a !important;
+}
+
  .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
         background: #ecececb5 !important;
  }

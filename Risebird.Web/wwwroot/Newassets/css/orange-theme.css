@@ -26,7 +26,11 @@ body {
 textarea::-webkit-scrollbar {
     background-color: var(#acacad, #565656) !important;
 }
-.qc-feedback .card-footer {
+
+
+.qc-feedback .card-footer .upload-label {
+    background: #e2e2e2;
+}
     background: #fff
 }
 .qc-feedback .mdc-form-field > label, .qc-feedback label {
@@ -174,8 +178,16 @@ input[type='radio']:checked:after {
 .nav svg {
     fill: #fff;
 }
-.control-label {
+.control-label, .control-labeled {
     color: #5f5c5c !important;
+}
+.show-interest {
+    color: #000;
+}
+
+.swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
+    background: #e96b28 !important;
+    border-color: #e96b28 !important;
 }
 .mdc-card .modal .modal-content .modal-body, .modal .modal-content .modal-body {
     background: #ffb23630 !important;

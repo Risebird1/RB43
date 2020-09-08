@@ -376,7 +376,7 @@
                 let series = chart.series.push(new am4charts.FunnelSeries());
                 series.dataFields.value = "value";
                 series.dataFields.category = "name";
-
+                    series.labels.template.fill = am4core.color("#828080");
                 series.colors.step = 16;
                 var fillModifier = new am4core.LinearGradientModifier();
                 fillModifier.brightnesses = [-0.1, -0.1, -0.1];
