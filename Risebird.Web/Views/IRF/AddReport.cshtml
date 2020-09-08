@@ -1953,6 +1953,7 @@
 
             // Create axes
             chart.logo.disabled = true;
+
             var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
             categoryAxis.dataFields.category = "country";
             categoryAxis.renderer.inside = true;
@@ -1971,6 +1972,7 @@
 
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
+        categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";

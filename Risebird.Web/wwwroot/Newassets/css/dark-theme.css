@@ -93,7 +93,7 @@ hr {
 .video-title .video-title .video-title a, .video-title .candidate {
     color: #9A9A9A;
 }
-.control-label {
+.control-label, .control-labeled {
     color: #9A9A9A !important;
 }
 .nav svg {
@@ -282,6 +282,15 @@ table {
     background: #fff url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 6% !important;
 }
+.upload-label {
+    background: #1b191980;
+}
+input:-internal-autofill-selected{
+
+}
+
+
+
 
 .interview-date [type="date"].form-control {
     background: #252424 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
@@ -508,12 +517,12 @@ div.dataTables_wrapper div.dataTables_info {
 }
 
 .talk-bubble {
-    background: #000;
+    background: #181818;
     border: 1px #77737359 solid !important;
 }
 
     .talk-bubble textarea {
-        background: #000;
+        background: #181818;
         color: #9A9A9A;
     }
 
@@ -558,6 +567,14 @@ div.dataTables_wrapper div.dataTables_info {
     background-color: #181818 !important;
     border-bottom: 1px #77737359 solid !important;
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') !important;
+}
+.show-interest {
+    color: #9A9A9A;
+}
+
+.swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
+    background: #0d0d0d !important;
+    border-color: #0d0d0d!important;
 }
 
 .dropdown-menu:after {
