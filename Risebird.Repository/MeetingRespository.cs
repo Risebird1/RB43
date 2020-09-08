@@ -1685,6 +1685,14 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewMeetingsbyId", parameters,
                         commandType: CommandType.StoredProcedure);
+                    var query = "Select InterviewId,VideoTitle,VideoLink,Priority from VideoQuestionDetails Where InterViewid=@InterViewid and NULLIF(VideoLink, '') IS NOT NULL";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@InterViewid", id);
+                    var resultset = con.Query<QuestionDetails>(query, dynamicParameters);
+                    if (resultset.Count() != 0)
+                    {
+                        result.MeetingPatch = resultset.OrderBy(x=>x.Priority).ToList();
+                    }
                     return result;
                 }
 

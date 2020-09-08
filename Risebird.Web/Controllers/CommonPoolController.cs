@@ -596,6 +596,11 @@ namespace Risebird.Web.Controllers
                         NewModel.IsIntrested = model.IsIntrested;
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
                         // to get videocount details
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
@@ -692,8 +697,7 @@ namespace Risebird.Web.Controllers
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
                         NewModel.zoomLink = model.zoomLink;
-                        NewModel.IreportModel = IRListModel
-                            ?? new InterviewReport();
+                        NewModel.IreportModel = IRListModel?? new InterviewReport();
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
@@ -706,6 +710,11 @@ namespace Risebird.Web.Controllers
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
                         if (NewModel.IreportModel.QuestionsCollection == null)
@@ -919,6 +928,11 @@ namespace Risebird.Web.Controllers
                         NewModel.IsIntrested = model.IsIntrested;
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;

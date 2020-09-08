@@ -434,7 +434,9 @@
                                                 <div class=" col-8 player-main" id="player">
                                                     <div class="single-video-left">
                                                         <div>
-                                                            <div class="single-video ">
+                                                            <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
+
+                                                            <div class="single-video" >
                                                                 @if (Model.VideoLink != null && Model.VideoLink != "")
                                                                 {
 
@@ -442,7 +444,6 @@
                                                                     {
                                                                         <video controls class="vjs-tech video-width btnvideo">
                                                                             <source src="@Model.VideoLink" type="video/mp4">
-                                                                            <input type="text" hidden value="@Model.VideoLink" id="videoUrl" />
                                                                         </video>
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
@@ -493,7 +494,7 @@
 
 
                                                                                     @*
-                                                                    <div class="time">3:50</div>
+                                                                                        <div class="time">3:50</div>
                                                                                     *@
                                                                                 </div>
                                                                                 <div class="video-card-body">
@@ -1599,7 +1600,7 @@
 
 
     });
-        
+
         function checkStartDate(val) {
         if (val == "") {
             return "Kindly fill the Start Date field";
@@ -2300,14 +2301,14 @@
         $("#txtpublicsharetxt").val("");
     }
 
-   
+
     function closeVideoDetailsModel() {
         var modal = document.getElementById("VideoDetailsModel");
         modal.style.display = "none";
     }
 
 
-   
+
     function ShareVideoLinkToMail(resume) {
         $.ajax({
             type: "POST",
@@ -2378,7 +2379,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Interview/VideoShareEmail",
-                data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl,Candidateemail:$("#txtOnlineEmail").val() },
+                data: { videoid: $("#txtVideoId").val(), Emailid: $("#txtvideoemailid").val(), CurrentUrl: currentUrl, Candidateemail: $("#txtOnlineEmail").val() },
                 success: function (data) {
                     //check popup status
                     if (data == "Success") {
@@ -2386,13 +2387,13 @@
                         $("#divbackground").removeClass("blk-bg");
                     } else {
                         //open popup to raise for request
-                         alert("Your request raised successfully.");
+                        alert("Your request raised successfully.");
                     }
                 }
             });
         }
     }
-    
+
     function closepublicSharePopUpvideo() {
         var modal = document.getElementById("PublicShareVideo");
         modal.style.display = "none";

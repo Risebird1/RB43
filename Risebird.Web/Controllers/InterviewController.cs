@@ -6058,6 +6058,11 @@ namespace Risebird.Web.Controllers
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
                         // to get videocount details
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
