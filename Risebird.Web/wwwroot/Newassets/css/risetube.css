@@ -195,7 +195,7 @@
         border-radius: 3px;
         position: relative;
         top: -7px;
-        border-bottom: 1px #0e960ec7 SOLID;
+        color: #040800; border-bottom: 1px #0e960ec7 SOLID;
     }
 
 
@@ -906,16 +906,22 @@ textarea::-webkit-scrollbar-thumb {
 
 .show-interest {
     border: none;
-    background-color: white;
+    background: transparent;
     font-weight: bold;
     font-size: 13px !important;
     padding: 0px 0px;
     height: 30px;
 }
-
+.yellow-btn {
+    border: none;
+    background-color: yellow;
+    font-weight: bold;
+    font-size: 13.3px !important;
+    padding: 0px 5px;
+    height: 30px;
+}
 .share {
     border: none;
-
     font-weight: bold;
     font-size: 13px !important;
     padding: 0px 0px;
@@ -1601,7 +1607,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .upload-label {
-    background: #57adf80f;
+    
     padding: 5px 15px !important;
 }
 
@@ -2460,6 +2466,7 @@ textarea::-webkit-scrollbar-thumb {
         text-align: left !important;
         left: -15px;
     }
+    .yellow-btn{padding:0px 25px;}
     .newsletter .mdc-button--outlined.card-title-space {
         margin-top: 0px;
     }

@@ -594,7 +594,7 @@ modal-content .modal-body {
     }
 
 .control-labeled {
-    color: #5f5c5c !important;
+
     font-size: 12px;
     margin-bottom: 5px;
     color: #9A9A9A;
@@ -660,7 +660,10 @@ modal-content .modal-body {
     }
 
     /* Position tooltip above the element */
-.talk-bubble [data-tooltip]:before {
+.selected-priority .talk-bubble [data-tooltip]:before {
+    bottom: 72%;
+}
+    .talk-bubble [data-tooltip]:before {
     position: absolute;
     bottom: 150%;
     left: 10%;

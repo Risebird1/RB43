@@ -94,7 +94,8 @@ textarea::-webkit-scrollbar-thumb {
 
     fill: #97d1f9;
 }
-.control-label {
+.control-label, .control-labeled {
+
     color: #5f5c5c !important;
 }
     .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
@@ -112,6 +113,15 @@ textarea::-webkit-scrollbar-thumb {
 }
 .multiselect-container.dropdown-menu {
     background-color: #fff !important;
+}
+
+.swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
+    background: #42a5f5 !important;
+    border-color: #42a5f5 !important;
+}
+
+.show-interest {
+    color: #000;
 }
 
 [type="datetime-local"] {
@@ -150,7 +160,9 @@ textarea::-webkit-scrollbar-thumb {
     background-size: 9% !important;
     box-shadow: none;
 }
-
+.upload-label {
+    background: #57adf80f;
+}
     .file-lable {
     color: #000;
     font-size: 14px !important;
