@@ -5849,7 +5849,39 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid).Where(x => x.interviewDate >= DateTime.Now.Date);
+                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
+                        if (HttpContext.Session.GetString("HRfilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
+
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                            }
+                            else if (filter.StartDate != null && filter.EndDate == null)
+                            {
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate).ToList();
+                            }
+                            else if (filter.StartDate == null && filter.EndDate != null)
+                            {
+
+                                myInterview = myInterview.Where(t => t.interviewDate.Date <= filter.EndDate).ToList();
+
+                            }
+
+                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = myInterview.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                            filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = myInterview.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+
+                            myInterview = myInterview.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                            && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
+
+
+                        }
+                        else
+                        {
+                            myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
+
+                        }
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
@@ -5895,7 +5927,92 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> HRMyInterview(InterviewFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("HRfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName =  profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid =  emailid.Replace("\"", "");
+                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
+                       
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                        }
+                        else if (filter.StartDate != null && filter.EndDate == null)
+                        {
+                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate).ToList();
+                        }
+                        else if (filter.StartDate == null && filter.EndDate != null)
+                        {
 
+                            myInterview = myInterview.Where(t => t.interviewDate.Date <= filter.EndDate).ToList();
+
+                        }
+
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = myInterview.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                        filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = myInterview.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+                        
+                        myInterview = myInterview.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                        && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
+
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        foreach (var item in myInterview)
+                        {
+                            if (!string.IsNullOrEmpty(item.resumeLink))
+                            {
+                                try
+                                {
+                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception)
+                                {
+                                    item.resumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.resumeLink = "";
+                            }
+
+                        }
+
+                        if (TempData["SuccessErrorMessageHR"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageHR"].ToString();
+                            TempData.Remove("SuccessErrorMessageHR");
+                        }
+                        return View(myInterview);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> HRUnassignYourself(int id)
@@ -6358,7 +6475,28 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        public async Task<IActionResult> ResetHRInterviewFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("HRfilters");
+                    return RedirectToAction("HRMyInterview");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
 
+        }
     }
 
 }
