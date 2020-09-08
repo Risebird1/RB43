@@ -2,27 +2,38 @@
 
 @if (Model != null && Model.Count() != 0)
 {
-    <div class="sb-container scroller">
-        <table class="table table-bordered table-striped" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>EmailId</th>
-                    <th>ResumeLink</th>
-                    <th>Total Interviews</th>
-                    <th>Total QC</th>
-                    <th>Call</th>
-                </tr>
-            </thead>
-            <tbody>
+    <div class="member">
+        <div class="sb-container scroller">
+            <table class="table table-bordered table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>EmailId</th>
+                        <th>ResumeLink</th>
+                        <th>Total Interviews</th>
+                        <th>Total QC</th>
+                        <th>Call</th>
+                    </tr>
+                </thead>
+                <tbody>
 
 
-                @foreach (var item in Model)
-                {
+                    @foreach (var item in Model)
+                    {
                     <tr>
                         <td>@item.Type</td>
                         <td>@item.EmailId</td>
-                        <td>@item.ResumeLink</td>
+                        @if (item.ResumeLink != null && item.ResumeLink != "")
+                        {
+                            <td>
+
+                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>No Resume</td>
+                        }                       
                         <td>@item.TotalInterviews</td>
                         <td>@item.TotalQCInterviews</td>
                         <td>
@@ -33,10 +44,11 @@
 
                         </td>
                     </tr>
-                }
+                    }
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 }
 else
@@ -45,7 +57,7 @@ else
         No interviewers/Quality Controllers for this Skill Channel
     </div>
 }
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=1" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=6" />
 <script src="~/Newassets/js/scrollBar.js"></script>
 <script src="~/js/CallTwilio.js"></script>
 <script type="text/javascript">
