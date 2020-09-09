@@ -71,7 +71,7 @@
             <div class="panel-header panel-header-sm">
             </div>
             <!-- PAGE CONTENT WRAPPER -->
-            <div class="page-content-wrap">
+            <div class="page-content-wrap dashboard">
 
                 <!-- START DASHBOARD CHART -->
                 <div class="row">
@@ -303,7 +303,7 @@
 
         series.slices.template.fillModifier = fillModifier;
         series.alignLabels = true;
-
+    series.labels.template.fill = am4core.color("#828080");
         chart.fontSize = 13;
         series.labels.template.text = "{category}: [bold]{value}[/]";
 

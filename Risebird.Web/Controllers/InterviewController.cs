@@ -5850,7 +5850,7 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
-                        if (HttpContext.Session.GetString("Interviewfilters") != null)
+                        if (HttpContext.Session.GetString("HRfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
 
@@ -5937,14 +5937,14 @@ namespace Risebird.Web.Controllers
                 {
                     if (filter != null)
                     {
-                        HttpContext.Session.SetString("Interviewfilters", JsonConvert.SerializeObject(filter));
+                        HttpContext.Session.SetString("HRfilters", JsonConvert.SerializeObject(filter));
                     }
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
+                    profileName =  profileName.Replace("\"", "");
                     if (profileName == "HR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
+                        emailid =  emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
                        
                         if (filter.StartDate != null && filter.EndDate != null)
@@ -6482,7 +6482,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    HttpContext.Session.Remove("Interviewfilters");
+                    HttpContext.Session.Remove("HRfilters");
                     return RedirectToAction("HRMyInterview");
                 }
                 else

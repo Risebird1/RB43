@@ -907,11 +907,11 @@
                                                                                             <thead>
                                                                                                 <tr>
 
-                                                                                                    <th width="20%">Required Level</th>
+                                                                                                    <th  class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
                                                                                                     <th width="15%">Actual Level</th>
-                                                                                                    <th width="10%">Required Weightage</th>
+                                                                                                    <th  class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -922,7 +922,7 @@
                                                                                                     {
                                                                                                         <tr>
 
-                                                                                                            <td>
+                                                                                                            <td class="desktop-view">
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                             </td>
                                                                                                             <td>
@@ -936,7 +936,7 @@
                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "dropques form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                                                             </td>
-                                                                                                            <td>
+                                                                                                            <td class="desktop-view">
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                             </td>
                                                                                                             <td>
@@ -980,11 +980,11 @@
                                                                                         <table class="table table-bordered mbn" id="JoinabilityTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th width="20%">Required Level</th>
+                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
                                                                                                     <th width="15%">Actual Level</th>
-                                                                                                    <th width="10%">Required Weightage</th>
+                                                                                                    <th  class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -995,7 +995,7 @@
                                                                                                     {
                                                                                                         <tr>
 
-                                                                                                            <td>
+                                                                                                            <td class="desktop-view">
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                             </td>
@@ -1010,7 +1010,7 @@
                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
                                                                                                             </td>
-                                                                                                            <td>
+                                                                                                            <td class="desktop-view">
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                             </td>
                                                                                                             <td>
@@ -1052,11 +1052,11 @@
                                                                                         <table class="table table-bordered mbn" id="SelectabilityTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th width="20%">Required Level</th>
+                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
                                                                                                     <th width="15%">Actual Level</th>
-                                                                                                    <th width="10%">Required Weightage</th>
+                                                                                                    <th class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -1067,7 +1067,7 @@
                                                                                                     {
                                                                                                         <tr>
 
-                                                                                                            <td>
+                                                                                                            <td class="desktop-view">
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                             </td>
@@ -1082,7 +1082,7 @@
                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
                                                                                                             </td>
-                                                                                                            <td>
+                                                                                                            <td class="desktop-view">
                                                                                                                 @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                             </td>
                                                                                                             <td>
@@ -1131,7 +1131,7 @@
                                                                                 <div class="form-group comment-area">
                                                                                     <div class="talk-bubble tri-right border-bubble right-in">
                                                                                         <div class="talktext">
-                                                                                            <textarea class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
+                                                                                            <textarea spellcheck="true" class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
                                                                                         </div>
                                                                                     </div>
                                                                                     <div class="button-group pull-right"> <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a> </div>
@@ -1348,7 +1348,8 @@ else
                 <div class="col-md-12">
                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
                         <div class="talktext">
-                            <textarea rows="2" id="txtintrestecomment" placeholder="Please enter comment" style="width:100%"></textarea>
+                            <textarea spellcheck="true" rows="2" id="txtintrestecomment" placeholder="Please enter comment" style="width:100%"></textarea>
+                            <div id="words"></div>
                         </div>
                     </div>
                 </div>
@@ -1387,7 +1388,7 @@ else
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
 
                     <div class="sharing">
-                        <textarea class="form-control" rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                        <textarea spellcheck="true" class="form-control" rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                     </div>
                 </div>
 
@@ -1397,7 +1398,7 @@ else
                     <label class="label-field desp-label" for="Comment">Interviewer Comment(Editable)</label>
 
                     <div class="sharing">
-                        <textarea rows="2" id="comment" placeholder="Comment" class="form-control" style="width:100%"></textarea>
+                        <textarea spellcheck="true" rows="2" id="comment" placeholder="Comment" class="form-control" style="width:100%"></textarea>
                     </div>
 
                 </div>
@@ -1436,7 +1437,7 @@ else
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
 
                     <div class="form-control text-areadiv">
-                        <textarea rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                        <textarea spellcheck="true" rows="2" id="txtsharetext1" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
                     </div>
 
                 </div>
@@ -1476,7 +1477,7 @@ else
                 <div class="col-md-12">
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
                     <div class="form-control text-areadiv">
-                        <textarea rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                        <textarea spellcheck="true" rows="2" id="txtpublicsharing" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
 
                     </div>
                 </div>
@@ -1676,7 +1677,7 @@ else
                                 Message
                             </label>
                             <div class="col-md-12 col-sm-12">
-                                <textarea id="txtOnlineBody" class="form-control w-full" rows="3" style="height:100px;"></textarea>
+                                <textarea spellcheck="true" id="txtOnlineBody" class="form-control w-full" rows="3" style="height:100px;"></textarea>
                             </div>
                         </div>
 
@@ -2380,7 +2381,7 @@ else
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            chart.stroke = am4core.color("#396478");
+    
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -3116,7 +3117,7 @@ else
             if (data[i].viewName != null && data[i].viewName != "") {
                 html += '                    <td><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">' + data[i].viewName+'</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             } else {
-                html += '                    <td><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">Click Here</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
+                html += '                    <td class="text-center"><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">Click Here</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             }
             html += '                  <td class="text-center count-view"><span class="label-num"><strong>' + data[i].count + '</strong></span></td>';
             if (data[i].timeSpend != null) {
@@ -3164,6 +3165,116 @@ else
             });
         }
     }
+</script>
+<script>
+    ; (function () {
+
+        "use strict";
+
+        var words = document.getElementById("words"),
+            input = document.getElementById("txtintrestecomment"),
+            timeout, xhr;
+
+        input.addEventListener("keyup", function (e) {
+
+            if (timeout) clearTimeout(timeout);
+
+            if (!this.value.trim()) words.innerHTML = '';
+
+            timeout = setTimeout(function () {
+
+                var test_phrase = shuffle_words(input.value);
+
+                spell_check(test_phrase);
+
+                timeout = null;
+
+            }, 500);
+
+        });
+
+        function shuffle_words(inp) {
+
+            inp = inp.replace(/\s+/g, ' ');
+
+            var arr = inp.split(" "),
+                n = arr.length;
+
+            while (n > 0) {
+                var i = Math.floor(Math.random() * n--),
+                    t = arr[n];
+                arr[n] = arr[i];
+                arr[i] = t;
+            }
+
+            return arr.join(' ');
+        }
+
+        function spell_check(text) {
+
+            if (xhr) xhr.abort();
+
+            xhr = $.ajax({
+                url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
+                headers: {
+                    'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
+                    'Accept': 'application/json'
+                },
+                data: {
+                    'text': text
+                },
+                cache: false,
+                success: function (result) {
+
+                    xhr = null;
+                    suggest_words(result);
+
+                }
+            });
+
+        }
+
+        function suggest_words(obj) {
+
+            if (!obj.corrections) return;
+
+            words.innerHTML = '';
+
+            for (var key in obj.corrections) {
+
+                if (obj.corrections.hasOwnProperty(key)) {
+
+                    var div = document.createElement("div");
+                    div.className = "word";
+                    div.innerHTML = obj.corrections[key][0];
+                    div.orig = key;
+
+                    div.onmouseover = function () {
+                        var start = input.value.indexOf(this.orig);
+                        input.selectionStart = start;
+                        input.selectionEnd = start + this.orig.length;
+                    };
+
+                    div.onmouseout = function () {
+                        var len = input.value.length;
+                        input.selectionStart = len;
+                        input.selectionEnd = len;
+                    }
+
+                    div.onclick = function () {
+                        input.value = input.value.replace(this.orig, this.innerHTML);
+                        this.parentNode.removeChild(this);
+                    }
+
+                    words.appendChild(div);
+
+                }
+
+            }
+
+        }
+
+    })();
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {

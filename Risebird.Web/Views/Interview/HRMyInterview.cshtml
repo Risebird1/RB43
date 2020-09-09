@@ -15,9 +15,9 @@
     string[] primarySkills = new string[] { };
 
 }
-@if (HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters") != null)
+@if (HttpContextAccessor.HttpContext.Session.GetString("HRfilters") != null)
 {
-    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters"));
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("HRfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
