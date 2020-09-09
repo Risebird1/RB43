@@ -1825,6 +1825,53 @@ textarea::-webkit-scrollbar-thumb {
     font-size: 24px;
 }
 
+
+.relatedvideo {
+    flex: 0 0 32.3%;
+    max-width: 32.3%;
+    margin: 5px 4px 5px 4px;
+    padding: 10px;
+}
+    .relatedvideo .videosidelist:first-child {
+        padding-top: 10px;
+    }
+    .relatedvideo .videosidelist {
+        width: 360px;
+        padding: 10px 10px 0px 10px;
+    }
+    .relatedvideo .video-card-list .video-card-image {
+        float: left;
+        margin: 0 0px 10px 0;
+        width: 35%;
+        position: relative;
+    }
+
+.relatedvideo .video-card-list .video-card-body {
+    padding: 0;
+    height: auto;
+    float: left;
+    width: 60%;
+    margin-left: 10px;
+}
+.count-bg {
+    position: absolute;
+    z-index: 1000;
+    right: 0px;
+    background: rgba(0, 0, 0, 0.8);
+    height: 100%;
+    width: 40%;
+    text-align: center;
+    display: table;
+}
+.count-bg span {
+    display: table-cell;
+    height: 100%;
+    vertical-align: middle;
+    font-size: 16px;
+}
+.video-scroller {
+    height: 130px;
+}
 .chat {
     background: #fff;
 }
@@ -2141,7 +2188,23 @@ textarea::-webkit-scrollbar-thumb {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
     }
- 
+    .related .videosidelist:first-child {
+        padding-top: 5px;
+    }
+
+    .related .videosidelist .video-card-image {
+        width:30% !important
+    }
+    .related .videosidelist .video-card-body {
+        width: 65% !important;
+    }
+    .related .videosidelist {
+        padding: 5px;
+    }
+    .relatedvideo .videosidelist {
+        width: 100%;
+        padding: 10px 10px 10px 10px;
+    }
 
     #link8 .canvasjs-chart-container {
         text-align: left !important;

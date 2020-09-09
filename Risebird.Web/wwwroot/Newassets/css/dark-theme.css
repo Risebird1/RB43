@@ -290,7 +290,17 @@ table {
     box-shadow: none;
     border-color: #fff;
 }
+.related-title {
+    margin: 0px 0px 3px 0px !important; color:#9a9a9a!important
+}
 
+.active-video {
+    border: 5px #e8e4e4 solid !important;
+  
+ 
+}
+
+.count-bg span{color:#9a9a9a!important}
 [type="date"] {
     background: #f5f5f5 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;

@@ -243,7 +243,16 @@ input[type='radio']:checked:after {
     background: #fbad7f;
     color: #fff;
 }
-
+.related-title {
+    margin: 0px 0px 3px 0px !important;
+    color: #000;
+}
+.active-video {
+    border: 5px #9a9a9abd solid !important;
+}
+.count-bg span {
+    color: #fff !important;
+}
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
     border-bottom: 2px #ea6e24 solid !important;
 }
