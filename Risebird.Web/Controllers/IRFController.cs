@@ -3800,10 +3800,10 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
+        
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddCuratedGroup(CuratedGroup model)
+        public async Task<IActionResult> AddCuratedGroup(int[] irfList, string cgName)
         {
             try
             {
@@ -3811,15 +3811,15 @@ namespace Risebird.Web.Controllers
                 {
                     //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     //profileName = profileName.Replace("\"", "");
-                    if (_irfService.AddCuratedGroup(model).Result)
+                    if (_irfService.AddCuratedGroup(irfList, cgName).Result)
                     {
                         TempData["SuccessErrorMessageCG"] = "Curated Group added Successfully";
-                        return RedirectToAction("CuratedGroups");
+                        return Json(true);
                     }
                     else
                     {
                         TempData["SuccessErrorMessageCG"] = "Adding Curated Group has Failed";
-                        return RedirectToAction("CuratedGroups");
+                        return Json(false);
                     }
 
                 }
@@ -3832,7 +3832,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageCG"] = "Adding Curated Group has failed";
-                return RedirectToAction("CuratedGroups");
+                return Json(false);
             }
         }
 
@@ -3851,24 +3851,24 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
+        
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> EditCuratedGroup(CuratedGroup model)
+        public async Task<IActionResult> EditCuratedGroup(int[] irfList, string cgName, int cgId)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_irfService.UpdateCuratedGroup(model))
+                    if (_irfService.UpdateCuratedGroup(irfList, cgName, cgId))
                     {
                         TempData["SuccessErrorMessageCG"] = "Curated Group edited successfully!";
-                        return RedirectToAction("CuratedGroups");
+                        return Json(true);
                     }
                     else
                     {
                         TempData["SuccessErrorMessageCG"] = "Saving changes for Curated Group failed!";
-                        return RedirectToAction("CuratedGroups");
+                        return Json(false);
                     }
 
                 }
@@ -3881,10 +3881,9 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageCG"] = "Saving changes for Curated Group failed!";
-                return RedirectToAction("CuratedGroups");
+                return Json(false);
             }
         }
-
         [Authorize]
         [HttpGet]
         public IActionResult AddUpdateCuratedGroupUsers(int id)
@@ -3900,24 +3899,24 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
+        
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model)
+        public async Task<IActionResult> AddUpdateCuratedGroupUsers(int[] users, int curatedGroupId)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_irfService.AddUpdateCuratedGroupUsers(model))
+                    if (_irfService.AddUpdateCuratedGroupUsers(users, curatedGroupId))
                     {
                         TempData["SuccessErrorMessageCG"] = "Curated Group users updated successfully!";
-                        return RedirectToAction("CuratedGroups");
+                        return Json(true);
                     }
                     else
                     {
                         TempData["SuccessErrorMessageCG"] = "Sorry! Curated Group users could not be updated.";
-                        return RedirectToAction("CuratedGroups");
+                        return Json(false);
                     }
 
                 }
@@ -3930,10 +3929,9 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageCG"] = "Sorry! Curated Group users could not be updated.";
-                return RedirectToAction("CuratedGroups");
+                return Json(false);
             }
         }
-
         public IActionResult CuratedIndex()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)

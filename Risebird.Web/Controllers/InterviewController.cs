@@ -5844,11 +5844,11 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "HR";// profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     if (profileName == "HR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = "prasad_srinivas@risebird.io";// emailid.Replace("\"", "");
+                        emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
                         if (HttpContext.Session.GetString("Interviewfilters") != null)
                         {
@@ -5940,11 +5940,11 @@ namespace Risebird.Web.Controllers
                         HttpContext.Session.SetString("Interviewfilters", JsonConvert.SerializeObject(filter));
                     }
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "HR";// profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     if (profileName == "HR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = "prasad_srinivas@risebird.io";// emailid.Replace("\"", "");
+                        emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
                        
                         if (filter.StartDate != null && filter.EndDate != null)

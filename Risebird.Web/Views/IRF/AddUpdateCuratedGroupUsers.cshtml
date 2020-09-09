@@ -41,98 +41,182 @@
 
                     <div class="mdc-card-wrapper__text-section">
 
-                        @using (Html.BeginForm("AddUpdateCuratedGroupUsers", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
-                        {
+                        @*@using (Html.BeginForm("AddUpdateCuratedGroupUsers", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+        {
 
 
-                            <div class="row">
-                                <div class="card-header">
-                                    <h4 class="card-title">Curated Group Users</h4>
-                                </div>
+            <div class="row">
+                <div class="card-header">
+                    <h4 class="card-title">Curated Group Users</h4>
+                </div>
 
-                                <div style="width: 100%;">&nbsp;</div>
-                                <div class="col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.CuratedGroupName, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                <div style="width: 100%;">&nbsp;</div>
+                <div class="col-md-4 col-sm-4 pr-1">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CuratedGroupName, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.EditorFor(model => model.CuratedGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-                                        @Html.ValidationMessageFor(model => model.CuratedGroupName, "", new { @class = "text-danger" })
+                        @Html.EditorFor(model => model.CuratedGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.CuratedGroupName, "", new { @class = "text-danger" })
 
-                                    </div>
-                                </div>
+                    </div>
+                </div>
 
+            </div>
+
+            <div id="tableID">
+                <div class="scrollbox-curated">
+                    <div class="table-responsive-sm">
+                        <table class="table table-bordered mbn" id="IRFList">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="font-size:15px!important;">EmailId</th>
+                                    <th class="text-center" style="font-size:15px!important;">Add</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.CuratedGroupUserList.Count(); i++)
+                                {
+                                    <tr>
+
+                                        <td class="text-center" width="60%">@Model.CuratedGroupUserList[i].EmailId</td>
+                                        <td class="text-center" width="40%">
+
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox">
+                                                    @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control" })
+
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                            </div>
+
+
+
+                                        </td>
+                                        @Html.HiddenFor(m => m.CuratedGroupUserList[i].UserId)
+                                        @Html.HiddenFor(m => m.CuratedGroupUserList[i].CuratedGroupId)
+
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+
+                        @Html.HiddenFor(m => m.CuratedGroupId)
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-12 mc-button-area">
+                        @Html.ActionLink("Back to List", "CuratedGroups", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        }*@
+
+
+                        <div class="row">
+                            <div class="card-header">
+                                <h4 class="card-title">Curated Group Users</h4>
                             </div>
-                           
-                            <div id="tableID">
-                                <div class="scrollbox-curated">
-                                    <div class="table-responsive-sm">
-                                        <table class="table table-bordered mbn" id="IRFList">
-                                            <thead>
+
+                            <div style="width: 100%;">&nbsp;</div>
+                            <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CuratedGroupName, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                    @Html.EditorFor(model => model.CuratedGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.CuratedGroupName, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div id="tableID">
+                            <div class="scrollbox-curated">
+                                <div class="table-responsive-sm">
+                                    <table class="table table-bordered mbn" id="IRFList">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" style="font-size:15px!important;">EmailId</th>
+                                                <th class="text-center" style="font-size:15px!important;">Add</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.CuratedGroupUserList.Count(); i++)
+                                            {
                                                 <tr>
-                                                    <th class="text-center" style="font-size:15px!important;">EmailId</th>
-                                                    <th class="text-center" style="font-size:15px!important;">Add</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @for (int i = 0; i < Model.CuratedGroupUserList.Count(); i++)
-                                                {
-                                                    <tr>
 
-                                                        <td class="text-center" width="60%">@Model.CuratedGroupUserList[i].EmailId</td>
-                                                        <td class="text-center" width="40%">
+                                                    <td class="text-center" width="60%">@Model.CuratedGroupUserList[i].EmailId</td>
+                                                    <td class="text-center" width="40%">
 
 
-                                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
-                                                                <div class="mdc-checkbox">
-                                                                    @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control" })
+                                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                            <div class="mdc-checkbox">
+                                                                @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control", @onclick="UpdateUserList(this.id)" })
 
 
-                                                                    <div class="mdc-checkbox__background">
-                                                                        <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
-                                                                            <path class="mdc-checkbox__checkmark-path"
-                                                                                  fill="none"
-                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                        </svg>
-                                                                        <div class="mdc-checkbox__mixedmark"></div>
-                                                                    </div>
-                                                                    <div class="mdc-checkbox__ripple"></div>
-
-
+                                                                <div class="mdc-checkbox__background">
+                                                                    <svg class="mdc-checkbox__checkmark"
+                                                                         viewBox="0 0 24 24">
+                                                                        <path class="mdc-checkbox__checkmark-path"
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                    </svg>
+                                                                    <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
+                                                                <div class="mdc-checkbox__ripple"></div>
+
+
                                                             </div>
+                                                        </div>
 
 
 
-                                                        </td>
-                                                        @Html.HiddenFor(m => m.CuratedGroupUserList[i].UserId)
-                                                        @Html.HiddenFor(m => m.CuratedGroupUserList[i].CuratedGroupId)
+                                                    </td>
+                                                    @Html.HiddenFor(m => m.CuratedGroupUserList[i].UserId)
+                                                    @Html.HiddenFor(m => m.CuratedGroupUserList[i].CuratedGroupId)
 
-                                                    </tr>
-                                                }
+                                                </tr>
+                                            }
 
-                                            </tbody>
-                                        </table>
+                                        </tbody>
+                                    </table>
 
-                                        @Html.HiddenFor(m => m.CuratedGroupId)
-                                    </div>
+                                    @Html.HiddenFor(m => m.CuratedGroupId)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-md-12 mc-button-area">
+                                    @Html.ActionLink("Back to List", "CuratedGroups", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="SaveUsers()">Save</button>
                                 </div>
                             </div>
 
-                            <div class="card-footer">
-                                <div class="row">
-                                    <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "CuratedGroups", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
-                                    </div>
-                                </div>
-
-                            </div>
-
-
-
-                        }
-
+                        </div>
 
 
                     </div>
@@ -149,6 +233,60 @@
 
 </div>
 
+<script>
+    var users = [];
+
+    $(document).ready(function () {
+
+        $.each($("input[type=checkbox]:checked"), function () {
+            var id = $(this).attr("id");
+            var valueId = id.split('__')[0] + '__UserId';
+            users.push(document.getElementById(valueId).value);
+        });
+    });
+    function SaveUsers() {
+
+        $.ajax({
+            url: '/IRF/AddUpdateCuratedGroupUsers',
+            type: 'POST',
+            data: { 'users': users, 'curatedGroupId':@Model.CuratedGroupId },
+            success: function (data) {
+                window.location.href = "/IRF/CuratedGroups";
+            }
+        });
+    }
+
+    function UpdateUserList(id) {
+        var valueId = id.split('__')[0] + '__UserId';
+        var value = document.getElementById(valueId).value;
+        var checked = document.getElementById(id).checked;
+        if (checked) {
+            //check if the array has this value
+            if (users.includes(value)) {
+                return;
+            }
+            //if not, add the value
+            else {
+                users.push(value);
+                return;
+            }
+            
+        }
+        else {
+            //check if the array has this value. If yes, remove the value
+            if (users.includes(value)) {
+                var index = users.indexOf(value);
+                users.splice(index,1);
+                return;
+            }
+
+            else {
+                return;
+            }
+
+        }
+    }
+</script>
 
 <script>
     $(document).ready(function () {

@@ -113,11 +113,11 @@ namespace Risebird.Repository.Interface
 
         Task<IEnumerable<CuratedGroup>> GetAllCuratedGroups();
         IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping();
-        Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails);
+        Task<bool> AddCuratedGroup(int[] irfList, string cgName);
         Task<IEnumerable<CuratedIRFMapping>> GetCuratedGroupMappingsById(int curatedGroupId);
-        Task<bool> UpdateCuratedGroup(CuratedGroup curatedGroupDetails);
+        Task<bool> UpdateCuratedGroup(int[] irfList, string cgName, int cgId);
         Task<IEnumerable<CuratedGroupUsers>> GetCuratedGroupUsers(int curatedGroupId);
-        Task<bool> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM curatedUsers);
+        Task<bool> AddUpdateCuratedGroupUsers(int[] users, int curatedGroupId);
         Task<IEnumerable<CuratedUserGroupData>> GetCuratedGroupsForCuratedUser(string emailId);
         string pickInterviewerSills(string Interviewerids);
         Task<IEnumerable<IRFInterviewerMembers>> GetIRFInterviewerMembers(int irfId);

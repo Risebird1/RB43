@@ -61,11 +61,11 @@ namespace Risebird.Business.Interface
         IList<CandidateCuratedScore> GetCandidateCuratedScore(int id);
         IEnumerable<CuratedGroup> GetAllCuratedGroups();
         IEnumerable<CuratedIRFMapping> GetIRFListForCuratedMapping();
-        Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails);
+        Task<bool> AddCuratedGroup(int[] irfList, string cgName);
         CuratedGroup GetCuratedGroupMappingsById(int curatedGroupId);
-        bool UpdateCuratedGroup(CuratedGroup model);
+        bool UpdateCuratedGroup(int[] irfList, string cgName, int cgId);
         CuratedGroupUsersVM GetCuratedGroupUsers(int curatedGroupId);
-        bool AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model);
+        bool AddUpdateCuratedGroupUsers(int[] users, int curatedGroupId);
         IEnumerable<CuratedUserGroupData> GetCuratedGroupsForCuratedUser(string emailId);
         Task<IEnumerable<IRFInterviewerMembers>> GetIRFInterviewerMembers(int irfId);
     }

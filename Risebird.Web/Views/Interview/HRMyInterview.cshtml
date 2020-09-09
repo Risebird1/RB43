@@ -20,7 +20,6 @@
     filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("Interviewfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-    //RFID = filter.RFID != null ? filter.RFID : new string[] { };
     Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
 
