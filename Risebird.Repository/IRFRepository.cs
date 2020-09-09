@@ -2580,7 +2580,7 @@ namespace Risebird.Repository
                 parameters.Add("@ExpectedSalary", obj.ExpectedSalary);
                 parameters.Add("@Notice", obj.Notice);
                 parameters.Add("@AddedByUserId", obj.AddedByUserId);
-
+                parameters.Add("@CostEstimate", obj.CostEstimate);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -2732,9 +2732,8 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@CurrentSalary", obj.CurrentSalary);
                 dynamicParameters.Add("@ExpectedSalary", obj.ExpectedSalary);
                 dynamicParameters.Add("@Notice", obj.Notice);
-
                 dynamicParameters.Add("@id", obj.id);
-
+                dynamicParameters.Add("@CostEstimate", obj.CostEstimate);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -3301,43 +3300,47 @@ namespace Risebird.Repository
             }
             return null;
         }
-
-        public async Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails)
+        
+        public async Task<bool> AddCuratedGroup(int[] irfList, string cgName)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if(irfList!=null && irfList.Count()>0)
                 {
-                    DynamicParameters parameters = new DynamicParameters();
-                    parameters.Add("@Name", curatedGroupDetails.Name);
-                    parameters.Add("@CreatedOn", DateTime.Now);
-                    var obj = SqlMapper.Query<int>(con, "usp_AddCuratedGroup", parameters,
-                         commandType: CommandType.StoredProcedure);
-
-                    var curatedGroupId = obj.FirstOrDefault();
-
-                    DataTable curatedIRFDt = new DataTable();
-                    curatedIRFDt.Columns.Add("CuratedGroupId", typeof(int));
-                    curatedIRFDt.Columns.Add("IRFId", typeof(int));
-                    curatedIRFDt.Columns.Add("IsAdded", typeof(bool));
-
-                    foreach (var item in curatedGroupDetails.CuratedIRFMappings)
+                    using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        curatedIRFDt.Rows.Add(curatedGroupId, item.IRFId, item.IsAdded);
+                        DynamicParameters parameters = new DynamicParameters();
+                        parameters.Add("@Name", cgName);
+                        parameters.Add("@CreatedOn", DateTime.Now);
+                        var obj = SqlMapper.Query<int>(con, "usp_AddCuratedGroup", parameters,
+                             commandType: CommandType.StoredProcedure);
+
+                        var curatedGroupId = obj.FirstOrDefault();
+
+                        DataTable curatedIRFDt = new DataTable();
+                        curatedIRFDt.Columns.Add("CuratedGroupId", typeof(int));
+                        curatedIRFDt.Columns.Add("IRFId", typeof(int));
+                        curatedIRFDt.Columns.Add("IsAdded", typeof(bool));
+
+                        foreach (var item in irfList)
+                        {
+                            curatedIRFDt.Rows.Add(curatedGroupId, item, true);
+                        }
+
+                        SqlCommand cmdCuratedIRF = new SqlCommand("usp_CuratedIRFBulkInsert", con);
+                        cmdCuratedIRF.CommandType = CommandType.StoredProcedure;
+                        cmdCuratedIRF.Parameters.Add(new SqlParameter("@CuratedIRFBulkData", SqlDbType.Structured));
+                        cmdCuratedIRF.Parameters["@CuratedIRFBulkData"].Value = curatedIRFDt;
+                        con.Open();
+                        if (cmdCuratedIRF.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+
                     }
 
-                    SqlCommand cmdCuratedIRF = new SqlCommand("usp_CuratedIRFBulkInsert", con);
-                    cmdCuratedIRF.CommandType = CommandType.StoredProcedure;
-                    cmdCuratedIRF.Parameters.Add(new SqlParameter("@CuratedIRFBulkData", SqlDbType.Structured));
-                    cmdCuratedIRF.Parameters["@CuratedIRFBulkData"].Value = curatedIRFDt;
-                    con.Open();
-                    if (cmdCuratedIRF.ExecuteNonQuery() != 0)
-                    {
-                        con.Close();
-                    }
-
-                    return true;
                 }
+                return true;
 
             }
 
@@ -3377,15 +3380,14 @@ namespace Risebird.Repository
             return null;
         }
 
-
-        public async Task<bool> UpdateCuratedGroup(CuratedGroup curatedGroupDetails)
+        public async Task<bool> UpdateCuratedGroup(int[] irfList, string cgName, int cgId)
         {
             try
             {
 
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@id", curatedGroupDetails.id);
-                parameters.Add("@Name", curatedGroupDetails.Name);
+                parameters.Add("@id", cgId);
+                parameters.Add("@Name", cgName);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -3394,16 +3396,16 @@ namespace Risebird.Repository
 
 
 
-                    if (curatedGroupDetails.CuratedIRFMappings != null)
+                    if (irfList != null && irfList.Count() > 0)
                     {
                         DataTable curatedIRFDt = new DataTable();
                         curatedIRFDt.Columns.Add("CuratedGroupId", typeof(int));
                         curatedIRFDt.Columns.Add("IRFId", typeof(int));
                         curatedIRFDt.Columns.Add("IsAdded", typeof(bool));
 
-                        foreach (var item in curatedGroupDetails.CuratedIRFMappings)
+                        foreach (var item in irfList)
                         {
-                            curatedIRFDt.Rows.Add(curatedGroupDetails.id, item.IRFId, item.IsAdded);
+                            curatedIRFDt.Rows.Add(cgId, item, true);
                         }
 
                         SqlCommand cmdCuratedIRF = new SqlCommand("usp_CuratedIRFBulkInsert", con);
@@ -3460,7 +3462,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<bool> AddUpdateCuratedGroupUsers(CuratedGroupUsersVM curatedUsers)
+        public async Task<bool> AddUpdateCuratedGroupUsers(int[] users, int curatedGroupId)
         {
             try
             {
@@ -3468,19 +3470,19 @@ namespace Risebird.Repository
                 {
                     var query = "delete from CuratedGroupUsers where CuratedGroupId=@CuratedGroupId";
                     var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("@CuratedGroupId", curatedUsers.CuratedGroupId);
+                    dynamicParameters.Add("@CuratedGroupId", curatedGroupId);
                     con.Query(query, dynamicParameters);
 
-                    if (curatedUsers.CuratedGroupUserList != null)
+                    if (users != null && users.Count()!=0)
                     {
                         DataTable curatedUsersDt = new DataTable();
                         curatedUsersDt.Columns.Add("UserId", typeof(int));
                         curatedUsersDt.Columns.Add("CuratedGroupId", typeof(int));
                         curatedUsersDt.Columns.Add("IsAdded", typeof(bool));
 
-                        foreach (var item in curatedUsers.CuratedGroupUserList)
+                        foreach (var item in users)
                         {
-                            curatedUsersDt.Rows.Add(item.UserId, item.CuratedGroupId, item.IsAdded);
+                            curatedUsersDt.Rows.Add(item, curatedGroupId, true);
                         }
 
                         SqlCommand cmdCuratedUsers = new SqlCommand("usp_CuratedGroupUsersBulkInsert", con);

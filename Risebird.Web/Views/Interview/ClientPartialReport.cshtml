@@ -554,9 +554,9 @@
                                                     <div class="talktext">
 
 
-                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @id = "text", @class = "form-control text-box single-line" }, @style = "width:100%" })
 
-
+                                                        <div id="words"></div>
                                                     </div>
 
                                                 </div>
@@ -1483,7 +1483,8 @@
             categoryAxis.renderer.labels.template.valign = "top";
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
-             chart.fontSize = 13;
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+             chart.fontSize = 23;
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -1493,7 +1494,7 @@
             categoryAxis.renderer.grid.template.disabled = true;
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
-         
+            
             valueAxis.renderer.grid.template.disabled = true;
 
             // Create series
@@ -2180,7 +2181,7 @@
                 categoryAxis.renderer.labels.template.valign = "top";
                 categoryAxis.renderer.grid.template.location = 0;
                 categoryAxis.renderer.minGridDistance = 30;
-
+                categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
                 categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                     if (target.dataItem && target.dataItem.index & 2 == 2) {
                         return dy;

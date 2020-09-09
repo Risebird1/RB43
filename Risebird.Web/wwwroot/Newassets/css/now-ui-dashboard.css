@@ -2176,9 +2176,7 @@ a.text-gray:focus,
 a.text-gray:hover {
     color: #E3E3E3 !important;
 }
-.swal2-popup .swal2-actions:not(.swal2-loading) .swal2-styled:active, .swal2-popup .swal2-styled.swal2-confirm {
-    background: #42a5f5 !important;
-}
+
 .blockquote {
     border-left: none;
     border: 1px solid #888;

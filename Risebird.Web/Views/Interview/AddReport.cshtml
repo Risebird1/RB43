@@ -739,7 +739,8 @@
                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                 <div class="talktext">
 
-                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line scrollbar" }, @style = "width:100%" })
+                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @id = "text", @class = "form-control text-box single-line scrollbar" }, @style = "width:100%" })
+                                                    <div id="words"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1570,6 +1571,7 @@
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             chart.fontSize = 13;
+       categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -1579,6 +1581,7 @@
             categoryAxis.renderer.grid.template.disabled = true;
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
             valueAxis.renderer.grid.template.disabled = true;
+     
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";
@@ -2105,7 +2108,7 @@
             categoryAxis.renderer.labels.template.valign = "top";
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
-
+               categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -2153,4 +2156,113 @@
 <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
 
 <script src="~/js/FeedbackRecorder/Record.js"></script>
+<script>
+        ; (function () {
 
+            "use strict";
+
+            var words = document.getElementById("words"),
+                input = document.getElementById("text"),
+                timeout, xhr;
+
+            input.addEventListener("keyup", function (e) {
+
+                if (timeout) clearTimeout(timeout);
+
+                if (!this.value.trim()) words.innerHTML = '';
+
+                timeout = setTimeout(function () {
+
+                    var test_phrase = shuffle_words(input.value);
+
+                    spell_check(test_phrase);
+
+                    timeout = null;
+
+                }, 500);
+
+            });
+
+            function shuffle_words(inp) {
+
+                inp = inp.replace(/\s+/g, ' ');
+
+                var arr = inp.split(" "),
+                    n = arr.length;
+
+                while (n > 0) {
+                    var i = Math.floor(Math.random() * n--),
+                        t = arr[n];
+                    arr[n] = arr[i];
+                    arr[i] = t;
+                }
+
+                return arr.join(' ');
+            }
+
+            function spell_check(text) {
+
+                if (xhr) xhr.abort();
+
+                xhr = $.ajax({
+                    url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
+                    headers: {
+                        'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
+                        'Accept': 'application/json'
+                    },
+                    data: {
+                        'text': text
+                    },
+                    cache: false,
+                    success: function (result) {
+
+                        xhr = null;
+                        suggest_words(result);
+
+                    }
+                });
+
+            }
+
+            function suggest_words(obj) {
+
+                if (!obj.corrections) return;
+
+                words.innerHTML = '';
+
+                for (var key in obj.corrections) {
+
+                    if (obj.corrections.hasOwnProperty(key)) {
+
+                        var div = document.createElement("div");
+                        div.className = "word";
+                        div.innerHTML = obj.corrections[key][0];
+                        div.orig = key;
+
+                        div.onmouseover = function () {
+                            var start = input.value.indexOf(this.orig);
+                            input.selectionStart = start;
+                            input.selectionEnd = start + this.orig.length;
+                        };
+
+                        div.onmouseout = function () {
+                            var len = input.value.length;
+                            input.selectionStart = len;
+                            input.selectionEnd = len;
+                        }
+
+                        div.onclick = function () {
+                            input.value = input.value.replace(this.orig, this.innerHTML);
+                            this.parentNode.removeChild(this);
+                        }
+
+                        words.appendChild(div);
+
+                    }
+
+                }
+
+            }
+
+        })();
+</script>
