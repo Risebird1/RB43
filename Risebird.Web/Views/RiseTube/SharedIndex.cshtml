@@ -217,6 +217,10 @@
                                         <div class="col-xl-3 col-sm-6 mb-3">
                                             <div class="video-card">
                                                 <div class="video-card-image">
+                                                    @if (item.MeetingPatchCount > 0)
+                                                    {
+                                                        <div class="count-bg"><span>@item.MeetingPatchCount</span></div>
+                                                    }
                                                     @if (item.VideoLink.Contains(".mp4"))
                                                     {
                                                         @if (item.ThumbnailImage != null)
