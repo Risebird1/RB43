@@ -203,6 +203,7 @@ namespace Risebird.Entities.ViewModel
         public int? VideoSentimentImid { get; set; }
         public string Client { get; set; }
         public List<QuestionDetails> MeetingPatch { get; set; }
+        public int MeetingPatchCount { get; set; }
     }
     public class VedioComments
     {
