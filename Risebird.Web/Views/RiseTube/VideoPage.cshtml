@@ -2018,7 +2018,9 @@
 
                                             <a href="#" data-tooltip="@Model.InterviewerComment">
                                                 <div class="talktext">
-                                                    @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:100px;width:100%" })
+                                                    @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new {@id="interviewercomment", @class = "form-control text-box comment single-line" }, @style = "height:100px;width:100%" })
+                                                
+                                                <div id="words"></div>
                                                 </div>
                                             </a>
                                         </div>
@@ -3483,7 +3485,7 @@
         "use strict";
 
         var words = document.getElementById("words"),
-            input = document.getElementById("txtintrestecomment,txtComment,txtsharetext,comment,txtsharetext1"),
+            input = document.getElementById("txtintrestecomment,txtComment,txtsharetext,comment,txtsharetext1,interviewercomment"),
             timeout, xhr;
 
         input.addEventListener("keyup", function (e) {

@@ -186,7 +186,9 @@ textarea::-webkit-scrollbar-thumb {
     background: #fff url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 9% !important;
     box-shadow: none;
+    line-height: 11px !important;
 }
+
 [type="date"] {
     background: #f5f5f5 url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;

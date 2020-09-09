@@ -82,7 +82,8 @@
 
                                                     @Html.TextAreaFor(model => model.InterviewerComment, new { @class = "form-control cmt-ht" })
 
-                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new {@id="interviewerComment", @class = "text-danger" })
+                                                    <div id="words"></div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-sm-6 pl-1">
@@ -158,7 +159,8 @@
 
 
 
-                                                    @Html.TextAreaFor(model => model.HRComment, new { @class = "form-control cmt-ht" })
+                                                    @Html.TextAreaFor(model => model.HRComment, new { @id = "hrcomment", @class = "form-control cmt-ht" })
+                                                    <div id="words"></div>
 
                                                     @Html.ValidationMessageFor(model => model.HRComment, "", new { @class = "text-danger" })
 
@@ -187,7 +189,7 @@
 
 
 
-                                                    @Html.TextAreaFor(model => model.QCComment, new { @class = "form-control cmt-ht" })
+                                                    @Html.TextAreaFor(model => model.QCComment, new { @id = "qcontroller", @class = "form-control cmt-ht" })
 
                                                     @Html.ValidationMessageFor(model => model.QCComment, "", new { @class = "text-danger" })
 
@@ -405,4 +407,113 @@
     }
 
 </script>
+<script>
+    ; (function () {
 
+        "use strict";
+
+        var words = document.getElementById("words"),
+            input = document.getElementById("interviewerComment,qcontroller,hrcomment"),
+            timeout, xhr;
+
+        input.addEventListener("keyup", function (e) {
+
+            if (timeout) clearTimeout(timeout);
+
+            if (!this.value.trim()) words.innerHTML = '';
+
+            timeout = setTimeout(function () {
+
+                var test_phrase = shuffle_words(input.value);
+
+                spell_check(test_phrase);
+
+                timeout = null;
+
+            }, 500);
+
+        });
+
+        function shuffle_words(inp) {
+
+            inp = inp.replace(/\s+/g, ' ');
+
+            var arr = inp.split(" "),
+                n = arr.length;
+
+            while (n > 0) {
+                var i = Math.floor(Math.random() * n--),
+                    t = arr[n];
+                arr[n] = arr[i];
+                arr[i] = t;
+            }
+
+            return arr.join(' ');
+        }
+
+        function spell_check(text) {
+
+            if (xhr) xhr.abort();
+
+            xhr = $.ajax({
+                url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
+                headers: {
+                    'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
+                    'Accept': 'application/json'
+                },
+                data: {
+                    'text': text
+                },
+                cache: false,
+                success: function (result) {
+
+                    xhr = null;
+                    suggest_words(result);
+
+                }
+            });
+
+        }
+
+        function suggest_words(obj) {
+
+            if (!obj.corrections) return;
+
+            words.innerHTML = '';
+
+            for (var key in obj.corrections) {
+
+                if (obj.corrections.hasOwnProperty(key)) {
+
+                    var div = document.createElement("div");
+                    div.className = "word";
+                    div.innerHTML = obj.corrections[key][0];
+                    div.orig = key;
+
+                    div.onmouseover = function () {
+                        var start = input.value.indexOf(this.orig);
+                        input.selectionStart = start;
+                        input.selectionEnd = start + this.orig.length;
+                    };
+
+                    div.onmouseout = function () {
+                        var len = input.value.length;
+                        input.selectionStart = len;
+                        input.selectionEnd = len;
+                    }
+
+                    div.onclick = function () {
+                        input.value = input.value.replace(this.orig, this.innerHTML);
+                        this.parentNode.removeChild(this);
+                    }
+
+                    words.appendChild(div);
+
+                }
+
+            }
+
+        }
+
+    })();
+</script>

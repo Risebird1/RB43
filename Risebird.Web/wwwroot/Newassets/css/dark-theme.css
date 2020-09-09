@@ -285,10 +285,6 @@ table {
 .upload-label {
     background: #1b191980;
 }
-input:-internal-autofill-selected{
-
-}
-
 
 
 
@@ -298,6 +294,7 @@ input:-internal-autofill-selected{
     color: #fff;
     box-shadow: none;
     border-color: #fff;
+  line-height: 11px !important;
 }
 
 [type="date"] {
