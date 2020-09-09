@@ -1850,7 +1850,7 @@ textarea::-webkit-scrollbar-thumb {
     padding: 0;
     height: auto;
     float: left;
-    width: 60%;
+    width: 60%!important;
     margin-left: 10px;
 }
 .count-bg {
@@ -2027,7 +2027,7 @@ textarea::-webkit-scrollbar-thumb {
 
     .single-video-left {
         border-bottom: 0px #620bee21 solid;
-        margin-bottom: 20px;
+        margin-bottom: 0px;
         padding: 0px;
     }
 
