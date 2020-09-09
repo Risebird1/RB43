@@ -2656,6 +2656,8 @@
 
             // Create axes
             chart.logo.disabled = true;
+            chart.tapToActivate = true;
+
             var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
             categoryAxis.dataFields.category = "country";
             categoryAxis.renderer.inside = true;
