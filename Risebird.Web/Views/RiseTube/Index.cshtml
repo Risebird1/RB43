@@ -491,7 +491,7 @@
                                                                 </button>
                                                             </span>
                                                         }
-                                                        else
+                                                        else if(@item.CostEstimate != null)
                                                         {
                                                             <div class="video-info nopad pull-right">
                                                                 <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
