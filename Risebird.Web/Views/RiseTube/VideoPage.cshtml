@@ -739,14 +739,26 @@
 
 
                                                                                             <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
-                                                                                                <a href="#" data-tooltip="@Model.InterviewerComment">
-                                                                                                    <div class="talktext">
+                                                                                                @if (Model.InterviewerComment != null)
+                                                                                                {
+                                                                                                    <a href="#" data-tooltip="@Model.InterviewerComment">
+
+                                                                                                        <div class="talktext">
+
+
+                                                                                                            @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;", @readonly = "readonly" })
+
+                                                                                                        </div>
+                                                                                                    </a>
+                                                                                                }
+
+                                                                                                else
+                                                                                                { <div class="talktext">
 
 
                                                                                                         @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box comment single-line" }, @style = "height:195px;", @readonly = "readonly" })
 
-                                                                                                    </div>
-                                                                                                </a>
+                                                                                                    </div>}
                                                                                             </div>
 
                                                                                             @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
@@ -3660,9 +3672,9 @@
         html += '       </tr>';
         for (var i = 0; i < data.length; i++) {
             html += '   <tr>';
-            html += '                  <td>' + data[i].candidate + '</td>';
+            html += '                  <td >' + data[i].candidate + '</td>';
             if (data[i].viewName != null && data[i].viewName != "") {
-                html += '                    <td><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">' + data[i].viewName + '</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
+                html += '                    <td class="text-center"><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">' + data[i].viewName + '</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             } else {
                 html += '                    <td class="text-center"><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">Click Here</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             }
