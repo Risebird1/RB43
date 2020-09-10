@@ -6521,7 +6521,7 @@ namespace Risebird.Web.Controllers
                     List<QuestionDetails> _question = new List<QuestionDetails>();
                     var norows = model.Keys.Count - 1 + model.Files.Count;
                     int Interviewid = 0;
-                    for (int i = 0; i < norows / 6; i++)
+                    for (int i = 0; i < norows / 9; i++)
                     {
                         _question.Add(new QuestionDetails { Question = model["questionset[" + i + "].Question"][0], VideoLink = model["questionset[" + i + "].VideoLink"][0], VideoTitle = model["questionset[" + i + "].VideoTitle"][0], Priority = Convert.ToInt32(model["questionset[" + i + "].Priority"][0]), Id = Convert.ToInt32(model["questionset[" + i + "].Id"][0]), InterviewId = Convert.ToInt32(model["questionset[" + i + "].InterviewId"][0]) });
                         Interviewid = Convert.ToInt32(model["questionset[" + i + "].InterviewId"][0]);
