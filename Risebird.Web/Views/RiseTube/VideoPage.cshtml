@@ -2678,7 +2678,7 @@
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             chart.fontSize = 13;
-       
+       chart.tapToActivate = true;
 
           
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
@@ -2711,7 +2711,7 @@
                 am4core.color("#F64042"),
                 am4core.color("#ffbc50")
 
-
+        
 
             ];
             series.columns.template.events.once("inited", function (event) {
