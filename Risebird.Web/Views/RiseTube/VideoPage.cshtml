@@ -1595,97 +1595,103 @@
                                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
 
 
-                                                        <div class="video-card video-card-list  videosidelist">
-                                                            <div class="video-card-image">
-                                                                <div class="count-bg"><span>6</span></div>
-                                                                @if (videolist.VideoLink.Contains(".mp4"))
+                                                    <div class="video-card video-card-list  videosidelist">
+
+                                                        <div class="video-card-image">
+                                                            @if (videolist.MeetingPatchCount > 0)
+                                                            {
+                                                                <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
+                                                            }
+                                                            @if (videolist.VideoLink.Contains(".mp4"))
+                                                            {
+                                                                @if (videolist.ThumbnailImage != null)
                                                                 {
-                                                                    @if (videolist.ThumbnailImage != null)
-                                                                    {
-                                                                        <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                    <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
-                                                                        <source src="@videolist.VideoLink" type="video/mp4">
-                                                                    </video>
-                                                                    @if (Model.IsClientCurated)
-                                                                    {
-                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
-
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-
-                                                                    }
+                                                                    <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                    <source src="@videolist.VideoLink" type="video/mp4">
+                                                                </video>
+                                                                @if (Model.IsClientCurated)
+                                                                {
+                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
 
                                                                 }
                                                                 else
                                                                 {
-                                                                    @if (videolist.ThumbnailImage != null)
-                                                                    {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
-                                                                    else
-                                                                    { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                @if (videolist.ThumbnailImage != null)
+                                                                {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                else
+                                                                { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
 
 
-                                                                @*
-                                                                    <div class="time">3:50</div>
-                                                                *@
-                                                            </div>
-                                                            <div class="video-card-body">
-                                                                <div class="video-title">
-                                                                    @if (@videolist.candidateName.Length > 11)
-                                                                    {
-                                                                        <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span class="candidate">@videolist.candidateName</span>}
+                                                            @*
+            <div class="time">3:50</div>
+                                                            *@
+                                                        </div>
 
-                                                                    @if (@videolist.JDTiltle.Length > 10)
-                                                                    {
-                                                                        <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
-
-                                                                    else
-                                                                    {
-                                                                        <span>@videolist.JDTiltle</span>}
-
-                                                                </div>
-                                                                <div class="video-page text-success">
-                                                                    &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
-                                                                    <span class="divider-g">
-                                                                        @if (videolist.InterviewStatus == 4)
-                                                                        {
-                                                                            <span style="color:palevioletred">Border Line</span>
-                                                                        }
-
-                                                                        else if (videolist.InterviewStatus == 2)
-                                                                        {
-                                                                            <span style="color:green">Selected</span>
-
-                                                                        }
-                                                                    </span>
-
-                                                                </div>
-
-
-                                                                <div class="video-info">
-                                                                    <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
-                                                                    {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                        
+                                                        <div class="video-card-body">
+                                                            <div class="video-title">
+                                                                @if (@videolist.candidateName.Length > 11)
+                                                                {
+                                                                    <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                }
                                                                 else
                                                                 {
-                                                                    <span id="join_time"> @videolist.joiningTime</span>}
-                                                                </div>
+                                                                    <span class="candidate">@videolist.candidateName</span>}
 
-                                                                <div class="video-info">
-                                                                    <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
-                                                                    {
-                                                                        <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+                                                                @if (@videolist.JDTiltle.Length > 10)
+                                                                {
+                                                                    <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
-                                                                    else
+                                                                else
+                                                                {
+                                                                    <span>@videolist.JDTiltle</span>}
+
+                                                            </div>
+                                                            <div class="video-page text-success">
+                                                                &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
+                                                                <span class="divider-g">
+                                                                    @if (videolist.InterviewStatus == 4)
                                                                     {
-                                                                        <span>@videolist.expectedPerHourRate</span>}
-                                                                </div>
+                                                                        <span style="color:palevioletred">Border Line</span>
+                                                                    }
+
+                                                                    else if (videolist.InterviewStatus == 2)
+                                                                    {
+                                                                        <span style="color:green">Selected</span>
+
+                                                                    }
+                                                                </span>
+
+                                                            </div>
+
+
+                                                            <div class="video-info">
+                                                                <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
+                                                                {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                            else
+                                                            {
+                                                                <span id="join_time"> @videolist.joiningTime</span>}
+                                                            </div>
+
+                                                            <div class="video-info">
+                                                                <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                {
+                                                                    <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+
+                                                                else
+                                                                {
+                                                                    <span>@videolist.expectedPerHourRate</span>}
                                                             </div>
                                                         </div>
+                                                    </div>
 
 
 
