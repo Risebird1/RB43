@@ -1685,7 +1685,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewMeetingsbyId", parameters,
                         commandType: CommandType.StoredProcedure);
-                    var query = "Select InterviewId,VideoTitle,VideoLink,Priority from VideoQuestionDetails Where InterViewid=@InterViewid and NULLIF(VideoLink, '') IS NOT NULL";
+                    var query = "Select InterviewId,VideoTitle,VideoLink,Priority,ThumbnailLink from VideoQuestionDetails Where InterViewid=@InterViewid and NULLIF(VideoLink, '') IS NOT NULL";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@InterViewid", id);
                     var resultset = con.Query<QuestionDetails>(query, dynamicParameters);
@@ -2786,7 +2786,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var finalquery = "Select Id,Question,InterviewId,VideoTitle,VideoLink,Priority from VideoQuestionDetails Where InterViewid=@InterViewid";
+                var finalquery = "Select Id,Question,InterviewId,VideoTitle,VideoLink,Priority,ThumbnailLink from VideoQuestionDetails Where InterViewid=@InterViewid";
                 var finaldynamicParameters = new DynamicParameters();
                 finaldynamicParameters.Add("@InterViewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2794,7 +2794,7 @@ namespace Risebird.Repository
                     var results = con.Query<QuestionDetails>(finalquery, finaldynamicParameters);
                     if (results.Count() == 0)
                     {
-                        var query = "Select 0 as Id,Comment as Question,InterviewId,'' as VideoTitle,'' as VideoLink,0 as Priority from QuestionsDiscussed Where InterViewid=@InterViewid";
+                        var query = "Select 0 as Id,Comment as Question,InterviewId,'' as VideoTitle,'' as VideoLink,0 as Priority,'' as ThumbnailLink from QuestionsDiscussed Where InterViewid=@InterViewid";
                         var dynamicParameters = new DynamicParameters();
                         finaldynamicParameters.Add("@InterViewid", interviewid);
                         results = con.Query<QuestionDetails>(query, dynamicParameters);
@@ -2826,11 +2826,12 @@ namespace Risebird.Repository
                     questionsDt.Columns.Add("Priority", typeof(int));
                     questionsDt.Columns.Add("VideoTitle", typeof(string));
                     questionsDt.Columns.Add("VideoLink", typeof(string));
+                    questionsDt.Columns.Add("ThumbnailLink", typeof(string));
 
 
                     foreach (var item in _question)
                     {
-                        questionsDt.Rows.Add(item.Id, item.InterviewId, item.Question, item.Priority, item.VideoTitle, item.VideoLink);
+                        questionsDt.Rows.Add(item.Id, item.InterviewId, item.Question, item.Priority, item.VideoTitle, item.VideoLink,item.Thumbnail);
                     }
 
                     SqlCommand cmdQuestions = new SqlCommand("usp_AddorEditQuestionsDetails", con)

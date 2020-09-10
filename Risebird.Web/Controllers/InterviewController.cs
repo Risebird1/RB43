@@ -6537,11 +6537,25 @@ namespace Risebird.Web.Controllers
                         var rowvalue = Convert.ToInt32(item.Name.Split("[")[1].Split("]")[0]);
                         if (uploadedvideoFileURL == null)
                         {
-                            _question[rowvalue].VideoLink = "";
+                            if (item.Name.Contains("Thumbnail"))
+                            {
+                                _question[rowvalue].ThumbnailLink = "";
+                            }
+                            else
+                            {
+                                _question[rowvalue].VideoLink = "";
+                            }
                         }
                         else
                         {
-                            _question[rowvalue].VideoLink = uploadedvideoFileURL;
+                            if (item.Name.Contains("Thumbnail"))
+                            {
+                                _question[rowvalue].ThumbnailLink = uploadedvideoFileURL;
+                            }
+                            else
+                            {
+                                _question[rowvalue].VideoLink = uploadedvideoFileURL;
+                            }
                         }
                     }
                     var model1 = _meetingService.UpdateQuestionDetails(_question);
