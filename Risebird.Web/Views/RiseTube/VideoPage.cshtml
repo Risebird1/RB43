@@ -1060,24 +1060,49 @@
                                                                                                     }
                                                                                                     else
                                                                                                     {
-                                                                                                        for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
+                                                                                                        @if (Model.MeetingPatch.Count() == 0)
                                                                                                         {
-                                                                                                            <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
-                                                                                                                <td>
-                                                                                                                    @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                                </td>
-                                                                                                                <td>
-                                                                                                                    @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                                </td>
-                                                                                                                <td>
-                                                                                                                    @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
-                                                                                                                </td>
-                                                                                                                <td>
+                                                                                                            for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
+                                                                                                            {
+                                                                                                                <tr onclick="switchtoquestionVideo(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                                                                                    <td>
+                                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                    </td>
+                                                                                                                    <td>
+                                                                                                                        @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                    </td>
+                                                                                                                    <td>
+                                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
+                                                                                                                    </td>
+                                                                                                                    <td>
 
-                                                                                                                    @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
+                                                                                                                        @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
 
-                                                                                                                </td>
-                                                                                                            </tr>
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            }
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
+                                                                                                            {
+                                                                                                                <tr onclick="changeVideo(@Model.IreportModel.QuestionsCollection[i].Priority)" style="cursor:pointer">
+                                                                                                                    <td>
+                                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                    </td>
+                                                                                                                    <td>
+                                                                                                                        @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                                    </td>
+                                                                                                                    <td>
+                                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
+                                                                                                                    </td>
+                                                                                                                    <td>
+
+                                                                                                                        @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
+
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            }
                                                                                                         }
                                                                                                     }
                                                                                                 </tbody>
@@ -1377,7 +1402,7 @@
                                                                                 <div class="video-card video-card-list videosidelist">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
-                                                                                  
+
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
                                                                                             <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
@@ -1389,7 +1414,7 @@
                                                                                             <a class="play-icon" style=" cursor: pointer;"></a>
                                                                                         }
                                                                                     </div>
-                                                                                    <div class="video-card-body"  onclick="changeVideo(@videolist.Priority)">
+                                                                                    <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
                                                                                         <div class="video-title">
                                                                                             @if (@videolist.VideoTitle.Length > 11)
                                                                                             {
@@ -1408,7 +1433,7 @@
                                                                                 <div class="video-card video-card-list videosidelist">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
-                                                                            
+
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
                                                                                             <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
@@ -1422,8 +1447,8 @@
                                                                                         }
 
                                                                                     </div>
-                                                                                    <div class="video-card-body"  onclick="changeVideo(@videolist.Priority)">
-                                                                                        <div class="video-title" >
+                                                                                    <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
+                                                                                        <div class="video-title">
                                                                                             @if (@videolist.VideoTitle.Length > 11)
                                                                                             {
                                                                                                 <a data-tooltip="@videolist.VideoTitle" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.VideoTitle</span> </a>
@@ -1446,114 +1471,114 @@
                                                     {
                                                         @if (Model.SubVideo_List.Count > 0)
                                                         {
-                                                <h4 class="related-title">
-                                                    Similar Skill Video
-                                                </h4>
-                                                                <div id="style-2" class="single-video-right">
+                                                            <h4 class="related-title">
+                                                                Similar Skill Video
+                                                            </h4>
+                                                            <div id="style-2" class="single-video-right">
+                                                                <div>
                                                                     <div>
-                                                                        <div>
-                                                                            <div class="relatedvideo">
+                                                                        <div class="relatedvideo">
 
-                                                                                @foreach (var videolist in Model.SubVideo_List)
-                                                                                {
-                                                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-                                                                                    <div class="video-card video-card-list videosidelist">
-                                                                                        <div class="video-card-image">
-                                                                                            @if (videolist.VideoLink.Contains(".mp4"))
+                                                                            @foreach (var videolist in Model.SubVideo_List)
+                                                                            {
+                                                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                                                <div class="video-card video-card-list videosidelist">
+                                                                                    <div class="video-card-image">
+                                                                                        @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                        {
+                                                                                            @if (videolist.ThumbnailImage != null)
                                                                                             {
-                                                                                                @if (videolist.ThumbnailImage != null)
-                                                                                                {
-                                                                                                    <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                                <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
-                                                                                                    <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                                </video>
-                                                                                                @if (Model.IsClientCurated)
-                                                                                                {
-                                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
-
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-
-                                                                                                }
+                                                                                                <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                                <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                            </video>
+                                                                                            @if (Model.IsClientCurated)
+                                                                                            {
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
 
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                @if (videolist.ThumbnailImage != null)
-                                                                                                {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
-                                                                                                else
-                                                                                                { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
 
-                                                                                        </div>
-                                                                                        <div class="video-card-body">
-                                                                                            <div class="video-title">
-                                                                                                @if (@videolist.candidateName.Length > 11)
-                                                                                                {
-                                                                                                    <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    <span class="candidate">@videolist.candidateName</span>}
+                                                                                            }
 
-                                                                                                @if (@videolist.JDTiltle.Length > 10)
-                                                                                                {
-                                                                                                    <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @if (videolist.ThumbnailImage != null)
+                                                                                            {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
+                                                                                            else
+                                                                                            { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
 
-                                                                                                else
-                                                                                                {
-                                                                                                    <span>@videolist.JDTiltle</span>}
-
-                                                                                            </div>
-                                                                                            <div class="video-page text-success">
-                                                                                                &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
-                                                                                                <span class="divider-g">
-                                                                                                    @if (videolist.InterviewStatus == 4)
-                                                                                                    {
-                                                                                                        <span style="color:palevioletred">Border Line</span>
-                                                                                                    }
-
-                                                                                                    else if (videolist.InterviewStatus == 2)
-                                                                                                    {
-                                                                                                        <span style="color:green">Selected</span>
-
-                                                                                                    }
-                                                                                                </span>
-
-                                                                                            </div>
-
-
-                                                                                            <div class="video-info">
-                                                                                                <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
-                                                                                                {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                                    </div>
+                                                                                    <div class="video-card-body">
+                                                                                        <div class="video-title">
+                                                                                            @if (@videolist.candidateName.Length > 11)
+                                                                                            {
+                                                                                                <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                            }
                                                                                             else
                                                                                             {
-                                                                                                <span id="join_time"> @videolist.joiningTime</span>}
-                                                                                            </div>
+                                                                                                <span class="candidate">@videolist.candidateName</span>}
 
-                                                                                            <div class="video-info">
-                                                                                                <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
-                                                                                                {
-                                                                                                    <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+                                                                                            @if (@videolist.JDTiltle.Length > 10)
+                                                                                            {
+                                                                                                <a href="#" data-tooltip="@videolist.JDTiltle"> <span class="join-time" style="color: #6c757d;font-weight: 500; font-size:13px;">(@videolist.JDTiltle.Split("|")[0])</span></a>}
 
-                                                                                                else
+                                                                                            else
+                                                                                            {
+                                                                                                <span>@videolist.JDTiltle</span>}
+
+                                                                                        </div>
+                                                                                        <div class="video-page text-success">
+                                                                                            &nbsp;<i class="fas fa-calendar-alt"></i> <span class="interviewDate">@videolist.interviewDate</span>
+                                                                                            <span class="divider-g">
+                                                                                                @if (videolist.InterviewStatus == 4)
                                                                                                 {
-                                                                                                    <span>@videolist.expectedPerHourRate</span>}
-                                                                                            </div>
+                                                                                                    <span style="color:palevioletred">Border Line</span>
+                                                                                                }
+
+                                                                                                else if (videolist.InterviewStatus == 2)
+                                                                                                {
+                                                                                                    <span style="color:green">Selected</span>
+
+                                                                                                }
+                                                                                            </span>
+
+                                                                                        </div>
+
+
+                                                                                        <div class="video-info">
+                                                                                            <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
+                                                                                            {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
+                                                                                        else
+                                                                                        {
+                                                                                            <span id="join_time"> @videolist.joiningTime</span>}
+                                                                                        </div>
+
+                                                                                        <div class="video-info">
+                                                                                            <span>Expected Salary:</span>  @if (@videolist.expectedPerHourRate.Length > 10)
+                                                                                            {
+                                                                                                <a href="#" data-tooltip="@videolist.expectedPerHourRate"> <span class="join-time">@videolist.expectedPerHourRate</span></a>}
+
+                                                                                            else
+                                                                                            {
+                                                                                                <span>@videolist.expectedPerHourRate</span>}
                                                                                         </div>
                                                                                     </div>
-                                                                                }
+                                                                                </div>
+                                                                            }
 
-                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            }
-                                                            else
-                                                            {
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
 
-                                                            }
+                                                        }
                                                     }
                                                 </div>
                                             </div>

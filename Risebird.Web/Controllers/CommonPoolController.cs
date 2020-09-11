@@ -601,6 +601,10 @@ namespace Risebird.Web.Controllers
                         {
                             NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
                         }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
+                        }
                         // to get videocount details
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
@@ -714,6 +718,10 @@ namespace Risebird.Web.Controllers
                         if (model.MeetingPatch.Count() > 0)
                         {
                             NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
                         }
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
@@ -932,6 +940,10 @@ namespace Risebird.Web.Controllers
                         if (model.MeetingPatch.Count() > 0)
                         {
                             NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
                         }
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();

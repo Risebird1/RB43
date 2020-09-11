@@ -6180,6 +6180,10 @@ namespace Risebird.Web.Controllers
                         {
                             NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
                         }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
+                        }
                         // to get videocount details
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
