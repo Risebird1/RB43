@@ -213,6 +213,8 @@ textarea::-webkit-scrollbar-thumb {
 }
 .count-bg span {
     color: #fff !important;
+    position: relative;
+    top: -4px;
 }
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
     border-bottom: 2px #929292 solid !important;
