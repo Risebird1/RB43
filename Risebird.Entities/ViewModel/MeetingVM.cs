@@ -15,6 +15,7 @@ namespace Risebird.Entities.ViewModel
         public MeetingVM()
         {
             SubVideo_List = new List<MeetingVM>();
+            MeetingPatch = new List<QuestionDetails>();
         }
         public List<MeetingVM> SubVideo_List { get; set; }
         public int imid { get; set; }
@@ -201,6 +202,8 @@ namespace Risebird.Entities.ViewModel
         public string LogoUrl { get; set; }
         public int? VideoSentimentImid { get; set; }
         public string Client { get; set; }
+        public List<QuestionDetails> MeetingPatch { get; set; }
+        public int MeetingPatchCount { get; set; }
         public string CostEstimate { get; set; }
     }
     public class VedioComments

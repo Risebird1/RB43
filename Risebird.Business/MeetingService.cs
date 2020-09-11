@@ -1779,7 +1779,32 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public async Task<List<QuestionDetails>> FetchQuestionDetails(int interviewid)
+        {
+            try
+            {
+                var result = await _meetingRespository.FetchQuestionDetails(interviewid);
+                 return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public string UpdateQuestionDetails(List<QuestionDetails> _question)
+        {
+            try
+            {
+                var result = _meetingRespository.UpdateQuestionDetails(_question);
+                return result.ToString();
+            }
+            catch (Exception ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
     }
 
 }

@@ -1,0 +1,169 @@
+﻿@model Risebird.Entities.ViewModel.Question
+@{
+    ViewData["Title"] = "Interview Video Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
+
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js"></script>
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Interview Video Upload</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
+    </div>
+    <div class="content curated-group client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+
+                    <div class="mdc-card-wrapper__text-section">
+
+                        @using (Html.BeginForm("UploadInterviewVideoes", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+                        {
+
+
+                        
+
+                            <div id="tableID">
+                                <div class="scrollbox-curated">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered mbn" id="IRFList">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center" style="font-size:15px!important;">Question</th>
+                                                    <th class="text-center" style="font-size:15px!important;">VideoTitle</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Priority</th>
+                                                    <th class="text-center" style="font-size:15px!important;">VideoLink</th>
+                                                    <th class="text-center" style="font-size:15px!important;">ThumbNailLink</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Thumbnail</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Action</th>
+
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int i = 0; i < Model.questionset.Count(); i++)
+                                                {
+                                                <tr>
+                                                    <td>
+                                                        @Html.HiddenFor(m => m.questionset[i].InterviewId)
+                                                        @Html.HiddenFor(m => m.questionset[i].Id)
+
+                                                        @Html.TextBoxFor(m => m.questionset[i].Question, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.questionset[i].VideoTitle, new { @class = "form-control text-box single-line" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.questionset[i].Priority, new { @class = "form-control text-box single-line" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.questionset[i].VideoLink, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.questionset[i].ThumbnailLink, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.questionset[i].Thumbnail, new { type = "file", @class = "form-control btn ", @accept = ".jpg,.png" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.questionset[i].VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
+                                                    </td>
+                                                </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+                        }
+
+
+
+                    </div>
+
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#IRFList').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                //[10, 25, 50, -1],
+                //[10, 25, 50, "All"]
+                [-1],
+                ["All"]
+            ],
+            order: [],
+            responsive: false,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
+        });
+        var table = $('#IRFList').DataTable();
+    });
+</script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+<script>
+    (function ($) {
+        $(window).on("load", function () {
+            $(".scrollbox-curated").mCustomScrollbar();
+        });
+    })(jQuery);
+</script>
