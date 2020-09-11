@@ -1963,9 +1963,14 @@ textarea::-webkit-scrollbar-thumb {
         margin: 0;
         padding: 0;
     }
-        .relatedvideo .videosidelist {
-            width: 100%;
+        .relatedvideo.rvdio .videosidelist {
+            width: 360px !important;
+            margin: 0px 5px;
         }
+
+    .relatedvideo .videosidelist {
+        width: 100%;
+    }
             .mob-pad {
         padding: 0px !important;
         display: block !important
@@ -2082,7 +2087,15 @@ textarea::-webkit-scrollbar-thumb {
     .video-contop {
         margin-top: 0;
     }
-    .k .fa{font-size:20px!important}
+
+    .relatedvideo.rvdio .video-card-list .video-card-body {
+        width: 60% !important;
+    }
+
+
+    .k .fa {
+        font-size: 20px !important
+    }
 
     #VideoDetailsModel .modal-lg {
         max-width: 700px !important;
