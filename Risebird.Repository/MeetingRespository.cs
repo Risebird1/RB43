@@ -2798,7 +2798,7 @@ namespace Risebird.Repository
                     {
                         var query = "Select 0 as Id,Comment as Question,InterviewId,'' as VideoTitle,'' as VideoLink,0 as Priority,'' as ThumbnailLink from QuestionsDiscussed Where InterViewid=@InterViewid";
                         var dynamicParameters = new DynamicParameters();
-                        finaldynamicParameters.Add("@InterViewid", interviewid);
+                        dynamicParameters.Add("@InterViewid", interviewid);
                         results = con.Query<QuestionDetails>(query, dynamicParameters);
                     }
                     return results;

@@ -34,7 +34,7 @@ join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
 left join QCFeedbackReport QCF on im.id=QCF.InterviewId      
 inner join client cl on IRF.ClientID=cl.id      
 inner join TechSkillReport tsr  on tsr.InterviewId= im.id
-outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId)patchvideoCount
+outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount
 where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null
 group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,      
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,      
@@ -64,7 +64,7 @@ inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id
 inner join dbo.UserList ul on ul.id = tc.ClientUserId      
 inner join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id   
 inner join TechSkillReport tsr  on tsr.InterviewId= im.id
-outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId)patchvideoCount
+outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and NULLIF(VideoLink, '') IS NOT NULL)patchvideoCount
 where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ul.EmailId=@Emailid and QCF.QCStatus=1 and (ic.MoveToCP is null or ic.MoveToCP =0)       
 group by im.id,im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,      
 im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewOnDevice, im.PreferredLocation,IRF.IsBiometricEnabled,  im.InterviewBiometryScore,      
