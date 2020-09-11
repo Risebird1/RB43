@@ -1759,7 +1759,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .counts-liks label {
-    font-size: 15px !important;
+    font-size: 14px !important;
     margin-bottom: 5px;
     color: #9A9A9A;
     padding: 0px 5px !important;
@@ -1848,7 +1848,7 @@ textarea::-webkit-scrollbar-thumb {
     .relatedvideo .video-card-list .video-card-image {
         float: left;
         margin: 0 0px 10px 0;
-        width: 35%;
+        width: 33%;
         position: relative;
     }
 
@@ -1856,7 +1856,7 @@ textarea::-webkit-scrollbar-thumb {
     padding: 0;
     height: auto;
     float: left;
-    width: 61%!important;
+    width: 62%!important;
     margin-left: 10px;
 }
 .count-bg {
@@ -1956,7 +1956,17 @@ textarea::-webkit-scrollbar-thumb {
     .designation {
         font-size: 16px;
     }
-    .mob-pad {
+    .relatedvideo {
+        flex: 0 0 0%;
+        max-width: 100%;
+        padding: 10px;
+        margin: 0;
+        padding: 0;
+    }
+        .relatedvideo .videosidelist {
+            width: 100%;
+        }
+            .mob-pad {
         padding: 0px !important;
         display: block !important
     }
@@ -2193,6 +2203,11 @@ textarea::-webkit-scrollbar-thumb {
 @media screen and (max-width: 767px) {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
+    }
+
+    .single-video-right.related {
+        height: auto;
+        overflow-x: hidden;
     }
     .related .videosidelist:first-child {
         padding-top: 5px;
