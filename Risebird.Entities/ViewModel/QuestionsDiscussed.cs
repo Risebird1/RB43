@@ -9,5 +9,9 @@
         public int RatingId { get; set; }
         public int? Timing { get; set; }
         public string QuestionStatus { get; set; }
+        public string VideoLink { get; set; }
+        public int Priority { get; set; }
+
+
     }
 }

@@ -1263,7 +1263,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from QuestionsDiscussed where InterviewId = @id";
+                // var query = "Select * from QuestionsDiscussed where InterviewId = @id";
+                var query = "Select  qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority from QuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment where qd.Interviewid= @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1691,7 +1692,7 @@ namespace Risebird.Repository
                     var resultset = con.Query<QuestionDetails>(query, dynamicParameters);
                     if (resultset.Count() != 0)
                     {
-                        result.MeetingPatch = resultset.OrderBy(x=>x.Priority).ToList();
+                        result.MeetingPatch = resultset.OrderBy(x => x.Priority).ToList();
                     }
                     return result;
                 }
@@ -2437,7 +2438,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from SharedQuestionsDiscussed where InterviewId = @id";
+                //var query = "Select * from SharedQuestionsDiscussed where InterviewId = @id";
+                var query = "Select qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority from SharedQuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment join SharedInterviewComments ic on ic.id=qd.Interviewid where qd.Interviewid= @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2831,7 +2833,7 @@ namespace Risebird.Repository
 
                     foreach (var item in _question)
                     {
-                        questionsDt.Rows.Add(item.Id, item.InterviewId, item.Question, item.Priority, item.VideoTitle, item.VideoLink,item.Thumbnail);
+                        questionsDt.Rows.Add(item.Id, item.InterviewId, item.Question, item.Priority, item.VideoTitle, item.VideoLink, item.Thumbnail);
                     }
 
                     SqlCommand cmdQuestions = new SqlCommand("usp_AddorEditQuestionsDetails", con)
