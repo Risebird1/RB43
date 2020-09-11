@@ -2894,7 +2894,7 @@
 
             // Add data
             chart.data = [{
-                "country": "Tech",
+                "country": "Techi",
                 "visits": arr[0]
 
             }, {
@@ -2910,6 +2910,9 @@
 
             // Create axes
             chart.logo.disabled = true;
+    chart.tapToActivate = true;
+
+
             var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
             categoryAxis.dataFields.category = "country";
             categoryAxis.renderer.inside = true;
@@ -2928,7 +2931,7 @@
             });
 
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
+   
             categoryAxis.renderer.grid.template.disabled = true;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             valueAxis.renderer.grid.template.disabled = true;
