@@ -62,19 +62,29 @@
         padding: 3px 4px;
         font-size: 12px;
     }
-.remove-btn input{
+.remove-btn input {
     border: 0px;
     background: none;
     text-align: center;
+    padding: 2px 20px;
+    width: 30px;
+    height: 30px;
+    display: block;
+    position: relative;
+    top: 10px;
 }
 
-    .remove-btn i {
-        position: relative;
-        top: 0px;
-        left: -10px;
-        color: #c53737;
-        font-size: 17px
-    }
+
+.remove-btn i {
+    position: relative;
+    top: -17px;
+    left: -5px;
+    color: #c53737;
+    font-size: 17px;
+    padding: 0px 6px;
+    width: 30px;
+}
+
     .text-areadiv #comment::-webkit-input-placeholder { /* Edge */
         line-height: 40px !important
     }
@@ -1862,21 +1872,30 @@ textarea::-webkit-scrollbar-thumb {
 .count-bg {
     position: absolute;
     z-index: 1000;
-    right: 0px;
+    right: -1px;
     background: rgba(0, 0, 0, 0.8);
     height: 100%;
     width: 40%;
     text-align: center;
     display: table;
 }
-.count-bg span {
+    .count-bg span {
+        display: table-cell;
+        height: 100%;
+        vertical-align: middle;
+        font-size: 16px;
+        background: url(../../Newassets/img/lines.png) 52% 75% no-repeat;
+    }
+.video-scroller {
+    height: 130px;
+}
+
+#VideoList .count-bg span {
     display: table-cell;
     height: 100%;
     vertical-align: middle;
     font-size: 16px;
-}
-.video-scroller {
-    height: 130px;
+    background: url(../../Newassets/img/lines.png) 52% 65% no-repeat;
 }
 .chat {
     background: #fff;
@@ -1953,6 +1972,9 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 @media screen and (max-width:1024px) {
+    .single-video-right.related {
+        overflow-x: hidden;
+    }
     .designation {
         font-size: 16px;
     }

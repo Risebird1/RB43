@@ -913,8 +913,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     padding: 0;
     height: auto;
     float: left;
-    width: 230px;
-
+    /* width: 230px;*/
 }
 
 .videosidelist:first-child {

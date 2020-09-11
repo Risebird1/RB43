@@ -182,8 +182,12 @@ textarea::-webkit-scrollbar-thumb {
     color: #000;
 }
 .count-bg span {
-    color: #fff!important;
+    color: #fff !important;
+    position: relative;
+    top: -4px;
 }
+
+
 .active-video {
     border: 5px #e8e4e4 solid !important;
 }

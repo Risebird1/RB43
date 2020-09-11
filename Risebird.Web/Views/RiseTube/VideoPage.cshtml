@@ -1032,7 +1032,10 @@
                                                                                                         <th width="40%">Questions</th>
                                                                                                         <th width="20%">SkillName</th>
                                                                                                         <th width="20%">Rating</th>
-                                                                                                        <th width="10%">Time(In Seconds)</th>
+                                                                                                        @if (Model.MeetingPatch.Count() == 0)
+                                                                                                        {
+                                                                                                            <th width="10%">Time(In Seconds)</th>
+                                                                                                        }
                                                                                                     </tr>
                                                                                                 </thead>
                                                                                                 <tbody>
@@ -1095,11 +1098,6 @@
                                                                                                                     </td>
                                                                                                                     <td>
                                                                                                                         @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
-                                                                                                                    </td>
-                                                                                                                    <td>
-
-                                                                                                                        @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
-
                                                                                                                     </td>
                                                                                                                 </tr>
                                                                                                             }
@@ -1484,6 +1482,10 @@
                                                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                                 <div class="video-card video-card-list videosidelist">
                                                                                     <div class="video-card-image">
+                                                                                        @if (videolist.MeetingPatchCount > 0)
+                                                                                        {
+                                                                                            <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
+                                                                                        }
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
                                                                                             @if (videolist.ThumbnailImage != null)
@@ -1617,6 +1619,7 @@
                                                                                 @if (videolist.MeetingPatchCount > 0)
                                                                                 {
                                                                                     <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
+                                                                                    <div class="underline--magical"></div>
                                                                                 }
                                                                                 @if (videolist.VideoLink.Contains(".mp4"))
                                                                                 {
@@ -2390,9 +2393,12 @@
                                                                         <th width="40%">Questions</th>
                                                                         <th width="20%">SkillName</th>
                                                                         <th width="20%">Rating</th>
-                                                                        <th width="10%">Time(In Seconds)</th>
-                                                                        <th width="10%">Action</th>
-                                                                    </tr>
+                                                                        @if (Model.MeetingPatch.Count() == 0)
+                                                                        {
+                                                                            <th width="10%">Time(In Seconds)</th>
+                                                                        }
+                                                                            <th width="10%">Action</th>
+                                                                        </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     @if (Model.IreportModel.QuestionsCollection == null || Model.IreportModel.QuestionsCollection.Count() == 0)
@@ -2423,25 +2429,33 @@
                                                                     {
                                                                         for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
                                                                         {
-                                                                            <tr id="quetxt_@i" style="cursor:pointer">
-                                                                                <td>
-                                                                                    @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
-                                                                                </td>
-                                                                                <td>
-                                                                                    @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
-                                                                                    @Html.HiddenFor(m => m.IreportModel.QuestionsCollection[i].QuestionStatus, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                                                </td>
-                                                                                <td class="text-center remove-btn">
-                                                                                    <input type="button" value="" onclick="RemoveRow(@i)" /><i class="far fa-trash-alt"></i>
-                                                                                </td>
+                                                                <tr id="quetxt_@i" style="cursor:pointer">
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
+                                                                    </td>
+                                                                    @if (Model.MeetingPatch.Count() == 0)
+                                                                    {
+                                                                        <td>
+                                                                            @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
+                                                                            @Html.HiddenFor(m => m.IreportModel.QuestionsCollection[i].QuestionStatus, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.HiddenFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
+                                                                        @Html.HiddenFor(m => m.IreportModel.QuestionsCollection[i].QuestionStatus, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                                    }
+                                                                    <td class="text-center remove-btn" onclick="RemoveRow(@i)">
+                                                                        <input type="button" value=""  /><i class="far fa-trash-alt"></i>
+                                                                    </td>
 
-                                                                            </tr>
+                                                                </tr>
                                                                         }
                                                                     }
                                                                 </tbody>
@@ -2935,7 +2949,7 @@
 
             // Create axes
             chart.logo.disabled = true;
-    chart.tapToActivate = true;
+            chart.tapToActivate = true;
 
 
             var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
@@ -2956,7 +2970,7 @@
             });
 
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-   
+
             categoryAxis.renderer.grid.template.disabled = true;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             valueAxis.renderer.grid.template.disabled = true;
@@ -3695,7 +3709,6 @@
         html += '          <th class="text-center">Video Link</th>';
         html += '            <th class="text-center">Total View</th>';
         html += '           <th class="text-center">Total Time</th>';
-        html += '           <th class="text-center">Video Time</th>';
         html += '           <th class="text-center">Action</th>';
         html += '           <th class="text-center">Interest</th>';
 
@@ -3715,12 +3728,7 @@
                 html += '                <td class="text-center"></td>';
 
             }
-            if (data[i].currentTime != null) {
-                html += '                  <td class="text-center">' + data[i].currentTime + '</td>';
-            } else {
-                html += '                  <td class="text-center"></td>';
-
-            }
+          
             html += '                <td class="text-center"><div class="sharing-btn"><i class="fa fa-share-alt"></i> <input  type="button" value="Share" onclick="OpenSharePopup(' + i + ')" /></div></td>';
             if (data[i].isIntrested == "Interested" || data[i].isIntrested == "Intrested") {
                 html += '                <td class="text-center"><div><input class="view-video"  type="button" value="Interested" /></div></td>';

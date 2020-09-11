@@ -316,8 +316,11 @@ input:-internal-autofill-selected{
   
  
 }
-
-.count-bg span{color:#9a9a9a!important}
+.count-bg span {
+    color: #fff !important;
+    position: relative;
+    top: -4px;
+}
 [type="date"] {
     background: #f5f5f5 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;

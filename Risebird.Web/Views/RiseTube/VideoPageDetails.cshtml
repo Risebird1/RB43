@@ -441,7 +441,10 @@
                                                                                                         <th width="40%">Questions</th>
                                                                                                         <th width="20%">SkillName</th>
                                                                                                         <th width="20%">Rating</th>
-                                                                                                        <th width="10%">Time(In Seconds)</th>
+                                                                                                        @if (Model.MeetingPatch.Count() == 0)
+                                                                                                        {
+                                                                                                            <th width="10%">Time(In Seconds)</th>
+                                                                                                        }
                                                                                                     </tr>
                                                                                                 </thead>
                                                                                                 <tbody>
@@ -518,9 +521,6 @@
                                                                                                                     </td>
                                                                                                                     <td>
                                                                                                                         @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
-                                                                                                                    </td>
-                                                                                                                    <td>
-                                                                                                                        @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
                                                                                                                     </td>
                                                                                                                 </tr>
                                                                                                             }
@@ -843,7 +843,7 @@
 
 
                                                                                         @*
-                                            <div class="time">3:50</div>
+                                                                                            <div class="time">3:50</div>
                                                                                         *@
                                                                                     </div>
                                                                                     <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
@@ -883,6 +883,10 @@
                                                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                                 <div class="video-card video-card-list videosidelist">
                                                                                     <div class="video-card-image">
+                                                                                        @if (videolist.MeetingPatchCount > 0)
+                                                                                        {
+                                                                                            <div class="count-bg"><span>@videolist.MeetingPatchCount</span></div>
+                                                                                        }
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
                                                                                             @if (videolist.ThumbnailImage != null)
@@ -1009,7 +1013,7 @@
                                                                 {
                                                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
 
-                                                                    <td class="relatedvideo" style="width:33.3%">
+                                                                    <td class="relatedvideo rvdio" style="width:33.3%">
                                                                         <div class="video-card video-card-list  videosidelist">
                                                                             <div class="video-card-image">
                                                                                 @if (videolist.MeetingPatchCount > 0)
@@ -1045,7 +1049,7 @@
 
 
                                                                                 @*
-                                                                <div class="time">3:50</div>
+                                                                                    <div class="time">3:50</div>
                                                                                 *@
                                                                             </div>
                                                                             <div class="video-card-body">
@@ -1088,8 +1092,8 @@
                                                                                 <div class="video-info">
                                                                                     <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
                                                                                     {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                                    else
-                                                                                    {
+                                                                                else
+                                                                                {
                                                                                     <span id="join_time"> @videolist.joiningTime</span>}
                                                                                 </div>
 
@@ -1169,7 +1173,7 @@
 
 
                                                                     @*
-                                                    <div class="time">3:50</div>
+                                                                        <div class="time">3:50</div>
                                                                     *@
                                                                 </div>
                                                                 <div class="video-card-body">
@@ -1212,8 +1216,8 @@
                                                                     <div class="video-info">
                                                                         <span> Notice Period: </span> @if (videolist.joiningTime.Length > 10)
                                                                         {<a href="#" data-tooltip="@videolist.joiningTime"> <span class="join-time"> @videolist.joiningTime</span></a>}
-                                                                        else
-                                                                        {
+                                                                    else
+                                                                    {
                                                                         <span id="join_time"> @videolist.joiningTime</span>}
                                                                     </div>
 
@@ -1241,7 +1245,7 @@
                                 }
                             </div>
                         }
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2014,28 +2018,28 @@
             });
         }
     }
-        function changeVideo(index) {
-            $(".video-card-image").removeClass("active-video");
-            $("#divvideoclick_" + index).addClass("active-video");
-            $('.active-video').attr('opacity', '0.65')
-            var videourl = $("#txtvideopri_" + index).val();
-            var html = '';
+    function changeVideo(index) {
+        $(".video-card-image").removeClass("active-video");
+        $("#divvideoclick_" + index).addClass("active-video");
+        $('.active-video').attr('opacity', '0.65')
+        var videourl = $("#txtvideopri_" + index).val();
+        var html = '';
 
-            if (videourl.includes(".mp4") || videourl.includes(".org")) {
-                html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">';
-                html += '<source src="' + videourl + '" type="video/mp4">';
-                html += '</video>';
-            }
-            else if (videourl.includes("/manifest")) {
-                html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " controlsList="nodownload">';
-                html += '<source src="' + videourl + '" type="application/vnd.ms-sstr+xml" />';
-                html += ' </video>';
-            }
-            else {
-                html += '           <iframe width="100%" class="vjs-tech btnvideo" height="315" src="' + videourl + '" allowfullscreen></iframe>';
-            }
-            $("#divvideochange").empty().html(html);
+        if (videourl.includes(".mp4") || videourl.includes(".org")) {
+            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">';
+            html += '<source src="' + videourl + '" type="video/mp4">';
+            html += '</video>';
         }
+        else if (videourl.includes("/manifest")) {
+            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " controlsList="nodownload">';
+            html += '<source src="' + videourl + '" type="application/vnd.ms-sstr+xml" />';
+            html += ' </video>';
+        }
+        else {
+            html += '           <iframe width="100%" class="vjs-tech btnvideo" height="315" src="' + videourl + '" allowfullscreen></iframe>';
+        }
+        $("#divvideochange").empty().html(html);
+    }
 </script>
 <script src="~/RiseTube/js/custom.js"></script>
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>

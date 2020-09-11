@@ -2788,17 +2788,17 @@ namespace Risebird.Repository
         {
             try
             {
-                var finalquery = "Select Id,Question,InterviewId,VideoTitle,VideoLink,Priority,ThumbnailLink from VideoQuestionDetails Where Interviewid=@interviewid";
+                var finalquery = "Select Id,Question,InterviewId,VideoTitle,VideoLink,Priority,ThumbnailLink from VideoQuestionDetails Where InterViewid=@InterViewid";
                 var finaldynamicParameters = new DynamicParameters();
-                finaldynamicParameters.Add("@interviewid", interviewid);
+                finaldynamicParameters.Add("@InterViewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<QuestionDetails>(finalquery, finaldynamicParameters);
                     if (results.Count() == 0)
                     {
-                        var query = "Select 0 as Id,Comment as Question,InterviewId,'' as VideoTitle,'' as VideoLink,0 as Priority,'' as ThumbnailLink from QuestionsDiscussed Where InterviewId=@Interviewid";
+                        var query = "Select 0 as Id,Comment as Question,InterviewId,'' as VideoTitle,'' as VideoLink,0 as Priority,'' as ThumbnailLink from QuestionsDiscussed Where InterViewid=@InterViewid";
                         var dynamicParameters = new DynamicParameters();
-                        dynamicParameters.Add("@Interviewid", interviewid);
+                        dynamicParameters.Add("@InterViewid", interviewid);
                         results = con.Query<QuestionDetails>(query, dynamicParameters);
                     }
                     return results;
