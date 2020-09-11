@@ -104,8 +104,10 @@ hr {
     background-color: #161616 !important;
     box-shadow: none !important;
 }
-
- .relatedvideo .video-card {
+.show .dropdown-menu:before {
+    color: #181818;
+}
+.relatedvideo .video-card {
     border: 1px #1f1e1e solid;
     background-color: #161616 !important;
     box-shadow: none !important;
