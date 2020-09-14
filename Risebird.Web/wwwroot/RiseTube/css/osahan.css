@@ -865,7 +865,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 }
 
 .video-block .single-video-right .video-title {
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     min-height: 20px;
 }
 
@@ -913,8 +913,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     padding: 0;
     height: auto;
     float: left;
-    width: 230px;
-
+    /* width: 230px;*/
 }
 
 .videosidelist:first-child {

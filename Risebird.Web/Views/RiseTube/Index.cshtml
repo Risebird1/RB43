@@ -434,6 +434,10 @@
                                         <div class="col-xl-3 col-sm-6 mb-3">
                                             <div class="video-card">
                                                 <div class="video-card-image">
+                                                    @if (item.MeetingPatchCount > 0)
+                                                    {
+                                                        <div class="count-bg"><span>@item.MeetingPatchCount</span></div>
+                                                    }
                                                     @if (item.VideoLink.Contains(".mp4"))
                                                     {
                                                         @if (item.ThumbnailImage != null)
@@ -514,14 +518,14 @@
 
                                                     </div>
                                                     <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                     <i class="fas fa-calendar-alt"></i>
+                                                        <i class="fas fa-calendar-alt"></i>
                                                         <span>@item.interviewDate</span>
                                                     </div>
                                                     <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
                                                         <span class="pull-left">Tech Skill Score:</span>
-                                                    
+
                                                         <span class="pull-left">@(item.TechSkillScore)%</span>
-                                                        
+
 
                                                     </div>
 

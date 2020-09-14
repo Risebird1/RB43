@@ -1263,7 +1263,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from QuestionsDiscussed where InterviewId = @id";
+                // var query = "Select * from QuestionsDiscussed where InterviewId = @id";
+                var query = "Select  qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority from QuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment where qd.Interviewid= @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1685,6 +1686,14 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewMeetingsbyId", parameters,
                         commandType: CommandType.StoredProcedure);
+                    var query = "Select InterviewId,VideoTitle,VideoLink,Priority,ThumbnailLink from VideoQuestionDetails Where InterViewid=@InterViewid and NULLIF(VideoLink, '') IS NOT NULL";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@InterViewid", id);
+                    var resultset = con.Query<QuestionDetails>(query, dynamicParameters);
+                    if (resultset.Count() != 0)
+                    {
+                        result.MeetingPatch = resultset.OrderBy(x => x.Priority).ToList();
+                    }
                     return result;
                 }
 
@@ -2429,7 +2438,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from SharedQuestionsDiscussed where InterviewId = @id";
+                //var query = "Select * from SharedQuestionsDiscussed where InterviewId = @id";
+                var query = "Select qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority from SharedQuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment join SharedInterviewComments ic on ic.id=qd.Interviewid where qd.Interviewid= @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2773,6 +2783,83 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<IEnumerable<QuestionDetails>> FetchQuestionDetails(int interviewid)
+        {
+            try
+            {
+                var finalquery = "Select Id,Question,InterviewId,VideoTitle,VideoLink,Priority,ThumbnailLink from VideoQuestionDetails Where InterViewid=@InterViewid";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@InterViewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<QuestionDetails>(finalquery, finaldynamicParameters);
+                    if (results.Count() == 0)
+                    {
+                        var query = "Select 0 as Id,Comment as Question,InterviewId,'' as VideoTitle,'' as VideoLink,0 as Priority,'' as ThumbnailLink from QuestionsDiscussed Where InterViewid=@InterViewid";
+                        var dynamicParameters = new DynamicParameters();
+                        dynamicParameters.Add("@InterViewid", interviewid);
+                        results = con.Query<QuestionDetails>(query, dynamicParameters);
+                    }
+                    return results;
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string UpdateQuestionDetails(List<QuestionDetails> _question)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable questionsDt = new DataTable();
+                    questionsDt.Columns.Add("id", typeof(int));
+                    questionsDt.Columns.Add("Interviewid", typeof(int));
+                    questionsDt.Columns.Add("Question", typeof(string));
+                    questionsDt.Columns.Add("Priority", typeof(int));
+                    questionsDt.Columns.Add("VideoTitle", typeof(string));
+                    questionsDt.Columns.Add("VideoLink", typeof(string));
+                    questionsDt.Columns.Add("ThumbnailLink", typeof(string));
+
+
+                    foreach (var item in _question)
+                    {
+                        questionsDt.Rows.Add(item.Id, item.InterviewId, item.Question, item.Priority, item.VideoTitle, item.VideoLink, item.Thumbnail);
+                    }
+
+                    SqlCommand cmdQuestions = new SqlCommand("usp_AddorEditQuestionsDetails", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDetailsBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@QuestionsDetailsBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
         }
     }
 }
