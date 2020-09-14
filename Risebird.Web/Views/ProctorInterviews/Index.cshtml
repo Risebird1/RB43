@@ -1,0 +1,220 @@
+﻿@model Risebird.Entities.ViewModel.VirtualMachineVM
+@{
+    ViewData["Title"] = "Virtual Machines Catalogue";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Virtual Machines Catalogue
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <!--  <div class="panel-header panel-header-sm"></div>-->
+
+
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">  Virtual Machines Catalogue</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+
+
+                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-search" data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interviewer Search</font></span>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Curated Groups" onclick="location.href='@Url.Action("CuratedGroups", "IRF")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill=" rgb(255, 255, 255)" d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><font style="font-family:arial;"> Curated Groups</font></span>
+                        </button>*@
+
+                       
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card  bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+
+
+                        <!-- end content-->
+                        <!--  end card  -->
+                        <!-- end col-md-12 -->
+                        <!-- Start Card -->
+
+                        <div class="row">
+                            @foreach (var item in Model.VMList)
+                            {
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                    <div class="card-content-holder border card-blue">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class=" col-md-5 col-sm-5 first">
+                                                    <h6> @item.Name </h6>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- irf body-->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="statusImg">
+                                                    <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                </div>
+                                                <div class="statusInfo">
+                                                    <div class="group inner list-group-item-text">
+                                                        
+                                                        <div class="row second">
+                                                            <div> Resource Group Name:</div> <div title="@item.ResourceGroupName">@item.ResourceGroupName</div>
+                                                        </div> <br />
+
+                                                        <div class="row three"> <span>Public Ip Address:</span>@item.IpAddress</div> <br />
+
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-footer action">
+                                            <div class="row">
+
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 " id="irf-card-footer">
+
+                                                    @if (@item.StatusDesc == "running")
+                                                    {
+                                                        <h6 style="color: green;"> @item.StatusDesc</h6>
+                                                    }
+                                                    else if (@item.StatusDesc == "stopped")
+                                                    {
+                                                        <h6 style="color: black;"> @item.StatusDesc</h6>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h6 style="color: grey;"> @item.StatusDesc</h6>
+                                                    }
+                                                </div>
+
+                                                @*<div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
+
+                                                    <button class="mdc-fab app-fab--absolute item1" aria-label="Questions">
+                                                        <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                    </button>
+                                                    <button class="mdc-fab app-fab--absolute allintac" aria-label="Interest-Accept">
+                                                        <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Accept"})'" title="Interest-Accept Candidates" class="mdc-fab__icon material-icons">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                                                        </span>
+                                                    </button>
+
+                                                </div>*@
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- End Card-->
+                        
+
+                        
+                        <!-- end row -->
+
+                        
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@Model.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@Model.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/ProctorInterviews/Index';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@Model.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function () {
+                        window.location.href = '/ProctorInterviews/Index';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+
+
+
+
+

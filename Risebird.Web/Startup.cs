@@ -189,6 +189,9 @@ namespace Risebird.Web
             services.AddScoped<IChatRepository, ChatRepository>();
             services.AddScoped<IMeetingInviteService, MeetingInviteService>();
             services.AddScoped<IMeetingInviteRepository, MeetingInviteRepository>();
+            services.AddScoped<IProctorInterviewsService, ProctorInterviewsService>();
+            services.AddScoped<IProctorInterviewsRepository, ProctorInterviewsRepository>();
+            services.AddScoped<IAzureHelper, AzureHelper>();
 
         }
     }

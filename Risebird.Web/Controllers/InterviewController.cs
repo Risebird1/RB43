@@ -70,6 +70,14 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    //var path = $"http://localhost:7071/api/StartStopVM";
+                    //var functionKey = "Q/8CUsLsbKYeqRMFNPT5QnKsNWzoudpVayC1bN7tQbYK0SEAw1wboQ==";
+
+                   
+                    //HttpClient httpClient = new HttpClient();
+                    //httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                    //await httpClient.SendRequestAsync(HttpMethod.Post, path, new { Name="Harsh"}, functionKey, "", _cancellationToken);
 
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
