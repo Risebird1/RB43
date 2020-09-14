@@ -1829,11 +1829,13 @@ textarea::-webkit-scrollbar-thumb {
     font-weight: 500;
     font-size: 12px;
 }
-
+.mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
+    border-color: rgb(146, 146, 146);
+}
+.mdc-radio__ripple{width:auto;}
 #toggle-click {
     color: blue;
     font-size: 24px;
-
 }
 
 #toggle-click1 {
@@ -1871,7 +1873,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 .count-bg {
     position: absolute;
-    z-index: 1000;
+    z-index:1 ;
     right: -1px;
     background: rgba(0, 0, 0, 0.8);
     height: 100%;
@@ -2543,6 +2545,7 @@ textarea::-webkit-scrollbar-thumb {
     .share {
         width: 30%!important;
     }
+
     .views {
         padding: 0px 10px 0px 10px;
         right: 4px;

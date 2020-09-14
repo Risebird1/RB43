@@ -165,7 +165,9 @@ textarea::-webkit-scrollbar-thumb {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 9% !important;
     box-shadow: none;
+    line-height: 11px !important;
 }
+ 
 .upload-label {
     background: #57adf80f;
 }
