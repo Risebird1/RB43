@@ -1162,12 +1162,12 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> AddCuratedGroup(CuratedGroup curatedGroupDetails)
+        
+        public async Task<bool> AddCuratedGroup(int[] irfList, string cgName)
         {
             try
             {
-                curatedGroupDetails.CuratedIRFMappings = curatedGroupDetails.CuratedIRFMappings.Where(x => x.IsAdded == true).ToList();
-                return _irfRepository.AddCuratedGroup(curatedGroupDetails).Result;
+                return _irfRepository.AddCuratedGroup(irfList, cgName).Result;
             }
 
             catch (Exception e)
@@ -1197,13 +1197,12 @@ namespace Risebird.Business
                 return null;
             }
         }
-
-        public bool UpdateCuratedGroup(CuratedGroup model)
+        
+        public bool UpdateCuratedGroup(int[] irfList, string cgName, int cgId)
         {
             try
             {
-                model.CuratedIRFMappings = model.CuratedIRFMappings.Where(x => x.IsAdded == true).ToList();
-                return _irfRepository.UpdateCuratedGroup(model).Result;
+                return _irfRepository.UpdateCuratedGroup(irfList, cgName, cgId).Result;
             }
 
             catch (Exception e)
@@ -1212,6 +1211,7 @@ namespace Risebird.Business
                 return false;
             }
         }
+
         public CuratedGroupUsersVM GetCuratedGroupUsers(int curatedGroupId)
         {
             try
@@ -1234,13 +1234,12 @@ namespace Risebird.Business
                 return null;
             }
         }
-
-        public bool AddUpdateCuratedGroupUsers(CuratedGroupUsersVM model)
+        
+        public bool AddUpdateCuratedGroupUsers(int[] users, int curatedGroupId)
         {
             try
             {
-                model.CuratedGroupUserList = model.CuratedGroupUserList.Where(x => x.IsAdded == true).ToList();
-                return _irfRepository.AddUpdateCuratedGroupUsers(model).Result;
+                return _irfRepository.AddUpdateCuratedGroupUsers(users, curatedGroupId).Result;
             }
 
             catch (Exception e)
@@ -1249,7 +1248,6 @@ namespace Risebird.Business
                 return false;
             }
         }
-
         public IEnumerable<CuratedUserGroupData> GetCuratedGroupsForCuratedUser(string emailId)
         {
             try

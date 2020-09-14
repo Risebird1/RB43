@@ -62,19 +62,29 @@
         padding: 3px 4px;
         font-size: 12px;
     }
-.remove-btn input{
+.remove-btn input {
     border: 0px;
     background: none;
     text-align: center;
+    padding: 2px 20px;
+    width: 30px;
+    height: 30px;
+    display: block;
+    position: relative;
+    top: 10px;
 }
 
-    .remove-btn i {
-        position: relative;
-        top: 0px;
-        left: -10px;
-        color: #c53737;
-        font-size: 17px
-    }
+
+.remove-btn i {
+    position: relative;
+    top: -17px;
+    left: -5px;
+    color: #c53737;
+    font-size: 17px;
+    padding: 0px 6px;
+    width: 30px;
+}
+
     .text-areadiv #comment::-webkit-input-placeholder { /* Edge */
         line-height: 40px !important
     }
@@ -1759,7 +1769,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .counts-liks label {
-    font-size: 15px !important;
+    font-size: 14px !important;
     margin-bottom: 5px;
     color: #9A9A9A;
     padding: 0px 5px !important;
@@ -1833,6 +1843,62 @@ textarea::-webkit-scrollbar-thumb {
     font-size: 24px;
 }
 
+
+.relatedvideo {
+    flex: 0 0 32.3%;
+    max-width: 32.3%;
+
+    padding: 10px;
+}
+    .relatedvideo .videosidelist:first-child {
+        padding-top: 10px;
+    }
+    .relatedvideo .videosidelist {
+        width: 360px;
+        padding: 10px 10px 0px 10px;
+    }
+    .relatedvideo .video-card-list .video-card-image {
+        float: left;
+        margin: 0 0px 10px 0;
+        width: 33%;
+        position: relative;
+    }
+
+.relatedvideo .video-card-list .video-card-body {
+    padding: 0;
+    height: auto;
+    float: left;
+    width: 62%!important;
+    margin-left: 10px;
+}
+.count-bg {
+    position: absolute;
+    z-index: 1000;
+    right: -1px;
+    background: rgba(0, 0, 0, 0.8);
+    height: 100%;
+    width: 40%;
+    text-align: center;
+    display: table;
+}
+    .count-bg span {
+        display: table-cell;
+        height: 100%;
+        vertical-align: middle;
+        font-size: 16px;
+        background: url(../../Newassets/img/lines.png) 52% 75% no-repeat;
+    }
+.video-scroller {
+    height: 130px;
+}
+
+#VideoList .count-bg span {
+    display: table-cell;
+    height: 100%;
+    vertical-align: middle;
+    font-size: 16px;
+    background: url(../../Newassets/img/lines.png) 52% 65% no-repeat;
+}
 .chat {
     background: #fff;
 }
@@ -1908,10 +1974,28 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 @media screen and (max-width:1024px) {
+    .single-video-right.related {
+        overflow-x: hidden;
+    }
     .designation {
         font-size: 16px;
     }
-    .mob-pad {
+    .relatedvideo {
+        flex: 0 0 0%;
+        max-width: 100%;
+        padding: 10px;
+        margin: 0;
+        padding: 0;
+    }
+        .relatedvideo.rvdio .videosidelist {
+            width: 360px !important;
+            margin: 0px 5px;
+        }
+
+    .relatedvideo .videosidelist {
+        width: 100%;
+    }
+            .mob-pad {
         padding: 0px !important;
         display: block !important
     }
@@ -1988,7 +2072,7 @@ textarea::-webkit-scrollbar-thumb {
 
     .single-video-left {
         border-bottom: 0px #620bee21 solid;
-        margin-bottom: 20px;
+        margin-bottom: 0px;
         padding: 0px;
     }
 
@@ -2027,7 +2111,15 @@ textarea::-webkit-scrollbar-thumb {
     .video-contop {
         margin-top: 0;
     }
-    .k .fa{font-size:20px!important}
+
+    .relatedvideo.rvdio .video-card-list .video-card-body {
+        width: 60% !important;
+    }
+
+
+    .k .fa {
+        font-size: 20px !important
+    }
 
     #VideoDetailsModel .modal-lg {
         max-width: 700px !important;
@@ -2149,7 +2241,34 @@ textarea::-webkit-scrollbar-thumb {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
     }
- 
+
+    .single-video-right.related {
+        height: auto;
+        overflow-x: hidden;
+    }
+    .related .videosidelist:first-child {
+        padding-top: 5px;
+    }
+
+    .relatedvideo {
+        flex: 0 0 100%!important;
+        max-width: 100%!important;
+        padding: 10px;
+    }
+
+    .related .videosidelist .video-card-image {
+        width:30% !important
+    }
+    .related .videosidelist .video-card-body {
+        width: 65% !important;
+    }
+    .related .videosidelist {
+        padding: 5px;
+    }
+    .relatedvideo .videosidelist {
+        width: 100%;
+        padding: 10px 10px 10px 10px;
+    }
 
     #link8 .canvasjs-chart-container {
         text-align: left !important;

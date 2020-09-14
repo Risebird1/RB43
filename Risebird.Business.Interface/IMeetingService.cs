@@ -90,6 +90,8 @@ namespace Risebird.Business.Interface
         string UpdateCandidateStatus(int videoid, string Status);
         Task<SentimentPercentage> GetSentimentAnalysis(int imid);
         Task<List<MeetingVM>> GetSharedRiseTubeMeetings();
+        Task<List<QuestionDetails>> FetchQuestionDetails(int interviewid);
+        string UpdateQuestionDetails(List<QuestionDetails> _question);
 
     }
 }
