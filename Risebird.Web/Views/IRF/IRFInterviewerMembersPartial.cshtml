@@ -12,6 +12,7 @@
                         <th>ResumeLink</th>
                         <th>Total Interviews</th>
                         <th>Total QC</th>
+                        <th class="text-center">Mobile</th>
                         <th class="text-center">Call</th>
                     </tr>
                 </thead>
@@ -21,7 +22,21 @@
                     @foreach (var item in Model)
                     {
                     <tr>
-                        <td>@item.Type</td>
+                        @if (item.Type == "Interviewer")
+                        {
+                            <td style="color: #17c317">@item.Type</td>
+                        }
+
+                        @if (item.Type == "Emergency Interviewer")
+                        {
+                            <td style="color: #ff7bf5">@item.Type</td>
+                        }
+
+
+                        @if (item.Type == "QC Interviewer")
+                        {
+                            <td style="color:yellow">@item.Type</td>
+                        }
                         <td>@item.EmailId</td>
                         @if (item.ResumeLink != null && item.ResumeLink != "")
                         {
@@ -33,9 +48,10 @@
                         else
                         {
                             <td class="text-center">No Resume</td>
-                        }                       
+                        }
                         <td class="text-center">@item.TotalInterviews</td>
                         <td class="text-center">@item.TotalQCInterviews</td>
+                        <td class="text-center">@item.MobileNumber</td>
                         <td class="text-center">
                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                             {
