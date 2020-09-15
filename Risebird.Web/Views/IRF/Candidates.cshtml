@@ -87,6 +87,7 @@
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
                                                     <th>Resume</th>
+                                                    <th>Coded Resume</th>
                                                     <th>Invite Sent</th>
                                                     <th>Invite Confirmation</th>
                                                     <th>Joinability Score</th>
@@ -122,6 +123,7 @@
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
                                                     <th>Resume</th>
+                                                    <th>Coded Resume</th>
                                                     <th>Invite Sent</th>
                                                     <th>Invite Confirmation</th>
                                                     <th>Joinability Score</th>
@@ -191,6 +193,14 @@
                                                     else
                                                     {
                                                         <td>No Resume</td>
+                                                    }
+                                                    @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
+                                                    {
+                                                        <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Coded Resume</td>
                                                     }
                                                     <td class="text-center">@item.TotalInvites</td>
                                                     <td class="text-center">@item.InviteConfirmation</td>

@@ -22,6 +22,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Resume Link")]
 
         public string ResumeLink { get; set; }
+        [Display(Name = "EncodedResume Link")]
+
+        public string EncodedResumeLink { get; set; }
         public string IRFName { get; set; }
         public int TotalInvites { get; set; }
         public int InviteConfirmation { get; set; }
