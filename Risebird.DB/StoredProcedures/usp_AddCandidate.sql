@@ -27,7 +27,8 @@ CREATE PROCEDURE [dbo].[usp_AddCandidate]
 @ExpectedSalary decimal(10,2),
 @Notice decimal(10,2),
 @AddedByUserId int,
-@CostEstimate nvarchar(200)
+@CostEstimate nvarchar(200),
+@EncodedResumeLink varchar(500)
 
 AS
 Begin
@@ -80,7 +81,8 @@ insert into Candidate
 [Notice],
 [AddedByUserId],
 [CandidateMasterId],
-[CostEstimate]
+[CostEstimate],
+[EncodedResumeLink]
 )
 values(@IRFId,
 @ResumeLink,
@@ -97,7 +99,8 @@ values(@IRFId,
 @Notice,
 @AddedByUserId,
 (select id from CandidatesMaster where UserId=@UserId),
-@CostEstimate
+@CostEstimate,
+@EncodedResumeLink
 )
 
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))
@@ -134,7 +137,8 @@ insert into Candidate
 [Notice],
 [AddedByUserId],
 [CandidateMasterId],
-[CostEstimate]
+[CostEstimate],
+[EncodedResumeLink]
 )
 values(@IRFId,
 @ResumeLink,
@@ -151,7 +155,8 @@ values(@IRFId,
 @Notice,
 @AddedByUserId,
 (select id from CandidatesMaster where UserId=@CandidateUserId),
-@CostEstimate)
+@CostEstimate,
+@EncodedResumeLink)
 
 
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))

@@ -583,6 +583,13 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
+                        if (profileName == "CuratedUser")
+                        {
+                            if (!String.IsNullOrEmpty(model.encodedresumeLink))
+                            {
+                                NewModel.resumeLink = model.encodedresumeLink;
+                            }
+                        }
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
                         NewModel.IsLike = model.IsLike;
@@ -700,8 +707,12 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
+                        if (!String.IsNullOrEmpty(model.encodedresumeLink))
+                        {
+                            NewModel.resumeLink = model.encodedresumeLink;
+                        }
                         NewModel.zoomLink = model.zoomLink;
-                        NewModel.IreportModel = IRListModel?? new InterviewReport();
+                        NewModel.IreportModel = IRListModel ?? new InterviewReport();
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
@@ -923,6 +934,13 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
+                        if (profileName == "CuratedUser")
+                        {
+                            if (!String.IsNullOrEmpty(model.encodedresumeLink))
+                            {
+                                NewModel.resumeLink = model.encodedresumeLink;
+                            }
+                        }
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel;
                         NewModel.IsLike = model.IsLike;

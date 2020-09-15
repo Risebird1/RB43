@@ -33,6 +33,7 @@ CREATE TABLE [dbo].[Candidate](
 	[VoiceItUserId] [nvarchar](max) NULL,
 	[Status] [int] NULL,
     [CostEstimate] [nvarchar](200) NULL,
+    [EncodedResumeLink] [varchar](500) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -290,6 +291,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add [CostEstimate] [nvarchar](200) NULL
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'EncodedResumeLink')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add  [EncodedResumeLink] [varchar](500) NULL
 END
 
 End

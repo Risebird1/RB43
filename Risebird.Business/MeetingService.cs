@@ -746,6 +746,7 @@ namespace Risebird.Business
                     model.CandidateName = interviewDetails.candidateName;
                     model.interviewDate = interviewDetails.interviewDate.ToString();
                     model.resumeLink = interviewDetails.resumeLink;
+                    model.encodedresumeLink = interviewDetails.encodedresumeLink;
                     model.IRFId = irfId;
 
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
@@ -884,6 +885,7 @@ namespace Risebird.Business
             var interviewMeetingsDetails = _meetingRespository.GetInterviewMeetingById(model.InterviewId).Result;
             model.PreferredLocation = interviewMeetingsDetails.preferredLocation;
             model.resumeLink = interviewMeetingsDetails.resumeLink;
+            model.encodedresumeLink = interviewMeetingsDetails.encodedresumeLink;
             model.currentEmployerName = model.currentEmployerName;
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
 
@@ -1464,6 +1466,8 @@ namespace Risebird.Business
                     model.LogoUrl = candidatedetails.LogoUrl;
                     model.interviewDate = interviewDetails.interviewDate.ToString();
                     model.resumeLink = interviewDetails.resumeLink;
+                    model.encodedresumeLink = interviewDetails.encodedresumeLink;
+
                     model.IRFId = irfId;
 
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
@@ -1602,6 +1606,7 @@ namespace Risebird.Business
             var interviewMeetingsDetails = _meetingRespository.GetInterviewMeetingById(model.InterviewId).Result;
             model.PreferredLocation = interviewMeetingsDetails.preferredLocation;
             model.resumeLink = interviewMeetingsDetails.resumeLink;
+            model.encodedresumeLink = interviewMeetingsDetails.encodedresumeLink;
             model.currentEmployerName = model.currentEmployerName;
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
 

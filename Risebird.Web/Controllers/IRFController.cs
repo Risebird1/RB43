@@ -2564,7 +2564,7 @@ namespace Risebird.Web.Controllers
                                         CurrentSalary = (workSheet.Cells[rowIterator, 12].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value) : 0,                  // Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value);
                                         ExpectedSalary = (workSheet.Cells[rowIterator, 13].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value) : 0,                //Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value);
                                         Notice = (workSheet.Cells[rowIterator, 14].Value != null) ? Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value) : 0,                   //Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value);
-
+                                        //Add template column EncodedResumeLink
                                         IRFId = IRFId
                                     };
                                     candidateList.Add(candidate);

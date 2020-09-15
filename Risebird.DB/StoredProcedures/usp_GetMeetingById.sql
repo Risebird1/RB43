@@ -27,6 +27,7 @@ SELECT [InterviewMeetings].id as imid
 	 ,candidateEmail
 	 ,ClientHrContact
 	 ,ca.ResumeLink as resumeLink
+	 ,Isnull(ca.EncodedResumeLink,'') as encodedresumeLink
 	 ,confirmationStatus
 	 ,zoomLink
 	 ,[InterviewMeetings].risebirdHR
