@@ -377,6 +377,199 @@ namespace Risebird.Web.Controllers
 
         }
 
+
+
+
+
+        [Authorize]
+        [HttpGet]
+        public FileContentResult HRInterviewsExporttoExcel()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("My Interviews");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
+            try
+            {
+               
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    
+                  
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
+                        if (HttpContext.Session.GetString("HRfilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
+
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                            }
+                            else if (filter.StartDate != null && filter.EndDate == null)
+                            {
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate).ToList();
+                            }
+                            else if (filter.StartDate == null && filter.EndDate != null)
+                            {
+
+                                myInterview = myInterview.Where(t => t.interviewDate.Date <= filter.EndDate).ToList();
+
+                            }
+
+                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = myInterview.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                            filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = myInterview.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+
+                            myInterview = myInterview.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                            && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
+
+
+                        }
+                        else
+                        {
+                            myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
+
+                        }
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        foreach (var item in myInterview)
+                        {
+                            if (!string.IsNullOrEmpty(item.resumeLink))
+                            {
+                                try
+                                {
+                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception)
+                                {
+                                    item.resumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.resumeLink = "";
+                            }
+
+                        }
+                var modelList = myInterview;
+                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 40;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "Date";
+                Sheet.Cells[1, 2].Value = "Slot";
+                Sheet.Cells[1, 3].Value = "Candidate Name";
+                Sheet.Cells[1, 4].Value = "Interviewer";
+                Sheet.Cells[1, 5].Value = "Candidate Email";
+                Sheet.Cells[1, 6].Value = "Primary Skill";
+                Sheet.Cells[1, 7].Value = "Resume";
+                Sheet.Cells[1, 8].Value = "JD Link";
+                Sheet.Cells[1, 9].Value = "Client Hr";
+                Sheet.Cells[1, 10].Value = "QCInterviewer";
+                Sheet.Cells[1, 11].Value = "HR Comment";
+              
+                //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
+                int i = 2;
+                //string LastAction = null; ;
+
+                if (modelList.Count() > 0)
+                {
+                    foreach (var item in modelList)
+                    {
+                        Sheet.Cells[i, 1].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm"); ;
+                        Sheet.Cells[i, 2].Value = item.interviewSlot;
+                        Sheet.Cells[i, 3].Value = item.candidateName;
+                        Sheet.Cells[i, 4].Value = item.interviewer;
+                        Sheet.Cells[i, 5].Value = item.candidateEmail;
+                        Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
+                        if (!string.IsNullOrEmpty(item.resumeLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 7].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
+                                Sheet.Cells[i, 7].Value = "Resume";
+                                Sheet.Cells[i, 7].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 7].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 7].Value = "No Resume";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 7].Value = "No Resume";
+                        }
+                        if (!string.IsNullOrEmpty(item.JDLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 8].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
+                                Sheet.Cells[i, 8].Value = "JD Link";
+                                Sheet.Cells[i, 8].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 8].Value = "No Link";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 8].Value = "No Link";
+                        }
+                        Sheet.Cells[i, 9].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 10].Value = item.QCInterviewer;
+                        Sheet.Cells[i, 11].Value = item.HRComment;
+                        
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         [Authorize]
         public async Task<IActionResult> MultipleCandidateInvites()
         {
