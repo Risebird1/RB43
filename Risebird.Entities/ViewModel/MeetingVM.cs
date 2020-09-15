@@ -57,6 +57,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Resume Link")]
         //[Required]
         public string resumeLink { get; set; }
+        [Display(Name = "Encoded Resume Link")]
+        //[Required]
+        public string encodedresumeLink { get; set; }
         [Display(Name = "Confirmation Status")]
         [Required(ErrorMessage = "Please enter Confirmation Status.")]
         public string confirmationStatus { get; set; }

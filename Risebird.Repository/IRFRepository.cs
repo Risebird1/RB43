@@ -2581,6 +2581,7 @@ namespace Risebird.Repository
                 parameters.Add("@Notice", obj.Notice);
                 parameters.Add("@AddedByUserId", obj.AddedByUserId);
                 parameters.Add("@CostEstimate", obj.CostEstimate);
+                parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -2660,6 +2661,8 @@ namespace Risebird.Repository
                             parameters.Add("@ExpectedSalary", obj.ExpectedSalary);
                             parameters.Add("@Notice", obj.Notice);
                             parameters.Add("@AddedByUserId", userId);
+                            parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
+
                             SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                         }
@@ -2734,6 +2737,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Notice", obj.Notice);
                 dynamicParameters.Add("@id", obj.id);
                 dynamicParameters.Add("@CostEstimate", obj.CostEstimate);
+                dynamicParameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
