@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 
 namespace Risebird.MicroService
 {
@@ -29,16 +30,17 @@ namespace Risebird.MicroService
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            var creds = _azureHelper.GetAzureCredential();
-            string name = req.Query["name"];
+
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            VMActionDTO data = JsonConvert.DeserializeObject<VMActionDTO>(requestBody);
 
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
+            //dynamic data = JsonConvert.DeserializeObject(requestBody);
+
+            string responseMessage = string.Empty;
+            //string responseMessage = string.IsNullOrEmpty(name)
+            //    ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
+            //    : $"Hello, {name}. This HTTP triggered function executed successfully.";
 
             return new OkObjectResult(responseMessage);
         }
