@@ -12,5 +12,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<TriggeredVM>> GetAllTriggeredVMs();
         Task<bool> DeleteTriggeredVMs(List<int> idList);
         Task<bool> UpdateVMStatus(int id, int status);
+        Task<bool> AddVMTrigger(int vmId, string action, string expectedStatus);
     }
 }

@@ -10,6 +10,9 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using RestSharp;
+using System.Net;
+using Risebird.Repository.Interface;
 
 namespace Risebird.MicroService
 {
@@ -17,11 +20,13 @@ namespace Risebird.MicroService
     {
         private readonly IConfiguration _configuration;
         private readonly IAzureHelper _azureHelper;
+        private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
 
-        public StartStopVM(IConfiguration configuration, IAzureHelper azureHelper)
+        public StartStopVM(IConfiguration configuration, IAzureHelper azureHelper, IProctorInterviewsRepository proctorInterviewsRepository)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
+            _proctorInterviewsRepository = proctorInterviewsRepository;
 
         }
         [FunctionName("StartStopVM")]
@@ -34,15 +39,71 @@ namespace Risebird.MicroService
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             VMActionDTO data = JsonConvert.DeserializeObject<VMActionDTO>(requestBody);
-
-            //dynamic data = JsonConvert.DeserializeObject(requestBody);
+            var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name,data.ActionCommand);
 
             string responseMessage = string.Empty;
+            if(result)
+            {
+                //add entry in VmTriggered table
+                var expectedStatus = string.Empty;
+                if(data.ActionCommand.ToLower()=="start")
+                {
+                    expectedStatus = "running";
+                }
+                else
+                {
+                    expectedStatus = "deallocated";
+                }
+                await _proctorInterviewsRepository.AddVMTrigger(data.VMPropertyId, data.ActionCommand,expectedStatus);
+                responseMessage = "Successful";
+            }
+            else
+            {
+                responseMessage = "Failed";
+            }
             //string responseMessage = string.IsNullOrEmpty(name)
             //    ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
             //    : $"Hello, {name}. This HTTP triggered function executed successfully.";
 
             return new OkObjectResult(responseMessage);
+        }
+
+        public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand)
+        {
+            //string resourceType = "Microsoft.Compute/virtualMachines";
+            var credentials = _azureHelper.GetAzureCredential();
+            var client =
+                CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
+                    credentials);
+            var requestUrl =
+                $"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
+            var request = CreateRequest(requestUrl, Method.POST);
+            var response = client.Execute(request);
+
+            if (response.StatusCode == HttpStatusCode.Accepted)
+            {
+                // return "Success";
+                return true;
+
+            }
+
+            //return $"There was an error while Starting VM '{resourceGroupName}', Please contact Administrator.";
+            return false;
+        }
+        private RestClient CreateClient(string EndPoint, AzureCredentials credentials)
+        {
+            // Default request
+            var client = new RestClient(EndPoint);
+            client.AddDefaultHeader("Authorization", "Bearer " + credentials.Token);
+            return client;
+        }
+        private RestRequest CreateRequest(string requestUrl, Method requestMethod, object postData = null)
+        {
+            var request = new RestRequest(requestUrl, requestMethod) { RequestFormat = DataFormat.Json };
+            if (postData != null)
+                request.AddParameter("application/json", JsonConvert.SerializeObject(postData),
+                    ParameterType.RequestBody);
+            return request;
         }
     }
 }

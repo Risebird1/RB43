@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 
@@ -21,6 +24,8 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly IConfiguration _configuration;
         private readonly IProctorInterviewsService _proctorInterviewsService;
+        private readonly CancellationToken _cancellationToken;
+
 
         public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService)
         {
@@ -89,5 +94,44 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [HttpPost]
+        public async Task<bool> StartStopVM(int vmId,string name, string rgName, string action)
+        {
+            try
+            {
+
+                if (name != null && rgName != null && action != null)
+                {
+                    var model = new VMActionDTO();
+                    model.VMPropertyId = vmId;
+                    model.Name = name;
+                    model.ResourceGroupName = rgName;
+                    model.ActionCommand = action;
+                    var path = $"http://localhost:7071/api/StartStopVM";
+                    //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                    //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+
+                    HttpClient httpClient = new HttpClient();
+                    httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                    var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken);
+                    // return response.Content.ReadAsStringAsync().Result;
+                    if(response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
+                    {
+                        return true;
+                    }
+
+                }
+                return false;
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }

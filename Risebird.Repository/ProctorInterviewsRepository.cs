@@ -117,6 +117,28 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> AddVMTrigger(int vmId, string action, string expectedStatus)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@vmId", vmId);
+                dynamicParameters.Add("@action", action);
+                dynamicParameters.Add("@expectedStatus", expectedStatus);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = SqlMapper.Query(con, "usp_AddVMTrigger", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
     }
 }
