@@ -52,7 +52,7 @@ namespace Risebird.MicroService
                 }
                 else
                 {
-                    expectedStatus = "deallocated";
+                    expectedStatus = "deallocated/stopped";
                 }
                 await _proctorInterviewsRepository.AddVMTrigger(data.VMPropertyId, data.ActionCommand,expectedStatus);
                 responseMessage = "Successful";
@@ -61,16 +61,12 @@ namespace Risebird.MicroService
             {
                 responseMessage = "Failed";
             }
-            //string responseMessage = string.IsNullOrEmpty(name)
-            //    ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-            //    : $"Hello, {name}. This HTTP triggered function executed successfully.";
-
+           
             return new OkObjectResult(responseMessage);
         }
 
         public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand)
         {
-            //string resourceType = "Microsoft.Compute/virtualMachines";
             var credentials = _azureHelper.GetAzureCredential();
             var client =
                 CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
@@ -82,12 +78,10 @@ namespace Risebird.MicroService
 
             if (response.StatusCode == HttpStatusCode.Accepted)
             {
-                // return "Success";
                 return true;
 
             }
 
-            //return $"There was an error while Starting VM '{resourceGroupName}', Please contact Administrator.";
             return false;
         }
         private RestClient CreateClient(string EndPoint, AzureCredentials credentials)

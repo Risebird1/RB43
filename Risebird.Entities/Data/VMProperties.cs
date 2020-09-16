@@ -17,6 +17,7 @@ namespace Risebird.Entities.Data
         public bool IsDeleted { get; set; }
         public string StatusDesc { get; set; }
         public string ImageUrl { get; set; }
+        public string LastAction { get; set; }
 
     }
 }

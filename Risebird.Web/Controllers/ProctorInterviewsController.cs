@@ -50,10 +50,25 @@ namespace Risebird.Web.Controllers
                     model.VMList = (await _proctorInterviewsService.GetAllVMs()).ToList();
                     foreach (var vm in model.VMList)
                     {
-                        vm.StatusDesc = vm.Status.HasValue ? ((VMState)vm.Status).GetDescription() : string.Empty;
+                        if(vm.LastAction!=null)
+                        {
+                            if(vm.LastAction.ToLower()=="start")
+                            {
+                                vm.StatusDesc = "Starting";
+                            }
+                            else if(vm.LastAction.ToLower() == "poweroff")
+                            {
+                                vm.StatusDesc = "Stopping";
+                            }
+
+                        }
+                        else
+                        {
+                            vm.StatusDesc = vm.Status.HasValue ? ((VMState)vm.Status).GetDescription() : string.Empty;
+
+                        }
                     }
-                    //var irfList = _irfService.GetAllIRFs(emailid, profileName);
-                    //irfList.ToList().ForEach(x => { x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription(); x.SubscriptionStatus = ((SubscriptionStatus)Convert.ToInt16(x.IsSubscribed)).GetDescription(); });
+                    
                     //foreach (var item in model.IRFList)
                     //{
                     //    if (item.IsPaused)

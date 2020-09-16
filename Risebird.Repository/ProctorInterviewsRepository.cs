@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -73,14 +74,10 @@ namespace Risebird.Repository
         {
             try
             {
-                var ids = "(" + String.Join(",", idList) + ")";
+                var ids = string.Join(",", idList);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@ids", ids);
-                    await con.QueryAsync("Delete from TransVMTriggerDetails where id in @ids", parameters);
-                    //await SqlMapper.QueryAsync(con, "usp_DeleteTriggeredVMs", parameters,
-                    //     commandType: CommandType.StoredProcedure);
+                    await con.QueryAsync("Delete from TransVMTriggerDetails where id in (" +ids +")");
                     return true;
                 }
                 
