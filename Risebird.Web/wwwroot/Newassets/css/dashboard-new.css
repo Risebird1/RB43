@@ -292,7 +292,16 @@ body {
     line-height: 20px;
     color: #423f3f;
 }
-
+.label-num-unassigned {
+    background: #af0a0a;
+    width: 20px;
+    border-radius: 100%;
+    padding: 6px;
+    display: inline-table;
+    font-size: 12px;
+    line-height: 20px;
+    color: #fff;
+}
 .hour {
     font-family: Roboto, sans-serif;
 }
