@@ -2543,7 +2543,10 @@ textarea::-webkit-scrollbar-thumb {
         width: 72%;
     }
 
-    #link8 .canvasjs-chart-container {
+    .k {
+        width: auto;
+    }
+        #link8 .canvasjs-chart-container {
         text-align: left !important;
         left: 35px;
     }
