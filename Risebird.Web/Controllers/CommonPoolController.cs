@@ -585,9 +585,9 @@ namespace Risebird.Web.Controllers
                         NewModel.resumeLink = model.resumeLink;
                         if (profileName == "CuratedUser")
                         {
-                            if (!String.IsNullOrEmpty(model.encodedresumeLink))
+                            if (!String.IsNullOrEmpty(model.IreportModel.encodedresumeLink))
                             {
-                                NewModel.resumeLink = model.encodedresumeLink;
+                                NewModel.resumeLink = model.IreportModel.encodedresumeLink;
                             }
                         }
                         NewModel.zoomLink = model.zoomLink;
@@ -707,9 +707,9 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
-                        if (!String.IsNullOrEmpty(model.encodedresumeLink))
+                        if (!String.IsNullOrEmpty(model.IreportModel.encodedresumeLink))
                         {
-                            NewModel.resumeLink = model.encodedresumeLink;
+                            NewModel.resumeLink = model.IreportModel.encodedresumeLink;
                         }
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
@@ -936,9 +936,9 @@ namespace Risebird.Web.Controllers
                         NewModel.resumeLink = model.resumeLink;
                         if (profileName == "CuratedUser")
                         {
-                            if (!String.IsNullOrEmpty(model.encodedresumeLink))
+                            if (!String.IsNullOrEmpty(model.IreportModel.encodedresumeLink))
                             {
-                                NewModel.resumeLink = model.encodedresumeLink;
+                                NewModel.resumeLink = model.IreportModel.encodedresumeLink;
                             }
                         }
                         NewModel.zoomLink = model.zoomLink;
