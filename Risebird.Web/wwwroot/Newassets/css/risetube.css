@@ -2125,7 +2125,7 @@ textarea::-webkit-scrollbar-thumb {
     }
     .mobdr {
         border-top: 1px #cccccc7a solid;
-        margin-top: 10px;
+        margin-top: 20px;
     }
     .splitvideo-mobile{display:block}
     .splitvideo-desktop {
@@ -2543,7 +2543,10 @@ textarea::-webkit-scrollbar-thumb {
         width: 72%;
     }
 
-    #link8 .canvasjs-chart-container {
+    .k {
+        width: auto;
+    }
+        #link8 .canvasjs-chart-container {
         text-align: left !important;
         left: 35px;
     }
