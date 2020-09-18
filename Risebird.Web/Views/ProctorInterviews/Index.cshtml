@@ -39,19 +39,13 @@
 
                 <div class="pull-right">
                     <div>
-
-
-                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
-                        </button>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-search" data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interviewer Search</font></span>
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add existing VMs" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Existing VMs</font></span>
                         </button>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span data-toggle="tooltip" data-placement="top" title="Curated Groups" onclick="location.href='@Url.Action("CuratedGroups", "IRF")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill=" rgb(255, 255, 255)" d="M9 8c1.11 0 2-.9 2-2s-.89-2-2-2c-1.1 0-2 .9-2 2s.9 2 2 2zm4 0c1.11 0 2-.9 2-2s-.89-2-2-2c-.36 0-.69.1-.98.27.3.51.48 1.1.48 1.73s-.18 1.22-.48 1.73c.29.17.63.27.98.27zM9 9.2c-1.67 0-5 .83-5 2.5V13h10v-1.3c0-1.67-3.33-2.5-5-2.5zM5 7H3V5H2v2H0v1h2v2h1V8h2V7zm9.23 2.31c.75.6 1.27 1.38 1.27 2.39V13H18v-1.3c0-1.31-2.07-2.11-3.77-2.39z" /></svg><font style="font-family:arial;"> Curated Groups</font></span>
-                        </button>*@
 
-                       
+                        
+
+
 
 
                     </div>
@@ -99,7 +93,7 @@
                                                 </div>
                                                 <div class="statusInfo">
                                                     <div class="group inner list-group-item-text">
-                                                        
+
                                                         <div class="row second">
                                                             <div> Resource Group Name:</div> <div title="@item.ResourceGroupName">@item.ResourceGroupName</div>
                                                         </div> <br />
@@ -144,7 +138,7 @@
                                                     }
                                                     else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
                                                     {
-                                                        
+
                                                         <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
                                                             <i class="fa fa-play"></i>
                                                         </button>
@@ -160,12 +154,38 @@
                         </div>
 
                         <!-- End Card-->
-                        
 
-                        
+                        <div id="nonExistingModal" class="modal modal-bg">
+                            <!-- Modal content -->
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+
+
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="publicsharing-icon fas fa-question fa-2x"></span>
+                                        </div>
+                                        <h5 class="modal-title pull-left">Existing VMs</h5>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" id="nonExistingPopUp" style="cursor:pointer;">&times;</span>
+                                    </button>
+
+                                    <div class="modal-body" id="nonExistingTableBody">
+
+
+
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
                         <!-- end row -->
 
-                        
+
                     </div>
 
                 </div>
@@ -249,6 +269,28 @@
 
 </script>
 
+<script>
+    var closeMember = document.getElementById("nonExistingPopUp");
+    // When the user clicks on <span> (x), close the modal
+    closeMember.onclick = function () {
+        var modal = document.getElementById("nonExistingModal");
+        modal.style.display = "none";
+    }
+    function GetNonExistingVMs() {
+        $.ajax({
+            url: '/ProctorInterviews/GetNonExistingVMs',
+            //data: { 'irfId': id },
+            success: function (data) {
+                var modal = document.getElementById("nonExistingModal");
+                modal.style.display = "block";
+                $('#nonExistingTableBody').html('');
+                $('#nonExistingTableBody').html(data);
 
+
+            }
+        });
+    }
+
+</script>
 
 

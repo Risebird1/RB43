@@ -87,10 +87,7 @@ namespace Risebird.MicroService
                     }
                 }
 
-                //if (!string.IsNullOrEmpty(statusInDB) && !string.IsNullOrEmpty(powerstate) && statusInDB.ToLower() == powerstate.ToLower())
-                //{
-                //    continue;
-                //}
+               
 
                 if (powerstate.ToLower() == "running" && statusInDB.ToLower() == "stopping")
                     powerstate = "stopping";
@@ -99,17 +96,19 @@ namespace Risebird.MicroService
                 var updatedStatus = Enum.IsDefined(typeof(VMState), powerstate.ToLower()) ? (int)Enum.Parse(typeof(VMState), powerstate.ToLower()) : 3;
                 await _proctorInterviewsRepository.UpdateVMStatus(vm.VMPropertyId, updatedStatus);
 
-                if (vm.ExpectedStatus != null && vm.ExpectedStatus.Contains(powerstate.ToLower()))
+                if(powerstate.ToLower()!="unknown")//if powerstate is unknown, do not delete from Triggered VM table
                 {
-                    //add id to a list
-                    vmIds.Add(vm.Id);
+                    if ((vm.ExpectedStatus != null && vm.ExpectedStatus.Contains(powerstate.ToLower())) || vm.LastAction=="Added")
+                    {
+                        //add id to a list
+                        vmIds.Add(vm.Id);
+                    }
                 }
+                
                
 
             }
-            // check status for each vm, if status = expected status, add the id of the vm in a list and update the status in vmproperties table
-            // after checking all the status, delete the ones whose entry has been done in the list
-
+            
             //delete from triggered table
             if(vmIds!=null && vmIds.Count() != 0)
             {

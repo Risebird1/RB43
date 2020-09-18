@@ -13,5 +13,8 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteTriggeredVMs(List<int> idList);
         Task<bool> UpdateVMStatus(int id, int status);
         Task<bool> AddVMTrigger(int vmId, string action, string expectedStatus);
+        Task<string> AddNonExistingVMs(List<VMProperties> vmList);
+        int GetVM(string name, string rgName);
+        Task<bool> AddBulkVmTrigger(List<TriggeredVM> vmList);
     }
 }

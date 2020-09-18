@@ -11,5 +11,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<VMProperties>> GetAllVMs();
         Task<IEnumerable<TriggeredVM>> GetAllTriggeredVMs();
         Task<bool> DeleteTriggeredVMs(List<int> ids);
+        Task<List<NonExistingVMDTO>> GetNonExistingVMs();
+        Task<string> AddNonExistingVMs(List<NonExistingVMDTO> vmList);
     }
 }

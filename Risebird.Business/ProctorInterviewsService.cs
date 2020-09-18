@@ -1,11 +1,16 @@
-﻿using Risebird.Business.Interface;
+﻿using Newtonsoft.Json;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -15,6 +20,8 @@ namespace Risebird.Business
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
+        private readonly CancellationToken _cancellationToken;
+
 
         public ProctorInterviewsService(INotificationHelper notificationHelper,  IApplicationErrorLogger applicationErrorLogger, IProctorInterviewsRepository proctorInterviewsRepository)
         {
@@ -65,5 +72,102 @@ namespace Risebird.Business
             }
         }
 
+
+        //code to get all the existing vms on the azure cloud which are not in the db
+        public async Task<List<NonExistingVMDTO>> GetNonExistingVMs()
+        {
+            List<NonExistingVMDTO> unMatchedList = new List<NonExistingVMDTO>();
+            try
+            {
+
+                //Get All vm from azure portal existing in sunbsription
+
+                var path = $"http://localhost:7071/api/GetVMList";
+                //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+
+                HttpClient httpClient = new HttpClient();
+                httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                var response = await httpClient.SendRequestAsync(HttpMethod.Get, path, null, "", "", _cancellationToken);
+                var result = response.Content.ReadAsStringAsync().Result;
+                result = result.Replace("\\r", "\r").Replace("\\n","\n").Replace("\"","").Replace("\\","\"");
+                var vmsInCloudPortal = JsonConvert.DeserializeObject<VMServerProperty>(result);
+                if (vmsInCloudPortal == null)
+                    return null;
+                //Get oneshare vm from db
+                var vmsInDb = await _proctorInterviewsRepository.GetAllVMs();
+                //Find vms which are not in db
+                foreach (var item in vmsInCloudPortal.value)
+                {
+                    NonExistingVMDTO obj = new NonExistingVMDTO { ResourceGroupName = item.id.Split("/")[4] };
+                    bool isAvailable = vmsInDb != null && vmsInDb.ToList().Exists(a => a.Name.ToUpper() == item.name.ToUpper() && a.ResourceGroupName.ToUpper() == obj.ResourceGroupName?.ToUpper());
+                    if (!isAvailable && obj.ResourceGroupName != null)
+                    {
+                        obj.Name = item.name;
+                        unMatchedList.Add(obj);
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return unMatchedList;
+        }
+
+
+        public async Task<string> AddNonExistingVMs(List<NonExistingVMDTO> vmList)
+        {
+            try
+            {
+                var vmPropList = new List<VMProperties>(); 
+                var triggeredVMList = new List<TriggeredVM>(); 
+                if(vmList != null && vmList.Count()>0)
+                {
+                    foreach (var vm in vmList)
+                    {
+                        var obj = new VMProperties();
+                        obj.Name = vm.Name;
+                        obj.ResourceGroupName = vm.ResourceGroupName;
+                        obj.IsAdded = true;
+                        obj.Status = (int)VMState.creating;
+                        vmPropList.Add(obj);
+                    }
+                    var result = await _proctorInterviewsRepository.AddNonExistingVMs(vmPropList);
+                    foreach (var vm in vmList)
+                    {
+                        //add the vm to TRiggered VMS
+                        var vmId = _proctorInterviewsRepository.GetVM(vm.Name, vm.ResourceGroupName);
+                        if(vmId!=0)
+                        {
+                            var obj = new TriggeredVM();
+                            obj.VMPropertyId = vmId;
+                            obj.LastAction = "Added";
+                            obj.ExpectedStatus = "";
+                            triggeredVMList.Add(obj);
+                        
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                    }
+                    await _proctorInterviewsRepository.AddBulkVmTrigger(triggeredVMList);
+                    return result;
+                }
+                
+                
+                return "Failed. No VMs selected.";
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed";
+            }
+        }
     }
 }

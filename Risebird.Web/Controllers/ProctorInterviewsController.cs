@@ -50,7 +50,7 @@ namespace Risebird.Web.Controllers
                     model.VMList = (await _proctorInterviewsService.GetAllVMs()).ToList();
                     foreach (var vm in model.VMList)
                     {
-                        if(vm.LastAction!=null)
+                        if(vm.LastAction!=null && vm.LastAction!="Added")
                         {
                             if(vm.LastAction.ToLower()=="start")
                             {
@@ -68,7 +68,11 @@ namespace Risebird.Web.Controllers
 
                         }
                     }
-                    
+                    if (TempData["SuccessErrorMessageProctor"] != null)
+                    {
+                        model.Message = TempData["SuccessErrorMessageProctor"].ToString();
+                        TempData.Remove("SuccessErrorMessageProctor");
+                    }
                     //foreach (var item in model.IRFList)
                     //{
                     //    if (item.IsPaused)
@@ -145,6 +149,36 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public async Task<IActionResult> GetNonExistingVMs()
+        {
+            try
+            {
+                var model = new NonExistingVMViewModel();
+                model.NonExistingVMList = ((IList<NonExistingVMDTO>)await _proctorInterviewsService.GetNonExistingVMs());
+                return PartialView("GetNonExistingVMsPartial", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddNonExistingVMs(NonExistingVMViewModel model)
+        {
+            try
+            {
+                var result = await _proctorInterviewsService.AddNonExistingVMs(model.NonExistingVMList.Where(x => x.IsSelected == true).ToList());
+                TempData["SuccessErrorMessageProctor"] = result;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
             }
         }
 
