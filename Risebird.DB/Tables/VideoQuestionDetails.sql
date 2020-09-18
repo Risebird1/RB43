@@ -6,7 +6,7 @@ CREATE TABLE [dbo].[VideoQuestionDetails](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[Interviewid] [int] NULL,
 	[VideoLink] [varchar](max) NULL,
-	[VideoTitle] [varchar](100) NULL,
+	[VideoTitle] [varchar](200) NULL,
 	[Priority] [int] NULL,
 	[Question] [varchar](max) NULL,
 	[ThumbnailLink] [varchar](max) NULL,
@@ -15,6 +15,7 @@ CREATE TABLE [dbo].[VideoQuestionDetails](
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+End
 GO
 
 

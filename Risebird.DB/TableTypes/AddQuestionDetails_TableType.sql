@@ -5,7 +5,7 @@ CREATE TYPE [dbo].[AddQuestionDetails_TableType] AS TABLE(
 	[Interviewid] [int] NOT NULL,
 	[Question] [varchar](max) NULL,
 	[Priority] [int] NOT NULL,
-	[VideoTitle] [varchar](100) NULL,
+	[VideoTitle] [varchar](200) NULL,
 	[VideoLink] [varchar](max) NULL,
 	[ThumbnailLink] [varchar](max) NULL
 
