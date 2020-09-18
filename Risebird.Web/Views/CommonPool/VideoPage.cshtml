@@ -1301,7 +1301,7 @@
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" autoplay>
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -1333,7 +1333,7 @@
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" autoplay>
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -3656,12 +3656,12 @@
         var html = '';
 
         if (videourl.includes(".mp4") || videourl.includes(".org")) {
-            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">';
+            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload" autoplay>';
             html += '<source src="' + videourl + '" type="video/mp4">';
             html += '</video>';
         }
         else if (videourl.includes("/manifest")) {
-            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " controlsList="nodownload">';
+            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " controlsList="nodownload" autoplay>';
             html += '<source src="' + videourl + '" type="application/vnd.ms-sstr+xml" />';
             html += ' </video>';
         }

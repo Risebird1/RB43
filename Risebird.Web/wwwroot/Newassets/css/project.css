@@ -23,6 +23,10 @@ textarea::-webkit-scrollbar-thumb {
     display: none !important;
 }
 
+#broadcastModal .modal-lg {
+    max-width: 700px !important;
+}
+
 .no-sort {
     pointer-events: none !important;
     cursor: default !important;

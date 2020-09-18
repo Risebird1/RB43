@@ -725,6 +725,35 @@
                             <input type="radio" id="radThree" name="receivers" value="Client">
                             <label for="radThree" class="control-label desp-label">All Clients</label>
                         </div>
+
+
+                        <div class="broad-ele">
+                            <div class="pull-left">
+                                <input type="radio" id="radFour" name="receivers" value="IRF">
+                                <label for="radFour" class="control-label desp-label">IRF</label>
+                            </div>
+
+
+                            <div id="IRFLIST" class="form-group pull-left" style="display:none;margin-left:15px;"  >
+                                <label class="control-label desp-label pull-left" style="padding-top: 2px;">IRF LIST</label>
+                                <div class="form-group pull-left col-md-9">
+                                    <select id="irflist" class="select-css form-control">
+                                        @foreach (var item in Model.ToList())
+                                        {
+                                            @if (item.IRFId != null && item.IRFId != "")
+                                            {
+                                        <option value="@item.interviewer">@item.IRFId</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+
+
                     </div>
                 </div>
 
@@ -743,29 +772,15 @@
                             </div>
                         </div>
 
-
-
-
-
                     </div>
 
-
                 </div>
-
-
-
-
 
                 <div class="col-md-12 col-sm-12 text-right">
                     <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
                     <button type="button" id="broadcastPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
                 </div>
-
-
             </div>
-
-
-
         </div>
     </div>
 </div>
@@ -1255,7 +1270,7 @@
 
         var message = document.getElementById("bcMessage").value;
         var subject = document.getElementById("bcSubject").value;
-
+        var irfid = document.getElementById("irflist").value;
         var ele = document.getElementsByName('receivers');
         for (i = 0; i < ele.length; i++) {
             if (ele[i].checked) {
@@ -1263,12 +1278,14 @@
             }
         }
 
+    
 
         $.ajax({
             type: "GET",
             url: "/Interview/Broadcast",
             data: {
-                'message': message, 'subject': subject, 'receiver': receiver
+
+                'message': message, 'subject': subject, 'receiver': receiver, 'irfid': irfid
             },
             success: function (data) {
                 location.reload(true);
@@ -1356,4 +1373,15 @@
         });
     }
 
+</script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    $('input:radio[name="receivers"]').click(function () {
+   
+        if ($(this).val() == 'IRF') {
+            $('#IRFLIST').show();
+        } else {
+            $('#IRFLIST').hide()
+        }
+    });
 </script>
