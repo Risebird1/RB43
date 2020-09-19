@@ -31,7 +31,7 @@ inner join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
 inner join UserList ul on ul.EmailId = im.candidateEmail    
 join CandidatesMaster cm on cm.UserId = ul.id        
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
-inner join (select InterviewId, sum(WeightageActual) as TechSkillScore from TechSkillReport group by InterviewId ) tsr  on tsr.InterviewId= im.id
+outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId ) as tsr
 outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId)patchvideoCount
 
 where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null  
