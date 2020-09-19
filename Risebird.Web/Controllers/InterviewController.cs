@@ -264,7 +264,15 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 7].Value = item.interviewer;
                         Sheet.Cells[i, 8].Value = item.confirmationStatus;
-                        Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
+                        if (item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                        {
+                            Sheet.Cells[i, 9].Value = "Scheduled";
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 9].Value = item.MeetingStatusDescription;
+                        }
+                      
                         Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
 
                         if (!string.IsNullOrEmpty(item.resumeLink))
@@ -391,67 +399,67 @@ namespace Risebird.Web.Controllers
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
             try
             {
-               
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    
-                  
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
-                        if (HttpContext.Session.GetString("HRfilters") != null)
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
+                if (HttpContext.Session.GetString("HRfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
+
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                    }
+                    else if (filter.StartDate != null && filter.EndDate == null)
+                    {
+                        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate).ToList();
+                    }
+                    else if (filter.StartDate == null && filter.EndDate != null)
+                    {
+
+                        myInterview = myInterview.Where(t => t.interviewDate.Date <= filter.EndDate).ToList();
+
+                    }
+
+                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = myInterview.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+                    filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = myInterview.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+
+                    myInterview = myInterview.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                    && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
+
+
+                }
+                else
+                {
+                    myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
+
+                }
+                myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                foreach (var item in myInterview)
+                {
+                    if (!string.IsNullOrEmpty(item.resumeLink))
+                    {
+                        try
                         {
-                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("Interviewfilters"));
-
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                            }
-                            else if (filter.StartDate != null && filter.EndDate == null)
-                            {
-                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate).ToList();
-                            }
-                            else if (filter.StartDate == null && filter.EndDate != null)
-                            {
-
-                                myInterview = myInterview.Where(t => t.interviewDate.Date <= filter.EndDate).ToList();
-
-                            }
-
-                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = myInterview.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                            filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = myInterview.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-
-                            myInterview = myInterview.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                            && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
-
+                            item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
                         }
-                        else
+                        catch (Exception)
                         {
-                            myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
-
+                            item.resumeLink = "";
                         }
-                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        foreach (var item in myInterview)
-                        {
-                            if (!string.IsNullOrEmpty(item.resumeLink))
-                            {
-                                try
-                                {
-                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+                    }
+                    else
+                    {
+                        item.resumeLink = "";
+                    }
 
-                                }
-                                catch (Exception)
-                                {
-                                    item.resumeLink = "";
-                                }
-                            }
-                            else
-                            {
-                                item.resumeLink = "";
-                            }
-
-                        }
+                }
                 var modelList = myInterview;
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
@@ -474,7 +482,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 9].Value = "Client Hr";
                 Sheet.Cells[1, 10].Value = "QCInterviewer";
                 Sheet.Cells[1, 11].Value = "HR Comment";
-              
+
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -528,7 +536,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 9].Value = item.ClientHrContact;
                         Sheet.Cells[i, 10].Value = item.QCInterviewer;
                         Sheet.Cells[i, 11].Value = item.HRComment;
-                        
+
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4458,7 +4466,15 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 4].Value = item.ClientName;
                         Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 6].Value = item.confirmationStatus;
-                        Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
+                        if (item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                        {
+                            Sheet.Cells[i, 7].Value = "Scheduled";
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
+                        }
+                      
                         if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
                             Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
@@ -6134,13 +6150,13 @@ namespace Risebird.Web.Controllers
                         HttpContext.Session.SetString("HRfilters", JsonConvert.SerializeObject(filter));
                     }
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName =  profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     if (profileName == "HR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid =  emailid.Replace("\"", "");
+                        emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
-                       
+
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
@@ -6158,7 +6174,7 @@ namespace Risebird.Web.Controllers
 
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = myInterview.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                         filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = myInterview.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
-                        
+
                         myInterview = myInterview.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && ((filter.Interviewer != null && filter.Interviewer.Count() > 0) ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
 
@@ -6756,7 +6772,7 @@ namespace Risebird.Web.Controllers
                     }
                     var model1 = _meetingService.UpdateQuestionDetails(_question);
 
-                    return RedirectToAction("UploadInterviewVideoes",new { id= Interviewid });
+                    return RedirectToAction("UploadInterviewVideoes", new { id = Interviewid });
                 }
                 else
                 {
@@ -6790,5 +6806,5 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        }
     }
+}
