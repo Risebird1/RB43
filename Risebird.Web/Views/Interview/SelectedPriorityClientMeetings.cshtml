@@ -85,9 +85,8 @@
 
 
 
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded exportfive card-title-space">
-                                <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Export Selected Candidate</font></span>
-                            </button>
+                          
+                            <i type="submit" class="fa fa-file-excel-o excel-file export five  card-title-space" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"></i>
 
 
 
@@ -456,7 +455,7 @@
 
                                                         @if (item.VideoLink != null && item.VideoLink != "")
                                                         {
-                                                            <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                            <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
                                                         }
                                                         else
                                                         {

@@ -18,7 +18,9 @@ Begin
 
 	select irf.IRFId, (irf.irfID + '('+ CASE WHEN CHARINDEX('|', JDTiltle) != 0 THEN (SUBSTRING(JDTiltle,0, (CHARINDEX('|', JDTiltle)))) ELSE JDTiltle END +')' ) as IRFnSkill,
 	(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=1 and cast(interviewDate as date) = cast (@dateValue as date) and im.confirmationStatus=1 and confirmationStatus=1) as Morning,
+	(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=1 and cast(interviewDate as date) = cast (@dateValue as date) and im.confirmationStatus=1 and confirmationStatus=1 and im.interviewer is null) as MorningUnassinged,
 	(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=2 and cast(interviewDate as date) = cast (@dateValue as date) and im.confirmationStatus=1 and confirmationStatus=1) as Evening,
+		(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and interviewSlot=2 and cast(interviewDate as date) = cast (@dateValue as date) and im.confirmationStatus=1 and confirmationStatus=1 and im.interviewer is null) as EveningUnassinged,
 	(select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and im.confirmationStatus=1 and confirmationStatus=1) as total,
 	(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=1  and confirmationStatus=1) as Proxy,
 	(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=2  and confirmationStatus=1) as Selected,
@@ -30,7 +32,7 @@ Begin
 	(select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus is null and MeetingStatus=4  and confirmationStatus=1) as Pending
 	from InterviewMeetings im join irf on irf.IRFId = im.IRFId
 	where cast(interviewDate as date) = cast (@dateValue as date) and im.confirmationStatus=1 
-	group by IRF.IRFId, irf.JDTiltle, im.IRFId, im.confirmationStatus order by total desc
+	group by IRF.IRFId, irf.JDTiltle, im.IRFId, im.confirmationStatus,im.interviewer order by total desc
 
 End
 

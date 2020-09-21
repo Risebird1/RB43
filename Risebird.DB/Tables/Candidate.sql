@@ -292,6 +292,15 @@ BEGIN
     ALTER TABLE Candidate
     Add [CostEstimate] [nvarchar](200) NULL
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'EncodedResumeLink')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add  [EncodedResumeLink] [varchar](500) NULL
+END
 
 End
 
