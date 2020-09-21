@@ -124,6 +124,7 @@ namespace Risebird.Web
             //Antiforgery token secure
             //app.UseAntiforgeryTokens();
             app.UseHttpsRedirection();
+            app.UseResponseCompression();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseStaticFiles(); app.UseMvc(routes =>
             {
