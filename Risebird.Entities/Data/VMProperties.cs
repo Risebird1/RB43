@@ -19,6 +19,7 @@ namespace Risebird.Entities.Data
         public string ImageUrl { get; set; }
         public string LastAction { get; set; }
         public string OSType { get; set; }
+        public string PrivateIP { get; set; }
 
     }
 }

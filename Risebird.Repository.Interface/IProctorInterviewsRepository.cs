@@ -17,5 +17,6 @@ namespace Risebird.Repository.Interface
         int GetVM(string name, string rgName);
         Task<bool> AddBulkVmTrigger(List<TriggeredVM> vmList);
         VMProperties GetVMbyId(int id);
+        Task UpdateVMIP(IList<VMProperties> vmList);
     }
 }

@@ -277,5 +277,50 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task UpdateVMIP(IList<VMProperties> vmList)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    DataTable vmIpDt = new DataTable();
+                    vmIpDt.Columns.Add("id", typeof(int));
+                    vmIpDt.Columns.Add("OSType", typeof(string));
+                    vmIpDt.Columns.Add("PublicIP", typeof(string));
+                    vmIpDt.Columns.Add("PrivateIP", typeof(string));
+
+
+                    foreach (var item in vmList)
+                    {
+                        vmIpDt.Rows.Add(item.id, item.OSType, item.PublicIP, item.PrivateIP);
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_VMIPBulkUpdate", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@VMIPBulkData", SqlDbType.Structured));
+                    cmd.Parameters["@VMIPBulkData"].Value = vmIpDt;
+                    con.Open();
+                    if (cmd.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+        }
+
+
     }
 }
