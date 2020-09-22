@@ -10,7 +10,7 @@ namespace Risebird.Entities.Data
         public string vmId { get; set; }
         public string Name { get; set; }
         public string ResourceGroupName { get; set; }
-        public string IpAddress { get; set; }
+        public string PublicIP { get; set; }
         public int? Status { get; set; }
         public bool IsAdded { get; set; }
         public bool IsRemoved { get; set; }
@@ -18,6 +18,8 @@ namespace Risebird.Entities.Data
         public string StatusDesc { get; set; }
         public string ImageUrl { get; set; }
         public string LastAction { get; set; }
+        public string OSType { get; set; }
+        public string PrivateIP { get; set; }
 
     }
 }
