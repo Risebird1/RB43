@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -182,5 +183,63 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetRDPFile(int vmId)
+        {
+            try
+            {
+
+                if (vmId!=0)
+                {
+                    
+                    var path = $"http://localhost:7071/api/GetRDPFile";
+                    //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                    //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+
+                    HttpClient httpClient = new HttpClient();
+                    httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                    var response = await httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, "", "", _cancellationToken);
+                    // return response.Content.ReadAsStringAsync().Result;
+                    if(response!=null)
+                    {
+                        var rdpfile = response.Content.ReadAsStringAsync().Result;
+                        if (rdpfile != null)
+                        {
+                            rdpfile = rdpfile.Replace("\"", "").Replace("\\", "\"");
+                            //rdpfile = rdpfile.Replace("\\","").Replace("\"","");
+                            var file = JsonConvert.DeserializeObject<RdpFileModel>(rdpfile);
+                            var filecontent = JsonConvert.DeserializeObject<List<byte>>(file.FileContent.ToString());
+                            var obj = new RdpFileModel(file.FileName, filecontent);
+                            return File(((List<byte>)obj.FileContent).ToArray<byte>(),
+                               System.Net.Mime.MediaTypeNames.Application.Octet, obj.FileName);
+                        }
+                        else
+                        {
+
+                            TempData["SuccessErrorMessageProctor"] = "Failed!";
+                            return RedirectToAction("Index");
+                        }
+
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Failed!";
+                        return RedirectToAction("Index");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageProctor"] = "Failed!";
+                return RedirectToAction("Index");
+            }
+        }
     }
 }

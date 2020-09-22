@@ -98,7 +98,7 @@
                                                             <div> Resource Group Name:</div> <div title="@item.ResourceGroupName">@item.ResourceGroupName</div>
                                                         </div> <br />
 
-                                                        <div class="row three"> <span>Public Ip Address:</span>@item.IpAddress</div> <br />
+                                                        <div class="row three"> <span>Public Ip Address:</span>@item.PublicIP</div> <br />
 
 
 
@@ -133,6 +133,10 @@
                                                     {
                                                         <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'powerOff');">
                                                             <i class="fa fa-stop"></i>
+                                                        </button>
+
+                                                        <button id="rdpButton_@item.id" class="mdc-fab app-fab--absolute" aria-label="Download RDP" onclick="location.href='@Url.Action("GetRDPFile", "ProctorInterviews", new { vmId = item.id})'">
+                                                            <i class="fa fa-file"></i>
                                                         </button>
 
                                                     }
@@ -249,6 +253,8 @@
         else if (action == 'powerOff') {
             //deallocating
             document.getElementById("statusId_" + vmId).innerHTML = "Deallocating";
+            document.getElementById("rdpButton_" + vmId).style.display = "none";
+
         }
         $.ajax({
             url: '/ProctorInterviews/StartStopVM',
@@ -258,7 +264,7 @@
                 //update status in the tile
                 if (!response) {
                     document.getElementById("statusId_" + vmId).innerHTML = "Failed";
-                    document.getElementById("actionButton_" + vmId).disabled = false;
+                    //document.getElementById("actionButton_" + vmId).disabled = false;
                     
                 }
                 
@@ -279,7 +285,6 @@
     function GetNonExistingVMs() {
         $.ajax({
             url: '/ProctorInterviews/GetNonExistingVMs',
-            //data: { 'irfId': id },
             success: function (data) {
                 var modal = document.getElementById("nonExistingModal");
                 modal.style.display = "block";
@@ -292,5 +297,9 @@
     }
 
 </script>
-
+<script>
+    $(document).ready(function () {
+        setTimeout("location.reload(true);", 30000);
+    });
+</script>
 

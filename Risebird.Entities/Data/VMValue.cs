@@ -6,6 +6,7 @@ namespace Risebird.Entities.Data
 {
     public class VMValue
     {
+        public vProperties properties /*{ get; set; }*/ = new vProperties();
         public string location { get; set; }
         public string id { get; set; }
         public string name { get; set; }

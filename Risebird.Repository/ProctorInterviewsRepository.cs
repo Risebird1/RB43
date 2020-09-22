@@ -256,5 +256,26 @@ namespace Risebird.Repository
             return false;
         }
 
+        public VMProperties GetVMbyId(int id)
+        {
+            try
+            {
+                var query = "Select * from VMProperties where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<VMProperties>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }
