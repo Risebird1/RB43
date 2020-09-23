@@ -16,7 +16,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--     Fonts and icons     -->
 
-
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 
 <script>
     function dropDwnToolTips(id) {
@@ -291,6 +293,7 @@
                                                     <p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>
                                                     <div>
                                                         <div id="scoreChart" style="height: 200px; width:100%;"></div>
+                                                        <div class="transparent-chart">&nbsp;</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -328,7 +331,7 @@
 
                                                             </div>
                                                         </div>
-                                                 
+
                                                         @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                                     </div>
                                                     <div class="form-group">
@@ -431,7 +434,7 @@
                                                             {
                                                                 <tr>
                                                                     <td>
-                                                                      
+
 
 
                                                                         @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "select-css form-control dropques text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
@@ -443,7 +446,7 @@
                                                                         @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                     </td>
                                                                     <td>
-                                                                      
+
 
                                                                         @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css form-control droprating" })
 
@@ -459,7 +462,7 @@
                                                                     <td class="action text-center">
                                                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                         <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                       
+
 
 
 
@@ -802,7 +805,7 @@
 
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                         <div class="talktext">
-                                                            @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:70%", @readonly = "readonly" })
+                                                            @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1012,7 +1015,7 @@
                                                             </td>
                                                             <td class="control-width">
                                                                 @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        
+
 
                                                             </td>
 
@@ -1048,7 +1051,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="form-group">
-                                     
+
                                             <label for="approveDropdown" class="control-label">Approved For Next Round</label>
                                             <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                                         </div>
@@ -1066,67 +1069,69 @@
                             </div>
 
                             <div id="mySelectionModal" class="modal modal-bg" tabindex="-1" role="dialog" aria-labelledby="mySelectionModalLabel" aria-hidden="true">
-                                    <!-- Modal content -->
-                                <div class="modal-content">
-                                  
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
 
 
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                                            <span class="reportbtn-icon fas fa-check"></span>
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="reportbtn-icon fas fa-check"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Final Selection Status</h5>
                                         </div>
-                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Final Selection Status</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true" id="selectPopUp">&times;</span>
+                                        </button>
+
+
+
+                                        <div class="modal-body">
+                                            <div class="form-group">
+
+                                                <label for="selectionDropdown" class="control-label">Final Selection</label>
+                                                <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                            </div>
+                                            <div id="selectionComments" class="form-group">
+                                                <label class="control-label">Final Comments</label>
+                                                <input type="text" name="selecComments" class="form-control" id="selecComments">
+                                            </div>
+                                            <div class="">
+                                                <input type="button" onclick="SaveSelecPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSelectUpload" value="Save">
+                                            </div>
+
+                                        </div>
+
                                     </div>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true" id="selectPopUp">&times;</span>
-                                    </button>
-
-
-
-                                    <div class="modal-body">
-                                        <div class="form-group">
-
-                                            <label for="selectionDropdown" class="control-label">Final Selection</label>
-                                            <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                                        </div>
-                                        <div id="selectionComments" class="form-group">
-                                            <label class="control-label">Final Comments</label>
-                                            <input type="text" name="selecComments" class="form-control" id="selecComments">
-                                        </div>
-                                        <div class="">
-                                            <input type="button" onclick="SaveSelecPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSelectUpload" value="Save">
-                                        </div>
-
-                                    </div>
-
-                                </div>
 
                                 </div>
                             </div>
                         </div>
-
-                        <!-- end content-->
                     </div>
-                    <!--  end card  -->
+
+                    <!-- end content-->
                 </div>
-                <!-- end col-md-12 -->
+                <!--  end card  -->
             </div>
-
-
-            <!-- end row -->
-
+            <!-- end col-md-12 -->
         </div>
-        <footer class="footer">
-            <div class=" container-fluid ">
 
-                <div class="copyright" id="copyright">
-                    &copy;
-                    <script>
-                        document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                    </script> Risebird All Rights Reserved.
-                </div>
+
+        <!-- end row -->
+
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
             </div>
-        </footer>
+        </div>
+    </footer>
     </div>
     <script src="https://www.amcharts.com/lib/4/core.js"></script>
     <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -1494,7 +1499,7 @@
             categoryAxis.renderer.grid.template.disabled = true;
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
-            
+
             valueAxis.renderer.grid.template.disabled = true;
 
             // Create series

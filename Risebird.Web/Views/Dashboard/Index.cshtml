@@ -10,7 +10,7 @@
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=1" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=1" />
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
 <!-- END PLUGINS -->
 <!-- START THIS PAGE PLUGINS-->
 <script type='text/javascript' src='~/js/plugins/icheck/icheck.min.js?v=123?v=1'></script>
@@ -510,7 +510,7 @@
                 startAngle: 60,
                 innerRadius: 55,
                 indexLabelFontSize: 15,
-                indexLabelFontColor: "#9a9a9a",  
+                indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
 
@@ -541,10 +541,10 @@
                 startAngle: 60,
                 innerRadius: 55,
                 indexLabelFontSize: 15,
-                indexLabelFontColor: "#9a9a9a",               
+                indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
-                
+
                 dataPoints: meetingsCountObj
             }]
         });
@@ -559,7 +559,7 @@
             { y: @Model.CandidatesCountObj.ScheduledCount, label:"Scheduled"},
             { y: @Model.CandidatesCountObj.DroppedCount, label:"Dropped"},
             { y: @Model.CandidatesCountObj.Pending, label: "Pending" }]
-          
+
 
         var chart = new CanvasJS.Chart("candidatesPieId", {
            theme: "light2",
@@ -572,7 +572,7 @@
                 startAngle: 60,
                 innerRadius: 55,
                 indexLabelFontSize: 15,
-                indexLabelFontColor: "#9a9a9a", 
+                indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
 
@@ -656,7 +656,7 @@
             url: '/Dashboard/GetDateWiseIRFProgress',
             data: { 'date': date },
             success: function (data) {
-               
+
                 $('#progressTableId').html('');
                 $('#progressTableId').html(data);
 

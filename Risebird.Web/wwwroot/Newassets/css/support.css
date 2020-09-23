@@ -102,20 +102,7 @@ td:hover.wordwrap {
 }
 
 /*CSS FOR Loader*/
-.loader {
-    font-family: Arial;
-    font-size: 10pt;
-    /*border: 5px solid #67CFF5;*/
-    /*width: 200px;
-            height: 100px;*/
-    display: none;
-    position: center !important;
-    background-color: #fbfbfb;
-    z-index: 999;
-    /*opacity: 0.5;*/
-    filter: alpha(opacity = 50);
-    text-align: center;
-}
+
 
 
 

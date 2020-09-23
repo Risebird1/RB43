@@ -248,64 +248,7 @@ table {
 
 
 
-    .dataTables_length label {
-        font-size: 14px;
-    }
 
-    .dataTables_length select.form-control{
-        padding: 8px 8px;
-    }
-
-    .dataTables_length select:focus {
-        border-color: #4a93de;
-    }
-
-    .dataTables_filter input {
-        outline: none;
-    }
-
-        .dataTables_filter input::-webkit-search-decoration,
-        #dataTables_filter input::-webkit-search-cancel-button, #clientduser_filter input::-webkit-search-decoration
-        {
-            display: none;
-        }
-
-        .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
-            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-            border: solid 1px #ccc;
-            padding: 9px 10px 9px 32px;
-            width: 150px;
-            font-family: arial;
-            -webkit-border-radius: 10em;
-            -moz-border-radius: 10em;
-            border-radius: 10em;
-            -webkit-transition: all .5s;
-            -moz-transition: all .5s;
-            transition: all .5s;
-            position:relative;
-        }
-
-            .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
-                width: 200px;
-                background-color: #fff;
-                border-color: #4a93de;
-                font-family: arial;
-                margin: 3px;
-                border: 1px rgba(80, 158, 235, 0.58) solid !important;
-            }
-
-
-        .dataTables_filter input:-moz-placeholder {
-            color: #999;
-        }
-
-        .dataTables_filter input::-webkit-input-placeholder {
-            color: #999;
-        }
-
-    .dataTables_length select.form-control:focus {
-        border: 1px rgba(80, 158, 235, 0.58) solid !important;
-    }
 #x {
     position: absolute;
     right: 30px;

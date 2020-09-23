@@ -1909,7 +1909,7 @@
 .form-control[disabled],
 .form-control[readonly],
 fieldset[disabled] .form-control {
-    background-color: #E3E3E3;
+    
     color: #888;
     cursor: not-allowed;
 }
@@ -2312,6 +2312,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     -ms-transform: rotate(180deg);
     transform: rotate(180deg);
 }
+
 
 .button-bar {
     display: block;

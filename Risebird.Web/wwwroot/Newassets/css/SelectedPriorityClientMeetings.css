@@ -20,26 +20,32 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
+.wrapper {
+    height:auto!important;
+}
 .pt30 {
     padding-top: 30px;
 }
-
-.card-title-space {
-    margin-top: 20px;
-    margin-bottom: 0px;
+.transparent-chart {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    background: transparent;
 }
+
 .client .mdc-card {
   box-shadow:none; border:0px;
     border-radius:0px;
 }
 
-
-
-
-.content.client {
-    margin-top: 0px;
-    padding: 0px 10px 0px;
+#uploadDiv #videoId {
+    background: none;
+    text-decoration: none;
 }
+
+
+
 
 .mdc-card .modal textarea::-webkit-scrollbar {
     width: 2px;
@@ -325,25 +331,30 @@ table {
 }
 
 .call-txt {
-    border: 1px #53a5f5 solid;
+   
     position: relative;
     padding: 5px 15px;
     left: -10px;
     top: 8px;
     font-size: 14px;
     font-family: arial;
-    color: #53a5f5;
+
     border-left: 0px;
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
 
+.mobile-view {
+    display: none;
+}
 
+.desktop-view {
+    display: block;
+}
 
 .multiple_row > h2 {
-    font-size: 16px;
-    background: #42a5f5 !important;
-    padding: 4px 10px;
+    font-size: 18px;
+    padding: 8px 10px;
     text-align: left;
     color: #ffffff;
     margin-top: 0px;
@@ -449,9 +460,11 @@ table {
 .border-rv {
     border-right: 1px dotted #ccc;
 }
-
-.control-label {
-    color: #5f5c5c !important;
+.mt50 {
+    margin-top: 60px;
+}
+#create_pdf {
+    margin-right: 5px;
 }
 .caret {
     display: none !important;
@@ -527,10 +540,7 @@ modal-content .modal-body {
     text-decoration: none;
 }
 
-.mdc-button--outlined:not(:disabled) {
-    border-color: #42a5f5 !important;
-    color: #42a5f5 !important;
-}
+
 
 .mdc-fab-secondary {
     background: #fff !important;
@@ -540,7 +550,6 @@ modal-content .modal-body {
 .mdc-card .modal .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -565,7 +574,6 @@ modal-content .modal-body {
 .dropdown-toggle {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke !important;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -758,6 +766,9 @@ modal-content .modal-body {
     #ProctoringTable .label-type {
         white-space: normal;
     }
+    .mdc-card-wrapper__text-section {
+        padding: 10px !important;
+    }
 }
 
 @media screen and (max-width: 767px) {
@@ -766,7 +777,13 @@ modal-content .modal-body {
         left: 25%;
         margin-left: 10px;
     }
+    .mobile-view {
+        display: block;
+    }
 
+    .desktop-view {
+        display: none;
+    }
     .interviewer-comment .talk-bubble [data-tooltip]:after {
         margin-left: 190px;
     }
