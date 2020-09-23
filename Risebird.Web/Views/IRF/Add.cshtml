@@ -13,7 +13,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 
 
-
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 
 <div class="main-panel " id="main-panel">
@@ -39,12 +40,12 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content ">
-        <div class="row">
+    <div class="content client ">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
                         @*<form action="/IRF/AddIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">*@
@@ -52,51 +53,51 @@
                         @using (Html.BeginForm("AddIRF", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckTotalWeightage()" }))
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                            <div class="row">
+                        <div class="row">
 
 
-                                <div class="card-header">
-                                    <h4 class="card-title">Add Skills Channel</h4>
-                                </div>
+                            <div class="col-md-12">
+                                <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Skill Channel</h4></div>
+                            </div>
 
-                                <div style="width: 100%;">&nbsp;</div>
+                            <div style="width: 100%;">&nbsp;</div>
 
-                                <div class="col-md-3 col-sm-3 pr-1">
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-
-                                        @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
-                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                        @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+                            <div class="col-md-3 col-sm-3 pr-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
 
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-3 px-1">
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
-                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-3 px-1">
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
+                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                    @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
 
-                                        @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
 
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3 col-sm-3 pl-1">
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "select-css form-control" })
-
-                                    </div>
                                 </div>
                             </div>
+                            <div class="col-md-3 col-sm-3 px-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
+                                    @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 px-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                    @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 pl-1">
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "select-css form-control" })
+
+                                </div>
+                            </div>
+                        </div>
                             <div class="row">
 
 
@@ -181,15 +182,15 @@
                                     <div class="form-group">
 
                                         <!--   <div class="switch-btn col-md-12">
-           <span class="on-off">B2C</span>
-           <div class="material-toggle">
+                                            <span class="on-off">B2C</span>
+                                            <div class="material-toggle">
 
-               <input class="switch" id="MoveToB2B" type="checkbox" checked="checked" value="false" name="B2B">
-               <label for="MoveToB2B" class=""></label>
+                                                <input class="switch" id="MoveToB2B" type="checkbox" checked="checked" value="false" name="B2B">
+                                                <label for="MoveToB2B" class=""></label>
 
-           </div>
-           <span class="on-off">B2B</span>
-       </div>-->
+                                            </div>
+                                            <span class="on-off">B2B</span>
+                                        </div>-->
 
 
 

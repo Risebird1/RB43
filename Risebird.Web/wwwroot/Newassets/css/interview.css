@@ -151,7 +151,6 @@ select{
     top: 30px;
     width: 0.8rem;
     position: absolute;
-    background: whitesmoke;
     border-radius: 0;
     display: none;
     height: 2rem;
@@ -223,8 +222,7 @@ input[type=number] {
     }
 
 
-[type="datetime-local"] {
-    background: #f5f5f5 url(../img/blue-timdate.png) 97% 50% no-repeat !important;
+[type="datetime-local"] {  
     background-size: 5% !important;
 }
 
@@ -237,7 +235,7 @@ input[type=number] {
     }
 
 
-
+#error_interviewDate{position:absolute}
 
 
 .mdc-button--raised .fa-file-excel-o:before {
@@ -323,16 +321,6 @@ select {
     position: relative;
 }
 
-.spinner {
-    top: 30px;
-    width: 0.8rem;
-    position: absolute;
-    background: whitesmoke;
-    border-radius: 0;
-    display: none;
-    height: 2rem;
-    right: 50px;
-}
 
 .js .spinner {
     display: block;
@@ -400,8 +388,7 @@ input[type=number] {
 
 
 [type="datetime-local"] {
-    background: url(../../img/blue-timdate.png) 97% 50% no-repeat !important;
-    
+   
     background-size: 5% !important;
 }
 
@@ -669,14 +656,12 @@ ul.panel-controls > li > button {
 }
 
 .call-txt {
-    border: 1px #53a5f5 solid;
     position: relative;
     padding: 5px 15px;
     left: -10px;
     top: 8px;
     font-size: 14px;
     font-family: arial;
-    color: #53a5f5;
     border-left: 0px;
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
@@ -815,26 +800,22 @@ padding:0;
 
 
 #resumeId, #zoomlinkId {
-    background: #e2f0ff;
-    color: #1d3b5e;
     padding: 5px 10px;
     border-radius: 16px;
 }
 
 
 #reportId {
-    background: #b3d2f1;
-    color: #1d3b5e;
+ 
     padding: 5px 10px;
     border-radius: 16px;
 }
 
 #jdlinkId {
-    background: #fff;
-    color: #1d3b5e;
+
     padding: 4px 10px;
     border-radius: 16px;
-    border: 1px #79c0f3 solid;
+
 }
 
 
@@ -845,6 +826,7 @@ padding:0;
     height: auto;
     border-radius: 10px;
     margin: 5px 0px;
+    width: 200px;
 
 }
 
@@ -970,7 +952,7 @@ padding:0;
 }
 
 .click {
-    color: #53a5f5;
+
     text-decoration: underline;
 }
 
@@ -994,7 +976,7 @@ padding:0;
 
 
 .mdc-fab-secondary {
-    background: #fff !important;
+    
     color: #53a5f5 !important;
 }
 
@@ -1045,7 +1027,6 @@ padding:0;
 .dropdown-toggle {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke !important;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -1109,7 +1090,7 @@ padding:0;
 }
 
 .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
-    border-color: #53a5f5 !important;
+    border-color: #53a5f5;
 }
 
 .mc-button-area {
@@ -1169,9 +1150,8 @@ padding:0;
     border-bottom: 1px #E3E3E3 solid !important;
 }
 .multiple_row > h2 {
-    font-size: 16px;
-   
-    padding: 4px 10px;
+    font-size: 18px;
+    padding: 8px 10px;
     text-align: left;
     color: #ffffff;
     margin-top: 0px;
@@ -1322,13 +1302,7 @@ select:-moz-focusring {
         padding: 12px 5px 10px 5px;
     }
 
-        .card-blue .card-body .client-field {
-            color: #1b4775;
-            display: block;
-            float: left;
-            font-weight: bold;
-            padding-right: 4px;
-        }
+      
 
 
 
@@ -1450,12 +1424,7 @@ top:3px;
     top: 0px;
     position: relative;
 }
-    .cheklabel {
-    font-size: 13.5px;
-    color: #5f5c5c;
-    padding-top: 10px;
-    float: left;
-}
+
 .fx-17 {
     font-size: 17px;
 }

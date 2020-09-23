@@ -19,7 +19,10 @@ body {
     border: 0px !important;
     border-radius: 0px;
 }
-input[type='radio']:checked:after {
+table.dataTable thead .sorting:after {
+    color: #fff;
+}
+    input [type='radio']:checked:after {
     background-color: #42a5f5!important;
     top: 1px!important;
 }
@@ -33,7 +36,10 @@ input[type='radio']:checked:after {
     .qc-feedback .mdc-form-field > label, .qc-feedback label {
   color:#000;
 }
-
+.select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
+    background-color: whitesmoke !important;
+    border-bottom: 1px solid #aaa !important;
+}
 #broadcastModal input[type='radio']:checked:after {
     background-color: #42a5f5 !important;
     top: -1px !important;

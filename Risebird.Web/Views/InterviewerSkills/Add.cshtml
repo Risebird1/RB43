@@ -5,7 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 
 <div class="main-panel" id="main-panel">
@@ -37,7 +38,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
-                  
+
                     <div class="mdc-card-wrapper__text-section">
                         @*<form action="/IRF/AddIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">*@
                         @*<input type="hidden" id="LoginMailId" value="@ViewBag.LoginMailId" />*@
@@ -343,7 +344,7 @@
 
 
 
-                        
+
                         }
                         @*</form>*@
 
@@ -357,11 +358,11 @@
         </div>
         <!-- end row -->
     </div>
- 
+
 </div>
 
 <script>
-   
+
 
     $(document).ready(function () {
         var inputs = document.getElementsByTagName("input");
@@ -475,7 +476,7 @@
 
     }
 
-    
+
     function SkillChanged() {
         //var index = id.charAt(16);
         var Skills = $('[id$="PrimarySkill"]');
@@ -527,7 +528,7 @@
         });
 
     }
-    
+
     function checkStartDate(val) {
 
         if (val == "") {
@@ -785,7 +786,7 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
-    
+
     function AddRowInterviewer() {
         document.getElementById("btnUpload").disabled = false;
 
@@ -833,7 +834,7 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
-    
+
     function InterviewerChanged(val, id) {
 
         var index = id.charAt(22);
@@ -849,7 +850,7 @@
 
 
     }
-    
+
     $(document).ready(function () {
 
         SkillChanged();
@@ -862,16 +863,16 @@
             data: { 'id': id },
             success: function (data) {
                 $("#InterviewerCollection_0__SkillId").val(data);
-               
+
 
             }
         });
 
-        
+
 
     });
 
-    
+
     function DeleteRow(element, collectionName, tdOne, tdTwo) {
         if ($(element).parents('tbody').find('tr').length === 1) {
 

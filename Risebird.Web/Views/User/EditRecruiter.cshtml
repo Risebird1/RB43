@@ -3,43 +3,44 @@
     ViewData["Title"] = "Update Recruiter";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
-
-    <div class="main-panel" id="main-panel">
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-            <div class="container-fluid">
-                <div class="navbar-wrapper">
-                    <div class="navbar-toggle">
-                        <button type="button" class="navbar-toggler">
-                            <span class="navbar-toggler-bar bar1"></span>
-                            <span class="navbar-toggler-bar bar2"></span>
-                            <span class="navbar-toggler-bar bar3"></span>
-                        </button>
-                    </div>
-                    <a class="navbar-brand breadcrumscolor" href="/User/Recruiters">Recruiter</a>
-                    <a class="navbar-brand">/ &nbsp; Update Recruiter</a>
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
                 </div>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-bar navbar-kebab"></span>
-                    <span class="navbar-toggler-bar navbar-kebab"></span>
-                    <span class="navbar-toggler-bar navbar-kebab"></span>
-                </button>
+                <a class="navbar-brand breadcrumscolor" href="/User/Recruiters">Recruiter</a>
+                <a class="navbar-brand">/ &nbsp; Update Recruiter</a>
             </div>
-        </nav>
-        <!-- End Navbar -->
-        <div class="mt50">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
         </div>
-        <div class="content client">
-            <div class="row bg-white">
-                <div class="col-md-12 ">
-                    <div class="mdc-card card bg-white">
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
+    </div>
+    <div class="content client">
+        <div class="row bg-white">
+            <div class="col-md-12 ">
+                <div class="mdc-card card bg-white">
 
-                        <div class="mdc-card-wrapper__text-section">
-                            @using (Html.BeginForm("EditRecruiter", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                            {
+                    <div class="mdc-card-wrapper__text-section">
+                        @using (Html.BeginForm("EditRecruiter", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
 
-                                @Html.AntiForgeryToken()
+                            @Html.AntiForgeryToken()
 
                             <div class="row">
                                 <div class="col-md-12">
@@ -109,30 +110,30 @@
 
                             </div>
 
-                                <div class="card-footer ">
-                                    <div class="row">
+                            <div class="card-footer ">
+                                <div class="row">
 
-                                        <div class="col-md-12 mc-button-area">
-                                            @Html.ActionLink("Back to List", "Recruiters", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
-                                        </div>
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Recruiters", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
                                     </div>
                                 </div>
+                            </div>
 
-                            }
-                        </div>
-
-
-
+                        }
                     </div>
-                    <!--  end card  -->
-                </div>
-                <!-- end col-md-12 -->
-            </div>
-            <!-- end row -->
-        </div>
 
+
+
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
     </div>
+
+</div>
 
 
 

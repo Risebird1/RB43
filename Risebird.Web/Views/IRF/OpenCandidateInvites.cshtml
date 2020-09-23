@@ -8,8 +8,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
-
-
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -41,7 +41,7 @@
 
 
                 <div class="pull-right">
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" >
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "IRF", actMethod ="OpenCandidateInvites" } )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Support</font></span>
                     </button>
                 </div>
@@ -53,7 +53,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                      
+
                         <div class="row">
                             @foreach (var item in Model)
                             {
@@ -87,7 +87,7 @@
 
                                                         <div class="col-12">
                                                             <div class="group inner list-group-item-text">
-                                                                <div class="can-details second">   <span class="client-field">Client Name:</span> <span class="clientName">@item.ClientCompName (@item.ClientName)</span></div>                                                                
+                                                                <div class="can-details second">   <span class="client-field">Client Name:</span> <span class="clientName">@item.ClientCompName (@item.ClientName)</span></div>
                                                                 <div class="can-details four">  <b>Job Ends on :</b> <span>@item.EndDate.ToString("dd MMM yyyy")  </span></div>
                                                                 <div class="can-details five"> <b>Jd Link:</b> <span><a href="@item.JDLink" target="_blank">Job Description</a></span></div>
 
@@ -99,7 +99,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                       
+
                                     </div>
                                 </div>
                             }

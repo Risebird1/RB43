@@ -179,22 +179,20 @@ textarea::-webkit-scrollbar-thumb {
         color: darkgray
     }
 
-.up, .up-1, .up-2, .up-3, .up-4, .up-5, .up-6, .up-7, .up-8 {
-    transform: rotate(-90deg);
-    top: -.5rem;
-    right:-.3rem;
-}
 
-.down, .down-1, .down-2, .down-3, .down-4, .down-5, .down-6, .down-7, .down-8 {
-    transform: rotate(-90deg);
-    top: -2rem;
-    right: -.3rem;
-}
 
 .spinner-wrap {
     position: relative
 }
 
+.card-blue .statistics .card-header {
+    padding: 10px 0px 10px 0;
+}
+.card-header-buttons.action {
+    padding: 0px 5px 5px 0px;
+    float: right;
+    text-align: right;
+}
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -412,7 +410,7 @@ table {
 }
 
 .click {
-    color: #53a5f5;
+  
     text-decoration: underline;
 }
 
@@ -643,123 +641,6 @@ modal-content .modal-body {
 .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
     border-color: #53a5f5;
 }
-
-
-
-
-
-.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip] {
-    position: relative;
-    z-index: 2;
-    cursor: pointer;
-    left: 0%;
-}
-
-    /* Hide the tooltip content by default */
-    .talk-bubble [data-tooltip]:before,
-    .talk-bubble [data-tooltip]:after, .video-info [data-tooltip]:before,
-    .video-info [data-tooltip]:after, .video-title [data-tooltip]:before,
-    .video-title [data-tooltip]:after {
-        visibility: hidden;
-        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    /* Position tooltip above the element */
-.selected-priority .talk-bubble [data-tooltip]:before {
-    bottom: 72%;
-}
-    .talk-bubble [data-tooltip]:before {
-    position: absolute;
-    bottom: 150%;
-    left: 10%;
-    margin-bottom: 5px;
-    margin-left: -80px;
-    font-weight: 300;
-    padding: 7px;
-    width: 300px;
-    font-size: 13px;
-    height: auto;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
-    content: attr(data-tooltip);
-    text-align: center;
-    /* font-size: 14px; */
-    line-height: 1.3;
-    white-space: normal;
-    border-radius: 15px;
-}
-
-.interviewer-comment .talk-bubble [data-tooltip]:before {
-    width:400px;
-}
-
-
-
-    .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        margin-bottom: 5px;
-        margin-left: -80px;
-        font-weight: 300;
-        padding: 7px;
-        min-width: 180px;
-        font-size: 13px;
-        height: auto;
-        -webkit-border-radius: 3px;
-        -moz-border-radius: 3px;
-        border-radius: 3px;
-        box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
-        content: attr(data-tooltip);
-        text-align: center;
-        /* font-size: 14px; */
-        line-height: 1.3;
-        white-space: normal;
-    }
-
-
-    /* Triangle hack to make tooltip look like a speech bubble */
-    .talk-bubble [data-tooltip]:after {
-        position: absolute;
-        bottom: 150%;
-        left: 50%;
-        margin-left: -5px;
-        width: 0;
-        content: " ";
-        font-size: 0;
-        line-height: 0;
-    }
-
-
-    .video-info [data-tooltip]:after, .video-title [data-tooltip]:after {
-        position: absolute;
-        bottom: 95%;
-        left: 10%;
-        margin-left: -5px;
-        width: 0;
-        content: " ";
-        font-size: 0;
-        line-height: 0;
-    }
-
-
-
-    /* Show tooltip content on hover */
-    .talk-bubble [data-tooltip]:hover:before,
-    .talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after {
-        visibility: visible;
-        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
-        opacity: 1;
-    }
-
-
-
 
 
 @media screen and (max-width:991px) {

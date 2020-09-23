@@ -13,6 +13,9 @@ body {
 .client .mdc-card {
     background: #ebecf1;
 }
+table.dataTable thead .sorting:after {
+    color: #fff;
+}
 .navbar.navbar-transparent.btn-primary:hover, .navbar.navbar-transparent.btn-primary:focus {
     background: linear-gradient(to right, #787878 0%, #959596 60%, #8a8a8c 100%) !important;
 }
@@ -38,7 +41,10 @@ textarea::-webkit-scrollbar {
     background-position: 45%;
     z-index: 1000;
 }
-
+.select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
+    background-color: whitesmoke !important;
+    border-bottom: 1px solid #aaa !important;
+}
 .qc-feedback .card-footer .upload-label {
     background: #e2e2e2;
 }

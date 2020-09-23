@@ -107,6 +107,9 @@ hr {
 .show .dropdown-menu:before {
     color: #181818!important;
 }
+table.dataTable thead .sorting:after {
+    color: #121212;
+}
 .relatedvideo .video-card {
     border: 1px #1f1e1e solid;
     background-color: #161616 !important;
@@ -412,11 +415,17 @@ border-bottom: 2px #121212 solid !important;
     font-weight: 300 !important;
 }
 
-.click {
+.click, .click:hover {
     color: #f7eaea75;
     !important;
     text-decoration: underline !important;
 }
+.select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
+    background-color: #181818 !important;
+    border-bottom: 1px solid #181818!important;
+}
+
+
 
 #ProctoringTable .label-type {
     background: #181818 !important;
@@ -608,7 +617,8 @@ div.dataTables_wrapper div.dataTables_info {
 }
 
 .dropdown-menu {
-    border-color: #181818 !important;
+    border-color: #181818!important;
+    background: #181818!important;
 }
 
 .comment-area textarea {

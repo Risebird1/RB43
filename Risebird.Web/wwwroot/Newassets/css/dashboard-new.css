@@ -1206,6 +1206,161 @@ body.page-container-boxed {
     border-radius: .25em;
 }
 
+.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip] {
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    left: 0%;
+}
+
+    /* Hide the tooltip content by default */
+    .talk-bubble [data-tooltip]:before,
+    .talk-bubble [data-tooltip]:after, .video-info [data-tooltip]:before,
+    .video-info [data-tooltip]:after, .video-title [data-tooltip]:before,
+    .video-title [data-tooltip]:after {
+        visibility: hidden;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+/* Position tooltip above the element */
+.selected-priority .talk-bubble [data-tooltip]:before {
+    bottom: 72%;
+}
+
+.talk-bubble [data-tooltip]:before {
+    position: absolute;
+    bottom: 150%;
+    left: 10%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    font-weight: 300;
+    padding: 7px;
+    width: 300px;
+    font-size: 13px;
+    height: auto;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+    content: attr(data-tooltip);
+    text-align: center;
+    /* font-size: 14px; */
+    line-height: 1.3;
+    white-space: normal;
+    border-radius: 15px;
+}
+
+.interviewer-comment .talk-bubble [data-tooltip]:before {
+    width: 400px;
+}
+
+
+
+.video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    font-weight: 300;
+    padding: 7px;
+    min-width: 180px;
+    font-size: 13px;
+    height: auto;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+    content: attr(data-tooltip);
+    text-align: center;
+    /* font-size: 14px; */
+    line-height: 1.3;
+    white-space: normal;
+}
+
+
+/* Triangle hack to make tooltip look like a speech bubble */
+.talk-bubble [data-tooltip]:after {
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -5px;
+    width: 0;
+    content: " ";
+    font-size: 0;
+    line-height: 0;
+}
+
+
+.video-info [data-tooltip]:after, .video-title [data-tooltip]:after {
+    position: absolute;
+    bottom: 95%;
+    left: 10%;
+    margin-left: -5px;
+    width: 0;
+    content: " ";
+    font-size: 0;
+    line-height: 0;
+}
+.cheklabel {
+    font-size: 13.5px;
+    color: #5f5c5c;
+    padding-top: 10px;
+    float: left;
+}
+
+.card-blue .card-body .client-field {
+    display: block;
+    float: left;
+    font-weight: bold;
+    padding-right: 4px;
+}
+.can-details {
+    width: 100%;
+    float: left;
+    font-weight: normal !important;
+    padding: 0px 0px 10px 0px;
+    font-size: 14px;
+    line-height: 16px;
+}
+
+    .can-details span {
+        font-weight: normal;
+    }
+.clientName {
+    display: inline-block;
+    float: left;
+    padding-bottom: 3px;
+    width: 235px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: normal !important;
+}
+.up, .up-1, .up-2, .up-3, .up-4, .up-5, .up-6, .up-7, .up-8 {
+    transform: rotate(-90deg);
+    top: -.5rem;
+    right: -.3rem;
+}
+
+.down, .down-1, .down-2, .down-3, .down-4, .down-5, .down-6, .down-7, .down-8 {
+    transform: rotate(-90deg);
+    top: -2rem;
+    right: -.3rem;
+}
+
+/* Show tooltip content on hover */
+.talk-bubble [data-tooltip]:hover:before,
+.talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after {
+    visibility: visible;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
+}
+
 .page-container.page-mode-rtl .x-navigation.x-navigation-minimized li ul {
     top: 0px;
     right: auto;
@@ -2670,6 +2825,13 @@ input[type='radio'] {
 }
 .pt30 {
     padding-top: 30px;
+}
+
+.mt50 {
+    margin-top: 60px;
+}
+.mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
+    border-color: rgb(146, 146, 146);
 }
 .PieId {
     height: 200px;
@@ -5346,7 +5508,7 @@ blockquote {
 .modal-title {
     text-align: center;
     padding: 10px 10px 0px 10px;
-    font-size: 1.57em !important;
+    font-size: 1.5em !important;
     text-transform: uppercase;
 }
 
@@ -5444,7 +5606,16 @@ button.close {
     border: 0px;
     border-radius: 0px;
 }
+.w-full {
+    width: 100%;
+}
+.mobile-view {
+    display: none;
+}
 
+.desktop-view {
+    display: block;
+}
 .dataTables_length label {
     font-size: 14px;
 }
@@ -5471,6 +5642,7 @@ button.close {
         border: solid 1px #ccc;
         padding: 9px 10px 9px 32px;
         width: 150px;
+        height: 40px;
         font-family: arial;
         -webkit-border-radius: 10em;
         -moz-border-radius: 10em;
@@ -7151,6 +7323,14 @@ div.tagsinput {
             height: auto !important;
             width: 100% !important;
         }
+
+    .mobile-view {
+        display: block;
+    }
+
+    .desktop-view {
+        display: none;
+    }
 }
 
 

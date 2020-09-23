@@ -6552,7 +6552,7 @@ Created using IcoMoon - icomoon.io
 .wrapper {
     position: relative;
     top: 0;
-    height: 100vh;
+ 
 }
 
     .wrapper.wrapper-full-page {
@@ -11090,7 +11090,7 @@ textarea:focus {
 table.dataTable thead .sorting:after {
     opacity: 1 !important;
     content: "\f0dc";
-    color: #fff !important;
+
 }
 
 table.dataTable {

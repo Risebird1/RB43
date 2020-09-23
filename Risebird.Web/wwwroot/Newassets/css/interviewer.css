@@ -160,14 +160,12 @@ table {
 }
 
 .call-txt {
-    border: 1px #53a5f5 solid;
     position: relative;
     padding: 5px 15px;
     left: -10px;
     top: 8px;
     font-size: 14px;
     font-family: arial;
-    color: #53a5f5;
     border-left: 0px;
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
@@ -337,8 +335,7 @@ table {
 
 
 #resumeId, #zoomlinkId {
-    background: #e2f0ff;
-    color: #1d3b5e;
+ 
     padding: 5px 10px;
     border-radius: 16px;
 }
@@ -389,7 +386,7 @@ table {
     height: auto;
     border-radius: 10px;
     margin: 5px 0px;
-    background-color: #eff7ff;
+
 }
 
 /* Modal */
@@ -510,7 +507,7 @@ table {
     height: auto;
     border-radius: 7px;
     margin: 5px 0px;
-    background-color: #fff;
+
 }
 .cmt-w {
     width: 300px
@@ -519,7 +516,6 @@ table {
     .talk-bubble textarea {
         resize: none;
         border: 0;
-        background: #fff;
         padding: 5px;
         width: 100%;
     }
@@ -561,18 +557,7 @@ table {
 .mc-button-area {
     text-align: right;
 }
-.can-details {
-    width: 100%;
-    float: left;
-    font-weight: normal !important;
-    padding: 0px 0px 10px 0px;
-    font-size: 14px;
-    line-height: 16px;
-}
 
-    .can-details span {
-        font-weight: normal;
-    }
 .upload {
     margin: 10px 0px 0px 0px;
 }
