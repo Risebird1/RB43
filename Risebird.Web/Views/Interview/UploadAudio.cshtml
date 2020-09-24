@@ -7,13 +7,8 @@
 }
 
 
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>*@
-
-
-<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
 
@@ -72,7 +67,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
-                                       
+
                                         @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                         @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control btn", @accept = ".mp3, .wav, .m4a" })
 
@@ -83,12 +78,12 @@
                                             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.Description, new { @class = "form-control text-box single-line", @style = "margin-top:10px; height:45px" })
                                         </div>
-                                       
+
                                     </div>
 
                                 </div>
-                      
-                             
+
+
 
 
                                 @Html.HiddenFor(m => m.IRFId)
@@ -126,7 +121,7 @@
         <!-- end row -->
 
     </div>
-    
+
 </div>
 
 

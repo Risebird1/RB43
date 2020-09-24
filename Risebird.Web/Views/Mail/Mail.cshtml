@@ -4,7 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <script src="~/js/CustomValidation/EmailValidation.js"></script>
 @using (Html.BeginForm("Mail", "Mail", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return validateEmail()" }))
@@ -31,7 +32,7 @@
                     <span class="navbar-toggler-bar navbar-kebab"></span>
                     <span class="navbar-toggler-bar navbar-kebab"></span>
                 </button>
-               
+
             </div>
         </nav>
         <!-- End Navbar -->

@@ -101,7 +101,7 @@ hr {
 }
 .video-card {
     border: 1px #1f1e1e solid;
-    background-color: #161616 !important;
+    background-color: #161616;
     box-shadow: none !important;
 }
 .show .dropdown-menu:before {
@@ -446,8 +446,11 @@ select * {
     background: #181818;
 }
 
+.border-db {
+    border-right: 1px #77737359 solid !important
+}
 #resumeId, #zoomlinkId, .callatag {
-    background: #000000;
+    background: #000000 !important;
     color: #47484a;
     border: 1px #77737359 solid;
 }

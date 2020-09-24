@@ -29,7 +29,9 @@ table.dataTable thead .sorting:after {
 textarea::-webkit-scrollbar {
     background-color: var(#acacad, #565656) !important;
 }
-
+.table-bordered {
+    border: 1px solid #dee2e6 !important;
+}
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
     background: whitesmoke;
     color: #888 !important;
@@ -40,6 +42,9 @@ textarea::-webkit-scrollbar {
     background-repeat: no-repeat;
     background-position: 45%;
     z-index: 1000;
+}
+.border-db {
+    border-right: 1px #ddd solid !important
 }
 .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
     background-color: whitesmoke !important;

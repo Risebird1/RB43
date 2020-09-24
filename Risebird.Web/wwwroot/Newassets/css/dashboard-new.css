@@ -1311,7 +1311,15 @@ body.page-container-boxed {
     padding-top: 10px;
     float: left;
 }
-
+#resumeId, .callatag {
+    background: #e2f0ff;
+    
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+#create_pdf {
+    margin-right: 5px;
+}
 .card-blue .card-body .client-field {
     display: block;
     float: left;
@@ -3008,9 +3016,7 @@ label {
         color: #95b75d;
     }
 
-.border-db {
-    border-right: 1px #ddd solid !important
-}
+
 
 .control-label.text-left {
     text-align: left;
@@ -5453,7 +5459,7 @@ blockquote {
 
     .theme-settings .ts-body {
         width: 165px;
-        background: rgba(28,175,154,0.9);
+       
         -moz-border-radius: 5px 0px 0px 5px;
         -webkit-border-radius: 5px 0px 0px 5px;
         border-radius: 5px 0px 0px 5px;

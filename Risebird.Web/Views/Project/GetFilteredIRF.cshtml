@@ -1,7 +1,8 @@
 ﻿@model Risebird.Entities.ViewModel.Project
 
 
-
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
 <table class="table table-bordered mbn" id="IRFList">
     <thead>
         <tr>
@@ -14,39 +15,38 @@
     <tbody>
         @for (int i = 0; i < Model.ProjectIRFMappings.Count(); i++)
         {
-        <tr>
-            <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
-            <td class="text-center">@Model.ProjectIRFMappings[i].PrimarySkills</td>
-            <td class="text-center">@Model.ProjectIRFMappings[i].Client</td>
-            <td class="text-center">
-               
+            <tr>
+                <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
+                <td class="text-center">@Model.ProjectIRFMappings[i].PrimarySkills</td>
+                <td class="text-center">@Model.ProjectIRFMappings[i].Client</td>
+                <td class="text-center">
 
 
 
 
-                <div class="mdc-form-field" style="margin-bottom: 10px;">
-                    <div class="mdc-checkbox">
-                       
 
-                        @Html.CheckBoxFor(m => m.ProjectIRFMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
-                        <div class="mdc-checkbox__background">
-                            <svg class="mdc-checkbox__checkmark"
-                                 viewBox="0 0 24 24">
-                                <path class="mdc-checkbox__checkmark-path"
-                                      fill="none"
-                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                            </svg>
-                            <div class="mdc-checkbox__mixedmark"></div>
+                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                        <div class="mdc-checkbox">
+
+
+                            @Html.CheckBoxFor(m => m.ProjectIRFMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark"
+                                     viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path"
+                                          fill="none"
+                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
+                            <div class="mdc-checkbox__ripple"></div>
+
+
                         </div>
-                        <div class="mdc-checkbox__ripple"></div>
-
-
                     </div>
-                </div>
 
-            </td>
-            @Html.HiddenFor(m => m.ProjectIRFMappings[i].IRFId)
-
+                </td>
+                @Html.HiddenFor(m => m.ProjectIRFMappings[i].IRFId)
 
 
 
@@ -57,7 +57,8 @@
 
 
 
-        </tr>
+
+            </tr>
         }
 
     </tbody>

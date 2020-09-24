@@ -4,7 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
-
+<link href="~/Newassets/css/irf.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
 
 <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js"></script>
@@ -31,21 +32,19 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
     <div class="content curated-group">
-        <div class="row">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card  bl-bg">
 
 
                     <div class="mdc-card-wrapper__text-section">
 
-                       
+
                         <div class="row">
-                            <div class="card-header">
-                                <h4 class="card-title">Curated Group Users</h4>
-                            </div>
+                         
 
                             <div style="width: 100%;">&nbsp;</div>
                             <div class="col-md-4 col-sm-4 pr-1">
@@ -66,8 +65,10 @@
                                     <table class="table table-bordered mbn" id="IRFList">
                                         <thead>
                                             <tr>
-                                                <th class="text-center" style="font-size:15px!important;">EmailId</th>
-                                                <th class="text-center" style="font-size:15px!important;">Add</th>
+                                                <th class="text-center" style="font-size:15px!important;border:0px!important">EmailId</th>
+                                                <th class="text-center" style="        font-size: 15px !important;
+        border: 0px !important
+">Add</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -81,7 +82,7 @@
 
                                                         <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                             <div class="mdc-checkbox">
-                                                                @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control", @onclick="UpdateUserList(this.id)" })
+                                                                @Html.CheckBoxFor(m => m.CuratedGroupUserList[i].IsAdded, new { @class = "mdc-checkbox__native-control", @onclick = "UpdateUserList(this.id)" })
 
 
                                                                 <div class="mdc-checkbox__background">
@@ -178,7 +179,7 @@
                 users.push(value);
                 return;
             }
-            
+
         }
         else {
             //check if the array has this value. If yes, remove the value

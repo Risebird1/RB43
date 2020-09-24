@@ -8,7 +8,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -67,8 +68,8 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-                        
-                           
+
+
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <div id="tableID" class="second">
                                     <table id="MyInterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -150,11 +151,11 @@
                                                             </button>
                                                         }
                                                         @*<button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
-                                                            <span onclick="location.href = '@Url.Action("SampleQuestions", "Interviewer", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
-                                                        </button>*@
+                                                                <span onclick="location.href = '@Url.Action("SampleQuestions", "Interviewer", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
+                                                            </button>*@
                                                         @*<button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
-                                                            <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                        </button>*@
+                                                                <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                            </button>*@
                                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
                                                             <span onclick="location.href = '@Url.Action("AddReport", "Interviewer", new { interviewId = item.id, irfId = item.iscIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                         </button>
@@ -177,7 +178,7 @@
             <div id="myModal" class="modal modal-bg">
                 <!-- Modal content -->
                 <div class="modal-content">
-                  
+
                     <div class="filheader">
                         <div class="filavatar">
                             <span class="publicsharing-icon">
@@ -193,13 +194,13 @@
                     </button>
 
                     <div class="modal-body">
-                     
-                   <label id="callingLabel" class="modal-title text-center mt-20"><b>Calling...</b></label>
 
-              <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-                       
+                        <label id="callingLabel" class="modal-title text-center mt-20"><b>Calling...</b></label>
+
+                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto; display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+
                     </div>
-              
+
                 </div>
 
             </div>

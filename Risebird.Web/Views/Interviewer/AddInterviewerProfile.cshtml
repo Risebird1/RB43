@@ -4,7 +4,8 @@
     ViewData["Title"] = "Add Interviewer Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -60,7 +61,7 @@
                                     </div>
                                     <div class="form-group dob">
                                         @Html.LabelFor(model => model.DOB, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    
+
                                         @Html.TextBoxFor(m => m.DOB, null, new { id = "DOB", @class = "form-control text-box single-line", type = "date" })
                                         @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
                                     </div>
@@ -88,7 +89,7 @@
                                         @Html.EditorFor(model => model.Blog, new { htmlAttributes = new { id = "txt_Blog", @class = "form-control text-box single-line", @type = "text" } })
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })                                       
+                                        @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]
                                                         {   new SelectListItem { Text = "No", Value = "false" },
                                                             new SelectListItem { Text = "Yes", Value = "true"} },
@@ -216,7 +217,7 @@
                                         @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                     </div>
-                                   
+
                                 </div>
                             </div>
                             <!-- INterviewer personal Details End-->
@@ -270,7 +271,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                               
+
                                             </tbody>
                                         </table>
                                         <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
@@ -319,7 +320,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                               
+
                                             </tbody>
                                         </table>
                                         <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
@@ -394,7 +395,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                               
+
 
                                             </tbody>
                                         </table>
@@ -418,7 +419,7 @@
                                         <table class="table table-bordered mbn" id="projectTable">
                                             <thead>
                                                 <tr class="tableHeaderClass">
-                                           
+
                                                     <th width="10%" class="table_heading">Is Primary Skill used In Recent Project</th>
                                                     <th width="50%" class="table_heading">Project Description</th>
                                                     <th width="10%" class="table_heading">Is Commercial Project</th>
@@ -430,7 +431,7 @@
                                                 @if (Model.InterviewerProjectsDetails == null || Model.InterviewerProjectsDetails.Count() == 0)
                                                 {
                                                     <tr>
-                                                       
+
                                                         <td>
                                                             <div class="mdc-checkbox">
                                                                 @Html.CheckBox(("InterviewerProjectsDetails[0].IsPrimarySkillUsed"), new { @class = "mdc-checkbox__native-control" })
@@ -475,7 +476,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                               
+
 
                                             </tbody>
                                         </table>
@@ -539,7 +540,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                               
+
 
 
                                             </tbody>
@@ -591,7 +592,7 @@
                                         </div>
                                     </div>
                                 }
-                               
+
                                 <!-- Account Detilas End-->
                             </div>
                             <!-- Account Details End-->
@@ -613,17 +614,17 @@
 
 
                         }
-                        
+
                     </div>
                 </div>
             </div>
 
-           
+
         </div>
     </div>
 
 </div>
-    <script>
+<script>
         //====== Age CalculationFunctiopn======//
 
         $(document).ready(function () {
@@ -635,7 +636,7 @@
                 document.getElementById("txt_Age").value = age.toString();
             });
         });
-    
+
         // ========== Add Row Methods  =========================================================//
 
         // Skills
@@ -685,14 +686,14 @@
         $form.data("validator", null);
 
         // Check document for changes
-      
+
 
     }
 
        // For Certificate
 
         function addRowCertificateDetails() {
-       
+
         var $ttc = $("#certificateTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#certificateTable tr").length - 1;
@@ -731,7 +732,7 @@
 
     }
 
-        // For Education 
+        // For Education
         function addRowEducationDetails() {
 
         var table = document.getElementById("educationTable");
@@ -776,10 +777,10 @@
         $form.unbind();
         $form.data("validator", null);
 
-        
+
     }
 
-    // For Project 
+    // For Project
         function addProjectTableRow() {
         var table = document.getElementById("projectTable");
         var rowCount = table.rows.length;
@@ -828,7 +829,7 @@
 
         }
 
-        // For Availability 
+        // For Availability
         function addAvailabilityDetails() {
         var table = document.getElementById("availabilityDetailsTable");
         var rowCount = table.rows.length;
@@ -875,12 +876,12 @@
 
         }
         //=========================== End of Add rows functions ====================//
-        
+
         //===========================Begin of delete rows functions ====================//
 
         function deleteRowSkillDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix) {
             if ($(element).parents('tbody').find('tr').length === 1) {
-                
+
                 alert('Must have atleast one Row');
                 return false;
             }
@@ -933,7 +934,7 @@
             }
         }
 
-        
+
 
         // for certficate and Project Lists
 
@@ -984,7 +985,7 @@
             }
         }
 
-        
+
 
 
         function deleteRowEducationDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
@@ -1105,4 +1106,4 @@
             }
 
         }
-    </script>
+</script>
