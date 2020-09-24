@@ -542,8 +542,7 @@ table {
 }
 
 #resumeId, #zoomlinkId {
-    background: #e2f0ff;
-    color: #1d3b5e;
+  
     padding: 5px 10px;
     border-radius: 16px;
 }
