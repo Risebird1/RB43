@@ -4,6 +4,7 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,20 @@ namespace Risebird.Business
             try
             {
                 var result = await _proctorInterviewsRepository.GetAllVMs();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<VMProperties>> GetAllUserVMs(string emailId, string profile)
+        {
+            try
+            {
+                var result = await _proctorInterviewsRepository.GetAllUserVMs(emailId, profile);
                 return result;
             }
             catch (Exception ex)
@@ -169,5 +184,44 @@ namespace Risebird.Business
                 return "Failed";
             }
         }
+
+        public async Task<string> ResetPassword(VMResetPassword model)
+        {
+            try
+            {
+                string first = "$adsi = [ADSI]" + "\"" + "WinNT://$env:COMPUTERNAME" + "\"" + "\n";
+                string second = "$existing = $adsi.Children | where {$_.SchemaClassName -eq 'user' -and $_.Name -eq " + "\"" + model.userName + "\"" + "}" + "\n";
+                string third = "$existing.SetPassword(" + "\"" + model.Password + "\"" + ")" + "\n";
+                first.Split('\n');
+                second.Split('\n');
+                third.Split('\n');
+                string[] scripts = new string[1];
+                scripts[0] = first + second + third;
+                string Url = $"/resourceGroups/{model.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{model.VmName}";
+
+
+                var path = $"http://localhost:7071/api/RunPowerShellScript";
+                //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+                var dto = new RunPowershellDTO();
+                dto.Script = scripts;
+                dto.Url = Url;
+                HttpClient httpClient = new HttpClient();
+                httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, dto, "", "", _cancellationToken);
+                return response.Content.ReadAsStringAsync().Result;
+                
+                //Find vms which are not in db
+
+            }
+            catch (Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

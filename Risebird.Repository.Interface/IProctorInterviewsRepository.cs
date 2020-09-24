@@ -9,6 +9,7 @@ namespace Risebird.Repository.Interface
     public interface IProctorInterviewsRepository
     {
         Task<IEnumerable<VMProperties>> GetAllVMs();
+        Task<IEnumerable<VMProperties>> GetAllUserVMs(string emailId, string profile);
         Task<IEnumerable<TriggeredVM>> GetAllTriggeredVMs();
         Task<bool> DeleteTriggeredVMs(List<int> idList);
         Task<bool> UpdateVMStatus(int id, int status);

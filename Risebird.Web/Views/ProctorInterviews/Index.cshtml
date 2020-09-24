@@ -89,13 +89,13 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="statusImg">
-                                                    <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                    <img id="statusImage_@item.id" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
                                                 </div>
                                                 <div class="statusInfo">
                                                     <div class="group inner list-group-item-text">
 
                                                         <div class="row second">
-                                                            <div> Resource Group Name:</div> <div title="@item.ResourceGroupName">@item.ResourceGroupName</div>
+                                                            <div> Resource Group Name:</div> <div title="@item.ResourceGroupName"> @item.ResourceGroupName</div>
                                                         </div> <br />
 
                                                         <div class="row three"> <span>Public Ip Address:</span>@item.PublicIP</div> <br />
@@ -148,6 +148,9 @@
                                                             <i class="fa fa-play"></i>
                                                         </button>
                                                     }
+                                                    <button id="passwordButton_@item.id" class="mdc-fab app-fab--absolute" aria-label="Reset Password" onclick="location.href='@Url.Action("ResetPassword", "ProctorInterviews", new { name = item.Name, rgName = item.ResourceGroupName})'">
+                                                        <i class="fa fa-unlock-alt"></i>
+                                                    </button>
 
                                                 </div>
                                             </div>
@@ -250,11 +253,13 @@
         if (action == 'start') {
             //starting
             document.getElementById("statusId_" + vmId).innerHTML = "Starting";
+            document.getElementById("statusImage_" + vmId).src = "/img/Cards_Png/01_Green-White.png";
         }
         else if (action == 'powerOff') {
             //deallocating
             document.getElementById("statusId_" + vmId).innerHTML = "Deallocating";
             document.getElementById("rdpButton_" + vmId).style.display = "none";
+            document.getElementById("statusImage_" + vmId).src = "/img/Cards_Png/01_Grey-White.png";
 
         }
         $.ajax({

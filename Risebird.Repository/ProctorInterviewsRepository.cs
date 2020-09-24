@@ -26,6 +26,31 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
+        public async Task<IEnumerable<VMProperties>> GetAllUserVMs(string emailId, string profile)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@EmailId", emailId);
+                dynamicParameters.Add("@Profile", profile);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<VMProperties>(con, "usp_GetAllUserVMs", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<IEnumerable<VMProperties>> GetAllVMs()
         {
             try
