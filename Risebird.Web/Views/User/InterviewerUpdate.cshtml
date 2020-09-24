@@ -26,7 +26,8 @@
 
 
 </script>
-
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -63,229 +64,229 @@
 
                             @Html.AntiForgeryToken()
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Update Interviewer</h4></div>
-                            </div>
-
-
-                            <div style="width: 100%;">&nbsp;</div>
-
-                            <div class="form-horizontal">
-                                <div class="col-md-12 col-sm-12 nopad pull-left">
-                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 col-sm-4 pl-1 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
-
-                                        </div>
-
-                                    </div>
-
-
-
-
-
-                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-                                            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
-
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.PrimarySkill, new { htmlAttributes = new { ID = "drop", @class = "form-control", @type = "text", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" } })
-                                            @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-4 col-sm-4 pl-1 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.DropDownListFor(m => m.SelectedSkillIds, new SelectList(Model.PrimarySkills, "Value", "Text", Model.SelectedSkillIds), new { @id = "select", @class = "form-control", @type = "checkbox" })
-                                            @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
-
-                                        </div>
-
-                                    </div>
-
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Update Interviewer</h4></div>
                                 </div>
 
 
+                                <div style="width: 100%;">&nbsp;</div>
 
-                                <div class="col-md-12 col-sm-12 nopad pull-left">
+                                <div class="form-horizontal">
+                                    <div class="col-md-12 col-sm-12 nopad pull-left">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        </div>
 
 
-                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.Slots, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <div class="col-md-4 col-sm-4 px-1 pull-left">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.EditorFor(model => model.Slots, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-                                            @Html.ValidationMessageFor(model => model.Slots, "", new { @class = "text-danger" })
+                                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 col-sm-4 pl-1 pull-left">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+
+                                            </div>
 
                                         </div>
+
+
+
+
+
+                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 col-sm-4 px-1 pull-left">
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.PrimarySkill, new { htmlAttributes = new { ID = "drop", @class = "form-control", @type = "text", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" } })
+                                                @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 col-sm-4 pl-1 pull-left">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.DropDownListFor(m => m.SelectedSkillIds, new SelectList(Model.PrimarySkills, "Value", "Text", Model.SelectedSkillIds), new { @id = "select", @class = "form-control", @type = "checkbox" })
+                                                @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
+
+                                            </div>
+
+                                        </div>
+
                                     </div>
 
 
-                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
 
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            <span class="uploadfile-txt"> Upload File</span>
+                                    <div class="col-md-12 col-sm-12 nopad pull-left">
 
 
-                                            <div class="mdc-touch-target-wrapper" style="top: 4px;
+                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Slots, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.Slots, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                                @Html.ValidationMessageFor(model => model.Slots, "", new { @class = "text-danger" })
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 col-sm-4 px-1 pull-left">
+
+                                            <div class="form-group" style="margin-bottom:0px;">
+                                                <span class="uploadfile-txt"> Upload File</span>
+
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px;
     position: relative;">
-                                                <div class="mdc-radio mdc-radio--touch">
-                                                    <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" onclick="RadioChanged(this.value)">
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
                                                     </div>
-                                                    <div class="mdc-radio__ripple"></div>
                                                 </div>
+
+                                                Add a link
+
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Link" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
+                                                    </div>
+                                                </div>
+
+
+
+                                                None
+
+                                                <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                    <div class="mdc-radio mdc-radio--touch">
+                                                        <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="None" checked="checked" onclick="RadioChanged(this.value)">
+                                                        <div class="mdc-radio__background">
+                                                            <div class="mdc-radio__outer-circle"></div>
+                                                            <div class="mdc-radio__inner-circle"></div>
+                                                        </div>
+                                                        <div class="mdc-radio__ripple"></div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="form-group" style="display:none" id="linkDiv">
+                                                @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
+
                                             </div>
 
-                                            Add a link
+                                            <div class="" style="display:none" id="uploadDiv">
+                                                @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-
-                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                <div class="mdc-radio mdc-radio--touch">
-                                                    <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Link" onclick="RadioChanged(this.value)">
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
-                                                    <div class="mdc-radio__ripple"></div>
-                                                </div>
+                                                @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                             </div>
 
-
-
-                                            None
-
-                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                                <div class="mdc-radio mdc-radio--touch">
-                                                    <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="None" checked="checked" onclick="RadioChanged(this.value)">
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
-                                                    <div class="mdc-radio__ripple"></div>
-                                                </div>
-                                            </div>
-
-
-                                        </div>
-                                        <div class="form-group" style="display:none" id="linkDiv">
-                                            @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                            @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                            @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
-
-                                        </div>
-
-                                        <div class="" style="display:none" id="uploadDiv">
-                                            @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                        </div>
-
-                                        <div class="upload">
-                                            @{
-                                                if (Model.ResumeLink != null)
-                                                {
-                                                    <a id="videoId" target="_blank" title="Resume" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" href=@Model.ResumeLink.ToString().Replace(" ","%20")>Uploaded Resume</a>
+                                            <div class="upload">
+                                                @{
+                                                    if (Model.ResumeLink != null)
+                                                    {
+                                                        <a id="videoId" target="_blank" title="Resume" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded  col-lg-12" href=@Model.ResumeLink.ToString().Replace(" ","%20")>Uploaded Resume</a>
+                                                    }
                                                 }
-                                            }
+                                            </div>
+
                                         </div>
 
                                     </div>
 
-                                </div>
+                                    <div class="col-md-12 col-sm-12 pr-1 pull-left">
 
-                                <div class="col-md-12 col-sm-12 pr-1 pull-left">
+                                        <div class="form-group">
 
-                                    <div class="form-group">
-
-                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
 
 
-                                            <div class="mdc-checkbox">
+                                                <div class="mdc-checkbox">
 
-                                                @Html.CheckBoxFor(m => m.IsApproved, new { @class = "mdc-checkbox__native-control" })
+                                                    @Html.CheckBoxFor(m => m.IsApproved, new { @class = "mdc-checkbox__native-control" })
 
-                                                <div class="mdc-checkbox__background">
-                                                    <svg class="mdc-checkbox__checkmark"
-                                                         viewBox="0 0 24 24">
-                                                        <path class="mdc-checkbox__checkmark-path"
-                                                              fill="none"
-                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                    </svg>
-                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
                                                 </div>
-                                                <div class="mdc-checkbox__ripple"></div>
+
+                                                @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px;" })
+                                                @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
 
 
                                             </div>
 
-                                            @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px;" })
-                                            @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
-
 
                                         </div>
-
-
                                     </div>
-                                </div>
 
 
-                                <div class="col-md-12" style="width:100%; float:left;">
-                                    <div class="card-footer">
-                                        <div class="row">
+                                    <div class="col-md-12" style="width:100%; float:left;">
+                                        <div class="card-footer">
+                                            <div class="row">
 
-                                            <div class="col-md-12 mc-button-area">
-                                                @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
+                                                <div class="col-md-12 mc-button-area">
+                                                    @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
 
 

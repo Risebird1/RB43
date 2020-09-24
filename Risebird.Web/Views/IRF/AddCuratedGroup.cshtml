@@ -4,7 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+<link href="~/Newassets/css/irf.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
 
 
 <div class="main-panel" id="main-panel">
@@ -30,22 +31,19 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
-        <div class="row">
+    <div class="content client">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
 
-                       
+
 
                         <div class="row">
 
-                            <div class="card-header">
-                                <h4 class="card-title">Add Curated Group</h4>
-                            </div>
 
                             <div style="width: 100%;">&nbsp;</div>
                             <div class="col-md-4 col-sm-4 pr-1">
@@ -65,9 +63,14 @@
                             <table class="table table-bordered mbn" id="IRFList">
                                 <thead>
                                     <tr>
-                                        <th class="text-center border-db" style="font-size:15px!important; width:30%">IRF ID</th>
-                                        <th class="text-center border-db" style="font-size:15px!important; width:40%">Primary Skills</th>
-                                        <th class="text-center" style="font-size:15px!important;width:30%">Add</th>
+                                        <th class="text-center border-db" style="font-size:15px!important;border:0px!important; width:30%">IRF ID</th>
+                                        <th class="text-center border-db" style="        font-size: 15px !important;
+        border: 0px !important;
+        width: 40%">Primary Skills</th>
+                                        <th class="text-center" style="        font-size: 15px !important;
+        width: 30%;
+        border: 0px !important;
+">Add</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -133,7 +136,7 @@
 </div>
 <script>
     var irfList = [];
-    
+
     function AddCuratedGroup() {
         var cgName = document.getElementById('Name').value;
         if (cgName == null || cgName == '') {
@@ -174,7 +177,7 @@
             //check if the array has this value. If yes, remove the value
             if (irfList.includes(value)) {
                 var index = irfList.indexOf(value);
-                irfList.splice(index,1);
+                irfList.splice(index, 1);
                 return;
             }
 
@@ -195,7 +198,7 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            order:[],
+            order: [],
             responsive: false,
             language: {
                 search: "_INPUT_",

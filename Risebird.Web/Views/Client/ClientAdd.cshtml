@@ -3,7 +3,8 @@
     ViewData["Title"] = "ClientAdd";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 
 <div class="main-panel" id="main-panel">
@@ -33,7 +34,7 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
- <div class="content">
+    <div class="content">
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
@@ -45,7 +46,7 @@
                             @Html.AntiForgeryToken()
                             <div class="row">
 
-                            <div class="card-header">
+                                <div class="card-header">
                                     <h4 class="card-title">Add Client</h4>
                                 </div>
 
@@ -108,14 +109,15 @@
 
                                         <input type="submit" id="btnUpload" value="Submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
 
-                                    </div></div></div>
-
-                                        }
-
                                     </div>
                                 </div>
                             </div>
-                        </div>
+
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-          

@@ -20,26 +20,32 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
+.wrapper {
+    height:auto!important;
+}
 .pt30 {
     padding-top: 30px;
 }
-
-.card-title-space {
-    margin-top: 20px;
-    margin-bottom: 0px;
+.transparent-chart {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    background: transparent;
 }
+
 .client .mdc-card {
   box-shadow:none; border:0px;
     border-radius:0px;
 }
 
-
-
-
-.content.client {
-    margin-top: 0px;
-    padding: 0px 10px 0px;
+#uploadDiv #videoId {
+    background: none;
+    text-decoration: none;
 }
+
+
+
 
 .mdc-card .modal textarea::-webkit-scrollbar {
     width: 2px;
@@ -173,22 +179,20 @@ textarea::-webkit-scrollbar-thumb {
         color: darkgray
     }
 
-.up, .up-1, .up-2, .up-3, .up-4, .up-5, .up-6, .up-7, .up-8 {
-    transform: rotate(-90deg);
-    top: -.5rem;
-    right:-.3rem;
-}
 
-.down, .down-1, .down-2, .down-3, .down-4, .down-5, .down-6, .down-7, .down-8 {
-    transform: rotate(-90deg);
-    top: -2rem;
-    right: -.3rem;
-}
 
 .spinner-wrap {
     position: relative
 }
 
+.card-blue .statistics .card-header {
+    padding: 10px 0px 10px 0;
+}
+.card-header-buttons.action {
+    padding: 0px 5px 5px 0px;
+    float: right;
+    text-align: right;
+}
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -325,25 +329,30 @@ table {
 }
 
 .call-txt {
-    border: 1px #53a5f5 solid;
+   
     position: relative;
     padding: 5px 15px;
     left: -10px;
     top: 8px;
     font-size: 14px;
     font-family: arial;
-    color: #53a5f5;
+
     border-left: 0px;
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
 
+.mobile-view {
+    display: none;
+}
 
+.desktop-view {
+    display: block;
+}
 
 .multiple_row > h2 {
-    font-size: 16px;
-    background: #42a5f5 !important;
-    padding: 4px 10px;
+    font-size: 18px;
+    padding: 8px 10px;
     text-align: left;
     color: #ffffff;
     margin-top: 0px;
@@ -401,7 +410,7 @@ table {
 }
 
 .click {
-    color: #53a5f5;
+  
     text-decoration: underline;
 }
 
@@ -449,10 +458,10 @@ table {
 .border-rv {
     border-right: 1px dotted #ccc;
 }
-
-.control-label {
-    color: #5f5c5c !important;
+.mt50 {
+    margin-top: 60px;
 }
+
 .caret {
     display: none !important;
 }
@@ -527,10 +536,7 @@ modal-content .modal-body {
     text-decoration: none;
 }
 
-.mdc-button--outlined:not(:disabled) {
-    border-color: #42a5f5 !important;
-    color: #42a5f5 !important;
-}
+
 
 .mdc-fab-secondary {
     background: #fff !important;
@@ -540,7 +546,6 @@ modal-content .modal-body {
 .mdc-card .modal .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -565,7 +570,6 @@ modal-content .modal-body {
 .dropdown-toggle {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke !important;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -637,126 +641,12 @@ modal-content .modal-body {
 }
 
 
-
-
-
-.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip] {
-    position: relative;
-    z-index: 2;
-    cursor: pointer;
-    left: 0%;
-}
-
-    /* Hide the tooltip content by default */
-    .talk-bubble [data-tooltip]:before,
-    .talk-bubble [data-tooltip]:after, .video-info [data-tooltip]:before,
-    .video-info [data-tooltip]:after, .video-title [data-tooltip]:before,
-    .video-title [data-tooltip]:after {
-        visibility: hidden;
-        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    /* Position tooltip above the element */
-.selected-priority .talk-bubble [data-tooltip]:before {
-    bottom: 72%;
-}
-    .talk-bubble [data-tooltip]:before {
-    position: absolute;
-    bottom: 150%;
-    left: 10%;
-    margin-bottom: 5px;
-    margin-left: -80px;
-    font-weight: 300;
-    padding: 7px;
-    width: 300px;
-    font-size: 13px;
-    height: auto;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
-    content: attr(data-tooltip);
-    text-align: center;
-    /* font-size: 14px; */
-    line-height: 1.3;
-    white-space: normal;
-    border-radius: 15px;
-}
-
-.interviewer-comment .talk-bubble [data-tooltip]:before {
-    width:400px;
-}
-
-
-
-    .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        margin-bottom: 5px;
-        margin-left: -80px;
-        font-weight: 300;
-        padding: 7px;
-        min-width: 180px;
-        font-size: 13px;
-        height: auto;
-        -webkit-border-radius: 3px;
-        -moz-border-radius: 3px;
-        border-radius: 3px;
-        box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
-        content: attr(data-tooltip);
-        text-align: center;
-        /* font-size: 14px; */
-        line-height: 1.3;
-        white-space: normal;
-    }
-
-
-    /* Triangle hack to make tooltip look like a speech bubble */
-    .talk-bubble [data-tooltip]:after {
-        position: absolute;
-        bottom: 150%;
-        left: 50%;
-        margin-left: -5px;
-        width: 0;
-        content: " ";
-        font-size: 0;
-        line-height: 0;
-    }
-
-
-    .video-info [data-tooltip]:after, .video-title [data-tooltip]:after {
-        position: absolute;
-        bottom: 95%;
-        left: 10%;
-        margin-left: -5px;
-        width: 0;
-        content: " ";
-        font-size: 0;
-        line-height: 0;
-    }
-
-
-
-    /* Show tooltip content on hover */
-    .talk-bubble [data-tooltip]:hover:before,
-    .talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after {
-        visibility: visible;
-        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-        filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
-        opacity: 1;
-    }
-
-
-
-
-
 @media screen and (max-width:991px) {
     #ProctoringTable .label-type {
         white-space: normal;
+    }
+    .mdc-card-wrapper__text-section {
+        padding: 10px !important;
     }
 }
 
@@ -766,7 +656,13 @@ modal-content .modal-body {
         left: 25%;
         margin-left: 10px;
     }
+    .mobile-view {
+        display: block;
+    }
 
+    .desktop-view {
+        display: none;
+    }
     .interviewer-comment .talk-bubble [data-tooltip]:after {
         margin-left: 190px;
     }
