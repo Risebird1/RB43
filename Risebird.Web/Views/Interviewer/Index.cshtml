@@ -3,7 +3,8 @@
     ViewData["Title"] = "Interviewers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -27,7 +28,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
-                  
+
                     <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
@@ -57,13 +58,13 @@
                                 </div>
 
 
-                              
+
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <table id="interviewer" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
-                                            <th>First Name</th>
+                                            <th id="start">First Name</th>
                                             <th>Last Name</th>
                                             <th>Email Id</th>
                                             <th>Mobile Number</th>
@@ -108,124 +109,124 @@
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
-                                        <tr id=@item.id>
-                                            <td>@item.FirstName</td>
-                                            <td>@item.LastName</td>
-                                            <td>@item.EmailId</td>
-                                            <td>@item.MobileNumber</td>
-                                            <td>@item.City</td>
-                                            <td>@item.CurrentRole</td>
-                                            <td>@item.Experience</td>
-                                            <td>@item.PreferredDomain</td>
-                                            <td>
-                                                <div class="talk-bubble tri-right border-bubble right-in ">
-                                                    <div class="talktext">
-                                                        <a href="#" data-tooltip="@item.PrimarySkill"><textarea>@item.PrimarySkill</textarea></a>
+                                            <tr id=@item.id>
+                                                <td>@item.FirstName</td>
+                                                <td>@item.LastName</td>
+                                                <td>@item.EmailId</td>
+                                                <td>@item.MobileNumber</td>
+                                                <td>@item.City</td>
+                                                <td>@item.CurrentRole</td>
+                                                <td>@item.Experience</td>
+                                                <td>@item.PreferredDomain</td>
+                                                <td>
+                                                    <div class="talk-bubble tri-right border-bubble right-in ">
+                                                        <div class="talktext">
+                                                            <a href="#" data-tooltip="@item.PrimarySkill"><textarea>@item.PrimarySkill</textarea></a>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                           
-                                            @if (item.ResumeLink != null && item.ResumeLink != "")
-                                            {
-                                                <td>
-
-                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
                                                 </td>
-                                            }
-                                            else
-                                            {
-                                                <td>No Resume</td>
-                                            }
-                                            @if (item.GitHubLink != null && item.GitHubLink != "")
-                                            {
-                                                <td>
 
-                                                    <a id="githubId" target="_blank" title="Github" href=@item.GitHubLink>Github</a>
+                                                @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                {
+                                                    <td>
+
+                                                        <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
+                                                @if (item.GitHubLink != null && item.GitHubLink != "")
+                                                {
+                                                    <td>
+
+                                                        <a id="githubId" target="_blank" title="Github" href=@item.GitHubLink>Github</a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Github</td>
+                                                }
+                                                @if (item.CodedResumeLink != null && item.CodedResumeLink != "")
+                                                {
+                                                    <td>
+
+                                                        <a id="codedResumeId" target="_blank" title="Coded Resume" href=@item.CodedResumeLink>Coded Resume</a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Coded Resume</td>
+                                                }
+                                                @if (item.LinkedinLink != null && item.LinkedinLink != "")
+                                                {
+                                                    <td>
+
+                                                        <a id="linkedInId" target="_blank" title="LinkedIn" href=@item.LinkedinLink>LinkedIn</a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No LinkedIn</td>
+                                                }
+                                                @if (item.StackOverflowLink != null && item.StackOverflowLink != "")
+                                                {
+                                                    <td>
+
+                                                        <a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=@item.StackOverflowLink>Stackoverflow</a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Stackoverflow</td>
+                                                }
+                                                @if (item.Blog != null && item.Blog != "")
+                                                {
+                                                    <td>
+
+                                                        <a id="blogId" target="_blank" title="Blog" href=@item.Blog>Blog</a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Blog</td>
+                                                }
+                                                @if (item.IsApproved == true)
+                                                {
+                                                    <td>Approved</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Not Approved</td>
+                                                }
+                                                @if (item.IsLeadInterviewer)
+                                                {
+                                                    <td>Yes</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
+                                                <td class="text-right action">
+
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit interviewer Profile">
+                                                        <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId})'" title="Click here to edit interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
+
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Click here to Add interviewer Employer Details">
+                                                        <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to Add interviewer Employer Details" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
+                                                    </button>
+
+
+
+                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete interviewer Profile">
+                                                        <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                    </button>
+
+
                                                 </td>
-                                            }
-                                            else
-                                            {
-                                                <td>No Github</td>
-                                            }
-                                            @if (item.CodedResumeLink != null && item.CodedResumeLink != "")
-                                            {
-                                                <td>
-
-                                                    <a id="codedResumeId" target="_blank" title="Coded Resume" href=@item.CodedResumeLink>Coded Resume</a>
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td>No Coded Resume</td>
-                                            }
-                                            @if (item.LinkedinLink != null && item.LinkedinLink != "")
-                                            {
-                                                <td>
-
-                                                    <a id="linkedInId" target="_blank" title="LinkedIn" href=@item.LinkedinLink>LinkedIn</a>
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td>No LinkedIn</td>
-                                            }
-                                            @if (item.StackOverflowLink != null && item.StackOverflowLink != "")
-                                            {
-                                                <td>
-
-                                                    <a id="stackOverFlowId" target="_blank" title="Stackoverflow" href=@item.StackOverflowLink>Stackoverflow</a>
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td>No Stackoverflow</td>
-                                            }
-                                            @if (item.Blog != null && item.Blog != "")
-                                            {
-                                                <td>
-
-                                                    <a id="blogId" target="_blank" title="Blog" href=@item.Blog>Blog</a>
-                                                </td>
-                                            }
-                                            else
-                                            {
-                                                <td>No Blog</td>
-                                            }
-                                            @if (item.IsApproved == true)
-                                            {
-                                                <td>Approved</td>
-                                            }
-                                            else
-                                            {
-                                                <td>Not Approved</td>
-                                            }
-                                            @if (item.IsLeadInterviewer)
-                                            {
-                                                <td>Yes</td>
-                                            }
-                                            else
-                                            {
-                                                <td>No</td>
-                                            }
-                                            <td class="text-right action">
-
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit interviewer Profile">
-                                                    <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId})'" title="Click here to edit interviewer Profile" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                </button>
-
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to Add interviewer Employer Details">
-                                                    <span onclick="location.href = '@Url.Action("IndexEmployer", "Interviewer", new { id = item.id})'" title="Click here to Add interviewer Employer Details" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M10 8c1.66 0 2.99-1.34 2.99-3S11.66 2 10 2 7 3.34 7 5s1.34 3 3 3zm-6 2V8h2V6H4V4H2v2H0v2h2v2h2zm6 0c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
-                                                </button>
-
-
-
-                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete interviewer Profile">
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                </button>
-
-
-                                            </td>
-                                        </tr>
+                                            </tr>
                                         }
                                     </tbody>
                                 </table>
@@ -395,4 +396,50 @@
         }, 2000);
     };
     //// script for loader ends here
+</script>
+
+<script>
+    var start = document.getElementById('start');
+    start.focus();
+
+    function dotheneedful(sibling) {
+        if (sibling != null) {
+            start.focus();
+            start.style.backgroundColor = '';
+            start.style.color = '';
+            sibling.focus();
+            start = sibling;
+        }
+    }
+
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38') {
+            // up arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.previousElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '40') {
+            // down arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.nextElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '37') {
+            // left arrow
+            var sibling = start.previousElementSibling;
+            dotheneedful(sibling);
+        } else if (e.keyCode == '39') {
+            // right arrow
+            var sibling = start.nextElementSibling;
+            dotheneedful(sibling);
+        }
+    }
 </script>

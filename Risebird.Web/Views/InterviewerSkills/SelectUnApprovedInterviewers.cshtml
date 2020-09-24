@@ -4,7 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 
 <div class="main-panel" id="main-panel">
@@ -20,7 +21,7 @@
                     </button>
                 </div>
                 @Html.ActionLink("GetISCInterviewers", "InterviewerSkills", new { id = @ViewBag.ISCId, InterviewerSkillidName = @ViewBag.ISCName }, htmlAttributes: new { @class = "navbar-brand breadcrumscolor" })
-            <a class="navbar-brand"> / &nbsp; UnApproved Interviewer</a>
+                <a class="navbar-brand"> / &nbsp; UnApproved Interviewer</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -37,7 +38,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
-                    
+
                     <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
@@ -45,12 +46,12 @@
                         <div class="dataloading">
 
                             <div class="toolbar">
-                            
+
                                 <div class="row">
                                     <div class="card-header">
                                         <h4 class="card-title">Select interviewers for <strong>'@Model.ISCName'</strong></h4>
                                     </div>
-                                
+
 
                                 </div>
 
@@ -146,7 +147,7 @@
 
         <!-- end row -->
     </div>
-   
+
 </div>
 
 

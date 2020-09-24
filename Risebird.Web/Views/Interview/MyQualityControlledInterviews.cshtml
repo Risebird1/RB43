@@ -31,7 +31,8 @@
     //InterviewDuration = filter.InterviewDuration != null ? filter.InterviewDuration : new string[] { };
 }
 
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -67,7 +68,7 @@
                 <div class="pull-right">
 
 
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" >
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyQualityControlledInterviews" } )'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Support</font></span>
                     </button>
 
@@ -87,7 +88,7 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-                            
+
 
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <div id="tableID" class="second">
@@ -176,7 +177,7 @@
                                                         </button>
 
                                                         <button class="mdc-fab app-fab--absolute six icon-lst" aria-label="Report">
-                                                            <span class="fa fa-file fa-1x" onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId, isQC=true})'" title="Feedback Report" ></span>
+                                                            <span class="fa fa-file fa-1x" onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId, isQC=true})'" title="Feedback Report"></span>
                                                         </button>
 
 
@@ -204,7 +205,7 @@
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
-                       
+
                         <div class="filheader">
                             <div class="filavatar">
                                 <span class="publicsharing-icon">
@@ -215,7 +216,7 @@
                             <h5 class="modal-title pull-left">QC Feedback</h5>
                         </div>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span  aria-hidden="true" id="feedbackPopUp" style="cursor:pointer;">&times;</span>
+                            <span aria-hidden="true" id="feedbackPopUp" style="cursor:pointer;">&times;</span>
                         </button>
 
 
@@ -655,7 +656,7 @@
 
 <script>
     $(document).ready(function () {
-  
+
 
         $('#MyInterviewList').DataTable({
             "pagingType": "full_numbers",
@@ -710,7 +711,7 @@
             var RisebirdHR =  @Html.Raw(Json.Serialize(RisebirdHR));
             var InterviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
             var JobLevel =  @Html.Raw(Json.Serialize(JobLevel));
-           
+
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);

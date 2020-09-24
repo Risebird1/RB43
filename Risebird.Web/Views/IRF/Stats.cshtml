@@ -5,45 +5,46 @@
 }
 
 
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
-
-    <div class="main-panel" id="main-panel">
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-            <div class="container-fluid">
-                <div class="navbar-wrapper">
-                    <div class="navbar-toggle">
-                        <button type="button" class="navbar-toggler">
-                            <span class="navbar-toggler-bar bar1"></span>
-                            <span class="navbar-toggler-bar bar2"></span>
-                            <span class="navbar-toggler-bar bar3"></span>
-                        </button>
-                    </div>
-                    <a class="navbar-brand">
-                        Interview Stats
-                    </a>
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
                 </div>
+                <a class="navbar-brand">
+                    Interview Stats
+                </a>
             </div>
-        </nav>
-        <!-- End Navbar -->
+        </div>
+    </nav>
+    <!-- End Navbar -->
 
 
-        <div class="pt30">
-            <div class="col-md-12 nopad">
-                <div class="card-header bg-w clearfix">
-                    <div class="pull-left">
-                        <div class="desktop-view">
-                            <h4 class="card-title pull-left">Interview Stats For <strong>@ViewBag.IRF</strong></h4>
-                        </div>
-                        <div class="mobile-view"><h4 class="card-title pull-left">Interview Stats For <strong>@ViewBag.IRF</strong></h4></div>
+    <div class="pt30">
+        <div class="col-md-12 nopad">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <div class="desktop-view">
+                        <h4 class="card-title pull-left">Interview Stats For <strong>@ViewBag.IRF</strong></h4>
                     </div>
+                    <div class="mobile-view"><h4 class="card-title pull-left">Interview Stats For <strong>@ViewBag.IRF</strong></h4></div>
+                </div>
 
-                    <div class="pull-right">
-                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
-                    </div>
+                <div class="pull-right">
+                    @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                 </div>
             </div>
         </div>
+    </div>
 
 
 
@@ -55,95 +56,95 @@
 
 
 
-        <div class="content stats client">
-            <div class="row bl-bg">
-                <div class="col-md-12">
-                    <div class="mdc-card card bl-bg">
-                        <div class="mdc-card-wrapper__text-section">
+    <div class="content stats client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
 
-                            <div class="row">
-                            
-                                <div style="width: 100%;">&nbsp;</div>
+                        <div class="row">
 
-                                <div class="col-md-10 mr-auto" style="margin-left: auto">
-                                    <div class="card card-chart">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Interview Analysis</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <div id="myFunnelChart" style="height: 300px; width: 100%;"></div>
+                            <div style="width: 100%;">&nbsp;</div>
 
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Interview Analysis</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="myFunnelChart" style="height: 300px; width: 100%;"></div>
 
-                                        </div>
 
                                     </div>
+
                                 </div>
-                                <div class="col-md-5 ml-auto">
-                                    <div class="card card-chart">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Meeting Status</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <canvas id="myChart"></canvas>
-                                        </div>
-
+                            </div>
+                            <div class="col-md-5 ml-auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Meeting Status</h4>
                                     </div>
+                                    <div class="card-body">
+                                        <canvas id="myChart"></canvas>
+                                    </div>
+
                                 </div>
-                                <div class="col-md-5 mr-auto">
-                                    <div class="card card-chart">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Interview Status</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <canvas id="myChartselected"></canvas>
-                                        </div>
-
+                            </div>
+                            <div class="col-md-5 mr-auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Interview Status</h4>
                                     </div>
-                                </div>
-
-                                <div class="col-md-5 ml-auto">
-                                    <div class="card card-chart">
-                                        <div class="card-header">
-                                            <h4 class="card-title">HR Staffing Meeting Status</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <canvas id="clientIndiv" style="display: block;height: 350px;width: 100%;"></canvas>
-                                        </div>
-
+                                    <div class="card-body">
+                                        <canvas id="myChartselected"></canvas>
                                     </div>
-                                </div>
-                                <div class="col-md-5 mr-auto">
-                                    <div class="card card-chart">
-                                        <div class="card-header">
-                                            <h4 class="card-title">HR Staffing Interview Status</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <canvas id="clientIndivFeedback" style="display: block;height: 350px;width: 100%;"></canvas>
-                                        </div>
 
-                                    </div>
-                                </div>
-                                <div class="col-md-10 mr-auto" style="margin-left: auto">
-                                    <div class="card card-chart">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Daily Meetings Cost</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <canvas id="myCostChart" style="display: block;height: 350px;width: 100%;"></canvas>
-                                        </div>
-
-                                    </div>
                                 </div>
                             </div>
 
+                            <div class="col-md-5 ml-auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">HR Staffing Meeting Status</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="clientIndiv" style="display: block;height: 350px;width: 100%;"></canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-5 mr-auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">HR Staffing Interview Status</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="clientIndivFeedback" style="display: block;height: 350px;width: 100%;"></canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Daily Meetings Cost</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="myCostChart" style="display: block;height: 350px;width: 100%;"></canvas>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
 
                     </div>
+
                 </div>
             </div>
         </div>
-
     </div>
+
+</div>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
@@ -154,7 +155,7 @@
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-          
+
 
             var aData = chData;
             var aLabels = aData[0];
@@ -499,13 +500,13 @@
                     "value": chData.totalCandidates
                     }];
 
-                
+
                 chart.logo.disabled = true;
                 let series = chart.series.push(new am4charts.FunnelSeries());
                 series.dataFields.value = "value";
                 series.dataFields.category = "name";
                 series.labels.template.disabled = false;
-             
+
                 series.colors.step = 16;
                 var fillModifier = new am4core.LinearGradientModifier();
                 fillModifier.brightnesses = [-0.1, -0.1, -0.1];
@@ -519,7 +520,7 @@
                 series.labels.template.text = "{category}: [bold]{value}[/]";
 
             });
-            
+
         }
     });
 

@@ -113,6 +113,10 @@
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
+
+<link href="~/Newassets/css/risetube.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
 <!-- Owl Carousel -->
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
@@ -184,10 +188,22 @@
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
-                                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                        <h5 class="modal-title" id="filterModalLabel" style="color:#fff">Filter</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                  
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <span class="fa fa-filter"></span>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                     </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+
+
+
+
+
+
                                     <form action="@Url.Action("VideoPage", "commonpool", new { id = Model.imid })" method="post" id="form">
                                         <div class="modal-body">
                                             <div class="row">
@@ -362,32 +378,33 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
 
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="CandidateAvailable"> Candidate Available </label>
-                                                    <div class="col-md-12 col-sm-12">
-                                                        <select id="CandidateAvailable" name="CandidateAvailable" class="form-control multiselect" multiple="multiple">
+                                                                <option value="Available">Available</option>
+                                                                <option value="NotAvailable">NotAvailable</option>
 
-                                                            <option value="Available">Available</option>
-                                                            <option value="NotAvailable">NotAvailable</option>
-
-                                                        </select>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-12 col-sm-12 text-right">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
+                                                    <div class="col-md-12 col-sm-12 text-right">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
 
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -1301,7 +1318,7 @@
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" autoplay>
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -1333,7 +1350,7 @@
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" autoplay>
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -2159,7 +2176,7 @@
                 <div class="col-md-12 ">
                     <div class="text-right">
                         <input type="button" onclick="SubmitMeeting()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">
-                        <input style="        background: #53a5f5!important;
+                        <input style="
         line-height: 13px;" type="button" onclick="closeOnlineMeetingModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -2415,7 +2432,7 @@
                                                                                 @Html.HiddenFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
                                                                                 @Html.HiddenFor(m => m.IreportModel.QuestionsCollection[i].QuestionStatus, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                                             }
-                                                                            <td class="text-center remove-btn" onclick="RemoveRow(@i)"><input type="button" value=""  /><i class="far fa-trash-alt"></i></td>
+                                                                            <td class="text-center remove-btn" onclick="RemoveRow(@i)"><input type="button" value="" /><i class="far fa-trash-alt"></i></td>
 
                                                                         </tr>
                                                                     }
@@ -2866,7 +2883,7 @@
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-     categoryAxis.renderer.labels.template.paddingBottom = 172;
+            categoryAxis.renderer.labels.template.paddingBottom = 172;
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -3656,12 +3673,12 @@
         var html = '';
 
         if (videourl.includes(".mp4") || videourl.includes(".org")) {
-            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">';
+            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload" autoplay>';
             html += '<source src="' + videourl + '" type="video/mp4">';
             html += '</video>';
         }
         else if (videourl.includes("/manifest")) {
-            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " controlsList="nodownload">';
+            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " controlsList="nodownload" autoplay>';
             html += '<source src="' + videourl + '" type="application/vnd.ms-sstr+xml" />';
             html += ' </video>';
         }

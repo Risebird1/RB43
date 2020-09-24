@@ -39,8 +39,9 @@
 <link href="~/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css?v=1" rel="stylesheet" />
 <script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js?v=1"></script>
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css?v=1" rel="stylesheet">
-<link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
 
+<link href="~/Newassets/css/risetube.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js?v=1"></script>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=1" defer />
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v=1"></script>
@@ -151,7 +152,7 @@
     </div>
     <div class="content client">
         <div class="row bg-white">
-            <div class="col-md-12">
+            <div class="col-md-12 candidate">
                 <div class="mdc-card card bg-white">
                     <div class="mdc-card-wrapper__text-section">
 
@@ -183,7 +184,7 @@
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
                                                                     {
-                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
+                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload" autoplay>
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
 
                                                                         </video>
@@ -217,7 +218,7 @@
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" autoplay>
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -248,7 +249,7 @@
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" autoplay>
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -261,7 +262,7 @@
 
 
                                                                                         @*
-                                                        <div class="time">3:50</div>
+                                                                                            <div class="time">3:50</div>
                                                                                         *@
                                                                                     </div>
                                                                                     <div class="video-card-body">
@@ -1160,7 +1161,7 @@
 
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input style="background:#53a5f5!important;line-height:13px;" type="button" onclick="closeVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="line-height:13px;" type="button" onclick="closeVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -2101,8 +2102,8 @@
         html += '<div class="table-responsive"> <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">';
         html += '       <tr>';
         html += '          <th>User Name</th>';
-        html += '            <th><span class="pull-left">Total View</span>   <span class="pull-right"></span></th>';
-        html += '           <th><span class="pull-left">Total Time</span> <span class="pull-right"></span></th>';
+        html += '            <th><span class="text-center">Total View</span> </th>';
+        html += '           <th><span class="text-center">Total Time</span> </th>';
         html += '           <th class="text-center">Interest</th>';
 
 
@@ -2160,12 +2161,12 @@
         var html = '';
 
         if (videourl.includes(".mp4") || videourl.includes(".org")) {
-            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload">';
+            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload" autoplay>';
             html += '<source src="' + videourl + '" type="video/mp4">';
             html += '</video>';
         }
         else if (videourl.includes("/manifest")) {
-            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " controlsList="nodownload">';
+            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " controlsList="nodownload" autoplay>';
             html += '<source src="' + videourl + '" type="application/vnd.ms-sstr+xml" />';
             html += ' </video>';
         }

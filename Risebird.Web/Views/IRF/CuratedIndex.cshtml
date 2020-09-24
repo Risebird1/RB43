@@ -17,7 +17,8 @@
     SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
 
 }
-
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -31,7 +32,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand card-title" >Risebird Verified</a>
+                <a class="navbar-brand card-title">Risebird Verified</a>
             </div>
         </div>
     </nav>
@@ -549,10 +550,10 @@
         <script src="~/Newassets/js/enjoyhint.min.js"></script>
         <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
         <script>
-            
+
 
             var getData = localStorage.getItem('subscribe');
-             
+
             if (getData == "true") {
 
                 var enjoyhint_instance = new EnjoyHint({});
@@ -562,7 +563,7 @@
                         'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
                         'nextButton': { className: "myNext", text: "Next" },
                         'skipButton': { className: "mySkip", text: "Skip" }
-                    },        
+                    },
                     {
                         'next .allcur ': 'All Selected Candidiates',
                         'nextbutton': { classname: "mynext", text: "Next" },
@@ -621,7 +622,7 @@
                         'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
                         'nextButton': { className: "myNext", text: "Next" },
                         'skipButton': { className: "mySkip", text: "Skip" }
-                    }, 
+                    },
                     {
                         'next .allcur ': 'All Selected Candidiates',
                         'nextbutton': { classname: "mynext", text: "Next" },
@@ -652,7 +653,7 @@
                 }, 1000)
             }
 
-            
+
 
 
 

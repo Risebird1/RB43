@@ -5906,7 +5906,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         //[HttpPost]
-        public IActionResult Broadcast(string message, string subject, string receiver)
+        public IActionResult Broadcast(string message, string subject, string receiver, string irfid)
         {
 
             try
@@ -5924,9 +5924,21 @@ namespace Risebird.Web.Controllers
                             Message = message,
                             Subject = subject
                         };
-                        var result = _meetingService.Broadcast(model);
-                        TempData["SuccessErrorMessageInterview"] = result.Result;
-                        return Json(result.Result);
+                        if (receiver != "IRF") {
+                            var result = _meetingService.Broadcast(model);
+                            TempData["SuccessErrorMessageInterview"] = result.Result;
+                            return Json(result.Result);
+                        }
+                        else
+                        {
+                            List<string> receiverEmails = new List<string>();
+                            List<string> supportEmails = new List<string>();
+                            receiverEmails.Add(irfid);
+                            var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails, model);
+                            TempData["SuccessErrorMessageInterview"] = result;
+                            return Json(result);
+                        }
+                   
 
                     }
                     else
