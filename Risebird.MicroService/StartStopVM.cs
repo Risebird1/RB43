@@ -82,8 +82,11 @@ namespace Risebird.MicroService
             //var client =
             //    CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
             //        credentials, log);
+            //var client =
+            //    CreateClient(string.Format("https://management.azure.com/subscriptions/{0}", credentials.SubscriptionId),
+            //        credentials, log);
             var client =
-                CreateClient(string.Format("https://management.azure.com/subscriptions/{0}", credentials.SubscriptionId),
+                CreateClient("https://management.azure.com/subscriptions/05d4ebe3-b5c7-4725-b618-8bb535cf2c8c",
                     credentials, log);
             log.LogInformation("client created");
             //log.LogInformation(resourceGroupName + resourceName + excuteCommand + _configuration["AzureSettings:ApiVersionToDoVM"]);
