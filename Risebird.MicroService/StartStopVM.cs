@@ -76,7 +76,7 @@ namespace Risebird.MicroService
         public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand, ILogger log)
         {
             var credentials = _azureHelper.GetAzureCredential();
-            log.LogInformation("credentials created " +credentials.SubscriptionId);
+            log.LogInformation("credentials created " +credentials.SubscriptionId +" token: " +credentials.Token);
             //log.LogInformation("endpoint: " +_configuration["AzureSettings:endPoint"]);
 
             //var client =
