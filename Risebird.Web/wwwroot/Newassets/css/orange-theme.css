@@ -43,6 +43,11 @@ textarea::-webkit-scrollbar {
     background-position: 45%;
     z-index: 1000;
 }
+
+.call-txt {
+    border: 1px #ea6e24 solid;
+    color: #ea6e24;
+}
 .border-db {
     border-right: 1px #ddd solid !important
 }
@@ -53,8 +58,7 @@ textarea::-webkit-scrollbar {
 .qc-feedback .card-footer .upload-label {
     background: #e2e2e2;
 }
-    background: #fff
-}
+
 .qc-feedback .mdc-form-field > label, .qc-feedback label {
     color: #000;
 }
