@@ -43,7 +43,7 @@ namespace Risebird.MicroService
             VMActionDTO data = JsonConvert.DeserializeObject<VMActionDTO>(requestBody);
             log.LogInformation("data converted to class" + data.ActionCommand + data.VMPropertyId);
 
-            var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name,data.ActionCommand);
+            var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name,data.ActionCommand, log);
             log.LogInformation("excecuted" + result.ToString());
 
             string responseMessage = string.Empty;
