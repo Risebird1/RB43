@@ -77,16 +77,21 @@ namespace Risebird.MicroService
         {
             var credentials = _azureHelper.GetAzureCredential();
             log.LogInformation("credentials created");
-            log.LogInformation("endpoint: " +_configuration["AzureSettings:endPoint"]);
+            //log.LogInformation("endpoint: " +_configuration["AzureSettings:endPoint"]);
 
+            //var client =
+            //    CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
+            //        credentials, log);
             var client =
-                CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
+                CreateClient(string.Format("https://management.azure.com/subscriptions/{0}", credentials.SubscriptionId),
                     credentials, log);
             log.LogInformation("client created");
-            log.LogInformation(resourceGroupName + resourceName + excuteCommand + _configuration["AzureSettings:ApiVersionToDoVM"]);
+            //log.LogInformation(resourceGroupName + resourceName + excuteCommand + _configuration["AzureSettings:ApiVersionToDoVM"]);
 
+            //var requestUrl =
+//$"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
             var requestUrl =
-                $"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
+               $"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version=2019-12-01";
             log.LogInformation("request url created");
 
             var request = CreateRequest(requestUrl, Method.POST, log);
