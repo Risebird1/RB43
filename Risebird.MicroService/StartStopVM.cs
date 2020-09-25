@@ -76,7 +76,7 @@ namespace Risebird.MicroService
         public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand, ILogger log)
         {
             var credentials = _azureHelper.GetAzureCredential();
-            log.LogInformation("credentials created");
+            log.LogInformation("credentials created " +credentials.SubscriptionId);
             //log.LogInformation("endpoint: " +_configuration["AzureSettings:endPoint"]);
 
             //var client =
@@ -91,7 +91,7 @@ namespace Risebird.MicroService
             //var requestUrl =
 //$"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
             var requestUrl =
-               $"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version=2019-12-01";
+               $"resourceGroups/{resourceGroupName.ToLower()}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version=2019-12-01";
             log.LogInformation("request url created");
 
             var request = CreateRequest(requestUrl, Method.POST, log);
