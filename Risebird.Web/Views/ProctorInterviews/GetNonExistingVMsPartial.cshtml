@@ -1,0 +1,59 @@
+﻿@model Risebird.Entities.ViewModel.NonExistingVMViewModel
+
+@if (Model != null && Model.NonExistingVMList.Count() != 0)
+{
+    @using (Html.BeginForm("AddNonExistingVMs", "ProctorInterviews", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+    {
+        <div class="member">
+            <div class="sb-container scroller">
+                <table class="table table-bordered table-striped" style="width:610px; text-align:center">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Resource Group</th>
+                            <th>Add</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.NonExistingVMList.Count(); i++)
+                        {
+                            <tr>
+                                <td>@Model.NonExistingVMList[i].Name</td>
+                                <td>@Model.NonExistingVMList[i].ResourceGroupName</td>
+                                <td style="width:40%">
+                                    @Html.CheckBoxFor(m => m.NonExistingVMList[i].IsSelected@*, new { @class = "mdc-checkbox__native-control" }*@)
+
+                                </td>
+                                @Html.HiddenFor(m=>m.NonExistingVMList[i].Name)
+                                @Html.HiddenFor(m=>m.NonExistingVMList[i].ResourceGroupName)
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer ">
+
+            <div class="row">
+                <div class="col-md-12 mc-button-area">
+                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Add</button>
+                </div>
+            </div>
+        </div>
+
+    }
+
+}
+else
+{
+    <div>
+        No other VMs exist.
+    </div>
+}
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=6" />
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
