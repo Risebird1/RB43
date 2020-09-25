@@ -1638,6 +1638,7 @@
 
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";
