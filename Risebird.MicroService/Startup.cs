@@ -10,6 +10,8 @@ using Risebird.MicroService;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
+using System.IO;
+using System.Reflection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Risebird.MicroService
@@ -19,13 +21,18 @@ namespace Risebird.MicroService
         public IConfiguration Configuration { get; }
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            var configuration = new ConfigurationBuilder()
-            .SetBasePath(Environment.CurrentDirectory)
-            .AddJsonFile("appsettings.json", true, true)
-            .AddEnvironmentVariables()
-            .Build();
+            var currentDirectory = Environment.GetEnvironmentVariable("AzureWebJobsScriptRoot")  // local_root
+                   ?? (Environment.GetEnvironmentVariable("HOME") == null
+                       ? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                       : $"{Environment.GetEnvironmentVariable("HOME")}/site/wwwroot"); // azure_root
 
+            var configuration = new ConfigurationBuilder()
+              .SetBasePath(currentDirectory)
+              .AddJsonFile("appsettings.json", true, true)
+              .AddEnvironmentVariables()
+              .Build();
             builder.Services.AddSingleton<IConfiguration>(configuration);
+           
             builder.Services.AddSingleton<AuthenticationService>();
             builder.Services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             builder.Services.AddScoped<IAzureHelper, AzureHelper>();
