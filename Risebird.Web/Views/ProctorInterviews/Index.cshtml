@@ -1,8 +1,8 @@
 ﻿@model Risebird.Entities.ViewModel.VirtualMachineVM
 @{
-    ViewData["Title"] = "Virtual Machines Catalogue";
+    ViewData["Title"] = "Proctor Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
+
 }
 
 
@@ -19,7 +19,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand">
-                    Virtual Machines Catalogue
+                    Proctor Interviews
                 </a>
             </div>
         </div>
@@ -43,7 +43,7 @@
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add existing VMs" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Existing VMs</font></span>
                         </button>
 
-                        
+
 
 
 
@@ -79,7 +79,24 @@
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class=" col-md-5 col-sm-5 first">
-                                                    <h6> @item.Name </h6>
+                                                    @if (item.CustomName != null)
+                                                    {
+                                                        <h6>@(item.CustomName)(@item.Name)</h6>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h6> @item.Name </h6>
+
+                                                    }
+                                                </div>
+                                                <div class="col-md-7 col-sm-7 card-header-buttons action">
+                                                    @if (Model.Profile == "Admin")
+                                                    {
+                                                        <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" aria-label="Start VM" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name');">
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
+                                                    }
+
                                                 </div>
 
                                             </div>
@@ -89,20 +106,17 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="statusImg">
-                                                    <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                                                    <img id="statusImage_@item.id" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
                                                 </div>
                                                 <div class="statusInfo">
                                                     <div class="group inner list-group-item-text">
 
-                                                        <div class="row second">
-                                                            <div> Resource Group Name:</div> <div title="@item.ResourceGroupName">@item.ResourceGroupName</div>
+
+                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div> <br />
+                                                        <div class="row three">
+                                                            <div> Password:</div> <div title="="Password"> @item.Password</div>
+                                                                               
                                                         </div> <br />
-
-                                                        <div class="row three"> <span>Public Ip Address:</span>@item.PublicIP</div> <br />
-                                                        <div class="row"> <span>OS:</span>@item.OSType</div> <br />
-
-
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -148,6 +162,15 @@
                                                             <i class="fa fa-play"></i>
                                                         </button>
                                                     }
+                                                    <button id="passwordButton_@item.id" class="mdc-fab app-fab--absolute" aria-label="Reset Password" onclick="location.href='@Url.Action("ResetPassword", "ProctorInterviews", new { name = item.Name, rgName = item.ResourceGroupName, vmId = item.id})'">
+                                                        <i class="fa fa-key"></i>
+                                                    </button>
+                                                    @if (Model.Profile == "Admin")
+                                                    {
+                                                        @*<button id="shareButton_@item.id" class="mdc-fab app-fab--absolute" aria-label="Share VM" onclick="location.href='@Url.Action("VMUsers", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
+                                            <i class="fa fa-share"></i>
+                                        </button>*@
+                                                    }
 
                                                 </div>
                                             </div>
@@ -185,6 +208,58 @@
                                     </div>
                                 </div>
 
+                            </div>
+                        </div>
+
+
+                        <div id="editModal" class="modal modal-bg">
+                            <!-- Modal content -->
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+
+                                    <div class="filheader">
+                                        <div class="filavatar">
+                                            <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z"></path></svg>
+                                        </div>
+                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Edit</h5>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true" id="editPopUp">&times;</span>
+                                    </button>
+
+                                    <div class="modal-body">
+
+                                        
+                                        <div class="col-md-12 col-sm-12">
+                                            <div class="form-group">
+                                                <label class="control-label  desp-label" for="CustomName">Name </label>
+                                                <input class="form-control w-full" type="text" name="textField" id="idCustomName" />
+                                                <label class="text-danger" id="customName_Error" style="color:red"></label>
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label  desp-label" for="Password">Password </label>
+                                                <input class="form-control w-full" type="text" name="textField" id="idPassword" />
+                                                <label class="text-danger" id="emptyFields_Error" style="color:red"></label>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-md-12 col-sm-12 text-right">
+                                            <button type="button" onclick="EditNamePassword()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Save</button>
+                                            <button type="button" id="editPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
+
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                </div>
                             </div>
                         </div>
 
@@ -250,26 +325,27 @@
         if (action == 'start') {
             //starting
             document.getElementById("statusId_" + vmId).innerHTML = "Starting";
+            document.getElementById("statusImage_" + vmId).src = "/img/Cards_Png/01_Green-White.png";
         }
         else if (action == 'powerOff') {
             //deallocating
             document.getElementById("statusId_" + vmId).innerHTML = "Deallocating";
             document.getElementById("rdpButton_" + vmId).style.display = "none";
+            document.getElementById("statusImage_" + vmId).src = "/img/Cards_Png/01_Grey-White.png";
 
         }
         $.ajax({
             url: '/ProctorInterviews/StartStopVM',
             method: 'POST',
-            data: { 'vmId' : vmId, 'name': name, 'rgName': rgName, 'action': action },
+            data: { 'vmId': vmId, 'name': name, 'rgName': rgName, 'action': action },
             success: function (response) {
                 //update status in the tile
                 if (!response) {
                     document.getElementById("statusId_" + vmId).innerHTML = "Failed";
-                    //document.getElementById("actionButton_" + vmId).disabled = false;
-                    
+
                 }
-                
-                
+
+
             }
         });
     }
@@ -300,7 +376,71 @@
 </script>
 <script>
     $(document).ready(function () {
-        setTimeout("location.reload(true);", 30000);
+        setTimeout("location.reload(true);", 45000);
     });
+</script>
+
+
+<script type="text/javascript">
+    var editVmId;
+    var editvmName;
+    var spanedit = document.getElementById("editPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanedit.onclick = function () {
+        var modal = document.getElementById("editModal");
+        modal.style.display = "none";
+    }
+
+    var spanedit1 = document.getElementById("editPopUpclose");
+    // When the user clicks on <span> (x), close the modal
+    spanedit1.onclick = function () {
+        var modal = document.getElementById("editModal");
+        modal.style.display = "none";
+    }
+
+
+    function EditModal(id, customeName, password, vmName) {
+        // Get the modal
+        editVmId = id;
+        editvmName = vmName;
+        var modal = document.getElementById("editModal");
+        modal.style.display = "block";
+        document.getElementById("idCustomName").value = customeName;
+        document.getElementById("idPassword").value = password;
+        return;
+
+    }
+
+    function EditNamePassword() {
+        var customName = document.getElementById("idCustomName").value;
+        if (customName.length > 20) {
+            document.getElementById( "customName_Error").innerHTML = "Name should be less than or equal to 20 characters."
+            return;
+        }
+        else {
+            document.getElementById("customName_Error").innerHTML = "";
+        }
+        var password = document.getElementById("idPassword").value;
+
+        if (customName.length == 0 && password.length == 0) {
+            document.getElementById("emptyFields_Error").innerHTML = "Kindly fill atleast one field to save.";
+            return;
+        }
+        else {
+            document.getElementById("emptyFields_Error").innerHTML = "";
+        }
+        $.ajax({
+            type: "POST",
+            url: "/ProctorInterviews/EditNamePassword",
+            data: {
+                'id': editVmId, 'customName': customName, 'password': password, 'vmName': editvmName
+            },
+            success: function (data) {
+                location.reload(true);
+
+            }
+        });
+    }
+
 </script>
 

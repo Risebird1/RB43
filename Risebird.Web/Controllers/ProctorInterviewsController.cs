@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -48,7 +49,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser")
                 {
                     var model = new VirtualMachineVM();
-                    model.VMList = (await _proctorInterviewsService.GetAllVMs()).ToList();
+                    model.VMList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
                     foreach (var vm in model.VMList)
                     {
                         if(vm.LastAction!=null && vm.LastAction!="Added")
@@ -74,33 +75,23 @@ namespace Risebird.Web.Controllers
                         model.Message = TempData["SuccessErrorMessageProctor"].ToString();
                         TempData.Remove("SuccessErrorMessageProctor");
                     }
-                    //foreach (var item in model.IRFList)
-                    //{
-                    //    if (item.IsPaused)
-                    //    {
-                    //        item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
-                    //        item.IRFStatus = "Paused";
-                    //    }
-                    //    else if (item.IsDeleted)
-                    //    {
-                    //        item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
-                    //        item.IRFStatus = "Archived";
-                    //    }
-                    //    else
-                    //    {
-                    //        item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
-                    //        item.IRFStatus = "Active";
-                    //    }
-                    //}
+                    foreach (var vm in model.VMList)
+                    {
+                        if (vm.StatusDesc.ToLower()=="running" || vm.StatusDesc.ToLower() == "starting")
+                        {
+                            vm.ImageUrl = "/img/Cards_Png/01_Green-White.png";
 
-
-                    //if (TempData["SuccessErrorMessage"] != null)
-                    //{
-                    //    model.Message = TempData["SuccessErrorMessage"].ToString();
-                    //    TempData.Remove("SuccessErrorMessage");
-                    //}
-
-                    //model.Profile = profileName;
+                        }
+                        else if (vm.StatusDesc.ToLower() == "stopping" || vm.StatusDesc.ToLower()=="deallocating")
+                        {
+                            vm.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                        }
+                        else if (vm.StatusDesc.ToLower() == "stopped" || vm.StatusDesc.ToLower() == "deallocated")
+                        {
+                            vm.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                        }
+                    }
+                    model.Profile = profileName;
                     return View(model);
 
                 }
@@ -136,7 +127,6 @@ namespace Risebird.Web.Controllers
                     httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
                     var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken);
-                    // return response.Content.ReadAsStringAsync().Result;
                     if(response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
                     {
                         return true;
@@ -200,14 +190,12 @@ namespace Risebird.Web.Controllers
                     httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
                     var response = await httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, "", "", _cancellationToken);
-                    // return response.Content.ReadAsStringAsync().Result;
                     if(response!=null)
                     {
                         var rdpfile = response.Content.ReadAsStringAsync().Result;
                         if (rdpfile != null)
                         {
                             rdpfile = rdpfile.Replace("\"", "").Replace("\\", "\"");
-                            //rdpfile = rdpfile.Replace("\\","").Replace("\"","");
                             var file = JsonConvert.DeserializeObject<RdpFileModel>(rdpfile);
                             var filecontent = JsonConvert.DeserializeObject<List<byte>>(file.FileContent.ToString());
                             var obj = new RdpFileModel(file.FileName, filecontent);
@@ -239,6 +227,169 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageProctor"] = "Failed!";
                 return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(string name, string rgName, int vmId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser")
+                    {
+                        var model = new VMResetPassword();
+                        model.VmName = name;
+                        model.ResourceGroupName = rgName;
+                        model.VmId = vmId;
+                        return View(model);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(VMResetPassword model)
+        {
+            try
+            {
+                var result = await _proctorInterviewsService.ResetPassword(model);
+                if(result.ToLower().Contains("success"))
+                {
+                    TempData["SuccessErrorMessageProctor"] = "Password reset successful for " + model.VmName;
+
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageProctor"] = "Password reset failed for " + model.VmName;
+
+                }
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult VMUsers(int vmId, string vmName)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var model = new VMUsersMapping
+                {
+                    VmId = vmId,
+                    VmName = vmName,
+                    UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId))
+                };
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateVMUsers(int[] userList, int vmId, string vmName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (await _proctorInterviewsService.UpdateVMUsers(userList, vmId))
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Users for the VM " + vmName + " updated successfully!";
+                        return Json(true);
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Saving users for the VM " + vmName + " failed!";
+                        return Json(false);
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageProctor"] = "Saving users for the VM " + vmName + " failed!";
+                return Json(false);
+            }
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditNamePassword(int id, string customName, string password, string vmName)
+        {
+
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin")
+                    {
+                       if(await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password))
+                        {
+                            TempData["SuccessErrorMessageProctor"] = "Successfully saved data for " +vmName;
+                            return Json(true);
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageProctor"] = "Failed to save the data for " + vmName;
+                            return Json(false);
+
+                        }
+                        
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageProctor"] = "Failed to save the data for " + vmName;
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }

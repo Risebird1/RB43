@@ -9,5 +9,6 @@ namespace Risebird.Entities.ViewModel
     {
         public List<VMProperties> VMList { get; set; }
         public string Message { get; set; }
+        public string Profile { get; set; }
     }
 }

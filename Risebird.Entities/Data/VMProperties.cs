@@ -20,6 +20,8 @@ namespace Risebird.Entities.Data
         public string LastAction { get; set; }
         public string OSType { get; set; }
         public string PrivateIP { get; set; }
+        public string CustomName { get; set; }
+        public string Password { get; set; }
 
     }
 }

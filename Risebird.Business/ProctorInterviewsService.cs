@@ -4,6 +4,7 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,20 @@ namespace Risebird.Business
             try
             {
                 var result = await _proctorInterviewsRepository.GetAllVMs();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<VMProperties>> GetAllUserVMs(string emailId, string profile)
+        {
+            try
+            {
+                var result = await _proctorInterviewsRepository.GetAllUserVMs(emailId, profile);
                 return result;
             }
             catch (Exception ex)
@@ -80,7 +95,7 @@ namespace Risebird.Business
             try
             {
 
-                //Get All vm from azure portal existing in sunbsription
+                //Get All vm from azure portal existing in subscription
 
                 var path = $"http://localhost:7071/api/GetVMList";
                 //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
@@ -95,7 +110,7 @@ namespace Risebird.Business
                 var vmsInCloudPortal = JsonConvert.DeserializeObject<VMServerProperty>(result);
                 if (vmsInCloudPortal == null)
                     return null;
-                //Get oneshare vm from db
+                //Get vm from db
                 var vmsInDb = await _proctorInterviewsRepository.GetAllVMs();
                 //Find vms which are not in db
                 foreach (var item in vmsInCloudPortal.value)
@@ -139,7 +154,7 @@ namespace Risebird.Business
                     var result = await _proctorInterviewsRepository.AddNonExistingVMs(vmPropList);
                     foreach (var vm in vmList)
                     {
-                        //add the vm to TRiggered VMS
+                        //add the vm to Triggered VMs
                         var vmId = _proctorInterviewsRepository.GetVM(vm.Name, vm.ResourceGroupName);
                         if(vmId!=0)
                         {
@@ -167,6 +182,90 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed";
+            }
+        }
+
+        public async Task<string> ResetPassword(VMResetPassword model)
+        {
+            try
+            {
+                string first = "$adsi = [ADSI]" + "\"" + "WinNT://$env:COMPUTERNAME" + "\"" + "\n";
+                string second = "$existing = $adsi.Children | where {$_.SchemaClassName -eq 'user' -and $_.Name -eq " + "\"" + model.userName + "\"" + "}" + "\n";
+                string third = "$existing.SetPassword(" + "\"" + model.Password + "\"" + ")" + "\n";
+                first.Split('\n');
+                second.Split('\n');
+                third.Split('\n');
+                string[] scripts = new string[1];
+                scripts[0] = first + second + third;
+                string Url = $"/resourceGroups/{model.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{model.VmName}";
+
+
+                var path = $"http://localhost:7071/api/RunPowerShellScript";
+                //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+                var dto = new RunPowershellDTO();
+                dto.Script = scripts;
+                dto.Url = Url;
+                HttpClient httpClient = new HttpClient();
+                httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, dto, "", "", _cancellationToken);
+                var result = response.Content.ReadAsStringAsync().Result;
+                if(result.ToLower().Contains("success"))
+                {
+                    //update password in database
+                    await _proctorInterviewsRepository.UpdateVMPassword(model.VmId, model.Password);
+                }
+                return result;
+                
+
+            }
+            catch (Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public IEnumerable<TransVMUser> GetUserList(int vmId)
+        {
+            try
+            {
+                var result = _proctorInterviewsRepository.GetUserList(vmId).OrderByDescending(x=>x.IsAdded==true).ToList();
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateVMUsers(int[] userList, int vmId)
+        {
+            try
+            {
+                return await _proctorInterviewsRepository.UpdateVMUsers(userList, vmId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateVMNamePassword(int id, string customName, string password)
+        {
+            try
+            {
+                return await _proctorInterviewsRepository.UpdateVMNamePassword(id, customName, password);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }
