@@ -95,7 +95,7 @@ namespace Risebird.Business
             try
             {
 
-                //Get All vm from azure portal existing in sunbsription
+                //Get All vm from azure portal existing in subscription
 
                 var path = $"http://localhost:7071/api/GetVMList";
                 //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
@@ -110,7 +110,7 @@ namespace Risebird.Business
                 var vmsInCloudPortal = JsonConvert.DeserializeObject<VMServerProperty>(result);
                 if (vmsInCloudPortal == null)
                     return null;
-                //Get oneshare vm from db
+                //Get vm from db
                 var vmsInDb = await _proctorInterviewsRepository.GetAllVMs();
                 //Find vms which are not in db
                 foreach (var item in vmsInCloudPortal.value)
@@ -154,7 +154,7 @@ namespace Risebird.Business
                     var result = await _proctorInterviewsRepository.AddNonExistingVMs(vmPropList);
                     foreach (var vm in vmList)
                     {
-                        //add the vm to TRiggered VMS
+                        //add the vm to Triggered VMs
                         var vmId = _proctorInterviewsRepository.GetVM(vm.Name, vm.ResourceGroupName);
                         if(vmId!=0)
                         {
@@ -210,9 +210,14 @@ namespace Risebird.Business
                 httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
                 var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, dto, "", "", _cancellationToken);
-                return response.Content.ReadAsStringAsync().Result;
+                var result = response.Content.ReadAsStringAsync().Result;
+                if(result.ToLower().Contains("success"))
+                {
+                    //update password in database
+                    await _proctorInterviewsRepository.UpdateVMPassword(model.VmId, model.Password);
+                }
+                return result;
                 
-                //Find vms which are not in db
 
             }
             catch (Exception ex)
@@ -223,5 +228,45 @@ namespace Risebird.Business
             }
         }
 
+        public IEnumerable<TransVMUser> GetUserList(int vmId)
+        {
+            try
+            {
+                var result = _proctorInterviewsRepository.GetUserList(vmId).OrderByDescending(x=>x.IsAdded==true).ToList();
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateVMUsers(int[] userList, int vmId)
+        {
+            try
+            {
+                return await _proctorInterviewsRepository.UpdateVMUsers(userList, vmId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateVMNamePassword(int id, string customName, string password)
+        {
+            try
+            {
+                return await _proctorInterviewsRepository.UpdateVMNamePassword(id, customName, password);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

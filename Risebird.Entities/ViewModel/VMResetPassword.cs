@@ -23,6 +23,7 @@ namespace Risebird.Entities.ViewModel
         [Compare("Password", ErrorMessage = "Password and Confirmation Password must match.")]
         [DisplayName("Confirm Password")]
         public string confirmPassword { get; set; }
+        public int VmId { get; set; }
 
     }
 }
