@@ -73,16 +73,25 @@ namespace Risebird.MicroService
             return new OkObjectResult(responseMessage);
         }
 
-        public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand)
+        public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand, ILogger log)
         {
             var credentials = _azureHelper.GetAzureCredential();
+            log.LogInformation("credentials created");
+            log.LogInformation("endpoint: " +_configuration["AzureSettings:endPoint"]);
+
             var client =
                 CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
-                    credentials);
+                    credentials, log);
+            log.LogInformation("client created");
+            log.LogInformation(resourceGroupName + resourceName + excuteCommand + _configuration["AzureSettings:ApiVersionToDoVM"]);
 
             var requestUrl =
                 $"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
-            var request = CreateRequest(requestUrl, Method.POST);
+            log.LogInformation("request url created");
+
+            var request = CreateRequest(requestUrl, Method.POST, log);
+            log.LogInformation("request created");
+
             var response = client.Execute(request);
 
             if (response.StatusCode == HttpStatusCode.Accepted)
@@ -93,14 +102,14 @@ namespace Risebird.MicroService
 
             return false;
         }
-        private RestClient CreateClient(string EndPoint, AzureCredentials credentials)
+        private RestClient CreateClient(string EndPoint, AzureCredentials credentials, ILogger log)
         {
             // Default request
             var client = new RestClient(EndPoint);
             client.AddDefaultHeader("Authorization", "Bearer " + credentials.Token);
             return client;
         }
-        private RestRequest CreateRequest(string requestUrl, Method requestMethod, object postData = null)
+        private RestRequest CreateRequest(string requestUrl, Method requestMethod, ILogger log,object postData = null)
         {
             var request = new RestRequest(requestUrl, requestMethod) { RequestFormat = DataFormat.Json };
             if (postData != null)
