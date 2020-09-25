@@ -2375,6 +2375,9 @@ table {
     #myForm .searchbox input[type=email], #myForm .searchbox input[type=text] {
         width: 230px;
     }
+    .chart-box .card-text {
+        text-align: center
+    }
     .call-btn {
         top: -4px !important;
     }

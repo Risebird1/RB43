@@ -32,7 +32,7 @@ inner join UserList ul on ul.EmailId = im.candidateEmail
 join CandidatesMaster cm on cm.UserId = ul.id        
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id
 outer apply (select sum(WeightageActual) as TechSkillScore from TechSkillReport where Interviewid=ic.InterviewId ) as tsr
-outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId)patchvideoCount
+outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and VideoLink!='')patchvideoCount
 
 where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null  
 group by im.id, im.IRFId, im.interviewDate, im.interviewSlot, im.interviewDuration, im.candidateEmail, im.ClientHrContact,    
