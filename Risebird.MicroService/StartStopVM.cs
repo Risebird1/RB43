@@ -38,8 +38,13 @@ namespace Risebird.MicroService
 
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            log.LogInformation(requestBody);
+
             VMActionDTO data = JsonConvert.DeserializeObject<VMActionDTO>(requestBody);
+            log.LogInformation("data converted to class" + data.ActionCommand + data.VMPropertyId);
+
             var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name,data.ActionCommand);
+            log.LogInformation("excecuted" + result.ToString());
 
             string responseMessage = string.Empty;
             if(result)
@@ -55,13 +60,16 @@ namespace Risebird.MicroService
                     expectedStatus = "deallocated/stopped";
                 }
                 await _proctorInterviewsRepository.AddVMTrigger(data.VMPropertyId, data.ActionCommand,expectedStatus);
+                log.LogInformation("Added to trigger table process done");
+
                 responseMessage = "Successful";
             }
             else
             {
                 responseMessage = "Failed";
             }
-           
+            log.LogInformation("completed");
+
             return new OkObjectResult(responseMessage);
         }
 
@@ -71,6 +79,7 @@ namespace Risebird.MicroService
             var client =
                 CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
                     credentials);
+
             var requestUrl =
                 $"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
             var request = CreateRequest(requestUrl, Method.POST);
