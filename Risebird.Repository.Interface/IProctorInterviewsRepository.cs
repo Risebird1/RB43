@@ -20,8 +20,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddBulkVmTrigger(List<TriggeredVM> vmList);
         VMProperties GetVMbyId(int id);
         Task UpdateVMIP(IList<VMProperties> vmList);
-        //IEnumerable<TransVMUser> GetUserList(int vmId);
-        //Task<bool> UpdateVMUsers(int[] userList, int vmId);
+
         Task<bool> UpdateVMNamePassword(int id, string customName, string password);
         Task<bool> UpdateVMPassword(int id, string password);
     }

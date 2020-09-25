@@ -228,34 +228,6 @@ namespace Risebird.Business
             }
         }
 
-        //public IEnumerable<TransVMUser> GetUserList(int vmId)
-        //{
-        //    try
-        //    {
-        //        var result = _proctorInterviewsRepository.GetUserList(vmId).OrderByDescending(x=>x.IsAdded==true).ToList();
-        //        return result;
-        //    }
-
-        //    catch (Exception e)
-        //    {
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return null;
-        //    }
-        //}
-        //public async Task<bool> UpdateVMUsers(int[] userList, int vmId)
-        //{
-        //    try
-        //    {
-        //        return await _proctorInterviewsRepository.UpdateVMUsers(userList, vmId);
-        //    }
-
-        //    catch (Exception e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return false;
-        //    }
-        //}
-
         public async Task<bool> UpdateVMNamePassword(int id, string customName, string password)
         {
             try
