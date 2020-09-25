@@ -95,9 +95,12 @@ namespace Risebird.MicroService
             log.LogInformation("request url created");
 
             var request = CreateRequest(requestUrl, Method.POST, log);
-            log.LogInformation("request created");
+            log.LogInformation("request created" + requestUrl);
 
             var response = client.Execute(request);
+            log.LogInformation("client.Execute() called");
+
+            log.LogInformation(response.Content);
 
             if (response.StatusCode == HttpStatusCode.Accepted)
             {
