@@ -4,7 +4,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 
 <div class="main-panel" id="main-panel">
@@ -199,8 +200,8 @@
 
                             <div class="card-footer">
                                 <div class="row">
-                                   <div class="col-md-12 mc-button-area">
-                                      @Html.ActionLink("Cancel", "IndexEmployer", "Interviewer", new { id = Model.InterviewerProfileId }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Cancel", "IndexEmployer", "Interviewer", new { id = Model.InterviewerProfileId }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
                                     </div>
                                 </div>
@@ -213,6 +214,6 @@
                 </div>
             </div>
         </div>
-       
+
     </div>
 </div>

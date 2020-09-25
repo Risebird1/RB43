@@ -658,6 +658,7 @@ namespace Risebird.Web.Controllers
                                     itemmodel.candidateName = namemodel;
                                 }
                             }
+
                         }
 
                         MeetingVM NewModel = new MeetingVM();
@@ -733,6 +734,13 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
+                        if (profileName == "CuratedUser")
+                        {
+                            if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                            {
+                                NewModel.resumeLink = IRListModel.encodedresumeLink;
+                            }
+                        }
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
                         NewModel.IsLike = model.IsLike;
@@ -752,6 +760,15 @@ namespace Risebird.Web.Controllers
                         NewModel.VideoCountDetail = videodetailscount.ToList();
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                         NewModel.IsBiometricEnabled = model.IsBiometricEnabled;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
+                        }
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -842,6 +859,10 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
+                        if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                        {
+                            NewModel.resumeLink = IRListModel.encodedresumeLink;
+                        }
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
                         NewModel.IsLike = model.IsLike;
@@ -857,6 +878,15 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.ClientHrContact = model.ClientHrContact;
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
+                        }
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
                         if (NewModel.IreportModel.QuestionsCollection == null)
@@ -1120,6 +1150,13 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
+                        if (profileName == "CuratedUser")
+                        {
+                            if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                            {
+                                NewModel.resumeLink = IRListModel.encodedresumeLink;
+                            }
+                        }
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel;
                         NewModel.IsLike = model.IsLike;
@@ -1137,6 +1174,15 @@ namespace Risebird.Web.Controllers
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
                         NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
+                        }
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -1659,6 +1705,13 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
+                        if (profileName == "CuratedUser")
+                        {
+                            if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                            {
+                                NewModel.resumeLink = IRListModel.encodedresumeLink;
+                            }
+                        }
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
                         NewModel.IsLike = model.IsLike;
@@ -1672,6 +1725,15 @@ namespace Risebird.Web.Controllers
                         NewModel.IsIntrested = model.IsIntrested;
                         NewModel.IsOnline = model.IsOnline;
                         NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
+                        }
                         // to get videocount details
                         var videodetailscount = await _meetingService.GetTotalViewCount(id);
                         NewModel.VideoCountDetail = videodetailscount.ToList();
@@ -1818,6 +1880,10 @@ namespace Risebird.Web.Controllers
                 NewModel.candidateEmail = IRListModel.CandidateEmail;
                 NewModel.reportLink = model.reportLink;
                 NewModel.resumeLink = model.resumeLink;
+                if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                {
+                    NewModel.resumeLink = IRListModel.encodedresumeLink;
+                }
                 NewModel.zoomLink = model.zoomLink;
                 NewModel.IreportModel = IRListModel ?? new InterviewReport();
                 NewModel.IsLike = model.IsLike;
@@ -1833,6 +1899,15 @@ namespace Risebird.Web.Controllers
                 NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                 NewModel.LogoUrl = IRListModel.LogoUrl;
                 NewModel.ClientHrContact = model.ClientHrContact;
+                NewModel.MeetingPatch = model.MeetingPatch;
+                if (model.MeetingPatch.Count() > 0)
+                {
+                    NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                }
+                if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                {
+                    NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
+                }
                 var videodetailscount = await _meetingService.GetTotalViewCount(id);
                 NewModel.VideoCountDetail = videodetailscount.ToList();
                 if (NewModel.IreportModel.QuestionsCollection == null)
@@ -1931,7 +2006,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                 {
                     //To get data from db for video displayes
                     var model = _meetingService.GetVideoSumaryDetails(interviewid);
@@ -1939,10 +2014,14 @@ namespace Risebird.Web.Controllers
                     {
                         item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
                         item.interviewid = interviewid;
+                        if (profileName == "CuratedUser")
+                        {
+                            item.Candidate = item.Candidate?.ToCharArray()[0] + "XXXXXX" + item.Candidate.Split("@")[1];
+                        }
                     }
                     return Json(model);
                 }
-                else if (profileName == "Candidate" || profileName == "Client" || profileName == "CuratedUser")
+                else if (profileName == "Candidate")
                 {
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
@@ -2463,6 +2542,12 @@ namespace Risebird.Web.Controllers
                 NewModel.candidateEmail = model.candidateEmail;
                 NewModel.reportLink = model.reportLink;
                 NewModel.resumeLink = model.resumeLink;
+
+                if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
+                {
+                    NewModel.resumeLink = IRListModel.encodedresumeLink;
+                }
+
                 NewModel.zoomLink = model.zoomLink;
                 NewModel.IreportModel = IRListModel ?? new InterviewReport();
                 NewModel.IsLike = model.IsLike;

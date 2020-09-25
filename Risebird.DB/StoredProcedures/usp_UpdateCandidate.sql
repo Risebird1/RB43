@@ -29,7 +29,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateCandidate]
 @CurrentSalary decimal(10,2),
 @ExpectedSalary decimal(10,2),
 @Notice decimal(10,2),
-@CostEstimate nvarchar(200)
+@CostEstimate nvarchar(200),
+@EncodedResumeLink varchar(500)
 AS
 Begin
 declare
@@ -51,7 +52,8 @@ TotalExperience =@TotalExperience,
 CurrentSalary=@CurrentSalary,
 ExpectedSalary=@ExpectedSalary,
 Notice=@Notice,
-CostEstimate=@CostEstimate
+CostEstimate=@CostEstimate,
+EncodedResumeLink=@EncodedResumeLink
 where id=@id
 
 End

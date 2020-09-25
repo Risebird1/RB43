@@ -746,6 +746,7 @@ namespace Risebird.Business
                     model.CandidateName = interviewDetails.candidateName;
                     model.interviewDate = interviewDetails.interviewDate.ToString();
                     model.resumeLink = interviewDetails.resumeLink;
+                    model.encodedresumeLink = interviewDetails.encodedresumeLink;
                     model.IRFId = irfId;
 
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
@@ -884,6 +885,7 @@ namespace Risebird.Business
             var interviewMeetingsDetails = _meetingRespository.GetInterviewMeetingById(model.InterviewId).Result;
             model.PreferredLocation = interviewMeetingsDetails.preferredLocation;
             model.resumeLink = interviewMeetingsDetails.resumeLink;
+            model.encodedresumeLink = interviewMeetingsDetails.encodedresumeLink;
             model.currentEmployerName = model.currentEmployerName;
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
 
@@ -1464,6 +1466,8 @@ namespace Risebird.Business
                     model.LogoUrl = candidatedetails.LogoUrl;
                     model.interviewDate = interviewDetails.interviewDate.ToString();
                     model.resumeLink = interviewDetails.resumeLink;
+                    model.encodedresumeLink = interviewDetails.encodedresumeLink;
+
                     model.IRFId = irfId;
 
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
@@ -1602,6 +1606,7 @@ namespace Risebird.Business
             var interviewMeetingsDetails = _meetingRespository.GetInterviewMeetingById(model.InterviewId).Result;
             model.PreferredLocation = interviewMeetingsDetails.preferredLocation;
             model.resumeLink = interviewMeetingsDetails.resumeLink;
+            model.encodedresumeLink = interviewMeetingsDetails.encodedresumeLink;
             model.currentEmployerName = model.currentEmployerName;
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
 
@@ -1779,7 +1784,32 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public async Task<List<QuestionDetails>> FetchQuestionDetails(int interviewid)
+        {
+            try
+            {
+                var result = await _meetingRespository.FetchQuestionDetails(interviewid);
+                 return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public string UpdateQuestionDetails(List<QuestionDetails> _question)
+        {
+            try
+            {
+                var result = _meetingRespository.UpdateQuestionDetails(_question);
+                return result.ToString();
+            }
+            catch (Exception ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
     }
 
 }

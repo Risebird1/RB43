@@ -4,7 +4,8 @@
     ViewData["Title"] = "Edit Interviewer Skills";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -36,7 +37,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
-                  
+
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/InterviewerSkills/EditInterviewerSkills" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="InterviewerSkillsForm" onsubmit="return CheckTotalWeightage()">
 
@@ -370,10 +371,10 @@
         </div>
     </div>
 
- 
+
 </div>
 <script>
-   
+
     var InterviewerSkillName = document.getElementById("InterviewerSkillId").value;
     function InterviewerSkillsNameChanged() {
 
@@ -410,10 +411,10 @@
     });
 
     function SkillChanged() {
-       
-        
+
+
         var skills = document.getElementById("PrimarySkill").value;
-        
+
         $.ajax({
             type: "GET",
             url: "/InterviewerSkills/GetInterviewers",
@@ -477,7 +478,7 @@
     //                $("#" + drpdowns[i].id + " option").remove();
     //            }
 
-               
+
     //            if (data.length > 0) {
 
     //                for (i = 0; i < drpdowns.length; i++) {
@@ -504,7 +505,7 @@
 
     //                }
 
-                   
+
 
     //            }
 
@@ -798,7 +799,7 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
-    
+
 
 
 
@@ -818,7 +819,7 @@
 
     }
 
-   
+
 
 
 

@@ -41,7 +41,8 @@
 
 }
 
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/risetube.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 
 <div class="main-panel" id="main-panel">
@@ -98,9 +99,9 @@
                         </button>
                         @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
 
-            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-            <div class="mdc-button__ripple"></div>
-        </button>*@
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>*@
                     </div>
                 </div>
             </div>
@@ -157,7 +158,7 @@
                                                         </div>
                                                     </div>
 
-                                                    
+
 
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
@@ -200,6 +201,10 @@
                                         <div class="col-xl-3 col-sm-6 mb-3">
                                             <div class="video-card">
                                                 <div class="video-card-image">
+                                                    @if (item.MeetingPatchCount > 0)
+                                                    {
+                                                        <div class="count-bg"><span>@item.MeetingPatchCount</span></div>
+                                                    }
                                                     @if (item.VideoLink.Contains(".mp4"))
                                                     {
                                                         @if (item.ThumbnailImage != null)
@@ -249,16 +254,16 @@
                                                             <span class="designation">@item.JDTiltle</span>
                                                         }
                                                         @if (item.CostEstimate != null)
-                                                        { <div class="video-info  col-sm-6 col-md-5 col-lg-5 nopad pull-right">
-                                                            <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
-                                                            {
-                                                                <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>}
+                                                        {<div class="video-info  col-sm-6 col-md-5 col-lg-5 nopad pull-right">
+                                                                <span>Matching Fee:</span> @if (@item.CostEstimate.Length > 10)
+                                                                {
+                                                                    <a href="#" data-tooltip="@item.CostEstimate"> <span class="expected-salari">@item.CostEstimate</span></a>}
 
-                                                            else
-                                                            {
-                                                                <span>@item.CostEstimate</span>
-                                                            }
-                                                        </div>
+                                                                else
+                                                                {
+                                                                    <span>@item.CostEstimate</span>
+                                                                }
+                                                            </div>
                                                         }
 
 
@@ -304,7 +309,7 @@
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                        <span>Expected Salary:</span> @if (item.expectedPerHourRate!= null && item.expectedPerHourRate.Length > 5)
+                                                        <span>Expected Salary:</span> @if (item.expectedPerHourRate != null && item.expectedPerHourRate.Length > 5)
                                                         {
                                                             <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
 
@@ -317,7 +322,7 @@
 
                                                         <span>Location:</span>
                                                         <span>
-                                                            @if (item.preferredLocation!= null && item.preferredLocation.Length > 10)
+                                                            @if (item.preferredLocation != null && item.preferredLocation.Length > 10)
                                                             {
                                                                 <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
                                                             else
@@ -352,7 +357,7 @@
             </div>
         </div>
 
-        
+
     </div>
 </div>
 
@@ -601,7 +606,7 @@
             $("#CandidateLocation").val(candidateLocation);
             $("#CandidateAvailable").val(CandidateAvailable);
 
-          
+
     }
 
 

@@ -39,7 +39,8 @@
 }
 
 
-
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -375,10 +376,10 @@
                                                     <th>Aadhar Link</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
-                                                    <th class="no-sort"></th>
+                                                   
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
-                                                    <th class="no-sort"></th>
+                                                    
                                                     @*<th>Interview Device Details</th>*@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
@@ -399,7 +400,6 @@
                                                     <th>JD Link</th>
                                                     <th>Zoom Link</th>
                                                     <th>Zoom ID</th>
-
                                                     <th>Client HR</th>
                                                     <th>End Client Name</th>
                                                     <th>Video Link</th>
@@ -417,10 +417,10 @@
                                                     <th>Aadhar Link</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
-                                                    <th class="no-sort"></th>
+                                                 
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
-                                                    <th class="no-sort"></th>
+                                                  
                                                     @*<th>Interview Device Details</th>*@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
@@ -480,7 +480,14 @@
                                                             <td class="text-center"> @item.confirmationStatus</td>
                                                         }
 
-                                                        <td> @item.MeetingStatusStatusDesc</td>
+                                                        @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                                                        {
+                                                            <td>Scheduled</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td> @item.MeetingStatusStatusDesc</td>
+                                                        }
                                                         <td> @item.intervieweStatusStatDesc</td>
                                                         @if (item.resumeLink != null && item.resumeLink != "")
                                                         {
@@ -562,26 +569,26 @@
                                                             @item.NextLevelApprovalStat
                                                         </td>
                                                         <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in cmt-w">
+                                                            <div class="talk-bubble tri-right border-bubble right-in ">
                                                                 <div class="talktext">
                                                                     <a href="#" data-tooltip="@item.ApprovalComments">  <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea></a>
                                                                 </div>
                                                             </div>
                                                         </td>
 
-                                                        <td></td>
+                                                        
 
                                                         <td>
                                                             @item.FinalSelectionStat
                                                         </td>
                                                         <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in cmt-w">
+                                                            <div class="talk-bubble tri-right border-bubble right-in ">
                                                                 <div class="talktext">
                                                                     <a href="#" data-tooltip="@item.FinalComments"><textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea></a>
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td></td>
+                                                       
 
                                                         <td class="text-right action">
                                                             @if (item.IsBiometricEnabled)
@@ -591,6 +598,10 @@
                                                                 </button>
 
                                                             }
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Upload Videoes">
+                                                                @*<span onclick="OpenVideoUploadPopup(@item.imid)" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>*@
+                                                                <span onclick="location.href = '@Url.Action("UploadInterviewVideoes", "Interview", new { id = item.imid})'" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" /></svg></span>
+                                                            </button>
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                 <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                             </button>
@@ -605,12 +616,12 @@
 
                                                             @if (item.IsBiometricEnabled == true)
                                                             {
-                                                               
+
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Analyse Sentiment">
                                                                     <span onclick="SentimentModalClick('@item.imid')" title="Analyse Sentiment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M9 14h6v1.5H9z" /><circle cx="15.5" cy="9.5" r="1.5" /><circle cx="8.5" cy="9.5" r="1.5" /><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" /></svg></span>
                                                                 </button>
                                                             }
-                                                            
+
                                                         </td>
                                                         <td>
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -662,7 +673,7 @@
 
 
                                 <div class="modal-body">
-                                    <div class="row">
+                                    <div>
                                         <h5 class="modal-title text-center mt-20" id="callingLabel">Calling...</h5>
 
                                     </div>
@@ -721,6 +732,35 @@
                             <input type="radio" id="radThree" name="receivers" value="Client">
                             <label for="radThree" class="control-label desp-label">All Clients</label>
                         </div>
+
+
+                        <div class="broad-ele">
+                            <div class="pull-left">
+                                <input type="radio" id="radFour" name="receivers" value="IRF">
+                                <label for="radFour" class="control-label desp-label">IRF</label>
+                            </div>
+
+
+                            <div id="IRFLIST" class="form-group pull-left" style="display:none;margin-left:15px;">
+                                <label class="control-label desp-label pull-left" style="padding-top: 2px;">IRF LIST</label>
+                                <div class="form-group pull-left col-md-9">
+                                    <select id="irflist" class="select-css form-control">
+                                        @foreach (var item in Model.ToList())
+                                        {
+                                            @if (item.IRFId != null && item.IRFId != "")
+                                            {
+                                                <option value="@item.interviewer">@item.IRFId</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
                     </div>
                 </div>
 
@@ -739,29 +779,15 @@
                             </div>
                         </div>
 
-
-
-
-
                     </div>
 
-
                 </div>
-
-
-
-
 
                 <div class="col-md-12 col-sm-12 text-right">
                     <button type="button" onclick="SendBroadcast()" class="mdc-button mdc-button--raised mdc-ripple-upgraded sendButton">Send</button>
                     <button type="button" id="broadcastPopUpclose" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style=" background-color: #FF3636 !important; margin-left: 10px;">Close</button>
                 </div>
-
-
             </div>
-
-
-
         </div>
     </div>
 </div>
@@ -824,6 +850,36 @@
     </div>
 </div>
 
+<div id="VideoDetailsModel" class="modal modal-bg">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <svg class="publicsharing-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 1C4.58 1 1 4.58 1 9s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 2.75c1.24 0 2.25 1.01 2.25 2.25S10.24 8.25 9 8.25 6.75 7.24 6.75 6 7.76 3.75 9 3.75zM9 14.5c-1.86 0-3.49-.92-4.49-2.33C4.62 10.72 7.53 10 9 10c1.47 0 4.38.72 4.49 2.17-1 1.41-2.63 2.33-4.49 2.33z" /></svg>
+                </div>
+                <h5 class="modal-title pull-left">Share/View Details</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeVideoDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12 sb-container scroller">
+                    <div id="divvideodetailsmodel" class="pdr-20">
+
+                    </div>
+                </div>
+
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="SaveVideoDetails()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
@@ -1220,7 +1276,7 @@
 
         var message = document.getElementById("bcMessage").value;
         var subject = document.getElementById("bcSubject").value;
-
+        var irfid = document.getElementById("irflist").value;
         var ele = document.getElementsByName('receivers');
         for (i = 0; i < ele.length; i++) {
             if (ele[i].checked) {
@@ -1229,11 +1285,13 @@
         }
 
 
+
         $.ajax({
             type: "GET",
             url: "/Interview/Broadcast",
             data: {
-                'message': message, 'subject': subject, 'receiver': receiver
+
+                'message': message, 'subject': subject, 'receiver': receiver, 'irfid': irfid
             },
             success: function (data) {
                 location.reload(true);
@@ -1243,7 +1301,51 @@
     }
 
 </script>
+<script>
+    var start = document.getElementById('start');
+    start.focus();
 
+    function dotheneedful(sibling) {
+        if (sibling != null) {
+            start.focus();
+            start.style.backgroundColor = '';
+            start.style.color = '';
+            sibling.focus();
+            start = sibling;
+        }
+    }
+
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38') {
+            // up arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.previousElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '40') {
+            // down arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.nextElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '37') {
+            // left arrow
+            var sibling = start.previousElementSibling;
+            dotheneedful(sibling);
+        } else if (e.keyCode == '39') {
+            // right arrow
+            var sibling = start.nextElementSibling;
+            dotheneedful(sibling);
+        }
+    }
+</script>
 <script>
     $(document).ready(function () {
         $('.sendButton').attr('disabled', true);
@@ -1257,5 +1359,79 @@
                 $('.sendButton').attr('disabled', true);
             }
         });
+    });
+
+    //new added Popup
+    function OpenVideoUploadPopup(interviewid) {
+        var url = "/Interview/partialVideoView?id=" + interviewid;
+        $.get(url, function (data) {
+            $("#VideoDetailsModel").html(data);
+            //BindVideoData(data);
+            var modal = document.getElementById("VideoDetailsModel");
+            modal.style.display = "block";
+        });
+        //fetch question data
+        //Create popup for question and name and Videoupload
+        //Save data new table
+        //Close popup
+    }
+    function closeVideoDetailsModel() {
+        var modal = document.getElementById("VideoDetailsModel");
+        modal.style.display = "none";
+    }
+    function BindVideoData(Data) {
+        var html = '';
+        html += '<table>';
+        html += '<tr>';
+
+        html += '                        <td>Question</td>';
+        html += '                        <td>Title</td>';
+        html += '                         <td>Priority</td>';
+        html += '               <td>Video Link</td>';
+        html += '               <td>Upload Video</td>';
+        html += '           </tr>';
+        for (var i = 0; i < Data.length; i++) {
+            html += '<tr>';
+
+            html += '<td><input type="text" id="txt_que_' + i + '" value="' + Data[i].question + '" readonly /></td>';
+            if (Data[i].videoTitle != null) {
+                html += '<td><input type="text" id="txt_tit_' + i + '" value="' + Data[i].videoTitle + '" /></td>';
+            } else {
+                html += '<td><input type="text" id="txt_tit_' + i + '" value="" /></td>';
+            }
+            html += '<td><input type="text" id="txt_pri_' + i + '" value="' + Data[i].priority + '" /></td>';
+            if (Data[i].videoLink != null) {
+                html += '<td><input type="text" id="txt_vli_' + i + '" value="' + Data[i].videoLink + '" readonly /></td>';
+            } else {
+                html += '<td><input type="text" id="txt_vli_' + i + '" readonly /></td>';
+
+            }
+            html += '<td><input type="file" id = "txt_file_' + i + '"  accept = ".mp4" ></td>';
+            html += '</tr>';
+        }
+        html += '</table>';
+
+        $("#divvideodetailsmodel").empty().html(html);
+    }
+    function SaveVideoDetails() {
+        $.ajax({
+            type: "GET",
+            url: "/RiseTube/CalculateTimeSpend",
+            data: {},
+            success: function (data) {
+            }
+        });
+    }
+
+</script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    $('input:radio[name="receivers"]').click(function () {
+
+        if ($(this).val() == 'IRF') {
+            $('#IRFLIST').show();
+        } else {
+            $('#IRFLIST').hide()
+        }
     });
 </script>

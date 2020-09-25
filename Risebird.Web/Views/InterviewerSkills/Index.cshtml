@@ -20,7 +20,8 @@
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
 }
-
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -68,7 +69,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        
+
 
                         <div class="row">
                             @foreach (var item in Model.InterviewerSkillsChannelModelList)
@@ -105,7 +106,7 @@
                                                     }
                                                     else
                                                     {
-                                                       
+
 
                                                         <button class="mdc-fab app-fab--absolute unarchive-btn" aria-label="UnArchive">
                                                             <span onclick="javascript:UnArchiveISC('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
@@ -253,55 +254,55 @@
                                                     </div>
                                                 </div>
                                                 @*<div class="col-md-6 col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
-                                        <div class="col-md-6 col-sm-6">
-                                            <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.InterviewerSkillId).Distinct().ToList())
-                                                {
-                                                    @if (item != null && item != "")
-                                                    {
-                                                        <option value="@item">@item</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>
-                                    @if (!Model.IsClientUser)
-                                    {
-                                        <div class="form-group">
-                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">JD Tiltle</label>
-                                            <div class="col-md-6 col-sm-6">
-                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                    @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.JDTiltle).Distinct().ToList())
-                                                    {
-                                                        @if (item != null && item != "")
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.InterviewerSkillId).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        @if (!Model.IsClientUser)
                                                         {
-                                                            <option value="@item">@item</option>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">JD Tiltle</label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
                                                         }
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>*@
+                                                    </div>*@
 
                                                 <div class="col-md-6 col-sm-6">
 
                                                     @*<div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
-                                        <div class="col-md-6 col-sm-6">
-                                            <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
-                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.ArchiveStatus).Distinct().ToList())
-                                                {
-                                                @if (item != null && item != "")
-                                                    {
-                                                <option value="@item">@item</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
-                                    </div>*@
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                                    {
+                                                                    @if (item != null && item != "")
+                                                                        {
+                                                                    <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>*@
                                                     <div class="form-group col-md-12">
                                                         <div class="row">
                                                             <div class="col-md-6 col-sm-6">
@@ -330,15 +331,10 @@
         </div>
 
         <!-- Start Card -->
-
-        
-
         <!-- End Card-->
-        
-
         <!-- end row -->
     </div>
-    
+
 
 </div>
 

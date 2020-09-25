@@ -4,112 +4,113 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
 
-    <div class="main-panel" id="main-panel">
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-            <div class="container-fluid">
-                <div class="navbar-wrapper">
-
-                    <a class="navbar-brand breadcrumscolor" href="/Client/List">Client</a>
-                    <a class="navbar-brand">/ &nbsp; Update Client</a>
-                </div>
-            </div>
-        </nav>
-        <!-- End Navbar -->
-        <div class="mt50">
-        </div>
-
-        <div class="content client">
-            <div class="row bg-white">
-                <div class="col-md-12">
-                    <div class="mdc-card card bg-white">
-
-
-                        <div class="mdc-card-wrapper__text-section">
-                            @using (Html.BeginForm("EditClient", "Client", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                            {@Html.AntiForgeryToken() <div class="row">
-
-    <div class="col-md-12">
-        <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Update Client</h4></div>
-    </div>
-    <div style="width: 100%;">&nbsp;</div>
-
-    <div class="form-horizontal w-full">
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        <div class="col-md-6 col-sm-6 pr-1 pull-left">
-            <div class="form-group">
-                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-
+                <a class="navbar-brand breadcrumscolor" href="/Client/List">Client</a>
+                <a class="navbar-brand">/ &nbsp; Update Client</a>
             </div>
         </div>
-
-
-        <div class="col-md-6 col-sm-6 pl-1 pull-left">
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-
-            </div>
-        </div>
-
-
-        <div class="col-md-6 col-sm-6 pr-1 pull-left">
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.GST, "", new { @class = "text-danger" })
-
-            </div>
-        </div>
-
-
-        <div class="col-md-6 col-sm-6 pl-1 pull-left">
-            <div class="form-group">
-                @Html.LabelFor(model => model.OfficeAddress, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                @Html.EditorFor(model => model.OfficeAddress, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.OfficeAddress, "", new { @class = "text-danger" })
-
-            </div>
-        </div>
-
-
-
-
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
     </div>
 
+    <div class="content client">
+        <div class="row bg-white">
+            <div class="col-md-12">
+                <div class="mdc-card card bg-white">
 
 
-</div>
+                    <div class="mdc-card-wrapper__text-section">
+                        @using (Html.BeginForm("EditClient", "Client", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {@Html.AntiForgeryToken() <div class="row">
 
-                            <div class="card-footer">
-                                <div class="row">
+                            <div class="col-md-12">
+                                <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Update Client</h4></div>
+                            </div>
+                            <div style="width: 100%;">&nbsp;</div>
 
-                                    <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "List", "Client", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                            <div class="form-horizontal w-full">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                        <input type="submit" id="btnUpload" value="Save" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
 
                                     </div>
                                 </div>
+
+
+                                <div class="col-md-6 col-sm-6 pl-1 pull-left">
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.GST, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.OfficeAddress, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.OfficeAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.OfficeAddress, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+
+
+
                             </div>
 
 
-                        }
+
                         </div>
+
+                        <div class="card-footer">
+                            <div class="row">
+
+                                <div class="col-md-12 mc-button-area">
+                                    @Html.ActionLink("Back to List", "List", "Client", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
+                                    <input type="submit" id="btnUpload" value="Save" class="mdc-button mdc-button--raised mdc-ripple-upgraded" />
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                    }
                     </div>
                 </div>
             </div>
         </div>
     </div>
-                  
+</div>
+

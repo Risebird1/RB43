@@ -2,17 +2,19 @@
 
 @if (Model != null && Model.Count() != 0)
 {
-    <div class="member">
+    <div>
         <div class="sb-container scroller">
             <table class="table table-bordered table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>Type</th>
+                        <th class="text-center">Mobile</th>
+                        <th class="text-center">Call</th>
                         <th>EmailId</th>
                         <th>ResumeLink</th>
                         <th>Total Interviews</th>
                         <th>Total QC</th>
-                        <th>Call</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -21,28 +23,45 @@
                     @foreach (var item in Model)
                     {
                     <tr>
-                        <td>@item.Type</td>
-                        <td>@item.EmailId</td>
-                        @if (item.ResumeLink != null && item.ResumeLink != "")
+                        @if (item.Type == "Interviewer")
                         {
-                            <td>
-
-                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
-                            </td>
+                            <td style="color: #17c317">@item.Type</td>
                         }
-                        else
+
+                        @if (item.Type == "Emergency Interviewer")
                         {
-                            <td>No Resume</td>
-                        }                       
-                        <td>@item.TotalInterviews</td>
-                        <td>@item.TotalQCInterviews</td>
-                        <td>
+                            <td style="color: #ff7bf5">@item.Type</td>
+                        }
+
+
+                        @if (item.Type == "QCInterviewer")
+                        {
+                            <td style="color:yellow">@item.Type</td>
+                        }
+                        <td class="text-center">@item.MobileNumber</td>
+                        <td class="text-center">
                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                             {
                                 <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CallButtonClick('@item.EmailId','@item.MobileNumber','myCallModal','callingLabel')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call</span></span>
                             }
 
                         </td>
+                        <td>@item.EmailId</td>
+                        @if (item.ResumeLink != null && item.ResumeLink != "")
+                        {
+                            <td class="text-center">
+
+                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="text-center">No Resume</td>
+                        }
+                        <td class="text-center">@item.TotalInterviews</td>
+                        <td class="text-center">@item.TotalQCInterviews</td>
+
+
                     </tr>
                     }
 

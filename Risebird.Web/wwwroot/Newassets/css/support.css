@@ -102,20 +102,7 @@ td:hover.wordwrap {
 }
 
 /*CSS FOR Loader*/
-.loader {
-    font-family: Arial;
-    font-size: 10pt;
-    /*border: 5px solid #67CFF5;*/
-    /*width: 200px;
-            height: 100px;*/
-    display: none;
-    position: center !important;
-    background-color: #fbfbfb;
-    z-index: 999;
-    /*opacity: 0.5;*/
-    filter: alpha(opacity = 50);
-    text-align: center;
-}
+
 
 
 
@@ -184,14 +171,14 @@ table {
 }
 
 .call-txt {
-    border: 1px #53a5f5 solid;
+
     position: relative;
-    padding: 5px 15px;
+    padding: 5px 16px;
     left: -10px;
     top: 8px;
     font-size: 14px;
     font-family: arial;
-    color: #53a5f5;
+   
     border-left: 0px;
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
@@ -200,12 +187,7 @@ table {
     position: relative !important;
     top: -3px !important;
 }
-#resumeId, .callatag {
-    background: #e2f0ff;
-    color: #1d3b5e;
-    padding: 5px 10px;
-    border-radius: 10px;
-}
+
 
 #reportId {
     background: #b3d2f1;
