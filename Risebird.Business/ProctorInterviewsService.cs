@@ -97,14 +97,15 @@ namespace Risebird.Business
 
                 //Get All vm from azure portal existing in subscription
 
-                var path = $"http://localhost:7071/api/GetVMList";
-                //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
-                //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+                //var path = $"http://localhost:7071/api/GetVMList";
+                var path = $"https://risebirdmicroservice.azurewebsites.net/api/GetVMList";
+                var functionKey = "IX4USua29CSGnwdutllpMH7xfNY8hagHxtRQwE3AdQ9aCakoky5IMw==";
 
                 HttpClient httpClient = new HttpClient();
                 httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
-                var response = await httpClient.SendRequestAsync(HttpMethod.Get, path, null, "", "", _cancellationToken);
+                //var response = await httpClient.SendRequestAsync(HttpMethod.Get, path, null, "", "", _cancellationToken);
+                var response = await httpClient.SendRequestAsync(HttpMethod.Get, path, null, functionKey, "", _cancellationToken);
                 var result = response.Content.ReadAsStringAsync().Result;
                 result = result.Replace("\\r", "\r").Replace("\\n","\n").Replace("\"","").Replace("\\","\"");
                 var vmsInCloudPortal = JsonConvert.DeserializeObject<VMServerProperty>(result);
@@ -200,16 +201,17 @@ namespace Risebird.Business
                 string Url = $"/resourceGroups/{model.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{model.VmName}";
 
 
-                var path = $"http://localhost:7071/api/RunPowerShellScript";
-                //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
-                //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+                var path = $"https://risebirdmicroservice.azurewebsites.net/api/RunPowerShellScript";
+                //var path = $"http://localhost:7071/api/RunPowerShellScript";
+                var functionKey = "WHofCkAw2PceqzvGNyCXdDRChqLB8zYS5aUGuG313KHdufTjW58NJQ==";
                 var dto = new RunPowershellDTO();
                 dto.Script = scripts;
                 dto.Url = Url;
                 HttpClient httpClient = new HttpClient();
                 httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
-                var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, dto, "", "", _cancellationToken);
+                //var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, dto, "", "", _cancellationToken);
+                var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
                 var result = response.Content.ReadAsStringAsync().Result;
                 if(result.ToLower().Contains("success"))
                 {
