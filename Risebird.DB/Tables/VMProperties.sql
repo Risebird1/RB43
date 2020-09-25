@@ -15,6 +15,8 @@ CREATE TABLE [dbo].[VMProperties](
 	[OSType] [varchar](25) NULL,
 	[PublicIP] [varchar](100) NULL,
 	[PrivateIP] [varchar](100) NULL,
+	[Password] [VARCHAR](20) NULL,
+	[CustomName] [VARCHAR](20) NULL,
  CONSTRAINT [PK_VMProperties] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
