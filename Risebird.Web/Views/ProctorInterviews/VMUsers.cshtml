@@ -1,0 +1,214 @@
+﻿@model Risebird.Entities.ViewModel.VMUsersMapping
+@{
+    ViewData["Title"] = "VM Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">VM Users</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+
+
+                    <div class="mdc-card-wrapper__text-section">
+
+
+                        <div class="row">
+                            <div class="card-header">
+                                <h4 class="card-title">VM Users</h4>
+                            </div>
+
+                            <div style="width: 100%;">&nbsp;</div>
+                            <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.VmName, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                    @Html.EditorFor(model => model.VmName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr class="l-hr" />
+                        <div id="tableID">
+                            <div class="table-responsive-sm">
+                                <table class="table table-bordered mbn" id="UserListTb">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center border-db" style="font-size:15px!important;">EmailId</th>
+                                            <th class="text-center  border-db" style="font-size:15px!important;">Profile</th>
+                                            <th class="text-center " style="font-size:15px!important;">Add</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.UsersList.Count(); i++)
+                                        {
+                                        <tr>
+
+                                            <td class="text-center  border-db" width="30%">@Model.UsersList[i].EmailId</td>
+                                            <td class="text-center  border-db" width="30%">@Model.UsersList[i].ProfileName</td>
+                                            <td class="text-center" width="20%">
+
+
+                                                <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                    <div class="mdc-checkbox">
+                                                        @Html.CheckBoxFor(m => m.UsersList[i].IsAdded, new { @class = "mdc-checkbox__native-control", @onclick = "UpdateUserList(this.id)" })
+
+
+                                                        <div class="mdc-checkbox__background">
+                                                            <svg class="mdc-checkbox__checkmark"
+                                                                 viewBox="0 0 24 24">
+                                                                <path class="mdc-checkbox__checkmark-path"
+                                                                      fill="none"
+                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                            </svg>
+                                                            <div class="mdc-checkbox__mixedmark"></div>
+                                                        </div>
+                                                        <div class="mdc-checkbox__ripple"></div>
+
+
+                                                    </div>
+                                                </div>
+
+
+
+                                            </td>
+                                            @Html.HiddenFor(m => m.UsersList[i].UserId)
+
+                                        </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card-footer ">
+                            <div class="row">
+                                <div class="col-md-12 mc-button-area">
+                                    @Html.ActionLink("Back to List", "Index", "ProctorInterviews", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="UpdateVMUsers()">Save</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+</div>
+
+<script>
+    var userList = [];
+
+    $(document).ready(function () {
+
+        $.each($("input[type=checkbox]:checked"), function () {
+            var id = $(this).attr("id");
+            var valueId = id.split('__')[0] + '__UserId';
+            userList.push(document.getElementById(valueId).value);
+        });
+    });
+
+    function UpdateVMUsers() {
+        $.ajax({
+            url: '/ProctorInterviews/UpdateVMUsers',
+            type: 'POST',
+            data: { 'userList': userList, 'vmId': @Model.VmId, 'vmName':'@Model.VmName' },
+            success: function (data) {
+                window.location.href = "/ProctorInterviews/Index";
+            }
+        });
+    }
+
+    function UpdateUserList(id) {
+        var valueId = id.split('__')[0] + '__UserId';
+        var value = document.getElementById(valueId).value;
+        var checked = document.getElementById(id).checked;
+        if (checked) {
+            //check if the array has this value
+            if (userList.includes(value)) {
+                return;
+            }
+            //if not, add the value
+            else {
+                userList.push(value);
+                return;
+            }
+
+        }
+        else {
+            //check if the array has this value. If yes, remove the value
+            if (userList.includes(value)) {
+                var index = userList.indexOf(value);
+                userList.splice(index, 1);
+                return;
+            }
+
+            else {
+                return;
+            }
+
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $('#UserListTb').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order:[],
+            responsive: false,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
+        });
+        var table = $('#UserListTb').DataTable();
+    });
+</script>
+
