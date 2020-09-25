@@ -38,8 +38,13 @@ namespace Risebird.MicroService
 
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            log.LogInformation(requestBody);
+
             VMActionDTO data = JsonConvert.DeserializeObject<VMActionDTO>(requestBody);
-            var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name,data.ActionCommand);
+            log.LogInformation("data converted to class" + data.ActionCommand + data.VMPropertyId);
+
+            var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name,data.ActionCommand, log);
+            log.LogInformation("excecuted" + result.ToString());
 
             string responseMessage = string.Empty;
             if(result)
@@ -55,26 +60,50 @@ namespace Risebird.MicroService
                     expectedStatus = "deallocated/stopped";
                 }
                 await _proctorInterviewsRepository.AddVMTrigger(data.VMPropertyId, data.ActionCommand,expectedStatus);
+                log.LogInformation("Added to trigger table process done");
+
                 responseMessage = "Successful";
             }
             else
             {
                 responseMessage = "Failed";
             }
-           
+            log.LogInformation("completed");
+
             return new OkObjectResult(responseMessage);
         }
 
-        public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand)
+        public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand, ILogger log)
         {
             var credentials = _azureHelper.GetAzureCredential();
+            log.LogInformation("credentials created " +credentials.SubscriptionId +" token: " +credentials.Token);
+            //log.LogInformation("endpoint: " +_configuration["AzureSettings:endPoint"]);
+
+            //var client =
+            //    CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
+            //        credentials, log);
+            //var client =
+            //    CreateClient(string.Format("https://management.azure.com/subscriptions/{0}", credentials.SubscriptionId),
+            //        credentials, log);
             var client =
-                CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
-                    credentials);
+                CreateClient("https://management.azure.com/subscriptions/05d4ebe3-b5c7-4725-b618-8bb535cf2c8c",
+                    credentials, log);
+            log.LogInformation("client created");
+            //log.LogInformation(resourceGroupName + resourceName + excuteCommand + _configuration["AzureSettings:ApiVersionToDoVM"]);
+
+            //var requestUrl =
+//$"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
             var requestUrl =
-                $"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
-            var request = CreateRequest(requestUrl, Method.POST);
+               $"resourceGroups/{resourceGroupName.ToLower()}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version=2019-12-01";
+            log.LogInformation("request url created");
+
+            var request = CreateRequest(requestUrl, Method.POST, log);
+            log.LogInformation("request created" + requestUrl);
+
             var response = client.Execute(request);
+            log.LogInformation("client.Execute() called");
+
+            log.LogInformation(response.Content);
 
             if (response.StatusCode == HttpStatusCode.Accepted)
             {
@@ -84,14 +113,14 @@ namespace Risebird.MicroService
 
             return false;
         }
-        private RestClient CreateClient(string EndPoint, AzureCredentials credentials)
+        private RestClient CreateClient(string EndPoint, AzureCredentials credentials, ILogger log)
         {
             // Default request
             var client = new RestClient(EndPoint);
             client.AddDefaultHeader("Authorization", "Bearer " + credentials.Token);
             return client;
         }
-        private RestRequest CreateRequest(string requestUrl, Method requestMethod, object postData = null)
+        private RestRequest CreateRequest(string requestUrl, Method requestMethod, ILogger log,object postData = null)
         {
             var request = new RestRequest(requestUrl, requestMethod) { RequestFormat = DataFormat.Json };
             if (postData != null)
