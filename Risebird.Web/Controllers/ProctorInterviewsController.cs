@@ -27,7 +27,7 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IProctorInterviewsService _proctorInterviewsService;
         private readonly CancellationToken _cancellationToken;
-        private readonly HttpClient _httpClient;
+     
 
 
         public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService, HttpClientHelper factory)
@@ -38,7 +38,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _configuration = configuration;
             _proctorInterviewsService = proctorInterviewsService;
-            _httpClient = factory.GetHttpClient();
+          
 
         }
 
@@ -50,7 +50,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser")
+                if (profileName == "Admin" || profileName == "HR")
                 {
                     var model = new VirtualMachineVM();
                     model.VMList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
