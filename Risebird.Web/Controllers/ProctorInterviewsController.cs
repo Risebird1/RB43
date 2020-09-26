@@ -20,7 +20,7 @@ namespace Risebird.Web.Controllers
 {
     public class ProctorInterviewsController : Controller
     {
-
+        private readonly HttpClient _httpClient;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly INotificationHelper _notificationHelper;
@@ -29,8 +29,9 @@ namespace Risebird.Web.Controllers
         private readonly CancellationToken _cancellationToken;
 
 
-        public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService)
+        public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService, HttpClientHelper factory)
         {
+            _httpClient = factory.GetHttpClient();
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _notificationHelper = notificationHelper;
@@ -119,14 +120,10 @@ namespace Risebird.Web.Controllers
                     model.Name = name;
                     model.ResourceGroupName = rgName;
                     model.ActionCommand = action;
-                    var path = $"http://localhost:7071/api/StartStopVM";
-                    //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
-                    //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+                    var path = $"https://risebirdmicroservice.azurewebsites.net/api/StartStopVM";
+                    var functionKey = "D1fJaqGva3a/p9biA7clekVxAyfOialCKpO3SHpgHCP3WdBa4lOBnA==";
 
-                    HttpClient httpClient = new HttpClient();
-                    httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
-
-                    var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken);
+                    var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
                     if(response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
                     {
                         return true;
@@ -182,14 +179,10 @@ namespace Risebird.Web.Controllers
                 if (vmId!=0)
                 {
                     
-                    var path = $"http://localhost:7071/api/GetRDPFile";
-                    //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
-                    //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+                    var path = $"https://risebirdmicroservice.azurewebsites.net/api/GetRDPFile";
+                    var functionKey = "rE8wOZBltuOTe44IBcAY28zAydprjs/WjO8tONe4mb2HIOGwtO8onw==";
 
-                    HttpClient httpClient = new HttpClient();
-                    httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
-
-                    var response = await httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, "", "", _cancellationToken);
+                    var response =await _httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, functionKey, "", _cancellationToken);
                     if(response!=null)
                     {
                         var rdpfile = response.Content.ReadAsStringAsync().Result;
@@ -293,61 +286,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet]
-        public IActionResult VMUsers(int vmId, string vmName)
-        {
-            if (HttpContext.Session.GetString("email") != null)
-            {
-
-                var model = new VMUsersMapping
-                {
-                    VmId = vmId,
-                    VmName = vmName,
-                    UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId))
-                };
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> UpdateVMUsers(int[] userList, int vmId, string vmName)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    if (await _proctorInterviewsService.UpdateVMUsers(userList, vmId))
-                    {
-                        TempData["SuccessErrorMessageProctor"] = "Users for the VM " + vmName + " updated successfully!";
-                        return Json(true);
-                    }
-                    else
-                    {
-                        TempData["SuccessErrorMessageProctor"] = "Saving users for the VM " + vmName + " failed!";
-                        return Json(false);
-                    }
-
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageProctor"] = "Saving users for the VM " + vmName + " failed!";
-                return Json(false);
-            }
-        }
-
-
+        
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditNamePassword(int id, string customName, string password, string vmName)
