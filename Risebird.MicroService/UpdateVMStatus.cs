@@ -21,7 +21,6 @@ namespace Risebird.MicroService
     {
         private readonly IConfiguration _configuration;
         private readonly IAzureHelper _azureHelper;
-        //private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
         private readonly INotificationHelper _notificationHelper;
         private readonly IProctorInterviewsService _proctorInterviewsService;
