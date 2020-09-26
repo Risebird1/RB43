@@ -35,7 +35,6 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
 
 
-            //DependencyMapping(builder.Services);
         }
 
         

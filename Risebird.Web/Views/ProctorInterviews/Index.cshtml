@@ -83,7 +83,7 @@
                                                 <div class=" col-md-7 col-sm-7 first">
                                                     @if (item.CustomName != null)
                                                     {
-                                                        <h6>@(item.CustomName)(@item.Name)</h6>
+                                                        <h6>@item.CustomName</h6>
                                                     }
                                                     else
                                                     {
@@ -113,15 +113,16 @@
                                                 <div class="statusInfo">
                                                     <div class="group inner list-group-item-text">
 
+                                                        <div class="row"> <span>VM Name:</span>@item.Name</div> <br />
 
                                                         <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div> <br />
                                                         <div class="row three">
                                                             <div> Password:</div>
-                                                        
-                                                           
-                                                        
-                                                        
-                                                        <div id="password-field" title="=" Password"> @item.Password </div>
+
+
+
+
+                                                            <div id="password-field" title="=" Password"> @item.Password </div>
 
                                                         </div> <br />
                                                     </div>
@@ -137,19 +138,15 @@
 
                                                     @if (@item.StatusDesc.ToLower() == "running")
                                                     {
-                                                        <h6 id="statusId_@item.id" style="color: green;text-align:left"> @item.StatusDesc</h6>
+                                                        <h6 id="statusId_@item.id" style="color:green;text-align:left"> @item.StatusDesc</h6>
                                                     }
                                                     else if (@item.StatusDesc.ToLower() == "deallocated")
                                                     {
-                                                        <h6 id="statusId_@item.id" style="        color: black;
-        text-align: left
-"> @item.StatusDesc</h6>
+                                                        <h6 id="statusId_@item.id" style="color:black;text-align:left"> @item.StatusDesc</h6>
                                                     }
                                                     else
                                                     {
-                                                        <h6 id="statusId_@item.id" style="        color: grey;
-        text-align: left
-"> @item.StatusDesc</h6>
+                                                        <h6 id="statusId_@item.id" style="color:grey;text-align:left"> @item.StatusDesc</h6>
                                                     }
                                                 </div>
 

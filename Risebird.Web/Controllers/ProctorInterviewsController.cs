@@ -120,15 +120,9 @@ namespace Risebird.Web.Controllers
                     model.Name = name;
                     model.ResourceGroupName = rgName;
                     model.ActionCommand = action;
-                    //var path = $"http://localhost:7071/api/StartStopVM";
                     var path = $"https://risebirdmicroservice.azurewebsites.net/api/StartStopVM";
-                    //var path = $"StartStopVM";
                     var functionKey = "D1fJaqGva3a/p9biA7clekVxAyfOialCKpO3SHpgHCP3WdBa4lOBnA==";
 
-                    //HttpClient httpClient = new HttpClient();
-                    //httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
-
-                    //var response = await httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken);
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
                     if(response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
                     {
@@ -185,15 +179,10 @@ namespace Risebird.Web.Controllers
                 if (vmId!=0)
                 {
                     
-                    //var path = $"http://localhost:7071/api/GetRDPFile";
                     var path = $"https://risebirdmicroservice.azurewebsites.net/api/GetRDPFile";
                     var functionKey = "rE8wOZBltuOTe44IBcAY28zAydprjs/WjO8tONe4mb2HIOGwtO8onw==";
 
-                    HttpClient httpClient = new HttpClient();
-                    httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
-
-                    //var response = await httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, "", "", _cancellationToken);
-                    var response = await httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, functionKey, "", _cancellationToken);
+                    var response =await _httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, functionKey, "", _cancellationToken);
                     if(response!=null)
                     {
                         var rdpfile = response.Content.ReadAsStringAsync().Result;
