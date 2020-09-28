@@ -107,6 +107,11 @@ hr {
 .show .dropdown-menu:before {
     color: #181818!important;
 }
+.assessment h1 {
+    color: #a9a5a5 !important
+}
+
+
 .assessment-grp {
     color: #9A9A9A;
 }

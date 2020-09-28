@@ -61,6 +61,9 @@ textarea::-webkit-scrollbar {
 
     background-color: var(#acacad, #565656)!important;
 }
+.assessment h1 {
+    color: #1d3b5f !important
+}
 .assessment-grp {
     color: #54a5f5;
     font-size: 20px !important;

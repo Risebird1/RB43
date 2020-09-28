@@ -27,7 +27,9 @@ textarea::-webkit-scrollbar-thumb {
     border: 1px solid #dee2e6 !important;
 
 }
-
+.assessment h1 {
+    color: #47484a !important
+}
 
 .call-txt {
     border: 1px #dee2e6 solid;
