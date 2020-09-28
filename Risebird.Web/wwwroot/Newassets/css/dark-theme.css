@@ -110,11 +110,24 @@ hr {
 .assessment h1 {
     color: #a9a5a5 !important
 }
+.assessment-blk {
+    border: 1px #464343 solid;
+}
 
 
-.assessment-grp {
+.assessment-blk-h {
+    border: 1px #464343 solid;
+}
+    .assessment-grp {
     color: #9A9A9A;
 }
+.table-grey thead {
+    background: #121212;
+}
+.table-grey > tbody > tr > td{color:#9a9a9a;}
+
+
+
 table.dataTable thead .sorting:after {
     color: #121212;
 }

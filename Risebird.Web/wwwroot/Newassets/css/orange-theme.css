@@ -65,6 +65,16 @@ textarea::-webkit-scrollbar {
 .assessment h1 {
     color: #e96b28 !important
 }
+
+.assessment-blk {
+    border: 1px #e2e2e2 solid;
+}
+.assessment-blk-h {
+    border: 1px #e2e2e2 solid;
+}
+.table-grey thead {
+    background: #5f5f5f;
+}
 .assessment-grp {
     color: #da6025;
 }
