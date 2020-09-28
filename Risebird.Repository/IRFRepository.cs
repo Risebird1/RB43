@@ -3304,12 +3304,12 @@ namespace Risebird.Repository
             }
             return null;
         }
-        
+
         public async Task<bool> AddCuratedGroup(int[] irfList, string cgName)
         {
             try
             {
-                if(irfList!=null && irfList.Count()>0)
+                if (irfList != null && irfList.Count() > 0)
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -3477,7 +3477,7 @@ namespace Risebird.Repository
                     dynamicParameters.Add("@CuratedGroupId", curatedGroupId);
                     con.Query(query, dynamicParameters);
 
-                    if (users != null && users.Count()!=0)
+                    if (users != null && users.Count() != 0)
                     {
                         DataTable curatedUsersDt = new DataTable();
                         curatedUsersDt.Columns.Add("UserId", typeof(int));
@@ -3881,6 +3881,74 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public IEnumerable<InterviewerVM> GetSkillDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "select sk.id as id,LTRIM(RTRIM(sk.Name)) as PrimarySkill from Skill sk order by LTRIM(RTRIM(sk.Name))";
+                    var parameters = new DynamicParameters();
+                    var results = con.Query<InterviewerVM>(query, parameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string Addassignmentgroup(Skilldetails _skilldetails)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AssessmentGroup", _skilldetails.AssessmentGroupName);
+                    parameters.Add("@PrimarySkills", _skilldetails.PrimarySkill);
+                    SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "Failed";
+        }
+        public IEnumerable<AssignmentVM> FetchAssessmentdetails(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select * from InterviewerAssessments where id=@id";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    var results = con.Query<AssignmentVM>(query, parameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

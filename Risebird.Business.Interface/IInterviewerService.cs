@@ -37,5 +37,8 @@ namespace Risebird.Business.Interface
         Task<InterviewReport> GetInterviewerinteviewReport(int interviewId, int irfId);
         Task<bool> AddInterviewerReport(InterviewReport reportModel);
         IEnumerable<SkillComment> GetTechSkillComments(int IRFid);
+        IEnumerable<AssignmentVM> GetInterviewerAssessment(string emailid);
+        string AddAssessment(AssignmentVM _assessment);
+        IEnumerable<AssignmentVM> FetchAssessmentGroups();
     }
 }
