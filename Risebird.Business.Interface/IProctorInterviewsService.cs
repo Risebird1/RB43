@@ -17,5 +17,7 @@ namespace Risebird.Business.Interface
         Task<string> AddNonExistingVMs(List<NonExistingVMDTO> vmList);
         Task<string> ResetPassword(VMResetPassword model);
         Task<bool> UpdateVMNamePassword(int id, string customName, string password);
+        IEnumerable<TransVMUser> GetUserList(int vmId);
+        Task<bool> UpdateVMUsers(int[] userList, int vmId);
     }
 }
