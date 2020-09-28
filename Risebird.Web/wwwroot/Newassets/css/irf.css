@@ -788,14 +788,29 @@ input[type=number] {
     padding: 12px 20px 10px 20px;
 }
 
-
-
-
-.card-header-buttons button.btn-danger {
+.card-header-buttons.action {
+    padding: 0px 5px 10px 0px;
+}
+    .card-header-buttons button.btn-danger {
     background: #FF3636 !important;
 }
-
-
+.password{position:relative}
+#eyeicon {
+    font-size: 18px;
+    top: 35px;
+    position: absolute;
+    right: 10px;
+}
+.go-btn {
+    background: green !important
+}
+.field-icon {
+    float: right;
+    margin-left: -25px;
+    margin-top: -25px;
+    position: relative;
+    z-index: 2;
+}
 .card-blue .card-footer {
     text-align: center;
     padding: 8px 0px 8px 0px;
