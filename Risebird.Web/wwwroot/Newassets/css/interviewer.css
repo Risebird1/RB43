@@ -773,20 +773,28 @@ table {
     padding: 12px 5px !important;
 }
 
-@media screen and (max-width: 980px) {
-    .uploadfile-txt {
-        padding: 0px;
-    }
-    .mdc-radio {
-        padding:15px  0px !important;
-        margin: 0px !important;
+@media screen and (max-width: 1024px) {
+    .assessment-detail {
+        width: 100%;
+        margin: 0px auto;
     }
 }
+    @media screen and (max-width: 980px) {
+        .uploadfile-txt {
+            padding: 0px;
+        }
+
+        .mdc-radio {
+            padding: 15px 0px !important;
+            margin: 0px !important;
+        }
+    }
+
     @media screen and (max-width: 767px) {
         .table > tbody > tr > td {
             padding: 12px 5px !important;
         }
-       
+
 
         #interviewer_length, #interviewer_filter {
             margin: 7px 0px 0px 0px !important;
@@ -807,12 +815,13 @@ table {
             width: 100%;
         }
     }
-@media screen and (max-width:480px) {
-    .client-cmt {
-        width: 25% !important;
-    }
 
-    .client-action {
-        width: 27% !important;
+    @media screen and (max-width:480px) {
+        .client-cmt {
+            width: 25% !important;
+        }
+
+        .client-action {
+            width: 27% !important;
+        }
     }
-}
