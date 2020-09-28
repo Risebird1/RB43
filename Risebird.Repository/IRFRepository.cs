@@ -3937,6 +3937,11 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@id", id);
                     var results = con.Query<AssignmentVM>(query, parameters);
+                    var finalquery = "Select Assessmentid,QuestionCovered,Skill as Skills,QuestionLevel as Level,Time from AssessmentQuestions  where Assessmentid=@id";
+                    var finalparameters= new DynamicParameters();
+                    finalparameters.Add("@id",id);
+                    var Questions = con.Query<AssessmentQuestions>(finalquery, finalparameters);
+                    results.FirstOrDefault().Questionslist = Questions.ToList();
                     return results;
                 }
             }

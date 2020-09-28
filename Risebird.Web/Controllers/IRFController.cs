@@ -4292,6 +4292,15 @@ namespace Risebird.Web.Controllers
             var result= _irfService.FetchAssessmentdetails(id);
             var model = result.FirstOrDefault();
             model.Seniority = ((Senioritylevel)model.Senioritylevel).GetDescription();
+            model.YearsOfExperience = ((AssessmentYearsOfExperience)model.YearsofExprience).GetDescription();
+            model.AssessmentTypes = ((AssessmentType)model.AssessmentType).GetDescription();
+            model.Evaluations = ((Evaluation)model.Evaluation).GetDescription();
+            model.EmployerStages = ((EmployerStage)model.EmployerStage).GetDescription();
+            model.EmployerSizes = ((EmployerSize)model.EmployerSize).GetDescription();
+            foreach (var item in model.Questionslist)
+            {
+                item.Levels= ((AssessmentLevel)item.Level).GetDescription();
+            }
             return View(model);
         }
     }
