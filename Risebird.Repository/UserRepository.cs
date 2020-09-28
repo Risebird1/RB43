@@ -1098,9 +1098,59 @@ namespace Risebird.Repository
             {
                 return "";
             }
-
-            return "";
         }
-
+        public IEnumerable<AssignmentVM> GetInterviewerEntitle()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    // var query = "select sk.id as id,LTRIM(RTRIM(sk.Name)) as PrimarySkill,Count(*) as NoOfInterview from Skill sk join TransInterviewerSkill tis on sk.id=tis.SkillId group by sk.Name,sk.id order by LTRIM(RTRIM(sk.Name))";
+                    var query = "Select ag.id,AssessmentGroup,PrimarySkills,(Select count(*) from InterviewerAssessments where Assessmentgroupid=ag.id and isApproved=1) as Assessmentcount from AssessmentGroup ag ";
+                    var parameters = new DynamicParameters();
+                    var results = con.Query<AssignmentVM>(query, parameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<AssignmentVM> InterviewerEntitleDetails(int id)
+        {
+            try
+            {
+                var finalquery = "Select ia.id,ia.Overview,ia.Senioritylevel,ia.Difficultylevel,ia.TestedSkill,ag.AssessmentGroup from InterviewerAssessments ia join AssessmentGroup ag on ia.Assessmentgroupid=ag.id Where ia.Assessmentgroupid = @id and ia.isApproved=1";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<AssignmentVM>(finalquery, finaldynamicParameters);
+                    return result;
+                }
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                //    var parameters = new DynamicParameters();
+                //    parameters.Add("@id", id);
+                //    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[usp_RisebirdInterviewerEntitleDetails]", parameters,
+                //        commandType: StoredProcedure);
+                //}
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

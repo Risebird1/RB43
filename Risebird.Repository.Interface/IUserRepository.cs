@@ -51,5 +51,8 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteRecruiter(int userId);
         Task UpdateUserSigInDetails(string emailId);
         string GetCurrenttheme(string emailId);
+        IEnumerable<AssignmentVM> GetInterviewerEntitle();
+        IEnumerable<AssignmentVM> InterviewerEntitleDetails(int id);
+
     }
 }
