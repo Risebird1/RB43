@@ -811,6 +811,9 @@ input[type=number] {
     position: relative;
     z-index: 2;
 }
+
+.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple{background:#fff!important}
+
 .card-blue .card-footer {
     text-align: center;
     padding: 8px 0px 8px 0px;

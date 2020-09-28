@@ -61,6 +61,10 @@ textarea::-webkit-scrollbar {
 
     background-color: var(#acacad, #565656)!important;
 }
+.assessment-grp {
+    color: #54a5f5;
+    font-size: 20px !important;
+}
 .call-txt {
     border: 1px #53a5f5 solid;
     color: #53a5f5;

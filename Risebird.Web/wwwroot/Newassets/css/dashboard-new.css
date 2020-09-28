@@ -5511,6 +5511,10 @@ blockquote {
             height: 30px;
         }
 
+.table-h {
+    padding: 12px 5px!important;
+}
+
 .modal-title {
     text-align: center;
     padding: 10px 10px 0px 10px;

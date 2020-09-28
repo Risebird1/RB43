@@ -62,7 +62,10 @@ textarea::-webkit-scrollbar {
 .qc-feedback .mdc-form-field > label, .qc-feedback label {
     color: #000;
 }
-.main-panel {
+.assessment-grp {
+    color: #da6025;
+}
+    .main-panel {
     background: #ebecf1;
 }
 textarea::-webkit-scrollbar-thumb {

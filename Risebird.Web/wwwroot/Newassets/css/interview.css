@@ -965,7 +965,9 @@ padding:0;
     font-size: 13px !important;
 }
 
-
+.assesment .form-group .form-control {
+    width: 100%
+}
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
     background: #42a5f5;
