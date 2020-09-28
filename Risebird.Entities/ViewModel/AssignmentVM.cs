@@ -26,6 +26,11 @@ namespace Risebird.Entities.ViewModel
         public int Assessmentcount { get; set; }
         public string Createdby { get; set; }
         public string Seniority { get; set; }
+        public string YearsOfExperience { get; set; }
+        public string AssessmentTypes { get; set; }
+        public string Evaluations { get; set; }
+        public string EmployerStages { get; set; }
+        public string EmployerSizes { get; set; }
         public SelectList Senioritylevellist { get; set; }
         public SelectList AssessmentTypelist { get; set; }
         public SelectList Evaluationlist { get; set; }
@@ -62,6 +67,8 @@ namespace Risebird.Entities.ViewModel
         public string QuestionCovered { get; set; }
         public string Skills { get; set; }
         public int? Level { get; set; }
+        public string Levels { get; set; }
+
         public SelectList LevelList { get; set; }
         public string Time { get; set; }
     }

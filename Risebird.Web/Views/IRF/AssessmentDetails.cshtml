@@ -20,7 +20,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">Assessment Group</a>
+                <a class="navbar-brand">Assessment</a>
             </div>
         </div>
     </nav>
@@ -41,19 +41,13 @@
                             <div class="row">
                                 <div class="card-header clearfix">
                                     <div class="pull-left">
-                                        <h4 class="card-title">Assessment Group</h4>
+                                        <h4 class="card-title"></h4>
                                     </div>
                                     <div class="pull-right">
                                         <div class="newsletter">
                                             <div class="content">
                                                 <div class="input-group" id="myForm">
-                                                    @*<div class="searchbox">
-                                                            <input id="searchinput" type="text" class="form-control txtsearch1" placeholder="Please enter interviewer's name or skill" value="@ViewBag.searchvalue">
-                                                            <span class="input-group-btn" id="searchGo">
-                                                                <button class="btn btn3" id="btnSearch" value="Search" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg></button>
-                                                            </span>
 
-                                                        </div>*@
                                                 </div>
                                             </div>
                                         </div>
@@ -64,10 +58,67 @@
 
 
                             <div style="clear:both;padding:10px"></div>
-                           
+                            <div class="row">
+                                <div class="col-md-12 col-lg-12">Overview</div>
+                                <div class="col-md-12 col-lg-12">@Model.Overview</div>
+                                <div class="col-md-12 col-lg-12">Seniority Level</div>
+                                <div class="col-md-12 col-lg-12">@Model.Seniority</div>
+                                <div class="col-md-12 col-lg-12">Years of Experience</div>
+                                <div class="col-md-12 col-lg-12">@Model.YearsOfExperience</div>
+                                <div class="col-md-12 col-lg-12">Assessment Type</div>
+                                <div class="col-md-12 col-lg-12">@Model.AssessmentTypes</div>
+                                <div class="col-md-6 col-lg-6">
+                                    Tested Skills Primary<br />
+                                    @Model.TestedSkill
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    Evaluation<br />
+                                    @Model.Evaluations
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    Delivery<br />
+                                    @Model.Delivery
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    Environment<br />
+                                    @Model.Environment
+                                </div>
+                                <div class="col-md-12 col-lg-12">
+                                    Difficulty Level : @Model.Difficultylevel
+                                </div>
+                                <div class="col-md-12 col-lg-12">
+                                    Employer Type : @Model.EmployerType
+                                </div>
+                                <div class="col-md-12 col-lg-12">
+                                    Employer Stage : @Model.EmployerStages
+                                </div>
+                                <div class="col-md-12 col-lg-12">
+                                    Employer Size : @Model.EmployerSizes
+                                </div>
+                            </div>
 
                             <div style="clear:both"></div>
-                            @*@Html.PagedListPager(Model, Page => Url.Action("InterviewerEntitle", new { Page = Page }))*@
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Question Covered</th>
+                                        <th>Skills</th>
+                                        <th>Level</th>
+                                        <th>Time(in Min.)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Questionslist)
+                                    {
+                                        <tr>
+                                            <td>@item.QuestionCovered</td>
+                                            <td>@item.Skills</td>
+                                            <td>@item.Levels</td>
+                                            <td>@item.Time</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
 
 
