@@ -63,11 +63,14 @@ namespace Risebird.Web
                 o.Cookie.HttpOnly = true;
                 o.Cookie.IsEssential = true;
             });
-            services.AddResponseCompression();
 
-            services.Configure<GzipCompressionProviderOptions>(options =>
+            services.Configure<BrotliCompressionProviderOptions>(options =>
             {
-                options.Level = CompressionLevel.Fastest;
+                options.Level = CompressionLevel.Optimal;
+            });
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true; options.Providers.Add<BrotliCompressionProvider>();
             });
             // Add Cors
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
@@ -121,11 +124,14 @@ namespace Risebird.Web
             });
             app.UseAuthentication();
             app.UseCors(options => options.AllowAnyOrigin());
+            app.UseResponseCompression();
             //Antiforgery token secure
             //app.UseAntiforgeryTokens();
             app.UseHttpsRedirection();
+           
             app.UseStatusCodePagesWithReExecute("/error/{0}");
-            app.UseStaticFiles(); app.UseMvc(routes =>
+            app.UseStaticFiles(); 
+            app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
@@ -189,6 +195,9 @@ namespace Risebird.Web
             services.AddScoped<IChatRepository, ChatRepository>();
             services.AddScoped<IMeetingInviteService, MeetingInviteService>();
             services.AddScoped<IMeetingInviteRepository, MeetingInviteRepository>();
+            services.AddScoped<IProctorInterviewsService, ProctorInterviewsService>();
+            services.AddScoped<IProctorInterviewsRepository, ProctorInterviewsRepository>();
+            services.AddScoped<IAzureHelper, AzureHelper>();
 
         }
     }

@@ -82,6 +82,8 @@
 <!-- Owl Carousel -->
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/risetube.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel bg-white" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -352,6 +354,21 @@
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                            @{
+                                                                                                if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                                { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                            }
+                                                                                        </div>
+                                                                                    </div>
+
+
+
+                                                                                </div>
 
 
                                                                             </div>
@@ -364,10 +381,10 @@
                                                                                         <table class="table table-bordered mbn" id="SkillTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th width="20%" class="desktop-view">Required Level</th>
+                                                                                                    <th  class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Skill Name</th>
                                                                                                     <th width="25%">Actual Level</th>
-                                                                                                    <th width="15%" class="desktop-view">Required Weightage</th>
+                                                                                                    <th  class="desktop-view">Required Weightage</th>
                                                                                                     <th width="15%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -376,7 +393,7 @@
                                                                                             <tbody>
                                                                                                 @if (Model.IreportModel.TechSkillReportCollection != null)
                                                                                                 {
-                                                                                                    @for (int i = 0; i < Model.IreportModel.TechSkillReportCollection.Count(); i++)
+                                                                                                @for (int i = 0; i < Model.IreportModel.TechSkillReportCollection.Count(); i++)
                                                                                                     {
                                                                                                         <tr>
 
@@ -546,11 +563,11 @@
                                                                                             <thead>
                                                                                                 <tr>
 
-                                                                                                    <th width="20%" class="desktop-view">Required Level</th>
+                                                                                                    <th  class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
                                                                                                     <th width="15%">Actual Level</th>
-                                                                                                    <th width="10%" class="desktop-view">Required Weightage</th>
+                                                                                                    <th  class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -619,11 +636,11 @@
                                                                                         <table class="table table-bordered mbn" id="JoinabilityTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th width="20%" class="desktop-view">Required Level</th>
+                                                                                                    <th  class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
                                                                                                     <th width="15%">Actual Level</th>
-                                                                                                    <th width="10%" class="desktop-view">Required Weightage</th>
+                                                                                                    <th  class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -691,11 +708,11 @@
                                                                                         <table class="table table-bordered mbn" id="SelectabilityTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th width="20%" class="desktop-view">Required Level</th>
+                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
                                                                                                     <th width="15%">Actual Level</th>
-                                                                                                    <th width="10%" class="desktop-view">Required Weightage</th>
+                                                                                                    <th  class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -1620,6 +1637,7 @@
             var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
             categoryAxis.dataFields.category = "country";
             categoryAxis.renderer.inside = true;
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             categoryAxis.renderer.labels.template.valign = "top";
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
@@ -1636,6 +1654,7 @@
 
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
+
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";

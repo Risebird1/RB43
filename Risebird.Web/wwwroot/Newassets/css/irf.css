@@ -32,11 +32,7 @@ textarea::-webkit-scrollbar-thumb {
     background: #18ce0f !important;
 }
 
-.designation {
-    color: #606060;
-    font-weight: 500;
-    font-size: 13px;
-}
+
 
 #interviewerMemberModal .modal-lg {
     max-width: 870px !important;
@@ -64,7 +60,6 @@ textarea::-webkit-scrollbar-thumb {
 
 table {
     white-space: nowrap !important;
-    border: 1px #ccc solid !important;
 }
 
 td.wordwrap {
@@ -238,11 +233,11 @@ table th {
     top: 30px;
     width: 0.8rem;
     position: absolute;
-    background: whitesmoke;
+  
     border-radius: 0;
     display: none;
     height: 2rem;
-    right: 10px;
+    right: 15px;
 }
 
 .js .spinner {
@@ -634,7 +629,6 @@ input[type=number] {
 }
 
 .control-label {
-    color: #5f5c5c !important;
     font-weight: 500;
 }
 
@@ -654,7 +648,7 @@ input[type=number] {
 .mdc-fab {
     width: 30px !important;
     height: 30px !important;
-    background-color: #53a5f5 !important;
+    background-color: #53a5f5;
 }
 
 .sidebar:after, .off-canvas-sidebar:after {
@@ -663,16 +657,13 @@ input[type=number] {
 
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-    background: #42a5f5 !important;
+    background: #42a5f5;
     font-family: Roboto, sans-serif;
     font-size: 12px;
     text-decoration: none;
 }
 
-.mdc-button--outlined:not(:disabled) {
-    border-color: #42a5f5 !important;
-    color: #42a5f5 !important;
-}
+
 
 .mdc-fab-secondary {
     background: #fff !important;
@@ -683,7 +674,6 @@ input[type=number] {
 .mdc-card .form-control, .mdc-card .modal .form-control, .modal .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -767,7 +757,7 @@ input[type=number] {
 
 
 .card-blue {
-    border: 1px #6fb6ff59 solid !important;
+
     border-radius: 4px;
     background-color: #fff;
     background-color: var(--mdc-theme-surface, #fff);
@@ -798,24 +788,31 @@ input[type=number] {
     padding: 12px 20px 10px 20px;
 }
 
-.card-blue .card-body .client-field {
-    color: #1b4775;
-    display: block;
-    float: left;
-    font-weight: bold;
-    padding-right: 4px;
+.card-header-buttons.action {
+    padding: 0px 5px 10px 0px;
 }
-
-
-
-.card-blue:hover {
-    box-shadow: 0 0 25px #134e8c45;
-}
-
-.card-header-buttons button.btn-danger {
+    .card-header-buttons button.btn-danger {
     background: #FF3636 !important;
 }
+.password{position:relative}
+#eyeicon {
+    font-size: 18px;
+    top: 35px;
+    position: absolute;
+    right: 10px;
+}
+.go-btn {
+    background: green !important
+}
+.field-icon {
+    float: right;
+    margin-left: -25px;
+    margin-top: -25px;
+    position: relative;
+    z-index: 2;
+}
 
+.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple{background:#fff!important}
 
 .card-blue .card-footer {
     text-align: center;
@@ -836,7 +833,6 @@ input[type=number] {
 .mdc-card .modal .form-control, .modal .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
@@ -882,7 +878,7 @@ input[type=number] {
 .dropdown-toggle {
     border: 0;
     border-radius: 4px 4px 0 0;
-    background: whitesmoke !important;
+    background: whitesmoke;
     height: 40px;
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;

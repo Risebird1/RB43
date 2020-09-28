@@ -1909,7 +1909,7 @@
 .form-control[disabled],
 .form-control[readonly],
 fieldset[disabled] .form-control {
-    background-color: #E3E3E3;
+    
     color: #888;
     cursor: not-allowed;
 }
@@ -2312,6 +2312,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     -ms-transform: rotate(180deg);
     transform: rotate(180deg);
 }
+
 
 .button-bar {
     display: block;
@@ -6551,7 +6552,7 @@ Created using IcoMoon - icomoon.io
 .wrapper {
     position: relative;
     top: 0;
-    height: 100vh;
+ 
 }
 
     .wrapper.wrapper-full-page {
@@ -11089,7 +11090,7 @@ textarea:focus {
 table.dataTable thead .sorting:after {
     opacity: 1 !important;
     content: "\f0dc";
-    color: #fff !important;
+
 }
 
 table.dataTable {

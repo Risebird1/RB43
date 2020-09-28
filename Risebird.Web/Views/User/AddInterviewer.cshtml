@@ -3,17 +3,18 @@
     ViewData["Title"] = "InterviewerAdd";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js?v7"></script>
+<link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v7" defer></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        $("#select").select2({ multiple: true });
+        jQuery("#select").select2({ multiple: true });
     });
 
 </script>
-
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -50,142 +51,142 @@
 
                             @Html.AntiForgeryToken()
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Add Interviewer</h4></div>
-                            </div>
-
-                            <div style="width: 100%;">&nbsp;</div>
-
-                            <div class="form-horizontal w-full">
-                                <div class="clearfix">
-                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                                    <div class="form-group col-md-4 col-sm-4 pr-1 pull-left">
-                                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-
-                                    </div>
-
-                                    <div class="form-group col-lg-4  col-md-4 col-sm-4 px-1 pull-left">
-                                        @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-
-                                    </div>
-
-                                    <div class="form-group col-lg-4  col-md-4 col-sm-4 pl-1 pull-left">
-                                        @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
-
-                                    </div>
-
-                                </div>
-
-                                <div class="clearfix">
-
-                                    <div class="form-group col-md-4 col-sm-4 pr-1 pull-left">
-                                        @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-                                        @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
-
-                                    </div>
-
-                                    <div class="form-group col-lg-4  col-md-4 col-sm-4 px-1 pull-left">
-                                        @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.DropDownListFor(m => m.SelectedSkillIds, new SelectList(Model.PrimarySkills, "Value", "Text", Model.SelectedSkillIds), new { @id = "select", @class = "form-control" })
-                                        @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
-
-                                    </div>
-
-                                    <div class="form-group col-lg-4  col-md-4 col-sm-4 pl-1 pull-left">
-                                        @Html.LabelFor(model => model.Slots, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.Slots, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-                                        @Html.ValidationMessageFor(model => model.Slots, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
-
-                                <div class="col-md-12 clearfix">
-                                    <div class="col-md-12">
-                                        Upload Resume
-
-
-                                        <div class="mdc-touch-target-wrapper" style="top: 4px;
-    position: relative;">
-                                            <div class="mdc-radio mdc-radio--touch">
-                                                <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" onclick="RadioChanged(this.value)">
-                                                <div class="mdc-radio__background">
-                                                    <div class="mdc-radio__outer-circle"></div>
-                                                    <div class="mdc-radio__inner-circle"></div>
-                                                </div>
-                                                <div class="mdc-radio__ripple"></div>
-                                            </div>
-                                        </div>
-
-
-                                        Add a link
-
-
-                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
-                                            <div class="mdc-radio mdc-radio--touch">
-                                                <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Link" onclick="RadioChanged(this.value)">
-                                                <div class="mdc-radio__background">
-                                                    <div class="mdc-radio__outer-circle"></div>
-                                                    <div class="mdc-radio__inner-circle"></div>
-                                                </div>
-                                                <div class="mdc-radio__ripple"></div>
-                                            </div>
-                                        </div>
-
-
-
-
-                                    </div>
-                                    <div style="display:none" id="linkDiv">
-                                        @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
-                                    </div>
-                                    <div id="uploadDiv">
-                                        @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-
-                                    </div>
-
-
-                                </div>
-
+                            <div class="row">
                                 <div class="col-md-12">
-                                    <div class="card-footer" style="margin-top: 15px;">
-                                        <div class="row">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Add Interviewer</h4></div>
+                                </div>
 
-                                            <div class="col-md-12 mc-button-area">
-                                                @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                <div style="width: 100%;">&nbsp;</div>
+
+                                <div class="form-horizontal w-full">
+                                    <div class="clearfix">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                        <div class="form-group col-md-4 col-sm-4 pr-1 pull-left">
+                                            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 px-1 pull-left">
+                                            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 pl-1 pull-left">
+                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="clearfix">
+
+                                        <div class="form-group col-md-4 col-sm-4 pr-1 pull-left">
+                                            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 px-1 pull-left">
+                                            @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.DropDownListFor(m => m.SelectedSkillIds, new SelectList(Model.PrimarySkills, "Value", "Text", Model.SelectedSkillIds), new { @id = "select", @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                        <div class="form-group col-lg-4  col-md-4 col-sm-4 pl-1 pull-left">
+                                            @Html.LabelFor(model => model.Slots, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.Slots, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                            @Html.ValidationMessageFor(model => model.Slots, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 clearfix">
+                                        <div class="col-md-12">
+                                            Upload Resume
+
+
+                                            <div class="mdc-touch-target-wrapper" style="top: 4px;
+    position: relative;">
+                                                <div class="mdc-radio mdc-radio--touch">
+                                                    <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Upload" onclick="RadioChanged(this.value)">
+                                                    <div class="mdc-radio__background">
+                                                        <div class="mdc-radio__outer-circle"></div>
+                                                        <div class="mdc-radio__inner-circle"></div>
+                                                    </div>
+                                                    <div class="mdc-radio__ripple"></div>
+                                                </div>
+                                            </div>
+
+
+                                            Add a link
+
+
+                                            <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                                <div class="mdc-radio mdc-radio--touch">
+                                                    <input class="mdc-radio__native-control" type="radio" id="Resume" name="Resume" value="Link" onclick="RadioChanged(this.value)">
+                                                    <div class="mdc-radio__background">
+                                                        <div class="mdc-radio__outer-circle"></div>
+                                                        <div class="mdc-radio__inner-circle"></div>
+                                                    </div>
+                                                    <div class="mdc-radio__ripple"></div>
+                                                </div>
+                                            </div>
+
+
+
+
+                                        </div>
+                                        <div style="display:none" id="linkDiv">
+                                            @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div id="uploadDiv">
+                                            @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="card-footer" style="margin-top: 15px;">
+                                            <div class="row">
+
+                                                <div class="col-md-12 mc-button-area">
+                                                    @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    @*<div class="form-group">*@
+
+
+                                    @*</div>*@
                                 </div>
-                                @*<div class="form-group">*@
 
 
-                                @*</div>*@
+
                             </div>
-
-
-
-                        </div>
 
 
 

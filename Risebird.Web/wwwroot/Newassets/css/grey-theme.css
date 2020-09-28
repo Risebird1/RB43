@@ -23,8 +23,26 @@ textarea::-webkit-scrollbar-thumb {
     background-color: #acacad !important;
     border: 1px solid #acacad !important;
 }
+.table-bordered {
+    border: 1px solid #dee2e6 !important;
+
+}
 
 
+.call-txt {
+    border: 1px #dee2e6 solid;
+    color: #dee2e6;
+}
+.border-db {
+    border-right: 1px #ddd solid !important
+}
+.select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
+    background-color: whitesmoke !important;
+    border-bottom: 1px solid #aaa !important;
+}
+table.dataTable thead .sorting:after {
+    color: #fff;
+}
 .upload-label {
     background: #e2e2e2;
 }
@@ -159,6 +177,8 @@ textarea::-webkit-scrollbar-thumb {
 }
 #myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
     background: #fff !important;
+    box-shadow: none !important;
+    border-color: #dcdfdf !important;
 }
 .client .row.bg-white {
     background-color: #fff !important;
@@ -204,7 +224,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .edit-share {
-    background-image: url('../../img/editicon-grey.png')!important;
+    background: url('../../img/editicon-grey.png') #fff no-repeat !important;
 }
 .related-title {
     margin: 0px 0px 3px 0px !important;
@@ -213,10 +233,25 @@ textarea::-webkit-scrollbar-thumb {
 .active-video {
     border: 5px #9a9a9abd solid !important;
 }
+.talk-bubble {
+    background-color: #f5f5f5;
+}
 .count-bg span {
     color: #fff !important;
     position: relative;
     top: -4px;
+}
+.mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
+    background: whitesmoke;
+    color: #888 !important;
+}
+#QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+    background: url("../../img/audio-button-set-4-transparent.png") #f5f5f5;
+    background-size: 25px;
+    background-repeat: no-repeat;
+    background-position: 45%;
+    z-index: 1000;
+}
 }
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
     border-bottom: 2px #929292 solid !important;
@@ -283,16 +318,16 @@ textarea::-webkit-scrollbar-thumb {
     background-color: #929292 !important;
 }
 .private-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
+    background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)"  d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>') !important;
 }
 .publicurl-share {
-    background-image: url('../../img/grey-link.png')!important;
+    background: url('../../img/grey-link.png') #fff no-repeat !important;
 }
 .public-share {
-    background-image: url('../../img/share-3g.png') !important;
+    background: url('../../img/share-3g.png') #fff no-repeat !important;
 }
 .email-share {
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>')!important;
+    background: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') #fff no-repeat !important;
 }
 
 

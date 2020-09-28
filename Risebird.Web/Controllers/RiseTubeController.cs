@@ -739,6 +739,7 @@ namespace Risebird.Web.Controllers
                             if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
                             {
                                 NewModel.resumeLink = IRListModel.encodedresumeLink;
+                                IRListModel.resumeLink = IRListModel.encodedresumeLink;
                             }
                         }
                         NewModel.zoomLink = model.zoomLink;
@@ -862,6 +863,7 @@ namespace Risebird.Web.Controllers
                         if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
                         {
                             NewModel.resumeLink = IRListModel.encodedresumeLink;
+                            IRListModel.resumeLink = IRListModel.encodedresumeLink;
                         }
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
@@ -1155,6 +1157,7 @@ namespace Risebird.Web.Controllers
                             if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
                             {
                                 NewModel.resumeLink = IRListModel.encodedresumeLink;
+                                IRListModel.resumeLink = IRListModel.encodedresumeLink;
                             }
                         }
                         NewModel.zoomLink = model.zoomLink;
@@ -1710,6 +1713,7 @@ namespace Risebird.Web.Controllers
                             if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
                             {
                                 NewModel.resumeLink = IRListModel.encodedresumeLink;
+                                IRListModel.resumeLink = IRListModel.encodedresumeLink;
                             }
                         }
                         NewModel.zoomLink = model.zoomLink;
@@ -1883,6 +1887,7 @@ namespace Risebird.Web.Controllers
                 if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
                 {
                     NewModel.resumeLink = IRListModel.encodedresumeLink;
+                    IRListModel.resumeLink = IRListModel.encodedresumeLink;
                 }
                 NewModel.zoomLink = model.zoomLink;
                 NewModel.IreportModel = IRListModel ?? new InterviewReport();
@@ -2546,6 +2551,7 @@ namespace Risebird.Web.Controllers
                 if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
                 {
                     NewModel.resumeLink = IRListModel.encodedresumeLink;
+                    IRListModel.resumeLink = IRListModel.encodedresumeLink;
                 }
 
                 NewModel.zoomLink = model.zoomLink;
@@ -2564,6 +2570,11 @@ namespace Risebird.Web.Controllers
                 NewModel.ClientHrContact = model.ClientHrContact;
                 NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
                 var videodetailscount = await _meetingService.GetTotalViewCount(id);
+                NewModel.MeetingPatch = model.MeetingPatch;
+                if (model.MeetingPatch.Count() > 0)
+                {
+                    NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                }
                 NewModel.VideoCountDetail = videodetailscount.ToList();
                 if (NewModel.IreportModel.QuestionsCollection == null)
                 {

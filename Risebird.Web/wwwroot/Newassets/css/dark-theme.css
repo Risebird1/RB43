@@ -101,11 +101,17 @@ hr {
 }
 .video-card {
     border: 1px #1f1e1e solid;
-    background-color: #161616 !important;
+    background-color: #161616;
     box-shadow: none !important;
 }
 .show .dropdown-menu:before {
-    color: #181818;
+    color: #181818!important;
+}
+.assessment-grp {
+    color: #9A9A9A;
+}
+table.dataTable thead .sorting:after {
+    color: #121212;
 }
 .relatedvideo .video-card {
     border: 1px #1f1e1e solid;
@@ -148,7 +154,7 @@ hr {
 }
 
 .title.name-video-primary-info-renderer {
-    color: #9A9A9A;
+    color: #9A9A9A!important;
 }
 
 .share-btn {
@@ -212,8 +218,8 @@ hr {
     color: #f7eaea75 !important;
 }
 #myForm input[type=email], #myForm input[type=text], #myForm input[type=email]:focus, #myForm input[type=text]:focus {
-    background: #161616;
-    border: solid 1px #cccccc3b;
+    background: #161616!important;
+    border: solid 1px #cccccc3b!important;
     box-shadow:none!important;
 }
 #myForm .searchbox .input-group-btn .btn {
@@ -323,6 +329,14 @@ table {
     background-size: 7% !important;
 }
 
+#QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+    background: url("../../img/audio-button-set-4-transparent.png") #181818;
+    background-size: 25px;
+    background-repeat: no-repeat;
+    background-position: 45%;
+    z-index: 1000;
+}
+
 .mdc-card .modal .form-control[type="date"], .modal .form-control[type="date"] {
     background: #181818 url(../img/dark-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
@@ -354,8 +368,8 @@ table {
     border-bottom: 2px #121212 solid !important;
 }
 
-.mdc-card button.dropdown-toggle:focus {
-    border-bottom: 2px #121212 solid !important;
+.mdc-card button.dropdown-toggle:focus #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover
+border-bottom: 2px #121212 solid !important;
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
@@ -404,11 +418,17 @@ table {
     font-weight: 300 !important;
 }
 
-.click {
+.click, .click:hover {
     color: #f7eaea75;
     !important;
     text-decoration: underline !important;
 }
+.select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
+    background-color: #181818 !important;
+    border-bottom: 1px solid #181818!important;
+}
+
+
 
 #ProctoringTable .label-type {
     background: #181818 !important;
@@ -429,8 +449,11 @@ select * {
     background: #181818;
 }
 
+.border-db {
+    border-right: 1px #77737359 solid !important
+}
 #resumeId, #zoomlinkId, .callatag {
-    background: #000000;
+    background: #000000 !important;
     color: #47484a;
     border: 1px #77737359 solid;
 }
@@ -600,7 +623,8 @@ div.dataTables_wrapper div.dataTables_info {
 }
 
 .dropdown-menu {
-    border-color: #181818 !important;
+    border-color: #181818!important;
+    background: #181818!important;
 }
 
 .comment-area textarea {

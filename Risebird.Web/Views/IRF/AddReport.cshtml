@@ -39,7 +39,8 @@
     })
 
 </script>
-
+<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -205,7 +206,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
-                                                <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
+                                                <p class="card-text">Overall Score: <span  id="totScore"></span></p>
                                                 <div class="col-lg-6 col-md-6 col-sm-6">
                                                     <div id="scoreChart" style="height: 200px; width:100%;"></div>
                                                 </div>
@@ -1073,20 +1074,20 @@
         var index;
         var skillName;
         if (id.includes("Tech")) {
-            
+
             skillName = "TechSkillReportCollection";
         }
 
         else if (id.includes("General")) {
-           
+
             skillName = "SkillGeneralReportCollection";
         }
         else if (id.includes("Joinability")) {
-           
+
             skillName = "JoinabilityHRReportCollection";
         }
         else {
-          
+
             skillName = "SelectabilityEvaluatorReportCollection";
         }
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
@@ -1229,7 +1230,7 @@
             categoryAxis.renderer.labels.template.valign = "top";
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
-
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -1238,7 +1239,7 @@
             });
 
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-            
+
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
             // Create series
@@ -1964,7 +1965,7 @@
 
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
-        categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";

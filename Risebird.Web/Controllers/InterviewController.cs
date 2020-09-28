@@ -71,7 +71,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-
+                    
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
@@ -263,15 +263,8 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 5].Value = item.candidateEmail;
                         Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 7].Value = item.interviewer;
-                        Sheet.Cells[i, 8].Value = item.confirmationStatus;
-                        if (item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
-                        {
-                            Sheet.Cells[i, 9].Value = "Scheduled";
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 9].Value = item.MeetingStatusDescription;
-                        }
+                        Sheet.Cells[i, 8].Value = item.confirmationStatus;                      
+                        Sheet.Cells[i, 9].Value = item.MeetingStatusDescription;                       
                       
                         Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
 
@@ -4466,14 +4459,9 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 4].Value = item.ClientName;
                         Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 6].Value = item.confirmationStatus;
-                        if (item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
-                        {
-                            Sheet.Cells[i, 7].Value = "Scheduled";
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
-                        }
+                        
+                        Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
+                        
                       
                         if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
@@ -5131,13 +5119,14 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Slot";
                 Sheet.Cells[1, 3].Value = "Duration";
                 Sheet.Cells[1, 4].Value = "Candidate Name";
-                Sheet.Cells[1, 5].Value = "Candidate Email";
-                Sheet.Cells[1, 6].Value = "Candidate Contact";
-                Sheet.Cells[1, 7].Value = "Resume";
-                Sheet.Cells[1, 8].Value = "JD Link";
-                Sheet.Cells[1, 9].Value = "Zoom ID";
-                Sheet.Cells[1, 10].Value = "Video Link";
-                Sheet.Cells[1, 11].Value = "Approval Comments";
+                Sheet.Cells[1, 5].Value = "Candidate Email";             
+                Sheet.Cells[1, 6].Value = "Meeting Status";
+                Sheet.Cells[1, 7].Value = "Interview Status";
+                Sheet.Cells[1, 8].Value = "Resume";
+                Sheet.Cells[1, 9].Value = "JD Link";
+                Sheet.Cells[1, 10].Value = "Zoom ID";
+                Sheet.Cells[1, 11].Value = "Video Link";
+                Sheet.Cells[1, 12].Value = "Approval Comments";
 
 
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
@@ -5153,64 +5142,64 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 3].Value = item.interviewDuration;
                         Sheet.Cells[i, 4].Value = item.candidateName;
                         Sheet.Cells[i, 5].Value = item.candidateEmail;
-                        Sheet.Cells[i, 6].Value = item.MobileNumber;
-
+                        Sheet.Cells[i, 6].Value = item.MeetingStatusDesc;
+                        Sheet.Cells[i, 7].Value = item.InterviewStatusDesc;
                         if (!string.IsNullOrEmpty(item.resumeLink))
                         {
                             try
                             {
-                                Sheet.Cells[i, 7].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
-                                Sheet.Cells[i, 7].Value = "Resume";
-                                Sheet.Cells[i, 7].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 7].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 7].Value = "No Resume";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 7].Value = "No Resume";
-                        }
-                        if (!string.IsNullOrEmpty(item.JDLink))
-                        {
-                            try
-                            {
-                                Sheet.Cells[i, 8].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
-                                Sheet.Cells[i, 8].Value = "JD Link";
+                                Sheet.Cells[i, 8].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
+                                Sheet.Cells[i, 8].Value = "Resume";
                                 Sheet.Cells[i, 8].Style.Font.UnderLine = true;
                                 Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, 8].Value = "No Link";
+                                Sheet.Cells[i, 8].Value = "No Resume";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 8].Value = "No Link";
+                            Sheet.Cells[i, 8].Value = "No Resume";
                         }
-                        Sheet.Cells[i, 9].Value = item.risebirdHR;
+                        if (!string.IsNullOrEmpty(item.JDLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 9].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
+                                Sheet.Cells[i, 9].Value = "JD Link";
+                                Sheet.Cells[i, 9].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 9].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 9].Value = "No Link";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 9].Value = "No Link";
+                        }
+                        Sheet.Cells[i, 10].Value = item.risebirdHR;
                         if (!string.IsNullOrEmpty(item.videoLink))
                         {
                             try
                             {
-                                Sheet.Cells[i, 10].Hyperlink = new Uri(item.videoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 10].Value = "Video Link";
-                                Sheet.Cells[i, 10].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.videoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 11].Value = "Video Link";
+                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, 6].Value = "No Video";
+                                Sheet.Cells[i, 11].Value = "No Video";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 6].Value = "No Video";
+                            Sheet.Cells[i, 11].Value = "No Video";
                         }
-                        Sheet.Cells[i, 11].Value = item.NextLevelApprovalStat ?? "Comments not submitted.";
+                        Sheet.Cells[i, 12].Value = item.NextLevelApprovalStat ?? "Comments not submitted.";
 
 
                         i++;
