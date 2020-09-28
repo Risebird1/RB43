@@ -23,5 +23,7 @@ namespace Risebird.Repository.Interface
 
         Task<bool> UpdateVMNamePassword(int id, string customName, string password);
         Task<bool> UpdateVMPassword(int id, string password);
+        IEnumerable<TransVMUser> GetUserList(int vmId);
+        Task<bool> UpdateVMUsers(int[] userList, int vmId);
     }
 }

@@ -62,7 +62,7 @@ namespace Risebird.Web.Controllers
                             {
                                 vm.StatusDesc = "Starting";
                             }
-                            else if(vm.LastAction.ToLower() == "poweroff")
+                            else if(vm.LastAction.ToLower() == "deallocate")
                             {
                                 vm.StatusDesc = "Stopping";
                             }
@@ -332,6 +332,60 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageProctor"] = "Failed to save the data for " + vmName;
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult VMUsers(int vmId, string vmName)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var model = new VMUsersMapping
+                {
+                    VmId = vmId,
+                    VmName = vmName,
+                    UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId))
+                };
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateVMUsers(int[] userList, int vmId, string vmName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (await _proctorInterviewsService.UpdateVMUsers(userList, vmId))
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Users for the VM " + vmName + " updated successfully!";
+                        return Json(true);
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Saving users for the VM " + vmName + " failed!";
+                        return Json(false);
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageProctor"] = "Saving users for the VM " + vmName + " failed!";
+                return Json(false);
             }
         }
     }
