@@ -5510,6 +5510,15 @@ blockquote {
             width: 30px;
             height: 30px;
         }
+.field-icon {
+    float: right;
+    margin-left: -25px;
+    margin-top: -25px;
+    position: relative;
+    z-index: 2;
+    right: 10px;
+    top: -3px;
+}
 
 .table-h {
     padding: 12px 5px!important;
