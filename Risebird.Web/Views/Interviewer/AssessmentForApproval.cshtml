@@ -1,0 +1,154 @@
+﻿
+@model IEnumerable<Risebird.Entities.ViewModel.AssignmentVM>
+
+@{
+    ViewData["Title"] = "Assessments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Assessment Market Place</a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                <input hidden type="text" value="@ViewBag.indexid" id="txtindexid" />
+                            </div>
+                            <div class="row">
+                                <div class="card-header clearfix">
+                                    <div class="pull-left">
+
+                                    </div>
+
+                                    <div class="pull-right">
+                                        <div class="newsletter">
+                                            <div class="content">
+                                                <div class="input-group" id="myForm">
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="AddIRF()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Create Skill Channel </font></span></button>*@
+                                        <a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-chevron-left"></span> Back to List</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="clear:both;padding:10px"></div>
+                            <div class="row">
+                                @foreach (var item in Model)
+                                {
+                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                        <div class="card-content-holder border card-blue">
+                                            @if(item.IsApproved==1){
+                                            <div class="card-header" style="background-color:green">
+                                                <div class="row">
+
+                                                    <div class="col-md-12 col-sm-12 card-header-buttons action text-right">
+                                                        @item.Seniority
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            }else if(item.IsApproved==-1){
+                                            <div class="card-header" style="background-color:darkred">
+                                                <div class="row">
+
+                                                    <div class="col-md-12 col-sm-12 card-header-buttons action text-right">
+                                                        @item.Seniority
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            }else{
+                                            <div class="card-header">
+                                                <div class="row">
+
+                                                    <div class="col-md-12 col-sm-12 card-header-buttons action text-right">
+                                                        @item.Seniority
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            }
+                                            <!-- irf body-->
+                                            <div class="card-body">
+                                                <div class="statusImg">
+
+                                                </div>
+                                                <div class="statusInfo">
+                                                    <h6 class="assessment-grp"><a href="">@item.AssessmentGroup</a></h6>
+                                                    <div class="group inner list-group-item-text">
+                                                        <p>@item.Overview</p>
+                                                        <p><b>Tested Skills:</b> @item.TestedSkill</p>
+                                                        <p><b>Difficulty Level:</b> @item.Difficultylevel</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 col-lg-12">
+                                                    <button value="Reject" onclick="RejectAssessment(@item.id)">Reject</button>
+                                                    <button value="Approve" onclick="ApproveAssessment(@item.id)">Approve</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+    <script>
+        function RejectAssessment(id) {
+            $.ajax({
+                type: "GET",
+                url: "/Interviewer/ChangeStatusAssessment",
+                data: { assessmentid: id, status:-1},
+                success: function (data) {
+                    var index=$("#txtindexid").val();
+                    window.location.href = '/Interviewer/AssessmentForApproval/'+index;
+                }
+            });
+        }
+        function ApproveAssessment(id) {
+            $.ajax({
+                type: "GET",
+                url: "/Interviewer/ChangeStatusAssessment",
+                data: { assessmentid: id, status: 1 },
+                success: function (data) {
+                    var index = $("#txtindexid").val();
+                    window.location.href = '/Interviewer/AssessmentForApproval/' + index;
+                }
+            });
+        }
+    </script>

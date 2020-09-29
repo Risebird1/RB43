@@ -654,7 +654,19 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
-
+        }
+        public string ChangeStatusAssessment(int assessmentid, int status)
+        {
+            try
+            {
+                var comments = _interviewerRepository.ChangeStatusAssessment(assessmentid, status);
+                return comments;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
         }
     }
 }

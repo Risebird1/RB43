@@ -1401,7 +1401,46 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        //save assessment and send for approval
+        public IActionResult AssessmentForApproval(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    //Fetch Assessment
+                    var model = _interviewerService.GetInterviewerAssessment(emailid);
+                    ViewBag.indexid = id;
+                    foreach (var item in model)
+                    {
+                        item.Seniority = ((Senioritylevel)item.Senioritylevel).GetDescription();
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        /// <summary>
+        /// Update Assessment Status like : Approve or reject
+        /// </summary>
+        /// <param name="assessmentid"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public JsonResult ChangeStatusAssessment(int assessmentid,int status)
+        {
+            var model = _interviewerService.ChangeStatusAssessment(assessmentid, status);
+            return Json("Success");
+        }
     }
 
 }

@@ -31,6 +31,7 @@ namespace Risebird.Entities.ViewModel
         public string Evaluations { get; set; }
         public string EmployerStages { get; set; }
         public string EmployerSizes { get; set; }
+        public int IsApproved { get; set; }
         public SelectList Senioritylevellist { get; set; }
         public SelectList AssessmentTypelist { get; set; }
         public SelectList Evaluationlist { get; set; }
