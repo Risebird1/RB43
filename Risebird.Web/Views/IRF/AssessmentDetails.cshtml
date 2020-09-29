@@ -6,7 +6,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 //@using X.PagedList.Mvc.Core;
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interviewer.css?v=8" />
 
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -25,103 +27,134 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
-    </div>
-    <div class="content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mdc-card card">
-                    <div class="mdc-card-wrapper__text-section">
-                        <div class="loader text-center">
-                            <img src="~/Newassets/img/lazyload.gif" />
-                        </div>
-                        <div class="dataloading">
-                            <div class="toolbar">
-                            </div>
-                            <div class="row">
-                                <div class="card-header clearfix">
-                                    <div class="pull-left">
-                                        <h4 class="card-title"></h4>
-                                    </div>
-                                    <div class="pull-right">
-                                        <div class="newsletter">
-                                            <div class="content">
-                                                <div class="input-group" id="myForm">
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <a href="/IRF/InterviewerEntitle" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-chevron-left"></span> Back to List</a>
-                                    </div>
+
+
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Assessment Group</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+
+                        <div class="newsletter card-title-space">
+                            <div class="content">
+                                <div class="input-group" id="myForm">
+
                                 </div>
                             </div>
+                        </div>
+                        <a href="/IRF/InterviewerEntitle" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" ><span class="fa fa-chevron-left"></span> Back to List</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-                            <div style="clear:both;padding:10px"></div>
-                            <div class="row">
-                                <div class="col-md-12 col-lg-12">Overview</div>
-                                <div class="col-md-12 col-lg-12">@Model.Overview</div>
-                                <div class="col-md-12 col-lg-12">Seniority Level</div>
+
+
+
+
+
+    <div class="content client assessment">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="assessment-detail">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+                            <div class="dataloading">
+
+                                <div style="clear:both;padding:10px"></div>
+
+                                <div class="col-md-12 col-lg-12 ">
+                                    <h1>Overview</h1>
+                                    <p>@Model.Overview</p>
+                                </div>
+
+                                <div class="col-md-12 col-lg-12"><h1>Seniority Level</h1></div>
                                 <div class="col-md-12 col-lg-12">@Model.Seniority</div>
-                                <div class="col-md-12 col-lg-12">Years of Experience</div>
-                                <div class="col-md-12 col-lg-12">@Model.YearsOfExperience</div>
-                                <div class="col-md-12 col-lg-12">Assessment Type</div>
-                                <div class="col-md-12 col-lg-12">@Model.AssessmentTypes</div>
-                                <div class="col-md-6 col-lg-6">
-                                    Tested Skills Primary<br />
+                                <div class="col-md-12 col-lg-12 assessment-blk">
+                                    <h1>Years of Experience </h1>
+                                    <h2> @Model.YearsOfExperience</h2>
+                                </div>
+
+                                <div class="col-md-12 col-lg-12 assessment-blk">
+                                    <h1>Assessment Type</h1>
+                                    <h2>@Model.AssessmentTypes</h2>
+                                </div>
+
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
+                                    <h1>  Tested Skills Primary</h1>
                                     @Model.TestedSkill
                                 </div>
-                                <div class="col-md-6 col-lg-6">
-                                    Evaluation<br />
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
+                                    <h1>
+                                        Evaluation
+                                    </h1>
                                     @Model.Evaluations
                                 </div>
-                                <div class="col-md-6 col-lg-6">
-                                    Delivery<br />
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
+                                    <h1>
+                                        Delivery
+                                    </h1>
                                     @Model.Delivery
                                 </div>
-                                <div class="col-md-6 col-lg-6">
-                                    Environment<br />
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
+                                    <h1>
+                                        Environment
+                                    </h1>
                                     @Model.Environment
                                 </div>
-                                <div class="col-md-12 col-lg-12">
-                                    Difficulty Level : @Model.Difficultylevel
+                                <div style="clear:both; height:10px;"></div>
+                                <div class="w-full pull-left pt10">
+                                    <h1 class="pull-left"> Difficulty Level :</h1> <h3> @Model.Difficultylevel</h3>
                                 </div>
-                                <div class="col-md-12 col-lg-12">
-                                    Employer Type : @Model.EmployerType
+                                <div class="w-full pull-left pt10">
+                                    <h1 class="pull-left"> Employer Type :</h1><h3> @Model.EmployerType</h3>
                                 </div>
-                                <div class="col-md-12 col-lg-12">
-                                    Employer Stage : @Model.EmployerStages
+                                <div class="w-full pull-left pt10">
+                                    <h1 class="pull-left">  Employer Stage :</h1> <h3>@Model.EmployerStages</h3>
                                 </div>
-                                <div class="col-md-12 col-lg-12">
-                                    Employer Size : @Model.EmployerSizes
+                                <div class="w-full pull-left pt10">
+                                    <h1 class="pull-left"> Employer Size :</h1><h3> @Model.EmployerSizes</h3>
                                 </div>
+
+
+                                <div style="clear:both; height:10px;"></div>
+                                <table class="table table-grey dt-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th>Question Covered</th>
+                                            <th class="text-center">Skills</th>
+                                            <th class="text-center">Level</th>
+                                            <th class="text-center">Time(in Min.)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Questionslist)
+                                        {
+                                            <tr>
+                                                <td class="br-g ">@item.QuestionCovered</td>
+                                                <td class="br-g text-center">@item.Skills</td>
+                                                <td class="br-g text-center">@item.Levels</td>
+                                                <td class="text-center">@item.Time</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
 
-                            <div style="clear:both"></div>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Question Covered</th>
-                                        <th>Skills</th>
-                                        <th>Level</th>
-                                        <th>Time(in Min.)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Questionslist)
-                                    {
-                                        <tr>
-                                            <td>@item.QuestionCovered</td>
-                                            <td>@item.Skills</td>
-                                            <td>@item.Levels</td>
-                                            <td>@item.Time</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
                         </div>
-
-
                     </div>
                 </div>
             </div>

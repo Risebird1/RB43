@@ -27,8 +27,20 @@ textarea::-webkit-scrollbar-thumb {
     border: 1px solid #dee2e6 !important;
 
 }
+.assessment h1 {
+    color: #47484a !important
+}
 
 
+.assessment-blk {
+    border: 1px #e2e2e2 solid;
+}
+.assessment-blk-h {
+    border: 1px #e2e2e2 solid;
+}
+.table-grey thead {
+    background: #5f5f5f;
+}
 .call-txt {
     border: 1px #dee2e6 solid;
     color: #dee2e6;
