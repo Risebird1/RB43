@@ -13,6 +13,7 @@ using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -31,10 +32,10 @@ namespace Risebird.Web.Controllers
         private IMeetingService _meetingService;
         private IIRFRepository _iRFRepository;
         private IConfiguration _configuration;
-
-
+        private ISupportService _supportService;
+        private readonly INotificationHelper _notificationHelper;
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper)
 
         {
             _interviewerService = interviewerService;
@@ -47,7 +48,8 @@ namespace Risebird.Web.Controllers
             _meetingService = meetingService;
             _iRFRepository = iRFRepository;
             _configuration = configuration;
-
+            _supportService = supportService;
+            _notificationHelper = notificationHelper;
         }
 
 
@@ -1387,6 +1389,15 @@ namespace Risebird.Web.Controllers
                     //send mail to HR
                     if (result == "Success")
                     {
+                        var hrlist = new List<String>();
+                        hrlist = _supportService.GetAllSupportHR().Select(x => x.EmailId).ToList();
+                        var Emailids = String.Join(";", hrlist);
+                        Mail _mail = new Mail
+                        {
+                            TO = Emailids,
+                            Subject = "Risebird: Interviewer send assessment for approval"
+                        };
+                        var resultset = _notificationHelper.SendAssessmentNotification(_mail, emailid);
                         return RedirectToAction("InterviewerAssessment");
                     }
                     return View("AddAssessments");
@@ -1436,7 +1447,7 @@ namespace Risebird.Web.Controllers
         /// <param name="assessmentid"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public JsonResult ChangeStatusAssessment(int assessmentid,int status)
+        public JsonResult ChangeStatusAssessment(int assessmentid, int status)
         {
             var model = _interviewerService.ChangeStatusAssessment(assessmentid, status);
             return Json("Success");
