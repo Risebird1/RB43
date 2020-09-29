@@ -22,7 +22,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
         }
 
-       
+
         public IActionResult Index(string controllerName = null, string actMethod = null)
         {
             try
@@ -53,7 +53,7 @@ namespace Risebird.Web.Controllers
                     {
                         model.BackController = controllerName;
                         model.BackMethod = actMethod;
-                                           }
+                    }
                     return View(model);
 
                 }
@@ -62,7 +62,7 @@ namespace Risebird.Web.Controllers
 
                     var model = new SupportList();
                     model.Supports = _supportService.GetAllSupportHR();
-                  
+
                     if (TempData["SuccessErrorMessageSupport"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageSupport"].ToString();
@@ -72,7 +72,7 @@ namespace Risebird.Web.Controllers
                     if (controllerName != null && actMethod != null)
                     {
                         model.BackController = controllerName;
-                        model.BackMethod = actMethod;                       
+                        model.BackMethod = actMethod;
                     }
                     return View(model);
                 }

@@ -3304,12 +3304,12 @@ namespace Risebird.Repository
             }
             return null;
         }
-        
+
         public async Task<bool> AddCuratedGroup(int[] irfList, string cgName)
         {
             try
             {
-                if(irfList!=null && irfList.Count()>0)
+                if (irfList != null && irfList.Count() > 0)
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -3477,7 +3477,7 @@ namespace Risebird.Repository
                     dynamicParameters.Add("@CuratedGroupId", curatedGroupId);
                     con.Query(query, dynamicParameters);
 
-                    if (users != null && users.Count()!=0)
+                    if (users != null && users.Count() != 0)
                     {
                         DataTable curatedUsersDt = new DataTable();
                         curatedUsersDt.Columns.Add("UserId", typeof(int));

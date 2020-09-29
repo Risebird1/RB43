@@ -1789,11 +1789,11 @@ namespace Risebird.Business
             try
             {
                 var result = await _meetingRespository.FetchQuestionDetails(interviewid);
-                 return result.ToList();
+                return result.ToList();
             }
             catch (Exception ex)
             {
-                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -1806,7 +1806,7 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "";
             }
         }

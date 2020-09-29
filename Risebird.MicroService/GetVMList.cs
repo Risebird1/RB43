@@ -1,16 +1,12 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration;
+using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using RestSharp;
 using System.Net;
 
 namespace Risebird.MicroService
@@ -45,7 +41,7 @@ namespace Risebird.MicroService
 
             string requestUrl = $"providers/Microsoft.Compute/virtualMachines?api-version={_configuration["AzureSettings:ApiVersionVMList"]}";
             var response = GetFromAzureRM(_azureHelper.GetAzureCredential(), requestUrl);
-            return  response;
+            return response;
         }
 
         private string GetFromAzureRM(AzureCredentials credentials, string requestUrl)

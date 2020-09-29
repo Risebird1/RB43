@@ -3800,7 +3800,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCuratedGroup(int[] irfList, string cgName)
@@ -3851,7 +3851,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditCuratedGroup(int[] irfList, string cgName, int cgId)
@@ -3899,7 +3899,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddUpdateCuratedGroupUsers(int[] users, int curatedGroupId)

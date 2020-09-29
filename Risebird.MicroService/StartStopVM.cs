@@ -1,18 +1,17 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration;
+using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using RestSharp;
-using System.Net;
 using Risebird.Repository.Interface;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -39,14 +38,14 @@ namespace Risebird.MicroService
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             VMActionDTO data = JsonConvert.DeserializeObject<VMActionDTO>(requestBody);
-            var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name,data.ActionCommand);
+            var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name, data.ActionCommand);
 
             string responseMessage = string.Empty;
-            if(result)
+            if (result)
             {
                 //add entry in VmTriggered table
                 var expectedStatus = string.Empty;
-                if(data.ActionCommand.ToLower()=="start")
+                if (data.ActionCommand.ToLower() == "start")
                 {
                     expectedStatus = "running";
                 }
@@ -54,14 +53,14 @@ namespace Risebird.MicroService
                 {
                     expectedStatus = "deallocated/stopped";
                 }
-                await _proctorInterviewsRepository.AddVMTrigger(data.VMPropertyId, data.ActionCommand,expectedStatus);
+                await _proctorInterviewsRepository.AddVMTrigger(data.VMPropertyId, data.ActionCommand, expectedStatus);
                 responseMessage = "Successful";
             }
             else
             {
                 responseMessage = "Failed";
             }
-           
+
             return new OkObjectResult(responseMessage);
         }
 

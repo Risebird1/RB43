@@ -154,7 +154,7 @@
 
                                                     @if (item.StatusDesc.ToLower() == "running")
                                                     {
-                                                        <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'powerOff');">
+                                                        <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
                                                             <i class="fa fa-stop"></i>
                                                         </button>
 
@@ -175,9 +175,9 @@
                                                     </button>
                                                     @if (Model.Profile == "Admin")
                                                     {
-                                                        @*<button id="shareButton_@item.id" class="mdc-fab app-fab--absolute" aria-label="Share VM" onclick="location.href='@Url.Action("VMUsers", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
-                                                                <i class="fa fa-share"></i>
-                                                            </button>*@
+                                                        <button id="shareButton_@item.id" class="mdc-fab app-fab--absolute" aria-label="Share VM" onclick="location.href='@Url.Action("VMUsers", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
+                                                            <i class="fa fa-share"></i>
+                                                        </button>
                                                     }
 
                                                 </div>
@@ -338,7 +338,7 @@
             document.getElementById("statusId_" + vmId).innerHTML = "Starting";
             document.getElementById("statusImage_" + vmId).src = "/img/Cards_Png/01_Green-White.png";
         }
-        else if (action == 'powerOff') {
+        else if (action == 'deallocate') {
             //deallocating
             document.getElementById("statusId_" + vmId).innerHTML = "Deallocating";
             document.getElementById("rdpButton_" + vmId).style.display = "none";
@@ -351,10 +351,7 @@
             data: { 'vmId': vmId, 'name': name, 'rgName': rgName, 'action': action },
             success: function (response) {
                 //update status in the tile
-                if (!response) {
-                    document.getElementById("statusId_" + vmId).innerHTML = "Failed";
-
-                }
+                location.reload(true);
 
 
             }
