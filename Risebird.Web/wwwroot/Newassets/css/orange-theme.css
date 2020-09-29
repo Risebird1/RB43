@@ -72,6 +72,9 @@ textarea::-webkit-scrollbar {
 .assessment-blk-h {
     border: 1px #e2e2e2 solid;
 }
+.assesment .card .card-body p {
+    color: #484848;
+}
 .table-grey thead {
     background: #5f5f5f;
 }

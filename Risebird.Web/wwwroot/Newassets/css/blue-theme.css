@@ -72,6 +72,10 @@ textarea::-webkit-scrollbar {
 .assessment-blk-h {
     border: 1px #e2e2e2 solid;
 }
+
+.assesment .card .card-body p {
+    color: #484848;
+}
     .assessment-grp {
         color: #54a5f5;
         font-size: 20px !important;

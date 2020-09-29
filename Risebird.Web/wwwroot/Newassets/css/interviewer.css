@@ -728,9 +728,7 @@ table {
 .assesment .card-content-holder {
     min-height: 250px;
 }
-.assesment .card .card-body p {
-    color: #484848;
-}
+
 .assesment .card .card-header {
     padding: 10px 0px 5px 0;
 }
