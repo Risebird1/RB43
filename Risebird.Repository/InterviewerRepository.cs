@@ -1423,7 +1423,7 @@ namespace Risebird.Repository
                 {
                     userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
                 }
-                var finalquery = "Select ia.id,ia.Overview,ia.Senioritylevel,ia.Difficultylevel,ia.TestedSkill,ag.AssessmentGroup from InterviewerAssessments ia join AssessmentGroup ag on ia.Assessmentgroupid=ag.id Where ia.createdby = @createdby";
+                var finalquery = "Select ia.id,ia.Overview,ia.Senioritylevel,ia.Difficultylevel,ia.TestedSkill,ag.AssessmentGroup,ia.isApproved as IsApproved from InterviewerAssessments ia join AssessmentGroup ag on ia.Assessmentgroupid=ag.id Where ia.createdby = @createdby";
                 var finaldynamicParameters = new DynamicParameters();
                 finaldynamicParameters.Add("@createdby", userid);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1528,6 +1528,27 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public string ChangeStatusAssessment(int assessmentid, int status)
+        {
+            try
+            {
+                var query = "Update InterviewerAssessments set isApproved=@isapproved where id=@assessmentid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@isapproved", status);
+                dynamicParameters.Add("@assessmentid", assessmentid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(query, null);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
         }
     }
 }
