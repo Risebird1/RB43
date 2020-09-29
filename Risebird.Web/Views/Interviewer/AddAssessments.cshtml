@@ -163,16 +163,16 @@
                                                         <td>
                                                             @Html.TextBox("Questionslist[0].QuestionCovered", null, new { @class = "select-css form-control text-box single-line" })
                                                         </td>
-                                                        <td>
-                                                            @Html.TextBox("Questionslist[0].Skills", null, new { @class = "form-control" })
+                                                        <td >
+                                                            @Html.TextBox("Questionslist[0].Skills", null, new { @class = "form-control", @style= "background: #f5f5f5" })
 
                                                         </td>
                                                         <td>
                                                             @Html.DropDownList("Questionslist[0].Level", (SelectList)Model.AssessmentLevellist, new { @class = "select-css form-control" })
 
                                                         </td>
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="Questionslist_0__Time" name="Questionslist[0].Time" type="number" min="1">
+                                                        <td >
+                                                            <input class="form-control text-box single-line" id="Questionslist_0__Time" name="Questionslist[0].Time" type="number" min="1" style= "background: #f5f5f5;">
                                                         </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>

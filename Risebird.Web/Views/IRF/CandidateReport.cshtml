@@ -54,7 +54,8 @@
 
     }
 </script>
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 
 <div class="main-panel" id="main-panel">
 
@@ -520,7 +521,7 @@
 
                                 </div>
 
-                                @if (Model.CandidateAudioCollection != null && Model.CandidateAudioCollection.Count()!=0)
+                                @if (Model.CandidateAudioCollection != null && Model.CandidateAudioCollection.Count() != 0)
                                 {
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -675,7 +676,7 @@
         var num = id.match(/(\d+)/);
         var index = num[0];
         value = parseInt(value);
-        
+
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
         var required = $("#" + reqLevelId).val();
         if (required <= value) {
@@ -808,13 +809,13 @@
                 "visits": arr[0]
 
             }, {
-                    "country": "Selectability",
+                "country": "Selectability",
                 "visits": arr[1]
             }, {
-                    "country": "Tech",
+                "country": "Tech",
                 "visits": arr[2]
             }, {
-                    "country": "General",
+                "country": "General",
                 "visits": arr[3]
             }];
 
