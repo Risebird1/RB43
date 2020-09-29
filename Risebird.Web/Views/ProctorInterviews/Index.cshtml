@@ -351,10 +351,7 @@
             data: { 'vmId': vmId, 'name': name, 'rgName': rgName, 'action': action },
             success: function (response) {
                 //update status in the tile
-                if (!response) {
-                    document.getElementById("statusId_" + vmId).innerHTML = "Failed";
-
-                }
+                location.reload(true);
 
 
             }

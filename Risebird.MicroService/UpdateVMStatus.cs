@@ -23,16 +23,14 @@ namespace Risebird.MicroService
         private readonly IAzureHelper _azureHelper;
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
         private readonly INotificationHelper _notificationHelper;
-        private readonly IProctorInterviewsService _proctorInterviewsService;
         private readonly string connectionString;
 
-        public UpdateVMStatus(IAzureHelper azureHelper, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, INotificationHelper notificationHelper, IProctorInterviewsService proctorInterviewsService)
+        public UpdateVMStatus(IAzureHelper azureHelper, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
             _proctorInterviewsRepository = proctorInterviewsRepository;
             _notificationHelper = notificationHelper;
-            _proctorInterviewsService = proctorInterviewsService;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
 
         }

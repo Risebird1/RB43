@@ -53,8 +53,8 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR")
                 {
                     var model = new VirtualMachineVM();
-                    model.VMList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
-                    foreach (var vm in model.VMList)
+                    var vmList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
+                    foreach (var vm in vmList)
                     {
                         if(vm.LastAction!=null && vm.LastAction!="Added")
                         {
@@ -64,7 +64,7 @@ namespace Risebird.Web.Controllers
                             }
                             else if(vm.LastAction.ToLower() == "deallocate")
                             {
-                                vm.StatusDesc = "Stopping";
+                                vm.StatusDesc = "Deallocating";
                             }
 
                         }
@@ -79,7 +79,7 @@ namespace Risebird.Web.Controllers
                         model.Message = TempData["SuccessErrorMessageProctor"].ToString();
                         TempData.Remove("SuccessErrorMessageProctor");
                     }
-                    foreach (var vm in model.VMList)
+                    foreach (var vm in vmList)
                     {
                         if (vm.StatusDesc.ToLower()=="running" || vm.StatusDesc.ToLower() == "starting")
                         {
@@ -95,6 +95,8 @@ namespace Risebird.Web.Controllers
                             vm.ImageUrl = "/img/Cards_Png/01_Black-White.png";
                         }
                     }
+                    model.VMList = vmList.Where(x => x.Status.HasValue && x.Status == (int)VMState.running).ToList() ;
+                    model.VMList.AddRange(vmList.Where(x => !x.Status.HasValue || x.Status != (int)VMState.running).ToList()) ;
                     model.Profile = profileName;
                     return View(model);
 
@@ -129,7 +131,14 @@ namespace Risebird.Web.Controllers
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
                     if(response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
                     {
+                        
+                        TempData["SuccessErrorMessageProctor"] = $"Successfully performed {action} action for {name}!";
                         return true;
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageProctor"] = $"Failed to perform {action} action for {name}!";
+
                     }
 
                 }
