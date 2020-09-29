@@ -155,6 +155,7 @@
                                                         <th>Skills</th>
                                                         <th width="15%">Level</th>
                                                         <th>Time(In Mins)</th>
+                                                        <th>VideoLink</th>
                                                         <th class="action text-center">Action</th>
                                                     </tr>
                                                 </thead>
@@ -174,19 +175,13 @@
                                                         <td>
                                                             <input class="form-control text-box single-line" id="Questionslist_0__Time" name="Questionslist[0].Time" type="number" min="1">
                                                         </td>
+                                                        <td>
+                                                            @Html.TextBox("Questionslist[0].VideoLink", null, new { @class = "form-control" })
+                                                        </td>
                                                         <td class="action text-center">
                                                             <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
-                                                            
-                                                                <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                         
+                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-
-
-
-
-
-
-                                                           
                                                         </td>
                                                     </tr>
                                                 </tbody>

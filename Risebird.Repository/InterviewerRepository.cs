@@ -1487,7 +1487,7 @@ namespace Risebird.Repository
                 {
                     if (!String.IsNullOrEmpty(item.QuestionCovered))
                     {
-                        questionsDt.Rows.Add(assessmentid,0, item.QuestionCovered,item.Level, item.Time, item.Skills,"");
+                        questionsDt.Rows.Add(assessmentid,0, item.QuestionCovered,item.Level, item.Time,item.VideoLink, item.Skills);
                     }
                 }
                 using (SqlConnection con = new SqlConnection(connectionString))
