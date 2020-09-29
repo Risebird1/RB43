@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -103,10 +102,10 @@ namespace Risebird.Repository
                 var ids = string.Join(",", idList);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await con.QueryAsync("Delete from TransVMTriggerDetails where id in (" +ids +")");
+                    await con.QueryAsync("Delete from TransVMTriggerDetails where id in (" + ids + ")");
                     return true;
                 }
-                
+
             }
             catch (SqlException ex)
             {
@@ -170,7 +169,7 @@ namespace Risebird.Repository
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        
+
                         DataTable vmPropertiesDt = new DataTable();
                         vmPropertiesDt.Columns.Add("Name", typeof(string));
                         vmPropertiesDt.Columns.Add("ResourceGroupName", typeof(string));
@@ -181,7 +180,7 @@ namespace Risebird.Repository
 
                         foreach (var vm in vmList)
                         {
-                            vmPropertiesDt.Rows.Add(vm.Name,vm.ResourceGroupName,vm.Status,true, false, false);
+                            vmPropertiesDt.Rows.Add(vm.Name, vm.ResourceGroupName, vm.Status, true, false, false);
                         }
 
                         SqlCommand cmd = new SqlCommand("usp_VMPropertiesBulkInsert", con);
@@ -390,6 +389,85 @@ namespace Risebird.Repository
             }
         }
 
+        public IEnumerable<TransVMUser> GetUserList(int vmId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@vmId", vmId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<TransVMUser>(con, "usp_GetUserList", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateVMUsers(int[] userList, int vmId)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@vmId", vmId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_DeleteTransVmUsers", parameters,
+                       commandType: CommandType.StoredProcedure);
+
+
+
+                    if (userList != null && userList.Count() > 0)
+                    {
+                        DataTable vmUserDt = new DataTable();
+                        vmUserDt.Columns.Add("VmId", typeof(int));
+                        vmUserDt.Columns.Add("UserId", typeof(int));
+
+                        foreach (var item in userList)
+                        {
+                            vmUserDt.Rows.Add(vmId, item);
+                        }
+
+                        SqlCommand cmd = new SqlCommand("usp_VMUsersBulkInsert", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@VMUsersBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@VMUsersBulkData"].Value = vmUserDt;
+                        con.Open();
+                        if (cmd.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+
+
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
     }
 }

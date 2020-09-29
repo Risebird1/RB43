@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.Data
+﻿namespace Risebird.Entities.Data
 {
     public class VMValue
     {
@@ -11,6 +7,6 @@ namespace Risebird.Entities.Data
         public string id { get; set; }
         public string name { get; set; }
         public string VmStatus { get; set; } = string.Empty;
-        
+
     }
 }

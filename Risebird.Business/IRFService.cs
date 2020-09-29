@@ -1162,7 +1162,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        
+
         public async Task<bool> AddCuratedGroup(int[] irfList, string cgName)
         {
             try
@@ -1197,7 +1197,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        
+
         public bool UpdateCuratedGroup(int[] irfList, string cgName, int cgId)
         {
             try
@@ -1234,7 +1234,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        
+
         public bool AddUpdateCuratedGroupUsers(int[] users, int curatedGroupId)
         {
             try

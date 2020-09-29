@@ -1,19 +1,17 @@
+using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using RestSharp;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using RestSharp;
-using Risebird.Business.Interface;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
-using Risebird.Entities.Enum;
-using Risebird.Repository.Interface;
 
 namespace Risebird.MicroService
 {
@@ -23,21 +21,19 @@ namespace Risebird.MicroService
         private readonly IAzureHelper _azureHelper;
         private readonly IProctorInterviewsRepository _proctorInterviewsRepository;
         private readonly INotificationHelper _notificationHelper;
-        private readonly IProctorInterviewsService _proctorInterviewsService;
         private readonly string connectionString;
 
-        public UpdateVMStatus(IAzureHelper azureHelper, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, INotificationHelper notificationHelper, IProctorInterviewsService proctorInterviewsService)
+        public UpdateVMStatus(IAzureHelper azureHelper, IConfiguration configuration, IProctorInterviewsRepository proctorInterviewsRepository, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
             _proctorInterviewsRepository = proctorInterviewsRepository;
             _notificationHelper = notificationHelper;
-            _proctorInterviewsService = proctorInterviewsService;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
 
         }
         [FunctionName("UpdateVMStatus")]
-        public async Task Run([TimerTrigger("0 * * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             //Get all the VMs whose status' need to be checked
@@ -86,7 +82,7 @@ namespace Risebird.MicroService
                     }
                 }
 
-               
+
 
                 if (powerstate.ToLower() == "running" && statusInDB.ToLower() == "stopping")
                     powerstate = "stopping";
@@ -95,25 +91,25 @@ namespace Risebird.MicroService
                 var updatedStatus = Enum.IsDefined(typeof(VMState), powerstate.ToLower()) ? (int)Enum.Parse(typeof(VMState), powerstate.ToLower()) : 3;
                 await _proctorInterviewsRepository.UpdateVMStatus(vm.VMPropertyId, updatedStatus);
 
-                if(powerstate.ToLower()!="unknown")//if powerstate is unknown, do not delete from Triggered VM table
+                if (powerstate.ToLower() != "unknown")//if powerstate is unknown, do not delete from Triggered VM table
                 {
-                    if ((vm.ExpectedStatus != null && vm.ExpectedStatus.Contains(powerstate.ToLower())) || vm.LastAction=="Added")
+                    if ((vm.ExpectedStatus != null && vm.ExpectedStatus.Contains(powerstate.ToLower())) || vm.LastAction == "Added")
                     {
                         //add id to a list
                         vmIds.Add(vm.Id);
                     }
                 }
-                
-               
+
+
 
             }
-            
+
             //delete from triggered table
-            if(vmIds!=null && vmIds.Count() != 0)
+            if (vmIds != null && vmIds.Count() != 0)
             {
                 await _proctorInterviewsRepository.DeleteTriggeredVMs(vmIds);
             }
-            
+
 
         }
 
@@ -152,7 +148,7 @@ namespace Risebird.MicroService
 
         private string GetFromAzureRM(AzureCredentials credentials, string requestUrl)
         {
-            string endpoint =_configuration["AzureSettings:endPoint"];
+            string endpoint = _configuration["AzureSettings:endPoint"];
             if (credentials != null && !string.IsNullOrEmpty(endpoint) && !string.IsNullOrEmpty(credentials.SubscriptionId))
             {
                 var client = CreateClient(string.Format(endpoint, credentials.SubscriptionId), credentials);

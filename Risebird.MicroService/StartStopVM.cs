@@ -1,18 +1,17 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration;
+using RestSharp;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using RestSharp;
-using System.Net;
 using Risebird.Repository.Interface;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -38,20 +37,15 @@ namespace Risebird.MicroService
 
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            log.LogInformation(requestBody);
-
             VMActionDTO data = JsonConvert.DeserializeObject<VMActionDTO>(requestBody);
-            log.LogInformation("data converted to class" + data.ActionCommand + data.VMPropertyId);
-
-            var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name,data.ActionCommand, log);
-            log.LogInformation("excecuted" + result.ToString());
+            var result = ExecuteToDoProcess(data.ResourceGroupName, data.Name, data.ActionCommand);
 
             string responseMessage = string.Empty;
-            if(result)
+            if (result)
             {
                 //add entry in VmTriggered table
                 var expectedStatus = string.Empty;
-                if(data.ActionCommand.ToLower()=="start")
+                if (data.ActionCommand.ToLower() == "start")
                 {
                     expectedStatus = "running";
                 }
@@ -59,51 +53,27 @@ namespace Risebird.MicroService
                 {
                     expectedStatus = "deallocated/stopped";
                 }
-                await _proctorInterviewsRepository.AddVMTrigger(data.VMPropertyId, data.ActionCommand,expectedStatus);
-                log.LogInformation("Added to trigger table process done");
-
+                await _proctorInterviewsRepository.AddVMTrigger(data.VMPropertyId, data.ActionCommand, expectedStatus);
                 responseMessage = "Successful";
             }
             else
             {
                 responseMessage = "Failed";
             }
-            log.LogInformation("completed");
 
             return new OkObjectResult(responseMessage);
         }
 
-        public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand, ILogger log)
+        public bool ExecuteToDoProcess(string resourceGroupName, string resourceName, string excuteCommand)
         {
             var credentials = _azureHelper.GetAzureCredential();
-            log.LogInformation("credentials created " +credentials.SubscriptionId +" token: " +credentials.Token);
-            //log.LogInformation("endpoint: " +_configuration["AzureSettings:endPoint"]);
-
-            //var client =
-            //    CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
-            //        credentials, log);
-            //var client =
-            //    CreateClient(string.Format("https://management.azure.com/subscriptions/{0}", credentials.SubscriptionId),
-            //        credentials, log);
             var client =
-                CreateClient("https://management.azure.com/subscriptions/05d4ebe3-b5c7-4725-b618-8bb535cf2c8c",
-                    credentials, log);
-            log.LogInformation("client created");
-            //log.LogInformation(resourceGroupName + resourceName + excuteCommand + _configuration["AzureSettings:ApiVersionToDoVM"]);
-
-            //var requestUrl =
-//$"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
+                CreateClient(string.Format(_configuration["AzureSettings:endPoint"], credentials.SubscriptionId),
+                    credentials);
             var requestUrl =
-               $"resourceGroups/{resourceGroupName.ToLower()}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version=2019-12-01";
-            log.LogInformation("request url created");
-
-            var request = CreateRequest(requestUrl, Method.POST, log);
-            log.LogInformation("request created" + requestUrl);
-
+                $"resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{resourceName}/{excuteCommand}?api-version={_configuration["AzureSettings:ApiVersionToDoVM"]}"; // CREATE THE REQUEST URL
+            var request = CreateRequest(requestUrl, Method.POST);
             var response = client.Execute(request);
-            log.LogInformation("client.Execute() called");
-
-            log.LogInformation(response.Content);
 
             if (response.StatusCode == HttpStatusCode.Accepted)
             {
@@ -113,14 +83,14 @@ namespace Risebird.MicroService
 
             return false;
         }
-        private RestClient CreateClient(string EndPoint, AzureCredentials credentials, ILogger log)
+        private RestClient CreateClient(string EndPoint, AzureCredentials credentials)
         {
             // Default request
             var client = new RestClient(EndPoint);
             client.AddDefaultHeader("Authorization", "Bearer " + credentials.Token);
             return client;
         }
-        private RestRequest CreateRequest(string requestUrl, Method requestMethod, ILogger log,object postData = null)
+        private RestRequest CreateRequest(string requestUrl, Method requestMethod, object postData = null)
         {
             var request = new RestRequest(requestUrl, requestMethod) { RequestFormat = DataFormat.Json };
             if (postData != null)
