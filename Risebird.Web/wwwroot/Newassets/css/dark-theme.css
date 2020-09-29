@@ -114,12 +114,17 @@ hr {
     border: 1px #464343 solid;
 }
 
-
+.assesment .card .card-body p {
+    color: #9A9A9A;
+}
 .assessment-blk-h {
     border: 1px #464343 solid;
 }
     .assessment-grp {
     color: #9A9A9A;
+}
+.table-h a {
+    color:#9A9A9A !important
 }
 .table-grey thead {
     background: #121212;
@@ -129,7 +134,7 @@ hr {
 
 
 table.dataTable thead .sorting:after {
-    color: #121212;
+    color: transparent;
 }
 .relatedvideo .video-card {
     border: 1px #1f1e1e solid;

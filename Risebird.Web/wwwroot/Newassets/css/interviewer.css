@@ -591,7 +591,16 @@ table {
 .pt10{
     padding-top:10px;
 }
+.assesment .list-group-item-text {
+    min-height: 135px;
+}
 
+.assess-left{width:35%;float:left;padding:0px 10px;}
+.assess-right {
+    width: 60%;
+    float: left;
+    padding: 0px 10px;
+}
 .newsletter {
     padding: 0;
     float: left;
@@ -728,14 +737,13 @@ table {
 .assesment .card-content-holder {
     min-height: 250px;
 }
-.assesment .card .card-body p {
-    color: #484848;
-}
+
 .assesment .card .card-header {
     padding: 10px 0px 5px 0;
 }
 .assessment-grp {
     font-size: 20px !important;
+    margin-bottom: 3px;
 }
     .fa-spinner {
     font-size: 18px;

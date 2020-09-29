@@ -31,12 +31,17 @@ textarea::-webkit-scrollbar-thumb {
     color: #47484a !important
 }
 
-
+.assesment .card .card-body p {
+    color: #484848;
+}
 .assessment-blk {
     border: 1px #e2e2e2 solid;
 }
 .assessment-blk-h {
     border: 1px #e2e2e2 solid;
+}
+.table-h a {
+    color: #9A9A9A !important
 }
 .table-grey thead {
     background: #5f5f5f;
@@ -53,7 +58,7 @@ textarea::-webkit-scrollbar-thumb {
     border-bottom: 1px solid #aaa !important;
 }
 table.dataTable thead .sorting:after {
-    color: #fff;
+    color: transparent
 }
 .upload-label {
     background: #e2e2e2;
