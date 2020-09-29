@@ -20,7 +20,7 @@ body {
     border-radius: 0px;
 }
 table.dataTable thead .sorting:after {
-    color: #fff;
+    color: transparent;
 }
     input [type='radio']:checked:after {
     background-color: #42a5f5!important;

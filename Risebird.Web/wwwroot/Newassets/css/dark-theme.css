@@ -134,7 +134,7 @@ hr {
 
 
 table.dataTable thead .sorting:after {
-    color: #121212;
+    color: transparent;
 }
 .relatedvideo .video-card {
     border: 1px #1f1e1e solid;

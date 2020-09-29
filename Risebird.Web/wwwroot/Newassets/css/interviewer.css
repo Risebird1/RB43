@@ -591,7 +591,16 @@ table {
 .pt10{
     padding-top:10px;
 }
+.assesment .list-group-item-text {
+    min-height: 135px;
+}
 
+.assess-left{width:35%;float:left;padding:0px 10px;}
+.assess-right {
+    width: 60%;
+    float: left;
+    padding: 0px 10px;
+}
 .newsletter {
     padding: 0;
     float: left;
@@ -734,6 +743,7 @@ table {
 }
 .assessment-grp {
     font-size: 20px !important;
+    margin-bottom: 3px;
 }
     .fa-spinner {
     font-size: 18px;

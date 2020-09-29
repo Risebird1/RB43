@@ -813,7 +813,9 @@ input[type=number] {
 }
 
 .modal .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple{background:#fff!important}
-
+.candidate .table > tbody > tr > td {
+    padding: 12px 5px;
+}
 .card-blue .card-footer {
     text-align: center;
     padding: 8px 0px 8px 0px;

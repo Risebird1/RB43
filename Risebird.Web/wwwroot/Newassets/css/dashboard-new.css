@@ -5514,7 +5514,14 @@ blockquote {
 .table-h {
     padding: 12px 5px!important;
 }
-
+.trash-btn {
+    background: #d20505 !important;
+    color: #fff !important;
+}
+.go-btn {
+    background: green !important;
+    color:#fff!important;
+}
 .modal-title {
     text-align: center;
     padding: 10px 10px 0px 10px;

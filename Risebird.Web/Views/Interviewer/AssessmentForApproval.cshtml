@@ -5,7 +5,8 @@
     ViewData["Title"] = "Assessments";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interviewer.css?v=8" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -23,12 +24,49 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Assessment Market Place</h4></div>
+                </div>
+
+
+
+
+                <div class="pull-right">
+                    <div class="newsletter">
+                        <div class="content">
+                            <div class="input-group" id="myForm">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>
+                </div>
+
+
+
+
+
+            </div>
+        </div>
     </div>
-    <div class="content">
-        <div class="row">
+
+
+
+
+
+
+    <div class="content client assesment">
+        <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
@@ -38,26 +76,7 @@
                             <div class="toolbar">
                                 <input hidden type="text" value="@ViewBag.indexid" id="txtindexid" />
                             </div>
-                            <div class="row">
-                                <div class="card-header clearfix">
-                                    <div class="pull-left">
 
-                                    </div>
-
-                                    <div class="pull-right">
-                                        <div class="newsletter">
-                                            <div class="content">
-                                                <div class="input-group" id="myForm">
-
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="AddIRF()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Create Skill Channel </font></span></button>*@
-                                        <a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;"><span class="fa fa-chevron-left"></span> Back to List</a>
-                                    </div>
-                                </div>
-                            </div>
                             <div style="clear:both;padding:10px"></div>
                             <div class="row">
                                 @foreach (var item in Model)
@@ -66,39 +85,43 @@
 
                                     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
                                         <div class="card-content-holder border card-blue">
-                                            @if(item.IsApproved==1){
-                                            <div class="card-header" style="background-color:green">
-                                                <div class="row">
-
-                                                    <div class="col-md-12 col-sm-12 card-header-buttons action text-right">
-                                                        @item.Seniority
+                                            @if (item.IsApproved == 1)
+                                            {
+                                                <div style="background-color: #0cea0c69;padding:7px 10px;">
+                                                    <div class="row">
+                                                        <div class="assess-left" style="color: #084e00">APPROVED</div>
+                                                        <div class="assess-right card-header-buttons action text-right pull-left">
+                                                            @item.Seniority
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            }else if(item.IsApproved==-1){
-                                            <div class="card-header" style="background-color:darkred">
-                                                <div class="row">
-
-                                                    <div class="col-md-12 col-sm-12 card-header-buttons action text-right">
-                                                        @item.Seniority
+                                            }
+                                            else if (item.IsApproved == -1)
+                                            {
+                                                <div  style="background-color: #ff454987; padding: 7px 10px;">
+                                                    <div class="row">
+                                                        <div class="assess-left" style="color: #a51709">REJECT</div>
+                                                        <div class="assess-right card-header-buttons action text-right pull-left">
+                                                            @item.Seniority
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            }else{
-                                            <div class="card-header">
-                                                <div class="row">
+                                            }
+                                            else
+                                            {
+                                                <div class="card-header">
+                                                    <div class="row">
 
-                                                    <div class="col-md-12 col-sm-12 card-header-buttons action text-right">
-                                                        @item.Seniority
+                                                        <div class="col-md-12 col-sm-12 card-header-buttons action text-right">
+                                                            @item.Seniority
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             }
                                             <!-- irf body-->
                                             <div class="card-body">
-                                                <div class="statusImg">
 
-                                                </div>
+
                                                 <div class="statusInfo">
                                                     <h6 class="assessment-grp"><a href="">@item.AssessmentGroup</a></h6>
                                                     <div class="group inner list-group-item-text">
@@ -107,48 +130,81 @@
                                                         <p><b>Difficulty Level:</b> @item.Difficultylevel</p>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12 col-lg-12">
-                                                    <button value="Reject" onclick="RejectAssessment(@item.id)">Reject</button>
-                                                    <button value="Approve" onclick="ApproveAssessment(@item.id)">Approve</button>
-                                                </div>
+                                              
+
+                                                                </div>
+
+                                                                <div class="card-footer action">
+                                                                    <div class="row">
+
+                                                                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+
+                                                                        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right">
+                                                                            <button class="mdc-fab app-fab--absolute trash-btn" value="Reject">
+                                                                                <span onclick="RejectAssessment(@item.id)" title="Reject" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /></svg></span>
+                                                                            </button>
+
+
+
+                                                                            <button class="mdc-fab app-fab--absolute approve-btn" value="Approve">
+                                                                                <span onclick="ApproveAssessment(@item.id)" title="Approve" class="mdc-fab__icon material-icons">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
+                                                                                </span>
+                                                                            </button>
+
+
+
+
+
+
+
+
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                    </div>
+
+
+
+
+                                                                    </div>
+                                                                </div>
+                                                                }
+                                                            </div>
                                             </div>
                                         </div>
                                     </div>
-                                }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
-    <script>
-        function RejectAssessment(id) {
-            $.ajax({
-                type: "GET",
-                url: "/Interviewer/ChangeStatusAssessment",
-                data: { assessmentid: id, status:-1},
-                success: function (data) {
-                    var index=$("#txtindexid").val();
-                    window.location.href = '/Interviewer/AssessmentForApproval/'+index;
-                }
-            });
-        }
-        function ApproveAssessment(id) {
-            $.ajax({
-                type: "GET",
-                url: "/Interviewer/ChangeStatusAssessment",
-                data: { assessmentid: id, status: 1 },
-                success: function (data) {
-                    var index = $("#txtindexid").val();
-                    window.location.href = '/Interviewer/AssessmentForApproval/' + index;
-                }
-            });
-        }
-    </script>
+                    <script>
+                        function RejectAssessment(id) {
+                            $.ajax({
+                                type: "GET",
+                                url: "/Interviewer/ChangeStatusAssessment",
+                                data: { assessmentid: id, status: -1 },
+                                success: function (data) {
+                                    var index = $("#txtindexid").val();
+                                    window.location.href = '/Interviewer/AssessmentForApproval/' + index;
+                                }
+                            });
+                        }
+                        function ApproveAssessment(id) {
+                            $.ajax({
+                                type: "GET",
+                                url: "/Interviewer/ChangeStatusAssessment",
+                                data: { assessmentid: id, status: 1 },
+                                success: function (data) {
+                                    var index = $("#txtindexid").val();
+                                    window.location.href = '/Interviewer/AssessmentForApproval/' + index;
+                                }
+                            });
+                        }
+                    </script>
