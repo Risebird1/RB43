@@ -130,9 +130,13 @@
 
                                                                                                                                             <div style="position:relative">
                                                                                                                                                 <div class="pull-left" id="password-field" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
-                                                                                                                                                <span  class="secret">********</span>
-                                                                                                                                                <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-
+                                                                                                                                                
+                                                                                                                                                @if (item.Password != null)
+                                                                                                                                                {<span class="secret">********</span>
+                                                                                                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+                                                                                                                                                }
+                                                                                                                                                else
+                                                                                                                                                { <span toggle="#password-field" class=" toggle-password" id="toggle-password"></span>}
                                                                                                                                             </div>
                                                                                                                                                 </div> <br />
                                                     </div>
