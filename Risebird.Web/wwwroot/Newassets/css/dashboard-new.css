@@ -5510,17 +5510,22 @@ blockquote {
             width: 30px;
             height: 30px;
         }
-.field-icon {
-    float: right;
-    margin-left: -25px;
-    margin-top: -25px;
-    position: relative;
-    z-index: 2;
-    right: 10px;
-    top: -3px;
-}
 
-.table-h {
+.passshow {
+
+    color: transparent;
+}
+.secret{position:absolute; top:13px; left:30px;}
+.field-icon {
+    float: left;
+    margin-left: 0px;
+    margin-top: 0px;
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    top: 35%;
+}
+    .table-h {
     padding: 12px 5px!important;
 }
 .trash-btn {
