@@ -47,23 +47,12 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
     <div class="content client assesment">
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
-
-
 
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
@@ -97,7 +86,7 @@
 
                                                     </div>
                                                     <div class="statusInfo">
-                                                        <h6 class="assessment-grp">@item.AssessmentGroup</h6>
+                                                        <h6 class="assessment-grp"><a href="@Url.Action("EditAssessment","Interviewer",new { id=item.id})">@item.AssessmentGroup</a></h6>
                                                         <div class="group inner list-group-item-text">
                                                             <p>@item.Overview</p>
                                                             <p><b>Tested Skills:</b> @item.TestedSkill</p>

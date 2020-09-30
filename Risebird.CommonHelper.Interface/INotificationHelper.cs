@@ -33,6 +33,8 @@ namespace Risebird.CommonHelper.Interface
         string VideoAccessRequest(Mail model, string url, string Emailid);
         string ShowIntrestInterview(Mail model, string Email, string videourl);
         string SendAssessmentNotification(Mail model,string emailid);
+        string SendAssessmentNotificationComments(Mail model, string assessment,string comments);
+
 
     }
 }
