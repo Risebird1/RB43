@@ -389,12 +389,13 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<TransVMUser> GetUserList(int vmId)
+        public IEnumerable<TransVMUser> GetUserList(int vmId, int profileId)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@vmId", vmId);
+                dynamicParameters.Add("@profileId", profileId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<TransVMUser>(con, "usp_GetUserList", dynamicParameters,
@@ -413,13 +414,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> UpdateVMUsers(int[] userList, int vmId)
+        public async Task<bool> UpdateVMUsers(int[] userList, int vmId, int profileId)
         {
             try
             {
 
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@vmId", vmId);
+                parameters.Add("@profileId", profileId);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -433,10 +435,11 @@ namespace Risebird.Repository
                         DataTable vmUserDt = new DataTable();
                         vmUserDt.Columns.Add("VmId", typeof(int));
                         vmUserDt.Columns.Add("UserId", typeof(int));
+                        vmUserDt.Columns.Add("ProfileId", typeof(int));
 
                         foreach (var item in userList)
                         {
-                            vmUserDt.Rows.Add(vmId, item);
+                            vmUserDt.Rows.Add(vmId, item, profileId);
                         }
 
                         SqlCommand cmd = new SqlCommand("usp_VMUsersBulkInsert", con);

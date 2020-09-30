@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
@@ -27,10 +28,11 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IProctorInterviewsService _proctorInterviewsService;
         private readonly CancellationToken _cancellationToken;
+        private IProfileService _profileService;
 
 
 
-        public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService, HttpClientHelper factory)
+        public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService, HttpClientHelper factory, IProfileService profileService)
         {
             _httpClient = factory.GetHttpClient();
             _applicationErrorLogger = applicationErrorLogger;
@@ -38,6 +40,7 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _configuration = configuration;
             _proctorInterviewsService = proctorInterviewsService;
+            _profileService = profileService;
 
 
         }
@@ -355,7 +358,8 @@ namespace Risebird.Web.Controllers
                 {
                     VmId = vmId,
                     VmName = vmName,
-                    UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId))
+                    UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId, (int)ProfileEnum.HR)),
+                    ProfileList = new SelectList(_profileService.GetProfile().Where(x=>x.id !=(int)ProfileEnum.Admin), "id", "Name",(int)ProfileEnum.HR)
                 };
                 return View(model);
             }
@@ -365,15 +369,33 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        public IActionResult GetUserList(int profileId, int vmId)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var model = new VMUsersMapping
+                {
+                    UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId, profileId))
+                };
+                return PartialView("VMUsersPartial", model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> UpdateVMUsers(int[] userList, int vmId, string vmName)
+        public async Task<IActionResult> UpdateVMUsers(int[] userList, int vmId, string vmName, int profileId)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (await _proctorInterviewsService.UpdateVMUsers(userList, vmId))
+                    if (await _proctorInterviewsService.UpdateVMUsers(userList, vmId, profileId))
                     {
                         TempData["SuccessErrorMessageProctor"] = "Users for the VM " + vmName + " updated successfully!";
                         return Json(true);

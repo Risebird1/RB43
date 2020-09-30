@@ -234,11 +234,11 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<TransVMUser> GetUserList(int vmId)
+        public IEnumerable<TransVMUser> GetUserList(int vmId, int profileId)
         {
             try
             {
-                var result = _proctorInterviewsRepository.GetUserList(vmId).OrderByDescending(x => x.IsAdded == true).ToList();
+                var result = _proctorInterviewsRepository.GetUserList(vmId, profileId).OrderByDescending(x => x.IsAdded == true).ToList();
                 return result;
             }
 
@@ -248,11 +248,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> UpdateVMUsers(int[] userList, int vmId)
+        public async Task<bool> UpdateVMUsers(int[] userList, int vmId, int profileId)
         {
             try
             {
-                return await _proctorInterviewsRepository.UpdateVMUsers(userList, vmId);
+                return await _proctorInterviewsRepository.UpdateVMUsers(userList, vmId, profileId);
             }
 
             catch (Exception e)
