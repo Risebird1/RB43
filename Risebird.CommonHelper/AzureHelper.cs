@@ -3,8 +3,6 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.CommonHelper
 {
@@ -28,7 +26,7 @@ namespace Risebird.CommonHelper
             _AuthenticationUri = _configuration["AzureVmCredentials:AuthenticationUri"];
             _SubscriptionId = _configuration["AzureVmCredentials:SubscriptionId"];
             _ARMEndpoint = _configuration["AzureVmCredentials:ARMEndpoint"];
-            
+
         }
 
 
@@ -38,8 +36,8 @@ namespace Risebird.CommonHelper
             {
                 //using for developemnt
                 SubscriptionId = _SubscriptionId,
-                AADTenantDomain =_AADTenantDomain,
-                AADAccessKey =_AADAccessKey,
+                AADTenantDomain = _AADTenantDomain,
+                AADAccessKey = _AADAccessKey,
                 AADClientId = _AADClientId,
                 Token = ""
             };
@@ -68,7 +66,7 @@ namespace Risebird.CommonHelper
                 var context = new AuthenticationContext(_AuthenticationUri + _AADTenantDomain);
                 AuthenticationResult result = null;
                 result = context.AcquireTokenAsync(_ARMEndpoint, cc).Result;
-                
+
                 if (result == null)
                 {
                     throw new InvalidOperationException("Failed to obtain the JWT token");

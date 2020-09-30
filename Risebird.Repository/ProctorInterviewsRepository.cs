@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -103,10 +102,10 @@ namespace Risebird.Repository
                 var ids = string.Join(",", idList);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await con.QueryAsync("Delete from TransVMTriggerDetails where id in (" +ids +")");
+                    await con.QueryAsync("Delete from TransVMTriggerDetails where id in (" + ids + ")");
                     return true;
                 }
-                
+
             }
             catch (SqlException ex)
             {
@@ -170,7 +169,7 @@ namespace Risebird.Repository
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        
+
                         DataTable vmPropertiesDt = new DataTable();
                         vmPropertiesDt.Columns.Add("Name", typeof(string));
                         vmPropertiesDt.Columns.Add("ResourceGroupName", typeof(string));
@@ -181,7 +180,7 @@ namespace Risebird.Repository
 
                         foreach (var vm in vmList)
                         {
-                            vmPropertiesDt.Rows.Add(vm.Name,vm.ResourceGroupName,vm.Status,true, false, false);
+                            vmPropertiesDt.Rows.Add(vm.Name, vm.ResourceGroupName, vm.Status, true, false, false);
                         }
 
                         SqlCommand cmd = new SqlCommand("usp_VMPropertiesBulkInsert", con);

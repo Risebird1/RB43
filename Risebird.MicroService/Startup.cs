@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Risebird.Business;
@@ -32,7 +31,7 @@ namespace Risebird.MicroService
               .AddEnvironmentVariables()
               .Build();
             builder.Services.AddSingleton<IConfiguration>(configuration);
-           
+
             builder.Services.AddSingleton<AuthenticationService>();
             builder.Services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             builder.Services.AddScoped<IAzureHelper, AzureHelper>();
@@ -43,6 +42,6 @@ namespace Risebird.MicroService
 
         }
 
-        
+
     }
 }
