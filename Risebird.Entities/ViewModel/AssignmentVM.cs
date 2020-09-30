@@ -69,7 +69,7 @@ namespace Risebird.Entities.ViewModel
         public string Skills { get; set; }
         public int? Level { get; set; }
         public string Levels { get; set; }
-
+        public string VideoLink { get; set; }
         public SelectList LevelList { get; set; }
         public string Time { get; set; }
     }

@@ -138,17 +138,20 @@
                                             <th class="text-center">Skills</th>
                                             <th class="text-center">Level</th>
                                             <th class="text-center">Time(in Min.)</th>
+                                            <th class="text-center">VideoLink</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach (var item in Model.Questionslist)
                                         {
-                                            <tr>
-                                                <td class="br-g ">@item.QuestionCovered</td>
-                                                <td class="br-g text-center">@item.Skills</td>
-                                                <td class="br-g text-center">@item.Levels</td>
-                                                <td class="text-center">@item.Time</td>
-                                            </tr>
+                                        <tr>
+                                            <td class="br-g ">@item.QuestionCovered</td>
+                                            <td class="br-g text-center">@item.Skills</td>
+                                            <td class="br-g text-center">@item.Levels</td>
+                                            <td class="text-center">@item.Time</td>
+                                            <td class="text-center">@item.VideoLink</td>
+
+                                        </tr>
                                         }
                                     </tbody>
                                 </table>

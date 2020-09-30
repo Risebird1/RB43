@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO
     
     
-CREATE PROCEDURE [dbo].[usp_AssessmentQuestionInsert]    
+Create PROCEDURE [dbo].[usp_AssessmentQuestionInsert]    
 (    
       @QuestionsDiscussedBulkData AS [dbo].[AddQuestionDetails_TableType] READONLY    
 )    
@@ -26,12 +26,15 @@ INSERT INTO [dbo].[AssessmentQuestions](
  [QuestionCovered],    
  [Skill],    
  [QuestionLevel],    
- [Time])    
+ [Time],
+ [VideoLink])    
      
     
-SELECT id as Assessmentid,Question as QuestionCovered,VideoLink as Skill ,Priority as QuestionLevel,VideoTitle as Time FROM @QuestionsDiscussedBulkData    
+SELECT id as Assessmentid,Question as QuestionCovered,ThumbnailLink as Skill ,Priority as QuestionLevel,VideoTitle as Time,VideoLink FROM @QuestionsDiscussedBulkData    
     
     
 END    
+  
+  
   
   

@@ -10,6 +10,7 @@ CREATE TABLE [dbo].[AssessmentQuestions](
 	[Skill] [varchar](200) NULL,
 	[QuestionLevel] [int] NULL,
 	[Time] [varchar](15) NULL,
+	[VideoLink] [varchar](max) NULL,
  CONSTRAINT [PK_AssessmentQuestions] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
