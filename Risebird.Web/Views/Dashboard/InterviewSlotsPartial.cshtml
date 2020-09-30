@@ -23,7 +23,7 @@
                                         <td class="text-center"><strong>@item.IRFnSkill</strong></td>
                                         <td class="text-center">
                                             <span class="label-num"><strong title="Total Interview: @item.Morning">@item.Morning</strong></span>/
-                                            @if (Model.DailyInterviewSlots.Count() != 0)
+                                            @if (item.MorningUnassinged == 0)
                                             {
 
                                                 <span class="label-num" style="color: green"><strong title="Unassinged Interview: @item.MorningUnassinged">@item.MorningUnassinged</strong></span>
@@ -38,7 +38,7 @@
                                         </td>
                                         <td class="text-center">
                                             <span class="label-num"><strong title="Total Interview: @item.Evening">@item.Evening</strong></span>/
-                                            @if (Model.DailyInterviewSlots.Count() != 0)
+                                            @if (item.EveningUnassinged == 0)
                                             {
                                                 <span class="label-num" style="color: green"><strong title="Unassinged Interview: @item.EveningUnassinged">@item.EveningUnassinged</strong></span>
                                             }
