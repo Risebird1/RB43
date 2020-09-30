@@ -115,11 +115,11 @@
                                                             <i class="fa fa-key"></i>
                                                         </button>
 
-                                                        <button id="shareButton_@item.id" class="mdc-fab app-fab--absolute" aria-label="Share VM" onclick="location.href='@Url.Action("VMUsers", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
+                                                        <button id="shareButton_@item.id" class="mdc-fab app-fab--absolute" title="Share VM" aria-label="Share VM" onclick="location.href='@Url.Action("VMUsers", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
                                                             <i class="fa fa-share"></i>
                                                         </button>
 
-                                                        <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" aria-label="Start VM" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name');">
+                                                        <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" title="Edit" aria-label="Edit" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name');">
                                                             <i class="fa fa-edit"></i>
                                                         </button>
                                                     }
