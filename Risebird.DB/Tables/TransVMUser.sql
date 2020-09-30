@@ -6,8 +6,10 @@ CREATE TABLE [dbo].[TransVMUser](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[VmId] [int] NOT NULL,
 	[UserId] [int] NOT NULL,
+	[ProfileId] [int] NULL,
 	FOREIGN KEY([VmId]) REFERENCES [dbo].[VMProperties] ([id]),
 	FOREIGN KEY([UserId]) REFERENCES [dbo].[UserList] ([id]),
+	FOREIGN KEY([ProfileId]) REFERENCES [dbo].[Profile] ([id]),
  CONSTRAINT [PK_TransVMUser] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
