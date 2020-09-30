@@ -11,13 +11,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_DeleteTransVmUsers]
-
-@vmId int
-
+@vmId int,
+@profileId int
 AS
 Begin
 
-delete from TransVMUser where VmId=@vmId
+delete from TransVMUser where VmId=@vmId and ProfileId=@profileId
 
 End
 GO
