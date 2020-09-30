@@ -51,5 +51,7 @@ namespace Risebird.Repository.Interface
         string AddAssessment(AssignmentVM _assessment);
         IEnumerable<AssignmentVM> FetchAssessmentGroups();
         string ChangeStatusAssessment(int assessmentid, int status);
+        string UpdateAssessment(AssignmentVM _assessment);
+
     }
 }

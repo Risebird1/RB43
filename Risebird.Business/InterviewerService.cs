@@ -668,5 +668,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public string UpdateAssessment(AssignmentVM _assessment)
+        {
+            try
+            {
+                var comments = _interviewerRepository.UpdateAssessment(_assessment);
+                return comments;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }

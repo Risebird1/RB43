@@ -23,10 +23,33 @@ Create Procedure usp_AddAssessment
 @EmployerStage int,  
 @EmployerSize int,  
 @createdby int,  
-@Delivery varchar(200)  
+@Delivery varchar(200),
+@Assessmentid int
 AS  
 BEGIN  
+if(@Assessmentid=0)
+begin
 Insert into InterviewerAssessments Output Inserted.id  
 values(@Assessmentgroupid,@Overview,@Senioritylevel,@YearsofExprience,@AssessmentType,@TestedSkill,@Evaluation,@Environment,@Difficultylevel,  
 @EmployerType,@EmployerStage,@EmployerSize,0,@createdby,Getdate(),@Delivery)  
+end
+else
+begin
+update InterviewerAssessments set Assessmentgroupid=@Assessmentgroupid,
+Overview=@Overview,
+Senioritylevel=@Senioritylevel,
+YearsofExprience=@YearsofExprience,
+AssessmentType=@AssessmentType,
+TestedSkill=@TestedSkill,
+Evaluation=@Evaluation,
+Environment=@Environment,
+Difficultylevel=@Difficultylevel,
+EmployerType=@EmployerType,
+EmployerStage=@EmployerStage,
+EmployerSize=@EmployerSize,
+Delivery=@Delivery where id=@Assessmentid
+
+Delete from AssessmentQuestions Where Assessmentid=@Assessmentid
+end
 END
+Go

@@ -98,7 +98,7 @@
                                             }
                                             else if (item.IsApproved == -1)
                                             {
-                                                <div  style="background-color: #ff454987; padding: 7px 10px;">
+                                                <div style="background-color: #ff454987; padding: 7px 10px;">
                                                     <div class="row">
                                                         <div class="assess-left" style="color: #a51709">REJECT</div>
                                                         <div class="assess-right card-header-buttons action text-right pull-left">
@@ -130,81 +130,125 @@
                                                         <p><b>Difficulty Level:</b> @item.Difficultylevel</p>
                                                     </div>
                                                 </div>
-                                              
-
-                                                                </div>
-
-                                                                <div class="card-footer action">
-                                                                    <div class="row">
-
-                                                                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
-
-                                                                        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right">
-                                                                            <button class="mdc-fab app-fab--absolute trash-btn" value="Reject">
-                                                                                <span onclick="RejectAssessment(@item.id)" title="Reject" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /></svg></span>
-                                                                            </button>
 
 
+                                            </div>
 
-                                                                            <button class="mdc-fab app-fab--absolute approve-btn" value="Approve">
-                                                                                <span onclick="ApproveAssessment(@item.id)" title="Approve" class="mdc-fab__icon material-icons">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
-                                                                                </span>
-                                                                            </button>
+                                            <div class="card-footer action">
+                                                <div class="row">
+                                                    <input type="text" hidden value="@item.Createdby" id="txtcreated_@item.id" />
+                                                    <input type="text" hidden value="@item.AssessmentGroup" id="txtassessment_@item.id" />
 
-
-
-
-
-
-
-
-
-                                                                        </div>
-
-                                                                    </div>
-                                                                    </div>
-
-
-
-
-                                                                    </div>
-                                                                </div>
-                                                                }
-                                                            </div>
+                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+                                                    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right">
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" value="Comment">
+                                                            <span onclick="ShareComment(@item.id)" title="Share Comment" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" value="Reject">
+                                                            <span onclick="RejectAssessment(@item.id)" title="Reject" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M14.59 8L12 10.59 9.41 8 8 9.41 10.59 12 8 14.59 9.41 16 12 13.41 14.59 16 16 14.59 13.41 12 16 9.41 14.59 8zM12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute approve-btn" value="Approve">
+                                                            <span onclick="ApproveAssessment(@item.id)" title="Approve" class="mdc-fab__icon material-icons">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                             </div>
                         </div>
                     </div>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="commentsmodel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
 
-                    <script>
-                        function RejectAssessment(id) {
-                            $.ajax({
-                                type: "GET",
-                                url: "/Interviewer/ChangeStatusAssessment",
-                                data: { assessmentid: id, status: -1 },
-                                success: function (data) {
-                                    var index = $("#txtindexid").val();
-                                    window.location.href = '/Interviewer/AssessmentForApproval/' + index;
-                                }
-                            });
-                        }
-                        function ApproveAssessment(id) {
-                            $.ajax({
-                                type: "GET",
-                                url: "/Interviewer/ChangeStatusAssessment",
-                                data: { assessmentid: id, status: 1 },
-                                success: function (data) {
-                                    var index = $("#txtindexid").val();
-                                    window.location.href = '/Interviewer/AssessmentForApproval/' + index;
-                                }
-                            });
-                        }
-                    </script>
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Share Comments!</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="txtindexid" hidden />
+                <input type="text" class="form-control" id="txtsharecomment" />
+
+                <div class="">
+                    <input type="button" onclick="SendComment()" style="margin: 20px auto;display: block;" class="btn btn-fill form-bottom-btn-bar" />
+                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 20px auto;display: block;" class="btn btn-fill btn-danger" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+<script>
+    function RejectAssessment(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Interviewer/ChangeStatusAssessment",
+            data: { assessmentid: id, status: -1 },
+            success: function (data) {
+                var index = $("#txtindexid").val();
+                window.location.href = '/Interviewer/AssessmentForApproval/' + index;
+            }
+        });
+    }
+    function ApproveAssessment(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Interviewer/ChangeStatusAssessment",
+            data: { assessmentid: id, status: 1 },
+            success: function (data) {
+                var index = $("#txtindexid").val();
+                window.location.href = '/Interviewer/AssessmentForApproval/' + index;
+            }
+        });
+    }
+    function ShareComment(id) {
+        $("#txtindexid").val(id);
+        var model = document.getElementById("commentsmodel");
+        model.style.display = "block";
+    }
+    function closeCallPopUp() {
+        $("#txtindexid").val('');
+        var model = document.getElementById("commentsmodel");
+        model.style.display = "none";
+    }
+    function SendComment() {
+        var id = $("#txtindexid").val();
+        var Emailid = $("#txtcreated_" + id).val();
+        var Assessment = $("#txtassessment_" + id).val();
+        var comments = $("#txtsharecomment").val();
+        $.ajax({
+            type: "POST",
+            url: "/Interviewer/ShareAssessmentcomment",
+            data: { assessmentid: id, EmailAddress: Emailid, assessment: Assessment, comments: comments},
+            success: function (data) {
+                var index = $("#txtindexid").val();
+                window.location.href = '/Interviewer/AssessmentForApproval/' + index;
+            }
+        });
+    }
+</script>

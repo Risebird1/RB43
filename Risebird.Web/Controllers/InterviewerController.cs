@@ -34,8 +34,9 @@ namespace Risebird.Web.Controllers
         private IConfiguration _configuration;
         private ISupportService _supportService;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IIRFService _irfService;
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService)
 
         {
             _interviewerService = interviewerService;
@@ -50,6 +51,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _supportService = supportService;
             _notificationHelper = notificationHelper;
+            _irfService = irfService;
         }
 
 
@@ -1412,7 +1414,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        public IActionResult AssessmentForApproval(int id)
+        public IActionResult AssessmentForApproval(int id, string EmailAddress)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1423,7 +1425,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     //Fetch Assessment
-                    var model = _interviewerService.GetInterviewerAssessment(emailid);
+                    var model = _interviewerService.GetInterviewerAssessment(EmailAddress);
                     ViewBag.indexid = id;
                     foreach (var item in model)
                     {
@@ -1452,6 +1454,62 @@ namespace Risebird.Web.Controllers
             var model = _interviewerService.ChangeStatusAssessment(assessmentid, status);
             return Json("Success");
         }
+        /// <summary>
+        /// Send Email to interviewer for update any details in Assessment
+        /// </summary>
+        /// <param name="assessmentid"></param>
+        /// <param name="EmailAddress"></param>
+        /// <param name="assessment"></param>
+        /// <param name="comments"></param>
+        /// <returns></returns>
+        public JsonResult ShareAssessmentcomment(int assessmentid, string EmailAddress, string assessment, string comments)
+        {
+            Mail _mail = new Mail
+            {
+                TO = EmailAddress,
+                Subject = "Risebird: Review Comments on your assessment"
+            };
+            var resultset = _notificationHelper.SendAssessmentNotificationComments(_mail, assessment, comments);
+            return Json("Success");
+        }
+        /// <summary>
+        /// Edit Assessment Details By interviewer
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult EditAssessment(int id)
+        {
+            var result = _irfService.FetchAssessmentdetails(id);
+            var model = result.FirstOrDefault();
+            var _senioritylevel = from Senioritylevel s in Enum.GetValues(typeof(Senioritylevel))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+            model.Senioritylevellist = new SelectList(_senioritylevel, "ID", "Name");
+            var _assessmentType = from AssessmentType s in Enum.GetValues(typeof(AssessmentType))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+            model.AssessmentTypelist = new SelectList(_assessmentType, "ID", "Name");
+            var _evaluation = from Evaluation s in Enum.GetValues(typeof(Evaluation))
+                              select new { ID = (int)s, Name = s.GetDescription() };
+            model.Evaluationlist = new SelectList(_evaluation, "ID", "Name");
+            var _employerStage = from EmployerStage s in Enum.GetValues(typeof(EmployerStage))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+            model.EmployerStagelist = new SelectList(_employerStage, "ID", "Name");
+            var _employerSize = from EmployerSize s in Enum.GetValues(typeof(EmployerSize))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            model.EmployerSizelist = new SelectList(_employerSize, "ID", "Name");
+            var _assessmentYearsOfExperience = from AssessmentYearsOfExperience s in Enum.GetValues(typeof(AssessmentYearsOfExperience))
+                                               select new { ID = (int)s, Name = s.GetDescription() };
+            model.YearsofExpriencelist = new SelectList(_assessmentYearsOfExperience, "ID", "Name");
+            var _assessmentLevel = from AssessmentLevel s in Enum.GetValues(typeof(AssessmentLevel))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            model.AssessmentLevellist = new SelectList(_assessmentLevel, "ID", "Name");
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult EditAssessment(AssignmentVM model)
+        {
+            var result = _interviewerService.UpdateAssessment(model);
+            return RedirectToAction("InterviewerAssessment");
+        }
+
     }
 
 }

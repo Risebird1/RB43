@@ -3933,11 +3933,11 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "Select * from InterviewerAssessments where id=@id";
+                    var query = "Select ia.*,ag.AssessmentGroup from InterviewerAssessments ia join assessmentgroup ag on ia.assessmentgroupid=ag.id where ia.id=@id";
                     var parameters = new DynamicParameters();
                     parameters.Add("@id", id);
                     var results = con.Query<AssignmentVM>(query, parameters);
-                    var finalquery = "Select Assessmentid,QuestionCovered,Skill as Skills,QuestionLevel as Level,Time,VideoLink from AssessmentQuestions  where Assessmentid=@id";
+                    var finalquery = "Select id,Assessmentid,QuestionCovered,Skill as Skills,QuestionLevel as Level,Time,VideoLink from AssessmentQuestions  where Assessmentid=@id";
                     var finalparameters= new DynamicParameters();
                     finalparameters.Add("@id",id);
                     var Questions = con.Query<AssessmentQuestions>(finalquery, finalparameters);
