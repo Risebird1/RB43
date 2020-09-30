@@ -1,0 +1,52 @@
+﻿@model Risebird.Entities.ViewModel.VMUsersMapping
+
+<div class="table-responsive-sm">
+    <table class="table table-bordered mbn" id="UserListTb">
+        <thead>
+            <tr>
+                <th class="text-center border-db" style="font-size:15px!important;">EmailId</th>
+                <th class="text-center  border-db" style="font-size:15px!important;">Profile</th>
+                <th class="text-center " style="font-size:15px!important;">Add</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.UsersList.Count(); i++)
+            {
+                <tr>
+
+                    <td class="text-center  border-db" width="30%">@Model.UsersList[i].EmailId</td>
+                    <td class="text-center  border-db" width="30%">@Model.UsersList[i].ProfileName</td>
+                    <td class="text-center" width="20%">
+
+
+                        <div class="mdc-form-field" style="margin-bottom: 10px;">
+                            <div class="mdc-checkbox">
+                                @Html.CheckBoxFor(m => m.UsersList[i].IsAdded, new { @class = "mdc-checkbox__native-control", @onclick = "UpdateUserList(this.id)" })
+
+
+                                <div class="mdc-checkbox__background">
+                                    <svg class="mdc-checkbox__checkmark"
+                                         viewBox="0 0 24 24">
+                                        <path class="mdc-checkbox__checkmark-path"
+                                              fill="none"
+                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                    </svg>
+                                    <div class="mdc-checkbox__mixedmark"></div>
+                                </div>
+                                <div class="mdc-checkbox__ripple"></div>
+
+
+                            </div>
+                        </div>
+
+
+
+                    </td>
+                    @Html.HiddenFor(m => m.UsersList[i].UserId)
+
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>

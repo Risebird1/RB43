@@ -94,7 +94,32 @@
                                                 <div class="col-md-5 col-sm-5 card-header-buttons action">
                                                     @if (Model.Profile == "Admin")
                                                     {
-                                                        <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" aria-label="Start VM" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name');">
+
+
+                                                        @if (item.StatusDesc.ToLower() == "running")
+                                                        {
+                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
+                                                                <i class="fa fa-stop"></i>
+                                                            </button>
+
+                                                        }
+                                                        else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
+                                                        {
+
+                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
+                                                                <i class="fa fa-play"></i>
+                                                            </button>
+                                                        }
+
+                                                        <button id="passwordButton_@item.id" class="mdc-fab app-fab--absolute" title="Reset Password" aria-label="Reset Password" onclick="location.href='@Url.Action("ResetPassword", "ProctorInterviews", new { name = item.Name, rgName = item.ResourceGroupName, vmId = item.id})'">
+                                                            <i class="fa fa-key"></i>
+                                                        </button>
+
+                                                        <button id="shareButton_@item.id" class="mdc-fab app-fab--absolute" title="Share VM" aria-label="Share VM" onclick="location.href='@Url.Action("VMUsers", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
+                                                            <i class="fa fa-share"></i>
+                                                        </button>
+
+                                                        <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" title="Edit" aria-label="Edit" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name');">
                                                             <i class="fa fa-edit"></i>
                                                         </button>
                                                     }
@@ -118,9 +143,6 @@
                                                         <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div> <br />
                                                         <div class="row three">
                                                             <div> Password:</div>
-
-
-
 
                                                             <div id="password-field" title="=" Password"> @item.Password </div>
 
@@ -154,32 +176,13 @@
 
                                                     @if (item.StatusDesc.ToLower() == "running")
                                                     {
-                                                        <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
-                                                            <i class="fa fa-stop"></i>
-                                                        </button>
-
+                                                        
                                                         <button id="rdpButton_@item.id" class="mdc-fab app-fab--absolute" title="Download RDP" aria-label="Download RDP" onclick="location.href='@Url.Action("GetRDPFile", "ProctorInterviews", new { vmId = item.id})'">
                                                             <i class="fa fa-desktop"></i>
                                                         </button>
 
                                                     }
-                                                    else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
-                                                    {
-
-                                                        <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
-                                                            <i class="fa fa-play"></i>
-                                                        </button>
-                                                    }
-                                                    <button id="passwordButton_@item.id" class="mdc-fab app-fab--absolute" title="Reset Password" aria-label="Reset Password" onclick="location.href='@Url.Action("ResetPassword", "ProctorInterviews", new { name = item.Name, rgName = item.ResourceGroupName, vmId = item.id})'">
-                                                        <i class="fa fa-key"></i>
-                                                    </button>
-                                                    @if (Model.Profile == "Admin")
-                                                    {
-                                                        <button id="shareButton_@item.id" class="mdc-fab app-fab--absolute" aria-label="Share VM" onclick="location.href='@Url.Action("VMUsers", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
-                                                            <i class="fa fa-share"></i>
-                                                        </button>
-                                                    }
-
+                                                    
                                                 </div>
                                             </div>
                                         </div>
