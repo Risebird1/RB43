@@ -8,5 +8,6 @@
         public bool IsAdded { get; set; }
         public string EmailId { get; set; }
         public string ProfileName { get; set; }
+        public int ProfileId { get; set; }
     }
 }
