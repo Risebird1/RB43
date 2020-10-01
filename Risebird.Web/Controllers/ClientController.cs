@@ -21,12 +21,14 @@ namespace Risebird.Web.Controllers
         private IClientService _clientService;
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly IUserRepository _userRepository;
-        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository)
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper)
         {
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
             _interviewerService = interviewerService;
             _userRepository = userRepository;
+            _azureStorageHelper = azureStorageHelper;
         }
 
         public async Task<IActionResult> List()
@@ -264,6 +266,14 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model._clientjddetails.CreatedBy = emailid;
+                    if (model._clientjddetails.File != null)
+                    {
+                        _azureStorageHelper.InsertBlob(model._clientjddetails.File.FileName, "videos", model._clientjddetails.File);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                        var blob = containerRef.GetBlockBlobReference(model._clientjddetails.File.FileName);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        model._clientjddetails.Filelink = uploadedvideoFileURL;
+                    }
                     var result = _clientService.AddClientJd(model._clientjddetails);
                     if (result == "Success")
                     {

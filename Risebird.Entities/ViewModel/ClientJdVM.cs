@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +21,8 @@ namespace Risebird.Entities.ViewModel
         public string JobDescription { get; set; }
         [Required]
         public string JDTitle { get; set; }
+        public IFormFile File { get; set; }
+        public string Filelink { get; set; }
         public SelectList AssessmentGrouplist { get; set; }
         public string CreatedBy { get; set; }
         public int ClientId { get; set; }

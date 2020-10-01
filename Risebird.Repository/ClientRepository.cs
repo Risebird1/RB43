@@ -219,6 +219,8 @@ namespace Risebird.Repository
                 parameters.Add("@CreatedBy", userid);
                 parameters.Add("@ClientId", _client.ClientId);
                 parameters.Add("@JDTitle", _client.JDTitle);
+                parameters.Add("@Filelink", _client.Filelink);
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "[usp_AddClientJD]", parameters,
