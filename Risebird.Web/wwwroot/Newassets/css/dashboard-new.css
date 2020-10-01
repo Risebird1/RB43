@@ -261,11 +261,11 @@ body {
     height: 180px;
     overflow: auto;
 }
-#searchGo button.btn {
+#searchGo button.btn, #btnSearch  {
     min-width: auto;
     height: 37px;
 }
-    #searchGo button.btn svg {
+    #searchGo button.btn svg, #btnSearch svg{
         position: relative;
         top: -9px;
     }
