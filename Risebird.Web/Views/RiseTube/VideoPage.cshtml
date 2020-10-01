@@ -708,7 +708,7 @@
                                                                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                                         @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                                         {
-                                                                                            <div class="video-card video-card-list videosidelist">
+                                                                                            <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                                 <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                                 <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
 
@@ -739,7 +739,7 @@
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            <div class="video-card video-card-list videosidelist">
+                                                                                            <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                                 <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                                 <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
 
