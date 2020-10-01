@@ -2363,6 +2363,8 @@ table {
     .single-video-right {
         height: 250px;
     }
+
+
     .col-md-8.video-contop .title.name-video-primary-info-renderer, .col-md-8.video-contop span {
         font-size: 13.5px !important;
     }

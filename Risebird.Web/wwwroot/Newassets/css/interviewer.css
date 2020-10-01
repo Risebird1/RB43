@@ -571,9 +571,181 @@ table {
     font-size: 13px;
     text-align: center;
 }
+.assessment-detail {
+    width: 1100px;
+    margin: 0px auto;
+}
+.assessment-blk {
+   
+    border-radius: 5px;
+    padding: 10px;
+    margin: 20px 0px;
+}
+
+.assessment-blk-h {
+   
+    border-radius: 0px;
+    padding: 10px;
+    margin: 0px 0px;
+}
+.pt10{
+    padding-top:10px;
+}
+.assesment .list-group-item-text {
+    min-height: 135px;
+}
+
+.assess-left{width:35%;float:left;padding:0px 10px;}
+.assess-right {
+    width: 60%;
+    float: left;
+    padding: 0px 10px;
+}
+.newsletter {
+    padding: 0;
+    float: left;
+}
+.assessment h1 {
+    text-transform: uppercase;
+    font-size: 15px;
+    margin: 0px 0px 10px 0px;
+    font-weight:bold;
+}
+.assessment h2 {
+    font-size: 16px;
+    margin: 8px 0px;
+}
+.assessment h3 {
+    float: left;
+    font-size: 15px;
+    padding-left:10px;
+    margin:0px;
+}
+
+ .table-grey thead th {
+      color: #fff;
+    }
+
+.table-grey > tbody > tr > td {
+    padding: 12px 5px !important;
+}
+.br-w {
+    border-right: 1px #fff solid;
+}
+
+.br-g {
+    border-right: 1px #ccc solid;
+}
+
+        .input-group .input-group-btn {
+            padding: 0 12px;
+            margin: -11px;
+        }
+
+.newsletter .content {
+    max-width: 650px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+#myForm input {
+    outline: none;
+}
+
+    #myForm input[type=email], #myForm input[type=text] {
+        -webkit-appearance: textfield;
+        -webkit-box-sizing: content-box;
+        font-family: inherit;
+        font-size: 100%;
+    }
+
+    #myForm input::-webkit-search-decoration,
+    #myForm input::-webkit-search-cancel-button {
+        display: none;
+    }
 
 
-.fa-spinner {
+    #myForm input[type=email], #myForm input[type=text] {
+        padding: 0px 10px 0px 20px;
+        height: 35px;
+        width: 265px;
+        font-family: arial;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        -webkit-transition: all .5s;
+        -moz-transition: all .5s;
+        transition: all .5s;
+        float: left;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        border-top-right-radius: 0em;
+        border-bottom-right-radius: 0em;
+        margin: 0px;
+    }
+
+        #myForm input[type=email]:focus, #myForm input[type=text]:focus {
+            width: 280px;
+            background-color: #fff;
+            border-color: #4a93de;
+            font-family: arial;
+            margin: 0px;
+            -webkit-box-shadow: 0 0 3px #4a93de;
+            -moz-box-shadow: 0 0 3px #4a93de;
+            box-shadow: 0 0 3px #4a93de;
+        }
+
+
+    #myForm input:-moz-placeholder {
+        color: #999;
+    }
+
+    #myForm input::-webkit-input-placeholder {
+        color: #999;
+    }
+
+#myForm .searchbox {
+    margin-right: 10px;
+}
+
+    #myForm .searchbox .input-group-btn {
+        float: left;
+        padding: 0;
+        margin: 0px 0px 0px 0px;
+    }
+
+        #myForm .searchbox .input-group-btn .btn {
+            background: #53a5f5;
+            padding: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            margin: 0;
+            border: 1px #53a5f5 solid;
+        }
+.card-blue {
+    border-radius: 4px;
+    background-color: #fff;
+    background-color: var(--mdc-theme-surface, #fff);
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.assesment .card-content-holder {
+    min-height: 250px;
+}
+
+.assesment .card .card-header {
+    padding: 10px 0px 5px 0;
+}
+.assessment-grp {
+    font-size: 20px !important;
+    margin-bottom: 3px;
+}
+    .fa-spinner {
     font-size: 18px;
     position: relative;
     top: 6px;
@@ -609,20 +781,28 @@ table {
     padding: 12px 5px !important;
 }
 
-@media screen and (max-width: 980px) {
-    .uploadfile-txt {
-        padding: 0px;
-    }
-    .mdc-radio {
-        padding:15px  0px !important;
-        margin: 0px !important;
+@media screen and (max-width: 1024px) {
+    .assessment-detail {
+        width: 100%;
+        margin: 0px auto;
     }
 }
+    @media screen and (max-width: 980px) {
+        .uploadfile-txt {
+            padding: 0px;
+        }
+
+        .mdc-radio {
+            padding: 15px 0px !important;
+            margin: 0px !important;
+        }
+    }
+
     @media screen and (max-width: 767px) {
         .table > tbody > tr > td {
             padding: 12px 5px !important;
         }
-       
+
 
         #interviewer_length, #interviewer_filter {
             margin: 7px 0px 0px 0px !important;
@@ -643,12 +823,13 @@ table {
             width: 100%;
         }
     }
-@media screen and (max-width:480px) {
-    .client-cmt {
-        width: 25% !important;
-    }
 
-    .client-action {
-        width: 27% !important;
+    @media screen and (max-width:480px) {
+        .client-cmt {
+            width: 25% !important;
+        }
+
+        .client-action {
+            width: 27% !important;
+        }
     }
-}

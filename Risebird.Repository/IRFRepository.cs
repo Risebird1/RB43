@@ -3881,6 +3881,79 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public IEnumerable<InterviewerVM> GetSkillDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "select sk.id as id,LTRIM(RTRIM(sk.Name)) as PrimarySkill from Skill sk order by LTRIM(RTRIM(sk.Name))";
+                    var parameters = new DynamicParameters();
+                    var results = con.Query<InterviewerVM>(query, parameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string Addassignmentgroup(Skilldetails _skilldetails)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AssessmentGroup", _skilldetails.AssessmentGroupName);
+                    parameters.Add("@PrimarySkills", _skilldetails.PrimarySkill);
+                    SqlMapper.QueryAsync(con, "usp_AddAssessmentGroup", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "Failed";
+        }
+        public IEnumerable<AssignmentVM> FetchAssessmentdetails(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var query = "Select ia.*,ag.AssessmentGroup from InterviewerAssessments ia join assessmentgroup ag on ia.assessmentgroupid=ag.id where ia.id=@id";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    var results = con.Query<AssignmentVM>(query, parameters);
+                    var finalquery = "Select id,Assessmentid,QuestionCovered,Skill as Skills,QuestionLevel as Level,Time,VideoLink from AssessmentQuestions  where Assessmentid=@id";
+                    var finalparameters= new DynamicParameters();
+                    finalparameters.Add("@id",id);
+                    var Questions = con.Query<AssessmentQuestions>(finalquery, finalparameters);
+                    results.FirstOrDefault().Questionslist = Questions.ToList();
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

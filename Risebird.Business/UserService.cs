@@ -573,6 +573,29 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public List<AssignmentVM> GetInterviewerEntitle()
+        {
+            try
+            {
+                return _userRepository.GetInterviewerEntitle().ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<AssignmentVM> InterviewerEntitleDetails(int id)
+        {
+            try
+            {
+                return _userRepository.InterviewerEntitleDetails(id).ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

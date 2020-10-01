@@ -138,14 +138,20 @@
                                                 <div class="statusInfo">
                                                     <div class="group inner list-group-item-text">
 
-                                                        <div class="row"> <span>VM Name:</span>@item.Name</div> <br />
+                                                        <div class="row">
+                                                            <span>VM Name:</span>@item.Name
+                                                        </div> <br /> <br />
 
-                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div> <br />
+                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div> <br /> <br />
                                                         <div class="row three">
-                                                            <div> Password:</div>
+                                                            <div style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
 
-                                                            <div id="password-field" title="=" Password"> @item.Password </div>
+                                                            <div class="pull-left">
+                                                                <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.Password" style="background:none;">
+                                                                <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+                                                            </div>
 
+                                                            <!--- <div id="password-field" title="=" Password"> @item.Password </div>-->
                                                         </div> <br />
                                                     </div>
                                                 </div>
