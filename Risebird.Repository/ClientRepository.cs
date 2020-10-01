@@ -3,11 +3,13 @@ using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using static System.Data.CommandType;
 
@@ -196,6 +198,143 @@ namespace Risebird.Repository
 
             return parameters;
         }
+        public async Task<string> AddClientJd(ClientJdVM _client)
+        {
+            try
+            {
+                int userid = 0;
+                var query = "Select id from UserList where Emailid = @Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", _client.CreatedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                }
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@StartDate", _client.StartDate);
+                parameters.Add("@EndDate", _client.EndDate);
+                parameters.Add("@AssessmentGroup", _client.AssessmentGroup);
+                parameters.Add("@JobDescription", _client.JobDescription);
+                parameters.Add("@CreatedBy", userid);
+                parameters.Add("@ClientId", _client.ClientId);
+                parameters.Add("@JDTitle", _client.JDTitle);
+                parameters.Add("@Filelink", _client.Filelink);
 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "[usp_AddClientJD]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return "";
+        }
+        public IEnumerable<ClientJdVM> FetchClientJd(int clientid)
+        {
+            try
+            {
+                if (clientid == 0)
+                {
+                    var query = "Select cl.*,ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id";
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var result = con.Query<ClientJdVM>(query, null);
+                        return result;
+                    }
+                }
+                else
+                {
+                    //Set the parameters to be passed to store procedure
+                    var query = "Select cl.*,ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id where Clientid=@ClientId";
+                    DynamicParameters parameters = new DynamicParameters();
+                    parameters.Add("@ClientId", clientid);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var result = con.Query<ClientJdVM>(query, parameters);
+                        return result;
+                    }
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlDeletePrevious = "Delete from CandidateJDScore where ClientJdid =@IRFId;";
+                    var deletedRows = con.Execute(sqlDeletePrevious, new
+                    {
+                        IRFId = IrfId,
+
+                    });
+                    foreach (var item in candidateCuratedScore)
+                    {
+
+                        string sqlCuratedCandidate = "INSERT INTO CandidateJDScore (ClientJdid,IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@ClientJdid,@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
+                        var affectedRows = con.Execute(sqlCuratedCandidate, new
+                        {
+                            ClientJdid= IrfId,
+                            IRFId = item.IRFId,
+                            item.CandidateEmailId,
+                            item.CuratedEmailId,
+                            item.Score
+
+                        });
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public IEnumerable<CandidateCuratedScore> GetCandidateJDScore(int id)
+        {
+            try
+            {
+                var query = "Select * from CandidateJDScore where ClientJdid = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CandidateCuratedScore>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
