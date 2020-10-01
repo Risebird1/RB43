@@ -264,7 +264,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 7].Value = item.interviewer;
                         Sheet.Cells[i, 8].Value = item.confirmationStatus;
-                        Sheet.Cells[i, 9].Value = item.MeetingStatusDescription;
+                        Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
 
                         Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
 
