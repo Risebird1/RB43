@@ -1810,6 +1810,19 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public IEnumerable<int> GetClientJdIRFs(int Clientjdid)
+        {
+            try
+            {
+                return _meetingRespository.GetClientJdIRFs(Clientjdid);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
 }

@@ -1,7 +1,7 @@
 ﻿@*@model IEnumerable<Risebird.Entities.ViewModel.ClientDetails>*@
 @model Risebird.Entities.ViewModel.ClientDetails
 @{
-    ViewData["Title"] = "Assessments";
+    ViewData["Title"] = "Job Description";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interviewer.css?v=8" />
@@ -134,7 +134,7 @@
 
                                                     <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right ">
                                                         <button class="mdc-fab app-fab--absolute item1" aria-label="Questions">
-                                                            <span onclick="javascript:Candidates('@item.id', '@item.id');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ALL"})'" title="ALL Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
                                                         </button>
                                                     </div>
                                                 </div>
