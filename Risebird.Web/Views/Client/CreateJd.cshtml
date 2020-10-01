@@ -71,11 +71,11 @@
                                         <div class="card-content-holder border card-blue">
                                             <div class="card-header">
                                                 <div class="row">
-                                                    <div class=" col-md-5 col-sm-5 first">
-                                                        <h6> @item.JDTitle </h6>
+                                                    <div class=" col-md-9 col-sm-9 first">
+                                                        <h6 class="assessment-grp"> @item.JDTitle </h6>
                                                     </div>
 
-                                                    <div class="col-md-7 col-sm-7 card-header-buttons action">
+                                                    <div class="col-md-3 col-sm-3 card-header-buttons action text-right">
                                                         @if (!Model._clientjddetails.isClientUser)
                                                         {
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Candidate JD Score">
@@ -89,31 +89,25 @@
 
                                             <!-- irf body-->
                                             <div class="card-body">
-                                                <div class="row">
-                                                    <div class="statusImg">
-                                                        @*<img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">*@
-                                                    </div>
                                                     <div class="statusInfo">
                                                         <div class="group inner list-group-item-text">
-                                                            <div class="row second">
-                                                                <div class="client-field"> Start Date:<span>@item.StartDate</span></div>
-                                                            </div> <br />
+                                                            <div class="second" style="margin-bottom:10px;">
+                                                                <div class="client-field"> Start Date:<span style="font-weight:normal">@item.StartDate</span></div>
+                                                            </div> 
+                                                            <br/>
+                                                            <div class="three" style="margin-bottom:10px;"> <span><b>End Date:</b></span>@item.EndDate</div>
 
-                                                            <div class="row three"> <span>End Date:</span>@item.EndDate</div> <br />
-
-                                                            <div class="row four">
-                                                                <span>JD:</span> @item.JobDescription
-                                                            </div> <br />
-                                                            <div class="row ">
-                                                                <span>Assessment Group:</span> @item.AssessmentGroupName
-                                                            </div> <br />
-                                                            <div class="row ">
-                                                                <span>File Link:</span><a href="" target="_blank"> @item.Filelink</a>
-                                                            </div> <br />
+                                                            <div class="four" style="margin-bottom:10px;">
+                                                                <span><b>JD:</b></span> @item.JobDescription
+                                                            </div>
+                                                            <div >
+                                                                <span><b>Assessment Group:</b></span> @item.AssessmentGroupName
+                                                            </div> 
+                                                            
 
                                                         </div>
                                                     </div>
-                                                </div>
+                                             
 
                                             </div>
 
@@ -136,7 +130,7 @@
                                                             }*@
                                                     </div>
 
-                                                    <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
+                                                    <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right ">
                                                         <button class="mdc-fab app-fab--absolute item1" aria-label="Questions">
                                                             <span onclick="javascript:Candidates('@item.id', '@item.id');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
                                                         </button>
