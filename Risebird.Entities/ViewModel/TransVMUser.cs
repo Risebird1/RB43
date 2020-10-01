@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.ViewModel
+﻿namespace Risebird.Entities.ViewModel
 {
     public class TransVMUser
     {
@@ -12,5 +8,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsAdded { get; set; }
         public string EmailId { get; set; }
         public string ProfileName { get; set; }
+        public int ProfileId { get; set; }
     }
 }

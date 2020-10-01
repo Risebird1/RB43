@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -13,6 +7,11 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -34,11 +33,11 @@ namespace Risebird.MicroService
 
         }
         [FunctionName("UpdateVMIP")]
-        public async Task Run([TimerTrigger("0 * * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
-            var vmsInDb = await  _proctorInterviewsRepository.GetAllVMs();
+            var vmsInDb = await _proctorInterviewsRepository.GetAllVMs();
             UpdateAzureVmIPsnOSType(vmsInDb);//update ips of the vms
 
         }
@@ -76,12 +75,12 @@ namespace Risebird.MicroService
                                     publicIP = GetVmDnsNameOrIpAddress(credentials, vm.ResourceGroupName, pipname, resourceType = "Microsoft.Network/publicIPAddresses");
                                 }
                                 finalVmList.Add(new VMProperties { id = vm.id, OSType = osType, PublicIP = publicIP, PrivateIP = privateIP });
-                                
+
                             }
 
                         }
                     }
-                    
+
                 }
                 _proctorInterviewsRepository.UpdateVMIP(finalVmList);
             }

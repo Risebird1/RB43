@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +24,7 @@ namespace Risebird.Business
         private readonly HttpClient _httpClient;
 
 
-        public ProctorInterviewsService(INotificationHelper notificationHelper,  IApplicationErrorLogger applicationErrorLogger, IProctorInterviewsRepository proctorInterviewsRepository, HttpClientHelper factory)
+        public ProctorInterviewsService(INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger, IProctorInterviewsRepository proctorInterviewsRepository, HttpClientHelper factory)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
@@ -103,7 +102,7 @@ namespace Risebird.Business
 
                 var response = await _httpClient.SendRequestAsync(HttpMethod.Get, path, null, functionKey, "", _cancellationToken);
                 var result = response.Content.ReadAsStringAsync().Result;
-                result = result.Replace("\\r", "\r").Replace("\\n","\n").Replace("\"","").Replace("\\","\"");
+                result = result.Replace("\\r", "\r").Replace("\\n", "\n").Replace("\"", "").Replace("\\", "\"");
                 var vmsInCloudPortal = JsonConvert.DeserializeObject<VMServerProperty>(result);
                 if (vmsInCloudPortal == null)
                     return null;
@@ -135,9 +134,9 @@ namespace Risebird.Business
         {
             try
             {
-                var vmPropList = new List<VMProperties>(); 
-                var triggeredVMList = new List<TriggeredVM>(); 
-                if(vmList != null && vmList.Count()>0)
+                var vmPropList = new List<VMProperties>();
+                var triggeredVMList = new List<TriggeredVM>();
+                if (vmList != null && vmList.Count() > 0)
                 {
                     foreach (var vm in vmList)
                     {
@@ -153,14 +152,14 @@ namespace Risebird.Business
                     {
                         //add the vm to Triggered VMs
                         var vmId = _proctorInterviewsRepository.GetVM(vm.Name, vm.ResourceGroupName);
-                        if(vmId!=0)
+                        if (vmId != 0)
                         {
                             var obj = new TriggeredVM();
                             obj.VMPropertyId = vmId;
                             obj.LastAction = "Added";
                             obj.ExpectedStatus = "";
                             triggeredVMList.Add(obj);
-                        
+
                         }
                         else
                         {
@@ -171,8 +170,8 @@ namespace Risebird.Business
                     await _proctorInterviewsRepository.AddBulkVmTrigger(triggeredVMList);
                     return result;
                 }
-                
-                
+
+
                 return "Failed. No VMs selected.";
             }
             catch (Exception ex)
@@ -202,16 +201,16 @@ namespace Risebird.Business
                 var dto = new RunPowershellDTO();
                 dto.Script = scripts;
                 dto.Url = Url;
-               
+
                 var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
                 var result = response.Content.ReadAsStringAsync().Result;
-                if(result.ToLower().Contains("success"))
+                if (result.ToLower().Contains("success"))
                 {
                     //update password in database
                     await _proctorInterviewsRepository.UpdateVMPassword(model.VmId, model.Password);
                 }
                 return result;
-                
+
 
             }
             catch (Exception ex)
@@ -234,5 +233,34 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public IEnumerable<TransVMUser> GetUserList(int vmId, int profileId)
+        {
+            try
+            {
+                var result = _proctorInterviewsRepository.GetUserList(vmId, profileId).OrderByDescending(x => x.IsAdded == true).ToList();
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateVMUsers(int[] userList, int vmId, int profileId)
+        {
+            try
+            {
+                return await _proctorInterviewsRepository.UpdateVMUsers(userList, vmId, profileId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

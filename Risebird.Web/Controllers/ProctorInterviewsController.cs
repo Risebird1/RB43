@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
@@ -15,6 +10,12 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -27,10 +28,11 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IProctorInterviewsService _proctorInterviewsService;
         private readonly CancellationToken _cancellationToken;
-     
+        private IProfileService _profileService;
 
 
-        public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService, HttpClientHelper factory)
+
+        public ProctorInterviewsController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IProctorInterviewsService proctorInterviewsService, HttpClientHelper factory, IProfileService profileService)
         {
             _httpClient = factory.GetHttpClient();
             _applicationErrorLogger = applicationErrorLogger;
@@ -38,7 +40,8 @@ namespace Risebird.Web.Controllers
             _notificationHelper = notificationHelper;
             _configuration = configuration;
             _proctorInterviewsService = proctorInterviewsService;
-          
+            _profileService = profileService;
+
 
         }
 
@@ -53,18 +56,18 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR")
                 {
                     var model = new VirtualMachineVM();
-                    model.VMList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
-                    foreach (var vm in model.VMList)
+                    var vmList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
+                    foreach (var vm in vmList)
                     {
-                        if(vm.LastAction!=null && vm.LastAction!="Added")
+                        if (vm.LastAction != null && vm.LastAction != "Added")
                         {
-                            if(vm.LastAction.ToLower()=="start")
+                            if (vm.LastAction.ToLower() == "start")
                             {
                                 vm.StatusDesc = "Starting";
                             }
-                            else if(vm.LastAction.ToLower() == "poweroff")
+                            else if (vm.LastAction.ToLower() == "deallocate")
                             {
-                                vm.StatusDesc = "Stopping";
+                                vm.StatusDesc = "Deallocating";
                             }
 
                         }
@@ -79,14 +82,14 @@ namespace Risebird.Web.Controllers
                         model.Message = TempData["SuccessErrorMessageProctor"].ToString();
                         TempData.Remove("SuccessErrorMessageProctor");
                     }
-                    foreach (var vm in model.VMList)
+                    foreach (var vm in vmList)
                     {
-                        if (vm.StatusDesc.ToLower()=="running" || vm.StatusDesc.ToLower() == "starting")
+                        if (vm.StatusDesc.ToLower() == "running" || vm.StatusDesc.ToLower() == "starting")
                         {
                             vm.ImageUrl = "/img/Cards_Png/01_Green-White.png";
 
                         }
-                        else if (vm.StatusDesc.ToLower() == "stopping" || vm.StatusDesc.ToLower()=="deallocating")
+                        else if (vm.StatusDesc.ToLower() == "stopping" || vm.StatusDesc.ToLower() == "deallocating")
                         {
                             vm.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                         }
@@ -95,6 +98,8 @@ namespace Risebird.Web.Controllers
                             vm.ImageUrl = "/img/Cards_Png/01_Black-White.png";
                         }
                     }
+                    model.VMList = vmList.Where(x => x.Status.HasValue && x.Status == (int)VMState.running).ToList();
+                    model.VMList.AddRange(vmList.Where(x => !x.Status.HasValue || x.Status != (int)VMState.running).ToList());
                     model.Profile = profileName;
                     return View(model);
 
@@ -111,7 +116,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> StartStopVM(int vmId,string name, string rgName, string action)
+        public async Task<bool> StartStopVM(int vmId, string name, string rgName, string action)
         {
             try
             {
@@ -127,9 +132,16 @@ namespace Risebird.Web.Controllers
                     var functionKey = "D1fJaqGva3a/p9biA7clekVxAyfOialCKpO3SHpgHCP3WdBa4lOBnA==";
 
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
-                    if(response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
+                    if (response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
                     {
+
+                        TempData["SuccessErrorMessageProctor"] = $"Successfully performed {action} action for {name}!";
                         return true;
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageProctor"] = $"Failed to perform {action} action for {name}!";
+
                     }
 
                 }
@@ -179,14 +191,14 @@ namespace Risebird.Web.Controllers
             try
             {
 
-                if (vmId!=0)
+                if (vmId != 0)
                 {
-                    
+
                     var path = $"https://risebirdmicroservice.azurewebsites.net/api/GetRDPFile";
                     var functionKey = "rE8wOZBltuOTe44IBcAY28zAydprjs/WjO8tONe4mb2HIOGwtO8onw==";
 
-                    var response =await _httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, functionKey, "", _cancellationToken);
-                    if(response!=null)
+                    var response = await _httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, functionKey, "", _cancellationToken);
+                    if (response != null)
                     {
                         var rdpfile = response.Content.ReadAsStringAsync().Result;
                         if (rdpfile != null)
@@ -270,7 +282,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var result = await _proctorInterviewsService.ResetPassword(model);
-                if(result.ToLower().Contains("success"))
+                if (result.ToLower().Contains("success"))
                 {
                     TempData["SuccessErrorMessageProctor"] = "Password reset successful for " + model.VmName;
 
@@ -289,7 +301,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditNamePassword(int id, string customName, string password, string vmName)
@@ -304,9 +316,9 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                       if(await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password))
+                        if (await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password))
                         {
-                            TempData["SuccessErrorMessageProctor"] = "Successfully saved data for " +vmName;
+                            TempData["SuccessErrorMessageProctor"] = "Successfully saved data for " + vmName;
                             return Json(true);
                         }
                         else
@@ -315,7 +327,7 @@ namespace Risebird.Web.Controllers
                             return Json(false);
 
                         }
-                        
+
                     }
                     else
                     {
@@ -332,6 +344,79 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageProctor"] = "Failed to save the data for " + vmName;
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult VMUsers(int vmId, string vmName)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var model = new VMUsersMapping
+                {
+                    VmId = vmId,
+                    VmName = vmName,
+                    UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId, (int)ProfileEnum.HR)),
+                    ProfileList = new SelectList(_profileService.GetProfile().Where(x=>x.id !=(int)ProfileEnum.Admin), "id", "Name",(int)ProfileEnum.HR)
+                };
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+
+        public IActionResult GetUserList(int profileId, int vmId)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var model = new VMUsersMapping
+                {
+                    UsersList = (IList<TransVMUser>)(_proctorInterviewsService.GetUserList(vmId, profileId))
+                };
+                return PartialView("VMUsersPartial", model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateVMUsers(int[] userList, int vmId, string vmName, int profileId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (await _proctorInterviewsService.UpdateVMUsers(userList, vmId, profileId))
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Users for the VM " + vmName + " updated successfully!";
+                        return Json(true);
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Saving users for the VM " + vmName + " failed!";
+                        return Json(false);
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageProctor"] = "Saving users for the VM " + vmName + " failed!";
+                return Json(false);
             }
         }
     }
