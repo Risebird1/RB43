@@ -5,7 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+<link href="~/Newassets/css/irf.css?v=6" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -82,7 +83,7 @@
                                                             <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="far fa  fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                            
+
 
 
 
@@ -116,9 +117,9 @@
                                                                 <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                                 <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                
 
-                                                             
+
+
 
 
                                                             </td>
@@ -282,7 +283,7 @@
                     {
                         //if Yes do this
                         window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
-           
+
                     }
                 )
 
@@ -298,7 +299,7 @@
                     function ()
                     {
                         window.location.href = '/IRF/SampleQuestions?id='+@Model.IRFId.ToString();
-                      
+
                     }
                 )
             }
