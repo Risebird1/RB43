@@ -1988,7 +1988,6 @@ namespace Risebird.Repository
                         IRFId = IrfId,
 
                     });
-
                     foreach (var item in candidateCuratedScore)
                     {
 
