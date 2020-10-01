@@ -334,5 +334,17 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+   
+       public async Task<ActionResult> ProctorTab()
+        {
+            return View("ProctorTab");
+
+        }
     }
+
+
+
+
+
+
 }
