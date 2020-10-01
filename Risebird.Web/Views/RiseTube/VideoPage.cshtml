@@ -482,13 +482,14 @@
                                                                 {
                                                                     @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
                                                                     {
-                                                                        <video controls class="vjs-tech video-width btnvideo" controlsList="nodownload" autoplay>
+                                                                        <video style="pointer-events: none;" controls class="vjs-tech video-width btnvideo"   controlsList="nodownload"  autoplay >
+                                                                            <source src="@Model.VideoLink" type="video/mp4">"  autoplay>
                                                                             <source src="@Model.VideoLink" type="video/mp4">
                                                                         </video>
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
                                                                     {
-                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload" autoplay>
+                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' disablePictureInPicture controlsList="nofullscreen nodownload playsinline " autoplay>
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
                                                                         </video>
                                                                     }
@@ -701,7 +702,7 @@
                                                                     <div id="style-2" class="single-video-right ">
                                                                         <div>
                                                                             <div>
-                                                                                <div>
+                                                                                <div class="relatedvideo">
                                                                                     @foreach (var videolist in Model.MeetingPatch)
                                                                                     {
                                                                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
@@ -713,9 +714,9 @@
 
                                                                                                     @if (videolist.VideoLink.Contains(".mp4"))
                                                                                                     {
-                                                                                                        <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
-                                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                                        </video>
+                                                                                                    <video controls style=" background:black!important;width:100%; height:100%;  pointer-events: none;" disablePictureInPicture controlsList="nofullscreen nodownload">
+                                                                                                        <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                                    </video>
                                                                                                     }
                                                                                                     else
                                                                                                     {
@@ -744,7 +745,7 @@
 
                                                                                                     @if (videolist.VideoLink.Contains(".mp4"))
                                                                                                     {
-                                                                                                        <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                                        <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                                                         </video>
                                                                                                     }
@@ -1486,19 +1487,19 @@
                                                         <div id="style-2" class="single-video-right splitvideo-desktop">
                                                             <div>
                                                                 <div>
-                                                                    <div>
+                                                                    <div class="relatedvideo">
                                                                         @foreach (var videolist in Model.MeetingPatch)
                                                                         {
                                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                             @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                             {
-                                                                                <div class="video-card video-card-list videosidelist">
+                                                                                <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" >
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -1523,13 +1524,13 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                <div class="video-card video-card-list videosidelist">
+                                                                                <div class="video-card video-card-list videosidelist"  onclick="changeVideo(@videolist.Priority)">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" >
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -1587,7 +1588,7 @@
                                                                                             @if (videolist.ThumbnailImage != null)
                                                                                             {
                                                                                                 <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                             @if (Model.IsClientCurated)
@@ -1724,7 +1725,7 @@
                                                                                     @if (videolist.ThumbnailImage != null)
                                                                                     {
                                                                                         <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                    <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                    <video controls style=" background:black!important;width:100%; height:100% "  controlsList="nodownload ">
                                                                                         <source src="@videolist.VideoLink" type="video/mp4">
                                                                                     </video>
                                                                                     @if (Model.IsClientCurated)
@@ -1845,7 +1846,7 @@
                                                                         @if (videolist.ThumbnailImage != null)
                                                                         {
                                                                             <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                        <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                        <video controls style=" background:black!important;width:100%; height:100% "  disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                         </video>
                                                                         @if (Model.IsClientCurated)
@@ -3401,6 +3402,7 @@
     [role="tooltip"] {
         visibility: hidden;
     }
+ 
 </style>
 <script>
     $(document).ready(function () {
@@ -3887,12 +3889,12 @@
         var html = '';
 
         if (videourl.includes(".mp4") || videourl.includes(".org")) {
-            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload" autoplay>';
+            html += '<video controls class="vjs-tech video-width btnvideo" controlsList="nodownload "  autoplay>';
             html += '<source src="' + videourl + '" type="video/mp4">';
             html += '</video>';
         }
         else if (videourl.includes("/manifest")) {
-            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " controlsList="nodownload" autoplay>';
+            html += '<video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup="{ "logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false } " disablePictureInPicture controlsList="nofullscreen nodownload" playsinline style="pointer-events: none;" autoplay>';
             html += '<source src="' + videourl + '" type="application/vnd.ms-sstr+xml" />';
             html += ' </video>';
         }
@@ -3907,6 +3909,8 @@
 <script type="text/javascript">
     $(".sb-container").scrollBox();
 </script>
+
+
 <script>
     ; (function () {
 
