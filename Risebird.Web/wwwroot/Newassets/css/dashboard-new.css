@@ -5625,7 +5625,7 @@ button.close {
 
     #searchGo button.btn svg, #btnSearch svg {
         position: relative;
-        top: -9px;
+        top: 0px;
     }
 
 .desktop-view {
