@@ -49,7 +49,8 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="/IRF/InterviewerEntitle" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" ><span class="fa fa-chevron-left"></span> Back to List</a>
+                        <a onclick="AssessmentLike(@Model.id)" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Show Interest</a>
+                        <a href="/IRF/InterviewerEntitleDetails/@Model.backid" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>
 
                     </div>
                 </div>
@@ -93,15 +94,7 @@
                                 </div>
                                 <div style="clear:both; height:10px;"></div>
 
-                                @*<div class="col-md-12 col-lg-12 assessment-blk">
-            <h1>Years of Experience </h1>
-            <h2> @Model.YearsOfExperience</h2>
-        </div>
-
-        <div class="col-md-12 col-lg-12 assessment-blk">
-            <h1>Assessment Type</h1>
-            <h2>@Model.AssessmentTypes</h2>
-        </div>*@
+                               
 
                                 <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
                                     <h1>  Tested Skills Primary</h1>
@@ -194,3 +187,15 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
+<script>
+    function AssessmentLike(id) {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/AssessmentLike",
+            data: { id: id },
+            success: function (data) {
+                alert("Successfully Liked!");
+            }
+        });
+    }
+</script>

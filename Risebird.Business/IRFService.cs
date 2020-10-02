@@ -1314,5 +1314,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string AssessmentLike(int id,string emailid)
+        {
+            try
+            {
+                return _irfRepository.AssessmentLike(id, emailid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }
