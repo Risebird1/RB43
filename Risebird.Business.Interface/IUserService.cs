@@ -49,5 +49,7 @@ namespace Risebird.Business.Interface
         void UpdateUserSigInDetails(string emailId);
 
         string GetCurrenttheme(string emailId);
+        List<AssignmentVM> GetInterviewerEntitle();
+        List<AssignmentVM> InterviewerEntitleDetails(int id);
     }
 }

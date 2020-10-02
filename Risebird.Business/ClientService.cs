@@ -2,6 +2,7 @@
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -102,6 +103,59 @@ namespace Risebird.Business
                     return clientRoles.Result.ToList();
                 else
                     return null;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string AddClientJd(ClientJdVM _client)
+        {
+            try
+            {
+                return _clientRepository.AddClientJd(_client).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public IEnumerable<ClientJdVM> FetchClientJd(int clientid)
+        {
+            try
+            {
+                return _clientRepository.FetchClientJd(clientid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        {
+            try
+            {
+                return _clientRepository.AddCandidateJDScore(IrfId, candidateCuratedScore);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public IList<CandidateCuratedScore> GetCandidateJDScore(int id)
+        {
+            try
+            {
+                var result = (IList<CandidateCuratedScore>)_clientRepository.GetCandidateJDScore(id);
+                return result;
             }
 
             catch (Exception e)

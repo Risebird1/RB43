@@ -1381,7 +1381,6 @@ namespace Risebird.Repository
                     {
                         techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual);
                     }
-
                     SqlCommand cmdTechReport = new SqlCommand("usp_TechSkillReportBulkInsert", con);
                     cmdTechReport.CommandType = CommandType.StoredProcedure;
                     cmdTechReport.Parameters.Add(new SqlParameter("@TechSkillReportBulkData", SqlDbType.Structured));
@@ -1391,8 +1390,6 @@ namespace Risebird.Repository
                     {
                         con.Close();
                     }
-
-
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportComments", parameters,
                             commandType: CommandType.StoredProcedure);
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerReportRecommendation", parametersRecomm,
@@ -1413,6 +1410,221 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
+        }
+        public IEnumerable<AssignmentVM> GetInterviewerAssessment(string emailid)
+        {
+            try
+            {
+                int userid = 0;
+                var query = "Select id from UserList where Emailid = @Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                }
+                var finalquery = "Select ia.id,ia.Overview,ia.Senioritylevel,ia.Difficultylevel,ia.TestedSkill,ag.AssessmentGroup,ia.isApproved as IsApproved,@emailid as Createdby from InterviewerAssessments ia join AssessmentGroup ag on ia.Assessmentgroupid=ag.id Where ia.createdby = @createdby";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@createdby", userid);
+                finaldynamicParameters.Add("@emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<AssignmentVM>(finalquery, finaldynamicParameters);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string AddAssessment(AssignmentVM _assessment)
+        {
+            try
+            {
+                int userid = 0;
+                int assessmentid = 0;
+                var query = "Select id from UserList where Emailid = @Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", _assessment.Createdby);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                }
+                //Add Assessment
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@Assessmentgroupid", Convert.ToInt32(_assessment.AssessmentGroup));
+                finaldynamicParameters.Add("@Overview", _assessment.Overview);
+                finaldynamicParameters.Add("@Senioritylevel", _assessment.Senioritylevel);
+                finaldynamicParameters.Add("@YearsofExprience", _assessment.YearsofExprience);
+                finaldynamicParameters.Add("@AssessmentType", _assessment.AssessmentType);
+                finaldynamicParameters.Add("@TestedSkill", _assessment.TestedSkill);
+                finaldynamicParameters.Add("@Evaluation", _assessment.Evaluation);
+                finaldynamicParameters.Add("@Environment", _assessment.Environment);
+                finaldynamicParameters.Add("@Difficultylevel", _assessment.Difficultylevel);
+                finaldynamicParameters.Add("@EmployerType", _assessment.EmployerType);
+                finaldynamicParameters.Add("@EmployerStage", _assessment.EmployerStage);
+                finaldynamicParameters.Add("@EmployerSize", _assessment.EmployerSize);
+                finaldynamicParameters.Add("@createdby", userid);
+                finaldynamicParameters.Add("@Delivery", _assessment.Delivery);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    assessmentid = SqlMapper.Query<int>(con, "usp_AddAssessment", finaldynamicParameters,
+                                          commandType: CommandType.StoredProcedure).FirstOrDefault();
+
+                }
+                //Add question set
+                DataTable questionsDt = new DataTable();
+                questionsDt.Columns.Add("id", typeof(int));
+                questionsDt.Columns.Add("Interviewid", typeof(int));
+                questionsDt.Columns.Add("Question", typeof(string));
+                questionsDt.Columns.Add("Priority", typeof(int));
+                questionsDt.Columns.Add("VideoTitle", typeof(string));
+                questionsDt.Columns.Add("VideoLink", typeof(string));
+                questionsDt.Columns.Add("ThumbnailLink", typeof(string));
+
+                foreach (var item in _assessment.Questionslist)
+                {
+                    if (!String.IsNullOrEmpty(item.QuestionCovered))
+                    {
+                        questionsDt.Rows.Add(assessmentid, 0, item.QuestionCovered, item.Level, item.Time, item.VideoLink, item.Skills);
+                    }
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlCommand cmdQuestions = new SqlCommand("usp_AssessmentQuestionInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
+        public IEnumerable<AssignmentVM> FetchAssessmentGroups()
+        {
+            try
+            {
+                var query = "Select id,AssessmentGroup from AssessmentGroup";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<AssignmentVM>(query, null);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string ChangeStatusAssessment(int assessmentid, int status)
+        {
+            try
+            {
+                var query = "Update InterviewerAssessments set isApproved=@isapproved where id=@assessmentid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@isapproved", status);
+                dynamicParameters.Add("@assessmentid", assessmentid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(query, null);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
+        public string UpdateAssessment(AssignmentVM _assessment)
+        {
+            try
+            {
+                int userid = 0;
+                int assessmentid = 0;
+                var query = "Select id from UserList where Emailid = @Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", _assessment.Createdby);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                }
+                //Add Assessment
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@Assessmentgroupid", Convert.ToInt32(_assessment.AssessmentGroup));
+                finaldynamicParameters.Add("@Overview", _assessment.Overview);
+                finaldynamicParameters.Add("@Senioritylevel", _assessment.Senioritylevel);
+                finaldynamicParameters.Add("@YearsofExprience", _assessment.YearsofExprience);
+                finaldynamicParameters.Add("@AssessmentType", _assessment.AssessmentType);
+                finaldynamicParameters.Add("@TestedSkill", _assessment.TestedSkill);
+                finaldynamicParameters.Add("@Evaluation", _assessment.Evaluation);
+                finaldynamicParameters.Add("@Environment", _assessment.Environment);
+                finaldynamicParameters.Add("@Difficultylevel", _assessment.Difficultylevel);
+                finaldynamicParameters.Add("@EmployerType", _assessment.EmployerType);
+                finaldynamicParameters.Add("@EmployerStage", _assessment.EmployerStage);
+                finaldynamicParameters.Add("@EmployerSize", _assessment.EmployerSize);
+                finaldynamicParameters.Add("@createdby", userid);
+                finaldynamicParameters.Add("@Delivery", _assessment.Delivery);
+                finaldynamicParameters.Add("@Assessmentid", _assessment.id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    assessmentid = SqlMapper.Query<int>(con, "usp_AddAssessment", finaldynamicParameters,
+                                          commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
+                //Add question set
+                DataTable questionsDt = new DataTable();
+                questionsDt.Columns.Add("id", typeof(int));
+                questionsDt.Columns.Add("Interviewid", typeof(int));
+                questionsDt.Columns.Add("Question", typeof(string));
+                questionsDt.Columns.Add("Priority", typeof(int));
+                questionsDt.Columns.Add("VideoTitle", typeof(string));
+                questionsDt.Columns.Add("VideoLink", typeof(string));
+                questionsDt.Columns.Add("ThumbnailLink", typeof(string));
+
+                foreach (var item in _assessment.Questionslist)
+                {
+                    if (!String.IsNullOrEmpty(item.QuestionCovered))
+                    {
+                        questionsDt.Rows.Add(assessmentid, 0, item.QuestionCovered, item.Level, item.Time, item.VideoLink, item.Skills);
+                    }
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlCommand cmdQuestions = new SqlCommand("usp_AssessmentQuestionInsert", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmdQuestions.Parameters.Add(new SqlParameter("@QuestionsDiscussedBulkData", SqlDbType.Structured));
+                    cmdQuestions.Parameters["@QuestionsDiscussedBulkData"].Value = questionsDt;
+                    con.Open();
+                    if (cmdQuestions.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
         }
     }
 }

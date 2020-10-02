@@ -68,5 +68,9 @@ namespace Risebird.Business.Interface
         bool AddUpdateCuratedGroupUsers(int[] users, int curatedGroupId);
         IEnumerable<CuratedUserGroupData> GetCuratedGroupsForCuratedUser(string emailId);
         Task<IEnumerable<IRFInterviewerMembers>> GetIRFInterviewerMembers(int irfId);
+        IEnumerable<InterviewerVM> GetSkillDetails();
+        string Addassignmentgroup(Skilldetails _skilldetails);
+        IEnumerable<AssignmentVM> FetchAssessmentdetails(int id);
+        string AssessmentLike(int id,string emailid);
     }
 }

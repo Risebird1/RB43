@@ -1275,5 +1275,57 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<InterviewerVM> GetSkillDetails()
+        {
+            try
+            {
+                 return  _irfRepository.GetSkillDetails();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string Addassignmentgroup(Skilldetails _skilldetails)
+        {
+            try
+            {
+                return _irfRepository.Addassignmentgroup(_skilldetails);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Failed";
+            }
+        }
+        public IEnumerable<AssignmentVM> FetchAssessmentdetails(int id)
+        {
+            try
+            {
+                return _irfRepository.FetchAssessmentdetails(id);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string AssessmentLike(int id,string emailid)
+        {
+            try
+            {
+                return _irfRepository.AssessmentLike(id, emailid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }

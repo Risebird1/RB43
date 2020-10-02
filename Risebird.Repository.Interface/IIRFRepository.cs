@@ -121,5 +121,9 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CuratedUserGroupData>> GetCuratedGroupsForCuratedUser(string emailId);
         string pickInterviewerSills(string Interviewerids);
         Task<IEnumerable<IRFInterviewerMembers>> GetIRFInterviewerMembers(int irfId);
+        IEnumerable<InterviewerVM> GetSkillDetails();
+        string Addassignmentgroup(Skilldetails _skilldetails);
+        IEnumerable<AssignmentVM> FetchAssessmentdetails(int id);
+        string AssessmentLike(int id,string emailid);
     }
 }

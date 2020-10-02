@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -13,12 +17,18 @@ namespace Risebird.Web.Controllers
     [Authorize]
     public class ClientController : Controller
     {
+        private IInterviewerService _interviewerService;
         private IClientService _clientService;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IUserRepository _userRepository;
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper)
         {
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
+            _interviewerService = interviewerService;
+            _userRepository = userRepository;
+            _azureStorageHelper = azureStorageHelper;
         }
 
         public async Task<IActionResult> List()
@@ -202,6 +212,117 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Deleting Client is Failed";
                 return RedirectToAction("List");
+            }
+        }
+        public async Task<IActionResult> CreateJd()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                bool isClientUser = false;
+                int ClientId = 0;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        var client = await _userRepository.GetClientUserDetails(emailid);
+                        ClientId = client.ClientId;
+                        isClientUser = true;
+                    }
+                    //Fetch ClientJds
+                    var result = _clientService.FetchClientJd(ClientId);
+                    var resultset = _interviewerService.FetchAssessmentGroups();
+                    //bind Dropdown values
+                    var model = new ClientDetails();
+                    model._clientjd = result.ToList();
+                    model._clientjddetails = new ClientJdVM();
+                    model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
+                    model._clientjddetails.ClientId = ClientId;
+                    model._clientjddetails.isClientUser = isClientUser;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public IActionResult CreateJd(ClientDetails model)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    model._clientjddetails.CreatedBy = emailid;
+                    if (model._clientjddetails.File != null)
+                    {
+                        _azureStorageHelper.InsertBlob(model._clientjddetails.File.FileName, "videos", model._clientjddetails.File);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                        var blob = containerRef.GetBlockBlobReference(model._clientjddetails.File.FileName);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        model._clientjddetails.Filelink = uploadedvideoFileURL;
+                    }
+                    var result = _clientService.AddClientJd(model._clientjddetails);
+                    if (result == "Success")
+                    {
+                        return RedirectToAction("CreateJd");
+                    }
+                    else
+                    {
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public IActionResult CandidateJDScore(string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                CandidateCuratedScoreVM model = new CandidateCuratedScoreVM();
+                var result = _clientService.GetCandidateJDScore(Convert.ToInt32(id));
+                model.CandidateCuratedScores = result;
+                model.IRFId = Convert.ToInt32(id);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public IActionResult CandidateJDScore(CandidateCuratedScoreVM model)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList());
+
+                return RedirectToAction("CandidateJDScore", "Client");
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }

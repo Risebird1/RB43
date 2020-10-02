@@ -107,8 +107,34 @@ hr {
 .show .dropdown-menu:before {
     color: #181818!important;
 }
+.assessment h1 {
+    color: #a9a5a5 !important
+}
+.assessment-blk {
+    border: 1px #464343 solid;
+}
+
+.assesment .card .card-body p {
+    color: #9A9A9A;
+}
+.assessment-blk-h {
+    border: 1px #464343 solid;
+}
+    .assessment-grp {
+    color: #9A9A9A;
+}
+.table-h a {
+    color:#9A9A9A !important
+}
+.table-grey thead {
+    background: #121212;
+}
+.table-grey > tbody > tr > td{color:#9a9a9a;}
+
+
+
 table.dataTable thead .sorting:after {
-    color: #121212;
+    color: transparent;
 }
 .relatedvideo .video-card {
     border: 1px #1f1e1e solid;
