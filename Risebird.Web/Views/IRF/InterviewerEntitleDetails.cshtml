@@ -42,13 +42,13 @@
                         <div class="newsletter card-title-space">
                             <div class="content">
                                 <div class="input-group" id="myForm">
-                                    <div class="searchbox">
-                                        <input id="searchinput" type="text" class="form-control txtsearch1" placeholder="Please enter interviewer's name or skill" value="@ViewBag.searchvalue">
+                                    @*<div class="searchbox">
+                                        <input id="searchinput" type="text" class="form-control txtsearch1" placeholder="Please enter Assessment Group name" value="@ViewBag.searchvalue">
                                         <span class="input-group-btn" id="searchGo">
                                             <button class="btn btn3" id="btnSearch" value="Search" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg></button>
                                         </span>
 
-                                    </div>
+                                    </div>*@
                                 </div>
                             </div>
                         </div>
@@ -61,14 +61,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
 
 
     <div class="content client assesment">
@@ -96,9 +88,11 @@
                                         <div class="card-content-holder border card-blue">
                                             <div class="card-header">
                                                 <div class="row">
-                                                   
-                                                    <div class="col-md-12 col-sm-12 card-header-buttons action text-right">
-                                                        @item.Seniority
+                                                    <div class="col-md-5 col-sm-5 card-header-buttons action">
+                                                        <h6 class="assessment-grp"><a href="@Url.Action("AssessmentDetails","IRF",new { id=item.id})">@item.AssessmentGroup</a></h6>
+                                                    </div>
+                                                    <div class="col-md-7 col-sm-7 card-header-buttons action text-right">
+                                                        Seniority Level: @item.Seniority
                                                     </div>
                                                 </div>
                                             </div>
@@ -109,7 +103,7 @@
                                                 
                                                     <div class="statusInfo" style="max-width:100%">
                                                         <div class="group inner">
-                                                            <h6 class="assessment-grp"><a href="@Url.Action("AssessmentDetails","IRF",new { id=item.id})">@item.AssessmentGroup</a></h6>
+                                                           
                                                             <p>@item.Overview</p>
                                                             <p><b>Tested Skills:</b> @item.TestedSkill</p>
                                                             <p><b>Difficulty Level:</b> @item.Difficultylevel</p>

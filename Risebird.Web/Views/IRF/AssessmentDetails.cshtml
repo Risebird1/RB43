@@ -83,15 +83,25 @@
 
                                 <div class="col-md-12 col-lg-12"><h1>Seniority Level</h1></div>
                                 <div class="col-md-12 col-lg-12">@Model.Seniority</div>
-                                <div class="col-md-12 col-lg-12 assessment-blk">
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
                                     <h1>Years of Experience </h1>
-                                    <h2> @Model.YearsOfExperience</h2>
+                                    @Model.YearsOfExperience
                                 </div>
-
-                                <div class="col-md-12 col-lg-12 assessment-blk">
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
                                     <h1>Assessment Type</h1>
-                                    <h2>@Model.AssessmentTypes</h2>
+                                    @Model.AssessmentTypes
                                 </div>
+                                <div style="clear:both; height:10px;"></div>
+
+                                @*<div class="col-md-12 col-lg-12 assessment-blk">
+            <h1>Years of Experience </h1>
+            <h2> @Model.YearsOfExperience</h2>
+        </div>
+
+        <div class="col-md-12 col-lg-12 assessment-blk">
+            <h1>Assessment Type</h1>
+            <h2>@Model.AssessmentTypes</h2>
+        </div>*@
 
                                 <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
                                     <h1>  Tested Skills Primary</h1>
@@ -116,19 +126,31 @@
                                     @Model.Environment
                                 </div>
                                 <div style="clear:both; height:10px;"></div>
-                                <div class="w-full pull-left pt10">
-                                    <h1 class="pull-left"> Difficulty Level :</h1> <h3> @Model.Difficultylevel</h3>
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
+                                    <h1>
+                                        Difficulty Level
+                                    </h1>
+                                    @Model.Difficultylevel
                                 </div>
-                                <div class="w-full pull-left pt10">
-                                    <h1 class="pull-left"> Employer Type :</h1><h3> @Model.EmployerType</h3>
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
+                                    <h1>
+                                        Employer Type
+                                    </h1>
+                                    @Model.EmployerType
                                 </div>
-                                <div class="w-full pull-left pt10">
-                                    <h1 class="pull-left">  Employer Stage :</h1> <h3>@Model.EmployerStages</h3>
+                                <div style="clear:both; height:10px;"></div>
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
+                                    <h1>
+                                        Employer Stage
+                                    </h1>
+                                    @Model.EmployerStages
                                 </div>
-                                <div class="w-full pull-left pt10">
-                                    <h1 class="pull-left"> Employer Size :</h1><h3> @Model.EmployerSizes</h3>
+                                <div class="col-md-6 col-lg-6 pull-left assessment-blk-h">
+                                    <h1>
+                                        Employer Size
+                                    </h1>
+                                    @Model.EmployerSizes
                                 </div>
-
 
                                 <div style="clear:both; height:10px;"></div>
                                 <table class="table table-grey dt-responsive">
@@ -144,14 +166,14 @@
                                     <tbody>
                                         @foreach (var item in Model.Questionslist)
                                         {
-                                        <tr>
-                                            <td class="br-g ">@item.QuestionCovered</td>
-                                            <td class="br-g text-center">@item.Skills</td>
-                                            <td class="br-g text-center">@item.Levels</td>
-                                            <td class="text-center">@item.Time</td>
-                                            <td class="text-center">@item.VideoLink</td>
+                                            <tr>
+                                                <td class="br-g ">@item.QuestionCovered</td>
+                                                <td class="br-g text-center">@item.Skills</td>
+                                                <td class="br-g text-center">@item.Levels</td>
+                                                <td class="text-center">@item.Time</td>
+                                                <td class="text-center">@item.VideoLink</td>
 
-                                        </tr>
+                                            </tr>
                                         }
                                     </tbody>
                                 </table>
