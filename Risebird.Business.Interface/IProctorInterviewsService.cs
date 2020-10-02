@@ -17,5 +17,7 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateVMNamePassword(int id, string customName, string password);
         IEnumerable<TransVMUser> GetUserList(int vmId, int profileId);
         Task<bool> UpdateVMUsers(int[] userList, int vmId, int profileId);
+        Task<IEnumerable<ProctorVMQuestions>> GetVMQuestions(int vmId);
+        Task<bool> UpdateVMQuestions(ProctorQuestionsViewModel model);
     }
 }

@@ -129,28 +129,33 @@
                                                             <span>VM Name:</span>@item.Name
                                                         </div> <br /> <br />
 
-                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div> <br /> <br />
-                                                                                                                                            <div class="row three" style="position:relative;">
-                                                                                                                                                <div style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
+                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div>
+                                                        <br />
+                                                        <br />
+                                                        <div class="row three" style="position:relative;">
+                                                            <div style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
 
-                                                                                                                                               <!--- <div class="pull-left">
-                                                                                                                                                    <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.Password" style="background:none;">
-                                                                                                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-                                                                                                                                                </div>--->
+                                                            <!--- <div class="pull-left">
+             <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.Password" style="background:none;">
+             <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+         </div>--->
 
 
 
-                                                                                                                                            <div style="position:relative">
-                                                                                                                                                <div class="pull-left" id="password-field" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
-                                                                                                                                                
-                                                                                                                                                @if (item.Password != null)
-                                                                                                                                                {<span class="secret">********</span>
-                                                                                                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-                                                                                                                                                }
-                                                                                                                                                else
-                                                                                                                                                { <span toggle="#password-field" class=" toggle-password" id="toggle-password"></span>}
-                                                                                                                                            </div>
-                                                                                                                                                </div> <br />
+                                                            <div style="position:relative">
+                                                                <div class="pull-left" id="password-field" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
+
+                                                                @if (item.Password != null)
+                                                                {<span class="secret">********</span>
+                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+                                                                }
+                                                                else
+                                                                { <span toggle="#password-field" class=" toggle-password" id="toggle-password"></span>}
+                                                            </div>
+                                                        </div>
+
+
+                                                        <br />
                                                     </div>
                                                 </div>
                                             </div>
@@ -189,7 +194,7 @@
 
 
                                                     }
-                                                   
+
                                                     else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
                                                     {
 
@@ -197,6 +202,9 @@
                                                             <i class="fa fa-play"></i>
                                                         </button>
                                                     }
+                                                    <button id="questionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("ProctorVMQuestions", "ProctorInterviews", new { vmId = item.id})'">
+                                                        <i class="fa fa-question"></i>
+                                                    </button>
 
                                                 </div>
                                             </div>

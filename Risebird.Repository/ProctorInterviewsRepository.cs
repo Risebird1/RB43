@@ -472,5 +472,92 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IEnumerable<ProctorVMQuestions>> GetVMQuestions(int vmId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@vmId", vmId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<ProctorVMQuestions>(con, "usp_GetVMQuestions", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+               await  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
+        public async Task<bool> UpdateVMQuestions(ProctorQuestionsViewModel model)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@vmId", model.VmId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_DeleteVMQuestions", parameters,
+                       commandType: CommandType.StoredProcedure);
+
+
+
+                    if (model.QuestionList != null && model.QuestionList.Count() > 0)
+                    {
+                        DataTable vmQuestionDt = new DataTable();
+                        vmQuestionDt.Columns.Add("VmId", typeof(int));
+                        vmQuestionDt.Columns.Add("Priority", typeof(int));
+                        vmQuestionDt.Columns.Add("Question", typeof(string));
+                        vmQuestionDt.Columns.Add("Detail", typeof(string));
+                        vmQuestionDt.Columns.Add("VideoLink", typeof(string));
+                        vmQuestionDt.Columns.Add("Time", typeof(int));
+                        vmQuestionDt.Columns.Add("Level", typeof(int));
+                        vmQuestionDt.Columns.Add("Skill", typeof(string));
+
+                        foreach (var item in model.QuestionList)
+                        {
+                            vmQuestionDt.Rows.Add(model.VmId, item.Priority, item.Question, item.Detail, item.VideoLink, item.Time, item.Level, item.Skill);
+                        }
+
+                        SqlCommand cmd = new SqlCommand("usp_VMQuestionsBulkInsert", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@VMQuestionsBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@VMQuestionsBulkData"].Value = vmQuestionDt;
+                        con.Open();
+                        if (cmd.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+
+
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

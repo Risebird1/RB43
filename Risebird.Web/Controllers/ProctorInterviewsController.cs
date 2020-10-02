@@ -419,5 +419,66 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ProctorVMQuestions(int vmId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    ProctorQuestionsViewModel model = new ProctorQuestionsViewModel();
+                    model.VmId = vmId;
+                    model.QuestionList = (IList<ProctorVMQuestions>)(await _proctorInterviewsService.GetVMQuestions(vmId));
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+
+            }
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ProctorVMQuestions(ProctorQuestionsViewModel model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (await _proctorInterviewsService.UpdateVMQuestions(model))
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Questions updated successfully!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Failed to save the Questions!";
+                        return RedirectToAction("Index");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageProctor"] = "Failed to save the Questions!";
+                return RedirectToAction("Index");
+            }
+        }
+
     }
 }
