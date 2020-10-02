@@ -25,3 +25,4 @@ Begin
  Insert Into Clientjd values(@StartDate,@EndDate,@JobDescription,@AssessmentGroup,@CreatedBy,Getdate(),@ClientId,@JDTitle,@Filelink)   
    
 End 
+GO

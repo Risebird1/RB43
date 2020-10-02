@@ -14,7 +14,9 @@ namespace Risebird.Entities.Enum
         [Description("Junior")]
         Junior = 1,
         [Description("Mid Level")]
-        MidLevel = 2
+        MidLevel =2,
+        [Description("Senior Level")]
+        SeniorLevel = 3
     }
     public enum AssessmentType
     {
@@ -30,22 +32,26 @@ namespace Risebird.Entities.Enum
         [Description("Automatic")]
         Automatic = 1,
         [Description("Manual")]
-        Manual = 2
+        Manual = 2,
+        [Description("SemiAutomatic")]
+        SemiAutomatic = 3
     }
     public enum EmployerStage
     {
         [Description("Enterprise")]
         Enterprise = 1,
         [Description("Public Limited")]
-        PublicLimited = 2
+        PublicLimited = 2,
+        [Description("Start Up")]
+        StartUp = 3
     }
     public enum EmployerSize
     {
-        [Description("1000-5000")]
+        [Description("0-50")]
         Level1 = 1,
-        [Description("5001-10,000")]
+        [Description("51-1000")]
         Level2 = 2,
-        [Description("10,001+")]
+        [Description("1000+")]
         Level3 = 3
     }
     public enum AssessmentYearsOfExperience
@@ -67,8 +73,8 @@ namespace Risebird.Entities.Enum
         Easy = 2,
         [Description("Medium")]
         Medium = 3,
-        [Description("EaMediumsy")]
-        EaMediumsy = 4,
+        [Description("MediumHard")]
+        MediumHard = 4,
         [Description("Hard")]
         Hard = 5,
     }
