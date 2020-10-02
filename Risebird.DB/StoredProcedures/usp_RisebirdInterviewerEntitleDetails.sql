@@ -20,5 +20,6 @@ inner join [dbo].[UserList] ul on inter.UserId = ul.id
 inner join TransInterviewerSkill tis on tis.InterviewerProfileId=inter.Id  
 where ul.IsActive =1 and tis.SkillId=@id  
 END  
+GO
   
   

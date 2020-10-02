@@ -483,7 +483,7 @@
                                                                                     {
                                                                                         @if (videolist.ThumbnailImage != null)
                                                                                         {<img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                        <video controls style=" background:black!important;width:100%; height:100%" autoplay>
+                                                                                        <video  style=" background:black!important;width:100%; height:100%" autoplay>
                                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                                         </video>
                                                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Interview", new { id = videolist.imid })'" style=" cursor: pointer;"></a> }
@@ -755,7 +755,7 @@
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -786,7 +786,7 @@
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
