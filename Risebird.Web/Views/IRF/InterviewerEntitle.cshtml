@@ -43,16 +43,9 @@
 
                 <div class="pull-right">
                     <div>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
-                            {
-                                @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim() == "Admin")
-                                {
-                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to create assessment group" onclick="CreateAssignmetGroup()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Create Assessment Group </font></span></button>
-                                }
-                            }
-                        }
+
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to create assessment group" onclick="CreateAssignmetGroup()" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Create Assessment Group </font></span></button>
+
                         <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>
 
                     </div>
@@ -93,6 +86,7 @@
                                 <thead>
                                     <tr>
                                         <th width="70%">Assessment Group</th>
+                                        <th>Primary Skills</th>
                                         <th>Number Of Assessments</th>
                                     </tr>
                                 </thead>
@@ -101,8 +95,9 @@
                                     @foreach (var item in Model._assessment)
                                     {
                                         <tr>
-                                            <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills</a></td>
-                                            <td class="table-h">@item.Assessmentcount</td>
+                                            <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.AssessmentGroup</a></td>
+                                            <td><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.PrimarySkills </a></td>
+                                            <td class="table-h"><a href="@Url.Action("InterviewerEntitleDetails","IRF",new { id=item.id})">@item.Assessmentcount</a></td>
                                         </tr>
                                     }
                                 </tbody>

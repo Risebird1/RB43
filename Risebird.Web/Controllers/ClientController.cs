@@ -318,7 +318,7 @@ namespace Risebird.Web.Controllers
             {
                 var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList());
 
-                return RedirectToAction("Index", "IRF");
+                return RedirectToAction("CandidateJDScore", "Client");
             }
             else
             {

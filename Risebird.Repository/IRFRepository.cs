@@ -3954,5 +3954,38 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public string AssessmentLike(int id, string emailid)
+        {
+            try
+            {
+                int userid = 0;
+                var query = "Select id from UserList where Emailid = @Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var queryfinal = "INSERT INTO AssessmentLike (Assessmentid,LikedBy) Values (@Assessmentid,@LikedBy);";
+                    var affectedRows = con.Execute(queryfinal, new
+                    {
+                        Assessmentid = id,
+                        LikedBy = userid
+                    });
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
     }
 }

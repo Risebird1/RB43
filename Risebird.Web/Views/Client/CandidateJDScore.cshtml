@@ -21,7 +21,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/Client/CreateJD">Client JD</a>
-                <a class="navbar-brand">/ &nbsp;Candidate JD Score</a>
+                <a class="navbar-brand">/ &nbsp;Candidate List</a>
             </div>
 
         </div>
@@ -65,12 +65,12 @@
                                                     </td>
                                                     <td>
                                                         <div class="text-areadiv ">
-                                                            <input type="number" class="form-control text-box single-line" id="CandidateCuratedScores_0__IRFId" name="CandidateCuratedScores[0].IRFId" style="width:100%" class="valid" aria-invalid="false" />
+                                                            <input type="text" class="form-control text-box single-line valid" id="CandidateCuratedScores_0__IRFId" name="CandidateCuratedScores[0].IRFId" style="width:100%" aria-invalid="false" />
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="text-areadiv ">
-                                                            <input type="number" class="form-control text-box single-line" id="CandidateCuratedScores_0__Score" name="CandidateCuratedScores[0].Score" style="width:100%" class="valid" aria-invalid="false" />
+                                                            <input type="number" class="form-control text-box single-line valid" id="CandidateCuratedScores_0__Score" name="CandidateCuratedScores[0].Score" style="width:100%" aria-invalid="false" />
                                                         </div>
                                                     </td>
                                                     <td class="text-center action-area">
@@ -98,7 +98,7 @@
                                                 <td>
 
                                                     <div class="text-areadiv">
-                                                        @Html.EditorFor(m => m.CandidateCuratedScores[i].IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" }, @style = "width:100%" })
+                                                        @Html.EditorFor(m => m.CandidateCuratedScores[i].IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                                     </div>
                                                 </td>
                                                 <td>
@@ -126,7 +126,7 @@
                             <div class="card-footer ">
                                 <div class="row">
                                     <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        @Html.ActionLink("Back to List", "CreateJd", "Client", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
                                     </div>
                                 </div>

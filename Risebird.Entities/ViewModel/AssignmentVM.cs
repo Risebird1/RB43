@@ -8,6 +8,7 @@ namespace Risebird.Entities.ViewModel
 {
     public class AssignmentVM
     {
+        public int backid { get; set; }
         public int id { get; set; }
         public string AssessmentGroup { get; set; }
         public string PrimarySkills { get; set; }

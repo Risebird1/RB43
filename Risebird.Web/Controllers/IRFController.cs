@@ -4297,11 +4297,31 @@ namespace Risebird.Web.Controllers
             model.Evaluations = ((Evaluation)model.Evaluation).GetDescription();
             model.EmployerStages = ((EmployerStage)model.EmployerStage).GetDescription();
             model.EmployerSizes = ((EmployerSize)model.EmployerSize).GetDescription();
+            model.backid = id;
             foreach (var item in model.Questionslist)
             {
                 item.Levels= ((AssessmentLevel)item.Level).GetDescription();
             }
             return View(model);
         }
+        [HttpPost]
+        public JsonResult AssessmentLike(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var result = _irfService.AssessmentLike(id, emailid);
+                return Json("Success");
+            }
+            else
+            {
+                return Json("Fail");
+            }
+        }
+
+
     }
 }
