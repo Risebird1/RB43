@@ -5618,6 +5618,15 @@ button.close {
 .mobile-view {
     display: none;
 }
+#searchGo button.btn, #btnSearch {
+    min-width: auto;
+    height: 37px;
+}
+
+    #searchGo button.btn svg, #btnSearch svg {
+        position: relative;
+        top: 0px;
+    }
 
 .desktop-view {
     display: block;
