@@ -5758,9 +5758,40 @@ blockquote {
 /* end errors */
 /* SETTINGS */
 
+.pad10{padding:10px;}
+.timer {
+    display: inline;
+    padding: 2px 8px;
+   
+    font-family: Verdana, sans-serif, Arial;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    float: left;
+    margin: 10px 0px;
+}
+    .timer span {
+        font-size: 13px;
+        display: block;
+        text-align: center;
+        color: #7b7373;
+        font-weight: 400;
+        line-height: 11px;
+    }
+    .time-divider {
+        border-left: 2px #ccc solid;
+        margin-left: 5px;
+    }
 
-
-
+.timer-wrap {
+    width: 16%;
+    float: right;
+}
+    .timer-wrap svg {
+        position: relative;
+        top: 13px;
+        float: left;
+    }
 .theme-settings {
     position: fixed;
     right: -165px;

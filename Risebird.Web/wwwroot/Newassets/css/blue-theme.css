@@ -22,6 +22,9 @@ body {
 table.dataTable thead .sorting:after {
     color: transparent;
 }
+
+
+
     input [type='radio']:checked:after {
     background-color: #42a5f5!important;
     top: 1px!important;

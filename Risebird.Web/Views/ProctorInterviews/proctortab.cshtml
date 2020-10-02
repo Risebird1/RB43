@@ -49,40 +49,90 @@
                             <div class="container tabs-wrap">
                                 <ul class="nav nav-tabs" role="tablist">
                                     <li role="presentation" class="active">
-                                        <a href="#billing" aria-controls="billing" role="tab" data-toggle="tab" aria-expanded="true">Billing Address</a>
+                                        <a href="#tab1" aria-controls="billing" role="tab" data-toggle="tab" aria-expanded="true">Tab1</a>
                                     </li>
                                     <li>
-                                        <a href="#shipping" aria-controls="shipping" role="tab" data-toggle="tab" aria-expanded="false">Delivery Address</a>
+                                        <a href="#tab2" aria-controls="shipping" role="tab" data-toggle="tab" aria-expanded="false">Tab2</a>
                                     </li>
                                     <li>
-                                        <a href="#review" aria-controls="review" role="tab" data-toggle="tab" aria-expanded="false">Review &amp; Payment</a>
+                                        <a href="#tab3" aria-controls="review" role="tab" data-toggle="tab" aria-expanded="false">Tab3</a>
                                     </li>
                                 </ul>
 
                                 <div class="tab-content">
 
-                                    <div role="tabpanel" class="tab-pane active" id="billing">
+                                    <div role="tabpanel" class="tab-pane active" id="tab1">
                                         <fieldset>
-                                            <h4 class="pull-left">Questions:</h4>
-                                            <div class="form-group pull-left">
-                                                <label  for="f1-first-name">First name</label>
+                                            <div class="proctor-detail clearfix">
+                                                <h4 class="pull-left col-md-2 pad10 text-right"><b>Questions:</b></h4>
+                                                <div class="form-group col-md-8 pad10 pull-left">
+                                                    <h4 class="pull-left">How angular use typescript and compiled into Javascript. How browser can understand JavaScript. How V8 Engine works.</h4>
+
+                                                </div>
+                                                <div class="timer-wrap">
+
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill=" rgb(255, 255, 255)" d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" /></svg>
+                                                    <div class="timer" id="ten-countdown"></div>
+                                                    <div class="timer time-divider">10 Mins <span>Total Time</span></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="proctor-detail clearfix">
+                                                <h4 class="pull-left col-md-2 text-right"><b>Level:</b></h4>
+                                                <div class="form-group col-md-8 pull-left">
+                                                    <h4 class="pull-left">SSE</h4>
+                                                 
+                                                </div>
+
+
                                                 
                                             </div>
-                                           
-                                         
+
+
+
+
+
+                                            <div class="proctor-detail clearfix">
+                                                <h4 class="pull-left col-md-2 text-right"><b>Video:</b></h4>
+                                                <div class="form-group col-md-8 pull-left">
+                                                    <div class="pull-left">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <video controls="" class="video-thumb-wrap" controlslist="nodownload">
+                                                                    <source src="https://prodvideo.blob.core.windows.net/videossept20/GMT20201001-082524_Manoj-Kuma_1686x768.mp4?sp=r&st=2020-10-01T10:17:34Z&se=2022-05-31T18:17:34Z&spr=https&sv=2019-12-12&sr=b&sig=YR1GpRzCeUBN9KE4cJ9K05F3adyuxVH9%2FZ8vn%2Bh0YWY%3D" type="video/mp4">
+                                                                </video>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="proctor-detail clearfix">
+                                                <h4 class="pull-left col-md-2 text-right"><b>Detail:</b></h4>
+                                                <div class="form-group col-md-8 pull-left">
+                                                    <h4 class="pull-left">How angular use typescript and compiled into Javascript. How browser can understand JavaScript. How V8 Engine works.</h4>
+
+                                                </div>
+
+
+                                               
+                                            </div>
                                         </fieldset>
 
-                                        <a class="btn btn-primary continue">Continue</a>
+                                        <a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space continue pull-right">Continue</a>
                                     </div>
 
-                                    <div role="tabpanel" class="tab-pane" id="shipping">
+                                    <div role="tabpanel" class="tab-pane" id="tab2">
                                         <h3 class="">Shipping Address</h3>
                                         <p>Shipping Address Form</p>
                                         <a class="btn btn-primary back">Go Back</a>
                                         <a class="btn btn-primary continue">Continue</a>
                                     </div>
 
-                                    <div role="tabpanel" class="tab-pane" id="review">
+                                    <div role="tabpanel" class="tab-pane" id="tab3">
                                         <h3 class="">Review &amp; Place Order</h3>
                                         <p>Review &amp; Payment Tab</p>
                                         <a class="btn btn-primary back">Go Back</a>
@@ -118,6 +168,36 @@
             $('.nav-tabs > .active').prev('li').find('a').trigger('click');
         });
 
+
+    </script>
+
+    <script>
+        function countdown(elementName, minutes, seconds) {
+            var element, endTime, hours, mins, msLeft, time;
+
+            function twoDigits(n) {
+                return (n <= 9 ? "0" + n : n);
+            }
+
+            function updateTimer() {
+                msLeft = endTime - (+new Date);
+                if (msLeft < 1000) {
+                    element.innerHTML = "Time is up!";
+                } else {
+                    time = new Date(msLeft);
+                    hours = time.getUTCHours();
+                    mins = time.getUTCMinutes();
+                    element.innerHTML = (hours ? hours + ':' + twoDigits(mins) : mins) + ':' + twoDigits(time.getUTCSeconds());
+                    setTimeout(updateTimer, time.getUTCMilliseconds() + 500);
+                }
+            }
+
+            element = document.getElementById(elementName);
+            endTime = (+new Date) + 1000 * (60 * minutes + seconds) + 500;
+            updateTimer();
+        }
+
+        countdown("ten-countdown", 10, 0);
 
     </script>
 

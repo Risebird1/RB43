@@ -131,7 +131,11 @@ hr {
 }
 .table-grey > tbody > tr > td{color:#9a9a9a;}
 
-
+.tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:hover{
+    background-color: #1a1a1a;
+    border: 0px;
+    color: #9a9a9a;
+}
 
 table.dataTable thead .sorting:after {
     color: transparent;
@@ -141,7 +145,11 @@ table.dataTable thead .sorting:after {
     background-color: #161616 !important;
     box-shadow: none !important;
 }
-.video-card-image {
+
+.timer {
+    color:#9a9a9a;
+}
+    .video-card-image {
     box-shadow: none !important;
 }
 .card-header.bg-w {
