@@ -616,5 +616,70 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<AssignmentVM> GetInterviewerAssessment(string emailid)
+        {
+            try
+            {
+                var comments = _interviewerRepository.GetInterviewerAssessment(emailid);
+                return comments;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string AddAssessment(AssignmentVM _assessment)
+        {
+            try
+            {
+                var comments = _interviewerRepository.AddAssessment(_assessment);
+                return comments;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public IEnumerable<AssignmentVM> FetchAssessmentGroups()
+        {
+            try
+            {
+                var comments = _interviewerRepository.FetchAssessmentGroups();
+                return comments;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string ChangeStatusAssessment(int assessmentid, int status)
+        {
+            try
+            {
+                var comments = _interviewerRepository.ChangeStatusAssessment(assessmentid, status);
+                return comments;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
+        public string UpdateAssessment(AssignmentVM _assessment)
+        {
+            try
+            {
+                var comments = _interviewerRepository.UpdateAssessment(_assessment);
+                return comments;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }

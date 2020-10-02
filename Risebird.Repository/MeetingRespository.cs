@@ -2861,5 +2861,26 @@ namespace Risebird.Repository
             return null;
 
         }
+        public IEnumerable<int> GetClientJdIRFs(int Clientjdid)
+        {
+            try
+            {
+                var query = "select IRFId from CandidateJDScore where ClientJdid = @ClientJdid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ClientJdid", Clientjdid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return con.Query<int>(query, dynamicParameters);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
     }
 }

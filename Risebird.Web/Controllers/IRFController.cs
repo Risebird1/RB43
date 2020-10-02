@@ -7,6 +7,7 @@ using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -29,7 +30,9 @@ namespace Risebird.Web.Controllers
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IMeetingService _meetingService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService)
+        private ISkillService _skillService;
+
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -38,6 +41,7 @@ namespace Risebird.Web.Controllers
             _meetingService = meetingService;
             _azureStorageHelper = azureStorageHelper;
             _evaluatorService = evaluatorService;
+            _skillService = skillService;
         }
 
 
@@ -1809,7 +1813,7 @@ namespace Risebird.Web.Controllers
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
             var confirmationTypes = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
-            model.ConfirmationTypeList = new SelectList(confirmationTypes, "ID", "Name"); ;
+            model.ConfirmationTypeList = new SelectList(confirmationTypes, "ID", "Name");
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
 
         }
@@ -4105,5 +4109,199 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Fetch All assessment groups
+        /// </summary>
+        /// <param name="Page"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> InterviewerEntitle(int? Page)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (TempData["SuccessErrorMessageInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterviewer");
+                        }
+                        var model = new Assessment();
+                        var modellist = _userService.GetInterviewerEntitle();
+                        if(modellist==null)
+                        {
+                            modellist = new List<AssignmentVM>();
+                        }
+                        model._assessment = modellist;
+                        var skillset = _skillService.GetSkills();
+                        model._skilldetails.PrimarySkills = new SelectList(skillset, "id", "Name");
+
+                        //    return View("AddInterviewer", model);
+
+                        //var skilllist = _irfService.GetSkillDetails();
+                        //ViewBag.skilllist = new SelectList(skilllist, "id", "PrimarySkill");
+                        //if (!string.IsNullOrEmpty(Searchvalue))
+                        //{
+                        //    model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
+                        //    ViewBag.searchvalue = Searchvalue;
+                        //}
+                        //else
+                        //{
+                        //    ViewBag.searchvalue = "";
+                        //}
+                        foreach (var item in model._assessment)
+                        {
+                            var PrimarySkillSet = item.PrimarySkills?.Split(',');
+                            if (PrimarySkillSet == null)
+                                continue;
+                            string PrimaryTopSkill = string.Empty;
+                            int ForLoopCount = 5;
+                            if (PrimarySkillSet.Count() < 5)
+                            {
+                                ForLoopCount = PrimarySkillSet.Count();
+                            }
+                            for (int i = 0; i < ForLoopCount; i++)
+                            {
+                                if (string.IsNullOrEmpty(PrimaryTopSkill))
+                                {
+                                    PrimaryTopSkill = PrimarySkillSet[i];
+                                }
+                                else
+                                {
+                                    PrimaryTopSkill = PrimaryTopSkill + "," + PrimarySkillSet[i];
+                                }
+                            }
+                            item.PrimarySkills = PrimaryTopSkill;
+                        }
+                        return View("InterviewerEntitle", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+        /// <summary>
+        /// Fetch Assessment Related to Assessment Group
+        /// </summary>
+        /// <param name="Page"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> InterviewerEntitleDetails(int? Page, int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (TempData["SuccessErrorMessageInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterviewer");
+                        }
+                        var model = _userService.InterviewerEntitleDetails(id);
+
+                        //if (!string.IsNullOrEmpty(Searchvalue))
+                        //{
+                        //    model = model.Where(x => x.FirstName.ToUpper().Contains(Searchvalue.ToUpper()) || (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(Searchvalue.ToUpper()))).ToList();
+                        //    ViewBag.searchvalue = Searchvalue;
+                        //}
+                        //else
+                        //{
+                        //    ViewBag.searchvalue = "";
+                        //}
+                        foreach (var item in model)
+                        {
+                            item.Seniority = ((Senioritylevel)item.Senioritylevel).GetDescription();
+                            var PrimarySkillSet = item.PrimarySkills?.Split(',');
+                            if (PrimarySkillSet == null)
+                                continue;
+                            string PrimaryTopSkill = string.Empty;
+                            int ForLoopCount = 5;
+                            if (PrimarySkillSet.Count() < 5)
+                            {
+                                ForLoopCount = PrimarySkillSet.Count();
+                            }
+                            for (int i = 0; i < ForLoopCount; i++)
+                            {
+                                if (string.IsNullOrEmpty(PrimaryTopSkill))
+                                {
+                                    PrimaryTopSkill = PrimarySkillSet[i];
+                                }
+                                else
+                                {
+                                    PrimaryTopSkill = PrimaryTopSkill + "," + PrimarySkillSet[i];
+                                }
+                            }
+                            item.PrimarySkills = PrimaryTopSkill;
+                        }
+                        return View("InterviewerEntitleDetails", model.ToPagedList(Page ?? 1, 12));
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+        /// <summary>
+        /// Craete Assessment Group
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult InterviewerEntitle(Assessment model)
+        {
+            List<Skill> skills = _skillService.GetSkills();
+            List<String> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+            model._skilldetails.PrimarySkill = String.Join(",", selectedSkill);
+            var result = _irfService.Addassignmentgroup(model._skilldetails);
+            return RedirectToAction("InterviewerEntitle");
+        }
+        /// <summary>
+        /// Assessment Detailed page
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult AssessmentDetails(int id)
+        {
+            var result= _irfService.FetchAssessmentdetails(id);
+            var model = result.FirstOrDefault();
+            model.Seniority = ((Senioritylevel)model.Senioritylevel).GetDescription();
+            model.YearsOfExperience = ((AssessmentYearsOfExperience)model.YearsofExprience).GetDescription();
+            model.AssessmentTypes = ((AssessmentType)model.AssessmentType).GetDescription();
+            model.Evaluations = ((Evaluation)model.Evaluation).GetDescription();
+            model.EmployerStages = ((EmployerStage)model.EmployerStage).GetDescription();
+            model.EmployerSizes = ((EmployerSize)model.EmployerSize).GetDescription();
+            foreach (var item in model.Questionslist)
+            {
+                item.Levels= ((AssessmentLevel)item.Level).GetDescription();
+            }
+            return View(model);
+        }
     }
 }
