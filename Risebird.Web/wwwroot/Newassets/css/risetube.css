@@ -883,13 +883,14 @@ textarea::-webkit-scrollbar-thumb {
 
 #QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
     cursor: pointer !important;
+    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
 
     #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
         background: url("../../img/audio-button-set-4-transparent.png");
         background-size: 25px;
         background-repeat: no-repeat;
-        background-position: 45%;
+        background-position: center;
         z-index: 1000;
     }
 

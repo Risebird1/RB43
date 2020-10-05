@@ -32,6 +32,16 @@ textarea::-webkit-scrollbar {
 .table-bordered {
     border: 1px solid #dee2e6 !important;
 }
+.tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
+    color: #fff;
+    background-color: #e96b28 !important;
+}
+
+
+.mdc-button--outlined:not(:disabled) {
+    border-color: #e96b28 !important;
+    color: #42a5f5 !important;
+}
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
     background: whitesmoke;
     color: #888 !important;
