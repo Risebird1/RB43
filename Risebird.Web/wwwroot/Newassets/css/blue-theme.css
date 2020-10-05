@@ -23,11 +23,13 @@ table.dataTable thead .sorting:after {
     color: transparent;
 }
 
+.tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
+    background: #53a5f5;color:#fff;
+}
 
-
-    input [type='radio']:checked:after {
-    background-color: #42a5f5!important;
-    top: 1px!important;
+input [type='radio']:checked:after {
+    background-color: #42a5f5 !important;
+    top: 1px !important;
 }
 
 .qc-feedback .card-footer {
@@ -239,7 +241,8 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-    background: #42a5f5!important;
+    background: #42a5f5 !important;
+    color: #fff !important;
 }
 
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
