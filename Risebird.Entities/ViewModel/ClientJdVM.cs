@@ -27,6 +27,7 @@ namespace Risebird.Entities.ViewModel
         public string CreatedBy { get; set; }
         public int ClientId { get; set; }
         public bool isClientUser { get; set; }
+        public string ClientEmail { get; set; }
     }
     public class ClientDetails
     {
@@ -36,6 +37,15 @@ namespace Risebird.Entities.ViewModel
         }
         public List<ClientJdVM> _clientjd { get; set; }
         public ClientJdVM _clientjddetails { get; set; }
+        public Clientfillter fillter { get; set; }
+
         //public Skilldetails _skilldetails { get; set; }
+    }
+    public class Clientfillter
+    {
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string[] ClientEmail { get; set; }
+        public string[] AssessmentGroupName { get; set; }
     }
 }

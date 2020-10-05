@@ -2234,7 +2234,7 @@ namespace Risebird.Repository
             parameters.Add("@PriorityLevel", entity.PriorityLevel);
             parameters.Add("@CompanyDetails", entity.CompanyDetails);
             parameters.Add("@Type", entity.Type);
-
+            parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
@@ -2581,7 +2581,7 @@ namespace Risebird.Repository
                 parameters.Add("@AddedByUserId", obj.AddedByUserId);
                 parameters.Add("@CostEstimate", obj.CostEstimate);
                 parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
-
+                parameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2737,7 +2737,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", obj.id);
                 dynamicParameters.Add("@CostEstimate", obj.CostEstimate);
                 dynamicParameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
-
+                dynamicParameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(
