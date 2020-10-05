@@ -15,5 +15,7 @@ namespace Risebird.Entities.ViewModel
         public int Time { get; set; }
         public int Level { get; set; }
         public string Skill { get; set; }
+
+        public string LevelDesc { get; set; }
     }
 }

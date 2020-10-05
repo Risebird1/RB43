@@ -480,5 +480,82 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CandidateQuestions(int vmId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    //profileName = "Candidate";
+                    profileName.Replace("\"", "");
+                   
+                    ProctorQuestionsViewModel model = new ProctorQuestionsViewModel();
+                    model.VmId = vmId;
+                    model.QuestionList = (IList<ProctorVMQuestions>)(await _proctorInterviewsService.GetVMQuestions(vmId));
+                    foreach (var item in model.QuestionList)
+                    {
+                        item.LevelDesc = ((QuestionLevel)item.Level).GetDescription();
+                    }
+                    if (model.QuestionList != null)
+                    {
+                        model.TotalQuestions = model.QuestionList.Count();
+                    }
+                    model.Profile = profileName;
+
+                    if (HttpContext.Session.GetString("CurrentQuestion") != null)
+                    {
+                        model.CurrentQuestionIndex = Convert.ToInt16(HttpContext.Session.GetString("CurrentQuestion"));
+                    }
+                    //HttpContext.Session.Remove("CurrentQuestion");
+
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+
+            }
+        }
+
+
+        public async Task<IActionResult> SetCurrentQuestion(string newIndex)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (HttpContext.Session.GetString("CurrentQuestion") != null)
+                    {
+                        HttpContext.Session.Remove("CurrentQuestion");
+
+                    }
+
+                    HttpContext.Session.SetString("CurrentQuestion", newIndex);
+
+                    return Json(true);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+
+        }
     }
 }

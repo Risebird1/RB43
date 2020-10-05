@@ -136,7 +136,7 @@
                                                             <div style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
 
                                                             <!--- <div class="pull-left">
-             <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.Password" style="background:none;">
+             <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
              <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
          </div>--->
 
@@ -202,9 +202,21 @@
                                                             <i class="fa fa-play"></i>
                                                         </button>
                                                     }
-                                                    <button id="questionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("ProctorVMQuestions", "ProctorInterviews", new { vmId = item.id})'">
-                                                        <i class="fa fa-question"></i>
-                                                    </button>
+                                                    @if (Model.Profile == "Interviewer" || Model.Profile == "Admin")
+                                                    {
+                                                        <button id="questionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Add questions" aria-label="Add questions" onclick="location.href='@Url.Action("ProctorVMQuestions", "ProctorInterviews", new { vmId = item.id})'">
+                                                            <i class="fa fa-question"></i>
+                                                        </button>
+                                                    }
+                                                    @if (item.QuestionsCount != 0)
+                                                    {
+                                                        <button id="candidateQuestionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("CandidateQuestions", "ProctorInterviews", new { vmId = item.id})'">
+                                                            <i class="fa fa-question-circle"></i>
+                                                        </button>
+                                                    }
+
+
+
 
                                                 </div>
                                             </div>
