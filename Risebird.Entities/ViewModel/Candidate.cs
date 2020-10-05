@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -88,6 +89,8 @@ namespace Risebird.Entities.ViewModel
         public string LogoUrl { get; set; }
         [DisplayName("Cost Estimate")]
         public string CostEstimate { get; set; }
+        public int Heuristicsscore { get; set; }
+        public SelectList Heuristicsscorelist { get; set; }
 
     }
 }

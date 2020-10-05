@@ -40,6 +40,10 @@
                             </div>
                         </div>
                     </div>
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
                     @*@if (Model._clientjddetails.isClientUser)
                         {
                             <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left" style="color:#fff;"></span>Create JD</a>
@@ -64,7 +68,92 @@
                         <div class="dataloading">
                             <div class="toolbar">
                             </div>
+                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
 
+
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+                                        <form action="@Url.Action("CreateJd", "Client")" method="post" id="form">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate"> Start Date </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="fillter_StartDate" name="fillter.StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="EndDate"> End Date </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="fillter_EndDate" name="fillter.EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6  border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupName"> Assessment Group </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="">Please Select Assessment Group</option>
+                                                                    @foreach (var item in Model._clientjd.Select(x => x.AssessmentGroupName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6  border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientEmail"> Client </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="fillter_ClientEmail" name="fillter.ClientEmail" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="">Please Select Client</option>
+                                                                    @foreach (var item in Model._clientjd.Select(x => x.ClientEmail).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-6 col-sm-6">
+                                                        <div>
+                                                            <div class="col-md-12 col-sm-12 ">
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                             <div style="clear:both;padding:10px"></div>
                             <div class="row">
                                 @foreach (var item in Model._clientjd)
@@ -171,7 +260,7 @@
                 <span aria-hidden="true" id="callPopUp" style="cursor:pointer;" onclick="closeCallPopUp()">&times;</span>
             </button>
             <div class="modal-body">
-                @using (Html.BeginForm("CreateJd", "Client", FormMethod.Post))
+                @using (Html.BeginForm("AddCreateJd", "Client", FormMethod.Post))
                 {
                     <div>
                         @Html.HiddenFor(m => m._clientjddetails.ClientId)
@@ -249,7 +338,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>*@
 
 <script>
-
+    $("#fillter_AssessmentGroupName").multiselect({
+        includeSelectAllOption: true,
+        selectedClass: 'active1',
+        buttonWidth: '100%',
+        maxHeight: 200
+    });
+    $("#fillter_ClientEmail").multiselect({
+        includeSelectAllOption: true,
+        selectedClass: 'active1',
+        buttonWidth: '100%',
+        maxHeight: 200
+    });
     function CreateJd() {
         var model = document.getElementById("commentsmodel");
         model.style.display = "block";

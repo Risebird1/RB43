@@ -691,6 +691,9 @@ namespace Risebird.Web.Controllers
                 ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
@@ -1503,7 +1506,9 @@ namespace Risebird.Web.Controllers
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                     select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                     model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
                     model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
@@ -2467,6 +2472,9 @@ namespace Risebird.Web.Controllers
                         IRFId = Convert.ToInt32(irfId),
                         IRFName = irfName
                     };
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     return View(model);
                 }
                 else
@@ -2658,6 +2666,9 @@ namespace Risebird.Web.Controllers
                 {
                     var model = _irfService.GetCandidate(id, Convert.ToInt32(irfId));
                     model.IRFName = irfName;
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     return View(model);
                 }
                 else

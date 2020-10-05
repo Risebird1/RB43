@@ -255,7 +255,53 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public IActionResult CreateJd(ClientDetails model)
+        public IActionResult CreateJd(ClientDetails fillters)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                bool isClientUser = false;
+                int ClientId = 0;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        var client = _userRepository.GetClientUserDetails(emailid);
+                        ClientId = client.Result.ClientId;
+                        isClientUser = true;
+                    }
+                    //Fetch ClientJds
+                    var result = _clientService.FetchClientJd(ClientId);
+                    var resultset = _interviewerService.FetchAssessmentGroups();
+                    result = result.Where(c =>
+                           (fillters.fillter.AssessmentGroupName.Count() > 0 ? fillters.fillter.AssessmentGroupName.Contains(c.AssessmentGroupName) : c.AssessmentGroupName == string.Empty)
+                          && (fillters.fillter.ClientEmail.Count() > 0 ? fillters.fillter.ClientEmail.Contains(c.ClientEmail) : c.ClientEmail == string.Empty)).ToList();
+                    //bind Dropdown values
+                    var model = new ClientDetails();
+                    model._clientjd = result.ToList();
+                    model._clientjddetails = new ClientJdVM();
+                    model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
+                    model._clientjddetails.ClientId = ClientId;
+                    model._clientjddetails.isClientUser = isClientUser;
+                    
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+
+        }
+            [HttpPost]
+        public IActionResult AddCreateJd(ClientDetails model)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {

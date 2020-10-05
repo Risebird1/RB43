@@ -9,7 +9,8 @@ CREATE TABLE [dbo].[Interviewer](
 			[IsApproved][BIT] NULL,
 			[IsActive][bit]NULL,
 			[NoOfIntterview][int]NULL,
-			[SuccessRate][REAL] null
+			[SuccessRate][REAL] null,
+			[Heuristicsscore] int Null
 			CONSTRAINT [FK_IntUser_User] FOREIGN KEY (UserId) REFERENCES UserList(id),			
  CONSTRAINT [PK_Interviewer] PRIMARY KEY CLUSTERED 					
 (					

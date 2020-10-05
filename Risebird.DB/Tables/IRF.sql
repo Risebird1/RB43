@@ -24,6 +24,7 @@ CREATE TABLE [dbo].[IRF](
             [CompanyDetails][VARCHAR](MAX) NULL,
             [Comment][VARCHAR](250) NULL,
             [BussinessType][varchar](4) NULL,
+            [Heuristicsscore][int] NULL,
             [idProgress][int] NOT NULL DEFAULT 1,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),

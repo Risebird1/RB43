@@ -366,6 +366,13 @@
                                             }
                                         }
                                     </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.Heuristicsscorelist, new { @class = "select-css form-control" })
+                                        @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">

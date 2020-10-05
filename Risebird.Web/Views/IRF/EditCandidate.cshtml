@@ -120,6 +120,11 @@
 
 
                                     </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(m => m.Heuristicsscore, new SelectList(Model.Heuristicsscorelist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+                                    </div>
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
