@@ -10,23 +10,33 @@ namespace Risebird.Entities.ViewModel
     {
         public int backid { get; set; }
         public int id { get; set; }
+        [Display(Name = "Assessment Group")]
         public string AssessmentGroup { get; set; }
         public string PrimarySkills { get; set; }
         public string Overview { get; set; }
+        [Display(Name = "Seniority Level")]
         public int? Senioritylevel { get; set; }
+        [Display(Name = "Years Of Exprience")]
         public int? YearsofExprience { get; set; }
+        [Display(Name = "Assessment Type")]
         public int? AssessmentType { get; set; }
+        [Display(Name = "Tested Skills")]
         public string TestedSkill { get; set; }
         public int? Evaluation { get; set; }
         public string Environment { get; set; }
+        [Display(Name = "Difficulty Level")]
         public int? Difficultylevel { get; set; }
+        [Display(Name = "Employer Type")]
         public string EmployerType { get; set; }
+        [Display(Name = "Employer Stage")]
         public int? EmployerStage { get; set; }
+        [Display(Name = "Employer Size")]
         public int? EmployerSize { get; set; }
         public string Delivery { get; set; }
         public int Assessmentcount { get; set; }
         public string Createdby { get; set; }
         public string Seniority { get; set; }
+        [Display(Name = "Years  OfExperience")]
         public string YearsOfExperience { get; set; }
         public string AssessmentTypes { get; set; }
         public string Evaluations { get; set; }
@@ -38,6 +48,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList Evaluationlist { get; set; }
         public SelectList EmployerStagelist { get; set; }
         public SelectList EmployerSizelist { get; set; }
+       
         public SelectList YearsofExpriencelist { get; set; }
         public SelectList AssessmentLevellist { get; set; }
         public SelectList AssessmentGrouplist { get; set; }

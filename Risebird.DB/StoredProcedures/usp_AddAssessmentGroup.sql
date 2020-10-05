@@ -17,3 +17,4 @@ AS
 BEGIN    
 Insert into AssessmentGroup values(@AssessmentGroup,@PrimarySkills)  
 END
+GO
