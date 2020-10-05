@@ -578,12 +578,12 @@ namespace Risebird.Repository
 
             parameters.Add("@selectedSkills", entity.PrimarySkill);
             parameters.Add("@resumeLink", entity.ResumeLink);
+            parameters.Add("@isApproved", entity.IsApproved);
             parameters.Add("@slots", entity.Slots);
             parameters.Add("@userFirstName", entity.FirstName);
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId.Trim().ToLower());
             parameters.Add("@userMobileNumber", entity.MobileNumber);
-            parameters.Add("@isApproved", entity.IsApproved);
             parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
             return parameters;
         }
