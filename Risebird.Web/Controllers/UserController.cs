@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -497,7 +498,9 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new InterviewerVM();
                     model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     return View("AddInterviewer", model);
                 }
                 else
@@ -525,7 +528,9 @@ namespace Risebird.Web.Controllers
                         ModelState.AddModelError(String.Empty, "Please upload a resume.");
                         var model = new InterviewerVM();
                         model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
+                        var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                        model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                         return View("AddInterviewer", model);
                     }
 
@@ -594,6 +599,9 @@ namespace Risebird.Web.Controllers
                     if (interviewerVM != null)
                     {
                         interviewerVM.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                        interviewerVM.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                         TempData["ResumeLink"] = interviewerVM.ResumeLink;
                         return View("InterviewerUpdate", interviewerVM);
                     }
@@ -635,7 +643,9 @@ namespace Risebird.Web.Controllers
                             ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
                             var model = new InterviewerVM();
                             model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
+                            var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                             select new { ID = (int)s, Name = s.GetDescription() };
+                            model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                             return View("InterviewerUpdate", model);
                         }
                         else
@@ -652,7 +662,9 @@ namespace Risebird.Web.Controllers
                         ModelState.AddModelError(string.Empty, "Please mention Skill");
                         var model = new InterviewerVM();
                         model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
+                        var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                        model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                         return View("InterviewerUpdate", model);
                     }
                     List<Skill> skills = _skillService.GetSkills();

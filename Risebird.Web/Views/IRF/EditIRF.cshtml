@@ -154,21 +154,21 @@
                                         @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
-                                        <!--  <div class="switch-btn col-md-12">
-                                            <span class="on-off">B2C</span>
-                                            <div class="material-toggle">
-
-                                                <input class="switch" id="MoveToB2B" type="checkbox" checked="checked" value="false" name="B2B">
-                                                <label for="MoveToB2B" class=""></label>
-
-                                            </div>
-                                            <span class="on-off">B2B</span>
-                                        </div>-->
+                                       
 
                                         @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
                                         @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
 
 
+
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, new { @class = "form-control select-css " })
+
+                                        @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+                                     
 
                                     </div>
                                 </div>
@@ -366,6 +366,7 @@
                                             }
                                         }
                                     </div>
+                                  
                                 </div>
                             </div>
                             <div class="row">

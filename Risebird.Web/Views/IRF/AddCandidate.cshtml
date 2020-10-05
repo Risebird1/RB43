@@ -131,9 +131,13 @@
                                         @Html.LabelFor(model => model.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.TotalExperience, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.TotalExperience, "", new { @class = "text-danger" })
-
-
                                     </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(m => m.Heuristicsscore, new SelectList(Model.Heuristicsscorelist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+                                    </div>
+                                    @*//Add dropdown*@
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">

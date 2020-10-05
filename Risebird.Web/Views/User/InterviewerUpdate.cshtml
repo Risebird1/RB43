@@ -14,15 +14,15 @@
 
 </script>
 <script>
-        function dropDwnToolTips(id) {
+    function dropDwnToolTips(id) {
 
-            if (id.value == 0) {
-                id.title = "";
-            }
-            else {
-                id.title = id.value
-            }
+        if (id.value == 0) {
+            id.title = "";
         }
+        else {
+            id.title = id.value
+        }
+    }
 
 
 </script>
@@ -234,6 +234,14 @@
                                                 }
                                             </div>
 
+                                        </div>
+                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.DropDownListFor(m => m.Heuristicsscore, new SelectList(Model.Heuristicsscorelist, "Value", "Text", Model.SelectedSkillIds), new { @id = "select", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+
+                                            </div>
                                         </div>
 
                                     </div>
