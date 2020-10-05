@@ -266,6 +266,15 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     model._clientjddetails.CreatedBy = emailid;
+                    if (profileName != "Client")
+                    {
+                        if (!String.IsNullOrEmpty(model._clientjddetails.ClientEmail))
+                        {
+                            var client = _userRepository.GetClientUserDetails(emailid);
+                            model._clientjddetails.ClientId = client.Result.ClientId;
+                            model._clientjddetails.CreatedBy = model._clientjddetails.ClientEmail;
+                        }
+                    }
                     if (model._clientjddetails.File != null)
                     {
                         _azureStorageHelper.InsertBlob(model._clientjddetails.File.FileName, "videos", model._clientjddetails.File);

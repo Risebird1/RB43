@@ -27,6 +27,7 @@ namespace Risebird.Entities.ViewModel
         public string CreatedBy { get; set; }
         public int ClientId { get; set; }
         public bool isClientUser { get; set; }
+        public string ClientEmail { get; set; }
     }
     public class ClientDetails
     {
