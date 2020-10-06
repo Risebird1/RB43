@@ -31,7 +31,7 @@ CREATE PROCEDURE [dbo].[InsertMeetings]
 AS
 Begin
 
-IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate)
+IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId)
 Begin
 INSERT INTO [dbo].[InterviewMeetings]
            ([IRFId]
