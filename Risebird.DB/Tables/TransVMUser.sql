@@ -16,6 +16,22 @@ CREATE TABLE [dbo].[TransVMUser](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 END
+
+Else 
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SharedOn')
+      AND Object_ID = Object_ID(N'TransVMUser'))
+BEGIN
+    ALTER TABLE TransVMUser
+    Add SharedOn DATETIME
+    
+END
+
+End
+
 GO
 
 
