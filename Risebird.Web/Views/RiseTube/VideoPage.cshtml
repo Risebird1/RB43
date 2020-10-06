@@ -2609,10 +2609,9 @@
                 <span onclick="closeVideoDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body">
-                <div class="col-md-12 sb-container scroller">
+                <div class="col-md-12 scroller">
                     <div id="divvideodetailsmodel" class="pdr-20"></div>
                 </div>
-
                 <div class="col-md-12 ">
                     <div class="text-right">
                         <input style="color:#fff;line-height: 13px;" type="button" onclick="closeVideoDetailsModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
@@ -3816,7 +3815,8 @@
         temp.remove();
         $('#special_text').text('Copied');
     }
-    function bindvideoDetailsData(data) {
+        function bindvideoDetailsData(data) {
+           
         var html = '';
         html += '<div class="table-responsive"> <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">';
         html += '       <tr>';
