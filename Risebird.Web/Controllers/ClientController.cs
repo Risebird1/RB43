@@ -359,6 +359,11 @@ namespace Risebird.Web.Controllers
                 var result = _clientService.GetCandidateJDScore(Convert.ToInt32(id));
                 model.CandidateCuratedScores = result;
                 model.IRFId = Convert.ToInt32(id);
+                if (TempData["SuccessErrorMessageInterviewer"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                    TempData.Remove("SuccessErrorMessageInterviewer");
+                }
                 return View(model);
             }
             else
@@ -372,8 +377,17 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList());
+                if (result)
+                {
+                    TempData["SuccessErrorMessageInterviewer"] = "Interviewer is Updated Successfully";
+                    return RedirectToAction("CandidateJDScore", "Client", new { id = model.IRFId });
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageInterviewer"] = "Interviewer update is Failed";
+                    return RedirectToAction("CandidateJDScore", "Client", new { id = model.IRFId });
 
-                return RedirectToAction("CandidateJDScore", "Client");
+                }
             }
             else
             {
