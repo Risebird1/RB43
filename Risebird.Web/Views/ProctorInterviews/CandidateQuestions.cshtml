@@ -34,7 +34,7 @@
                         </button>
                     </div>
                     <a class="navbar-brand">
-                        Proctor Interviews / Questions
+                        Proctor Interviews / Questions (@Model.VMName)
                     </a>
                 </div>
             </div>
@@ -71,24 +71,25 @@
                                         <div role="tabpanel" class="tab-pane" id="Question_@(i)">
 
                                             @if (Model.Profile == "Candidate")
-                                            {<div class="col-md-8 nopad"><div class="note">Disclaimer: <span>Kindly note that you wont be able to get back to the current question once you click <b>'Next'</b></span></div></div>
+                                            {
+                                                <div class="col-md-8 nopad"><div class="note">Disclaimer: <span>Kindly note that you wont be able to get back to the current question once you click <b>'Next'</b></span></div></div>
                                             }
-                                            <div class="timer-wrap">
+                                        <div class="timer-wrap">
 
+                                            @if (Model.Profile == "Candidate")
+                                            {
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" /></svg>
                                                 <div class="timer blink_me" id="countdown_@(i)"></div>
-                                                <div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>
 
-                                                <!-- else
-                    {
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
-                        <div class="timer">Total Time</div>  <div class="timer time-divider">@Model.QuestionList[i].Time Mins </div>}-->
+                                            }
 
 
-                                                @*<div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>*@
+                                            <div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>
 
 
-                                            </div>
+
+
+                                        </div>
                                             <div class="clearfix"></div>
                                             <fieldset>
 
@@ -160,7 +161,7 @@
                                             </div>
 
 
-                                            <div class="col-md-12"><a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space continue pull-right"><span class="fa fa-chevron-left"></span>BACK TO LIST</a></div>
+                                            <div class="col-md-12"><a href="@Url.Action("Index", "ProctorInterviews")" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space continue pull-right"><span class="fa fa-chevron-left"></span>BACK TO LIST</a></div>
 
                                         </div>
                                     }
