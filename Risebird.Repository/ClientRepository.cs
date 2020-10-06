@@ -293,7 +293,7 @@ namespace Risebird.Repository
                         var affectedRows = con.Execute(sqlCuratedCandidate, new
                         {
                             ClientJdid= IrfId,
-                            IRFId = item.IRFId,
+                            IRFId = item.IRFDetailsID,
                             item.CandidateEmailId,
                             item.CuratedEmailId,
                             item.Score
@@ -320,7 +320,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from CandidateJDScore where ClientJdid = @IRFId";
+                var query = "Select id as IRFID,ClientJdid,IRFId as IRFDetailsID,CandidateEmailId,Score from CandidateJDScore where ClientJdid = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

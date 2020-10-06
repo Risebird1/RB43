@@ -2646,7 +2646,7 @@ namespace Risebird.Web.Controllers
                         var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId, isClient);
                         modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
 
-                        modelList1 = modelList1.Where(x => irfList.Contains(x.irfIntId)).ToList();
+                        modelList1 = modelList1.Where(x => irfList.Contains(x.IRFId)).ToList();
                         ViewBag.actionstatus = "SkillChannelDetails";
 
                         //Start:Save View counts of vedio
