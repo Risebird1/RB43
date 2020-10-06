@@ -233,7 +233,6 @@ table th {
     top: 30px;
     width: 0.8rem;
     position: absolute;
-  
     border-radius: 0;
     display: none;
     height: 2rem;
@@ -757,7 +756,6 @@ input[type=number] {
 
 
 .card-blue {
-
     border-radius: 4px;
     background-color: #fff;
     background-color: var(--mdc-theme-surface, #fff);
@@ -791,19 +789,26 @@ input[type=number] {
 .card-header-buttons.action {
     padding: 0px 5px 10px 0px;
 }
-    .card-header-buttons button.btn-danger {
+
+.card-header-buttons button.btn-danger {
     background: #FF3636 !important;
 }
-.password{position:relative}
+
+.password {
+    position: relative
+}
+
 #eyeicon {
     font-size: 18px;
     top: 35px;
     position: absolute;
     right: 10px;
 }
+
 .go-btn {
     background: green !important
 }
+
 .field-icon {
     float: right;
     margin-left: -25px;
@@ -812,10 +817,115 @@ input[type=number] {
     z-index: 2;
 }
 
-.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple{background:#fff!important}
+.proctor-detail h4 {
+    font-size: 16px;
+    line-height: 26px;
+    margin:0px;
+    padding:0px;
+}
+.tabs-wrap .nav-tabs > li {
+    position: relative;
+    z-index: 100;
+    text-align: center;
+}
+    .tabs-wrap .nav-tabs > li > a {
+        border-radius: 10px;
+        font-size: 23px;
+        padding: 8px 8px;
+        background: #f2f2f2;
+        margin: 10px 30px 3px 30px;
+        height: 60px;
+        color: #a09898;
+        min-width: 60px;
+        text-align: center;
+        line-height: 44px;
+        border-radius: 100px;
+    }
+.tabs-wrap .tab-content {
+    border-top: 1px solid #ddd;
+}
+.tabs-wrap .nav-tabs {
+    border: 0px;
+    margin: 0px auto;
+  display:inline-block;
+    padding: 0 0px 20px 0px;
+}
+
+.tabs-wrap .nav-tabs > li:after {
+    border-right: 5px #f1eaea solid;
+    content: "";
+    transition: auto;
+    position: absolute;
+    top: -16%;
+    left: 82%;
+    height: 100px;
+    transform: rotate(90deg);
+    z-index: -1;
+}
+        .tabs-wrap .nav-tabs > li:last-child:after {
+            border-right: 0px #f1eaea solid;
+        }
+
+    .tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
+    }
+
+.tabs-wrap {
+    margin: 50px 0px;
+  
+}
+
+.note span {
+    color: red;
+}
+.note {
+    line-height: 54px;
+    color:#000;
+    font-size: 16px;
+}
+.step-btn {
+    position: absolute;
+    top: 0px;
+    right: 75px;
+}
+.blink_me {
+    animation: blinker 1s linear infinite;
+    line-height: 45px;
+}
+    .blink_me span {
+        animation:none;
+        font-size:23px; font-weight:bold;
+    }
+
+    @keyframes blinker {
+        50% {
+        opacity: 0;
+    }
+}
+
+.label-left {
+    width: 16.66666667%;
+    float: left;
+    padding:0px 10px;
+}
+
+.label-right {
+    width: 75%;
+    float: left;
+    padding: 0px 10px;
+}
+.video-thumb-wrap {
+    width: 100%;
+    height: auto;
+}
+
+.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
+    background: #fff !important
+}
+
 .candidate .table > tbody > tr > td {
     padding: 12px 5px;
 }
+
 .card-blue .card-footer {
     text-align: center;
     padding: 8px 0px 8px 0px;
@@ -1212,7 +1322,16 @@ input[type=number] {
     .clientName {
         width: 170px;
     }
-
+    .note {
+        line-height: 22px;
+        color: #000;
+        font-size: 14px;
+        text-align: center;
+        padding: 10px;
+    }
+    .container.tabs-wrap {
+        max-width: 100%;
+    }
     .card-header-buttons {
         text-align: center;
     }
@@ -1222,10 +1341,67 @@ input[type=number] {
         padding-top: 5px;
         padding-right: 0px !important;
     }
+
+    .step-btn {
+        position: absolute;
+        top: 0px;
+        right: 15px;
+    }
 }
 
 @media screen and (max-width: 640px) {
     .card-blue .card-header h6 {
         text-align: center;
     }
+    .card-title-space.back {
+        margin-top: 20px !important;
+        margin-right: 10px !important;
+    }
+    }
+    .tabs-wrap .nav-tabs > li > a {
+        border-radius: 10px;
+        font-size: 23px;
+        padding: 8px 8px;
+        background: #f2f2f2;
+        margin: 10px 30px 3px 30px;
+        height: 40px;
+        color: #a09898;
+        min-width: 40px;
+        text-align: center;
+        line-height: 25px;
+        border-radius: 100px;
+    }
+    .note {
+        font-size:15px;
+    }
+    }
+@media screen and (max-width: 540px) {
+    .label-right {
+        width: 70%;
+        float: left;
+        padding: 0px 0px;
+    }
+
+    .label-left {
+        width: 30%;
+        text-align: left !important;
+    }
 }
+
+    @media screen and (max-width: 360px) {
+        .label-right {
+            width: 100%;
+            float: left;
+            padding: 0px 0px;
+        }
+
+        .label-left {
+            width: 100%;
+            text-align: left !important;
+        }
+
+        .container.tabs-wrap {
+            max-width: 100%;
+            padding: 0;
+        }
+    }

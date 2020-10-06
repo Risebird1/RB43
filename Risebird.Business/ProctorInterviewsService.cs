@@ -262,5 +262,47 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<ProctorVMQuestions>> GetVMQuestions(int vmId)
+        {
+            try
+            {
+                var result = (await _proctorInterviewsRepository.GetVMQuestions(vmId)).OrderBy(x => x.Priority);
+                return result.ToList();
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateVMQuestions(ProctorQuestionsViewModel model)
+        {
+            try
+            {
+                return await _proctorInterviewsRepository.UpdateVMQuestions(model);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateActionPerformed( int vmId, string emailId, string action)
+        {
+            try
+            {
+                return await _proctorInterviewsRepository.UpdateActionPerformed(vmId, emailId, action);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

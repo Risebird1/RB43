@@ -1,6 +1,6 @@
 /****** Object:  Table [dbo].[TransVMUser]    Script Date: 25-09-2020 11.49.17 AM ******/
 IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
-WHERE TABLE_NAME = N'Candidate')
+WHERE TABLE_NAME = N'TransVMUser')
 BEGIN
 CREATE TABLE [dbo].[TransVMUser](
 	[id] [int] IDENTITY(1,1) NOT NULL,
@@ -16,6 +16,22 @@ CREATE TABLE [dbo].[TransVMUser](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 END
+
+Else 
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SharedOn')
+      AND Object_ID = Object_ID(N'TransVMUser'))
+BEGIN
+    ALTER TABLE TransVMUser
+    Add SharedOn DATETIME
+    
+END
+
+End
+
 GO
 
 

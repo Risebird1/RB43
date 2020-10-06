@@ -18,6 +18,6 @@
         public string PrivateIP { get; set; }
         public string CustomName { get; set; }
         public string Password { get; set; }
-
+        public int QuestionsCount { get; set; }
     }
 }
