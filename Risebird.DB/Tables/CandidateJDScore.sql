@@ -4,7 +4,7 @@ BEGIN
 CREATE TABLE [dbo].[CandidateJDScore](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[ClientJdid] [int] NULL,
-	[IRFId] [int] NULL,
+	[IRFId] [varchar](20) NULL,
 	[CandidateEmailId] [varchar](200) NULL,
 	[CuratedEmailId] [varchar](200) NULL,
 	[Score] [int] NULL,

@@ -2863,7 +2863,7 @@ namespace Risebird.Repository
             return null;
 
         }
-        public IEnumerable<int> GetClientJdIRFs(int Clientjdid)
+        public IEnumerable<string> GetClientJdIRFs(int Clientjdid)
         {
             try
             {
@@ -2873,7 +2873,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return con.Query<int>(query, dynamicParameters);
+                    return con.Query<string>(query, dynamicParameters);
                 }
 
             }
