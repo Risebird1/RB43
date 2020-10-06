@@ -77,10 +77,16 @@
                                                         {
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" /></svg>
                                                             <div class="timer" id="countdown_@(i)"></div>
+                                                            <div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>
                                                         }
+                                                        else
+                                                        {
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
+                                                            <div class="timer">Total Time</div>  <div class="timer time-divider">@Model.QuestionList[i].Time Mins </div>}
 
                                                         @*<div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>*@
-                                                        <div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>
+
+
                                                     </div>
                                                 </div>
 
@@ -98,10 +104,10 @@
 
 
 
-                                                @*<div class="proctor-detail clearfix">
+                                                <div class="proctor-detail clearfix">
                                                         <h4 class="pull-left col-md-2 text-right"><b>Video:</b></h4>
-                                                        <div class="form-group col-md-8 pull-left">
-                                                            <div class="pull-left">
+                                                        <div class="form-group col-md-7 pull-left">
+                                                            <div>
                                                                 <div class="card">
                                                                     <div class="card-body">
                                                                         <video controls="" class="video-thumb-wrap" controlslist="nodownload">
@@ -113,7 +119,7 @@
 
                                                         </div>
 
-                                                    </div>*@
+                                                    </div>
 
 
                                                 <div class="proctor-detail clearfix">
@@ -127,16 +133,17 @@
 
                                                 </div>
                                             </fieldset>
-                                            @if (i != 0 && Model.Profile != "Candidate")
-                                            {
-                                                <a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space back" onclick="previousQuestion('@i', '@Model.QuestionList[i-1].Time')">Previous</a>
+                                            <div class="pull-right">
+                                                @if (i != 0 && Model.Profile != "Candidate")
+                                                {
+                                                  <a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space back" onclick="previousQuestion('@i', '@Model.QuestionList[i-1].Time')">Previous</a>
+                                                }
+                                                @if ((i + 1) != Model.TotalQuestions)
+                                                {
+                                                    <a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space continue pull-right" onclick="nextQuestion('@i', '@Model.QuestionList[i+1].Time', '@Model.Profile')">Next</a>
 
-                                            }
-                                            @if ((i + 1) != Model.TotalQuestions)
-                                            {
-                                                <a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space continue pull-right" onclick="nextQuestion('@i', '@Model.QuestionList[i+1].Time', '@Model.Profile')">Next</a>
-
-                                            }
+                                                }
+                                            </div>
                                         </div>
                                     }
 

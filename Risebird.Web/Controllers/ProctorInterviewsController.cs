@@ -490,7 +490,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    //profileName = "Candidate";
+                 //  profileName = "Candidate";
                     profileName.Replace("\"", "");
                    
                     ProctorQuestionsViewModel model = new ProctorQuestionsViewModel();
@@ -510,7 +510,7 @@ namespace Risebird.Web.Controllers
                     {
                         model.CurrentQuestionIndex = Convert.ToInt16(HttpContext.Session.GetString("CurrentQuestion"));
                     }
-                    //HttpContext.Session.Remove("CurrentQuestion");
+                   //HttpContext.Session.Remove("CurrentQuestion");
 
                     return View(model);
                 }
