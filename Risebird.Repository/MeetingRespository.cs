@@ -2610,10 +2610,11 @@ namespace Risebird.Repository
 
                 if (UrlType == "Shared")
                 {
-                    var query = "Update SharedVideoCountDetails set IsIntrested='Interested' where Videoid=@Videoid and Emailid=@Emailid";
+                    var query = "Update SharedVideoCountDetails set IsIntrested='Interested',OnDate=@ondate where Videoid=@Videoid and Emailid=@Emailid";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@Videoid", videoid);
                     dynamicParameters.Add("@Emailid", Emailid);
+                    dynamicParameters.Add("@ondate", DateTime.Now);
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -2634,11 +2635,12 @@ namespace Risebird.Repository
                         id = results.FirstOrDefault();
                     }
 
-                    var query = "Update VideoCountDetails set IsIntrested='Interested' where Videoid=@interviewid and Emailid=@Emailid or Userid=@id";
+                    var query = "Update VideoCountDetails set IsIntrested='Interested',OnDate=@ondate where Videoid=@interviewid and (Emailid=@Emailid or Userid=@id)";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@interviewid", videoid);
                     dynamicParameters.Add("@Emailid", Emailid);
                     dynamicParameters.Add("@id", id);
+                    dynamicParameters.Add("@ondate", DateTime.Now);
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
