@@ -1829,7 +1829,7 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public IEnumerable<string> GetClientJdIRFs(int Clientjdid)
+        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid)
         {
             try
             {
