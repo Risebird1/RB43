@@ -436,10 +436,11 @@ namespace Risebird.Repository
                         vmUserDt.Columns.Add("VmId", typeof(int));
                         vmUserDt.Columns.Add("UserId", typeof(int));
                         vmUserDt.Columns.Add("ProfileId", typeof(int));
+                        vmUserDt.Columns.Add("SharedOn", typeof(DateTime));
 
                         foreach (var item in userList)
                         {
-                            vmUserDt.Rows.Add(vmId, item, profileId);
+                            vmUserDt.Rows.Add(vmId, item, profileId, DateTime.Now);
                         }
 
                         SqlCommand cmd = new SqlCommand("usp_VMUsersBulkInsert", con);
@@ -555,6 +556,29 @@ namespace Risebird.Repository
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateActionPerformed(int vmId, string emailId, string action)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@vmId", vmId);
+                dynamicParameters.Add("@emailId", emailId);
+                dynamicParameters.Add("@action", action);
+                dynamicParameters.Add("@time", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = SqlMapper.Query(con, "usp_UpdateActionPerformed", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }

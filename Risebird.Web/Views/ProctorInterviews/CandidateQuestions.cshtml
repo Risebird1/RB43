@@ -1,0 +1,297 @@
+﻿@model Risebird.Entities.ViewModel.ProctorQuestionsViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Proctor Interviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Questions</title>
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/irf.css?v=7" />
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+    <div class="main-panel" id="main-panel">
+        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+            <div class="container-fluid">
+                <div class="navbar-wrapper w-full">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <a class="navbar-brand">
+                        Questions
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <div class="mt50">
+        </div>
+
+
+
+        <div class="content client">
+            <div class="row bg-white">
+                <div class="col-md-12">
+                    <div class="mdc-card card bg-white">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="container tabs-wrap">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    @for (int i = 0; i < Model.QuestionList.Count(); i++)
+                                    {
+                                        <li id="li_tab_@(i)">
+                                            <a role="tab" @*data-toggle="tab"*@ aria-expanded="true">Question @(i + 1)</a>
+                                        </li>
+                                    }
+
+                                  
+                                </ul>
+
+                                <div class="tab-content">
+                                    @for (int i = 0; i < Model.QuestionList.Count(); i++)
+                                    {
+                                        <div role="tabpanel" class="tab-pane" id="Question_@(i)">
+                                            <fieldset>
+                                                <div class="proctor-detail clearfix">
+                                                    <h4 class="pull-left col-md-2 pad10 text-right"><b>Question:</b></h4>
+                                                    <div class="form-group col-md-7 pad10 pull-left">
+                                                        <h4 class="pull-left">@Model.QuestionList[i].Question</h4>
+
+                                                    </div>
+                                                    <div class="timer-wrap">
+                                                        @if (Model.Profile == "Candidate")
+                                                        {
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" /></svg>
+                                                            <div class="timer" id="countdown_@(i)"></div>
+                                                            <div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
+                                                            <div class="timer">Total Time</div>  <div class="timer time-divider">@Model.QuestionList[i].Time Mins </div>}
+
+                                                        @*<div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>*@
+
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="proctor-detail clearfix">
+                                                    <h4 class="pull-left col-md-2 text-right"><b>Level:</b></h4>
+                                                    <div class="form-group col-md-8 pull-left">
+                                                        <h4 class="pull-left">@Model.QuestionList[i].LevelDesc</h4>
+                                                    </div>
+
+
+
+                                                </div>
+
+
+
+
+
+                                                <div class="proctor-detail clearfix">
+                                                        <h4 class="pull-left col-md-2 text-right"><b>Video:</b></h4>
+                                                        <div class="form-group col-md-7 pull-left">
+                                                            <div>
+                                                                <div class="card">
+                                                                    <div class="card-body">
+                                                                        <video controls="" class="video-thumb-wrap" controlslist="nodownload">
+                                                                            <source src="@Model.QuestionList[i].VideoLink" type="video/mp4">
+                                                                        </video>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+
+                                                <div class="proctor-detail clearfix">
+                                                    <h4 class="pull-left col-md-2 text-right"><b>Detail:</b></h4>
+                                                    <div class="form-group col-md-8 pull-left">
+                                                        <h4 class="pull-left">@Model.QuestionList[i].Detail</h4>
+
+                                                    </div>
+
+
+
+                                                </div>
+                                            </fieldset>
+                                            <div class="pull-right">
+                                                @if (i != 0 && Model.Profile != "Candidate")
+                                                {
+                                                  <a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space back" onclick="previousQuestion('@i', '@Model.QuestionList[i-1].Time')">Previous</a>
+                                                }
+                                                @if ((i + 1) != Model.TotalQuestions)
+                                                {
+                                                    <a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space continue pull-right" onclick="nextQuestion('@i', '@Model.QuestionList[i+1].Time', '@Model.Profile')">Next</a>
+
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+
+
+                                    
+                                </div>
+                            </div>
+
+
+                            <div id="push"></div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous" defer></script>
+
+
+    <script>
+        function countdown(elementName, minutes, seconds) {
+            var element, endTime, hours, mins, msLeft, time;
+
+            function twoDigits(n) {
+                return (n <= 9 ? "0" + n : n);
+            }
+
+            function updateTimer() {
+                msLeft = endTime - (+new Date);
+                if (msLeft < 1000) {
+                    element.innerHTML = "Time is up!";
+                } else {
+                    time = new Date(msLeft);
+                    hours = time.getUTCHours();
+                    mins = time.getUTCMinutes();
+                    element.innerHTML = (hours ? hours + ':' + twoDigits(mins) : mins) + ':' + twoDigits(time.getUTCSeconds());
+                    setTimeout(updateTimer, time.getUTCMilliseconds() + 500);
+                }
+            }
+
+            element = document.getElementById(elementName);
+            endTime = (+new Date) + 1000 * (60 * minutes + seconds) + 500;
+            updateTimer();
+        }
+
+
+
+    </script>
+
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        var sessionValue = '@HttpContextAccessor.HttpContext.Session.GetString("CurrentQuestion")';
+        if (sessionValue == null || sessionValue == '') {
+            //set first tab as active
+            document.getElementById("li_tab_0").classList.add("active");
+            document.getElementById("li_tab_0").setAttribute("role", "presentation");
+
+            document.getElementById("Question_0").classList.add("active");
+            if (document.getElementById("countdown_0") != null) {
+                var time = '@Model.QuestionList.FirstOrDefault().Time';
+
+                countdown("countdown_0", time, 0);
+
+            }
+        }
+        else {
+            document.getElementById("li_tab_" + sessionValue).classList.add("active");
+            document.getElementById("li_tab_" + sessionValue).setAttribute("role", "presentation");
+
+            document.getElementById("Question_" + sessionValue).classList.add("active");
+
+            if (document.getElementById("countdown_" + sessionValue) != null) {
+                var time = '@Model.QuestionList[Model.CurrentQuestionIndex].Time';
+
+                countdown("countdown_" + sessionValue, time, 0);
+
+            }
+        }
+
+    });
+
+</script>
+<script>
+    function nextQuestion(indexValue, time, profile) {
+        debugger;
+        var nextIndex = parseInt(indexValue) + parseInt(1);
+
+        if (profile == "Candidate") {
+            $.ajax({
+                type: "POST",
+                url: "/ProctorInterviews/SetCurrentQuestion",
+                data: {
+                    'newIndex': nextIndex
+                },
+                success: function () {
+
+                }
+            });
+        }
+        
+        //remove active status of previous tabs
+        document.getElementById("li_tab_" + indexValue).classList.remove("active");
+        document.getElementById("li_tab_" + indexValue).setAttribute("role", "");
+        document.getElementById("Question_" + indexValue).classList.remove("active");
+
+        //add active class to the next tabs
+
+        document.getElementById("li_tab_" + nextIndex).classList.add("active");
+        document.getElementById("li_tab_" + nextIndex).setAttribute("role", "presentation");
+        document.getElementById("Question_" + nextIndex).classList.add("active");
+
+        if (document.getElementById("countdown_" + nextIndex) != null) {
+            countdown("countdown_" + nextIndex, time, 0);
+
+        }
+
+    }
+
+    function previousQuestion(indexValue, time) {
+        var previousIndex = parseInt(indexValue) - parseInt(1);
+
+        
+        //remove active current tabs
+        document.getElementById("li_tab_" + indexValue).classList.remove("active");
+        document.getElementById("li_tab_" + indexValue).setAttribute("role", "");
+        document.getElementById("Question_" + indexValue).classList.remove("active");
+
+        //add active class to the previous tabs
+
+        document.getElementById("li_tab_" + previousIndex).classList.add("active");
+        document.getElementById("li_tab_" + previousIndex).setAttribute("role", "presentation");
+        document.getElementById("Question_" + previousIndex).classList.add("active");
+        if (document.getElementById("countdown_" + previousIndex) != null) {
+            countdown("countdown_" + previousIndex, time, 0);
+
+        }
+
+    }
+
+</script>

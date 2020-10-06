@@ -233,7 +233,6 @@ table th {
     top: 30px;
     width: 0.8rem;
     position: absolute;
-  
     border-radius: 0;
     display: none;
     height: 2rem;
@@ -757,7 +756,6 @@ input[type=number] {
 
 
 .card-blue {
-
     border-radius: 4px;
     background-color: #fff;
     background-color: var(--mdc-theme-surface, #fff);
@@ -791,19 +789,26 @@ input[type=number] {
 .card-header-buttons.action {
     padding: 0px 5px 10px 0px;
 }
-    .card-header-buttons button.btn-danger {
+
+.card-header-buttons button.btn-danger {
     background: #FF3636 !important;
 }
-.password{position:relative}
+
+.password {
+    position: relative
+}
+
 #eyeicon {
     font-size: 18px;
     top: 35px;
     position: absolute;
     right: 10px;
 }
+
 .go-btn {
     background: green !important
 }
+
 .field-icon {
     float: right;
     margin-left: -25px;
@@ -812,10 +817,40 @@ input[type=number] {
     z-index: 2;
 }
 
-.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple{background:#fff!important}
+.proctor-detail h4 {
+    font-size: 16px;
+    line-height: 26px;
+}
+
+
+.tabs-wrap .nav-tabs > li > a {
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 8px 8px;
+    background: #f2f2f2;
+    margin: 10px 8px 3px 0px;
+    /* height: 66px; */
+    color: #a09898;
+    min-width: 100px;
+    text-align: center;
+}
+
+.tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
+}
+
+.video-thumb-wrap {
+    width: 100%;
+    height: auto;
+}
+
+.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
+    background: #fff !important
+}
+
 .candidate .table > tbody > tr > td {
     padding: 12px 5px;
 }
+
 .card-blue .card-footer {
     text-align: center;
     padding: 8px 0px 8px 0px;
@@ -966,6 +1001,7 @@ input[type=number] {
 
 #QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
     cursor: pointer !important;
+    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
 
     #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
