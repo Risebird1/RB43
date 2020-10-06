@@ -5932,10 +5932,10 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            List<string> receiverEmails = new List<string>();
-                            List<string> supportEmails = new List<string>();
-                            receiverEmails.Add(irfid);
-                            var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails, model);
+
+                            model.IRFId = Convert.ToInt16(irfid);
+                            var result = _meetingService.BroadcastIRFmembers(model);
+
                             TempData["SuccessErrorMessageInterview"] = result;
                             return Json(result);
                         }
