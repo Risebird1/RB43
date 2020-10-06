@@ -134,7 +134,10 @@ namespace Risebird.Web.Controllers
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
                     if (response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
                     {
-
+                        //save the email of the performer
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        await _proctorInterviewsService.UpdateActionPerformed(vmId, emailid, action);
                         TempData["SuccessErrorMessageProctor"] = $"Successfully performed {action} action for {name}!";
                         return true;
                     }
@@ -490,7 +493,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                 //  profileName = "Candidate";
+                    //profileName = "Candidate";
                     profileName.Replace("\"", "");
                    
                     ProctorQuestionsViewModel model = new ProctorQuestionsViewModel();
@@ -510,7 +513,7 @@ namespace Risebird.Web.Controllers
                     {
                         model.CurrentQuestionIndex = Convert.ToInt16(HttpContext.Session.GetString("CurrentQuestion"));
                     }
-                   //HttpContext.Session.Remove("CurrentQuestion");
+                    //HttpContext.Session.Remove("CurrentQuestion");
 
                     return View(model);
                 }

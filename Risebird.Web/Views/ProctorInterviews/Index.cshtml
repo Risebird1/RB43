@@ -41,9 +41,14 @@
 
                 <div class="pull-right">
                     <div>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add existing VMs" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Existing VMs</font></span>
-                        </button>
+
+                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Interviewer")
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add existing VMs" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Existing VMs</font></span>
+                            </button>
+                        }
+
 
 
 
@@ -92,7 +97,7 @@
                                                     }
                                                 </div>
                                                 <div class="col-md-5 col-sm-5 card-header-buttons action">
-                                                    @if (Model.Profile == "Admin")
+                                                    @if (Model.Profile == "Admin" || Model.Profile=="HR")
                                                     {
 
 
@@ -182,26 +187,38 @@
                                                 </div>
 
                                                 <div class="stats-bttm-btn  col-lg-6 col-md-6 col-sm-6 col-xs-6 ">
-
-                                                    @if (item.StatusDesc.ToLower() == "running")
+                                                    @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Interviewer")
                                                     {
-                                                        <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
-                                                            <i class="fa fa-stop"></i>
-                                                        </button>
-                                                        <button id="rdpButton_@item.id" class="mdc-fab app-fab--absolute" title="Download RDP" aria-label="Download RDP" onclick="location.href='@Url.Action("GetRDPFile", "ProctorInterviews", new { vmId = item.id})'">
-                                                            <i class="fa fa-desktop"></i>
-                                                        </button>
+                                                        @if (item.StatusDesc.ToLower() == "running")
+                                                        {
+                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
+                                                                <i class="fa fa-stop"></i>
+                                                            </button>
+
+
+                                                        }
+                                                        else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
+                                                        {
+
+                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
+                                                                <i class="fa fa-play"></i>
+                                                            </button>
+                                                        }
+                                                    }
+                                                    @if (Model.Profile == "Admin" || Model.Profile == "Candidate" || Model.Profile == "Interviewer")
+                                                    {
+                                                        @if (item.StatusDesc.ToLower() == "running")
+                                                        {
+                                                            <button id="rdpButton_@item.id" class="mdc-fab app-fab--absolute" title="Download RDP" aria-label="Download RDP" onclick="location.href='@Url.Action("GetRDPFile", "ProctorInterviews", new { vmId = item.id})'">
+                                                                <i class="fa fa-desktop"></i>
+                                                            </button>
+                                                        }
 
 
                                                     }
 
-                                                    else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
-                                                    {
 
-                                                        <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
-                                                            <i class="fa fa-play"></i>
-                                                        </button>
-                                                    }
+
                                                     @if (Model.Profile == "Interviewer" || Model.Profile == "Admin")
                                                     {
                                                         <button id="questionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Add questions" aria-label="Add questions" onclick="location.href='@Url.Action("ProctorVMQuestions", "ProctorInterviews", new { vmId = item.id})'">

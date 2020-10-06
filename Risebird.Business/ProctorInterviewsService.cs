@@ -290,5 +290,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> UpdateActionPerformed( int vmId, string emailId, string action)
+        {
+            try
+            {
+                return await _proctorInterviewsRepository.UpdateActionPerformed(vmId, emailId, action);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
