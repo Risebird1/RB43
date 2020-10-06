@@ -436,10 +436,11 @@ namespace Risebird.Repository
                         vmUserDt.Columns.Add("VmId", typeof(int));
                         vmUserDt.Columns.Add("UserId", typeof(int));
                         vmUserDt.Columns.Add("ProfileId", typeof(int));
+                        vmUserDt.Columns.Add("SharedOn", typeof(DateTime));
 
                         foreach (var item in userList)
                         {
-                            vmUserDt.Rows.Add(vmId, item, profileId);
+                            vmUserDt.Rows.Add(vmId, item, profileId, DateTime.Now);
                         }
 
                         SqlCommand cmd = new SqlCommand("usp_VMUsersBulkInsert", con);
@@ -468,6 +469,116 @@ namespace Risebird.Repository
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<ProctorVMQuestions>> GetVMQuestions(int vmId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@vmId", vmId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<ProctorVMQuestions>(con, "usp_GetVMQuestions", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+               await  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
+        public async Task<bool> UpdateVMQuestions(ProctorQuestionsViewModel model)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@vmId", model.VmId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_DeleteVMQuestions", parameters,
+                       commandType: CommandType.StoredProcedure);
+
+
+
+                    if (model.QuestionList != null && model.QuestionList.Count() > 0)
+                    {
+                        DataTable vmQuestionDt = new DataTable();
+                        vmQuestionDt.Columns.Add("VmId", typeof(int));
+                        vmQuestionDt.Columns.Add("Priority", typeof(int));
+                        vmQuestionDt.Columns.Add("Question", typeof(string));
+                        vmQuestionDt.Columns.Add("Detail", typeof(string));
+                        vmQuestionDt.Columns.Add("VideoLink", typeof(string));
+                        vmQuestionDt.Columns.Add("Time", typeof(int));
+                        vmQuestionDt.Columns.Add("Level", typeof(int));
+                        vmQuestionDt.Columns.Add("Skill", typeof(string));
+
+                        foreach (var item in model.QuestionList)
+                        {
+                            vmQuestionDt.Rows.Add(model.VmId, item.Priority, item.Question, item.Detail, item.VideoLink, item.Time, item.Level, item.Skill);
+                        }
+
+                        SqlCommand cmd = new SqlCommand("usp_VMQuestionsBulkInsert", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@VMQuestionsBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@VMQuestionsBulkData"].Value = vmQuestionDt;
+                        con.Open();
+                        if (cmd.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+
+
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateActionPerformed(int vmId, string emailId, string action)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@vmId", vmId);
+                dynamicParameters.Add("@emailId", emailId);
+                dynamicParameters.Add("@action", action);
+                dynamicParameters.Add("@time", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = SqlMapper.Query(con, "usp_UpdateActionPerformed", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }

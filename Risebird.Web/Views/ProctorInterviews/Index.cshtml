@@ -41,9 +41,14 @@
 
                 <div class="pull-right">
                     <div>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add existing VMs" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Existing VMs</font></span>
-                        </button>
+
+                        @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Interviewer")
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add existing VMs" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Existing VMs</font></span>
+                            </button>
+                        }
+
 
 
 
@@ -92,24 +97,11 @@
                                                     }
                                                 </div>
                                                 <div class="col-md-5 col-sm-5 card-header-buttons action">
-                                                    @if (Model.Profile == "Admin")
+                                                    @if (Model.Profile == "Admin" || Model.Profile=="HR")
                                                     {
 
 
-                                                        @if (item.StatusDesc.ToLower() == "running")
-                                                        {
-                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
-                                                                <i class="fa fa-stop"></i>
-                                                            </button>
-
-                                                        }
-                                                        else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
-                                                        {
-
-                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
-                                                                <i class="fa fa-play"></i>
-                                                            </button>
-                                                        }
+                                                       
 
                                                         <button id="passwordButton_@item.id" class="mdc-fab app-fab--absolute" title="Reset Password" aria-label="Reset Password" onclick="location.href='@Url.Action("ResetPassword", "ProctorInterviews", new { name = item.Name, rgName = item.ResourceGroupName, vmId = item.id})'">
                                                             <i class="fa fa-key"></i>
@@ -142,28 +134,33 @@
                                                             <span>VM Name:</span>@item.Name
                                                         </div> <br /> <br />
 
-                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div> <br /> <br />
-                                                                                                                                            <div class="row three" style="position:relative;">
-                                                                                                                                                <div style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
+                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div>
+                                                        <br />
+                                                        <br />
+                                                        <div class="row three" style="position:relative;">
+                                                            <div style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
 
-                                                                                                                                               <!--- <div class="pull-left">
-                                                                                                                                                    <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.Password" style="background:none;">
-                                                                                                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-                                                                                                                                                </div>--->
+                                                            <!--- <div class="pull-left">
+             <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
+             <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+         </div>--->
 
 
 
-                                                                                                                                            <div style="position:relative">
-                                                                                                                                                <div class="pull-left" id="password-field" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
-                                                                                                                                                
-                                                                                                                                                @if (item.Password != null)
-                                                                                                                                                {<span class="secret">********</span>
-                                                                                                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-                                                                                                                                                }
-                                                                                                                                                else
-                                                                                                                                                { <span toggle="#password-field" class=" toggle-password" id="toggle-password"></span>}
-                                                                                                                                            </div>
-                                                                                                                                                </div> <br />
+                                                            <div style="position:relative">
+                                                                <div class="pull-left" id="password-field" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
+
+                                                                @if (item.Password != null)
+                                                                {<span class="secret">********</span>
+                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+                                                                }
+                                                                else
+                                                                { <span toggle="#password-field" class=" toggle-password" id="toggle-password"></span>}
+                                                            </div>
+                                                        </div>
+
+
+                                                        <br />
                                                     </div>
                                                 </div>
                                             </div>
@@ -190,16 +187,54 @@
                                                 </div>
 
                                                 <div class="stats-bttm-btn  col-lg-6 col-md-6 col-sm-6 col-xs-6 ">
-
-                                                    @if (item.StatusDesc.ToLower() == "running")
+                                                    @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Interviewer")
                                                     {
-                                                        
-                                                        <button id="rdpButton_@item.id" class="mdc-fab app-fab--absolute" title="Download RDP" aria-label="Download RDP" onclick="location.href='@Url.Action("GetRDPFile", "ProctorInterviews", new { vmId = item.id})'">
-                                                            <i class="fa fa-desktop"></i>
-                                                        </button>
+                                                        @if (item.StatusDesc.ToLower() == "running")
+                                                        {
+                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
+                                                                <i class="fa fa-stop"></i>
+                                                            </button>
+
+
+                                                        }
+                                                        else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
+                                                        {
+
+                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
+                                                                <i class="fa fa-play"></i>
+                                                            </button>
+                                                        }
+                                                    }
+                                                    @if (Model.Profile == "Admin" || Model.Profile == "Candidate" || Model.Profile == "Interviewer")
+                                                    {
+                                                        @if (item.StatusDesc.ToLower() == "running")
+                                                        {
+                                                            <button id="rdpButton_@item.id" class="mdc-fab app-fab--absolute" title="Download RDP" aria-label="Download RDP" onclick="location.href='@Url.Action("GetRDPFile", "ProctorInterviews", new { vmId = item.id})'">
+                                                                <i class="fa fa-desktop"></i>
+                                                            </button>
+                                                        }
+
 
                                                     }
-                                                    
+
+
+
+                                                    @if (Model.Profile == "Interviewer" || Model.Profile == "Admin")
+                                                    {
+                                                        <button id="questionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Add questions" aria-label="Add questions" onclick="location.href='@Url.Action("ProctorVMQuestions", "ProctorInterviews", new { vmId = item.id})'">
+                                                            <i class="fa fa-question"></i>
+                                                        </button>
+                                                    }
+                                                    @if (item.QuestionsCount != 0)
+                                                    {
+                                                        <button id="candidateQuestionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("CandidateQuestions", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
+                                                            <i class="fa fa-question-circle"></i>
+                                                        </button>
+                                                    }
+
+
+
+
                                                 </div>
                                             </div>
                                         </div>
