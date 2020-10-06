@@ -227,7 +227,7 @@
                                                     }
                                                     @if (item.QuestionsCount != 0)
                                                     {
-                                                        <button id="candidateQuestionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("CandidateQuestions", "ProctorInterviews", new { vmId = item.id})'">
+                                                        <button id="candidateQuestionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("CandidateQuestions", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
                                                             <i class="fa fa-question-circle"></i>
                                                         </button>
                                                     }

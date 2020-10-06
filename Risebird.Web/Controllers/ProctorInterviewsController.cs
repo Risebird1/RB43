@@ -486,7 +486,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> CandidateQuestions(int vmId)
+        public async Task<IActionResult> CandidateQuestions(int vmId, string vmName)
         {
             try
             {
