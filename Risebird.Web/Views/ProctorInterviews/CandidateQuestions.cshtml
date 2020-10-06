@@ -34,7 +34,7 @@
                         </button>
                     </div>
                     <a class="navbar-brand">
-                        Questions
+                        Proctor Interviews / Questions
                     </a>
                 </div>
             </div>
@@ -50,49 +50,63 @@
                     <div class="mdc-card card bg-white">
                         <div class="mdc-card-wrapper__text-section">
                             <div class="container tabs-wrap">
-                                <ul class="nav nav-tabs" role="tablist">
-                                    @for (int i = 0; i < Model.QuestionList.Count(); i++)
-                                    {
-                                        <li id="li_tab_@(i)">
-                                            <a role="tab" @*data-toggle="tab"*@ aria-expanded="true">Question @(i + 1)</a>
-                                        </li>
-                                    }
+                                <div class="text-center">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        @for (int i = 0; i < Model.QuestionList.Count(); i++)
+                                        {
+                                            <li id="li_tab_@(i)">
+                                                <a role="tab" @*data-toggle="tab"*@ aria-expanded="true"> @(i + 1)</a>
+                                                <span style="        font-weight: 500;
+        font-size: 18px;
+">Question</span>
+                                            </li>
+                                        }
 
-                                  
-                                </ul>
 
+                                    </ul>
+                                </div>
                                 <div class="tab-content">
                                     @for (int i = 0; i < Model.QuestionList.Count(); i++)
                                     {
                                         <div role="tabpanel" class="tab-pane" id="Question_@(i)">
+
+                                            @if (Model.Profile == "Candidate")
+                                            {<div class="col-md-8 nopad"><div class="note">Disclaimer: <span>Kindly note that you wont be able to get back to the current question once you click <b>'Next'</b></span></div></div>
+                                            }
+                                            <div class="timer-wrap">
+
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" /></svg>
+                                                <div class="timer blink_me" id="countdown_@(i)"></div>
+                                                <div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>
+
+                                                <!-- else
+                    {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
+                        <div class="timer">Total Time</div>  <div class="timer time-divider">@Model.QuestionList[i].Time Mins </div>}-->
+
+
+                                                @*<div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>*@
+
+
+                                            </div>
+                                            <div class="clearfix"></div>
                                             <fieldset>
+
                                                 <div class="proctor-detail clearfix">
-                                                    <h4 class="pull-left col-md-2 pad10 text-right"><b>Question:</b></h4>
-                                                    <div class="form-group col-md-7 pad10 pull-left">
+                                                    <h4 class="pull-left label-left pad10 text-right"><b>Question:</b></h4>
+                                                    <div class="form-group label-right  pull-left">
                                                         <h4 class="pull-left">@Model.QuestionList[i].Question</h4>
 
                                                     </div>
-                                                    <div class="timer-wrap">
-                                                        @if (Model.Profile == "Candidate")
-                                                        {
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" /></svg>
-                                                            <div class="timer" id="countdown_@(i)"></div>
-                                                            <div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>
-                                                        }
-                                                        else
-                                                        {
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill=" rgb(154, 154, 154)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
-                                                            <div class="timer">Total Time</div>  <div class="timer time-divider">@Model.QuestionList[i].Time Mins </div>}
-
-                                                        @*<div class="timer time-divider">@Model.QuestionList[i].Time Mins <span>Total Time</span></div>*@
 
 
-                                                    </div>
+
+
                                                 </div>
 
                                                 <div class="proctor-detail clearfix">
-                                                    <h4 class="pull-left col-md-2 text-right"><b>Level:</b></h4>
-                                                    <div class="form-group col-md-8 pull-left">
+                                                    <h4 class="pull-left label-left text-right"><b>Level:</b></h4>
+                                                    <div class="form-group label-right pull-left">
                                                         <h4 class="pull-left">@Model.QuestionList[i].LevelDesc</h4>
                                                     </div>
 
@@ -105,26 +119,26 @@
 
 
                                                 <div class="proctor-detail clearfix">
-                                                        <h4 class="pull-left col-md-2 text-right"><b>Video:</b></h4>
-                                                        <div class="form-group col-md-7 pull-left">
-                                                            <div>
-                                                                <div class="card">
-                                                                    <div class="card-body">
-                                                                        <video controls="" class="video-thumb-wrap" controlslist="nodownload">
-                                                                            <source src="@Model.QuestionList[i].VideoLink" type="video/mp4">
-                                                                        </video>
-                                                                    </div>
+                                                    <h4 class="pull-left label-left text-right"><b>Video:</b></h4>
+                                                    <div class="label-right pull-left">
+                                                        <div>
+                                                            <div class="card">
+                                                                <div class="card-body">
+                                                                    <video controls="" class="video-thumb-wrap" controlslist="nodownload">
+                                                                        <source src="@Model.QuestionList[i].VideoLink" type="video/mp4">
+                                                                    </video>
                                                                 </div>
                                                             </div>
-
                                                         </div>
 
                                                     </div>
 
+                                                </div>
+
 
                                                 <div class="proctor-detail clearfix">
-                                                    <h4 class="pull-left col-md-2 text-right"><b>Detail:</b></h4>
-                                                    <div class="form-group col-md-8 pull-left">
+                                                    <h4 class="pull-left label-left text-right"><b>Detail:</b></h4>
+                                                    <div class="form-group label-right pull-left">
                                                         <h4 class="pull-left">@Model.QuestionList[i].Detail</h4>
 
                                                     </div>
@@ -133,10 +147,10 @@
 
                                                 </div>
                                             </fieldset>
-                                            <div class="pull-right">
+                                            <div class="step-btn">
                                                 @if (i != 0 && Model.Profile != "Candidate")
                                                 {
-                                                  <a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space back" onclick="previousQuestion('@i', '@Model.QuestionList[i-1].Time')">Previous</a>
+                                                    <a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space back" onclick="previousQuestion('@i', '@Model.QuestionList[i-1].Time')">Previous</a>
                                                 }
                                                 @if ((i + 1) != Model.TotalQuestions)
                                                 {
@@ -144,11 +158,14 @@
 
                                                 }
                                             </div>
+
+
+                                            <div class="col-md-12"><a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space continue pull-right">BACK TO LIST</a></div>
+
                                         </div>
                                     }
 
 
-                                    
                                 </div>
                             </div>
 
@@ -183,7 +200,7 @@
             function updateTimer() {
                 msLeft = endTime - (+new Date);
                 if (msLeft < 1000) {
-                    element.innerHTML = "Time is up!";
+                    element.innerHTML = " <span style='color: red; font - weight: bold;font-size: 23px; line-height: 45px;font-weight:bold'>0 Min</span>";
                 } else {
                     time = new Date(msLeft);
                     hours = time.getUTCHours();
