@@ -148,14 +148,14 @@
 
 
                                                             <div style="position:relative">
-                                                                <div class="pull-left" id="password-field" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
+                                                                <div class="pull-left passshow" id="password-field_@item.id" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
 
                                                                 @if (item.Password != null)
-                                                                {<span class="secret">********</span>
-                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+                                                                {<span class="secret" id="secret_@item.id">********</span>
+                                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
                                                                 }
                                                                 else
-                                                                { <span toggle="#password-field" class=" toggle-password" id="toggle-password"></span>}
+                                                                { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
                                                             </div>
                                                         </div>
 
@@ -510,26 +510,28 @@
 
 
 <script>
-    $("#password-field").addClass('passshow');
-    $(".secret").show();
-    $("#toggle-password").click(function () {
-        $(".secret").hide();
-        $(this).toggleClass("fa-eye fa-eye-slash");
-       
-        var value = $($(this).attr("toggle"));
-        if (value.attr("type") == "password") {
-            value.attr("type", "text");
-            $("#password-field").removeClass('passshow');
+
+    function showhidepass(id) {
+        var value = document.getElementById("password-field_" + id);
+        if (value.getAttribute("type") == "text") {
+            value.setAttribute("type", "password");
+            $("#secret_" + id).show();
+            $("#password-field_" + id).addClass('passshow');
          
-         
-        }
+            $("#toggle-password_" + id).removeClass("fa-eye-slash");
+             }
         else {
-            value.attr("type", "password");
-            $("#password-field").addClass('passshow');
-            $(".secret").show();
-      
-           
-        }
-    });
+           value.setAttribute("type", "text");
+            $("#password-field_" + id).removeClass('passshow');
+            $("#toggle-password_" + id).addClass("fa-eye-slash");
+           $("#secret_" + id).hide();
+
+}
+
+}
+
+
+
+
 </script>
 
