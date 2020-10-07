@@ -62,6 +62,8 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("No of Positions")]
         [Required]
         public int NoOfPosition { get; set; }
+        [DisplayName("Client Profile Type")]
+        public int Heuristicsscore { get; set; }
 
         [DisplayName("No of Interviews")]
         [Required]
@@ -141,6 +143,7 @@ namespace Risebird.Entities.ViewModel
         public int NoOfIntterview { get; set; }
         public int RisebirdHr { get; set; }
         public double PerMintuteRate { get; set; }
+        public int Heuristicsscore { get; set; }
 
         public int JobLevel { get; set; }
         public bool IsClientUser { get; set; }

@@ -2617,7 +2617,6 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     ViewBag.actionstatus = "Risetube";
                     ViewBag.ResultStatus = "VideoPresent";
@@ -2642,13 +2641,13 @@ namespace Risebird.Web.Controllers
 
                         var modelList1 = new List<MeetingVM>();
 
-                        var irfList = _meetingService.GetClientJdIRFs(ClientJdId).ToArray();
-                        var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId, isClient);
+                        var dataResult = _meetingService.GetClientJdIRFs(ClientJdId);
+                        //var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId, isClient);
                         modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
-
-                        modelList1 = modelList1.Where(x => irfList.Contains(x.irfIntId)).ToList();
+                        id = modelList1.FirstOrDefault().imid;
+                        //modelList1 = modelList1.Where(x => irfList.Contains(x.IRFId)).ToList();
                         ViewBag.actionstatus = "SkillChannelDetails";
-
+                        //fetch data on based on irfid and Emailid 
                         //Start:Save View counts of vedio
                         if (HttpContext.Session.GetString("UserLogedIn") != null)
                         {

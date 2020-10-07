@@ -1275,6 +1275,25 @@ namespace Risebird.Business
 
         }
 
+        public async Task<string> BroadcastIRFmembers(BroadcastModel model)
+        {
+            try
+            {
+                var receiverEmails = _meetingRespository.GetIRFMembersEmails(model.IRFId).Result;
+                var supportEmails = _supportRespository.GetAllSupportHREmails();
+                var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                return result;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Broadcast failed.";
+            }
+
+        }
+
         public IEnumerable<Meeting> GetHROpenInterviews()
         {
             try
@@ -1810,7 +1829,7 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public IEnumerable<int> GetClientJdIRFs(int Clientjdid)
+        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid)
         {
             try
             {

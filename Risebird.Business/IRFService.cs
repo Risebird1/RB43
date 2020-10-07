@@ -459,6 +459,7 @@ namespace Risebird.Business
                 model.TotalBudget = IRF.TotalBudget;
                 model.IsBiometricEnabled = IRF.IsBiometricEnabled;
                 model.PriorityLevel = IRF.PriorityLevel;
+                model.Heuristicsscore = IRF.Heuristicsscore;
                 model.Type = IRF.BussinessType;
                 var skillCount = transTechSkills.Count();
                 return model;
@@ -1312,6 +1313,19 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public string AssessmentLike(int id,string emailid)
+        {
+            try
+            {
+                return _irfRepository.AssessmentLike(id, emailid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
             }
         }
     }

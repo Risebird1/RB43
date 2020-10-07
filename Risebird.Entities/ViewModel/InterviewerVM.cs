@@ -55,7 +55,9 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Skills")]
         public SelectList PrimarySkills { get; set; }
-
+        public SelectList Heuristicsscorelist { get; set; }
+        [Display(Name = "Profile Type")]
+        public int Heuristicsscore { get; set; }
         public string InterviewerSkillId { get; set; }
 
         public string VideoLink { get; set; }

@@ -691,6 +691,9 @@ namespace Risebird.Web.Controllers
                 ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetAllHRs(), "id", "EmailId");
+                var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
@@ -1503,7 +1506,9 @@ namespace Risebird.Web.Controllers
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                     select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                     model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
                     model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
@@ -2252,7 +2257,7 @@ namespace Risebird.Web.Controllers
 
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
                             candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription());
-                            candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); });
+                            candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); x.HeuristicsscoreDesc = ((Heuristicsscorelevel)x.Heuristicsscore).GetDescription(); });
                         }
 
                         if (TempData["SuccessErrorMessageCandidate"] != null)
@@ -2467,6 +2472,9 @@ namespace Risebird.Web.Controllers
                         IRFId = Convert.ToInt32(irfId),
                         IRFName = irfName
                     };
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     return View(model);
                 }
                 else
@@ -2658,6 +2666,9 @@ namespace Risebird.Web.Controllers
                 {
                     var model = _irfService.GetCandidate(id, Convert.ToInt32(irfId));
                     model.IRFName = irfName;
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     return View(model);
                 }
                 else
@@ -4297,11 +4308,31 @@ namespace Risebird.Web.Controllers
             model.Evaluations = ((Evaluation)model.Evaluation).GetDescription();
             model.EmployerStages = ((EmployerStage)model.EmployerStage).GetDescription();
             model.EmployerSizes = ((EmployerSize)model.EmployerSize).GetDescription();
+            model.backid = id;
             foreach (var item in model.Questionslist)
             {
                 item.Levels= ((AssessmentLevel)item.Level).GetDescription();
             }
             return View(model);
         }
+        [HttpPost]
+        public JsonResult AssessmentLike(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var result = _irfService.AssessmentLike(id, emailid);
+                return Json("Success");
+            }
+            else
+            {
+                return Json("Fail");
+            }
+        }
+
+
     }
 }

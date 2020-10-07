@@ -92,6 +92,9 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetSharedRiseTubeMeetings();
         Task<List<QuestionDetails>> FetchQuestionDetails(int interviewid);
         string UpdateQuestionDetails(List<QuestionDetails> _question);
-        IEnumerable<int> GetClientJdIRFs(int Clientjdid);
+       
+       
+        Task<string> BroadcastIRFmembers(BroadcastModel model);
+        IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid);
     }
 }

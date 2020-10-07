@@ -34,6 +34,7 @@ SELECT id as Assessmentid,Question as QuestionCovered,ThumbnailLink as Skill ,Pr
     
     
 END    
+Go
   
   
   

@@ -166,7 +166,15 @@
 
 
                                     </div>
+                                    <div class="clearfix">
 
+                                        <div class="form-group col-md-4 col-sm-4 pr-1 pull-left">
+                                            @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(m => m.Heuristicsscore, new SelectList(Model.Heuristicsscorelist, "Value", "Text"), new { @id = "select", @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="card-footer" style="margin-top: 15px;">
                                             <div class="row">

@@ -2610,10 +2610,11 @@ namespace Risebird.Repository
 
                 if (UrlType == "Shared")
                 {
-                    var query = "Update SharedVideoCountDetails set IsIntrested='Interested' where Videoid=@Videoid and Emailid=@Emailid";
+                    var query = "Update SharedVideoCountDetails set IsIntrested='Interested',OnDate=@ondate where Videoid=@Videoid and Emailid=@Emailid";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@Videoid", videoid);
                     dynamicParameters.Add("@Emailid", Emailid);
+                    dynamicParameters.Add("@ondate", DateTime.Now);
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -2634,11 +2635,12 @@ namespace Risebird.Repository
                         id = results.FirstOrDefault();
                     }
 
-                    var query = "Update VideoCountDetails set IsIntrested='Interested' where Videoid=@interviewid and Emailid=@Emailid or Userid=@id";
+                    var query = "Update VideoCountDetails set IsIntrested='Interested',OnDate=@ondate where Videoid=@interviewid and (Emailid=@Emailid or Userid=@id)";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@interviewid", videoid);
                     dynamicParameters.Add("@Emailid", Emailid);
                     dynamicParameters.Add("@id", id);
+                    dynamicParameters.Add("@ondate", DateTime.Now);
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -2861,23 +2863,45 @@ namespace Risebird.Repository
             return null;
 
         }
-        public IEnumerable<int> GetClientJdIRFs(int Clientjdid)
+        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid)
         {
             try
             {
-                var query = "select IRFId from CandidateJDScore where ClientJdid = @ClientJdid";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@ClientJdid", Clientjdid);
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return con.Query<int>(query, dynamicParameters);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Clientjdid", Clientjdid);
+                    var result= SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForJd", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
                 }
 
             }
             catch (SqlException ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        public async Task<IEnumerable<string>> GetIRFMembersEmails(int irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.QueryAsync<string>(con, "usp_GetIRFMembersEmails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.Result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
 
