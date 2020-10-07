@@ -27,5 +27,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateVMQuestions(ProctorQuestionsViewModel model);
 
         Task<bool> UpdateActionPerformed(int vmId, string emailId, string action);
+        Task<bool> RemoveCandidateVmAccess();
     }
 }

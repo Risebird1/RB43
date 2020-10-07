@@ -583,5 +583,26 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> RemoveCandidateVmAccess()
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@profileId", (int)ProfileEnum.Candidate);
+                dynamicParameters.Add("@time", DateTime.Now.AddHours(-2));
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = SqlMapper.Query(con, "usp_RemoveCandidateVmAccess", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }
