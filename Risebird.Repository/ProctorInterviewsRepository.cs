@@ -346,7 +346,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateVMNamePassword(int id, string customName, string password)
+        public async Task<bool> UpdateVMNamePassword(int id, string customName, string password, string userName)
         {
             try
             {
@@ -354,6 +354,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 dynamicParameters.Add("@CustomName", customName);
                 dynamicParameters.Add("@Password", password);
+                dynamicParameters.Add("@UserName", userName);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = SqlMapper.Query(con, "usp_UpdateVMNamePassword", dynamicParameters,

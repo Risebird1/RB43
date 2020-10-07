@@ -221,11 +221,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> UpdateVMNamePassword(int id, string customName, string password)
+        public async Task<bool> UpdateVMNamePassword(int id, string customName, string password, string userName)
         {
             try
             {
-                return await _proctorInterviewsRepository.UpdateVMNamePassword(id, customName, password);
+                return await _proctorInterviewsRepository.UpdateVMNamePassword(id, customName, password, userName);
             }
             catch (Exception ex)
             {
