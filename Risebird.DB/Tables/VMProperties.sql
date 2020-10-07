@@ -23,7 +23,23 @@ CREATE TABLE [dbo].[VMProperties](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
-ENd
+END
+
+ELSE
+
+BEGIN
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'UserName')
+      AND Object_ID = Object_ID(N'VMProperties'))
+BEGIN
+    ALTER TABLE VMProperties
+    Add [UserName] VARCHAR(50)
+END
+
+END
 GO
 
 

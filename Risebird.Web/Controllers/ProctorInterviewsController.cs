@@ -307,7 +307,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> EditNamePassword(int id, string customName, string password, string vmName)
+        public async Task<IActionResult> EditNamePassword(int id, string customName, string password, string vmName, string userName)
         {
 
             try
@@ -319,7 +319,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        if (await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password))
+                        if (await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password, userName))
                         {
                             TempData["SuccessErrorMessageProctor"] = "Successfully saved data for " + vmName;
                             return Json(true);

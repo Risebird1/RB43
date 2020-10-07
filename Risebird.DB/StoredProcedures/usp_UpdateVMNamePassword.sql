@@ -14,14 +14,16 @@ GO
 CREATE PROCEDURE [dbo].[usp_UpdateVMNamePassword] 
 @id int, 
 @CustomName varchar(20),    
-@Password varchar(20)    
+@Password varchar(20),
+@UserName varchar(50)
 
 AS
 BEGIN
 update [dbo].[VMProperties] 
 set
 [CustomName]=@CustomName,
-[Password]=@Password
+[Password]=@Password,
+[UserName]=@UserName
 where id =@id
  
 END
