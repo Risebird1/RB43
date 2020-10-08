@@ -95,6 +95,7 @@ namespace Risebird.Business.Interface
        
        
         Task<string> BroadcastIRFmembers(BroadcastModel model);
-        IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid);
+       
+        IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId);
     }
 }
