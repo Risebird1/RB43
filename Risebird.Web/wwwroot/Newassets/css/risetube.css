@@ -37,10 +37,10 @@
     .candidateinterest-btn .view-video{
         padding-left: 0px;
         line-height: 25px;
-        color: GREEN;
-        TEXT-ALIGN: CENTER;
-        FLOAT: NONE;
-        MARGIN: 0PX AUTO;
+        color: green;
+        text-align: center;
+        float: none;
+        margin: 0px auto;
         background-position: 12% 50% !important;
         font-weight: normal;
         font-size: 13px !important;
@@ -51,7 +51,7 @@
         border-radius: 3px;
         position: relative;
         top: -10px;
-        border-bottom: 1px #0e960ec7 SOLID;
+        border-bottom: 1px #0e960ec7 solid;
     }
 .transparent-chart {
     position: absolute;

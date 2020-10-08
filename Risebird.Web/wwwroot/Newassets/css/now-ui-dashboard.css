@@ -19,8 +19,12 @@
 
 /*      light colors         */
 
-.btn,
-.navbar .navbar-nav > a.btn {
+.confirm.btn-primary,.confirm.btn-primary:hover,
+.confirm.btn-primary:not(:disabled):not(.disabled):active, 
+.confirm.btn-primary:active:hover {
+    line-height: 11px;
+}
+    .btn, .navbar .navbar-nav > a.btn {
     border-width: 2px;
     font-weight: 400;
     font-size: 0.8571em;
