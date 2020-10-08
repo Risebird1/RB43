@@ -20,5 +20,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<ProctorVMQuestions>> GetVMQuestions(int vmId);
         Task<bool> UpdateVMQuestions(ProctorQuestionsViewModel model);
         Task<bool> UpdateActionPerformed(int vmId, string emailId, string action);
+        Task<bool> RemoveVM(int vmId);
     }
 }

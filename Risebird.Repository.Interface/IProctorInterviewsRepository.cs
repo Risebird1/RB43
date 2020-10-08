@@ -28,5 +28,6 @@ namespace Risebird.Repository.Interface
 
         Task<bool> UpdateActionPerformed(int vmId, string emailId, string action);
         Task<bool> RemoveCandidateVmAccess();
+        Task<bool> RemoveVM(int vmId);
     }
 }
