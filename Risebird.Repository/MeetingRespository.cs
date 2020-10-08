@@ -2863,15 +2863,26 @@ namespace Risebird.Repository
             return null;
 
         }
-        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid)
+        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId)
         {
             try
             {
+                int Userid = 0;
+                var query = "Select id from UserList where Emailid=@emailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailId", emailId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    Userid = results.FirstOrDefault();
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Clientjdid", Clientjdid);
-                    var result= SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForJd", parameters,
+                    parameters.Add("@id", Userid);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForJd", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }

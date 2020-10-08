@@ -228,8 +228,17 @@
                                                     </div>
 
                                                     <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right ">
-                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Questions">
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="All">
                                                             <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ALL"})'" title="ALL Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="ShortListed">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="SHORTLIST"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Send">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="INTRESTED"})'" title="Intrest send Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Accept">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ACCEPT"})'" title="Intrest accepted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg></span>
                                                         </button>
                                                     </div>
                                                 </div>
