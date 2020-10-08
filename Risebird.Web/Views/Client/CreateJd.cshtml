@@ -163,7 +163,7 @@
                                             <div class="card-header">
                                                 <div class="row">
                                                     <div class=" col-md-9 col-sm-9 first">
-                                                        <h6 class="assessment-grp"> @item.JDTitle </h6>
+                                                        <h6 class="assessment-grp" onclick="EditJD(@item.id)"> @item.JDTitle </h6>
                                                     </div>
 
                                                     <div class="col-md-3 col-sm-3 card-header-buttons action text-right">
@@ -275,58 +275,92 @@
             <div class="modal-body">
                 @using (Html.BeginForm("AddCreateJd", "Client", FormMethod.Post))
                 {
-                    <div>
-                        @Html.HiddenFor(m => m._clientjddetails.ClientId)
-                        <div style="width:100%;height: 350px;">
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                <div class="form-group">
-                                    <label class="control-label  desp-label" for="StartDate"> Start Date </label>
-                                    <div>
-                                        <input id="zclientjddetails_StartDate" name="_clientjddetails.StartDate" type="date" class="form-control">
-                                    </div>
+                <div>
+                    @Html.HiddenFor(m => m._clientjddetails.ClientId)
+                    @Html.HiddenFor(m => m._clientjddetails.id)
+                    <div style="width:100%;height: 620px;">
+                        <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                            <div class="form-group">
+                                <label class="control-label  desp-label" for="StartDate"> Start Date </label>
+                                <div>
+                                    <input id="zclientjddetails_StartDate" name="_clientjddetails.StartDate" type="date" class="form-control">
                                 </div>
-
-                            </div>
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                <div class="form-group">
-                                    <label class="control-label  desp-label" for="StartDate"> End Date </label>
-                                    <div>
-                                        <input id="zclientjddetails_EndDate" name="_clientjddetails.EndDate" type="date" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.AssessmentGroup, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.JDTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.JDTitle, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.File, new { type = "file", @class = "form-control btn" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.File, "", new { @class = "text-danger" })
-                            </div>
-                            @if (!Model._clientjddetails.isClientUser)
-                            {
-                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                    @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.TextBoxFor(m => m._clientjddetails.ClientEmail, new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(model => model._clientjddetails.ClientEmail, "", new { @class = "text-danger" })
-                                </div>
-                            }
-                            <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.JobDescription, htmlAttributes: new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.JobDescription, "", new { @class = "text-danger" })
                             </div>
 
                         </div>
+                        <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                            <div class="form-group">
+                                <label class="control-label  desp-label" for="StartDate"> End Date </label>
+                                <div>
+                                    <input id="zclientjddetails_EndDate" name="_clientjddetails.EndDate" type="date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                            @Html.LabelFor(model => model._clientjddetails.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                            @Html.ValidationMessageFor(model => model._clientjddetails.AssessmentGroup, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                            @Html.LabelFor(model => model._clientjddetails.JDTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m._clientjddetails.JDTitle, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                            @Html.LabelFor(model => model._clientjddetails.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m._clientjddetails.File, new { type = "file", @class = "form-control btn" })
+                            @Html.ValidationMessageFor(model => model._clientjddetails.File, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                            @Html.LabelFor(model => model._clientjddetails.JDBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m._clientjddetails.JDBudget, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model._clientjddetails.JDBudget, "", new { @class = "text-danger" })
+                        </div>
+                        @if (!Model._clientjddetails.isClientUser)
+                        {
+                            <div style="clear:both"></div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.ClientEmail, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.ClientEmail, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.DropDownListFor(m => m._clientjddetails.Heuristicsscore, Model._clientjddetails.Heuristicsscorelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.Heuristicsscore, "", new { @class = "text-danger" })
+                            </div>
+                        }
+
+                        <div style="clear:both"></div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                            @Html.LabelFor(model => model._clientjddetails.JDType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m._clientjddetails.JDType, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model._clientjddetails.JDType, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                            @Html.LabelFor(model => model._clientjddetails.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m._clientjddetails.Location, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model._clientjddetails.Location, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                            @Html.LabelFor(model => model._clientjddetails.JobRole, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m._clientjddetails.JobRole, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model._clientjddetails.JobRole, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                            @Html.LabelFor(model => model._clientjddetails.ClientUrl, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m._clientjddetails.ClientUrl, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model._clientjddetails.ClientUrl, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
+                            @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m._clientjddetails.JobDescription, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model._clientjddetails.JobDescription, "", new { @class = "text-danger" })
+                        </div>
+
                     </div>
+                </div>
 
                     <div class="col-md-12 col-sm-12 clearfix">
                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
@@ -389,5 +423,28 @@
     function CandidateJdScore(id) {
         var url = '/Client/CandidateJDScore?id=' + id;
         window.location.href = url;
-    };
+    }
+    function EditJD(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Client/EditJd",
+            data: { assessmentid: id },
+            success: function (data) {
+                $("#zclientjddetails_id").val(data.id);
+                $("#zclientjddetails_StartDate").val(data.startDatestring);
+                $("#zclientjddetails_EndDate").val(data.endDatestring);
+                $("#zclientjddetails_JDTitle").val(data.jdTitle);
+                $("#zclientjddetails_JDBudget").val(data.jdBudget);
+                $("#zclientjddetails_JDType").val(data.jdType);
+                $("#zclientjddetails_Location").val(data.location);
+                $("#zclientjddetails_JobRole").val(data.jobRole);
+                $("#zclientjddetails_ClientUrl").val(data.clientUrl);
+                $("#zclientjddetails_JobDescription").val(data.jobDescription);
+                $("#zclientjddetails_ClientEmail").val(data.clientEmail);
+                $("#zclientjddetails_AssessmentGroup").val(data.assessmentGroup);
+                $("#zclientjddetails_Heuristicsscore").val(data.heuristicsscore);
+                CreateJd();
+            }
+        });
+    }
 </script>
