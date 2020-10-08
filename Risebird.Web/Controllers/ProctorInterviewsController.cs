@@ -307,7 +307,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> EditNamePassword(int id, string customName, string password, string vmName)
+        public async Task<IActionResult> EditNamePassword(int id, string customName, string password, string vmName, string userName)
         {
 
             try
@@ -319,7 +319,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        if (await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password))
+                        if (await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password, userName))
                         {
                             TempData["SuccessErrorMessageProctor"] = "Successfully saved data for " + vmName;
                             return Json(true);
@@ -561,5 +561,35 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [Authorize]
+        public async Task<IActionResult> RemoveVM(int vmId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (await _proctorInterviewsService.RemoveVM(vmId))
+                    {
+                        return Json(true);
+                    }
+                    else
+                    {
+                        return Json(true);
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+
     }
 }

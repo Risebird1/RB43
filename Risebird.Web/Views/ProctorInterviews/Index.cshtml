@@ -97,11 +97,11 @@
                                                     }
                                                 </div>
                                                 <div class="col-md-5 col-sm-5 card-header-buttons action">
-                                                    @if (Model.Profile == "Admin" || Model.Profile=="HR")
+                                                    @if (Model.Profile == "Admin" || Model.Profile == "HR")
                                                     {
 
 
-                                                       
+
 
                                                         <button id="passwordButton_@item.id" class="mdc-fab app-fab--absolute" title="Reset Password" aria-label="Reset Password" onclick="location.href='@Url.Action("ResetPassword", "ProctorInterviews", new { name = item.Name, rgName = item.ResourceGroupName, vmId = item.id})'">
                                                             <i class="fa fa-key"></i>
@@ -111,8 +111,14 @@
                                                             <i class="fa fa-share"></i>
                                                         </button>
 
-                                                        <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" title="Edit" aria-label="Edit" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name');">
+                                                        <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" title="Edit" aria-label="Edit" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name', '@item.UserName');">
                                                             <i class="fa fa-edit"></i>
+                                                        </button>
+                                                    }
+                                                    @if (Model.Profile == "Admin")
+                                                    {
+                                                        <button id="remove_@item.id" class="mdc-fab app-fab--absolute item1" title="Remove" aria-label="Remove" onclick="javascript:RemoveVM('@item.id', '@item.Name');" >
+                                                            <i class="fa fa-trash"></i>
                                                         </button>
                                                     }
 
@@ -133,6 +139,12 @@
                                                         <div class="row">
                                                             <span>VM Name:</span>@item.Name
                                                         </div> <br /> <br />
+                                                        @if (item.UserName != null)
+                                                        {
+                                                            <div class="row">
+                                                                <span>User Name:</span>@item.UserName
+                                                            </div> <br /> <br />
+                                                        }
 
                                                         <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div>
                                                         <br />
@@ -141,9 +153,9 @@
                                                             <div style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
 
                                                             <!--- <div class="pull-left">
-             <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
-             <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-         </div>--->
+            <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
+            <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+        </div>--->
 
 
 
@@ -305,6 +317,13 @@
                                             </div>
 
                                             <div class="form-group">
+                                                <label class="control-label  desp-label" for="UserName">User Name </label>
+                                                <input class="form-control w-full" type="text" name="textField" id="idUserName" />
+                                                @*<label class="text-danger" id="userName_emptyFields_Error" style="color:red"></label>*@
+
+                                            </div>
+
+                                            <div class="form-group">
                                                 <label class="control-label  desp-label" for="Password">Password </label>
                                                 <input class="form-control w-full" type="text" name="textField" id="idPassword" />
                                                 <label class="text-danger" id="emptyFields_Error" style="color:red"></label>
@@ -462,7 +481,7 @@
     }
 
 
-    function EditModal(id, customeName, password, vmName) {
+    function EditModal(id, customeName, password, vmName, userName) {
         // Get the modal
         editVmId = id;
         editvmName = vmName;
@@ -470,12 +489,14 @@
         modal.style.display = "block";
         document.getElementById("idCustomName").value = customeName;
         document.getElementById("idPassword").value = password;
+        document.getElementById("idUserName").value = userName;
         return;
 
     }
 
     function EditNamePassword() {
         var customName = document.getElementById("idCustomName").value;
+
         if (customName.length > 20) {
             document.getElementById("customName_Error").innerHTML = "Name should be less than or equal to 20 characters."
             return;
@@ -483,9 +504,12 @@
         else {
             document.getElementById("customName_Error").innerHTML = "";
         }
+
+        var userName = document.getElementById("idUserName").value;
+
         var password = document.getElementById("idPassword").value;
 
-        if (customName.length == 0 && password.length == 0) {
+        if (customName.length == 0 && password.length == 0 && userName.length==0) {
             document.getElementById("emptyFields_Error").innerHTML = "Kindly fill atleast one field to save.";
             return;
         }
@@ -496,7 +520,7 @@
             type: "POST",
             url: "/ProctorInterviews/EditNamePassword",
             data: {
-                'id': editVmId, 'customName': customName, 'password': password, 'vmName': editvmName
+                'id': editVmId, 'customName': customName, 'password': password, 'vmName': editvmName, 'userName' : userName
             },
             success: function (data) {
                 location.reload(true);
@@ -505,8 +529,60 @@
         });
     }
 
-                                    </script>
+</script>
+<script>
+    function RemoveVM(vmId, vmName) {
 
+        swal.fire({
+            title: 'Are you sure you want to remove ' + vmName + '?',
+            text: "The Virtual Machine will be removed!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/ProctorInterviews/RemoveVM?vmId=' + vmId,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            swal.fire("Error removing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Removed!',
+                    type: 'success',
+                    html: '<p>The Virtual Machine(' + vmName + ') has been removed!</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/ProctorInterviews/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'The virtual machine ' + vmName +' has not been removed!',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+
+</script>
 
 
 <script>

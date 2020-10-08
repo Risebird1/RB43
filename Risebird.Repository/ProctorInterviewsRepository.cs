@@ -346,7 +346,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateVMNamePassword(int id, string customName, string password)
+        public async Task<bool> UpdateVMNamePassword(int id, string customName, string password, string userName)
         {
             try
             {
@@ -354,6 +354,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 dynamicParameters.Add("@CustomName", customName);
                 dynamicParameters.Add("@Password", password);
+                dynamicParameters.Add("@UserName", userName);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = SqlMapper.Query(con, "usp_UpdateVMNamePassword", dynamicParameters,
@@ -582,6 +583,48 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> RemoveCandidateVmAccess()
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@profileId", (int)ProfileEnum.Candidate);
+                dynamicParameters.Add("@time", DateTime.Now.AddHours(-2));
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = SqlMapper.Query(con, "usp_RemoveCandidateVmAccess", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveVM(int vmId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@vmId", vmId) ;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = SqlMapper.Query(con, "usp_RemoveVM", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
     }
 }
