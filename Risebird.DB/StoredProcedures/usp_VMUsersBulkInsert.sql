@@ -23,12 +23,15 @@ SET NOCOUNT ON;
 --This row performs bulk copy of object DataTable to Table in SQL
 INSERT INTO [dbo].[TransVMUser](
 	[VmId],
-	[UserId])
+	[UserId],
+	[ProfileId],
+	[SharedOn])
 
 SELECT * FROM @VMUsersBulkData
 
 
 END
 GO
+
 
 

@@ -2234,7 +2234,7 @@ namespace Risebird.Repository
             parameters.Add("@PriorityLevel", entity.PriorityLevel);
             parameters.Add("@CompanyDetails", entity.CompanyDetails);
             parameters.Add("@Type", entity.Type);
-
+            parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
@@ -2581,7 +2581,7 @@ namespace Risebird.Repository
                 parameters.Add("@AddedByUserId", obj.AddedByUserId);
                 parameters.Add("@CostEstimate", obj.CostEstimate);
                 parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
-
+                parameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2737,7 +2737,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", obj.id);
                 dynamicParameters.Add("@CostEstimate", obj.CostEstimate);
                 dynamicParameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
-
+                dynamicParameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(
@@ -3953,6 +3953,39 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public string AssessmentLike(int id, string emailid)
+        {
+            try
+            {
+                int userid = 0;
+                var query = "Select id from UserList where Emailid = @Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var queryfinal = "INSERT INTO AssessmentLike (Assessmentid,LikedBy) Values (@Assessmentid,@LikedBy);";
+                    var affectedRows = con.Execute(queryfinal, new
+                    {
+                        Assessmentid = id,
+                        LikedBy = userid
+                    });
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
         }
     }
 }

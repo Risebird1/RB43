@@ -1,0 +1,407 @@
+﻿@model Risebird.Entities.ViewModel.ProctorQuestionsViewModel
+@using Risebird.Entities.Enum
+
+@{
+    ViewData["Title"] = "Interview Video Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
+
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js"></script>
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Questions</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
+    </div>
+    <div class="content curated-group client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        @using (Html.BeginForm("ProctorVMQuestions", "ProctorInterviews", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "Questionsform" }))
+                        {
+
+                            <div id="tableID">
+                                <div class="scrollbox-curated">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered mbn" id="questionsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center" style="font-size:15px!important;">Question</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Detail</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Priority</th>
+                                                    <th class="text-center" style="font-size:15px!important;">VideoLink</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Skill</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Level</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Time</th>
+                                                    <th class="text-center" style="font-size:15px!important;">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.QuestionList == null || Model.QuestionList.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" class="form-control text-box single-line" id="QuestionList_0__Question" name="QuestionList[0].Question" />
+                                                        </td>
+
+                                                        <td>
+                                                            <input type="text" class="form-control text-box single-line" id="QuestionList_0__Detail" name="QuestionList[0].Detail" />
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control text-box single-line" id="QuestionList_0__Priority" name="QuestionList[0].Priority" />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control text-box single-line" id="QuestionList_0__VideoLink" name="QuestionList[0].VideoLink" />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control text-box single-line" id="QuestionList_0__Skill" name="QuestionList[0].Skill" />
+                                                        </td>
+                                                        <td>
+                                                            <select class="select-css form-control" id="QuestionList_0__Level" name="QuestionList[0].Level" asp-items="Html.GetEnumSelectList<QuestionLevel>()"></select>
+
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control text-box single-line" id="QuestionList_0__Time" name="QuestionList[0].Time" />
+                                                        </td>
+
+                                                        <td class="text-center">
+
+                                                            <span onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+
+
+
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                <span onclick="DeleteRow(this, 'QuestionList')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                            </button>
+
+
+                                                        </td>
+                                                    </tr>
+
+                                                }
+                                                else
+                                                {
+                                                    @for (int i = 0; i < Model.QuestionList.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.QuestionList[i].Question, new { @class = "form-control text-box single-line" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.QuestionList[i].Detail, new { @class = "form-control text-box single-line" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.QuestionList[i].Priority, new { @type = "number", @class = "form-control text-box single-line" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.QuestionList[i].VideoLink, new { @class = "form-control text-box single-line" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.QuestionList[i].Skill, new { @class = "form-control text-box single-line" })
+                                                            </td>
+
+                                                            <td>
+                                                                <select class="select-css form-control" asp-for="QuestionList[i].Level" asp-items="Html.GetEnumSelectList<QuestionLevel>()"></select>
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.TextBoxFor(m => m.QuestionList[i].Time, new { @type = "number", @class = "form-control text-box single-line" })
+                                                            </td>
+                                                            <td class="text-center">
+
+                                                                <span  onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+
+                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                    <span  onclick="DeleteRow(this, 'QuestionList')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                                </button>
+
+
+                                                            </td>
+                                                        </tr>
+
+                                                    }
+
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                        @Html.HiddenFor(m => m.VmId)
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "ProctorInterviews", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnSubmit" onclick="Submitform()" value="Submit">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#questionsTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                //[10, 25, 50, -1],
+                //[10, 25, 50, "All"]
+                [-1],
+                ["All"]
+            ],
+            order: [],
+            responsive: false,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
+        });
+        var table = $('#questionsTable').DataTable();
+    });
+</script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
+
+<script>
+    (function ($) {
+        $(window).on("load", function () {
+            $(".scrollbox-curated").mCustomScrollbar();
+        });
+    })(jQuery);
+
+
+    function Submitform() {
+        debugger;
+        var message = '';
+        var noQuestion = false;
+        var prioritydetails = false;
+        var priorityblank = false;
+        var priority = [];
+        var totalcount = document.getElementById("questionsTable").rows.length - 1 ;
+
+        if (totalcount != null && totalcount > 0) {
+            for (var i = 0; i < totalcount; i++) {
+                //if (document.getElementById("questionset_" + i + "__VideoFile").files.length > 0 || document.getElementById("questionset_" + i + "__VideoLink").value != '') {
+
+                //}
+                if (document.getElementById("QuestionList_" + i + "__Question").value == '') {
+                    noQuestion = true;
+                }
+                if (document.getElementById("QuestionList_" + i + "__Priority").value != '') {
+                    if (parseInt(document.getElementById("QuestionList_" + i + "__Priority").value) == 0) {
+                        priorityblank = true;
+                    } else {
+                        priority.push(parseInt(document.getElementById("QuestionList_" + i + "__Priority").value));
+                    }
+                } else {
+                    prioritydetails = true;
+                }
+            }
+            var result = hasDuplicates(priority);
+            if (noQuestion == true) {
+                if (message == '') {
+                    message = 'Please enter Question';
+                } else {
+                    message = message + ', Please enter Question';
+                }
+            }
+            if (priorityblank == true) {
+                if (message == '') {
+                    message = 'Priority should not be 0';
+                } else {
+                    message = message + ', Priority should not be 0';
+                }
+            }
+            if (prioritydetails == true) {
+                if (message == '') {
+                    message = 'Priority should not be blank';
+                } else {
+                    message = message + ', Priority should not be blank';
+                }
+            }
+            if (result == true) {
+                if (message == '') {
+                    message = 'Priority should be unique';
+                } else {
+                    message = message + ', Priority should be unique';
+                }
+            }
+            if (noQuestion == true || priorityblank == true || prioritydetails == true || result == true) {
+                alert(message);
+            } else {
+                document.getElementById("Questionsform").submit();
+            }
+        }
+        else {
+            alert("No questions added!")
+            return;
+        }
+        
+    }
+    function hasDuplicates(arr) {
+        return arr.some(function (item) {
+            return arr.indexOf(item) !== arr.lastIndexOf(item);
+        });
+    }
+</script>
+
+<script>
+
+    function AddRow() {
+        var table = document.getElementById("questionsTable");
+
+        var $ttc = $("#questionsTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#questionsTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        //$tr.find("select").val("");
+        //$tr.find("textarea[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=number]").val("");
+
+        //$tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#questionsTable").find("tbody tr:last").after($tr);
+
+        var $ttlast = $("#questionsTable").find("tbody tr:last");
+        //$ttlast.find("textarea").val("");
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        //// Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+    function DeleteRow(element, collectionName) {
+        var tdOne = 'Question';
+        var tdTwo = 'Detail';
+        var tdThree = 'Priority';
+        var tdFour = 'VideoLink';
+        var tdFive = 'Skill';
+        var tdSix = 'Level';
+        var tdSeven = 'Time';
+
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+
+                    var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
+                    elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                    elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
+
+                    var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
+                    elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                    elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
+
+                    var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
+                    elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
+                    elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
+
+                }
+
+            }
+
+        }
+
+
+    }
+
+
+</script>

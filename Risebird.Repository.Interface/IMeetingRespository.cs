@@ -116,7 +116,12 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetings();
         Task<IEnumerable<QuestionDetails>> FetchQuestionDetails(int interviewid);
         string UpdateQuestionDetails(List<QuestionDetails> _question);
-        IEnumerable<int> GetClientJdIRFs(int Clientjdid);
+       
+      
+        Task<IEnumerable<string>> GetIRFMembersEmails(int irfId);
+
+        
+        IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId);
 
     }
 }

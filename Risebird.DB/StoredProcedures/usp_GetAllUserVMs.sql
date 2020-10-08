@@ -17,10 +17,19 @@ Create PROCEDURE [dbo].[usp_GetAllUserVMs]
 
 AS
 Begin
+
+declare @TotalQuestions table (VmId int, QuestionsCount int);
+		insert into @TotalQuestions 
+		select VmId, count(VmId) from ProctorVMQuestions group by VmId
+
+		
+
 IF (@Profile = 'Admin') 
 	Begin
 
-		select vmp.*, tvm.LastAction from VMProperties vmp left join TransVMTriggerDetails tvm  on tvm.VMPropertyId=vmp.id  where IsRemoved=0 and IsDeleted=0 
+		select vmp.*, tvm.LastAction, tq.QuestionsCount from VMProperties vmp left join TransVMTriggerDetails tvm  on tvm.VMPropertyId=vmp.id 
+		left join @TotalQuestions tq on tq.VmId = vmp.id
+		where IsRemoved=0 and IsDeleted=0 
 
 	End
 Else
@@ -28,7 +37,9 @@ Else
 
 	declare @userId int = (select id from UserList where EmailId=@EmailId)
 
-		select vmp.*, tvm.LastAction from VMProperties vmp left join TransVMTriggerDetails tvm  on tvm.VMPropertyId=vmp.id join TransVMUser tvu on tvu.VmId = vmp.id where IsRemoved=0 and IsDeleted=0 and tvu.UserId = @userId
+		select vmp.*, tvm.LastAction, tq.QuestionsCount from VMProperties vmp left join TransVMTriggerDetails tvm  on tvm.VMPropertyId=vmp.id join TransVMUser tvu on tvu.VmId = vmp.id
+		left join @TotalQuestions tq on tq.VmId = vmp.id
+		where IsRemoved=0 and IsDeleted=0 and tvu.UserId = @userId
 
 	End
 End

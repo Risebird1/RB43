@@ -40,10 +40,12 @@
                             </div>
                         </div>
                     </div>
-                    @if (Model._clientjddetails.isClientUser)
-                    {
-                        <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left" style="color:#fff;"></span>Create JD</a>
-                    }
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
+                    
+                    <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" style="color:#fff;"></span>Create JD</a>
                     @*<a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>*@
                 </div>
             </div>
@@ -63,7 +65,92 @@
                         <div class="dataloading">
                             <div class="toolbar">
                             </div>
+                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
 
+
+
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+                                        <form action="@Url.Action("CreateJd", "Client")" method="post" id="form">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate"> Start Date </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="fillter_StartDate" name="fillter.StartDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="EndDate"> End Date </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <input id="fillter_EndDate" name="fillter.EndDate" type="date" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6  border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupName"> Assessment Group </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="">Please Select Assessment Group</option>
+                                                                    @foreach (var item in Model._clientjd.Select(x => x.AssessmentGroupName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6  border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientEmail"> Client </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="fillter_ClientEmail" name="fillter.ClientEmail" class="form-control multiselect" multiple="multiple">
+                                                                    <option value="">Please Select Client</option>
+                                                                    @foreach (var item in Model._clientjd.Select(x => x.ClientEmail).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-md-6 col-sm-6">
+                                                        <div>
+                                                            <div class="col-md-12 col-sm-12 ">
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                             <div style="clear:both;padding:10px"></div>
                             <div class="row">
                                 @foreach (var item in Model._clientjd)
@@ -90,27 +177,31 @@
 
                                             <!-- irf body-->
                                             <div class="card-body">
-                                                    <div class="statusInfo">
-                                                        <div class="group inner list-group-item-text">
-                                                            <div class="second" style="margin-bottom:10px;">
-                                                                <div class="client-field"> Start Date:<span style="font-weight:normal">@item.StartDate</span></div>
-                                                            </div> 
-                                                            <br/>
-                                                            <div class="three" style="margin-bottom:10px;"> <span><b>End Date:</b></span>@item.EndDate</div>
+                                                <div class="statusInfo">
+                                                    <div class="group inner list-group-item-text">
+                                                        <div class="second" style="margin-bottom:10px;">
+                                                            <div class="client-field"> Start Date:<span style="font-weight:normal">@item.StartDate</span></div>
+                                                        </div>
+                                                        <br />
+                                                        <div class="three" style="margin-bottom:10px;"> <span><b>End Date:</b></span>@item.EndDate</div>
 
-                                                            <div class="four" style="margin-bottom:10px;">
-                                                                <span><b>JD:</b></span> @item.JobDescription
-                                                            </div>
-                                                            <div >
-                                                                <span><b>Assessment Group:</b></span> @item.AssessmentGroupName
-                                                            </div> 
-                                                            <div>
-                                                                <span><b>File Link:</b></span> <a href="@item.Filelink" target="_">Click Here</a>
-                                                            </div>
+                                                        <div class="four" style="margin-bottom:10px;">
+                                                            <span><b>JD:</b></span> @item.JobDescription
+                                                        </div>
+                                                        <div>
+                                                            <span><b>Assessment Group:</b></span> @item.AssessmentGroupName
+                                                        </div>
+                                                        <div>
+                                                            @if (!String.IsNullOrEmpty(item.Filelink))
+                                                            {
 
+                                                                <span><b>File Link:</b></span> <a href="@item.Filelink" target="_blank">Click Here</a>
+
+                                                            }
                                                         </div>
                                                     </div>
-                                             
+                                                </div>
+
 
                                             </div>
 
@@ -134,8 +225,17 @@
                                                     </div>
 
                                                     <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right ">
-                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Questions">
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="All">
                                                             <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ALL"})'" title="ALL Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="ShortListed">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="SHORTLIST"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Send">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="INTRESTED"})'" title="Intrest send Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Accept">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ACCEPT"})'" title="Intrest accepted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg></span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -157,71 +257,74 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-
-
             <div class="filheader">
                 <div class="filavatar">
                     <span class="publicsharing-icon">
-                       
-                   
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                    
-                    
+
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Create Job Description!</h5>
+                <h5 class="modal-title pull-left">Add Job Description</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true" id="callPopUp" style="cursor:pointer;" onclick="closeCallPopUp()">&times;</span>
             </button>
             <div class="modal-body">
-                @using (Html.BeginForm("CreateJd", "Client", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                @using (Html.BeginForm("AddCreateJd", "Client", FormMethod.Post))
                 {
-                    <div >
+                    <div>
                         @Html.HiddenFor(m => m._clientjddetails.ClientId)
-                        <div  style=" width: 100%; height: 100px;">
-                            @Html.AntiForgeryToken()
-                            <div style="width: 100%;">
-                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                    <div class="form-group">
-                                        <label class="control-label  desp-label" for="StartDate"> Start Date </label>
-                                        <div >
-                                            <input id="zclientjddetails_StartDate" name="_clientjddetails.StartDate" type="date" class="form-control">
-                                        </div>
+                        <div style="width:100%;height: 350px;">
+                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                <div class="form-group">
+                                    <label class="control-label  desp-label" for="StartDate"> Start Date </label>
+                                    <div>
+                                        <input id="zclientjddetails_StartDate" name="_clientjddetails.StartDate" type="date" class="form-control">
                                     </div>
-
-                                </div>
-                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                    <div class="form-group">
-                                        <label class="control-label  desp-label" for="StartDate"> End Date </label>
-                                        <div>
-                                            <input id="zclientjddetails_EndDate" name="_clientjddetails.EndDate" type="date" class="form-control">
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                    @Html.LabelFor(model => model._clientjddetails.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                    @Html.ValidationMessageFor(model => model._clientjddetails.AssessmentGroup, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                    @Html.LabelFor(model => model._clientjddetails.JDTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.TextBoxFor(m => m._clientjddetails.JDTitle, htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                    @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="form-group col-lg-6 col-md-6 col-sm-12 pull-left">
-                                    <input type="file" name="_clientjddetails.File" id="zclientjddetails_File" class="form-control" />
-                                </div>
-                                <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
-                                    @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.TextBoxFor(m => m._clientjddetails.JobDescription, htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                    @Html.ValidationMessageFor(model => model._clientjddetails.JobDescription, "", new { @class = "text-danger" })
                                 </div>
 
                             </div>
+                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                <div class="form-group">
+                                    <label class="control-label  desp-label" for="StartDate"> End Date </label>
+                                    <div>
+                                        <input id="zclientjddetails_EndDate" name="_clientjddetails.EndDate" type="date" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.AssessmentGroup, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.JDTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.JDTitle, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.File, new { type = "file", @class = "form-control btn" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.File, "", new { @class = "text-danger" })
+                            </div>
+                            @if (!Model._clientjddetails.isClientUser)
+                            {
+                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.TextBoxFor(m => m._clientjddetails.ClientEmail, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.ClientEmail, "", new { @class = "text-danger" })
+                                </div>
+                            }
+                            <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.JobDescription, htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.JobDescription, "", new { @class = "text-danger" })
+                            </div>
+
                         </div>
                     </div>
+
                     <div class="col-md-12 col-sm-12 clearfix">
                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
                             <font style="font-size:12px;">Create</font>
@@ -231,18 +334,32 @@
                         </button>
                     </div>
                 }
+
             </div>
         </div>
     </div>
 </div>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>*@
 
 <script>
-
+    $("#fillter_AssessmentGroupName").multiselect({
+        includeSelectAllOption: true,
+        selectedClass: 'active1',
+        buttonWidth: '100%',
+        maxHeight: 200
+    });
+    $("#fillter_ClientEmail").multiselect({
+        includeSelectAllOption: true,
+        selectedClass: 'active1',
+        buttonWidth: '100%',
+        maxHeight: 200
+    });
     function CreateJd() {
         var model = document.getElementById("commentsmodel");
         model.style.display = "block";

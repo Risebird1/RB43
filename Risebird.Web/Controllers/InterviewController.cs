@@ -71,7 +71,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    
+
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
@@ -263,9 +263,9 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 5].Value = item.candidateEmail;
                         Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 7].Value = item.interviewer;
-                        Sheet.Cells[i, 8].Value = item.confirmationStatus;                      
-                        Sheet.Cells[i, 9].Value = item.MeetingStatusDescription;                       
-                      
+                        Sheet.Cells[i, 8].Value = item.confirmationStatus;
+                        Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
+
                         Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
 
                         if (!string.IsNullOrEmpty(item.resumeLink))
@@ -4459,10 +4459,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 4].Value = item.ClientName;
                         Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 6].Value = item.confirmationStatus;
-                        
+
                         Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
-                        
-                      
+
+
                         if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
                             Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
@@ -5119,7 +5119,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 2].Value = "Slot";
                 Sheet.Cells[1, 3].Value = "Duration";
                 Sheet.Cells[1, 4].Value = "Candidate Name";
-                Sheet.Cells[1, 5].Value = "Candidate Email";             
+                Sheet.Cells[1, 5].Value = "Candidate Email";
                 Sheet.Cells[1, 6].Value = "Meeting Status";
                 Sheet.Cells[1, 7].Value = "Interview Status";
                 Sheet.Cells[1, 8].Value = "Resume";
@@ -5924,21 +5924,22 @@ namespace Risebird.Web.Controllers
                             Message = message,
                             Subject = subject
                         };
-                        if (receiver != "IRF") {
+                        if (receiver != "IRF")
+                        {
                             var result = _meetingService.Broadcast(model);
                             TempData["SuccessErrorMessageInterview"] = result.Result;
                             return Json(result.Result);
                         }
                         else
                         {
-                            List<string> receiverEmails = new List<string>();
-                            List<string> supportEmails = new List<string>();
-                            receiverEmails.Add(irfid);
-                            var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails, model);
+
+                            model.IRFId = Convert.ToInt16(irfid);
+                            var result = _meetingService.BroadcastIRFmembers(model);
+
                             TempData["SuccessErrorMessageInterview"] = result;
                             return Json(result);
                         }
-                   
+
 
                     }
                     else

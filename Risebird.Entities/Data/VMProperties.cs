@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Risebird.Entities.Data
+﻿namespace Risebird.Entities.Data
 {
     public class VMProperties
     {
@@ -22,6 +18,8 @@ namespace Risebird.Entities.Data
         public string PrivateIP { get; set; }
         public string CustomName { get; set; }
         public string Password { get; set; }
+        public int QuestionsCount { get; set; }
 
+        public string UserName { get; set; }
     }
 }

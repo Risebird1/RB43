@@ -2617,7 +2617,6 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     ViewBag.actionstatus = "Risetube";
                     ViewBag.ResultStatus = "VideoPresent";
@@ -2642,13 +2641,32 @@ namespace Risebird.Web.Controllers
 
                         var modelList1 = new List<MeetingVM>();
 
-                        var irfList = _meetingService.GetClientJdIRFs(ClientJdId).ToArray();
-                        var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId, isClient);
+                        var dataResult = _meetingService.GetClientJdIRFs(ClientJdId, emailId);
+                        //var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId, isClient);
                         modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
-
-                        modelList1 = modelList1.Where(x => irfList.Contains(x.irfIntId)).ToList();
+                        //id = modelList1.FirstOrDefault().imid;
+                        if (actionstatus.ToUpper() == "ALL")
+                        {
+                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                        }
+                        else if (actionstatus.ToUpper() == "SHORTLIST")
+                        {
+                            modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
+                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                        }
+                        else if (actionstatus.ToUpper() == "INTRESTED")
+                        {
+                            modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
+                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                        }
+                        else if (actionstatus.ToUpper() == "ACCEPT")
+                        {
+                            modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Accepted").ToList();
+                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                        }
+                        //modelList1 = modelList1.Where(x => irfList.Contains(x.IRFId)).ToList();
                         ViewBag.actionstatus = "SkillChannelDetails";
-
+                        //fetch data on based on irfid and Emailid 
                         //Start:Save View counts of vedio
                         if (HttpContext.Session.GetString("UserLogedIn") != null)
                         {
@@ -2695,7 +2713,7 @@ namespace Risebird.Web.Controllers
                         {
                             model = new MeetingVM();
                             ViewBag.ResultStatus = "VideoNotPresent";
-                            return View("VideoPage", model);
+                            return View(model);
 
                         }
 
@@ -2884,7 +2902,7 @@ namespace Risebird.Web.Controllers
                         }
                         NewModel.ActionStatus = actionstatus;
                         NewModel.CuratedGroupId = ClientJdId;
-                        return View("VideoPage", NewModel);
+                        return View(NewModel);
                     }
                     else
                     {

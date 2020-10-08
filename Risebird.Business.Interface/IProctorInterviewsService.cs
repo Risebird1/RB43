@@ -1,8 +1,6 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
@@ -16,6 +14,11 @@ namespace Risebird.Business.Interface
         Task<List<NonExistingVMDTO>> GetNonExistingVMs();
         Task<string> AddNonExistingVMs(List<NonExistingVMDTO> vmList);
         Task<string> ResetPassword(VMResetPassword model);
-        Task<bool> UpdateVMNamePassword(int id, string customName, string password);
+        Task<bool> UpdateVMNamePassword(int id, string customName, string password, string userName);
+        IEnumerable<TransVMUser> GetUserList(int vmId, int profileId);
+        Task<bool> UpdateVMUsers(int[] userList, int vmId, int profileId);
+        Task<IEnumerable<ProctorVMQuestions>> GetVMQuestions(int vmId);
+        Task<bool> UpdateVMQuestions(ProctorQuestionsViewModel model);
+        Task<bool> UpdateActionPerformed(int vmId, string emailId, string action);
     }
 }

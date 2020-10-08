@@ -182,6 +182,18 @@ table.dataTable thead .sorting:after {
 .client .mdc-card {
     background: #ebecf1;
 }
+
+.tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
+    background: #929292;
+    border: 0px;
+    color: #fff;
+}
+
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    background: #929292 !important;
+    color: #fff !important;
+}
+
 .card-header.bg-w {
     background: #fff !important;
 }

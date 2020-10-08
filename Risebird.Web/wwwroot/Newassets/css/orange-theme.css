@@ -54,6 +54,17 @@ textarea::-webkit-scrollbar {
     z-index: 1000;
 }
 
+.tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
+    background: #ea6e24;
+    border: 0px;
+    color: #fff;
+}
+
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    background: #ea6e24 !important;
+    color: #fff !important;
+}
+
 .call-txt {
     border: 1px #ea6e24 solid;
     color: #ea6e24;

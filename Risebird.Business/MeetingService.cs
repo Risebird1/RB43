@@ -1275,6 +1275,25 @@ namespace Risebird.Business
 
         }
 
+        public async Task<string> BroadcastIRFmembers(BroadcastModel model)
+        {
+            try
+            {
+                var receiverEmails = _meetingRespository.GetIRFMembersEmails(model.IRFId).Result;
+                var supportEmails = _supportRespository.GetAllSupportHREmails();
+                var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                return result;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Broadcast failed.";
+            }
+
+        }
+
         public IEnumerable<Meeting> GetHROpenInterviews()
         {
             try
@@ -1789,11 +1808,11 @@ namespace Risebird.Business
             try
             {
                 var result = await _meetingRespository.FetchQuestionDetails(interviewid);
-                 return result.ToList();
+                return result.ToList();
             }
             catch (Exception ex)
             {
-                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -1806,15 +1825,15 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "";
             }
         }
-        public IEnumerable<int> GetClientJdIRFs(int Clientjdid)
+        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId)
         {
             try
             {
-                return _meetingRespository.GetClientJdIRFs(Clientjdid);
+                return _meetingRespository.GetClientJdIRFs(Clientjdid, emailId);
 
             }
             catch (Exception ex)

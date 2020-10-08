@@ -1112,7 +1112,7 @@ textarea::-webkit-scrollbar-thumb {
         border-bottom-left-radius: 5px;
         border-top-right-radius: 0em;
         border-bottom-right-radius: 0em;
-        margin:0px;
+        margin:0px;color:#9a9a9a;
     }
 
         #myForm input[type=email]:focus, #myForm input[type=text]:focus {
@@ -1124,6 +1124,7 @@ textarea::-webkit-scrollbar-thumb {
             -webkit-box-shadow: 0 0 3px #4a93de;
             -moz-box-shadow: 0 0 3px #4a93de;
             box-shadow: 0 0 3px #4a93de;
+            color: #9a9a9a;
         }
 
 
@@ -2028,24 +2029,34 @@ table {
 .splitvideo-desktop {
     display: block
 }
+    .splitvideo-desktop .relatedvideo .videosidelist {
+        cursor:pointer;
+    }
 
-.call-btn {
-    background: #0ea93d;
-    border-radius: 100%;
-    float: right;
-    padding: 1px;
-    border: 0px;
-    position: relative;
-    top: 0px;
-    right: 8px;
-    width: 21px;
-    height: 21px;
-}
+        .splitvideo-desktop .relatedvideo .videosidelist:hover {
+            background: #9a989873 !important;
+        }
+
+        .call-btn {
+            background: #0ea93d;
+            border-radius: 100%;
+            float: right;
+            padding: 1px;
+            border: 0px;
+            position: relative;
+            top: 0px;
+            right: 8px;
+            width: 21px;
+            height: 21px;
+        }
 
     .call-btn svg {
         position: relative;
         top: -2px;
     }
+.splitvideo-desktop video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
 @media screen and (max-width:1200px) {
     .video-card-body {
         height: 110px;
@@ -2243,6 +2254,11 @@ table {
         margin-top: 20px;
     }
     .splitvideo-mobile{display:block}
+
+        .splitvideo-mobile video::-webkit-media-controls-enclosure {
+            display: none !important;
+        }
+
     .splitvideo-desktop {
         display: none
     }

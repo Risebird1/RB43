@@ -586,19 +586,19 @@
                                                                     <div id="style-2" class="single-video-right ">
                                                                         <div>
                                                                             <div>
-                                                                                <div>
+                                                                                <div class="relatedvideo">
                                                                                     @foreach (var videolist in Model.MeetingPatch)
                                                                                     {
                                                                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                                         @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                                         {
-                                                                                            <div class="video-card video-card-list videosidelist">
+                                                                                            <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                                 <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                                 <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
 
                                                                                                     @if (videolist.VideoLink.Contains(".mp4"))
                                                                                                     {
-                                                                                                        <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                                        <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                                                         </video>
                                                                                                     }
@@ -623,13 +623,13 @@
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            <div class="video-card video-card-list videosidelist">
+                                                                                            <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                                 <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                                 <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
 
                                                                                                     @if (videolist.VideoLink.Contains(".mp4"))
                                                                                                     {
-                                                                                                        <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                                        <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                                                         </video>
                                                                                                     }
@@ -1306,19 +1306,19 @@
                                                         <div id="style-2" class="single-video-right splitvideo-desktop">
                                                             <div>
                                                                 <div>
-                                                                    <div>
+                                                                    <div class="relatedvideo">
                                                                         @foreach (var videolist in Model.MeetingPatch)
                                                                         {
                                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
                                                                             @if (Model.MeetingPatch.FirstOrDefault().Priority == videolist.Priority)
                                                                             {
-                                                                                <div class="video-card video-card-list videosidelist">
+                                                                                <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image active-video" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)" disabled="true">
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" autoplay>
+                                                                                            <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -1344,13 +1344,13 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                <div class="video-card video-card-list videosidelist">
+                                                                                <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload" autoplay>
+                                                                                            <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -1363,7 +1363,7 @@
 
 
                                                                                         @*
-                                                                                            <div class="time">3:50</div>
+                        <div class="time">3:50</div>
                                                                                         *@
                                                                                     </div>
                                                                                     <div class="video-card-body" onclick="changeVideo(@videolist.Priority)">
@@ -2484,7 +2484,7 @@
                 <span onclick="closeVideoDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body">
-                <div class="col-md-12 sb-container scroller">
+                <div class="col-md-12 scroller">
 
                     <div id="divvideodetailsmodel" class="pdr-20"></div>
 

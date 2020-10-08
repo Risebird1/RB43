@@ -162,7 +162,15 @@ table.dataTable thead .sorting:after {
 .tab_container {
     background: #000000 !important;
 }
+.tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
+    background: #151515;border:0px;
+    color: #fff;
+}
 
+.mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+    background: #151515 !important;
+    color: #fff !important;
+}
 #toggle-click1 {
     color: #9A9A9A!important;
 }

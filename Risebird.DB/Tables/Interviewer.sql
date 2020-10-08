@@ -9,7 +9,8 @@ CREATE TABLE [dbo].[Interviewer](
 			[IsApproved][BIT] NULL,
 			[IsActive][bit]NULL,
 			[NoOfIntterview][int]NULL,
-			[SuccessRate][REAL] null
+			[SuccessRate][REAL] null,
+			[Heuristicsscore] int Null
 			CONSTRAINT [FK_IntUser_User] FOREIGN KEY (UserId) REFERENCES UserList(id),			
  CONSTRAINT [PK_Interviewer] PRIMARY KEY CLUSTERED 					
 (					
@@ -18,5 +19,19 @@ CREATE TABLE [dbo].[Interviewer](
 )					
 
 END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Heuristicsscore')
+      AND Object_ID = Object_ID(N'Interviewer'))
+BEGIN
+    ALTER TABLE Interviewer
+    Add [Heuristicsscore] INT null
+END
+
+
+End
 
 GO
