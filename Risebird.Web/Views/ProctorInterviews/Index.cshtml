@@ -97,11 +97,11 @@
                                                     }
                                                 </div>
                                                 <div class="col-md-5 col-sm-5 card-header-buttons action">
-                                                    @if (Model.Profile == "Admin" || Model.Profile=="HR")
+                                                    @if (Model.Profile == "Admin" || Model.Profile == "HR")
                                                     {
 
 
-                                                       
+
 
                                                         <button id="passwordButton_@item.id" class="mdc-fab app-fab--absolute" title="Reset Password" aria-label="Reset Password" onclick="location.href='@Url.Action("ResetPassword", "ProctorInterviews", new { name = item.Name, rgName = item.ResourceGroupName, vmId = item.id})'">
                                                             <i class="fa fa-key"></i>
@@ -113,6 +113,12 @@
 
                                                         <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" title="Edit" aria-label="Edit" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name', '@item.UserName');">
                                                             <i class="fa fa-edit"></i>
+                                                        </button>
+                                                    }
+                                                    @if (Model.Profile == "Admin")
+                                                    {
+                                                        <button id="remove_@item.id" class="mdc-fab app-fab--absolute item1" title="Remove" aria-label="Remove" onclick="javascript:RemoveVM('@item.id', '@item.Name');" >
+                                                            <i class="fa fa-trash"></i>
                                                         </button>
                                                     }
 
@@ -524,7 +530,59 @@
     }
 
 </script>
+<script>
+    function RemoveVM(vmId, vmName) {
 
+        swal.fire({
+            title: 'Are you sure you want to remove ' + vmName + '?',
+            text: "The Virtual Machine will be removed!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/ProctorInterviews/RemoveVM?vmId=' + vmId,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            swal.fire("Error removing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Removed!',
+                    type: 'success',
+                    html: '<p>The Virtual Machine(' + vmName + ') has been removed!</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/ProctorInterviews/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'The virtual machine ' + vmName +' has not been removed!',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+
+</script>
 
 
 <script>

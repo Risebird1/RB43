@@ -157,6 +157,10 @@
     });
 
     function UpdateVMUsers() {
+        if (profileIdVal == null  || profileIdVal=="") {
+            profileIdVal = document.getElementById("ProfileId").value;
+
+        }
         $.ajax({
             url: '/ProctorInterviews/UpdateVMUsers',
             type: 'POST',

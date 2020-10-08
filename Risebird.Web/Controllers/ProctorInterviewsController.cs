@@ -561,5 +561,35 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [Authorize]
+        public async Task<IActionResult> RemoveVM(int vmId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (await _proctorInterviewsService.RemoveVM(vmId))
+                    {
+                        return Json(true);
+                    }
+                    else
+                    {
+                        return Json(true);
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+
     }
 }
