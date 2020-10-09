@@ -45,6 +45,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -53,7 +54,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Candidate" || profileName == "ResumeEvaluator" || profileName == "Client" || profileName== "QualityController" || profileName== "CuratedUser" || profileName== "ExternalUser" || profileName== "Recruiter")
                 {
                     var model = new VirtualMachineVM();
                     var vmList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
