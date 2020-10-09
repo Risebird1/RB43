@@ -1455,7 +1455,7 @@
                                                                                 <div class="form-group comment-area">
                                                                                     <div class="talk-bubble tri-right border-bubble right-in">
                                                                                         <div class="talktext">
-                                                                                            <textarea spellcheck="true" class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
+                                                                                            <textarea spellcheck="true" class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..." style="height:51px"></textarea>
                                                                                             <div id="words"></div>
                                                                                         </div>
                                                                                     </div>
@@ -1620,11 +1620,11 @@
                                                                                         <div class="video-title">
                                                                                             @if (@videolist.candidateName.Length > 11)
                                                                                             {
-                                                                                                <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                                <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                <span class="candidate">@videolist.candidateName</span>}
+                                                                                                <span onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" class="candidate">@videolist.candidateName</span>}
 
                                                                                             @if (@videolist.JDTiltle.Length > 10)
                                                                                             {
@@ -1761,11 +1761,11 @@
                                                                                 <div class="video-title">
                                                                                     @if (@videolist.candidateName.Length > 11)
                                                                                     {
-                                                                                        <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                        <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <span class="candidate">@videolist.candidateName</span>}
+                                                                                        <span onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" class="candidate">@videolist.candidateName</span>}
 
                                                                                     @if (@videolist.JDTiltle.Length > 10)
                                                                                     {
