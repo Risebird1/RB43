@@ -304,5 +304,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> RemoveVM(int vmId)
+        {
+            try
+            {
+                return await _proctorInterviewsRepository.RemoveVM(vmId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
