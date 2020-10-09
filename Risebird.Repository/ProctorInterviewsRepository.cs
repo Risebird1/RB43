@@ -625,6 +625,30 @@ namespace Risebird.Repository
             }
         }
 
+        /// <summary>
+        /// Get the Emails of all the users who have started a virtual machine 
+        /// </summary> 2 hours or before back and is yet to be stopped 
+        /// <returns></returns>
+        public async Task<IEnumerable<VMActionPerformed>> GetVMStarterEmailId()
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@time", DateTime.Now.AddHours(-2));
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await  SqlMapper.QueryAsync<VMActionPerformed>(con, "usp_GetVMStarterEmailId", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
 
     }
 }
