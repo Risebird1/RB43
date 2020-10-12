@@ -212,6 +212,7 @@ namespace Risebird.Repository
                 }
                 //Set the parameters to be passed to store procedure
                 DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", _client.id);
                 parameters.Add("@StartDate", _client.StartDate);
                 parameters.Add("@EndDate", _client.EndDate);
                 parameters.Add("@AssessmentGroup", _client.AssessmentGroup);
@@ -221,6 +222,11 @@ namespace Risebird.Repository
                 parameters.Add("@JDTitle", _client.JDTitle);
                 parameters.Add("@Filelink", _client.Filelink);
 
+                parameters.Add("@Heuristicsscore", _client.Heuristicsscore);
+                parameters.Add("@JDBudget", _client.JDBudget);
+                parameters.Add("@JobRole", _client.JobRole);
+                parameters.Add("@Location", _client.Location);
+                parameters.Add("@ClientUrl", _client.ClientUrl);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "[usp_AddClientJD]", parameters,
@@ -244,7 +250,7 @@ namespace Risebird.Repository
             {
                 if (clientid == 0)
                 {
-                    var query = "Select cl.*,ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id";
+                    var query = "Select cl.*,cl.AssessmentGroupid as AssessmentGroup, ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var result = con.Query<ClientJdVM>(query, null);
