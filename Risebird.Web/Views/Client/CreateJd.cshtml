@@ -7,6 +7,26 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interviewer.css?v=8" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/risetube.css?v=8" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#fillter_AssessmentGroupName").select2({ multiple: true });
+    });
+
+    jQuery(document).ready(function () {
+        jQuery("#fillter_ClientEmail").select2({ multiple: true });
+    });
+
+    
+
+
+</script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -44,7 +64,7 @@
                         <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                         <div class="mdc-button__ripple"></div>
                     </button>
-                    
+
                     <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" style="color:#fff;"></span>Create JD</a>
                     @*<a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>*@
                 </div>
@@ -104,8 +124,8 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupName"> Assessment Group </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple">
-                                                                    <option value="">Please Select Assessment Group</option>
+                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple" >
+                                                              
                                                                     @foreach (var item in Model._clientjd.Select(x => x.AssessmentGroupName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -122,7 +142,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientEmail"> Client </label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="fillter_ClientEmail" name="fillter.ClientEmail" class="form-control multiselect" multiple="multiple">
-                                                                    <option value="">Please Select Client</option>
+                                                               
                                                                     @foreach (var item in Model._clientjd.Select(x => x.ClientEmail).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -225,8 +245,17 @@
                                                     </div>
 
                                                     <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right ">
-                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Questions">
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="All">
                                                             <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ALL"})'" title="ALL Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="ShortListed">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="SHORTLIST"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Send">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="INTRESTED"})'" title="Intrest send Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Accept">
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ACCEPT"})'" title="Intrest accepted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg></span>
                                                         </button>
                                                     </div>
                                                 </div>

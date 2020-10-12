@@ -120,7 +120,8 @@ namespace Risebird.Repository.Interface
       
         Task<IEnumerable<string>> GetIRFMembersEmails(int irfId);
 
-        IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid);
+        
+        IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId);
 
     }
 }
