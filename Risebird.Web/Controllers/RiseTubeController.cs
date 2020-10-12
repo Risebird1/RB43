@@ -2645,24 +2645,27 @@ namespace Risebird.Web.Controllers
                         //var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId, isClient);
                         modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
                         //id = modelList1.FirstOrDefault().imid;
-                        if (actionstatus.ToUpper() == "ALL")
+                        if (id == 0)
                         {
-                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                        }
-                        else if (actionstatus.ToUpper() == "SHORTLIST")
-                        {
-                            modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
-                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                        }
-                        else if (actionstatus.ToUpper() == "INTRESTED")
-                        {
-                            modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
-                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                        }
-                        else if (actionstatus.ToUpper() == "ACCEPT")
-                        {
-                            modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Accepted").ToList();
-                            id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            if (actionstatus.ToUpper() == "ALL")
+                            {
+                                id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            }
+                            else if (actionstatus.ToUpper() == "SHORTLIST")
+                            {
+                                modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
+                                id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            }
+                            else if (actionstatus.ToUpper() == "INTRESTED")
+                            {
+                                modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
+                                id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            }
+                            else if (actionstatus.ToUpper() == "ACCEPT")
+                            {
+                                modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Accepted").ToList();
+                                id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                            }
                         }
                         //modelList1 = modelList1.Where(x => irfList.Contains(x.IRFId)).ToList();
                         ViewBag.actionstatus = "SkillChannelDetails";

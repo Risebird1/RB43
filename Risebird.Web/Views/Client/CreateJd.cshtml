@@ -180,7 +180,7 @@
                                             <div class="card-header">
                                                 <div class="row">
                                                     <div class=" col-md-9 col-sm-9 first">
-                                                        <h6 class="assessment-grp"> @item.JDTitle </h6>
+                                                        <h6 class="assessment-grp" onclick="EditJD(@item.id)"> @item.JDTitle </h6>
                                                     </div>
 
                                                     <div class="col-md-3 col-sm-3 card-header-buttons action text-right">
@@ -206,17 +206,27 @@
                                                         <div class="three" style="margin-bottom:10px;"> <span><b>End Date:</b></span>@item.EndDate</div>
 
                                                         <div class="four" style="margin-bottom:10px;">
-                                                            <span><b>JD:</b></span> @item.JobDescription
+
                                                         </div>
                                                         <div>
                                                             <span><b>Assessment Group:</b></span> @item.AssessmentGroupName
                                                         </div>
                                                         <div>
+                                                            <span><b>JD Type:</b></span> @item.JDType
+                                                        </div>
+                                                        <div>
+                                                            <span><b>Role:</b></span> @item.JobRole
+                                                        </div>
+                                                        <div>
+                                                            <span><b>Budget:</b></span> @item.JDBudget
+                                                        </div>
+                                                        <div>
+                                                            <span><b>Location:</b></span> @item.Location
+                                                        </div>
+                                                        <div>
                                                             @if (!String.IsNullOrEmpty(item.Filelink))
                                                             {
-
-                                                                <span><b>File Link:</b></span> <a href="@item.Filelink" target="_blank">Click Here</a>
-
+                                                                <span><b>JD Link:</b></span> <a href="@item.Filelink" target="_blank">Click Here</a>
                                                             }
                                                         </div>
                                                     </div>
@@ -294,7 +304,8 @@
                 {
                     <div>
                         @Html.HiddenFor(m => m._clientjddetails.ClientId)
-                        <div style="width:100%;height: 350px;">
+                        @Html.HiddenFor(m => m._clientjddetails.id)
+                        <div style="width:100%;height: 620px;">
                             <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                 <div class="form-group">
                                     <label class="control-label  desp-label" for="StartDate"> Start Date </label>
@@ -324,18 +335,56 @@
                                 @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.File, new { type = "file", @class = "form-control btn" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.File, "", new { @class = "text-danger" })
+
+                                @Html.LabelFor(model => model._clientjddetails.JdFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                <input type="radio" id="rdupload" name="jdfile" value="Upload" checked onclick="Changefilesystem('Upload')">Uplaod
+                                <input type="radio" id="rdurl" name="jdfile" value="Url" onclick="Changefilesystem('Url')">File Url
+                                @Html.TextBoxFor(m => m._clientjddetails.JdFile, new { type = "file", @class = "form-control btn" ,@accept = ".pdf,.docx"})
+                                @Html.ValidationMessageFor(model => model._clientjddetails.JdFile, "", new { @class = "text-danger" })
+                                @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control btn", @style = "display:none" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.JDBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.JDBudget, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.JDBudget, "", new { @class = "text-danger" })
                             </div>
                             @if (!Model._clientjddetails.isClientUser)
                             {
+                                <div style="clear:both"></div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                     @Html.TextBoxFor(m => m._clientjddetails.ClientEmail, new { @class = "form-control" })
                                     @Html.ValidationMessageFor(model => model._clientjddetails.ClientEmail, "", new { @class = "text-danger" })
                                 </div>
+                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.DropDownListFor(m => m._clientjddetails.Heuristicsscore, Model._clientjddetails.Heuristicsscorelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.Heuristicsscore, "", new { @class = "text-danger" })
+                                </div>
                             }
+
+                            <div style="clear:both"></div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.JDType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.JDType, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.JDType, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.Location, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.Location, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.JobRole, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.JobRole, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.JobRole, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.ClientUrl, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.ClientUrl, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.ClientUrl, "", new { @class = "text-danger" })
+                            </div>
                             <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
                                 @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                 @Html.TextBoxFor(m => m._clientjddetails.JobDescription, htmlAttributes: new { @class = "form-control" })
@@ -406,5 +455,45 @@
     function CandidateJdScore(id) {
         var url = '/Client/CandidateJDScore?id=' + id;
         window.location.href = url;
-    };
+    }
+    function EditJD(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Client/EditJd",
+            data: { assessmentid: id },
+            success: function (data) {
+                $("#zclientjddetails_id").val(data.id);
+                $("#zclientjddetails_StartDate").val(data.startDatestring);
+                $("#zclientjddetails_EndDate").val(data.endDatestring);
+                $("#zclientjddetails_JDTitle").val(data.jdTitle);
+                $("#zclientjddetails_JDBudget").val(data.jdBudget);
+                $("#zclientjddetails_JDType").val(data.jdType);
+                $("#zclientjddetails_Location").val(data.location);
+                $("#zclientjddetails_JobRole").val(data.jobRole);
+                $("#zclientjddetails_ClientUrl").val(data.clientUrl);
+                $("#zclientjddetails_JobDescription").val(data.jobDescription);
+                $("#zclientjddetails_ClientEmail").val(data.clientEmail);
+                $("#zclientjddetails_AssessmentGroup").val(data.assessmentGroup);
+                $("#zclientjddetails_Heuristicsscore").val(data.heuristicsscore);
+                $("#zclientjddetails_Filelink").val(data.Filelink);
+                $("#rdurl").prop("checked", true);
+                Changefilesystem('Url');
+                CreateJd();
+            }
+        });
+    }
+    function Changefilesystem(tag) {
+        if (tag == "Upload") {
+            var filesystem = document.getElementById("zclientjddetails_Filelink");
+            var files = document.getElementById("zclientjddetails_File");
+            files.style.display = "block";
+            filesystem.style.display = "none";
+        }
+        else {
+            var filesystem = document.getElementById("zclientjddetails_Filelink");
+            var files = document.getElementById("zclientjddetails_File");
+            filesystem.style.display = "block";
+            files.style.display = "none";
+        }
+    }
 </script>
