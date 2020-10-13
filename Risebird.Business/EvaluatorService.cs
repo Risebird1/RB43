@@ -228,7 +228,7 @@ namespace Risebird.Business
                 {
                     var genSkillsDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
                     var genSkillList = new List<SkillGeneralEvaluatorReport>();
-                    var levels = _meetingRespository.GetLevels();
+                    var levelTech = _meetingRespository.GetLevelTech();
 
                     //assign values to model
                     foreach (var item in genSkillsDetails)
@@ -237,8 +237,8 @@ namespace Risebird.Business
                         {
                             CandidateId = candidateId,
                             IRFId = irfId,
-                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,

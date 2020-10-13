@@ -899,7 +899,7 @@ namespace Risebird.CommonHelper
                 mailMessage.To.Add(new MailAddress(obj.PerformedBy, "Risebird"));
                 
                 object[] parameters = new object[] { obj.Name };
-                mailMessage.Subject = "Virtual Machine running!";
+                mailMessage.Subject = "Virtual Machine Running!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "StopVMNotifier.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
