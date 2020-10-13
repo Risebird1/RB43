@@ -2935,7 +2935,8 @@
 
 <script>
 
-    window.onload = function () {
+        window.onload = function () {
+         
         if (localStorage.getItem('isTheaterMode') == "true") {
             getThMode();
             document.getElementById("1").value = "THEATER-MODE-OFF";
@@ -3071,7 +3072,7 @@
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             chart.fontSize = 13;
-            
+           
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -3079,10 +3080,14 @@
                 return dy;
             });
 
+
+  
+
+
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
             categoryAxis.renderer.grid.template.disabled = true;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 170;
+            categoryAxis.renderer.labels.template.paddingBottom = 172;
             valueAxis.renderer.grid.template.disabled = true;
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
@@ -3090,7 +3095,9 @@
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
-            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY}%)";
+
+
+            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
             series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
 
@@ -3108,7 +3115,6 @@
             series.columns.template.showTooltipOn = "always";
             series.tooltip.background.filters.clear();
             series.tooltip.getFillFromObject = false;
-
             series.tooltip.label.fill = am4core.color("#9a9a9a");
             series.tooltip.background.cornerRadius = 0;
             series.tooltip.label.textAlign = "middle";
@@ -3223,6 +3229,7 @@
         }
     }
 </script>
+
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
@@ -3419,12 +3426,7 @@
 
 
 </script>
-<style>
-    [role="tooltip"] {
-        visibility: hidden;
-    }
- 
-</style>
+
 <script>
     $(document).ready(function () {
         $(".candidate-name").each(function () {
