@@ -35,7 +35,7 @@ namespace Risebird.Entities.ViewModel
         public string Filelink { get; set; }
         public SelectList AssessmentGrouplist { get; set; }
         public SelectList Heuristicsscorelist { get; set; }
-        [Display(Name = "Heuristics Score")]
+        [Display(Name = "Client Type")]
         public int Heuristicsscore { get; set; }
         public string CreatedBy { get; set; }
         public int ClientId { get; set; }
