@@ -91,5 +91,8 @@ namespace Risebird.Entities.Data
         public string IRFnSkill { get; set; }
         public string BussinessType { get; set; }
         public int CandidateAvailable { get; set; }
+        public string ClientHrMobile { get; set; }
+        public string StaffingAgencyMobile { get; set; }
+
     }
 }
