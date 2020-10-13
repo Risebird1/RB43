@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -240,6 +241,9 @@ namespace Risebird.Web.Controllers
                     model._clientjd = result.ToList();
                     model._clientjddetails = new ClientJdVM();
                     model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     model._clientjddetails.ClientId = ClientId;
                     model._clientjddetails.isClientUser = isClientUser;
                     return View(model);
@@ -286,7 +290,7 @@ namespace Risebird.Web.Controllers
                     model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
                     model._clientjddetails.ClientId = ClientId;
                     model._clientjddetails.isClientUser = isClientUser;
-                    
+
                     return View(model);
                 }
                 else
@@ -300,7 +304,50 @@ namespace Risebird.Web.Controllers
             }
 
         }
-            [HttpPost]
+        //public IActionResult AddCreateJd()
+        //{
+        //    if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //    {
+        //        bool isClientUser = false;
+        //        int ClientId = 0;
+        //        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //        profileName = profileName.Replace("\"", "");
+        //        if (profileName == "Admin" || profileName == "Client")
+        //        {
+        //            var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //            emailid = emailid.Replace("\"", "");
+        //            if (profileName == "Client")
+        //            {
+        //                var client = _userRepository.GetClientUserDetails(emailid);
+        //                ClientId = client.Result.ClientId;
+        //                isClientUser = true;
+        //            }
+        //            //Fetch ClientJds
+        //            //var result = _clientService.FetchClientJd(ClientId);
+        //            var resultset = _interviewerService.FetchAssessmentGroups();
+        //            //bind Dropdown values
+
+        //            //model._clientjd = result.ToList();
+        //            var model = new ClientJdVM();
+        //            model.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
+        //            var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+        //                             select new { ID = (int)s, Name = s.GetDescription() };
+        //            model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+        //            model.ClientId = ClientId;
+        //            model.isClientUser = isClientUser;
+        //            return View(model);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("SignOut", "Session");
+        //    }
+        //}
+        [HttpPost]
         public IActionResult AddCreateJd(ClientDetails model)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -321,11 +368,11 @@ namespace Risebird.Web.Controllers
                             model._clientjddetails.CreatedBy = model._clientjddetails.ClientEmail;
                         }
                     }
-                    if (model._clientjddetails.File != null)
+                    if (model._clientjddetails.JdFile != null)
                     {
-                        _azureStorageHelper.InsertBlob(model._clientjddetails.File.FileName, "videos", model._clientjddetails.File);
+                        _azureStorageHelper.InsertBlob(model._clientjddetails.JdFile.FileName, "videos", model._clientjddetails.JdFile);
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                        var blob = containerRef.GetBlockBlobReference(model._clientjddetails.File.FileName);
+                        var blob = containerRef.GetBlockBlobReference(model._clientjddetails.JdFile.FileName);
                         string uploadedvideoFileURL = blob.Uri.ToString();
                         model._clientjddetails.Filelink = uploadedvideoFileURL;
                     }
@@ -387,6 +434,95 @@ namespace Risebird.Web.Controllers
                     TempData["SuccessErrorMessageInterviewer"] = "Failed to update candidates";
                     return RedirectToAction("CandidateJDScore", "Client", new { id = model.IRFId });
 
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public JsonResult EditJd(int assessmentid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                bool isClientUser = false;
+                int ClientId = 0;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        var client = _userRepository.GetClientUserDetails(emailid);
+                        ClientId = client.Result.ClientId;
+                        isClientUser = true;
+                    }
+                    //Fetch ClientJds
+                    var result = _clientService.FetchClientJd(ClientId);
+                    var resultset = _interviewerService.FetchAssessmentGroups();
+                    //bind Dropdown values
+                    var model = new ClientDetails();
+                    model._clientjd = result.ToList();
+                    model._clientjddetails = new ClientJdVM();
+                    model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                    model._clientjddetails.ClientId = ClientId;
+                    model._clientjddetails.isClientUser = isClientUser;
+                    var resultdetails = result.Where(x => x.id == assessmentid).FirstOrDefault();
+                    resultdetails.StartDatestring = resultdetails.StartDate.ToString("yyyy-MM-dd");
+                    resultdetails.EndDatestring = resultdetails.EndDate.ToString("yyyy-MM-dd");
+                    return Json(resultdetails);
+                }
+                else
+                {
+                    return Json("fail");
+                }
+            }
+            else
+            {
+                return Json("fail");
+            }
+        }
+        public IActionResult CandidateRelatedJD(int interviewid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                bool isClientUser = false;
+                int ClientId = 0;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Client" || profileName == "Candidate")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        var client = _userRepository.GetClientUserDetails(emailid);
+                        ClientId = client.Result.ClientId;
+                        isClientUser = true;
+                    }
+                    //Fetch ClientJds
+                    var result = _clientService.FetchClientJd(ClientId);
+                    var resultset = _interviewerService.FetchAssessmentGroups();
+                    //bind Dropdown values
+                    var model = new ClientDetails();
+                    model._clientjd = result.ToList();
+                    model._clientjddetails = new ClientJdVM();
+                    model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                    model._clientjddetails.ClientId = ClientId;
+                    model._clientjddetails.isClientUser = isClientUser;
+                    return View("CreateJd", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             else
