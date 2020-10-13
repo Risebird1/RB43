@@ -304,6 +304,49 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        //public IActionResult AddCreateJd()
+        //{
+        //    if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //    {
+        //        bool isClientUser = false;
+        //        int ClientId = 0;
+        //        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //        profileName = profileName.Replace("\"", "");
+        //        if (profileName == "Admin" || profileName == "Client")
+        //        {
+        //            var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //            emailid = emailid.Replace("\"", "");
+        //            if (profileName == "Client")
+        //            {
+        //                var client = _userRepository.GetClientUserDetails(emailid);
+        //                ClientId = client.Result.ClientId;
+        //                isClientUser = true;
+        //            }
+        //            //Fetch ClientJds
+        //            //var result = _clientService.FetchClientJd(ClientId);
+        //            var resultset = _interviewerService.FetchAssessmentGroups();
+        //            //bind Dropdown values
+
+        //            //model._clientjd = result.ToList();
+        //            var model = new ClientJdVM();
+        //            model.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
+        //            var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+        //                             select new { ID = (int)s, Name = s.GetDescription() };
+        //            model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+        //            model.ClientId = ClientId;
+        //            model.isClientUser = isClientUser;
+        //            return View(model);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("SignOut", "Session");
+        //    }
+        //}
         [HttpPost]
         public IActionResult AddCreateJd(ClientDetails model)
         {
@@ -452,7 +495,7 @@ namespace Risebird.Web.Controllers
                 int ClientId = 0;
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Client" || profileName== "Candidate")
+                if (profileName == "Admin" || profileName == "Client" || profileName == "Candidate")
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
