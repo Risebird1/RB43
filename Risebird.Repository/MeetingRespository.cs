@@ -1348,7 +1348,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SkillGeneralReport.*,SkillGeneralReport.Type as Name, [Level].[Name] as RequiredLevel from SkillGeneralReport inner join [Level] on SkillGeneralReport.RequiredLevelId=[Level].id where InterviewId = @id";
+                var query = "select SkillGeneralReport.*,SkillGeneralReport.Type as Name, [LevelTech].[Name] as RequiredLevel from SkillGeneralReport inner join [LevelTech] on SkillGeneralReport.RequiredLevelId=[LevelTech].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
