@@ -2936,7 +2936,7 @@
 <script>
 
         window.onload = function () {
-            debugger;
+         
         if (localStorage.getItem('isTheaterMode') == "true") {
             getThMode();
             document.getElementById("1").value = "THEATER-MODE-OFF";
@@ -3087,7 +3087,7 @@
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
             categoryAxis.renderer.grid.template.disabled = true;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 170;
+            categoryAxis.renderer.labels.template.paddingBottom = 172;
             valueAxis.renderer.grid.template.disabled = true;
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
@@ -3426,12 +3426,7 @@
 
 
 </script>
-<style>
-    [role="tooltip"] {
-        visibility: hidden;
-    }
- 
-</style>
+
 <script>
     $(document).ready(function () {
         $(".candidate-name").each(function () {
