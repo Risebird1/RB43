@@ -275,7 +275,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card" style="height:344px">
                                             <div class="card-body">
-                                                <p class="card-text">Overall Score: <span  id="totScore"></span></p>
+                                                <p class="card-text">Overall Average Score: <span id="totScore"></span></p>
                                                 <div id="scoreChart" style="height: 200px; width: 100%;"></div>
 
                                             </div>
@@ -1504,6 +1504,7 @@
 
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
+            categoryAxis.renderer.labels.template.paddingBottom = 170;
         categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
