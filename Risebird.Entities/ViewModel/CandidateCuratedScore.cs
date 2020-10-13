@@ -9,5 +9,7 @@
         public int Score { get; set; }
         public string Message { get; set; }
         public string IRFDetailsID { get; set; }
+        public int Priority { get; set; }
+        
     }
 }

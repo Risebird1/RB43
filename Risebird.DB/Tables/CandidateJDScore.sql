@@ -14,6 +14,18 @@ CREATE TABLE [dbo].[CandidateJDScore](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Priority')
+      AND Object_ID = Object_ID(N'CandidateJDScore'))
+BEGIN
+    ALTER TABLE CandidateJDScore
+    Add Priority [int] NULL		
+END
+END
 GO
 
 

@@ -406,6 +406,7 @@ namespace Risebird.Web.Controllers
                 var result = _clientService.GetCandidateJDScore(Convert.ToInt32(id));
                 model.CandidateCuratedScores = result;
                 model.IRFId = Convert.ToInt32(id);
+                model.candidateProfile = "AddCandidate";
                 if (TempData["SuccessErrorMessageInterviewer"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
@@ -423,18 +424,24 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList());
+                var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList(),model.candidateProfile);
                 if (result)
                 {
                     TempData["SuccessErrorMessageInterviewer"] = "Interviewer is Updated Successfully";
-                    return RedirectToAction("CandidateJDScore", "Client", new { id = model.IRFId });
                 }
                 else
                 {
                     TempData["SuccessErrorMessageInterviewer"] = "Interviewer update is Failed";
-                    return RedirectToAction("CandidateJDScore", "Client", new { id = model.IRFId });
-
                 }
+                if (model.candidateProfile == "AddCandidate")
+                {
+                    return RedirectToAction("CandidateJDScore", "Client", new { id = model.IRFId });
+                }
+                else
+                {
+                    return RedirectToAction("CandidateJDScorePriority", "Client", new { id = model.IRFId });
+                }
+
             }
             else
             {
@@ -524,6 +531,28 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpGet]
+        public IActionResult CandidateJDScorePriority(string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                CandidateCuratedScoreVM model = new CandidateCuratedScoreVM();
+                var result = _clientService.GetCandidateJDScore(Convert.ToInt32(id));
+                model.CandidateCuratedScores = result;
+                model.IRFId = Convert.ToInt32(id);
+                model.candidateProfile = "SetPriority";
+                if (TempData["SuccessErrorMessageInterviewer"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                    TempData.Remove("SuccessErrorMessageInterviewer");
+                }
+                return View(model);
             }
             else
             {

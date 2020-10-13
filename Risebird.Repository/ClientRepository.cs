@@ -280,31 +280,50 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore, string candidateProfile)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if (candidateProfile == "AddCandidate")
                 {
-                    string sqlDeletePrevious = "Delete from CandidateJDScore where ClientJdid =@IRFId;";
-                    var deletedRows = con.Execute(sqlDeletePrevious, new
+                    using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        IRFId = IrfId,
-
-                    });
-                    foreach (var item in candidateCuratedScore)
-                    {
-
-                        string sqlCuratedCandidate = "INSERT INTO CandidateJDScore (ClientJdid,IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@ClientJdid,@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
-                        var affectedRows = con.Execute(sqlCuratedCandidate, new
+                        string sqlDeletePrevious = "Delete from CandidateJDScore where ClientJdid =@IRFId;";
+                        var deletedRows = con.Execute(sqlDeletePrevious, new
                         {
-                            ClientJdid= IrfId,
-                            IRFId = item.IRFDetailsID,
-                            item.CandidateEmailId,
-                            item.CuratedEmailId,
-                            item.Score
+                            IRFId = IrfId,
 
                         });
+                        foreach (var item in candidateCuratedScore)
+                        {
+
+                            string sqlCuratedCandidate = "INSERT INTO CandidateJDScore (ClientJdid,IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@ClientJdid,@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
+                            var affectedRows = con.Execute(sqlCuratedCandidate, new
+                            {
+                                ClientJdid = IrfId,
+                                IRFId = item.IRFDetailsID,
+                                item.CandidateEmailId,
+                                item.CuratedEmailId,
+                                item.Score
+
+                            });
+                        }
+                        return true;
+                    }
+                }
+                else
+                {
+                    foreach (var item in candidateCuratedScore)
+                    {
+                        using (SqlConnection con = new SqlConnection(connectionString))
+                        {
+                            string sqlCuratedCandidate = "Update CandidateJDScore set Priority=@Priority where Id=@Id";
+                            var affectedRows = con.Execute(sqlCuratedCandidate, new
+                            {
+                                Priority=item.Priority,
+                                Id=item.IRFId
+                            });
+                        }
                     }
                     return true;
                 }
@@ -326,7 +345,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select id as IRFID,ClientJdid,IRFId as IRFDetailsID,CandidateEmailId,Score from CandidateJDScore where ClientJdid = @IRFId";
+                var query = "Select id as IRFID,ClientJdid,IRFId as IRFDetailsID,CandidateEmailId,Score,Priority from CandidateJDScore where ClientJdid = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

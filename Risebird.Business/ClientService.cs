@@ -137,11 +137,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore,string candidateProfile)
         {
             try
             {
-                return _clientRepository.AddCandidateJDScore(IrfId, candidateCuratedScore);
+                return _clientRepository.AddCandidateJDScore(IrfId, candidateCuratedScore, candidateProfile);
             }
 
             catch (Exception e)
