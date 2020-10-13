@@ -351,11 +351,6 @@
 
                             <div style="clear:both"></div>
                             <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.JDType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.JDType, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.JDType, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                 @Html.LabelFor(model => model._clientjddetails.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                 @Html.TextBoxFor(m => m._clientjddetails.Location, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model._clientjddetails.Location, "", new { @class = "text-danger" })
@@ -454,7 +449,6 @@
                 $("#zclientjddetails_EndDate").val(data.endDatestring);
                 $("#zclientjddetails_JDTitle").val(data.jdTitle);
                 $("#zclientjddetails_JDBudget").val(data.jdBudget);
-                $("#zclientjddetails_JDType").val(data.jdType);
                 $("#zclientjddetails_Location").val(data.location);
                 $("#zclientjddetails_JobRole").val(data.jobRole);
                 $("#zclientjddetails_ClientUrl").val(data.clientUrl);
@@ -463,8 +457,8 @@
                 $("#zclientjddetails_AssessmentGroup").val(data.assessmentGroup);
                 $("#zclientjddetails_Heuristicsscore").val(data.heuristicsscore);
                 $("#zclientjddetails_Filelink").val(data.Filelink);
-                $("#rdurl").prop("checked", true);
-                Changefilesystem('Url');
+                //$("#rdurl").prop("checked", true);
+                //Changefilesystem('Url');
                 CreateJd();
             }
         });
