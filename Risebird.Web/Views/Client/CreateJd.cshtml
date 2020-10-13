@@ -319,12 +319,14 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
 
-                                @Html.LabelFor(model => model._clientjddetails.JdFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                <input type="radio" id="rdupload" name="jdfile" value="Upload" checked onclick="Changefilesystem('Upload')">Uplaod
-                                <input type="radio" id="rdurl" name="jdfile" value="Url" onclick="Changefilesystem('Url')">File Url
-                                @Html.TextBoxFor(m => m._clientjddetails.JdFile, new { type = "file", @class = "form-control btn", @accept = ".pdf,.docx" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.JdFile, "", new { @class = "text-danger" })
-                                @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control btn", @style = "display:none" })
+                                @Html.LabelFor(model => model._clientjddetails.Filelink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @*<input type="radio" id="rdupload" name="jdfile" value="Upload" checked onclick="Changefilesystem('Upload')">Uplaod
+                                         <input type="radio" id="rdurl" name="jdfile" value="Url" onclick="Changefilesystem('Url')">File Url
+                                    @Html.TextBoxFor(m => m._clientjddetails.JdFile, new { type = "file", @class = "form-control btn", @accept = ".pdf,.docx" })
+                                         @Html.ValidationMessageFor(model => model._clientjddetails.JdFile, "", new { @class = "text-danger" })
+                                         @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control btn", @style = "display:none" })
+                                         @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })*@
+                                @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
