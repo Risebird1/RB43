@@ -180,10 +180,13 @@
                                             <div class="card-header">
                                                 <div class="row">
                                                     <div class=" col-md-9 col-sm-9 first">
-                                                        <h6 class="assessment-grp" onclick="EditJD(@item.id)"> @item.JDTitle </h6>
+                                                        <h6 class="assessment-grp"> @item.JDTitle </h6>
                                                     </div>
 
                                                     <div class="col-md-3 col-sm-3 card-header-buttons action text-right">
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                            <span onclick="javascript:EditJD('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
                                                         @if (!Model._clientjddetails.isClientUser)
                                                         {
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Candidate JD Score">
@@ -205,30 +208,26 @@
                                                         <br />
                                                         <div class="three" style="margin-bottom:10px;"> <span><b>End Date:</b></span>@item.EndDate</div>
 
-                                                        <div class="four" style="margin-bottom:10px;">
-
-                                                        </div>
                                                         <div>
                                                             <span><b>Assessment Group:</b></span> @item.AssessmentGroupName
                                                         </div>
                                                         <div>
-                                                            <span><b>JD Type:</b></span> @item.JDType
+                                                            <span><b>JD Link:</b></span>
+                                                            @if (!String.IsNullOrEmpty(item.Filelink))
+                                                            {
+                                                                <a href="@item.Filelink" target="_blank">Click Here</a>
+                                                            }
                                                         </div>
                                                         <div>
                                                             <span><b>Role:</b></span> @item.JobRole
                                                         </div>
                                                         <div>
-                                                            <span><b>Budget:</b></span> @item.JDBudget
+                                                            <span><b>Salary Range:</b></span> @item.JDBudget
                                                         </div>
                                                         <div>
                                                             <span><b>Location:</b></span> @item.Location
                                                         </div>
-                                                        <div>
-                                                            @if (!String.IsNullOrEmpty(item.Filelink))
-                                                            {
-                                                                <span><b>JD Link:</b></span> <a href="@item.Filelink" target="_blank">Click Here</a>
-                                                            }
-                                                        </div>
+
                                                     </div>
                                                 </div>
 
@@ -336,12 +335,14 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
 
-                                @Html.LabelFor(model => model._clientjddetails.JdFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                <input type="radio" id="rdupload" name="jdfile" value="Upload" checked onclick="Changefilesystem('Upload')">Uplaod
-                                <input type="radio" id="rdurl" name="jdfile" value="Url" onclick="Changefilesystem('Url')">File Url
-                                @Html.TextBoxFor(m => m._clientjddetails.JdFile, new { type = "file", @class = "form-control btn" ,@accept = ".pdf,.docx"})
-                                @Html.ValidationMessageFor(model => model._clientjddetails.JdFile, "", new { @class = "text-danger" })
-                                @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control btn", @style = "display:none" })
+                                @Html.LabelFor(model => model._clientjddetails.Filelink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @*<input type="radio" id="rdupload" name="jdfile" value="Upload" checked onclick="Changefilesystem('Upload')">Uplaod
+                                         <input type="radio" id="rdurl" name="jdfile" value="Url" onclick="Changefilesystem('Url')">File Url
+                                    @Html.TextBoxFor(m => m._clientjddetails.JdFile, new { type = "file", @class = "form-control btn", @accept = ".pdf,.docx" })
+                                         @Html.ValidationMessageFor(model => model._clientjddetails.JdFile, "", new { @class = "text-danger" })
+                                         @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control btn", @style = "display:none" })
+                                         @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })*@
+                                @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
@@ -430,6 +431,8 @@
         maxHeight: 200
     });
     function CreateJd() {
+        //var url = '/Client/AddCreateJd';
+        //window.location.href = url;
         var model = document.getElementById("commentsmodel");
         model.style.display = "block";
     }
@@ -485,13 +488,13 @@
     function Changefilesystem(tag) {
         if (tag == "Upload") {
             var filesystem = document.getElementById("zclientjddetails_Filelink");
-            var files = document.getElementById("zclientjddetails_File");
+            var files = document.getElementById("zclientjddetails_JdFile");
             files.style.display = "block";
             filesystem.style.display = "none";
         }
         else {
             var filesystem = document.getElementById("zclientjddetails_Filelink");
-            var files = document.getElementById("zclientjddetails_File");
+            var files = document.getElementById("zclientjddetails_JdFile");
             filesystem.style.display = "block";
             files.style.display = "none";
         }

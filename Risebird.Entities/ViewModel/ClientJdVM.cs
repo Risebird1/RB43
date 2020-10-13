@@ -31,6 +31,7 @@ namespace Risebird.Entities.ViewModel
         public string JDTitle { get; set; }
         [Display(Name = "JD File")]
         public IFormFile JdFile { get; set; }
+        [Display(Name = "JD File Link")]
         public string Filelink { get; set; }
         public SelectList AssessmentGrouplist { get; set; }
         public SelectList Heuristicsscorelist { get; set; }
