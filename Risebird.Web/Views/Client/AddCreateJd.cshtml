@@ -1,0 +1,236 @@
+﻿@*@model IEnumerable<Risebird.Entities.ViewModel.ClientDetails>*@
+@model Risebird.Entities.ViewModel.ClientJdVM
+@{
+    ViewData["Title"] = "Job Description";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interviewer.css?v=8" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/risetube.css?v=8" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Create Job Description</a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Create Job Description</h4></div>
+                </div>
+                <div class="pull-right">
+                    <div class="newsletter">
+                        <div class="content">
+                            <div class="input-group" id="myForm">
+
+                            </div>
+                        </div>
+                    </div>
+                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1 card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                        <div class="mdc-button__ripple"></div>
+                    </button>
+                    @*@if (Model.isClientUser)
+                        {
+                            <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left" style="color:#fff;"></span>Create JD</a>
+                        }*@
+                    @*<a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left" style="color:#fff;"></span>Create JD</a>*@
+                    <a href="/Client/CreateJd" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="content client assesment">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                            </div>
+                            
+                            <div style="clear:both;padding:10px"></div>
+                            <div class="row">
+                                @using (Html.BeginForm("AddCreateJd", "Client", FormMethod.Post))
+                                {
+                                    <div>
+                                        @Html.HiddenFor(m => m.ClientId)
+                                        @Html.HiddenFor(m => m.id)
+                                        <div style="width:100%;height: 620px;">
+                                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                                <div class="form-group">
+                                                    <label class="control-label  desp-label" for="StartDate"> Start Date </label>
+                                                    <div>
+                                                        <input id="zclientjddetails_StartDate" name="_clientjddetails.StartDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                                <div class="form-group">
+                                                    <label class="control-label  desp-label" for="StartDate"> End Date </label>
+                                                    <div>
+                                                        <input id="zclientjddetails_EndDate" name="_clientjddetails.EndDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                                @Html.LabelFor(model => model.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.DropDownListFor(m => m.AssessmentGroup, Model.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                @Html.ValidationMessageFor(model => model.AssessmentGroup, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                                @Html.LabelFor(model => model.JDTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.JDTitle, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.JDTitle, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+
+                                                @Html.LabelFor(model => model.JdFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <input type="radio" id="rdupload" name="jdfile" value="Upload" checked onclick="Changefilesystem('Upload')">Uplaod
+                                                <input type="radio" id="rdurl" name="jdfile" value="Url" onclick="Changefilesystem('Url')">File Url
+                                                @Html.TextBoxFor(m => m.JdFile, new { type = "file", @class = "form-control btn", @accept = ".pdf,.docx" })
+                                                @Html.ValidationMessageFor(model => model.JdFile, "", new { @class = "text-danger" })
+                                                @Html.TextBoxFor(m => m.Filelink, new { @class = "form-control btn", @style = "display:none" })
+                                                @Html.ValidationMessageFor(model => model.Filelink, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                                @Html.LabelFor(model => model.JDBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.JDBudget, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.JDBudget, "", new { @class = "text-danger" })
+                                            </div>
+                                            @if (!Model.isClientUser)
+                                            {
+                                                <div style="clear:both"></div>
+                                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                                    @Html.LabelFor(model => model.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.ClientEmail, new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(model => model.ClientEmail, "", new { @class = "text-danger" })
+                                                </div>
+                                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                                    @Html.LabelFor(model => model.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.DropDownListFor(m => m.Heuristicsscore, Model.Heuristicsscorelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                    @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
+                                                </div>
+                                            }
+
+                                            <div style="clear:both"></div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                                @Html.LabelFor(model => model.JDType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.JDType, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.JDType, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                                @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.Location, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                                @Html.LabelFor(model => model.JobRole, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.JobRole, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.JobRole, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                                @Html.LabelFor(model => model.ClientUrl, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.ClientUrl, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.ClientUrl, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
+                                                @Html.LabelFor(model => model.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.JobDescription, htmlAttributes: new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.JobDescription, "", new { @class = "text-danger" })
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 col-sm-12 clearfix">
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                            <font style="font-size:12px;">Create</font>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>*@
+
+<script>
+  
+    function CandidateJdScore(id) {
+        var url = '/Client/CandidateJDScore?id=' + id;
+        window.location.href = url;
+    }
+    function EditJD(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Client/EditJd",
+            data: { assessmentid: id },
+            success: function (data) {
+                $("#zclientjddetails_id").val(data.id);
+                $("#zclientjddetails_StartDate").val(data.startDatestring);
+                $("#zclientjddetails_EndDate").val(data.endDatestring);
+                $("#zclientjddetails_JDTitle").val(data.jdTitle);
+                $("#zclientjddetails_JDBudget").val(data.jdBudget);
+                $("#zclientjddetails_JDType").val(data.jdType);
+                $("#zclientjddetails_Location").val(data.location);
+                $("#zclientjddetails_JobRole").val(data.jobRole);
+                $("#zclientjddetails_ClientUrl").val(data.clientUrl);
+                $("#zclientjddetails_JobDescription").val(data.jobDescription);
+                $("#zclientjddetails_ClientEmail").val(data.clientEmail);
+                $("#zclientjddetails_AssessmentGroup").val(data.assessmentGroup);
+                $("#zclientjddetails_Heuristicsscore").val(data.heuristicsscore);
+                $("#zclientjddetails_Filelink").val(data.Filelink);
+                $("#rdurl").prop("checked", true);
+                Changefilesystem('Url');
+                CreateJd();
+            }
+        });
+    }
+    function Changefilesystem(tag) {
+        if (tag == "Upload") {
+            var filesystem = document.getElementById("zclientjddetails_Filelink");
+            var files = document.getElementById("zclientjddetails_JdFile");
+            files.style.display = "block";
+            filesystem.style.display = "none";
+        }
+        else {
+            var filesystem = document.getElementById("zclientjddetails_Filelink");
+            var files = document.getElementById("zclientjddetails_JdFile");
+            filesystem.style.display = "block";
+            files.style.display = "none";
+        }
+    }
+</script>
