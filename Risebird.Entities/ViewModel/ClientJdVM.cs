@@ -42,13 +42,13 @@ namespace Risebird.Entities.ViewModel
         public bool isClientUser { get; set; }
         [Display(Name = "Client Email")]
         public string ClientEmail { get; set; }
-        [Display(Name = "JD Budget")]
+        [Display(Name = "Salary Range")]
         public string JDBudget { get; set; }
         public string JDType { get; set; }
         public string Location { get; set; }
         [Display(Name = "Job Role")]
         public string JobRole { get; set; }
-        [Display(Name = "Client Url")]
+        [Display(Name = "Client Website URL")]
         public string ClientUrl { get; set; }
     }
     public class ClientDetails
