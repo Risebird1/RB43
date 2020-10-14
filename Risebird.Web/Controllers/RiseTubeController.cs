@@ -2190,15 +2190,15 @@ namespace Risebird.Web.Controllers
                     var modelList = new List<MeetingVM>();
 
 
-                    var dataResult = await _meetingService.GetSharedRiseTubeMeetings();
-                    modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                    modelList = await _meetingService.GetSharedRiseTubeMeetings();
+                    //modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
 
-                    ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
-                    ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
-                    ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
-                    ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
-                    ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
-                    ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
+                    //ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+                    //ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+                    //ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+                    //ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+                    //ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+                    //ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
 
                     ViewBag.NextLevelApprovalStatusList =
                         from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
@@ -2224,7 +2224,7 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Select(x =>
                         {
                             x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty;
-                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
 
@@ -2259,6 +2259,12 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
+                        ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+                        ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+                        ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+                        ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+                        ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+                        ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
                         modelList = modelList.Where(x => x.CandidateAvailable == "Available").ToList();
                     }
 
@@ -2356,8 +2362,8 @@ namespace Risebird.Web.Controllers
                         HttpContext.Session.SetString("RiseTubefilters", JsonConvert.SerializeObject(filter));
                     }
                     var modelList = new List<MeetingVM>();
-                    var dataResult = await _meetingService.GetSharedRiseTubeMeetings();
-                    modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                    modelList = await _meetingService.GetSharedRiseTubeMeetings();
+                    //modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();

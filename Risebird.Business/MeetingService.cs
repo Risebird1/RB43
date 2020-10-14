@@ -1795,7 +1795,7 @@ namespace Risebird.Business
             try
             {
                 var result = await _meetingRespository.GetSharedRiseTubeMeetings();
-                return result.OrderByDescending(x => x.interviewDate).ToList();
+                return result.OrderByDescending(x => x.Score).ToList();
             }
             catch (Exception ex)
             {
