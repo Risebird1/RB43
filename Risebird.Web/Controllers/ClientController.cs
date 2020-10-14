@@ -427,11 +427,11 @@ namespace Risebird.Web.Controllers
                 var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList(),model.candidateProfile);
                 if (result)
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Interviewer is Updated Successfully";
+                    TempData["SuccessErrorMessageInterviewer"] = "Candidate is Updated Successfully";
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Interviewer update is Failed";
+                    TempData["SuccessErrorMessageInterviewer"] = "Candidate update is Failed";
                 }
                 if (model.candidateProfile == "AddCandidate")
                 {
