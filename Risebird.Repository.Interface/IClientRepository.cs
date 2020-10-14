@@ -16,7 +16,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ClientRole>> GetClientRoles();
         Task<string> AddClientJd(ClientJdVM _client);
         IEnumerable<ClientJdVM> FetchClientJd(int clientid);
-        bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore,string candidateProfile);
+        string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore,string candidateProfile);
         IEnumerable<CandidateCuratedScore> GetCandidateJDScore(int id);
     };
 }

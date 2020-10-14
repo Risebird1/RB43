@@ -137,7 +137,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore,string candidateProfile)
+        public string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore,string candidateProfile)
         {
             try
             {
@@ -147,7 +147,7 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "";
             }
         }
         public IList<CandidateCuratedScore> GetCandidateJDScore(int id)

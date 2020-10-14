@@ -34,7 +34,7 @@ namespace Risebird.CommonHelper.Interface
         string ShowIntrestInterview(Mail model, string Email, string videourl);
         string SendAssessmentNotification(Mail model,string emailid);
         string SendAssessmentNotificationComments(Mail model, string assessment,string comments);
-
+        string CandidateJDScoreNotification(Mail model, int candidateCount, string JDName);
 
     }
 }

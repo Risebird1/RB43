@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -280,7 +281,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore, string candidateProfile)
+        public string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore, string candidateProfile)
         {
             try
             {
@@ -308,7 +309,6 @@ namespace Risebird.Repository
 
                             });
                         }
-                        return true;
                     }
                 }
                 else
@@ -325,27 +325,34 @@ namespace Risebird.Repository
                             });
                         }
                     }
-                    return true;
+                }
+                var query = "Select EmailId from ClientJd cj join UserList ul on cj.Createdby=ul.id where cj.id=@ClientId ";
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@ClientId", IrfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(query, parameters);
+                    return result.FirstOrDefault();
                 }
 
             }
             catch (SqlException e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "";
             }
 
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "";
             }
         }
         public IEnumerable<CandidateCuratedScore> GetCandidateJDScore(int id)
         {
             try
             {
-                var query = "Select id as IRFID,ClientJdid,IRFId as IRFDetailsID,CandidateEmailId,Score,Priority from CandidateJDScore where ClientJdid = @IRFId";
+                var query = "Select cjs.id as IRFID,cjs.ClientJdid,cjs.IRFId as IRFDetailsID,cjs.CandidateEmailId,cjs.Score,cjs.Priority,cj.JDTitle from CandidateJDScore cjs join ClientJd cj on  cj.id=cjs.ClientJdid where ClientJdid = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
