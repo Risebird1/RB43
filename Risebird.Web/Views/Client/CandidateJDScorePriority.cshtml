@@ -1,0 +1,340 @@
+﻿@model Risebird.Entities.ViewModel.CandidateCuratedScoreVM
+
+@{
+    ViewData["Title"] = "Candidate JD Score";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand breadcrumscolor" href="/Client/CreateJD">Client JD</a>
+                <a class="navbar-brand">/ &nbsp;Candidate List</a>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <form action="/Client/CandidateJDScore" enctype="multipart/form-data" method="post" id="candidateform" class="ng-pristine ng-valid">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Candidate JD Score</h4></div>
+                                </div>
+                                <div style="width:100%">&nbsp;</div>
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(m => m.IRFId)
+                                @Html.HiddenFor(m => m.candidateProfile)
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered mbn" id="scoreTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">Candidate Email</th>
+                                                    <th class="table_heading">IRFID</th>
+                                                    <th class="table_heading">Score</th>
+                                                    <th class="table_heading text-center">Priority</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.CandidateCuratedScores == null || Model.CandidateCuratedScores.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="text-areadiv">
+                                                                <input type="text" class="form-control text-box single-line" id="CandidateCuratedScores_0__CandidateEmailId" name="CandidateCuratedScores[0].CandidateEmailId" style="width:100%" class="valid" aria-invalid="false" />
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="text-areadiv ">
+                                                                <input type="text" class="form-control text-box single-line valid" id="CandidateCuratedScores_0__IRFDetailsID" name="CandidateCuratedScores[0].IRFDetailsID" style="width:100%" aria-invalid="false" />
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="text-areadiv ">
+                                                                <input type="number" class="form-control text-box single-line valid" id="CandidateCuratedScores_0__Score" name="CandidateCuratedScores[0].Score" style="width:100%" aria-invalid="false" />
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center action-area">
+                                                            <div class="text-areadiv ">
+                                                                <input type="number" class="form-control text-box single-line valid" id="CandidateCuratedScores_0__Priority" name="CandidateCuratedScores[0].Priority" style="width:100%" aria-invalid="false" />
+                                                            </div>
+
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.CandidateCuratedScores.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.HiddenFor(m => m.CandidateCuratedScores[i].IRFId)
+                                                                <div class="text-areadiv">
+                                                                    @Html.EditorFor(m => m.CandidateCuratedScores[i].CandidateEmailId, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" }, @style = "width:100%" })
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+
+                                                                <div class="text-areadiv">
+                                                                    @Html.EditorFor(m => m.CandidateCuratedScores[i].IRFDetailsID, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" }, @style = "width:100%" })
+                                                                </div>
+                                                            </td>
+                                                            <td>
+
+                                                                <div class="text-areadiv">
+                                                                    @Html.EditorFor(m => m.CandidateCuratedScores[i].Score, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @readonly = "readonly" }, @style = "width:100%" })
+                                                                </div>
+                                                            </td>
+
+                                                            <td class="text-center">
+                                                                <div class="text-areadiv">
+                                                                    @Html.EditorFor(m => m.CandidateCuratedScores[i].Priority, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" }, @style = "width:100%" })
+                                                                </div>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div><!--end of col-md-12-->
+                            </div>
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "CreateJd", "Client", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="ConfirmationSubmit(@Model.CandidateCuratedScores.Count())" id="btnUpload" value="Submit">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function ConfirmationSubmit(totalcount) {
+        var message = '';
+        var prioritydetails = false;
+        var priorityblank = false;
+        var priority = [];
+        for (var i = 0; i < totalcount; i++) {
+            if (document.getElementById("CandidateCuratedScores_" + i + "__Priority").value != '') {
+                if (parseInt(document.getElementById("CandidateCuratedScores_" + i + "__Priority").value) == 0) {
+                    priorityblank = true;
+                } else {
+                    priority.push(parseInt(document.getElementById("CandidateCuratedScores_" + i + "__Priority").value));
+                }
+            } else {
+                prioritydetails = true;
+            }
+
+        }
+        var result = hasDuplicates(priority);
+        if (priorityblank == true) {
+            if (message == '') {
+                message = 'Priority should not be 0';
+            } else {
+                message = message + ', Priority should not be 0';
+            }
+        }
+        if (prioritydetails == true) {
+            if (message == '') {
+                message = 'Priority should not be blank';
+            } else {
+                message = message + ', Priority should not be blank';
+            }
+        }
+        if (result == true) {
+            if (message == '') {
+                message = 'Priority should be unique';
+            } else {
+                message = message + ', Priority should be unique';
+            }
+        }
+        if (priorityblank == true || prioritydetails == true || result == true) {
+            alert(message);
+        } else {
+            $("#candidateform").submit();
+        }
+    }
+    function hasDuplicates(arr) {
+        return arr.some(function (item) {
+            return arr.indexOf(item) !== arr.lastIndexOf(item);
+        });
+    }
+    function AddRowComments() {
+        var table = document.getElementById("scoreTable");
+
+        var $ttc = $("#scoreTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#scoreTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        //$tr.find("select").val("");
+        //$tr.find("textarea[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=number]").val("");
+
+        //$tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#scoreTable").find("tbody tr:last").after($tr);
+
+        var $ttlast = $("#scoreTable").find("tbody tr:last");
+        //$ttlast.find("textarea").val("");
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        //// Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree) {
+
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    //name="ClientCollection[3].ClientUserId"
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                }
+
+            }
+
+        }
+
+
+    }
+
+
+</script>
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("successfully")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function () //confirm
+                    {
+                        //if Yes do this
+                        location.reload();
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        location.reload();
+
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
