@@ -363,7 +363,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (!String.IsNullOrEmpty(model._clientjddetails.ClientEmail))
                         {
-                            var client = _userRepository.GetClientUserDetails(model._clientjddetails.ClientEmail);
+                            var client = _userRepository.GetClientUserDetails(emailid);
                             model._clientjddetails.ClientId = client.Result.ClientId;
                             model._clientjddetails.CreatedBy = model._clientjddetails.ClientEmail;
                         }
@@ -406,6 +406,7 @@ namespace Risebird.Web.Controllers
                 var result = _clientService.GetCandidateJDScore(Convert.ToInt32(id));
                 model.CandidateCuratedScores = result;
                 model.IRFId = Convert.ToInt32(id);
+                model.candidateProfile = "AddCandidate";
                 if (TempData["SuccessErrorMessageInterviewer"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
@@ -423,18 +424,24 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList());
+                var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList(),model.candidateProfile);
                 if (result)
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Candidates are Updated Successfully";
+                    TempData["SuccessErrorMessageInterviewer"] = "Candidate is Updated Successfully";
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageInterviewer"] = "Candidate update is Failed";
+                }
+                if (model.candidateProfile == "AddCandidate")
+                {
                     return RedirectToAction("CandidateJDScore", "Client", new { id = model.IRFId });
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Failed to update candidates";
-                    return RedirectToAction("CandidateJDScore", "Client", new { id = model.IRFId });
-
+                    return RedirectToAction("CandidateJDScorePriority", "Client", new { id = model.IRFId });
                 }
+
             }
             else
             {
@@ -524,6 +531,28 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpGet]
+        public IActionResult CandidateJDScorePriority(string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                CandidateCuratedScoreVM model = new CandidateCuratedScoreVM();
+                var result = _clientService.GetCandidateJDScore(Convert.ToInt32(id));
+                model.CandidateCuratedScores = result;
+                model.IRFId = Convert.ToInt32(id);
+                model.candidateProfile = "SetPriority";
+                if (TempData["SuccessErrorMessageInterviewer"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                    TempData.Remove("SuccessErrorMessageInterviewer");
+                }
+                return View(model);
             }
             else
             {
