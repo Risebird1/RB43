@@ -368,5 +368,46 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<Wallet> FetchClientWallet(int clientid)
+        {
+            try
+            {
+                var query = "select * from ClientWallet where Clientid=@clientid order by CreatedOn desc";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@clientid", clientid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Wallet>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string AddWalletPoints(int ClientId, string emailid, int points)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@ClientId", ClientId);
+                parameters.Add("@emailid", emailid);
+                parameters.Add("@points", points);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.QueryAsync(con, "[usp_AddWalletPoints]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "failed"; 
+        }
     }
 }

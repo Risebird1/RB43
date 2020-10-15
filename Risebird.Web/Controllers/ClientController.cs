@@ -351,7 +351,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return View("CreateJd",model);
+                        return View("CreateJd", model);
                     }
                 }
                 else
@@ -399,8 +399,8 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var newcandidatecount = model.CandidateCuratedScores.Where(x => x.IRFId == 0).Count();
-                var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList(),model.candidateProfile);
-                if (result!="")
+                var result = _clientService.AddCandidateJDScore(model.IRFId, model.CandidateCuratedScores.ToList(), model.candidateProfile);
+                if (result != "")
                 {
                     TempData["SuccessErrorMessageInterviewer"] = "Candidate is Updated Successfully";
                 }
@@ -410,7 +410,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (model.candidateProfile == "AddCandidate")
                 {
-                    if(result!="")
+                    if (result != "")
                     {
                         //Send an email
                         Mail _mail = new Mail
@@ -552,6 +552,110 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+        /// <summary>
+        /// Client Wallet Details
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult RisebirdPay()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                bool isClientUser = false;
+                int ClientId = 0;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var client = _userRepository.GetClientUserDetails(emailid);
+                    ClientId = client.Result.ClientId;
+                    isClientUser = true;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public JsonResult WalletDetails(string action)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                bool isClientUser = false;
+                int ClientId = 0;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var client = _userRepository.GetClientUserDetails(emailid);
+                    ClientId = client.Result.ClientId;
+                    isClientUser = true;
+                    var model = _clientService.FetchClientWallet(ClientId);
+                    if (action == "CREDIT")
+                    {
+                        model = model.Where(x => x.Credit > 0).ToList();
+                    }
+                    else if (action == "DEBIT")
+                    {
+                        model = model.Where(x => x.Debit > 0).ToList();
+                    }
+                    return Json(model);
+                }
+                else
+                {
+                    return Json("SignOut");
+                }
+            }
+            else
+            {
+                return Json("SignOut");
+            }
+        }
+        [HttpPost]
+        public JsonResult AddWalletPoints(int points)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                bool isClientUser = false;
+                int ClientId = 0;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var client = _userRepository.GetClientUserDetails(emailid);
+                    ClientId = client.Result.ClientId;
+                    isClientUser = true;
+                    var result=_clientService.AddWalletPoints(ClientId, emailid, points);
+                    if (result == "Success")
+                    {
+                        return Json("Success");
+                    }
+                    else
+                    {
+                        return Json("failed");
+                    }
+                }
+                else
+                {
+                    return Json("SignOut");
+                }
+            }
+            else
+            {
+                return Json("SignOut");
             }
         }
     }

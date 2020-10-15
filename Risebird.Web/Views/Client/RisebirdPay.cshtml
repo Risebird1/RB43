@@ -1,0 +1,199 @@
+﻿@*@model IEnumerable<Risebird.Entities.ViewModel.Wallet>*@
+
+@{
+    ViewData["Title"] = "Client Wallet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section row">
+                        <div class="col-md-3 col-lg-3" style="padding:0px"><button class="form-control" id="btnall" onclick="FetchTransaction('All')">All Transaction</button></div>
+                        <div class="col-md-3 col-lg-3" style="padding:0px"><button class="form-control" onclick="FetchTransaction('CREDIT')">Credit</button></div>
+                        <div class="col-md-3 col-lg-3" style="padding:0px"><button class="form-control" onclick="FetchTransaction('DEBIT')">Debit</button></div>
+                        <div class="col-md-3 col-lg-3" style="padding:0px"><button class="form-control" onclick="OpenAddpointmodel()">Add Points</button></div>
+                    </div>
+                    <div id="divtransaction">
+                       <!--Bind transaction details-->
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+
+</div>
+
+<div id="Addpointmodel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Add Points</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="CloseAddpointmodel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Points</label>
+                        <input type="number" id="txtpoints" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="AddPoints()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Add Points">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="CloseAddpointmodel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        FetchTransaction('All');
+    });
+    function FetchTransaction(action) {
+        if (action == "All") {
+            //addclass to all
+            //removeclass to credit
+            //removeclass to debit
+            document.getElementById("btnall").style.backgroundColor = "blue";
+            document.getElementById("btnall").style.color = "white";
+        } else if(action=="DEBIT"){
+            //removeclass to all
+            //removeclass to credit
+            //Addclass to debit
+        }
+        else if (action == "CREDIT") {
+            //removeclass to all
+            //removeclass to debit
+            //Addclass to credit
+        }
+        $.ajax({
+            type: "POST",
+            url: "/Client/WalletDetails",
+            data: { action: action },
+            success: function (data) {
+                if (data == "SignOut") {
+                    alert("Relogin for further details.");
+                } else {
+                    BindTransaction(data, action);
+                }
+            }
+        });
+    }
+    function BindTransaction(data, action) {
+        var html = '';
+        html += '<table width="100%">';
+        html += '                  <thead>';
+        html += '                <tr>';
+        html += '                    <th>Date</th>';
+        html += '                    <th>Details</th>';
+        if (action == "All" || action == "DEBIT") {
+            html += '                    <th>Debit</th>';
+        }
+        if (action == "All" || action == "CREDIT") {
+            html += '                    <th>Credit</th>';
+        }
+        if (action == "All") {
+            html += '                    <th>Risebird Pay Balance</th>';
+        }
+        html += '                </tr>';
+        html += '            </thead>';
+        html += '            <tbody>';
+        for (var i = 0; i < data.length; i++) {
+            html += '                            <tr>';
+            html += '   <td>' + data[i].createdOn + '</td> ';
+            html += '   <td>' + data[i].comment + '</td> ';
+            if (action == "All" || action == "DEBIT") {
+                if (data[i].debit != 0) {
+                    html += '    <td style="color:red">-' + data[i].debit + '</td>';
+                }
+                else {
+                    html += '   <td></td> ';
+                }
+            }
+            if (action == "All" || action == "CREDIT") {
+                if (data[i].credit != 0) {
+                    html += '    <td style="color:green">+' + data[i].credit + '</td>';
+                }
+                else {
+                    html += '    <td></td> ';
+                }
+            }
+            if (action == "All") {
+                html += '    <td>' + data[i].balance + '</td> ';
+            }
+            html += '    </tr> ';
+        }
+        html += '                      </tbody> ';
+        html += '       </table> ';
+        $("#divtransaction").empty().html(html);
+    }
+    function OpenAddpointmodel() {
+        var model = document.getElementById("Addpointmodel");
+        model.style.display = 'block';
+    }
+    function CloseAddpointmodel() {
+        var model = document.getElementById("Addpointmodel");
+        model.style.display = 'none';
+    }
+    function AddPoints() {
+        var point = $("#txtpoints").val();
+        if (point.trim() != "" && parseInt(point) > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/Client/AddWalletPoints",
+                data: { points: point },
+                success: function (data) {
+                    if (data == "Success") {
+                        alert("Points added successfully.");
+                        CloseAddpointmodel();
+                    } else if (data == "failed") {
+                        alert("Fail to add points");
+                    } else {
+                        alert("Relogin for further details.");
+                    }
+                }
+            });
+        } else {
+            alert("Please Enter valid value in point field.");
+        }
+    }
+</script>
+

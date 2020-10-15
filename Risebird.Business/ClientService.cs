@@ -164,5 +164,33 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IList<Wallet> FetchClientWallet(int clientid)
+        {
+            try
+            {
+                var result = (IList<Wallet>)_clientRepository.FetchClientWallet(clientid);
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string AddWalletPoints(int ClientId, string emailid, int points)
+        {
+            try
+            {
+                var result = _clientRepository.AddWalletPoints(ClientId, emailid, points);
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "failed";
+            }
+        }
     }
 }
