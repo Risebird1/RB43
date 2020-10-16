@@ -43,6 +43,54 @@ textarea::-webkit-scrollbar {
     background-position: 45%;
     z-index: 1000;
 }
+.icon-svg svg {
+    fill: rgb(233, 110, 40);
+}
+
+.mdc-card .form-control.active-razorbtn {
+    background: #e96e28 !important;
+    color: #fff !important;
+    text-transform: uppercase;
+}
+
+.razorpay_details table th {
+    background: #dfe0e5;
+    padding: 8px;
+    border-right: 1px solid rgb(229,229,229);
+    border-bottom: 1px solid rgb(229,229,229);
+    color: #011f3e !important;
+    font-weight: normal;
+    font-size: 15px;
+}
+
+.razorpay_btn button.form-control {
+    border-bottom: 2px #e96e28 solid;
+    margin-bottom: 5px;
+    text-align: left !important;
+    text-transform: uppercase;
+    background: #fff !important;
+}
+
+.razorpay_details table td {
+    color: #504e4e;
+    padding: 8px;
+    border-right: 1px solid rgb(229,229,229);
+    text-transform: uppercase;
+}
+
+
+.razorpay_details table tr:nth-of-type(odd) {
+    background: #fff;
+}
+
+
+.razorpay_details table tr:nth-of-type(even) {
+    background: #dfe0e5;
+}
+
+
+
+
 
 .call-txt {
     border: 1px #ea6e24 solid;
@@ -441,4 +489,19 @@ input[type="radio"]:checked {
     border-top: 8px solid hsl(0deg 0% 50%) !important;
     border-right: 7px solid white !important;
     border-left: 7px solid white !important;
+}
+@media only screen and (max-width: 767px) {
+
+    .razorpay_btn button.form-control {
+        width: 33.3%;
+        float: left;
+        border-right: 1px #cccccc54 solid;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .razorpay_btn button.form-control {
+        height: 50px;
+        font-size: 10px !important;
+    }
 }
