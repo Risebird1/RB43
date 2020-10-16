@@ -122,6 +122,7 @@ namespace Risebird.Repository.Interface
 
         
         IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId);
+        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern);
 
     }
 }

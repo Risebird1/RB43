@@ -129,6 +129,34 @@ namespace Risebird.Repository
             return null;
         }
 
+
+        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@clientid", clientId);
+                    parameters.Add("@Emailid", Emailid);
+                    parameters.Add("@JDpattern", JDpattern);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByJD", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+                
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<IEnumerable<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid)
         {
             try
