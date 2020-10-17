@@ -32,17 +32,12 @@
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
-                    
+
                 </div>
 
                 <div class="pull-right">
                     <div>
-
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space icon-svg" onclick="OpenAddpointmodel()"><font style=" font-family: Roboto, sans-serif; font-size:12px;"><svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" /></svg> Add Points</font></button>
-
-                        
-
-
 
                     </div>
                 </div>
@@ -55,19 +50,23 @@
                 <div class="mdc-card card bl-bg razorpay_con ">
 
                     <div class="mdc-card-wrapper__text-section razorpay_btn">
-                        <div  style="padding:0px"><button class="form-control" id="btnall" onclick="FetchTransaction('All')">
-    <i class="fa fa-money-bill"></i>
-   
-    All Transaction
-</button></div>
-                        <div  style="padding:0px"><button class="form-control" id="btncredit" onclick="FetchTransaction('CREDIT')">
-    <i class="fas fa-credit-card"></i>CREDIT
-</button></div>
-                        <div  style="padding:0px"><button class="form-control" id="btndebit" onclick="FetchTransaction('DEBIT')"><i class="fa fa-credit-card "></i> Debit</button></div>
-               
+                        <div style="padding:0px">
+                            <button class="form-control" id="btnall" onclick="FetchTransaction('All')">
+                                <i class="fa fa-money-bill"></i>
+
+                                All Transaction
+                            </button>
+                        </div>
+                        <div style="padding:0px">
+                            <button class="form-control" id="btncredit" onclick="FetchTransaction('CREDIT')">
+                                <i class="fas fa-credit-card"></i>CREDIT
+                            </button>
+                        </div>
+                        <div style="padding:0px"><button class="form-control" id="btndebit" onclick="FetchTransaction('DEBIT')"><i class="fa fa-credit-card "></i> Debit</button></div>
+
                     </div>
                     <div id="divtransaction" class="razorpay_details">
-                       <!--Bind transaction details-->
+                        <!--Bind transaction details-->
                     </div>
                     <!-- end content-->
                 </div>
@@ -87,7 +86,7 @@
                 <div class="filavatar">
                     <span>
                         <i style=" font-size: 23px;" class="fas fa-coins publicsharing-icon"></i>
-                       
+
                     </span>
                 </div>
                 <h5 class="modal-title pull-left">Add Points</h5>
@@ -100,6 +99,12 @@
                     <div class="video-url">
                         <label>Points</label>
                         <input type="number" id="txtpoints" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Comments</label>
+                        <input type="text" id="txtcomment" class="form-control" />
                     </div>
                 </div>
                 <div class="col-md-12 ">
@@ -122,10 +127,10 @@
             //addclass to all
             //removeclass to credit
             //removeclass to debit
-           $("#btnall").addClass("active-razorbtn");
+            $("#btnall").addClass("active-razorbtn");
             $("#btncredit").removeClass("active-razorbtn");
             $("#btndebit").removeClass("active-razorbtn");
-        } else if(action=="DEBIT"){
+        } else if (action == "DEBIT") {
             //removeclass to all
             //removeclass to credit
             //Addclass to debit
@@ -217,7 +222,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Client/AddWalletPoints",
-                data: { points: point },
+                data: { points: point, comment: $("#txtcomment").val() },
                 success: function (data) {
                     if (data == "Success") {
                         alert("Points added successfully.");

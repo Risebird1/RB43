@@ -1,0 +1,88 @@
+﻿using Dapper;
+using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace Risebird.Repository
+{
+    public class RisebirdPayRepository : IRisebirdPayRepository
+    {
+        private readonly IConfiguration _configuration;
+        private readonly string connectionString;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+
+        public RisebirdPayRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
+        {
+            _configuration = configuration;
+            _applicationErrorLogger = applicationErrorLogger;
+            connectionString = _configuration["ConnectionString:DBConnectionString"];
+        }
+        public IEnumerable<Wallet> FetchClientDetails()
+        {
+            try
+            {
+                var query = "select * from Client";
+                var dynamicParameters = new DynamicParameters();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Wallet>(query, null);
+                    return results;
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string UpdateClient(int PerSuccessRate, int ClientId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlCuratedCandidate = "Update Client set PerSuccessRate=@PerSuccessRate where Id=@Id";
+                    var affectedRows = con.Execute(sqlCuratedCandidate, new
+                    {
+                        PerSuccessRate = PerSuccessRate,
+                        Id = ClientId
+                    });
+                    return "Success";
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "failed";
+        }
+        public string DeductWalletPoints(int ClientId, string emailid, int points, string comment)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@ClientId", ClientId);
+                parameters.Add("@emailid", emailid);
+                parameters.Add("@points", points);
+                parameters.Add("@comment", comment);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.QueryAsync(con, "[usp_DeductWalletPoints]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "failed";
+        }
+    }
+}

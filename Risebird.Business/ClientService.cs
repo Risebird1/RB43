@@ -178,11 +178,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string AddWalletPoints(int ClientId, string emailid, int points)
+        public string AddWalletPoints(int ClientId, string emailid, int points,string comment)
         {
             try
             {
-                var result = _clientRepository.AddWalletPoints(ClientId, emailid, points);
+                var result = _clientRepository.AddWalletPoints(ClientId, emailid, points, comment);
                 return result;
             }
 

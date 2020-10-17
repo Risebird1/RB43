@@ -388,7 +388,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public string AddWalletPoints(int ClientId, string emailid, int points)
+        public string AddWalletPoints(int ClientId, string emailid, int points,string comment)
         {
             try
             {
@@ -396,6 +396,7 @@ namespace Risebird.Repository
                 parameters.Add("@ClientId", ClientId);
                 parameters.Add("@emailid", emailid);
                 parameters.Add("@points", points);
+                parameters.Add("@comment", comment);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.QueryAsync(con, "[usp_AddWalletPoints]", parameters,

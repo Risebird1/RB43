@@ -623,7 +623,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public JsonResult AddWalletPoints(int points)
+        public JsonResult AddWalletPoints(int points,string comment)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -638,7 +638,7 @@ namespace Risebird.Web.Controllers
                     var client = _userRepository.GetClientUserDetails(emailid);
                     ClientId = client.Result.ClientId;
                     isClientUser = true;
-                    var result=_clientService.AddWalletPoints(ClientId, emailid, points);
+                    var result=_clientService.AddWalletPoints(ClientId, emailid, points, comment);
                     if (result == "Success")
                     {
                         return Json("Success");

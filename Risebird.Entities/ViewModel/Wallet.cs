@@ -13,5 +13,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? CreatedOn { get; set; }
         public string Comment { get; set; }
         public int Balance { get; set; }
+        public string Name { get; set; }
+        public int PerSuccessRate { get; set; }
     }
 }
