@@ -5981,10 +5981,32 @@ button.close {
     height: 37px;
 }
 
-    #searchGo button.btn svg, #btnSearch svg {
-        position: relative;
-        top: 0px;
-    }
+ #searchGo button.btn svg, #btnSearch svg {
+ position: relative;
+       
+}
+.razorpay_btn i {
+    font-size: 20px;
+    margin-right: 13px;
+}
+
+.razorpay_con {
+    position: relative;
+    width: 1100px;
+    margin: 0px auto;
+}
+.razorpay_btn {
+    flex: 0 0 20%;
+    max-width: 20%;
+    float:left;
+}
+.razorpay_details {
+    width: 78%;
+    float: left;
+    position: absolute;
+    left: 20%;
+    top: 20px;
+}
 
 .desktop-view {
     display: block;
@@ -7696,7 +7718,26 @@ div.tagsinput {
             height: auto !important;
             width: 100% !important;
         }
+    .razorpay_con {
+        position: relative;
+        width: 100%;
+        margin: 0px auto;
+    }
+    .razorpay_btn {
+        flex: 0 0 100%;
+        max-width: 100%;
+        float: left;
+    }
 
+    .razorpay_details {
+        width: 100%;
+        float: left;
+        position: absolute;
+        left: 0;
+        top: 75px;
+    }
+
+  
     .mobile-view {
         display: block;
     }
