@@ -485,6 +485,7 @@ namespace Risebird.Repository
             parameters.Add("@currentEmployerName", entity.currentEmployerName);
             parameters.Add("@MobileNumber", entity.MobileNumber);
             parameters.Add("@HRCoordinatorEmailId", entity.HRCoordinatorEmailId);
+            parameters.Add("@QCInterviewer", entity.QCInterviewer);
 
 
             return parameters;
@@ -513,6 +514,7 @@ namespace Risebird.Repository
                 parameters.Add("@staffingAgency", meeting.staffingAgency);
                 parameters.Add("@currentEmployerName", meeting.currentEmployerName);
                 parameters.Add("@MobileNumber", meeting.MobileNumber);
+                parameters.Add("@QCInterviewer", meeting.QCInterviewer);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddMeeting", parameters,
