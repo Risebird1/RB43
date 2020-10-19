@@ -36,12 +36,11 @@ if(@roleId=1)
 		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus=1) as Proxy,
 		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus=2 and QCStatus=1) as Selected,
 		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as Rejected,
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus=2 and QCStatus is null) as QCPending,
+		(select count(distinct(EmailId)) from @commonHRTable where (InterviewStatus=2 and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4)) as QCPending,
 		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus=4) as BorderLine,
 		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
 		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount,
-		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus is null and MeetingStatus=4) as Pending
+		(select count(distinct(EmailId)) from @commonHRTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount
 
 	End
 else if(@roleId=4)
@@ -59,12 +58,11 @@ else if(@roleId=4)
 		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=1) as Proxy,
 		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=2 and QCStatus=1) as Selected,
 		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as Rejected,
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=2 and QCStatus is null) as QCPending,
+		(select count(distinct(EmailId)) from @commonStaffingTable where (InterviewStatus=2 and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4)) as QCPending,
 		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus=4) as BorderLine,
 		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
 		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount,
-		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus is null and MeetingStatus=4) as Pending
+		(select count(distinct(EmailId)) from @commonStaffingTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount
 
 	End
 	
@@ -85,12 +83,11 @@ else
 			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=1) as Proxy,
 			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=2 and QCStatus=1) as Selected,
 			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as Rejected,
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=2 and QCStatus is null) as QCPending,
+			(select count(distinct(EmailId)) from @commonTable where (InterviewStatus=2 and QCStatus is null) or (InterviewStatus is null and MeetingStatus=4)) as QCPending,
 			(select count(distinct(EmailId)) from @commonTable where InterviewStatus=4) as BorderLine,
 			(select count(distinct(EmailId)) from @commonTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
 			(select count(distinct(EmailId)) from @commonTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount,
-			(select count(distinct(EmailId)) from @commonTable where InterviewStatus is null and MeetingStatus=4) as Pending
+			(select count(distinct(EmailId)) from @commonTable where InterviewStatus is null and MeetingStatus=3) as DroppedCount
 
 		
 	End

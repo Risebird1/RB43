@@ -199,9 +199,9 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
+                    profileName = "Client";// profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
+                    emailid = "rajat.p@e-solutionsinc.com";// emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
                         var model = new ClientDashboardVM();
