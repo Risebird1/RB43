@@ -20,26 +20,7 @@ namespace Risebird.Web.Controllers
         }
         public IActionResult Index()
         {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin")
-                {
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    var model = _risebirdpayservice.FetchClientDetails();
-                    return View(model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
+            return View();
         }
 
         /// <summary>
@@ -168,13 +149,6 @@ namespace Risebird.Web.Controllers
             {
                 return Json("SignOut");
             }
-        }
-        
-        [HttpPost]
-        public JsonResult EditClient(int PerSuccessRate, int ClientId)
-        {
-            var resultset = _risebirdpayservice.UpdateClient(PerSuccessRate, ClientId);
-            return Json(resultset);
         }
     }
 }

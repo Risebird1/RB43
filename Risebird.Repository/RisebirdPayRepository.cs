@@ -23,45 +23,6 @@ namespace Risebird.Repository
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
-        public IEnumerable<Wallet> FetchClientDetails()
-        {
-            try
-            {
-                var query = "select * from Client";
-                var dynamicParameters = new DynamicParameters();
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var results = con.Query<Wallet>(query, null);
-                    return results;
-                }
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
-        public string UpdateClient(int PerSuccessRate, int ClientId)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    string sqlCuratedCandidate = "Update Client set PerSuccessRate=@PerSuccessRate where Id=@Id";
-                    var affectedRows = con.Execute(sqlCuratedCandidate, new
-                    {
-                        PerSuccessRate = PerSuccessRate,
-                        Id = ClientId
-                    });
-                    return "Success";
-                }
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return "failed";
-        }
         public string DeductWalletPoints(int ClientId, string emailid, int points, string comment)
         {
             try

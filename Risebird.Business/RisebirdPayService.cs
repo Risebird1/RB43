@@ -18,32 +18,6 @@ namespace Risebird.Business
             _risebirdPayRepository = risebirdPayRepository;
             _applicationErrorLogger = applicationErrorLogger;
         }
-        public IEnumerable<Wallet> FetchClientDetails()
-        {
-            try
-            {
-                var result = _risebirdPayRepository.FetchClientDetails();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        public string UpdateClient(int PerSuccessRate, int ClientId)
-        {
-            try
-            {
-                var result = _risebirdPayRepository.UpdateClient(PerSuccessRate, ClientId);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "failed";
-            }
-        }
         public string DeductWalletPoints(int ClientId, string emailid, int points, string comment)
         {
             try
