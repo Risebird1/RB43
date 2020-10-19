@@ -322,8 +322,8 @@ namespace Risebird.Repository
                             string sqlCuratedCandidate = "Update CandidateJDScore set Priority=@Priority where Id=@Id";
                             var affectedRows = con.Execute(sqlCuratedCandidate, new
                             {
-                                Priority=item.Priority,
-                                Id=item.IRFId
+                                Priority = item.Priority,
+                                Id = item.IRFId
                             });
                         }
                     }
@@ -390,7 +390,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public string AddWalletPoints(int ClientId, string emailid, int points,string comment)
+        public async Task<string> AddWalletPoints(int ClientId, string emailid, int points, string comment)
         {
             try
             {
@@ -401,16 +401,16 @@ namespace Risebird.Repository
                 parameters.Add("@comment", comment);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.QueryAsync(con, "[usp_AddWalletPoints]", parameters,
+                    await SqlMapper.QueryAsync(con, "[usp_AddWalletPoints]", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return "failed"; 
+            return "failed";
         }
     }
 }

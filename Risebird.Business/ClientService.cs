@@ -182,7 +182,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = _clientRepository.AddWalletPoints(ClientId, emailid, points, comment);
+                var result = _clientRepository.AddWalletPoints(ClientId, emailid, points, comment).Result;
                 return result;
             }
 

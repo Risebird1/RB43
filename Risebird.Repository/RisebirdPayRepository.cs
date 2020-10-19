@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace Risebird.Repository
 {
@@ -23,7 +24,7 @@ namespace Risebird.Repository
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
-        public string DeductWalletPoints(int ClientId, string emailid, int points, string comment)
+        public async Task<string> DeductWalletPoints(int ClientId, string emailid, int points, string comment)
         {
             try
             {
@@ -34,14 +35,14 @@ namespace Risebird.Repository
                 parameters.Add("@comment", comment);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.QueryAsync(con, "[usp_DeductWalletPoints]", parameters,
-                        commandType: CommandType.StoredProcedure);
+                    await SqlMapper.QueryAsync(con, "[usp_DeductWalletPoints]", parameters,
+                         commandType: CommandType.StoredProcedure);
                     return "Success";
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "failed";
         }
