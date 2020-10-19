@@ -1892,6 +1892,18 @@ namespace Risebird.Repository
                 {
                     con.Query(query, dynamicParameters);
                 }
+                if (Status == "Interest Accepted")
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Interviewid", vedioid);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var updatestatus= SqlMapper.QueryAsync<string>(con, "usp_UpdateWalletdetails", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    }
+                }
+                //Debit 100 Points from Client wallet
                 var finalquery = "Select ul.EmailId as Comment,(ul.Firstname +''+ ul.lastname) as UserName from SuitableCandidate sc Join UserList ul on sc.userid=ul.id where sc.id=@Id ";
                 var finaldynamicParameters = new DynamicParameters();
                 finaldynamicParameters.Add("@Id", vedioid);
@@ -2865,7 +2877,7 @@ namespace Risebird.Repository
             return null;
 
         }
-        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId)
+        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid, string emailId)
         {
             try
             {

@@ -9,5 +9,6 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public string IRFDetailsID { get; set; }
         public string candidateProfile { get; set; }
+        public string JDTitle { get; set; }
     }
 }

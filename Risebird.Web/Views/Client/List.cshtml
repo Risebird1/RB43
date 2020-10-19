@@ -65,6 +65,8 @@
                                         <th>Description</th>
                                         <th>GST</th>
                                         <th>Address</th>
+                                        <th>RiseBird Pay Balance</th>
+                                        <th>Per SuccessRate</th>
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
                                 </thead>
@@ -75,6 +77,8 @@
                                         <th>Description</th>
                                         <th>GST</th>
                                         <th>Address</th>
+                                        <th>RiseBird Pay Balance</th>
+                                        <th>Per SuccessRate</th>
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
                                 </tfoot>
@@ -87,15 +91,22 @@
                                             <td>@item.Description</td>
                                             <td>@item.GST</td>
                                             <td style="white-space:normal;">@item.OfficeAddress</td>
+                                            <td>@item.Balance</td>
+                                            <td>@item.PerSuccessRate</td>
                                             <td class="text-right" style="padding-right:30px;">
-
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
+                                                    <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
+                                                </button>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
+                                                    <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
+                                                </button>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="View Details">
+                                                    <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
+                                                </button>
 
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
                                                     <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                 </button>
-
-
-
                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
                                                     <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                 </button>
@@ -122,6 +133,87 @@
 </div>
 
 
+<div id="Addpointmodel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <i style=" font-size: 23px;" class="fas fa-coins publicsharing-icon"></i>
+
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Add Points</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="CloseAddpointmodel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Points</label>
+                        <input type="number" id="txtpoints" class="form-control" />
+                        <input type="hidden" id="txtClientid" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Comments</label>
+                        <input type="text" id="txtcomment" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="AddPoints()" class="mdc-button mdc-button--raised mdc-ripple-upgraded  card-title-space" value="Add Points">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="CloseAddpointmodel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Deductpointmodel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <i style=" font-size: 23px;" class="fas fa-coins publicsharing-icon"></i>
+
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Deduct Points</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="CloseDeductpointmodel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Points</label>
+                        <input type="number" id="txtpointsdeduct" class="form-control" />
+                        <input type="hidden" id="txtClientiddeduct" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label>Comments</label>
+                        <input type="text" id="txtcommentdeduct" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="DeductPoints()" class="mdc-button mdc-button--raised mdc-ripple-upgraded  card-title-space" value="Deduct Points">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="CloseDeductpointmodel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -310,4 +402,70 @@
         }, 2000);
     };
     //// script for loader ends here
+</script>
+<script>
+    function OpenAddpointmodel(id) {
+        var model = document.getElementById("Addpointmodel");
+        model.style.display = 'block';
+        $("#txtClientid").val(id);
+    }
+    function CloseAddpointmodel() {
+        var model = document.getElementById("Addpointmodel");
+        model.style.display = 'none';
+    }
+    function AddPoints() {
+        var point = $("#txtpoints").val();
+        if (point.trim() != "" && parseInt(point) > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/RisebirdPay/AddWalletPoints",
+                data: { points: point, comment: $("#txtcomment").val(), ClientId: $("#txtClientid").val() },
+                success: function (data) {
+                    if (data == "Success") {
+                        alert("Points added successfully.");
+                        CloseAddpointmodel();
+                        initialcall();
+                    } else if (data == "failed") {
+                        alert("Fail to add points");
+                    }
+                }
+            });
+        } else {
+            alert("Please Enter valid value in point field.");
+        }
+    }
+    function OpenDeductpointmodel(id) {
+        var model = document.getElementById("Deductpointmodel");
+        model.style.display = 'block';
+        $("#txtClientiddeduct").val(id);
+    }
+    function CloseDeductpointmodel() {
+        var model = document.getElementById("Deductpointmodel");
+        model.style.display = 'none';
+    }
+    function DeductPoints() {
+        var point = $("#txtpointsdeduct").val();
+        if (point.trim() != "" && parseInt(point) > 0) {
+            $.ajax({
+                type: "POST",
+                url: "/RisebirdPay/DeductWalletPoints",
+                data: { points: point, comment: $("#txtcommentdeduct").val(), ClientId: $("#txtClientiddeduct").val() },
+                success: function (data) {
+                    if (data == "Success") {
+                        alert("Points deduct successfully.");
+                        CloseDeductpointmodel();
+                        initialcall();
+                    } else if (data == "failed") {
+                        alert("Fail to add points");
+                    }
+                }
+            });
+        } else {
+            alert("Please Enter valid value in point field.");
+        }
+    }
+    function initialcall() {
+        var url = "List";
+        window.location.href = url;
+    }
 </script>

@@ -69,7 +69,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
                                             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
 
                                         </div>
@@ -79,7 +79,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
                                             @Html.ValidationMessageFor(model => model.GST, "", new { @class = "text-danger" })
 
                                         </div>
@@ -95,6 +95,26 @@
 
                                         </div>
                                     </div>
+                                    <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Balance, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.Balance, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Balance, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pl-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.PerSuccessRate, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.PerSuccessRate, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.PerSuccessRate, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                    </div>
+
 
 
                                 </div>

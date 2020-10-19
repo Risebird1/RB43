@@ -14,7 +14,9 @@ namespace Risebird.Business.Interface
         List<ClientRole> GetClientRoles();
         string AddClientJd(ClientJdVM _client);
         IEnumerable<ClientJdVM> FetchClientJd(int clientid);
-        bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore,string candidateProfile);
+        string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore,string candidateProfile);
         IList<CandidateCuratedScore> GetCandidateJDScore(int id);
+        IList<Wallet> FetchClientWallet(int clientid);
+        string AddWalletPoints(int ClientId,string emailid,int points,string comment);
     }
 }
