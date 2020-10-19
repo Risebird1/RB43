@@ -2718,7 +2718,7 @@ namespace Risebird.Web.Controllers
 
                         }
 
-                        modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
+                       // modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
 
                         modelList1 = modelList1.Select(x =>
                         {
