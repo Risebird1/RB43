@@ -10,6 +10,7 @@
         public string Message { get; set; }
         public string IRFDetailsID { get; set; }
         public int Priority { get; set; }
-        
+        public string JDTitle { get; set; }
+
     }
 }
