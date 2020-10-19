@@ -1,0 +1,165 @@
+﻿@*@model IEnumerable<Risebird.Entities.ViewModel.Wallet>*@
+
+@{
+    ViewData["Title"] = "Client Wallet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+
+                </div>
+                <a class="navbar-brand card-title">RisebirdPay</a>
+
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        <a onclick="location.href = '@Url.Action("List", "Client")'" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left" style="color:#fff;"></span>Back To List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg razorpay_con ">
+                    <input type="hidden" value="@ViewBag.Clientid" id="txtclientid" />
+                    <div class="mdc-card-wrapper__text-section razorpay_btn">
+                        <div style="padding:0px">
+                            <button class="form-control" id="btnall" onclick="FetchTransaction('All')">
+                                <i class="fa fa-money-bill"></i>
+
+                                All Transaction
+                            </button>
+                        </div>
+                        <div style="padding:0px">
+                            <button class="form-control" id="btncredit" onclick="FetchTransaction('CREDIT')">
+                                <i class="fas fa-credit-card"></i>CREDIT
+                            </button>
+                        </div>
+                        <div style="padding:0px"><button class="form-control" id="btndebit" onclick="FetchTransaction('DEBIT')"><i class="fa fa-credit-card "></i> Debit</button></div>
+
+                    </div>
+                    <div id="divtransaction" class="razorpay_details">
+                        <!--Bind transaction details-->
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+    jQuery(document).ready(function ($) {
+        FetchTransaction('All');
+    });
+    function FetchTransaction(action) {
+        if (action == "All") {
+            $("#btnall").addClass("active-razorbtn");
+            $("#btncredit").removeClass("active-razorbtn");
+            $("#btndebit").removeClass("active-razorbtn");
+        } else if (action == "DEBIT") {
+            $("#btnall").removeClass("active-razorbtn");
+            $("#btncredit").removeClass("active-razorbtn");
+            $("#btndebit").addClass("active-razorbtn");
+        }
+        else if (action == "CREDIT") {
+            $("#btnall").removeClass("active-razorbtn");
+            $("#btncredit").addClass("active-razorbtn");
+            $("#btndebit").removeClass("active-razorbtn");
+        }
+        $.ajax({
+            type: "POST",
+            url: "/RisebirdPay/WalletDetails",
+            data: { action: action, ClientId: $("#txtclientid").val() },
+            success: function (data) {
+                if (data == "SignOut") {
+                    alert("Relogin for further details.");
+                } else {
+                    BindTransaction(data, action);
+                }
+            }
+        });
+    }
+    function BindTransaction(data, action) {
+        var html = '<div class="table-responsive">';
+        html += '<table width="100%" >';
+        html += '                  <thead>';
+        html += '                <tr>';
+        html += '                    <th width="20%">Date</th>';
+        html += '                    <th width="40%">Details</th>';
+        if (action == "All" || action == "DEBIT") {
+            html += '                    <th width="20%" class="text-center">Debit</th>';
+        }
+        if (action == "All" || action == "CREDIT") {
+            html += '                    <th width="20%" class="text-center">Credit</th>';
+        }
+        if (action == "All") {
+            html += '                    <th width="40%">Risebird Pay Balance</th>';
+        }
+        html += '                </tr>';
+        html += '            </thead>';
+        html += '            <tbody>';
+        for (var i = 0; i < data.length; i++) {
+            html += '                            <tr>';
+            html += '   <td>' + data[i].createdOn + '</td> ';
+            html += '   <td>' + data[i].comment + '</td> ';
+            if (action == "All" || action == "DEBIT") {
+                if (data[i].debit != 0) {
+                    html += '    <td style="color:red;font-weight:bold;" class="text-center">-' + data[i].debit + '</td>';
+                }
+                else {
+                    html += '   <td></td> ';
+                }
+            }
+            if (action == "All" || action == "CREDIT") {
+                if (data[i].credit != 0) {
+                    html += '    <td style="color:green;font-weight:bold;" class="text-center">+' + data[i].credit + '</td>';
+                }
+                else {
+                    html += '    <td></td> ';
+                }
+            }
+            if (action == "All") {
+                html += '    <td>' + data[i].balance + '</td> ';
+            }
+            html += '    </tr> ';
+        }
+        html += '                      </tbody> ';
+        html += '       </table> ';
+        html += '       </div> ';
+        $("#divtransaction").empty().html(html);
+    }
+
+</script>
+

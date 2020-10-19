@@ -44,6 +44,24 @@ BEGIN
     ALTER TABLE Client
     Add CuratedLink BIT NOT NULL DEFAULT 0	
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PerSuccessRate')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add PerSuccessRate Int NULL	
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Balance')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add Balance int NULL 	
+END
 END
 
 GO
