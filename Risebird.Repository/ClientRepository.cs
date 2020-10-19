@@ -253,7 +253,7 @@ namespace Risebird.Repository
             {
                 if (clientid == 0)
                 {
-                    var query = "Select cl.*,cl.AssessmentGroupid as AssessmentGroup, ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id";
+                    var query = "Select ul.Emailid as ClientEmail,c.Name,cl.*,cl.AssessmentGroupid as AssessmentGroup, ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id join Client c on c.id=cl.Clientid left join UserList ul on ul.id=cl.Createdby";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var result = con.Query<ClientJdVM>(query, null);

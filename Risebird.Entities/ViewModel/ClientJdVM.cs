@@ -50,6 +50,7 @@ namespace Risebird.Entities.ViewModel
         public string JobRole { get; set; }
         [Display(Name = "Client Url")]
         public string ClientUrl { get; set; }
+        public string Name { get; set; }
     }
     public class ClientDetails
     {

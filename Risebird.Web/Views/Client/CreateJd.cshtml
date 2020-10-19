@@ -193,8 +193,13 @@
                                                             <div class="client-field"> Start Date:<span style="font-weight:normal">@item.StartDate</span></div>
                                                         </div>
                                                         <br />
-                                                        <div class="three" style="margin-bottom:10px;"> <span><b>End Date:</b></span>@item.EndDate</div>
-
+                                                        <div class="three"> <span><b>End Date:</b></span>@item.EndDate</div>
+                                                        @if (!Model._clientjddetails.isClientUser)
+                                                        {
+                                                            <div>
+                                                                <span><b>Client:</b></span> @item.Name
+                                                            </div>
+                                                        }
                                                         <div>
                                                             <span><b>Assessment Group:</b></span> @item.AssessmentGroupName
                                                         </div>
@@ -463,6 +468,7 @@
                 $("#zclientjddetails_ClientUrl").val(data.clientUrl);
                 $("#zclientjddetails_JobDescription").val(data.jobDescription);
                 $("#zclientjddetails_ClientEmail").val(data.clientEmail);
+                document.getElementById("zclientjddetails_ClientEmail").disabled = true;
                 $("#zclientjddetails_AssessmentGroup").val(data.assessmentGroup);
                 $("#zclientjddetails_Heuristicsscore").val(data.heuristicsscore);
                 $("#zclientjddetails_Filelink").val(data.Filelink);

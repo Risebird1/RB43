@@ -331,8 +331,15 @@ namespace Risebird.Web.Controllers
                     {
                         if (!String.IsNullOrEmpty(model._clientjddetails.ClientEmail))
                         {
-                            var client = _userRepository.GetClientUserDetails(emailid);
-                            model._clientjddetails.ClientId = client.Result.ClientId;
+                            var client = _userRepository.GetClientUserDetails(model._clientjddetails.ClientEmail);
+                            if (client.Result != null)
+                            {
+                                model._clientjddetails.ClientId = client.Result.ClientId;
+                            }
+                            else
+                            {
+                                model._clientjddetails.ClientId = 0;
+                            }
                             model._clientjddetails.CreatedBy = model._clientjddetails.ClientEmail;
                         }
                     }
@@ -344,7 +351,16 @@ namespace Risebird.Web.Controllers
                         string uploadedvideoFileURL = blob.Uri.ToString();
                         model._clientjddetails.Filelink = uploadedvideoFileURL;
                     }
+                   
                     var result = _clientService.AddClientJd(model._clientjddetails);
+                    if (result != "")
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Client Jd is created Successfully";
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Client Jd creation is Failed";
+                    }
                     if (result == "Success")
                     {
                         return RedirectToAction("CreateJd");
