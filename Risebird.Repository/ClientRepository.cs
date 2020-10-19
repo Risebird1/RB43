@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -195,7 +196,9 @@ namespace Risebird.Repository
             parameters.Add("@clientDescr", entity.Description);
             parameters.Add("@GST", entity.GST);
             parameters.Add("@officeAddress", entity.OfficeAddress);
-
+            parameters.Add("@Balance", entity.Balance);
+            parameters.Add("@PerSuccessRate", entity.PerSuccessRate);
+            parameters.Add("@Createdby", entity.Createdby);
             return parameters;
         }
         public async Task<string> AddClientJd(ClientJdVM _client)
@@ -280,53 +283,78 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        public string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore, string candidateProfile)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if (candidateProfile == "AddCandidate")
                 {
-                    string sqlDeletePrevious = "Delete from CandidateJDScore where ClientJdid =@IRFId;";
-                    var deletedRows = con.Execute(sqlDeletePrevious, new
+                    using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        IRFId = IrfId,
-
-                    });
-                    foreach (var item in candidateCuratedScore)
-                    {
-
-                        string sqlCuratedCandidate = "INSERT INTO CandidateJDScore (ClientJdid,IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@ClientJdid,@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
-                        var affectedRows = con.Execute(sqlCuratedCandidate, new
+                        string sqlDeletePrevious = "Delete from CandidateJDScore where ClientJdid =@IRFId;";
+                        var deletedRows = con.Execute(sqlDeletePrevious, new
                         {
-                            ClientJdid= IrfId,
-                            IRFId = item.IRFDetailsID,
-                            item.CandidateEmailId,
-                            item.CuratedEmailId,
-                            item.Score
+                            IRFId = IrfId,
 
                         });
+                        foreach (var item in candidateCuratedScore)
+                        {
+
+                            string sqlCuratedCandidate = "INSERT INTO CandidateJDScore (ClientJdid,IRFId, CandidateEmailId, CuratedEmailId,Score) Values (@ClientJdid,@IRFId, @CandidateEmailId, @CuratedEmailId,@Score);";
+                            var affectedRows = con.Execute(sqlCuratedCandidate, new
+                            {
+                                ClientJdid = IrfId,
+                                IRFId = item.IRFDetailsID,
+                                item.CandidateEmailId,
+                                item.CuratedEmailId,
+                                item.Score
+
+                            });
+                        }
                     }
-                    return true;
+                }
+                else
+                {
+                    foreach (var item in candidateCuratedScore)
+                    {
+                        using (SqlConnection con = new SqlConnection(connectionString))
+                        {
+                            string sqlCuratedCandidate = "Update CandidateJDScore set Priority=@Priority where Id=@Id";
+                            var affectedRows = con.Execute(sqlCuratedCandidate, new
+                            {
+                                Priority=item.Priority,
+                                Id=item.IRFId
+                            });
+                        }
+                    }
+                }
+                var query = "Select EmailId from ClientJd cj join UserList ul on cj.Createdby=ul.id where cj.id=@ClientId ";
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@ClientId", IrfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(query, parameters);
+                    return result.FirstOrDefault();
                 }
 
             }
             catch (SqlException e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "";
             }
 
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "";
             }
         }
         public IEnumerable<CandidateCuratedScore> GetCandidateJDScore(int id)
         {
             try
             {
-                var query = "Select id as IRFID,ClientJdid,IRFId as IRFDetailsID,CandidateEmailId,Score from CandidateJDScore where ClientJdid = @IRFId";
+                var query = "Select cjs.id as IRFID,cjs.ClientJdid,cjs.IRFId as IRFDetailsID,cjs.CandidateEmailId,cjs.Score,cjs.Priority,cj.JDTitle from CandidateJDScore cjs join ClientJd cj on  cj.id=cjs.ClientJdid where ClientJdid = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -341,6 +369,48 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public IEnumerable<Wallet> FetchClientWallet(int clientid)
+        {
+            try
+            {
+                var query = "select * from ClientWallet where Clientid=@clientid order by CreatedOn desc";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@clientid", clientid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Wallet>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string AddWalletPoints(int ClientId, string emailid, int points,string comment)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@ClientId", ClientId);
+                parameters.Add("@emailid", emailid);
+                parameters.Add("@points", points);
+                parameters.Add("@comment", comment);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.QueryAsync(con, "[usp_AddWalletPoints]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "failed"; 
         }
     }
 }

@@ -36,6 +36,7 @@ namespace Risebird.CommonHelper.Interface
         string SendAssessmentNotificationComments(Mail model, string assessment,string comments);
         string SendVmStopReminder(VMActionPerformed obj);
 
+        string CandidateJDScoreNotification(Mail model, int candidateCount, string JDName);
 
     }
 }

@@ -198,6 +198,8 @@ namespace Risebird.Web
             services.AddScoped<IProctorInterviewsService, ProctorInterviewsService>();
             services.AddScoped<IProctorInterviewsRepository, ProctorInterviewsRepository>();
             services.AddScoped<IAzureHelper, AzureHelper>();
+            services.AddScoped<IRisebirdPayService, RisebirdPayService>();
+            services.AddScoped<IRisebirdPayRepository, RisebirdPayRepository>();
 
         }
     }

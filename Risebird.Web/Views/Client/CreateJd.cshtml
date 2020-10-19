@@ -179,13 +179,16 @@
                                         <div class="card-content-holder border card-blue">
                                             <div class="card-header">
                                                 <div class="row">
-                                                    <div class=" col-md-9 col-sm-9 first">
+                                                    <div class=" col-md-7 col-sm-7 first">
                                                         <h6 class="assessment-grp"> @item.JDTitle </h6>
                                                     </div>
 
-                                                    <div class="col-md-3 col-sm-3 card-header-buttons action text-right">
+                                                    <div class="col-md-5 col-sm-5 card-header-buttons action text-right">
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                             <span onclick="javascript:EditJD('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute priority" aria-label="Candidate JD Score Priority">
+                                                            <span onclick="javascript:CandidateJdScorePriority('@item.id');" title="Candidate Curated Score Priority" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M14 5h8v2h-8zm0 5.5h8v2h-8zm0 5.5h8v2h-8zM2 11.5C2 15.08 4.92 18 8.5 18H9v2l3-3-3-3v2h-.5C6.02 16 4 13.98 4 11.5S6.02 7 8.5 7H12V5H8.5C4.92 5 2 7.92 2 11.5z" /></svg></span>
                                                         </button>
                                                         @if (!Model._clientjddetails.isClientUser)
                                                         {
@@ -455,6 +458,11 @@
         var url = '/Client/CandidateJDScore?id=' + id;
         window.location.href = url;
     }
+    function CandidateJdScorePriority(id) {
+        var url = '/Client/CandidateJDScorePriority?id=' + id;
+        window.location.href = url;
+    }
+    
     function EditJD(id) {
         $.ajax({
             type: "GET",

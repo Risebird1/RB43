@@ -14,7 +14,7 @@ namespace Risebird.Entities.Enum
         [Description("Junior")]
         Junior = 1,
         [Description("Mid Level")]
-        MidLevel =2,
+        MidLevel = 2,
         [Description("Senior Level")]
         SeniorLevel = 3
     }

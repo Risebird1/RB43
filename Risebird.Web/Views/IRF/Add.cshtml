@@ -7,10 +7,9 @@
 
 
 
-<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
 
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -53,51 +52,51 @@
                         @using (Html.BeginForm("AddIRF", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckTotalWeightage()" }))
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        <div class="row">
+                            <div class="row">
 
 
-                            <div class="col-md-12">
-                                <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Skill Channel</h4></div>
-                            </div>
+                                <div class="col-md-12">
+                                    <div class="mobile-view"> <h4 class="card-title" style="margin:0px;">Edit Skill Channel</h4></div>
+                                </div>
 
-                            <div style="width: 100%;">&nbsp;</div>
+                                <div style="width: 100%;">&nbsp;</div>
 
-                            <div class="col-md-3 col-sm-3 pr-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-
-                                    @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
-                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                    @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+                                <div class="col-md-3 col-sm-3 pr-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
 
+                                        @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                        @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
+                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 col-sm-3 pl-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "select-css form-control" })
+
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-3 px-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
-                                    @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-3 px-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                    @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
-
-                                </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-3 pl-1">
-                                <div class="form-group" style="margin-bottom:0px;">
-                                    @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "select-css form-control" })
-
-                                </div>
-                            </div>
-                        </div>
                             <div class="row">
 
 
@@ -352,7 +351,7 @@
                                         @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
                                     </div>
-                                   
+
                                 </div>
                             </div>
 
@@ -921,6 +920,7 @@
     </div>
 
 </div>
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 <script>
     $(document).ready(function () {

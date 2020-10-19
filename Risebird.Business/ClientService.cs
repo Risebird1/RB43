@@ -137,17 +137,17 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public bool AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore)
+        public string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore,string candidateProfile)
         {
             try
             {
-                return _clientRepository.AddCandidateJDScore(IrfId, candidateCuratedScore);
+                return _clientRepository.AddCandidateJDScore(IrfId, candidateCuratedScore, candidateProfile);
             }
 
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "";
             }
         }
         public IList<CandidateCuratedScore> GetCandidateJDScore(int id)
@@ -162,6 +162,34 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public IList<Wallet> FetchClientWallet(int clientid)
+        {
+            try
+            {
+                var result = (IList<Wallet>)_clientRepository.FetchClientWallet(clientid);
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public string AddWalletPoints(int ClientId, string emailid, int points,string comment)
+        {
+            try
+            {
+                var result = _clientRepository.AddWalletPoints(ClientId, emailid, points, comment);
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "failed";
             }
         }
     }
