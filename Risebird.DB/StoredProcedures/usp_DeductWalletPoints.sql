@@ -9,27 +9,28 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
  
-CREATE Procedure usp_DeductWalletPoints      
-@ClientId int,    
-@emailid varchar(150),    
-@points int,
-@comment varchar(Max)
-AS      
-BEGIN      
-Declare @Userid int     
-Declare @Comments varchar(max)    
-Declare @Balance int    
-Select @Userid=id from UserList where Emailid=@emailid    
-if(IsNull(@comment,'')='')
-BEGIN
-Set @Comments='Points added by '+ @emailid   
-END
-ELSE
-BEGIN
-Set @Comments=@comment
-END
-Select @Balance=(sum(Credit)-sum(debit)-(@points)) from ClientWallet where Clientid=@ClientId      
-Insert Into ClientWallet values(@ClientId,@Userid,0,@points,Getdate(),@Comments,@Balance)    
-Update Client Set Balance=@Balance where id=@ClientId  
+CREATE Procedure usp_DeductWalletPoints        
+@ClientId int,      
+@emailid varchar(150),      
+@points int,  
+@comment varchar(Max)  
+AS        
+BEGIN        
+Declare @Userid int       
+Declare @Comments varchar(max)      
+Declare @Balance int  =0    
+Select @Userid=id from UserList where Emailid=@emailid      
+if(IsNull(@comment,'')='')  
+BEGIN  
+Set @Comments='Points added by '+ @emailid     
+END  
+ELSE  
+BEGIN  
+Set @Comments=@comment  
+END  
+Select @Balance=(sum(Credit)-sum(debit)) from ClientWallet where Clientid=@ClientId     
+Set @Balance=IsNull(@Balance,0)-@points  
+Insert Into ClientWallet values(@ClientId,@Userid,0,@points,Getdate(),@Comments,@Balance)      
+Update Client Set Balance=@Balance where id=@ClientId    
 END 
 Go
