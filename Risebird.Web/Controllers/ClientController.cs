@@ -396,7 +396,7 @@ namespace Risebird.Web.Controllers
                 model.CandidateCuratedScores = result;
                 model.IRFId = Convert.ToInt32(id);
                 model.candidateProfile = "AddCandidate";
-                model.JDTitle = result.FirstOrDefault().JDTitle;
+                //model.JDTitle = result.FirstOrDefault().JDTitle;
                 if (TempData["SuccessErrorMessageInterviewer"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();

@@ -167,7 +167,7 @@ namespace Risebird.Business
             try
             {
                 var countObj = await _dashboardRespository.GetClientCandidatesCount(emailId);
-                countObj.TotalCandidates = (countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy + countObj.NoShowCount + countObj.DroppedCount + countObj.ScheduledCount + countObj.Pending);
+                countObj.TotalCandidates = (countObj.Selected + countObj.Rejected + countObj.BorderLine + countObj.Proxy + countObj.NoShowCount + countObj.DroppedCount + countObj.ScheduledCount + countObj.QCPending);
                 return countObj;
             }
             catch (Exception ex)
