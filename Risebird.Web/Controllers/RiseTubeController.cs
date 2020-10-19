@@ -510,34 +510,50 @@ namespace Risebird.Web.Controllers
                             //var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
                             //modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
 
-                            modelList1 = await _meetingService.GetRiseTubeMeetingsByScore(0, profileName, emailId);
-
-                            if (!String.IsNullOrEmpty(irfid))
+                            //modelList1 = await _meetingService.GetRiseTubeMeetingsByScore(0, profileName, emailId);
+                            //modelList1 = await _meetingService.GetRiseTubeMeetingsForCuratedUserByIRF(emailId, actionstatus, Convert.ToInt32(irfid));
+                            if(String.IsNullOrEmpty(irfid))
                             {
-                                int irf = Convert.ToInt32(irfid);
-                                modelList1 = modelList1.Where(x => x.irfIntId == irf).ToList();
-                                ViewBag.actionstatus = "SkillChannel";
-                                if (actionstatus.ToUpper() == "ALL")
-                                {
-                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                                }
-                                else if (actionstatus.ToUpper() == "SHORTLIST")
-                                {
-                                    modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
-                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                                }
-                                else if (actionstatus.ToUpper() == "INTRESTED")
-                                {
-                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
-                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                                }
-                                else if (actionstatus.ToUpper() == "ACCEPT")
-                                {
-                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Accepted").ToList();
-                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                                }
+                                model = _meetingService.GetMeetingbyid(id, emailId);
+                                modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], profileName);
+
                             }
-                            model = _meetingService.GetMeetingbyid(id, emailId);
+
+
+                            else if (!String.IsNullOrEmpty(irfid))
+                            {
+                                modelList1 = await _meetingService.GetRiseTubeMeetingsForCuratedUserByIRF(emailId, actionstatus, Convert.ToInt32(irfid));
+                                id = modelList1.Max(x => x.imid);
+
+                                //int irf = Convert.ToInt32(irfid);
+                                //modelList1 = modelList1.Where(x => x.irfIntId == irf).ToList();
+                                ViewBag.actionstatus = "SkillChannel";
+                                model = _meetingService.GetMeetingbyid(id, emailId);
+
+                                //if (actionstatus.ToUpper() == "ALL")
+                                //{
+                                //    //id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                //    id = modelList1.Max(x=>x.imid);
+                                //}
+                                //else if (actionstatus.ToUpper() == "SHORTLIST")
+                                //{
+                                //    //modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
+                                //    //id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                //    id = modelList1.Max(x => x.imid);
+
+                                //}
+                                //else if (actionstatus.ToUpper() == "INTRESTED")
+                                //{
+                                //    modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
+                                //    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                //}
+                                //else if (actionstatus.ToUpper() == "ACCEPT")
+                                //{
+                                //    modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Accepted").ToList();
+                                //    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                //}
+                            }
+                            //model = _meetingService.GetMeetingbyid(id, emailId);
                             if (model == null)
                             {
                                 model = new MeetingVM();
