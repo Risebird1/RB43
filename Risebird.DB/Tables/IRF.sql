@@ -151,7 +151,15 @@ BEGIN
     ALTER TABLE IRF
 	ADD BussinessType varchar(4) NULL
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Heuristicsscore')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+	ADD Heuristicsscore int NULL
+END
 
 END
 

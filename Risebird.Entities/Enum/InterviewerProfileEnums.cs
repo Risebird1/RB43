@@ -1172,15 +1172,15 @@ namespace Risebird.Entities.Enum
     public enum Heuristicsscorelevel
     {
         [Description("Basic")]
-        Basic = 1,
+        Basic = 0,
         [Description("Standard")]
-        Standard = 2,
+        Standard = 1,
         [Description("Standard+")]
-        StandardPlus = 3,
+        StandardPlus = 2,
         [Description("Pro")]
-        Pro = 4,
+        Pro = 3,
         [Description("Elite")]
-        Elite = 5
+        Elite = 4
     }
 }
 

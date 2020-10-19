@@ -7,6 +7,26 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interviewer.css?v=8" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/risetube.css?v=8" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#fillter_AssessmentGroupName").select2({ multiple: true });
+    });
+
+    jQuery(document).ready(function () {
+        jQuery("#fillter_ClientEmail").select2({ multiple: true });
+    });
+
+    
+
+
+</script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -44,12 +64,8 @@
                         <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                         <div class="mdc-button__ripple"></div>
                     </button>
-                    @*@if (Model._clientjddetails.isClientUser)
-                        {
-                            <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left" style="color:#fff;"></span>Create JD</a>
-                        }*@
-                    <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left" style="color:#fff;"></span>Create JD</a>
 
+                    <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" style="color:#fff;"></span>Create JD</a>
                     @*<a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>*@
                 </div>
             </div>
@@ -108,8 +124,8 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupName"> Assessment Group </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple">
-                                                                    <option value="">Please Select Assessment Group</option>
+                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple" >
+                                                              
                                                                     @foreach (var item in Model._clientjd.Select(x => x.AssessmentGroupName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -126,7 +142,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientEmail"> Client </label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="fillter_ClientEmail" name="fillter.ClientEmail" class="form-control multiselect" multiple="multiple">
-                                                                    <option value="">Please Select Client</option>
+                                                               
                                                                     @foreach (var item in Model._clientjd.Select(x => x.ClientEmail).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -171,8 +187,8 @@
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                             <span onclick="javascript:EditJD('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                         </button>
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Candidate JD Score Priority">
-                                                            <span onclick="javascript:CandidateJdScorePriority('@item.id');" title="Candidate Curated Score Priority" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
+                                                        <button class="mdc-fab app-fab--absolute priority" aria-label="Candidate JD Score Priority">
+                                                            <span onclick="javascript:CandidateJdScorePriority('@item.id');" title="Candidate Curated Score Priority" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M14 5h8v2h-8zm0 5.5h8v2h-8zm0 5.5h8v2h-8zM2 11.5C2 15.08 4.92 18 8.5 18H9v2l3-3-3-3v2h-.5C6.02 16 4 13.98 4 11.5S6.02 7 8.5 7H12V5H8.5C4.92 5 2 7.92 2 11.5z" /></svg></span>
                                                         </button>
                                                         @if (!Model._clientjddetails.isClientUser)
                                                         {
@@ -285,7 +301,7 @@
 
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Create Job Description!</h5>
+                <h5 class="modal-title pull-left">Add Job Description</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true" id="callPopUp" style="cursor:pointer;" onclick="closeCallPopUp()">&times;</span>

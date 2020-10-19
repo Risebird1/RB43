@@ -41,9 +41,14 @@
 
                 <div class="pull-right">
                     <div>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add existing VMs" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Existing VMs</font></span>
-                        </button>
+
+                        @if (Model.Profile == "Admin")
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add existing VMs" onclick="javascript:GetNonExistingVMs();" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Existing VMs</font></span>
+                            </button>
+                        }
+
 
 
 
@@ -92,24 +97,11 @@
                                                     }
                                                 </div>
                                                 <div class="col-md-5 col-sm-5 card-header-buttons action">
-                                                    @if (Model.Profile == "Admin")
+                                                    @if (Model.Profile == "Admin" || Model.Profile == "HR")
                                                     {
 
 
-                                                        @if (item.StatusDesc.ToLower() == "running")
-                                                        {
-                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
-                                                                <i class="fa fa-stop"></i>
-                                                            </button>
 
-                                                        }
-                                                        else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
-                                                        {
-
-                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
-                                                                <i class="fa fa-play"></i>
-                                                            </button>
-                                                        }
 
                                                         <button id="passwordButton_@item.id" class="mdc-fab app-fab--absolute" title="Reset Password" aria-label="Reset Password" onclick="location.href='@Url.Action("ResetPassword", "ProctorInterviews", new { name = item.Name, rgName = item.ResourceGroupName, vmId = item.id})'">
                                                             <i class="fa fa-key"></i>
@@ -119,8 +111,14 @@
                                                             <i class="fa fa-share"></i>
                                                         </button>
 
-                                                        <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" title="Edit" aria-label="Edit" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name');">
+                                                        <button id="edit_@item.id" class="mdc-fab app-fab--absolute item1" title="Edit" aria-label="Edit" onclick="javascript:EditModal('@item.id','@(item.CustomName !=null ?item.CustomName:"")', '@(item.Password !=null ?item.Password:"")','@item.Name', '@item.UserName');">
                                                             <i class="fa fa-edit"></i>
+                                                        </button>
+                                                    }
+                                                    @if (Model.Profile == "Admin")
+                                                    {
+                                                        <button id="remove_@item.id" class="mdc-fab app-fab--absolute item1" title="Remove" aria-label="Remove" onclick="javascript:RemoveVM('@item.id', '@item.Name');" >
+                                                            <i class="fa fa-trash"></i>
                                                         </button>
                                                     }
 
@@ -141,29 +139,40 @@
                                                         <div class="row">
                                                             <span>VM Name:</span>@item.Name
                                                         </div> <br /> <br />
+                                                        @if (item.UserName != null)
+                                                        {
+                                                            <div class="row">
+                                                                <span>User Name:</span>@item.UserName
+                                                            </div> <br /> <br />
+                                                        }
 
-                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div> <br /> <br />
+                                                        <div class="row second"> <span>Public IP Address:</span>@item.PublicIP</div>
+                                                        <br />
+                                                        <br />
                                                         <div class="row three" style="position:relative;">
                                                             <div style="padding: 11px 5px 5px 0px;"> <span>Password:</span></div>
 
                                                             <!--- <div class="pull-left">
-                                                                 <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.Password" style="background:none;">
-                                                                 <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
-                                                             </div>--->
+            <input id="password-field" type="password" class="form-control h-auto" name="password" value="@item.id" style="background:none;">
+            <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+        </div>--->
 
 
 
                                                             <div style="position:relative">
-                                                                <div class="pull-left" id="password-field" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
+                                                                <div class="pull-left passshow" id="password-field_@item.id" type="password" title="" style="padding: 11px 5px 5px 0px; margin-left: 30px;" name="password">@item.Password </div>
 
                                                                 @if (item.Password != null)
-                                                                {<span class="secret">********</span>
-                                                                    <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password"></span>
+                                                                {<span class="secret" id="secret_@item.id">********</span>
+                                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
                                                                 }
                                                                 else
-                                                                { <span toggle="#password-field" class=" toggle-password" id="toggle-password"></span>}
+                                                                { <span toggle="#password-field_@item.id" class=" toggle-password" id="toggle-password_@item.id"></span>}
                                                             </div>
-                                                        </div> <br />
+                                                        </div>
+
+
+                                                        <br />
                                                     </div>
                                                 </div>
                                             </div>
@@ -190,15 +199,53 @@
                                                 </div>
 
                                                 <div class="stats-bttm-btn  col-lg-6 col-md-6 col-sm-6 col-xs-6 ">
-
-                                                    @if (item.StatusDesc.ToLower() == "running")
+                                                    @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "Interviewer")
                                                     {
+                                                        @if (item.StatusDesc.ToLower() == "running")
+                                                        {
+                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 trash-btn" title="Stop VM" aria-label="Stop VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'deallocate');">
+                                                                <i class="fa fa-stop"></i>
+                                                            </button>
 
-                                                        <button id="rdpButton_@item.id" class="mdc-fab app-fab--absolute" title="Download RDP" aria-label="Download RDP" onclick="location.href='@Url.Action("GetRDPFile", "ProctorInterviews", new { vmId = item.id})'">
-                                                            <i class="fa fa-desktop"></i>
-                                                        </button>
+
+                                                        }
+                                                        else if (item.StatusDesc.ToLower() == "deallocated" || item.StatusDesc.ToLower() == "stopped")
+                                                        {
+
+                                                            <button id="actionButton_@item.id" class="mdc-fab app-fab--absolute item1 go-btn" title="Start VM" aria-label="Start VM" onclick="javascript:StartStopVM('@item.id','@item.Name', '@item.ResourceGroupName', 'start');">
+                                                                <i class="fa fa-play"></i>
+                                                            </button>
+                                                        }
+                                                    }
+                                                    @if (Model.Profile == "Admin" || Model.Profile == "Candidate" || Model.Profile == "Interviewer")
+                                                    {
+                                                        @if (item.StatusDesc.ToLower() == "running")
+                                                        {
+                                                            <button id="rdpButton_@item.id" class="mdc-fab app-fab--absolute" title="Download RDP" aria-label="Download RDP" onclick="location.href='@Url.Action("GetRDPFile", "ProctorInterviews", new { vmId = item.id})'">
+                                                                <i class="fa fa-desktop"></i>
+                                                            </button>
+                                                        }
+
 
                                                     }
+
+
+
+                                                    @if (Model.Profile == "Interviewer" || Model.Profile == "Admin")
+                                                    {
+                                                        <button id="questionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Add questions" aria-label="Add questions" onclick="location.href='@Url.Action("ProctorVMQuestions", "ProctorInterviews", new { vmId = item.id})'">
+                                                            <i class="fa fa-question"></i>
+                                                        </button>
+                                                    }
+                                                    @if (item.QuestionsCount != 0)
+                                                    {
+                                                        <button id="candidateQuestionsButton_@item.id" class="mdc-fab app-fab--absolute" title="Questions" aria-label="Questions" onclick="location.href='@Url.Action("CandidateQuestions", "ProctorInterviews", new { vmId = item.id, vmName = item.Name})'">
+                                                            <i class="fa fa-question-circle"></i>
+                                                        </button>
+                                                    }
+
+
+
 
                                                 </div>
                                             </div>
@@ -250,7 +297,7 @@
 
                                             <svg class="broadcastfilter-icon" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 18 18"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M2 12.88V16h3.12L14 7.12 10.88 4 2 12.88zm14.76-8.51c.33-.33.33-.85 0-1.18l-1.95-1.95c-.33-.33-.85-.33-1.18 0L12 2.88 15.12 6l1.64-1.63z" /></svg>
 
-
+           
                                         </div>
                                         <h5 class="modal-title pull-left" id="filterModalLabel"> Edit</h5>
                                     </div>
@@ -266,6 +313,13 @@
                                                 <label class="control-label  desp-label" for="CustomName">Name </label>
                                                 <input class="form-control w-full" type="text" name="textField" id="idCustomName" />
                                                 <label class="text-danger" id="customName_Error" style="color:red"></label>
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label  desp-label" for="UserName">User Name </label>
+                                                <input class="form-control w-full" type="text" name="textField" id="idUserName" />
+                                                @*<label class="text-danger" id="userName_emptyFields_Error" style="color:red"></label>*@
 
                                             </div>
 
@@ -427,7 +481,7 @@
     }
 
 
-    function EditModal(id, customeName, password, vmName) {
+    function EditModal(id, customeName, password, vmName, userName) {
         // Get the modal
         editVmId = id;
         editvmName = vmName;
@@ -435,12 +489,14 @@
         modal.style.display = "block";
         document.getElementById("idCustomName").value = customeName;
         document.getElementById("idPassword").value = password;
+        document.getElementById("idUserName").value = userName;
         return;
 
     }
 
     function EditNamePassword() {
         var customName = document.getElementById("idCustomName").value;
+
         if (customName.length > 20) {
             document.getElementById("customName_Error").innerHTML = "Name should be less than or equal to 20 characters."
             return;
@@ -448,9 +504,12 @@
         else {
             document.getElementById("customName_Error").innerHTML = "";
         }
+
+        var userName = document.getElementById("idUserName").value;
+
         var password = document.getElementById("idPassword").value;
 
-        if (customName.length == 0 && password.length == 0) {
+        if (customName.length == 0 && password.length == 0 && userName.length==0) {
             document.getElementById("emptyFields_Error").innerHTML = "Kindly fill atleast one field to save.";
             return;
         }
@@ -461,7 +520,7 @@
             type: "POST",
             url: "/ProctorInterviews/EditNamePassword",
             data: {
-                'id': editVmId, 'customName': customName, 'password': password, 'vmName': editvmName
+                'id': editVmId, 'customName': customName, 'password': password, 'vmName': editvmName, 'userName' : userName
             },
             success: function (data) {
                 location.reload(true);
@@ -471,30 +530,84 @@
     }
 
 </script>
+<script>
+    function RemoveVM(vmId, vmName) {
 
+        swal.fire({
+            title: 'Are you sure you want to remove ' + vmName + '?',
+            text: "The Virtual Machine will be removed!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/ProctorInterviews/RemoveVM?vmId=' + vmId,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            swal.fire("Error removing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Removed!',
+                    type: 'success',
+                    html: '<p>The Virtual Machine(' + vmName + ') has been removed!</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/ProctorInterviews/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'The virtual machine ' + vmName +' has not been removed!',
+                    'error'
+                )
+            }
+        })
+
+
+    }
+
+</script>
 
 
 <script>
-    $("#password-field").addClass('passshow');
-    $(".secret").show();
-    $("#toggle-password").click(function () {
-        $(".secret").hide();
-        $(this).toggleClass("fa-eye fa-eye-slash");
 
-        var value = $($(this).attr("toggle"));
-        if (value.attr("type") == "password") {
-            value.attr("type", "text");
-            $("#password-field").removeClass('passshow');
-
-
-        }
+    function showhidepass(id) {
+        var value = document.getElementById("password-field_" + id);
+        if (value.getAttribute("type") == "text") {
+            value.setAttribute("type", "password");
+            $("#secret_" + id).show();
+            $("#password-field_" + id).addClass('passshow');
+         
+            $("#toggle-password_" + id).removeClass("fa-eye-slash");
+             }
         else {
-            value.attr("type", "password");
-            $("#password-field").addClass('passshow');
-            $(".secret").show();
+           value.setAttribute("type", "text");
+            $("#password-field_" + id).removeClass('passshow');
+            $("#toggle-password_" + id).addClass("fa-eye-slash");
+           $("#secret_" + id).hide();
+
+}
+
+}
 
 
-        }
-    });
+
+
 </script>
 

@@ -730,8 +730,8 @@ namespace Risebird.Business
                         SkillGeneralReport obj = new SkillGeneralReport
                         {
                             InterviewId = interviewId,
-                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,
@@ -1261,6 +1261,25 @@ namespace Risebird.Business
             {
                 //check the receiver and get all their emails from the db
                 var receiverEmails = _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever).Result;
+                var supportEmails = _supportRespository.GetAllSupportHREmails();
+                var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+                return result;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Broadcast failed.";
+            }
+
+        }
+
+        public async Task<string> BroadcastIRFmembers(BroadcastModel model)
+        {
+            try
+            {
+                var receiverEmails = _meetingRespository.GetIRFMembersEmails(model.IRFId).Result;
                 var supportEmails = _supportRespository.GetAllSupportHREmails();
                 var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
                 return result;

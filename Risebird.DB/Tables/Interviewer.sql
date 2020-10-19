@@ -19,5 +19,19 @@ CREATE TABLE [dbo].[Interviewer](
 )					
 
 END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Heuristicsscore')
+      AND Object_ID = Object_ID(N'Interviewer'))
+BEGIN
+    ALTER TABLE Interviewer
+    Add [Heuristicsscore] INT null
+END
+
+
+End
 
 GO

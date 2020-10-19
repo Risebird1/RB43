@@ -5,7 +5,8 @@ BEGIN
 CREATE TYPE [dbo].[TransVMUser_TableType] AS TABLE(
 	[VmId] [int] NOT NULL,
 	[UserId] [int] NOT NULL,
-	[ProfileId] [int] NULL
+	[ProfileId] [int] NULL,
+	[SharedOn] [datetime] NULL
 
 )
 

@@ -24,7 +24,8 @@ SET NOCOUNT ON;
 INSERT INTO [dbo].[TransVMUser](
 	[VmId],
 	[UserId],
-	[ProfileId])
+	[ProfileId],
+	[SharedOn])
 
 SELECT * FROM @VMUsersBulkData
 

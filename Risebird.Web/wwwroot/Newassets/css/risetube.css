@@ -883,6 +883,7 @@ textarea::-webkit-scrollbar-thumb {
 
 #QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
     cursor: pointer !important;
+    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
 
     #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
@@ -1111,7 +1112,7 @@ textarea::-webkit-scrollbar-thumb {
         border-bottom-left-radius: 5px;
         border-top-right-radius: 0em;
         border-bottom-right-radius: 0em;
-        margin:0px;
+        margin:0px;color:#9a9a9a;
     }
 
         #myForm input[type=email]:focus, #myForm input[type=text]:focus {
@@ -1123,6 +1124,7 @@ textarea::-webkit-scrollbar-thumb {
             -webkit-box-shadow: 0 0 3px #4a93de;
             -moz-box-shadow: 0 0 3px #4a93de;
             box-shadow: 0 0 3px #4a93de;
+            color: #9a9a9a;
         }
 
 

@@ -485,6 +485,7 @@ namespace Risebird.Repository
             parameters.Add("@currentEmployerName", entity.currentEmployerName);
             parameters.Add("@MobileNumber", entity.MobileNumber);
             parameters.Add("@HRCoordinatorEmailId", entity.HRCoordinatorEmailId);
+            parameters.Add("@QCInterviewer", entity.QCInterviewer);
 
 
             return parameters;
@@ -513,6 +514,7 @@ namespace Risebird.Repository
                 parameters.Add("@staffingAgency", meeting.staffingAgency);
                 parameters.Add("@currentEmployerName", meeting.currentEmployerName);
                 parameters.Add("@MobileNumber", meeting.MobileNumber);
+                parameters.Add("@QCInterviewer", meeting.QCInterviewer);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddMeeting", parameters,
@@ -1348,7 +1350,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SkillGeneralReport.*,SkillGeneralReport.Type as Name, [Level].[Name] as RequiredLevel from SkillGeneralReport inner join [Level] on SkillGeneralReport.RequiredLevelId=[Level].id where InterviewId = @id";
+                var query = "select SkillGeneralReport.*,SkillGeneralReport.Type as Name, [LevelTech].[Name] as RequiredLevel from SkillGeneralReport inner join [LevelTech] on SkillGeneralReport.RequiredLevelId=[LevelTech].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2903,6 +2905,28 @@ namespace Risebird.Repository
             catch (SqlException ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        public async Task<IEnumerable<string>> GetIRFMembersEmails(int irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.QueryAsync<string>(con, "usp_GetIRFMembersEmails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.Result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
 

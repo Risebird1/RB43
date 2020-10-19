@@ -45,6 +45,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -53,7 +54,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Candidate" || profileName == "ResumeEvaluator" || profileName == "Client" || profileName== "QualityController" || profileName== "CuratedUser" || profileName== "ExternalUser" || profileName== "Recruiter")
                 {
                     var model = new VirtualMachineVM();
                     var vmList = (await _proctorInterviewsService.GetAllUserVMs(emailid, profileName)).ToList();
@@ -134,7 +135,10 @@ namespace Risebird.Web.Controllers
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
                     if (response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
                     {
-
+                        //save the email of the performer
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        await _proctorInterviewsService.UpdateActionPerformed(vmId, emailid, action);
                         TempData["SuccessErrorMessageProctor"] = $"Successfully performed {action} action for {name}!";
                         return true;
                     }
@@ -304,7 +308,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> EditNamePassword(int id, string customName, string password, string vmName)
+        public async Task<IActionResult> EditNamePassword(int id, string customName, string password, string vmName, string userName)
         {
 
             try
@@ -316,7 +320,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin")
                     {
-                        if (await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password))
+                        if (await _proctorInterviewsService.UpdateVMNamePassword(id, customName, password, userName))
                         {
                             TempData["SuccessErrorMessageProctor"] = "Successfully saved data for " + vmName;
                             return Json(true);
@@ -419,5 +423,174 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ProctorVMQuestions(int vmId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    ProctorQuestionsViewModel model = new ProctorQuestionsViewModel();
+                    model.VmId = vmId;
+                    model.QuestionList = (IList<ProctorVMQuestions>)(await _proctorInterviewsService.GetVMQuestions(vmId));
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+
+            }
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ProctorVMQuestions(ProctorQuestionsViewModel model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (await _proctorInterviewsService.UpdateVMQuestions(model))
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Questions updated successfully!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageProctor"] = "Failed to save the Questions!";
+                        return RedirectToAction("Index");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageProctor"] = "Failed to save the Questions!";
+                return RedirectToAction("Index");
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CandidateQuestions(int vmId, string vmName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    //profileName = "Candidate";
+                    profileName.Replace("\"", "");
+                   
+                    ProctorQuestionsViewModel model = new ProctorQuestionsViewModel();
+                    model.VmId = vmId;
+                    model.QuestionList = (IList<ProctorVMQuestions>)(await _proctorInterviewsService.GetVMQuestions(vmId));
+                    foreach (var item in model.QuestionList)
+                    {
+                        item.LevelDesc = ((QuestionLevel)item.Level).GetDescription();
+                    }
+                    if (model.QuestionList != null)
+                    {
+                        model.TotalQuestions = model.QuestionList.Count();
+                    }
+                    model.Profile = profileName;
+
+                    if (HttpContext.Session.GetString("CurrentQuestion") != null)
+                    {
+                        model.CurrentQuestionIndex = Convert.ToInt16(HttpContext.Session.GetString("CurrentQuestion"));
+                    }
+                    //HttpContext.Session.Remove("CurrentQuestion");
+                    model.VMName = vmName;
+                        
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+
+            }
+        }
+
+
+        public async Task<IActionResult> SetCurrentQuestion(string newIndex)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (HttpContext.Session.GetString("CurrentQuestion") != null)
+                    {
+                        HttpContext.Session.Remove("CurrentQuestion");
+
+                    }
+
+                    HttpContext.Session.SetString("CurrentQuestion", newIndex);
+
+                    return Json(true);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> RemoveVM(int vmId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (await _proctorInterviewsService.RemoveVM(vmId))
+                    {
+                        return Json(true);
+                    }
+                    else
+                    {
+                        return Json(true);
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+
     }
 }

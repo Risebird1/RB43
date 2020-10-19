@@ -505,10 +505,13 @@
 
         $('#MyInterviewList').DataTable({
             "pagingType": "full_numbers",
+          
             "lengthMenu": [
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
+          
+            columnDefs: [{ type: 'date', 'targets': [0] }],
             responsive: true,
             language: {
                 search: "_INPUT_",
@@ -522,14 +525,19 @@
                 });
             },
 
+
         });
         var table = $('#MyInterviewList').DataTable();
-    });
 
+    });
+  
     $(document).ready(function () {
 
+      
+       
         $('#dataTables_filter').keyup(function () {
             oTable.fnFilter($(this).val());
+        
         });
 
         $("#x").click(function (e) {
