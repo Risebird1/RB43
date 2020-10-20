@@ -1593,7 +1593,7 @@
                                                                                     </video>
                                                                                     @if (Model.IsClientCurated)
                                                                                     {
-                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { curatedGroupId = videolist.CuratedGroupId, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
 
                                                                                     }
                                                                                     else
