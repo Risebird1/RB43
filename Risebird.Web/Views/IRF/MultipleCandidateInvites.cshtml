@@ -17,7 +17,7 @@
                         <span class="navbar-toggler-bar bar2"></span>
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
-                </div>
+                </div>zf
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skill Channel</a>
                 <a class="navbar-brand"> /  &nbsp; Multiple Candidate Invites</a>
             </div>
@@ -137,9 +137,9 @@
                                                         <td class="text-right action">
                                                             @if (item.IsAdmin && item.MeetingStatusStatusDesc != "Completed")
                                                             {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                    <span onclick="location.href = '@Url.Action("DeleteInterview", "Interview", new { id = item.imid,controllerName="IRF",irfId= item.IRFId})'" title="Delete Interview" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                                </button>
+                                                                
+                                                                    <span  class="mdc-fab app-fab--absolute trash-btn" onclick="location.href = '@Url.Action("DeleteInterview", "Interview", new { id = item.imid,controllerName="IRF",irfId= item.IRFId})'" title="Delete Interview" ><i class="far fa  fa-trash"></i></span>
+                                                                
                                                             }
                                                         </td>
                                                     </tr>

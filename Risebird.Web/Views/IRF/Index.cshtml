@@ -33,7 +33,7 @@
 
 }
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -81,9 +81,7 @@
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
                                 </button>
-                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                    <span class="fa fa-search" data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interviewer Search</font></span>
-                </button>*@
+                              
                                 @if (Model.Profile == "Admin")
                                 {
                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -812,7 +810,6 @@
 <script src="~/js/CallTwilio.js"></script>
 <script>
     var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
         hangUp();
         var modal = document.getElementById("myCallModal");
@@ -820,14 +817,12 @@
     }
     $(document).ready(function () {
         $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
             Twilio.Device.setup(data.token);
         });
     });
 </script>
 <script>
     var closeMember = document.getElementById("membersPopUp");
-    // When the user clicks on <span> (x), close the modal
     closeMember.onclick = function () {
         var modal = document.getElementById("interviewerMemberModal");
         modal.style.display = "none";
@@ -872,7 +867,7 @@
 
                         },
                         error: function () {
-                            //reject("error message")
+                         
                             swal.fire("Error archiving!", "Please try again", "error");
                         }
                     })
@@ -923,7 +918,7 @@
 
                         },
                         error: function () {
-                            //reject("error message")
+                        
                             swal.fire("Error subscribing!", "Please try again.", "error");
                         }
                     })
@@ -977,7 +972,7 @@
 
                         },
                         error: function () {
-                            //reject("error message")
+                          
                             swal.fire("Error unsubscribing!", "Please try again.", "error");
                         }
                     })
@@ -1077,7 +1072,7 @@
 
                         },
                         error: function () {
-                            //reject("error message")
+                        
                             swal.fire("Error pausing!", "Please try again", "error");
                         }
                     })
@@ -1129,7 +1124,7 @@
 
                         },
                         error: function () {
-                            //reject("error message")
+                        
                             swal.fire("Error playing!", "Please try again", "error");
                         }
                     })
@@ -1161,7 +1156,6 @@
         changeColor("yellow");
     }
 
-    //UnArchiveIRF
 </script>
 <script>
         $(document).ready(function () {
@@ -1222,13 +1216,6 @@
 
         function ResetFilter() {
             window.location.href = "/IRF/ResetIRFFilter";
-            //$.ajax({
-            //    type: "POST",
-            //    url: "/IRF/Index",
-            //    success: function (data) {
-            //        window.location.href = "/IRF/ResetIRFFilter";
-            //    }
-            //});
         }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -1250,13 +1237,7 @@
             $("#PrimarySkill").val(primarySkill);
 
             var form = $("#form").serialize();
-            //$.ajax({
-            //    type: "POST",
-            //    url: "/IRF/Index",
-            //    data: form,
-            //    success: function (data) {
-            //    }
-            //});
+           
         }
 
 </script>
@@ -1264,7 +1245,6 @@
     var irfId = "";
     var irfName = "";
     var span = document.getElementById("invoicePopUp");
-    // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
@@ -1293,7 +1273,6 @@
 
     function SavePopUp() {
         var sDate = $("#stDateInvoice").val();
-        //var stDate = document.getElementById("stDateInvoice").value;
         var endDate = document.getElementById("EndDateInvoice").value;
 
         var srNumber = $("#srNumberId").val();

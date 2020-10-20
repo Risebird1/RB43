@@ -7,13 +7,13 @@
 
 
 
+
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
 
 
-
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 
 
 <div class="main-panel " id="main-panel">
@@ -644,7 +644,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select -css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                        @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                     </td>
 
                                                     <td>
@@ -921,7 +921,7 @@
 
 </div>
 <script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script>
     $(document).ready(function () {
         var inputs = document.getElementsByTagName("input");

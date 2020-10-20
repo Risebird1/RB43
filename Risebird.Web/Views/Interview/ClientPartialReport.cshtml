@@ -20,41 +20,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 
-<script>
-    function dropDwnToolTips(id) {
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value;
-        }
-    }
 
-</script>
-
-
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $('.dropques option').wrap('<span>');
-
-        var selectedOption = $('.dropques').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-
-    })
-
-    $(document).ready(function () {
-        $('.droprating option').wrap('<span>');
-
-        var selectedOption = $('.droprating').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-</script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -1133,6 +1099,42 @@
         </div>
     </footer>
     </div>
+
+    <script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+    </script>
+
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+    </script>
     <script src="https://www.amcharts.com/lib/4/core.js"></script>
     <script src="https://www.amcharts.com/lib/4/charts.js"></script>
     <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
@@ -1511,14 +1513,14 @@
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
-             series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})"; 
+             series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
        series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
-                
+
                     return "";
                 }
                 else {
-                
+
                     return text;
                 }
             });
@@ -1530,7 +1532,7 @@
             series.columns.template.showTooltipOn = "always";
             series.tooltip.background.filters.clear();
             series.tooltip.getFillFromObject = false;
-      
+
             series.tooltip.label.fill = am4core.color("#9a9a9a");
             series.tooltip.background.cornerRadius = 0;
             series.tooltip.label.textAlign = "middle";

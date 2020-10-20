@@ -5,78 +5,19 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 <link href="~/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css" rel="stylesheet" />
-<script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
-<script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
+
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer />
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
 <script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
     amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
 </script>
 
-<script>
-    function dropDwnToolTips(id) {
-
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value
-        }
-    }
 
 
-</script>
 
-<script type="text/javascript">
-
-    function getOption(id) {
-        selectElement = document.querySelector('#droplevel');
-        output =
-            selectElement.options[selectElement.selectedIndex].text;
-
-
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = output
-        }
-
-
-    }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $('.dropques option').wrap('<span>');
-
-        var selectedOption = $('.dropques').find("[selected]");
-        $(selectedOption).unwrap();
-        if ('@ViewBag.ProfileName' == "CuratedUser" || '@Model.IsClientCurated' =='True' ) {
-            document.getElementsByClassName('minmaxCon')[0].style.display = "none";
-        }
-
-
-    })
-
-    $(document).ready(function () {
-        $('.droprating option').wrap('<span>');
-
-        var selectedOption = $('.droprating').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-</script>
-
-
-<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
 <!-- Owl Carousel -->
@@ -381,10 +322,10 @@
                                                                                         <table class="table table-bordered mbn" id="SkillTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th  class="desktop-view">Required Level</th>
+                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Skill Name</th>
                                                                                                     <th width="25%">Actual Level</th>
-                                                                                                    <th  class="desktop-view">Required Weightage</th>
+                                                                                                    <th class="desktop-view">Required Weightage</th>
                                                                                                     <th width="15%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -393,7 +334,7 @@
                                                                                             <tbody>
                                                                                                 @if (Model.IreportModel.TechSkillReportCollection != null)
                                                                                                 {
-                                                                                                @for (int i = 0; i < Model.IreportModel.TechSkillReportCollection.Count(); i++)
+                                                                                                    @for (int i = 0; i < Model.IreportModel.TechSkillReportCollection.Count(); i++)
                                                                                                     {
                                                                                                         <tr>
 
@@ -563,11 +504,11 @@
                                                                                             <thead>
                                                                                                 <tr>
 
-                                                                                                    <th  class="desktop-view">Required Level</th>
+                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
                                                                                                     <th width="15%">Actual Level</th>
-                                                                                                    <th  class="desktop-view">Required Weightage</th>
+                                                                                                    <th class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -636,11 +577,11 @@
                                                                                         <table class="table table-bordered mbn" id="JoinabilityTable">
                                                                                             <thead>
                                                                                                 <tr>
-                                                                                                    <th  class="desktop-view">Required Level</th>
+                                                                                                    <th class="desktop-view">Required Level</th>
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
                                                                                                     <th width="15%">Actual Level</th>
-                                                                                                    <th  class="desktop-view">Required Weightage</th>
+                                                                                                    <th class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -712,7 +653,7 @@
                                                                                                     <th width="30%">Type</th>
                                                                                                     <th width="25%">Value</th>
                                                                                                     <th width="15%">Actual Level</th>
-                                                                                                    <th  class="desktop-view">Required Weightage</th>
+                                                                                                    <th class="desktop-view">Required Weightage</th>
                                                                                                     <th width="10%">Actual Weightage</th>
                                                                                                 </tr>
                                                                                             </thead>
@@ -1330,7 +1271,68 @@
         </div>
     </div>
 </div>
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+<script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
+<script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
+<script>
+    function dropDwnToolTips(id) {
 
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+    function getOption(id) {
+        selectElement = document.querySelector('#droplevel');
+        output =
+            selectElement.options[selectElement.selectedIndex].text;
+
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = output
+        }
+
+
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+        if ('@ViewBag.ProfileName' == "CuratedUser" || '@Model.IsClientCurated' =='True' ) {
+            document.getElementsByClassName('minmaxCon')[0].style.display = "none";
+        }
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
 
 
 <script>
@@ -1586,26 +1588,7 @@
 
         totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = totalScore;
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
+        
 
         am4core.ready(function () {
 
