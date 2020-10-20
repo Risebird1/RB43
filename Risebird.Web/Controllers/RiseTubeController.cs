@@ -1088,23 +1088,41 @@ namespace Risebird.Web.Controllers
                         }
 
                         var modelList = new List<MeetingVM>();
+                        //MeetingVM model = new MeetingVM();
+                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
 
                         if (isClientUser)
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailId);
+                            //modelList = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailId);
+                            modelList = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0]);
+
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
-                            modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                            modelList = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], profileName);
+
+                            //var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
+                            //modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                        }
+                        else if (profileName == "ExternalUser")
+                        {
+                            modelList = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
+
+                            //var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
+                            //modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
                         }
                         else
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
+                            modelList = await _meetingService.GetRiseTubeMeetingsByJD(0, emailId, model.JDTiltle.Split("|")[0]);
+                            //modelList = await _meetingService.GetRiseTubeMeetingsByJD(0, profileName, emailId);
                         }
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+
                         //MeetingVM model = modelList.Where(a => a.imid == id).FirstOrDefault();
-                        modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
+                        if(profileName=="ExternalUser")
+                        {
+                            modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
+
+                        }
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
                         if (HttpContext.Session.GetString("RiseTubefilters") != null)
                         {
@@ -1169,7 +1187,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                        NewModel.SubVideo_List = modelList.ToList();
+                        NewModel.SubVideo_List = modelList;// modelList.ToList();
                         if (profileName == "CuratedUser")
                         {
                             if (model.IsIntrested != "Interest Accepted")
@@ -1300,14 +1318,14 @@ namespace Risebird.Web.Controllers
         /// Method to reset applied filters on mainframe VideoPage
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> ResetVideoPageFilter()
+        public async Task<IActionResult> ResetVideoPageFilter(int imid)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("VideoPagefilters");
-                    return RedirectToAction("VideoPage");
+                    return RedirectToAction("VideoPage", new { id=imid });
                 }
                 else
                 {
