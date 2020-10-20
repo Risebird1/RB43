@@ -229,7 +229,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card chart-box">
                                             <div class="card-body">
-                                                <p class="card-text">Overall Average Score: <span class="totScore" id="totScore"></span></p>
+                                                <p class="card-text">Overall Score: <span class="totScore" id="totScore"></span></p>
                                                 <div>
 
                                                     <div id="scoreChart" style="height: 200px; width:100%;"></div>
@@ -794,7 +794,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                 </td>
                                                                 <td>
@@ -1603,7 +1603,7 @@
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
-             series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY}%)"; 
+             series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})"; 
        series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
                 

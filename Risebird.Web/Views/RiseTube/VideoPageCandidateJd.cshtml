@@ -550,7 +550,10 @@
                                                                     <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
                                                                     <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
                                                                     <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
-                                                                   
+                                                                    @if (Model.IsIntrested == "Interest Accepted")
+                                                                    {
+                                                                        <input class="btnmeeting" type="button" id="btnmeeting" value="Schedule Meeting" />
+                                                                    }
                                                                 </h1>
                                                             }
                                                             <div class="row counts-liks">
@@ -610,7 +613,7 @@
                                                                             {
                                                                                 <input type="button" class="btninterest limebtn " id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border: none; background-color: limegreen;font-weight: bold;font-size: 13px !important;padding: 0px 5px;height: 30px;" />
                                                                             }
-
+                                                                            else
                                                                             {
                                                                                 <input type="button" class=" show-interest " id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none; font-weight: bold;font-size: 13px !important;  padding: 0px 5px; height: 30px;" />
                                                                             }
@@ -742,7 +745,7 @@
                                                                                     <div class="left-chart">
 
                                                                                         <div class="chart-box itemchart">
-                                                                                            <p class="card-text">Overall Average Score: <span class="toscore" id="totScore"></span></p>
+                                                                                            <p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>
                                                                                             <div class="col-lg-12 col-md-12 col-sm-12 nopad">
                                                                                                 <div id="scoreChart" style="height: 200px; width: 100%;">
 
@@ -897,8 +900,8 @@
                                                                                                     @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
                                                                                                     @{
-                                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                                        if (Model.IreportModel.encodedresumeLink != null && Model.IreportModel.encodedresumeLink != "")
+                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.encodedresumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
                                                                                                     }
                                                                                                 </div>
                                                                                             </div>
@@ -1332,7 +1335,7 @@
 
                                                                         </div>
                                                                     </div>
-                                                                   
+
                                                                 </div>
 
                                                             </div>
@@ -1452,12 +1455,12 @@
                                                                                             </video>
                                                                                             @if (Model.IsClientCurated)
                                                                                             {
-                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
 
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
 
                                                                                             }
 
@@ -1467,14 +1470,14 @@
                                                                                             @if (videolist.ThumbnailImage != null)
                                                                                             {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
                                                                                             else
-                                                                                            { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+                                                                                            { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId=videolist.ClientJdid,id = videolist.imid })'" style=" cursor: pointer;"></a>}
 
                                                                                     </div>
                                                                                     <div class="video-card-body">
                                                                                         <div class="video-title">
                                                                                             @if (@videolist.candidateName.Length > 11)
                                                                                             {
-                                                                                                <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                                <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
                                                                                             }
                                                                                             else
                                                                                             {
@@ -1524,6 +1527,7 @@
                                                                                             {
                                                                                                 <span>@videolist.expectedPerHourRate</span>}
                                                                                         </div>
+                                                                                      
                                                                                     </div>
                                                                                 </div>
                                                                             }
@@ -1589,12 +1593,12 @@
                                                                                     </video>
                                                                                     @if (Model.IsClientCurated)
                                                                                     {
-                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCurated", "Risetube", new { curatedGroupId = Model.CuratedGroupId, actionstatus = Model.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { curatedGroupId = videolist.CuratedGroupId, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
 
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>
 
                                                                                     }
 
@@ -1604,7 +1608,7 @@
                                                                                     @if (videolist.ThumbnailImage != null)
                                                                                     {<img class="thumbnailimage" src="@videolist.ThumbnailImage" /> }
                                                                                     else
-                                                                                    { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>}
+                                                                                    { <img src="~/RiseTube/img/video-icon.png" />} <a class="play-icon" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"></a>}
 
 
                                                                                 @*
@@ -1615,7 +1619,7 @@
                                                                                 <div class="video-title">
                                                                                     @if (@videolist.candidateName.Length > 11)
                                                                                     {
-                                                                                        <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
+                                                                                        <a data-tooltip="@videolist.candidateName" onclick="location.href='@Url.Action("VideoPageCandidateJd", "Risetube", new { ClientJdId = videolist.ClientJdid, actionstatus = videolist.ActionStatus, id = videolist.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate">@videolist.candidateName</span> </a>
                                                                                     }
                                                                                     else
                                                                                     {

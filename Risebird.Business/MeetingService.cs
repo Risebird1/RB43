@@ -730,8 +730,8 @@ namespace Risebird.Business
                         SkillGeneralReport obj = new SkillGeneralReport
                         {
                             InterviewId = interviewId,
-                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
+                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,

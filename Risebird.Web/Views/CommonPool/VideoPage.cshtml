@@ -681,7 +681,7 @@
                                                                                     <div class="left-chart">
 
                                                                                         <div class="chart-box itemchart">
-                                                                                            <p class="card-text">Overall Average Score: <span style="color: black" id="totScore"></span></p>
+                                                                                            <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
                                                                                             <div class="col-lg-12 col-md-12 col-sm-12 nopad">
                                                                                                 <div id="scoreChart" style="height: 200px; width: 100%;"></div>
 
@@ -2762,7 +2762,7 @@
 <script>
 
     window.onload = function () {
-        debugger;
+        
         if (localStorage.getItem('isTheaterMode') == "true") {
             getThMode();
             document.getElementById("1").value = "THEATER-MODE-OFF";
@@ -2917,7 +2917,7 @@
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
-            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY}%)";
+            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
             series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
 

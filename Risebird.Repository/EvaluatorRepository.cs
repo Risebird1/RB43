@@ -378,7 +378,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SkillGeneralEvaluatorReport.*,SkillGeneralEvaluatorReport.[Type] as [Name], [Level].[Name] as RequiredLevel from SkillGeneralEvaluatorReport inner join [Level] on SkillGeneralEvaluatorReport.RequiredLevelId=[Level].id where CandidateId = @CandidateId and IRFId = @IRFId";
+                var query = "select SkillGeneralEvaluatorReport.*,SkillGeneralEvaluatorReport.[Type] as [Name], [LevelTech].[Name] as RequiredLevel from SkillGeneralEvaluatorReport inner join [LevelTech] on SkillGeneralEvaluatorReport.RequiredLevelId=[LevelTech].id where CandidateId = @CandidateId and IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@CandidateId", candidateId);
                 dynamicParameters.Add("@IRFId", irfId);

@@ -209,6 +209,8 @@ namespace Risebird.Entities.ViewModel
         public int MeetingPatchCount { get; set; }
         public string CostEstimate { get; set; }
         public string TotalExperience { get; set; }
+        public int ClientJdid { get; set; }
+        public int Priority { get; set; }
     }
     public class VedioComments
     {

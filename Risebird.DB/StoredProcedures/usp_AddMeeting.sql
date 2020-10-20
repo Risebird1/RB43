@@ -15,7 +15,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_AddMeeting]
+Create PROCEDURE [dbo].[usp_AddMeeting]
 @IRFId varchar(200),
 @interviewDate varchar(200),
 @interviewSlot varchar(100),
@@ -33,7 +33,9 @@ CREATE PROCEDURE [dbo].[usp_AddMeeting]
 @joiningTime varchar(200),
 @staffingAgency varchar(200),
 @currentEmployerName varchar(200),
-@MobileNumber nvarchar(200)
+@MobileNumber nvarchar(200),
+@QCInterviewer varchar(200)
+
 AS
 Begin
 
@@ -60,6 +62,7 @@ INSERT INTO [dbo].[InterviewMeetings]
            ,[sCreatedBy]
            ,[dtCreatedOn]
 		   ,[MobileNumber]
+		   ,[QCInterviewer]
            )
      VALUES
            (@IRFId,
@@ -81,12 +84,12 @@ INSERT INTO [dbo].[InterviewMeetings]
 @currentEmployerName,
 'System',
 GETUTCDATE(),
-@MobileNumber
+@MobileNumber,
+@QCInterviewer
 )
 
 End
 END
-
 
 
 

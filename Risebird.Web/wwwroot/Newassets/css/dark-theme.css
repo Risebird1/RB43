@@ -1456,6 +1456,53 @@ div.dataTables_wrapper div.dataTables_info {
     background: #0d0d0d !important;
     border-color: #0d0d0d!important;
 }
+.mdc-card .form-control.active-razorbtn {
+    background: #53a5f5 !important;
+    color: #fff !important;
+    text-transform: uppercase;
+}
+
+.razorpay_details table th {
+    background: rgb(25, 25, 25) !important;
+    padding: 8px;
+   
+    border-bottom: 1px solid rgb(53 52 52);
+    color: #9a9a9a !important;
+    font-weight: normal;
+    font-size: 15px;
+    border-right: 1px solid rgb(53 52 52);
+}
+.razorpay_btn button.form-control {
+    border-bottom: 2px rgb(45 45 45) solid;
+    margin-bottom: 5px;
+    text-align: left !important;
+    text-transform: uppercase;
+    background: rgb(25 25 25) !important;
+}
+.razorpay_details table td {
+    color: #9a9a9a;
+    padding: 8px;
+    border-right: 1px solid rgb(53 52 52);
+    background: #000;
+    text-transform: uppercase;
+}
+.icon-svg svg {
+    fill: rgb(255, 255, 255);
+}
+.mdc-card .form-control.active-razorbtn {
+    background: #3a3a3a !important;
+    color: #fff !important;
+    text-transform: uppercase;
+}
+
+.razorpay_details table tr:nth-of-type(odd) {
+    background: #fff;
+}
+
+
+.razorpay_details table tr:nth-of-type(even) {
+    background: #f5f5f5b8;
+}
 
 .dropdown-menu:after {
     border-bottom-color: #191919 !important;
@@ -1549,5 +1596,17 @@ input[type="radio"]:checked {
 @media screen and (max-width: 767px) {
     .pt30 .card-title {
         color:#fff;
+    }
+    .razorpay_btn button.form-control {
+        width: 33.3%;
+        float: left;
+        border-right: 1px #cccccc54 solid;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .razorpay_btn button.form-control {
+        height: 50px;
+        font-size: 10px !important;
     }
 }
