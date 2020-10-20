@@ -20,7 +20,7 @@ namespace Risebird.Web.Controllers
         {
             SurveyVM model = new SurveyVM();
             model.interviewid = id;
-            model.Type = "Candaite";
+            model.Type = "Candidate";
             return View(model);
         }
         [HttpPost]
