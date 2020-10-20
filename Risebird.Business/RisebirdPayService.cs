@@ -5,6 +5,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -22,7 +23,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = _risebirdPayRepository.DeductWalletPoints(ClientId, emailid, points, comment);
+                var result = _risebirdPayRepository.DeductWalletPoints(ClientId, emailid, points, comment).Result;
                 return result;
             }
 

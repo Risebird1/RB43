@@ -20,17 +20,18 @@ Begin
 	set @roleId  = (select RoleId from ClientUser where UserId=@userId)
 if(@roleId=1)
 	Begin
-		--declare @emailId varchar(100);
-		--set @emailId = 'ramanaidu.m@mphasis.com'
-		declare @commonClientHRTable table (imid int, icid int, InterviewStatus int, MeetingStatus int)
+		
+		declare @commonClientHRTable table (imid int, icid int, InterviewStatus int, MeetingStatus int, QCStatus int)
 				insert into @commonClientHRTable 
-				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus from InterviewMeetings inm 
+				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus, qcf.QCStatus from InterviewMeetings inm 
 				left join InterviewComments inc on inc.InterviewId= inm.id
+				left join QCFeedbackReport qcf on qcf.InterviewId=inm.id
 				where inm.confirmationStatus=1 and inm.ClientHrContact=@emailId
 
 			select (select Count(imid) from @commonClientHRTable where InterviewStatus=1) as ProxyCount,
-			(select Count(imid) from @commonClientHRTable where InterviewStatus=2) as SelectedCount,
-			(select Count(imid) from @commonClientHRTable where InterviewStatus=3) as RejectedCount,
+			(select Count(imid) from @commonClientHRTable where InterviewStatus=2 and QCStatus=1) as SelectedCount,
+			(select Count(imid) from @commonClientHRTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as RejectedCount,
+			(select Count(imid) from @commonClientHRTable where InterviewStatus=2 and QCStatus is null) as Pending,
 			(select Count(imid) from @commonClientHRTable where InterviewStatus=4) as BorderLineCount,
 			(select Count(imid) from @commonClientHRTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
 			(select Count(imid) from @commonClientHRTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
@@ -40,17 +41,18 @@ if(@roleId=1)
 
 else if(@roleId=4)
 	Begin
-		--declare @emailId varchar(100);
-		--set @emailId = 'shweta_kadechkar@risebird.io'
-		declare @commonStaffiingAgencyTable table (imid int, icid int, InterviewStatus int, MeetingStatus int)
+		
+		declare @commonStaffiingAgencyTable table (imid int, icid int, InterviewStatus int, MeetingStatus int, QCStatus int)
 				insert into @commonStaffiingAgencyTable 
-				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus from InterviewMeetings inm 
+				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus, qcf.QCStatus from InterviewMeetings inm 
 				left join InterviewComments inc on inc.InterviewId= inm.id
+				left join QCFeedbackReport qcf on qcf.InterviewId=inm.id
 				where inm.confirmationStatus=1 and inm.staffingAgency=@emailId
 
 			select (select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=1) as ProxyCount,
-			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=2) as SelectedCount,
-			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=3) as RejectedCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=2 and QCStatus=1) as SelectedCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as RejectedCount,
+			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=2 and QCStatus is null) as Pending,
 			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus=4) as BorderLineCount,
 			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
 			(select Count(imid) from @commonStaffiingAgencyTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,
@@ -62,15 +64,17 @@ else if(@roleId=4)
 else
 		Begin
 
-			declare @commonTable table (imid int, icid int, InterviewStatus int, MeetingStatus int)
+			declare @commonTable table (imid int, icid int, InterviewStatus int, MeetingStatus int, QCStatus int)
 				insert into @commonTable 
-				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus from InterviewMeetings inm join IRF on irf.IRFId=inm.IRFId join TransClientUser tcu on tcu.IRFId = irf.id
+				select inm.id, inc.id, inc.InterviewStatus, inc.MeetingStatus, qcf.QCStatus from InterviewMeetings inm join IRF on irf.IRFId=inm.IRFId join TransClientUser tcu on tcu.IRFId = irf.id
 				left join InterviewComments inc on inc.InterviewId= inm.id
+				left join QCFeedbackReport qcf on qcf.InterviewId=inm.id
 				where tcu.ClientUserId = @userId and inm.confirmationStatus=1
 
 			select (select Count(imid) from @commonTable where InterviewStatus=1) as ProxyCount,
-			(select Count(imid) from @commonTable where InterviewStatus=2) as SelectedCount,
-			(select Count(imid) from @commonTable where InterviewStatus=3) as RejectedCount,
+			(select Count(imid) from @commonTable where InterviewStatus=2 and QCStatus=1) as SelectedCount,
+			(select Count(imid) from @commonTable where InterviewStatus=3 or (InterviewStatus=2 and QCStatus=2)) as RejectedCount,
+			(select Count(imid) from @commonTable where InterviewStatus=2 and QCStatus is null) as Pending,
 			(select Count(imid) from @commonTable where InterviewStatus=4) as BorderLineCount,
 			(select Count(imid) from @commonTable where InterviewStatus is null and MeetingStatus=1) as NoShowCount,
 			(select Count(imid) from @commonTable where InterviewStatus is null and (MeetingStatus=2 or MeetingStatus is null)) as ScheduledCount,

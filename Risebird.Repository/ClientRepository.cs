@@ -253,7 +253,7 @@ namespace Risebird.Repository
             {
                 if (clientid == 0)
                 {
-                    var query = "Select cl.*,cl.AssessmentGroupid as AssessmentGroup, ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id";
+                    var query = "Select ul.Emailid as ClientEmail,c.Name,cl.*,cl.AssessmentGroupid as AssessmentGroup, ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id join Client c on c.id=cl.Clientid left join UserList ul on ul.id=cl.Createdby";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var result = con.Query<ClientJdVM>(query, null);
@@ -322,8 +322,8 @@ namespace Risebird.Repository
                             string sqlCuratedCandidate = "Update CandidateJDScore set Priority=@Priority where Id=@Id";
                             var affectedRows = con.Execute(sqlCuratedCandidate, new
                             {
-                                Priority=item.Priority,
-                                Id=item.IRFId
+                                Priority = item.Priority,
+                                Id = item.IRFId
                             });
                         }
                     }
@@ -390,7 +390,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public string AddWalletPoints(int ClientId, string emailid, int points,string comment)
+        public async Task<string> AddWalletPoints(int ClientId, string emailid, int points, string comment)
         {
             try
             {
@@ -401,16 +401,16 @@ namespace Risebird.Repository
                 parameters.Add("@comment", comment);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.QueryAsync(con, "[usp_AddWalletPoints]", parameters,
+                    await SqlMapper.QueryAsync(con, "[usp_AddWalletPoints]", parameters,
                         commandType: CommandType.StoredProcedure);
                     return "Success";
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return "failed"; 
+            return "failed";
         }
     }
 }
