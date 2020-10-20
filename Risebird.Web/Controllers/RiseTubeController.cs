@@ -85,22 +85,24 @@ namespace Risebird.Web.Controllers
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
-                            modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                            //var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
+                            //modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+
+                            modelList = await _meetingService.GetRiseTubeMeetingsByScore(0, profileName, emailid);
                             modelList.ForEach(x => x.IsClientCurated = true);
                         }
                         else
                         {
                             modelList = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
                         }
-                        ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
-                        ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
-                        ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
-                        ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
-                        ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
-                        ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
-                        ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
-                        ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
+                        //ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+                        //ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+                        //ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+                        //ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+                        //ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+                        //ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
+                        //ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
+                        //ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
 
                         ViewBag.NextLevelApprovalStatusList =
                             from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
@@ -111,11 +113,11 @@ namespace Risebird.Web.Controllers
                         ViewBag.OfferStatusList =
                            from OfferStatus s in Enum.GetValues(typeof(OfferStatus))
                            select (s.GetDescription());
-                        modelList = modelList.Select(x =>
-                        {
-                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
+                        //modelList = modelList.Select(x =>
+                        //{
+                        //    x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                        //    return x;
+                        //}).ToList();
                         if (HttpContext.Session.GetString("RiseTubefilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RiseTubefilters"));
@@ -167,7 +169,20 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
+                            ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+                            ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+                            ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+                            ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+                            ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+                            ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
+                            ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
+                            ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
                             modelList = modelList.Where(x => x.CandidateAvailable == "Available").ToList();
+                            modelList = modelList.Select(x =>
+                            {
+                                x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                                return x;
+                            }).ToList();
                         }
                         if (profileName == "CuratedUser")
                         {
@@ -475,40 +490,78 @@ namespace Risebird.Web.Controllers
                         }
 
                         var modelList1 = new List<MeetingVM>();
-
+                        MeetingVM model = new MeetingVM();
                         if (isClientUser)
                         {
-                            modelList1 = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailId);
+                            model = _meetingService.GetMeetingbyid(id, emailId);
+                            if (model == null)
+                            {
+                                model = new MeetingVM();
+                                ViewBag.ResultStatus = "VideoNotPresent";
+                                return View(model);
+
+                            }
+                            //modelList1 = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailId);
+                            modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0]);
+
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
-                            modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
-                            if (!String.IsNullOrEmpty(irfid))
+                            //var dataResult = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
+                            //modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+
+                            //modelList1 = await _meetingService.GetRiseTubeMeetingsByScore(0, profileName, emailId);
+                            //modelList1 = await _meetingService.GetRiseTubeMeetingsForCuratedUserByIRF(emailId, actionstatus, Convert.ToInt32(irfid));
+                            if(String.IsNullOrEmpty(irfid))
                             {
-                                int irf = Convert.ToInt32(irfid);
-                                modelList1 = modelList1.Where(x => x.irfIntId == irf).ToList();
-                                ViewBag.actionstatus = "SkillChannel";
-                                if (actionstatus.ToUpper() == "ALL")
-                                {
-                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                                }
-                                else if (actionstatus.ToUpper() == "SHORTLIST")
-                                {
-                                    modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
-                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                                }
-                                else if (actionstatus.ToUpper() == "INTRESTED")
-                                {
-                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
-                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                                }
-                                else if (actionstatus.ToUpper() == "ACCEPT")
-                                {
-                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Accepted").ToList();
-                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
-                                }
+                                model = _meetingService.GetMeetingbyid(id, emailId);
+                                modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], profileName);
+
                             }
+
+
+                            else if (!String.IsNullOrEmpty(irfid))
+                            {
+                                modelList1 = await _meetingService.GetRiseTubeMeetingsForCuratedUserByIRF(emailId, actionstatus, Convert.ToInt32(irfid));
+                                id = modelList1.Max(x => x.imid);
+
+                                //int irf = Convert.ToInt32(irfid);
+                                //modelList1 = modelList1.Where(x => x.irfIntId == irf).ToList();
+                                ViewBag.actionstatus = "SkillChannel";
+                                model = _meetingService.GetMeetingbyid(id, emailId);
+
+                                //if (actionstatus.ToUpper() == "ALL")
+                                //{
+                                //    //id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                //    id = modelList1.Max(x=>x.imid);
+                                //}
+                                //else if (actionstatus.ToUpper() == "SHORTLIST")
+                                //{
+                                //    //modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
+                                //    //id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                //    id = modelList1.Max(x => x.imid);
+
+                                //}
+                                //else if (actionstatus.ToUpper() == "INTRESTED")
+                                //{
+                                //    modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
+                                //    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                //}
+                                //else if (actionstatus.ToUpper() == "ACCEPT")
+                                //{
+                                //    modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Accepted").ToList();
+                                //    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                //}
+                            }
+                            //model = _meetingService.GetMeetingbyid(id, emailId);
+                            if (model == null)
+                            {
+                                model = new MeetingVM();
+                                ViewBag.ResultStatus = "VideoNotPresent";
+                                return View(model);
+
+                            }
+
                         }
                         else if (profileName == "ExternalUser")
                         {
@@ -517,11 +570,29 @@ namespace Risebird.Web.Controllers
                             {
                                 id = modelList1.OrderByDescending(x => x.SharedOn).Select(x => x.imid).FirstOrDefault();
                             }
+                            model = _meetingService.GetMeetingbyid(id, emailId);
+                            if (model == null)
+                            {
+                                model = new MeetingVM();
+                                ViewBag.ResultStatus = "VideoNotPresent";
+                                return View(model);
+
+                            }
                         }
                         else
                         {
-                            modelList1 = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
+                            model = _meetingService.GetMeetingbyid(id, emailId);
+                            if (model == null)
+                            {
+                                model = new MeetingVM();
+                                ViewBag.ResultStatus = "VideoNotPresent";
+                                return View(model);
+
+                            }
+                            //modelList1 = await _meetingService.GetRiseTubeMeetings(0, profileName, emailId);
+                            modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(0, emailId, model.JDTiltle.Split("|")[0]);
                         }
+
                         //Start:Save View counts of vedio
                         if (HttpContext.Session.GetString("UserLogedIn") != null)
                         {
@@ -564,23 +635,27 @@ namespace Risebird.Web.Controllers
                         }
                         //End:Save View counts of vedio
 
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+                        //MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
 
-                        if (model == null)
-                        {
-                            model = new MeetingVM();
-                            ViewBag.ResultStatus = "VideoNotPresent";
-                            return View(model);
+                        //if (model == null)
+                        //{
+                        //    model = new MeetingVM();
+                        //    ViewBag.ResultStatus = "VideoNotPresent";
+                        //    return View(model);
 
-                        }
+                        //}
                         if (profileName == "ExternalUser")
                         {
                             modelList1 = modelList1.OrderByDescending(x => x.interviewDate).ToList();
                         }
-                        else
+                        else if(profileName=="CuratedUser")
                         {
                             modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
                         }
+                        //else
+                        //{
+                        //    modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
+                        //}
                         modelList1 = modelList1.Select(x =>
                         {
                             x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
@@ -2190,15 +2265,15 @@ namespace Risebird.Web.Controllers
                     var modelList = new List<MeetingVM>();
 
 
-                    var dataResult = await _meetingService.GetSharedRiseTubeMeetings();
-                    modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                    modelList = await _meetingService.GetSharedRiseTubeMeetings();
+                    //modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
 
-                    ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
-                    ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
-                    ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
-                    ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
-                    ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
-                    ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
+                    //ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+                    //ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+                    //ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+                    //ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+                    //ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+                    //ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
 
                     ViewBag.NextLevelApprovalStatusList =
                         from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
@@ -2224,7 +2299,7 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Select(x =>
                         {
                             x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty;
-                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            //x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
 
@@ -2259,6 +2334,12 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
+                        ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+                        ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+                        ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+                        ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+                        ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+                        ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
                         modelList = modelList.Where(x => x.CandidateAvailable == "Available").ToList();
                     }
 
@@ -2356,8 +2437,8 @@ namespace Risebird.Web.Controllers
                         HttpContext.Session.SetString("RiseTubefilters", JsonConvert.SerializeObject(filter));
                     }
                     var modelList = new List<MeetingVM>();
-                    var dataResult = await _meetingService.GetSharedRiseTubeMeetings();
-                    modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                    modelList = await _meetingService.GetSharedRiseTubeMeetings();
+                    //modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();

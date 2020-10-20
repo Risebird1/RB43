@@ -129,6 +129,79 @@ namespace Risebird.Repository
             return null;
         }
 
+
+        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null)
+        {
+            try
+            {
+                if(profileName!=null && profileName =="CuratedUser")
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@Emailid", Emailid);
+                        parameters.Add("@JDpattern", JDpattern);
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByJDforCuratedUser", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    }
+                }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@clientid", clientId);
+                        parameters.Add("@Emailid", Emailid);
+                        parameters.Add("@JDpattern", JDpattern);
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsByJD", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    }
+                }
+                
+                
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsForCuratedUserByIRF(string EmailId, string actionStatus, int irfId)
+        {
+            try
+            {
+                //if (profile == "CuratedUser" || IsClientCurated)
+                //{
+
+                //}
+                EmailId = EmailId.Replace("\"", "");
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", EmailId);
+                    parameters.Add("@actionStatus", actionStatus);
+                    parameters.Add("@irfId", irfId);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForCuratedUserByIRF", parameters,
+                             commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
         public async Task<IEnumerable<MeetingVM>> GetCPMeetings(int clientId, string profile, string Emailid)
         {
             try
