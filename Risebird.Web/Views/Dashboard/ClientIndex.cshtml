@@ -438,49 +438,6 @@
 
 </script>
 
-@*<script>
-        function getInterviewStatus() {
-            var date = document.getElementById('statusTrackingDate').value;
-            $.ajax({
-                url: '/Dashboard/GetDateWiseInterviewStatus',
-                data: { 'date': date },
-                success: function (data) {
-                    $('#statusTrackingId').html('');
-                    $('#statusTrackingId').html(data);
-
-
-                }
-            });
-        }
-
-        function getInterviewSlots() {
-            var date = document.getElementById('interviewSlotsDate').value;
-            $.ajax({
-                url: '/Dashboard/GetDateWiseMeetingsSlots',
-                data: { 'date': date },
-                success: function (data) {
-                    $('#slotsId').html('');
-                    $('#slotsId').html(data);
-
-
-                }
-            });
-        }
-
-        function getIRFProgress() {
-            var date = document.getElementById('ProgressDate_Date').value;
-            $.ajax({
-                url: '/Dashboard/GetDateWiseIRFProgress',
-                data: { 'date': date },
-                success: function (data) {
-                    $('#progressTableId').html('');
-                    $('#progressTableId').html(data);
-
-
-                }
-            });
-        }
-    </script>*@
 
 <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>

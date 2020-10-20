@@ -10,7 +10,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
-    string endDte = String.Empty;
+    string endDte = String.Empty;/***/
     string[] primarySkills = new string[] { };
     string[] ClientHR = new string[] { };
     string[] ClientName = new string[] { };
@@ -102,11 +102,7 @@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Risetube", actMethod ="SharedIndex" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
                         </button>
-                        @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
-
-                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                <div class="mdc-button__ripple"></div>
-                            </button>*@
+                      
                     </div>
                 </div>
             </div>
@@ -458,10 +454,6 @@
 
 
             else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-
-
-
-
 
         });
 

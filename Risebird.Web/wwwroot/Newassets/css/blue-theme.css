@@ -90,8 +90,11 @@ input [type='radio']:checked:after {
 .qc-feedback .mdc-form-field > label, .qc-feedback label {
     color: #000;
 }
-
-.select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
+.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .modal .select2-container--default .select2-selection--multiple {
+    background-color: white!important;
+    border-bottom: 1px solid #aaa !important;
+}
+    .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
     background-color: whitesmoke !important;
     border-bottom: 1px solid #aaa !important;
 }
@@ -416,8 +419,12 @@ input[type="radio"]:checked {
     border-right: 7px solid white !important;
     border-left: 7px solid white !important;
 }
-@media only screen and (max-width: 767px) {
+.jd-title [data-tooltip]:after {
+    border-right: 5px solid white !important;
+    border-left: 5px solid white !important;
+}
 
+@media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;
         float: left;

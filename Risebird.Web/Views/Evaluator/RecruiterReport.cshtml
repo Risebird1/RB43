@@ -46,9 +46,7 @@
     }
 </style>
 
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
 
 <div class="main-panel" id="main-panel">
 
@@ -518,7 +516,7 @@
                                                                         @Model.CandidateAudioCollection[i].AudioFileLink.Split('/').Last()
                                                                     </a>
                                                                 </td>
-                                                               
+
 
                                                                 <td>
                                                                     <audio src='@Model.CandidateAudioCollection[i].AudioFileLink' controls></audio>
@@ -582,13 +580,13 @@
         <!-- end row -->
 
     </div>
-    
+
 </div>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 
 
-
-@*<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>*@
 <script>
     function getPDF() {
 
