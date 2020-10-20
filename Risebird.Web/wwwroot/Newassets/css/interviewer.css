@@ -343,7 +343,7 @@ table {
 
 [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
+    background-size: 5% !important;
     padding:10px!important;
 }
 
@@ -744,13 +744,16 @@ table {
 .assessment-grp {
     font-size: 20px !important;
     margin-bottom: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
 }
+ 
     .fa-spinner {
-    font-size: 18px;
-    position: relative;
-    top: 6px;
-    left: 4px;
-}
+        font-size: 18px;
+        position: relative;
+        top: 6px;
+        left: 4px;
+    }
 
 .webkitEnabled {
     -webkit-appearance: menulist;

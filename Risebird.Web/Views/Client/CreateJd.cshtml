@@ -23,9 +23,20 @@
         jQuery("#fillter_ClientEmail").select2({ multiple: true });
     });
 
-    
+</script>
+
+<script>
+    $(".join-time").each(function () {
+        if ($(this).text().length > 5) {
+            $(this).text($(this).text().substr(0, 5) + "...")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
 
 
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
 </script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -124,8 +135,8 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupName"> Assessment Group </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple" >
-                                                              
+                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple">
+
                                                                     @foreach (var item in Model._clientjd.Select(x => x.AssessmentGroupName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -142,7 +153,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientEmail"> Client </label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="fillter_ClientEmail" name="fillter.ClientEmail" class="form-control multiselect" multiple="multiple">
-                                                               
+
                                                                     @foreach (var item in Model._clientjd.Select(x => x.ClientEmail).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -180,7 +191,15 @@
                                             <div class="card-header">
                                                 <div class="row">
                                                     <div class=" col-md-9 col-sm-9 first">
-                                                        <h6 class="assessment-grp"> @item.JDTitle </h6>
+
+
+                                                        @if (@item.JDTitle.Length > 5)
+                                                        {
+                                                            <a style="text-decoration:none;" href="#" data-tooltip=" @item.JDTitle"> <span class="join-time  assessment-grp"> @item.JDTitle </span></a>}
+
+                                                        else
+                                                        {
+                                                            <h6 class="assessment-grp"> @item.JDTitle </h6>}
                                                     </div>
 
                                                     <div class="col-md-3 col-sm-3 card-header-buttons action text-right">
