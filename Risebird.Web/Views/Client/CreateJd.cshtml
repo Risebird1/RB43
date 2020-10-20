@@ -23,20 +23,9 @@
         jQuery("#fillter_ClientEmail").select2({ multiple: true });
     });
 
-</script>
-
-<script>
-    $(".join-time").each(function () {
-        if ($(this).text().length > 5) {
-            $(this).text($(this).text().substr(0, 5) + "...")
-
-            $('[role="data-tooltip"]').css("visibility", "visible");
-
-        }
 
 
-        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-    });
+
 </script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -190,19 +179,28 @@
                                         <div class="card-content-holder border card-blue">
                                             <div class="card-header">
                                                 <div class="row">
-                                                    <div class=" col-md-9 col-sm-9 first">
+                                                    <div class=" col-md-7 col-sm-7 first">
+                                                       
 
 
-                                                        @if (@item.JDTitle.Length > 5)
+
+                                                        @if (@item.JDTitle.Length > 15)
                                                         {
-                                                            <a style="text-decoration:none;" href="#" data-tooltip=" @item.JDTitle"> <span class="join-time  assessment-grp"> @item.JDTitle </span></a>}
+                                                            <a style="text-decoration:none;" href="#" data-tooltip=" @item.JDTitle"> <span class="candidate-name  assessment-grp"> @item.JDTitle </span></a>}
 
                                                         else
                                                         {
                                                             <h6 class="assessment-grp"> @item.JDTitle </h6>}
+
                                                     </div>
 
-                                                    <div class="col-md-3 col-sm-3 card-header-buttons action text-right">
+                                                    <div class="col-md-5 col-sm-5 card-header-buttons action text-right">
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                            <span onclick="javascript:EditJD('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute priority" aria-label="Candidate JD Score Priority">
+                                                            <span onclick="javascript:CandidateJdScorePriority('@item.id');" title="Candidate Curated Score Priority" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M14 5h8v2h-8zm0 5.5h8v2h-8zm0 5.5h8v2h-8zM2 11.5C2 15.08 4.92 18 8.5 18H9v2l3-3-3-3v2h-.5C6.02 16 4 13.98 4 11.5S6.02 7 8.5 7H12V5H8.5C4.92 5 2 7.92 2 11.5z" /></svg></span>
+                                                        </button>
                                                         @if (!Model._clientjddetails.isClientUser)
                                                         {
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Candidate JD Score">
@@ -222,22 +220,33 @@
                                                             <div class="client-field"> Start Date:<span style="font-weight:normal">@item.StartDate</span></div>
                                                         </div>
                                                         <br />
-                                                        <div class="three" style="margin-bottom:10px;"> <span><b>End Date:</b></span>@item.EndDate</div>
-
-                                                        <div class="four" style="margin-bottom:10px;">
-                                                            <span><b>JD:</b></span> @item.JobDescription
-                                                        </div>
+                                                        <div class="three"> <span><b>End Date:</b></span>@item.EndDate</div>
+                                                        @if (!Model._clientjddetails.isClientUser)
+                                                        {
+                                                            <div>
+                                                                <span><b>Client:</b></span> @item.Name
+                                                            </div>
+                                                        }
                                                         <div>
                                                             <span><b>Assessment Group:</b></span> @item.AssessmentGroupName
                                                         </div>
                                                         <div>
+                                                            <span><b>JD Link:</b></span>
                                                             @if (!String.IsNullOrEmpty(item.Filelink))
                                                             {
-
-                                                                <span><b>File Link:</b></span> <a href="@item.Filelink" target="_blank">Click Here</a>
-
+                                                                <a href="@item.Filelink" target="_blank">Click Here</a>
                                                             }
                                                         </div>
+                                                        <div>
+                                                            <span><b>Role:</b></span> @item.JobRole
+                                                        </div>
+                                                        <div>
+                                                            <span><b>Salary Range:</b></span> @item.JDBudget
+                                                        </div>
+                                                        <div>
+                                                            <span><b>Location:</b></span> @item.Location
+                                                        </div>
+
                                                     </div>
                                                 </div>
 
@@ -313,7 +322,8 @@
                 {
                     <div>
                         @Html.HiddenFor(m => m._clientjddetails.ClientId)
-                        <div style="width:100%;height: 350px;">
+                        @Html.HiddenFor(m => m._clientjddetails.id)
+                        <div style="width:100%;height: 620px;">
                             <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                 <div class="form-group">
                                     <label class="control-label  desp-label" for="StartDate"> Start Date </label>
@@ -343,18 +353,53 @@
                                 @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.File, new { type = "file", @class = "form-control btn" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.File, "", new { @class = "text-danger" })
+
+                                @Html.LabelFor(model => model._clientjddetails.Filelink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @*<input type="radio" id="rdupload" name="jdfile" value="Upload" checked onclick="Changefilesystem('Upload')">Uplaod
+                                         <input type="radio" id="rdurl" name="jdfile" value="Url" onclick="Changefilesystem('Url')">File Url
+                                    @Html.TextBoxFor(m => m._clientjddetails.JdFile, new { type = "file", @class = "form-control btn", @accept = ".pdf,.docx" })
+                                         @Html.ValidationMessageFor(model => model._clientjddetails.JdFile, "", new { @class = "text-danger" })
+                                         @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control btn", @style = "display:none" })
+                                         @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })*@
+                                @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.JDBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.JDBudget, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.JDBudget, "", new { @class = "text-danger" })
                             </div>
                             @if (!Model._clientjddetails.isClientUser)
                             {
+                                <div style="clear:both"></div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                     @Html.TextBoxFor(m => m._clientjddetails.ClientEmail, new { @class = "form-control" })
                                     @Html.ValidationMessageFor(model => model._clientjddetails.ClientEmail, "", new { @class = "text-danger" })
                                 </div>
+                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.DropDownListFor(m => m._clientjddetails.Heuristicsscore, Model._clientjddetails.Heuristicsscorelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.Heuristicsscore, "", new { @class = "text-danger" })
+                                </div>
                             }
+
+                            <div style="clear:both"></div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.Location, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.Location, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.JobRole, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.JobRole, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.JobRole, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                @Html.LabelFor(model => model._clientjddetails.ClientUrl, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                @Html.TextBoxFor(m => m._clientjddetails.ClientUrl, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model._clientjddetails.ClientUrl, "", new { @class = "text-danger" })
+                            </div>
                             <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
                                 @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                 @Html.TextBoxFor(m => m._clientjddetails.JobDescription, htmlAttributes: new { @class = "form-control" })
@@ -365,11 +410,12 @@
                     </div>
 
                     <div class="col-md-12 col-sm-12 clearfix">
-                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                            <font style="font-size:12px;">Create</font>
-                        </button>
+
                         <button type="button" onclick="closeCallPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
                             <font style="font-size:12px;">Close</font>
+                        </button>
+                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                            <font style="font-size:12px;">Create</font>
                         </button>
                     </div>
                 }
@@ -400,6 +446,8 @@
         maxHeight: 200
     });
     function CreateJd() {
+        //var url = '/Client/AddCreateJd';
+        //window.location.href = url;
         var model = document.getElementById("commentsmodel");
         model.style.display = "block";
     }
@@ -425,5 +473,66 @@
     function CandidateJdScore(id) {
         var url = '/Client/CandidateJDScore?id=' + id;
         window.location.href = url;
-    };
+    }
+    function CandidateJdScorePriority(id) {
+        var url = '/Client/CandidateJDScorePriority?id=' + id;
+        window.location.href = url;
+    }
+
+    function EditJD(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Client/EditJd",
+            data: { assessmentid: id },
+            success: function (data) {
+                $("#zclientjddetails_id").val(data.id);
+                $("#zclientjddetails_StartDate").val(data.startDatestring);
+                $("#zclientjddetails_EndDate").val(data.endDatestring);
+                $("#zclientjddetails_JDTitle").val(data.jdTitle);
+                $("#zclientjddetails_JDBudget").val(data.jdBudget);
+                $("#zclientjddetails_Location").val(data.location);
+                $("#zclientjddetails_JobRole").val(data.jobRole);
+                $("#zclientjddetails_ClientUrl").val(data.clientUrl);
+                $("#zclientjddetails_JobDescription").val(data.jobDescription);
+                $("#zclientjddetails_ClientEmail").val(data.clientEmail);
+                document.getElementById("zclientjddetails_ClientEmail").disabled = true;
+                $("#zclientjddetails_AssessmentGroup").val(data.assessmentGroup);
+                $("#zclientjddetails_Heuristicsscore").val(data.heuristicsscore);
+                $("#zclientjddetails_Filelink").val(data.Filelink);
+                //$("#rdurl").prop("checked", true);
+                //Changefilesystem('Url');
+                CreateJd();
+            }
+        });
+    }
+    function Changefilesystem(tag) {
+        if (tag == "Upload") {
+            var filesystem = document.getElementById("zclientjddetails_Filelink");
+            var files = document.getElementById("zclientjddetails_JdFile");
+            files.style.display = "block";
+            filesystem.style.display = "none";
+        }
+        else {
+            var filesystem = document.getElementById("zclientjddetails_Filelink");
+            var files = document.getElementById("zclientjddetails_JdFile");
+            filesystem.style.display = "block";
+            files.style.display = "none";
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+
+        $(".candidate-name").each(function () {
+            if ($(this).text().length > 15) {
+                $(this).text($(this).text().substr(0, 15) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+    })
 </script>
