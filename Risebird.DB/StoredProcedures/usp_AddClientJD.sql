@@ -36,11 +36,10 @@ begin
 	 EndDate=@EndDate,
 	 JobDescription=@JobDescription,
 	 AssessmentGroupid=@AssessmentGroup,
-	 CreatedBy=@CreatedBy,
 	 Craetedon=Getdate(),
-	 ClientId=@ClientId,JDTitle=@JDTitle,Filelink=@Filelink ,Heuristicsscore=@Heuristicsscore,JDBudget=@JDBudget,
+	 JDTitle=@JDTitle,Filelink=@Filelink ,Heuristicsscore=@Heuristicsscore,JDBudget=@JDBudget,
 	 JobRole=@JobRole,Location=@Location,ClientUrl=@ClientUrl
-	
+	Where id=@id
 	 end
 End   
 

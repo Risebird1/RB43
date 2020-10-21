@@ -23,7 +23,7 @@
         jQuery("#fillter_ClientEmail").select2({ multiple: true });
     });
 
-    
+
 
 
 </script>
@@ -124,8 +124,8 @@
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupName"> Assessment Group </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple" >
-                                                              
+                                                                <select id="fillter_AssessmentGroupName" name="fillter.AssessmentGroupName" class="form-control multiselect" multiple="multiple">
+
                                                                     @foreach (var item in Model._clientjd.Select(x => x.AssessmentGroupName).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -142,7 +142,7 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientEmail"> Client </label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="fillter_ClientEmail" name="fillter.ClientEmail" class="form-control multiselect" multiple="multiple">
-                                                               
+
                                                                     @foreach (var item in Model._clientjd.Select(x => x.ClientEmail).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
@@ -403,9 +403,18 @@
                         <button type="button" onclick="closeCallPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
                             <font style="font-size:12px;">Close</font>
                         </button>
-                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                            <font style="font-size:12px;">Create</font>
-                        </button>
+                        @if (Model._clientjddetails.iscreated)
+                        {
+                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                <font style="font-size:12px;">Create</font>
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                <font style="font-size:12px;">Edit</font>
+                            </button>
+                        }
                     </div>
                 }
 
@@ -467,7 +476,7 @@
         var url = '/Client/CandidateJDScorePriority?id=' + id;
         window.location.href = url;
     }
-    
+
     function EditJD(id) {
         $.ajax({
             type: "GET",
