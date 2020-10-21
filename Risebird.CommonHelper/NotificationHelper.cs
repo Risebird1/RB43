@@ -826,13 +826,13 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string SendAssessmentNotification(Mail model,string emailid)
+        public string SendAssessmentNotification(Mail model, string emailid)
         {
             try
             {
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                
+
                 var toMails = model.TO.Split(";");
                 foreach (var mails in toMails)
                 {
@@ -857,7 +857,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string SendAssessmentNotificationComments(Mail model, string assessment,string comments)
+        public string SendAssessmentNotificationComments(Mail model, string assessment, string comments)
         {
             try
             {
@@ -869,7 +869,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
-                object[] parameters = new object[] { assessment,comments };
+                object[] parameters = new object[] { assessment, comments };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "AssessmentNotificationComment.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -897,7 +897,7 @@ namespace Risebird.CommonHelper
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 mailMessage.To.Add(new MailAddress(obj.PerformedBy, "Risebird"));
-                
+
                 object[] parameters = new object[] { obj.Name };
                 mailMessage.Subject = "Virtual Machine Running!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "StopVMNotifier.html");
@@ -918,7 +918,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string CandidateJDScoreNotification(Mail model, int candidateCount,string JDName)
+        public string CandidateJDScoreNotification(Mail model, int candidateCount, string JDName)
         {
             try
             {
@@ -932,6 +932,36 @@ namespace Risebird.CommonHelper
                 }
                 object[] parameters = new object[] { candidateCount, JDName };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateJDScoreNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+        public string SurveyNotification(Mail model, string UrlDetails)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { UrlDetails };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "SurveyNotification.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 mailMessage.Subject = model.Subject;

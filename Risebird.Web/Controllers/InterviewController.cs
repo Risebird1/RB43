@@ -3740,8 +3740,7 @@ namespace Risebird.Web.Controllers
                     {
                         isAdminHR = true;
                     }
-                    else if ((profileName == "Interviewer" ||
-                                                     profileName == "Quality Controller"))
+                    else if ((profileName == "Interviewer" || profileName == "Quality Controller"))
                     {
                         isInterviewer = true;
                     }
@@ -3926,10 +3925,19 @@ namespace Risebird.Web.Controllers
 
 
                         }
-
-
                         if (_meetingService.AddInterviewReport(model).Result)
                         {
+                            //if (model.MeetingStatus == 4)
+                            //{
+                            //    //send mail to candiate or interviewer
+                            //    string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + model.InterviewId;
+                            //    Mail _mail = new Mail
+                            //    {
+                            //        TO = model.CandidateEmail,
+                            //        Subject = "Risebird: Feedback form"
+                            //    };
+                            //    var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                            //}
                             TempData["SuccessErrorMessageInterview"] = "Report saved Successfully";
                             if (profileName == "Admin" || profileName == "HR")
                             {
