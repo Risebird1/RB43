@@ -17,42 +17,7 @@
 
 
 
-<script>
-    function dropDwnToolTips(id) {
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value;
-        }
-    }
 
-
-
-
-
-</script>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $('.dropques option').wrap('<span>');
-
-        var selectedOption = $('.dropques').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-    $(document).ready(function () {
-        $('.droprating option').wrap('<span>');
-
-        var selectedOption = $('.droprating').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-</script>
 <div class="main-panel" id="main-panel">
 
     <!-- Navbar -->
@@ -249,8 +214,7 @@
                                                             <div id="words"></div>
                                                         </div>
                                                     </div>
-                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                    @*@Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })*@
+
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
@@ -612,11 +576,6 @@
                                                                 <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
 
-
-
-                                                                <!-- <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                                                </button>-->
 
 
 
@@ -1262,7 +1221,7 @@
                                                         </td>
                                                         <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                            @*<input class="form-control text-box single-line" id="Proctoring_LinkedInPhotoVerification" name="Proctoring.LinkedInPhotoVerification" type="number" min="0" value="0">*@
+
 
                                                         </td>
 
@@ -1341,12 +1300,46 @@
 
 </div>
 
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
 
+
+
+
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () 
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-@*<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>*@
+
 
 <script>
     function getPDF() {

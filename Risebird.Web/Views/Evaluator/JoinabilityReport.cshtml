@@ -46,9 +46,7 @@
     }
 </style>
 
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
 
 <div class="main-panel" id="main-panel">
 
@@ -502,7 +500,7 @@
                                             <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
                                                 <thead>
                                                     <tr>
-                                                       <th width="30%">File</th>                                                        
+                                                        <th width="30%">File</th>
                                                         <th width="35%">Play</th>
                                                     </tr>
                                                 </thead>
@@ -518,7 +516,7 @@
                                                                         @Model.CandidateAudioCollection[i].AudioFileLink.Split('/').Last()
                                                                     </a>
                                                                 </td>
-                                                               
+
                                                                 <td>
                                                                     <audio src='@Model.CandidateAudioCollection[i].AudioFileLink' controls></audio>
                                                                 </td>
@@ -557,7 +555,7 @@
                                             {
                                                 <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
                                             }
-                                          
+
                                         </div>
                                     </div>
                                 </div>
@@ -580,7 +578,7 @@
         <!-- end row -->
 
     </div>
-    
+
 </div>
 
 
@@ -637,13 +635,13 @@
         }
         else if (skillName == 'TechSkillEvaluatorReportCollection') {
              index = id.charAt(35);
-        }       
+        }
         else if (skillName == 'SkillGeneralEvaluatorReportCollection') {
             index = id.charAt(38);
         }
         else
              index = id.charAt(55);
-        
+
         //var skillName = "JoinabilityHRReportCollection";
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
         var required = $("#" + reqLevelId).val();
@@ -792,7 +790,9 @@
     }
 
 </script>
-
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>

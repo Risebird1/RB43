@@ -5,21 +5,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $(".selectpicker").select2();
-    });
-
-
-</script>
-
-
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -154,7 +144,7 @@
                                         @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
-                                       
+
 
                                         @Html.RadioButtonFor(m => m.Type, "B2B") <span class="radio-field">B2B</span>
                                         @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
@@ -168,7 +158,7 @@
                                         @Html.DropDownListFor(m => m.Heuristicsscore, (SelectList)ViewBag.Heuristicsscorelist, new { @class = "form-control select-css " })
 
                                         @Html.ValidationMessageFor(model => model.Heuristicsscore, "", new { @class = "text-danger" })
-                                     
+
 
                                     </div>
                                 </div>
@@ -366,7 +356,7 @@
                                             }
                                         }
                                     </div>
-                                  
+
                                 </div>
                             </div>
                             <div class="row">
@@ -1090,20 +1080,23 @@
 
 
 </div>
+
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".selectpicker").select2();
+    });
+
+
+</script>
 <script>
-    //$(document).ready(function () {
 
-
-    //});
     var irfName = document.getElementById("IRFId").value;
     function IRFNameChanged() {
 
         var name = document.getElementById("IRFId").value;
-        //var result = checkUniqueness(name);
-        //if (result == false);
-        //{
-        //    return;
-        //}
+      
         var element = document.getElementById("btnUploadSaveAs");
 
         if (name != irfName) {
@@ -1126,7 +1119,7 @@
     $(document).ready(function () {
 
         var inputs = document.getElementsByTagName("input");
-        for (i = 0; i <= inputs.length-1; i++) {
+        for (i = 0; i <= inputs.length - 1; i++) {
             inputs[i].addEventListener("input", function () {
                 document.getElementById("btnUpload").disabled = false;
             });
@@ -1157,7 +1150,7 @@
         }
 
     }
-      function RadioCompanyChanged(val) {
+    function RadioCompanyChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadcdDiv").style.display = "block";
             document.getElementById("linkcdDiv").style.display = "none";
@@ -1459,10 +1452,7 @@
 
         var table = document.getElementById("SkillTable");
         var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Tech Skills.");
-        //    return;
-        //}
+       
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1795,7 +1785,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-        //document.getElementById("btnUpload").disabled = false;
+ 
 
     }
 
