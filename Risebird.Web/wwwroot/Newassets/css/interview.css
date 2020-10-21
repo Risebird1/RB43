@@ -369,47 +369,36 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
-
-
-
-
 [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
-    background-size: 7% !important;
-}
-
-    [type="date"]::-webkit-inner-spin-button {
-        display: none;
-    }
-
-    [type="date"]::-webkit-calendar-picker-indicator {
-        opacity: 0;
-    }
-
-
-[type="datetime-local"] {
-   
     background-size: 5% !important;
 }
 
-    [type="datetime-local"]::-webkit-inner-spin-button {
+ [type="date"]::-webkit-inner-spin-button {
         display: none;
-    }
+ }
 
-    [type="datetime-local"]::-webkit-calendar-picker-indicator {
+ [type="date"]::-webkit-calendar-picker-indicator {
         opacity: 0;
-    }
+ }
 
+[type="datetime-local"] {
+   
+  background-size: 5% !important;
+}
 
+ [type="datetime-local"]::-webkit-inner-spin-button {
+        display: none;
+ }
 
+[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        opacity: 0;
+ }
 
 #QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
     cursor: pointer !important;
     transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
-
-
-
 
 
 .no-sort::after {

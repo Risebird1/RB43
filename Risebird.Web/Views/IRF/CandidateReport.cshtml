@@ -278,7 +278,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.HRReport.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @*ID = "droplevel",*@ @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'HRReport_JoinabilityHRReportCollection')"@*, onmouseover = "getOption(this)"*@ })
+                                                                    @Html.DropDownListFor(m => m.HRReport.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new {  @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'HRReport_JoinabilityHRReportCollection')"@*, onmouseover = "getOption(this)"*@ })
 
                                                                 </td>
                                                                 <td>
@@ -435,7 +435,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @*ID = "droplevel",*@ @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')"@*, onmouseover = "getOption(this)"*@ })
+                                                                    @Html.DropDownListFor(m => m.SkillGeneralEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new {  @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value,'SkillGeneralEvaluatorReportCollection')"@*, onmouseover = "getOption(this)"*@ })
 
                                                                 </td>
                                                                 <td>
@@ -578,11 +578,24 @@
     </div>
 
 </div>
+<script>
+    function dropDwnToolTips(id) {
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value
+        }
+    }
+
+
+</script>
+
 
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-
 
 <script>
     function getPDF() {
@@ -800,7 +813,7 @@
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
-            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY}%)";
 
             series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
@@ -848,54 +861,7 @@
 
 </script>
 
-<script>
-    function dropDwnToolTips(id) {
 
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value
-        }
-    }
-
-
-</script>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $('.dropques option').wrap('<span>');
-
-        var selectedOption = $('.dropques').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-
-    })
-
-
-
-</script>
-
-
-<script type="text/javascript">
-
-    function getOption(id) {
-        selectElement = document.querySelector('#droplevel');
-        output =
-            selectElement.options[selectElement.selectedIndex].text;
-
-
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = output
-        }
-
-
-    }
-</script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>

@@ -43,78 +43,17 @@
 
 }
 <link href="~/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css" rel="stylesheet" />
-<script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
-<script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer />
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer/>
+
 <script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
     amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
 </script>
 
-<script>
-    function dropDwnToolTips(id) {
-
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value
-        }
-    }
-
-
-</script>
-
-<script type="text/javascript">
-
-    function getOption(id) {
-        selectElement = document.querySelector('#droplevel');
-        output =
-            selectElement.options[selectElement.selectedIndex].text;
-
-
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = output
-        }
-
-
-    }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $('.dropques option').wrap('<span>');
-
-        var selectedOption = $('.dropques').find("[selected]");
-        $(selectedOption).unwrap();
-        if ('@ViewBag.ProfileName' == "CuratedUser" || '@Model.IsClientCurated' =='True' ) {
-            document.getElementsByClassName('minmaxCon')[0].style.display = "none";
-        }
-
-
-    })
-
-    $(document).ready(function () {
-        $('.droprating option').wrap('<span>');
-
-        var selectedOption = $('.droprating').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-</script>
-
-
-<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
 
@@ -487,7 +426,7 @@
                                                                 {
                                                                     @if (@Model.VideoLink.Contains(".mp4") || @Model.VideoLink.Contains(".org"))
                                                                     {
-                                                                        <video controls class="vjs-tech video-width btnvideo"   controlsList="nodownload"  autoplay >
+                                                                        <video controls class="vjs-tech video-width btnvideo" controlsList="nodownload" autoplay>
                                                                             <source src="@Model.VideoLink" type="video/mp4">"  autoplay>
                                                                             <source src="@Model.VideoLink" type="video/mp4">
                                                                         </video>
@@ -619,7 +558,7 @@
                                                                                         </span>
                                                                                         <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly "><input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
                                                                                         <span class="tooltip--right" data-tooltip="To generate public sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
-                                                                                        @*<span class="tooltip--right" data-tooltip="Create / Edit View and Share"><input type="button" class="form-control btninterest sharebtn1 edit-share" id="btnShare4" value="Create / Edit View" Shortvalue="1" /></span>*@
+                                                                                      
 
                                                                                     </div>
                                                                                 </div>
@@ -719,9 +658,9 @@
 
                                                                                                     @if (videolist.VideoLink.Contains(".mp4"))
                                                                                                     {
-                                                                                                    <video  style=" background:black!important;width:100%; height:100%;  pointer-events: none;" disablePictureInPicture controlsList="nofullscreen nodownload">
-                                                                                                        <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                                    </video>
+                                                                                                        <video style=" background:black!important;width:100%; height:100%;  pointer-events: none;" disablePictureInPicture controlsList="nofullscreen nodownload">
+                                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                                        </video>
                                                                                                     }
                                                                                                     else
                                                                                                     {
@@ -750,7 +689,7 @@
 
                                                                                                     @if (videolist.VideoLink.Contains(".mp4"))
                                                                                                     {
-                                                                                                        <video  style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                                        <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                                                         </video>
                                                                                                     }
@@ -811,7 +750,7 @@
                                                                                     <div class="left-chart">
 
                                                                                         <div class="chart-box itemchart">
-                                                                           <p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>
+                                                                                            <p class="card-text">Overall Score: <span class="toscore" id="totScore"></span></p>
                                                                                             <div class="col-lg-12 col-md-12 col-sm-12 nopad">
                                                                                                 <div id="scoreChart" style="height: 200px; width: 100%;">
 
@@ -1529,13 +1468,13 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                <div class="video-card video-card-list videosidelist"  onclick="changeVideo(@videolist.Priority)">
+                                                                                <div class="video-card video-card-list videosidelist" onclick="changeVideo(@videolist.Priority)">
                                                                                     <input type="text" hidden value="@videolist.VideoLink" id="txtvideopri_@videolist.Priority" />
                                                                                     <div class="video-card-image" id="divvideoclick_@videolist.Priority" onclick="changeVideo(@videolist.Priority)">
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video  style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                                            <video style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -1730,7 +1669,7 @@
                                                                                     @if (videolist.ThumbnailImage != null)
                                                                                     {
                                                                                         <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                                    <video controls style=" background:black!important;width:100%; height:100% "  controlsList="nodownload ">
+                                                                                    <video controls style=" background:black!important;width:100%; height:100% " controlsList="nodownload ">
                                                                                         <source src="@videolist.VideoLink" type="video/mp4">
                                                                                     </video>
                                                                                     @if (Model.IsClientCurated)
@@ -1851,7 +1790,7 @@
                                                                         @if (videolist.ThumbnailImage != null)
                                                                         {
                                                                             <img class="thumbnailimage" src="@videolist.ThumbnailImage" />}
-                                                                        <video controls style=" background:black!important;width:100%; height:100% "  disablePictureInPicture controlsList="nofullscreen nodownload ">
+                                                                        <video controls style=" background:black!important;width:100%; height:100% " disablePictureInPicture controlsList="nofullscreen nodownload ">
                                                                             <source src="@videolist.VideoLink" type="video/mp4">
                                                                         </video>
                                                                         @if (Model.IsClientCurated)
@@ -2621,7 +2560,70 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
+<script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
+<script>
+    function dropDwnToolTips(id) {
 
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+    function getOption(id) {
+        selectElement = document.querySelector('#droplevel');
+        output =
+            selectElement.options[selectElement.selectedIndex].text;
+
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = output
+        }
+
+
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+        if ('@ViewBag.ProfileName' == "CuratedUser" || '@Model.IsClientCurated' =='True' ) {
+            document.getElementsByClassName('minmaxCon')[0].style.display = "none";
+        }
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
+
+
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <script>
     function GetSentimentAnalysis(imid) {
         document.getElementById('link8').innerHTML = '';
@@ -2706,7 +2708,7 @@
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 <!-- Bootstrap core JavaScript-->
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
-<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
@@ -2935,8 +2937,8 @@
 
 <script>
 
-        window.onload = function () {
-         
+    window.onload = function () {
+
         if (localStorage.getItem('isTheaterMode') == "true") {
             getThMode();
             document.getElementById("1").value = "THEATER-MODE-OFF";
@@ -3007,27 +3009,6 @@
         document.getElementById("totScore").innerHTML = totalScore;
 
 
-        //var chart = new CanvasJS.Chart("scoreChart", {
-        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
-        //    width: 400,//in pixels
-        //    height: 200,//in pixels
-        //    animationEnabled: true,
-        //    title: {
-        //        text: "Score Chart"
-        //    },
-        //    data: [{
-        //        type: "column",
-        //        //startAngle: 60,
-        //        //innerRadius: 55,
-        //        indexLabelFontSize: 8,
-        //        indexLabel: "{label}  {y}",
-        //        toolTipContent: "<b>{label} </b>({y})",
-        //        dataPoints: arr
-
-        //    }]
-        //});
-        //chart.render();
-
         am4core.ready(function () {
 
             // Themes begin
@@ -3072,7 +3053,7 @@
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             chart.fontSize = 13;
-           
+
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -3081,7 +3062,7 @@
             });
 
 
-  
+
 
 
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
@@ -3318,17 +3299,11 @@
                 });
 
     });
-    function ResetFilter() {
-                    window.location.href = "/risetube/VideoPage/@Model.imid";
+        function ResetFilter() {
+                   // window.location.href = "/risetube/VideoPage/@Model.imid";
+            window.location.href = "/Risetube/ResetVideoPageFilter?imid=" +'@Model.imid';
 
-             @*$.ajax({
-            type: "POST",
-            url: "/Risetube/ResetVideoPageFilter",
-                 success: function (data) {
-
-                    window.location.href = "/risetube/VideoPage/@Model.imid";
-                 }
-                });*@
+          
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -3834,8 +3809,8 @@
         temp.remove();
         $('#special_text').text('Copied');
     }
-        function bindvideoDetailsData(data) {
-           
+    function bindvideoDetailsData(data) {
+
         var html = '';
         html += '<div class="table-responsive"> <table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">';
         html += '       <tr>';
