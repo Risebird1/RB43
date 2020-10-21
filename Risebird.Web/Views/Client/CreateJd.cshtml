@@ -65,7 +65,7 @@
                         <div class="mdc-button__ripple"></div>
                     </button>
 
-                    <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" style="color:#fff;"></span>Create JD</a>
+                    <a onclick="CreateJd(2)" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" style="color:#fff;"></span>Create JD</a>
                     @*<a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>*@
                 </div>
             </div>
@@ -403,18 +403,16 @@
                         <button type="button" onclick="closeCallPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
                             <font style="font-size:12px;">Close</font>
                         </button>
-                        @if (Model._clientjddetails.iscreated)
-                        {
-                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                <font style="font-size:12px;">Create</font>
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                <font style="font-size:12px;">Edit</font>
-                            </button>
-                        }
+
+                        <button type="submit" id="btncreate" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                            <font style="font-size:12px;">Create</font>
+                        </button>
+
+
+                        <button type="submit" id="btnedit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;display:none">
+                            <font style="font-size:12px;">Edit</font>
+                        </button>
+
                     </div>
                 }
 
@@ -443,9 +441,13 @@
         buttonWidth: '100%',
         maxHeight: 200
     });
-    function CreateJd() {
+    function CreateJd(id) {
         //var url = '/Client/AddCreateJd';
         //window.location.href = url;
+        if (id == 2) {
+            document.getElementById('btncreate').style.display = 'block';
+            document.getElementById('btnedit').style.display = 'none';
+        }
         var model = document.getElementById("commentsmodel");
         model.style.display = "block";
     }
@@ -492,14 +494,16 @@
                 $("#zclientjddetails_JobRole").val(data.jobRole);
                 $("#zclientjddetails_ClientUrl").val(data.clientUrl);
                 $("#zclientjddetails_JobDescription").val(data.jobDescription);
-                $("#zclientjddetails_ClientEmail").val(data.clientEmail);
-                document.getElementById("zclientjddetails_ClientEmail").disabled = true;
-                $("#zclientjddetails_AssessmentGroup").val(data.assessmentGroup);
-                $("#zclientjddetails_Heuristicsscore").val(data.heuristicsscore);
+                if (data.isClientUser == false) {
+                    $("#zclientjddetails_ClientEmail").val(data.clientEmail);
+                    document.getElementById("zclientjddetails_ClientEmail").disabled = true;
+                    $("#zclientjddetails_Heuristicsscore").val(data.heuristicsscore);
+                }
+                document.getElementById("zclientjddetails_AssessmentGroup").value = data.assessmentGroup;
                 $("#zclientjddetails_Filelink").val(data.Filelink);
-                //$("#rdurl").prop("checked", true);
-                //Changefilesystem('Url');
-                CreateJd();
+                document.getElementById('btncreate').style.display = 'none';
+                document.getElementById('btnedit').style.display = 'block';
+                CreateJd(1);
             }
         });
     }
