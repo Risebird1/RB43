@@ -26,7 +26,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(SurveyVM model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View("Index", model);
             }
