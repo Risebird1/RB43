@@ -288,6 +288,8 @@ namespace Risebird.Web.Controllers
                     //Fetch ClientJds
                     var result = _clientService.FetchClientJd(ClientId);
                     var resultset = _interviewerService.FetchAssessmentGroups();
+                    fillters.fillter.AssessmentGroupName = fillters.fillter.AssessmentGroupName == null ? fillters.fillter.AssessmentGroupName = result.Select(x => x.AssessmentGroupName).ToArray() : fillters.fillter.AssessmentGroupName = fillters.fillter.AssessmentGroupName;
+                    fillters.fillter.ClientEmail = fillters.fillter.ClientEmail == null ? fillters.fillter.ClientEmail = result.Select(x => x.ClientEmail).ToArray() : fillters.fillter.ClientEmail = fillters.fillter.ClientEmail;
                     result = result.Where(c =>
                            (fillters.fillter.AssessmentGroupName.Count() > 0 ? fillters.fillter.AssessmentGroupName.Contains(c.AssessmentGroupName) : c.AssessmentGroupName == string.Empty)
                           && (fillters.fillter.ClientEmail.Count() > 0 ? fillters.fillter.ClientEmail.Contains(c.ClientEmail) : c.ClientEmail == string.Empty)).ToList();
@@ -296,6 +298,9 @@ namespace Risebird.Web.Controllers
                     model._clientjd = result.ToList();
                     model._clientjddetails = new ClientJdVM();
                     model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     model._clientjddetails.ClientId = ClientId;
                     model._clientjddetails.isClientUser = isClientUser;
                     model._clientjddetails.iscreated = true;
@@ -483,7 +488,7 @@ namespace Risebird.Web.Controllers
                     //model._clientjddetails = new ClientJdVM();
                     //model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
                     //var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                      //               select new { ID = (int)s, Name = s.GetDescription() };
+                    //               select new { ID = (int)s, Name = s.GetDescription() };
                     //model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     //model._clientjddetails.ClientId = ClientId;
                     //model._clientjddetails.isClientUser = isClientUser;
