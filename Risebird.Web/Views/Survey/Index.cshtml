@@ -41,6 +41,8 @@
                 color: #fc0;
             }
             .card-title-space{margin:20px 0px; float:right}
+
+        .mb10{margin-bottom:10px}
     </style>
 </head>
 <body>
@@ -61,11 +63,11 @@
                 @Html.HiddenFor(m => m.interviewid)
                 @Html.HiddenFor(m => m.Type)
                 <p>
-                    @Html.LabelFor(model => model.EmailAddress)
+                    <b> @Html.LabelFor(model => model.EmailAddress)</b>
                     @Html.TextBoxFor(m => m.EmailAddress, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
                 </p>
-                <p>1. Overall, how would you rate the video interview experience?</p>
+                <p><b>1. Overall, how would you rate the video interview experience?</b></p>
                 @Html.HiddenFor(m => m.Question1)
                 <div class="star-rating">
                     <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
@@ -81,7 +83,7 @@
                 </div>
                 @Html.ValidationMessageFor(model => model.Question1, "", new { @class = "text-danger" })
 
-                <p>2. How would you rate the evaluation process of interviewer?</p>
+                <p><b>2. How would you rate the evaluation process of interviewer?</b></p>
                 @Html.HiddenFor(m => m.Question2)
                 <div class="star-rating">
                     <input type="radio" id="Q2_5" name="rating2" value="5" onclick="ChangeQuestion2(5)" />
@@ -96,22 +98,22 @@
                     <label for="Q2_1" class="star">&#9733;</label>
                 </div>
                 @Html.ValidationMessageFor(model => model.Question2, "", new { @class = "text-danger" })
-                <p>3. Given a chance would you like to reappear for the video interview?</p>
+                <p><b>3. Given a chance would you like to reappear for the video interview? </b></p>
                 <div class="col-md-12">@Html.RadioButtonFor(m => m.Question3, "1") No, I am satisfied with the interviewer and evaluation process</div>
                 <div class="col-md-12">@Html.RadioButtonFor(m => m.Question3, "2") Yes, I didn't get a fair chance and I can do better</div>
                 @Html.ValidationMessageFor(model => model.Question3, "", new { @class = "text-danger" })
                 <p>&nbsp;</p>
-                <p>4. What did you like about the video interviews event?</p>
+                <p><b>4. What did you like about the video interviews event?</b></p>
                 <p>
                     @Html.TextAreaFor(m => m.Question4, new { @class = "form-control" })
                 </p>
                 @Html.ValidationMessageFor(model => model.Question4, "", new { @class = "text-danger" })
-                <p>5. What did you dislike about the video interviews event?</p>
+                <p><b>5. What did you dislike about the video interviews event? </b></p>
                 <p>
                     @Html.TextAreaFor(m => m.Question5, new { @class = "form-control" })
                 </p>
                 @Html.ValidationMessageFor(model => model.Question5, "", new { @class = "text-danger" })
-                <p>6. How friendly was the Risebird staff from scheduling to completion of interviews ?</p>
+                <p><b>6. How friendly was the Risebird staff from scheduling to completion of interviews ? </b></p>
                 @Html.HiddenFor(m => m.Question6)
                 <div class="star-rating">
                     <input type="radio" id="Q6_5" name="rating6" value="5" onclick="ChangeQuestion6(5)" />
@@ -126,10 +128,10 @@
                     <label for="Q6_1" class="star">&#9733;</label>
                 </div>
                 @Html.ValidationMessageFor(model => model.Question6, "", new { @class = "text-danger" })
-                <p>7. Your Details</p>
+                <p><b>7. Your Details</b></p>
                 <div>
                     @Html.LabelFor(model => model.Name)
-                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control mb10" })
                     @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
                 </div>
                 <div>
