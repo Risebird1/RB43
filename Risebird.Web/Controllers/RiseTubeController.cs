@@ -2723,7 +2723,7 @@ namespace Risebird.Web.Controllers
                         var modelList1 = new List<MeetingVM>();
 
                         var dataResult = _meetingService.GetClientJdIRFs(ClientJdId, emailId);
-                        modelList1 = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
+                        modelList1 = dataResult.ToList().OrderBy(y => y.Priority).ToList();
                         if (id == 0)
                         {
                             if (actionstatus.ToUpper() == "ALL")
@@ -2799,7 +2799,7 @@ namespace Risebird.Web.Controllers
 
                         }
 
-                       // modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
+                        // modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
 
                         modelList1 = modelList1.Select(x =>
                         {
