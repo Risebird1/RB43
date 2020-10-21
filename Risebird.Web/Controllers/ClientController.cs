@@ -252,6 +252,8 @@ namespace Risebird.Web.Controllers
                     model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     model._clientjddetails.ClientId = ClientId;
                     model._clientjddetails.isClientUser = isClientUser;
+                    model._clientjddetails.isClientUser = true;
+
                     return View(model);
                 }
                 else
@@ -296,7 +298,7 @@ namespace Risebird.Web.Controllers
                     model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
                     model._clientjddetails.ClientId = ClientId;
                     model._clientjddetails.isClientUser = isClientUser;
-
+                    model._clientjddetails.isClientUser = true;
                     return View(model);
                 }
                 else
@@ -485,6 +487,7 @@ namespace Risebird.Web.Controllers
                     model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     model._clientjddetails.ClientId = ClientId;
                     model._clientjddetails.isClientUser = isClientUser;
+                    model._clientjddetails.isClientUser = false;
                     var resultdetails = result.Where(x => x.id == assessmentid).FirstOrDefault();
                     resultdetails.StartDatestring = resultdetails.StartDate.ToString("yyyy-MM-dd");
                     resultdetails.EndDatestring = resultdetails.EndDate.ToString("yyyy-MM-dd");

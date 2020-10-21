@@ -8,9 +8,25 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/risetube.css?v=8" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 
-
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#fillter_AssessmentGroupName").select2({ multiple: true });
+    });
+
+    jQuery(document).ready(function () {
+        jQuery("#fillter_ClientEmail").select2({ multiple: true });
+    });
+
+
+
+
+</script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -50,7 +66,7 @@
                     </button>
 
                     <a onclick="CreateJd()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" style="color:#fff;"></span>Create JD</a>
-
+                    @*<a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>*@
                 </div>
             </div>
         </div>
@@ -139,7 +155,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group col-md-12 col-sm-12">
+                                                    <div class="form-group col-md-6 col-sm-6">
                                                         <div>
                                                             <div class="col-md-12 col-sm-12 ">
                                                                 <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
@@ -163,30 +179,19 @@
                                         <div class="card-content-holder border card-blue">
                                             <div class="card-header">
                                                 <div class="row">
-                                                    <div class=" col-md-7 col-sm-7 first jd-title">
-
-
-
-
-                                                        @if (@item.JDTitle.Length > 13)
-                                                        {
-                                                            <a style="text-decoration:none;" href="#" data-tooltip=" @item.JDTitle"> <span class="jd-name  assessment-grp"> @item.JDTitle </span></a>}
-
-                                                        else
-                                                        {
-                                                            <h6 class="assessment-grp"> @item.JDTitle </h6>}
-
+                                                    <div class=" col-md-7 col-sm-7 first">
+                                                        <h6 class="assessment-grp"> @item.JDTitle </h6>
                                                     </div>
 
                                                     <div class="col-md-5 col-sm-5 card-header-buttons action text-right">
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                             <span onclick="javascript:EditJD('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                         </button>
-                                                        <button class="mdc-fab app-fab--absolute priority" aria-label="Candidate JD Score Priority">
-                                                            <span onclick="javascript:CandidateJdScorePriority('@item.id');" title="Candidate Curated Score Priority" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M14 5h8v2h-8zm0 5.5h8v2h-8zm0 5.5h8v2h-8zM2 11.5C2 15.08 4.92 18 8.5 18H9v2l3-3-3-3v2h-.5C6.02 16 4 13.98 4 11.5S6.02 7 8.5 7H12V5H8.5C4.92 5 2 7.92 2 11.5z" /></svg></span>
-                                                        </button>
                                                         @if (!Model._clientjddetails.isClientUser)
                                                         {
+                                                            <button class="mdc-fab app-fab--absolute priority" aria-label="Candidate JD Score Priority">
+                                                                <span onclick="javascript:CandidateJdScorePriority('@item.id');" title="Candidate Curated Score Priority" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M14 5h8v2h-8zm0 5.5h8v2h-8zm0 5.5h8v2h-8zM2 11.5C2 15.08 4.92 18 8.5 18H9v2l3-3-3-3v2h-.5C6.02 16 4 13.98 4 11.5S6.02 7 8.5 7H12V5H8.5C4.92 5 2 7.92 2 11.5z" /></svg></span>
+                                                            </button>
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Candidate JD Score">
                                                                 <span onclick="javascript:CandidateJdScore('@item.id');" title="Candidate Curated Score" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M9 11.3l3.71 2.7-1.42-4.36L15 7h-4.55L9 2.5 7.55 7H3l3.71 2.64L5.29 14z" /></svg></span>
                                                             </button>
@@ -336,14 +341,19 @@
                                 @Html.TextBoxFor(m => m._clientjddetails.JDTitle, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
                             </div>
-                            <div class="form-group col-lg-6 col-md-6 col-sm-6 pull-left">
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
 
                                 @Html.LabelFor(model => model._clientjddetails.Filelink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
+                                @*<input type="radio" id="rdupload" name="jdfile" value="Upload" checked onclick="Changefilesystem('Upload')">Uplaod
+                                         <input type="radio" id="rdurl" name="jdfile" value="Url" onclick="Changefilesystem('Url')">File Url
+                                    @Html.TextBoxFor(m => m._clientjddetails.JdFile, new { type = "file", @class = "form-control btn", @accept = ".pdf,.docx" })
+                                         @Html.ValidationMessageFor(model => model._clientjddetails.JdFile, "", new { @class = "text-danger" })
+                                         @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control btn", @style = "display:none" })
+                                         @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })*@
                                 @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })
                             </div>
-                            <div class="form-group col-lg-6 col-md-6 col-sm-6 pull-left">
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                 @Html.LabelFor(model => model._clientjddetails.JDBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                 @Html.TextBoxFor(m => m._clientjddetails.JDBudget, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model._clientjddetails.JDBudget, "", new { @class = "text-danger" })
@@ -351,7 +361,7 @@
                             @if (!Model._clientjddetails.isClientUser)
                             {
                                 <div style="clear:both"></div>
-                                <div class="form-group col-lg-6 col-md-6 col-sm-6 pull-left">
+                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                     @Html.TextBoxFor(m => m._clientjddetails.ClientEmail, new { @class = "form-control" })
                                     @Html.ValidationMessageFor(model => model._clientjddetails.ClientEmail, "", new { @class = "text-danger" })
@@ -364,17 +374,17 @@
                             }
 
                             <div style="clear:both"></div>
-                            <div class="form-group col-lg-6 col-md-6 col-sm-6 pull-left">
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                 @Html.LabelFor(model => model._clientjddetails.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                 @Html.TextBoxFor(m => m._clientjddetails.Location, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model._clientjddetails.Location, "", new { @class = "text-danger" })
                             </div>
-                            <div class="form-group col-lg-6 col-md-6 col-sm-6 pull-left">
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                 @Html.LabelFor(model => model._clientjddetails.JobRole, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                 @Html.TextBoxFor(m => m._clientjddetails.JobRole, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model._clientjddetails.JobRole, "", new { @class = "text-danger" })
                             </div>
-                            <div class="form-group col-lg-12 col-md-12 col-sm-12 pull-left">
+                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                 @Html.LabelFor(model => model._clientjddetails.ClientUrl, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                 @Html.TextBoxFor(m => m._clientjddetails.ClientUrl, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(model => model._clientjddetails.ClientUrl, "", new { @class = "text-danger" })
@@ -393,9 +403,18 @@
                         <button type="button" onclick="closeCallPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
                             <font style="font-size:12px;">Close</font>
                         </button>
-                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-right:5px;">
-                            <font style="font-size:12px;">Create</font>
-                        </button>
+                        @if (Model._clientjddetails.iscreated)
+                        {
+                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                <font style="font-size:12px;">Create</font>
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                <font style="font-size:12px;">Edit</font>
+                            </button>
+                        }
                     </div>
                 }
 
@@ -404,19 +423,12 @@
     </div>
 </div>
 
-<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 
-<script type="text/javascript">
-    jQuery(document).ready(function () {
-        jQuery("#fillter_AssessmentGroupName").select2({ multiple: true });
-    });
 
-    jQuery(document).ready(function () {
-        jQuery("#fillter_ClientEmail").select2({ multiple: true });
-    });
-
-</script>
+@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>*@
 
 <script>
     $("#fillter_AssessmentGroupName").multiselect({
@@ -505,20 +517,4 @@
             files.style.display = "none";
         }
     }
-</script>
-<script>
-    $(document).ready(function () {
-
-        $(".jd-name").each(function () {
-            if ($(this).text().length > 13) {
-                $(this).text($(this).text().substr(0, 13) + "...")
-
-                $('[role="data-tooltip"]').css("visibility", "visible");
-
-            }
-
-
-            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
-        });
-    })
 </script>
