@@ -3782,6 +3782,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
                 GetStatusList(model, irfId);
                 if (isClient || isClientSelected)
                 {
@@ -3927,7 +3928,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (_meetingService.AddInterviewReport(model).Result)
                         {
-                            if (model.MeetingStatus == 4)
+                            if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
                                 //send mail to candiate or interviewer
                                 string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + model.InterviewId;

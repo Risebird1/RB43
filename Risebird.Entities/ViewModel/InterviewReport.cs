@@ -72,7 +72,7 @@ namespace Risebird.Entities.ViewModel
 
         public int? InterviewStatus { get; set; }
         public int? MeetingStatus { get; set; }
-
+        public int? PreviousMeetingStatus { get; set; }
         public string PageVideoLink { get; set; }
         public string AudioLink { get; set; }
         public string VideoLink { get; set; }
