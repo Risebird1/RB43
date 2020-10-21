@@ -40,9 +40,15 @@
             .star-rating label:hover ~ label {
                 color: #fc0;
             }
-            .card-title-space{margin:20px 0px; float:right}
 
-        .mb10{margin-bottom:10px}
+        .card-title-space {
+            margin: 20px 0px;
+            float: right
+        }
+
+        .mb10 {
+            margin-bottom: 10px
+        }
     </style>
 </head>
 <body>
@@ -52,12 +58,12 @@
             <h3 style="color:forestgreen;">
                 Risebird Video Interviews Event Feedback Survey-Candidates
             </h3>
-            
+
             <h5>
                 Thank you for attending Risebird Video Interviews event. Your feedback will help us to improve.
             </h5>
-            <br/>
-            @using (Html.BeginForm("Index", "Survey", FormMethod.Post))
+            <br />
+            @using (Html.BeginForm("Index", "Survey", FormMethod.Post, new { @id = "surveyform" }))
             {
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.HiddenFor(m => m.interviewid)
@@ -140,8 +146,29 @@
                     @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
 
                 </div>
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" id="txtCaptcha" disabled class="form-control" style="text-align: center; border: 1px solid black; font-weight: bold; font-size: 20px; font-family: Modern" />
+                    </div>
+                    <div class="col-md-1">
+                        <a class="mdc-fab app-fab--absolute priority" style="cursor:pointer" aria-label="Refresh">
+                            <span onclick="GenerateCaptcha();" title="Refresh" class="mdc-fab__icon material-icons">
+                                <svg width="1.7em" height="1.7em" viewBox="0 0 16 16" class="bi bi-arrow-clockwise" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                </svg>
+                            </span>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" id="txtCompare" class="form-control" />
+                    </div>
+                </div>
+                <br />
                 <div>
-                    <input type="submit" class="btn btn-primary card-title-space" value="submit" />
+                    <input type="button" class="btn btn-primary card-title-space" value="Submit" onclick="formsubmit()" />
                 </div>
             }
         </div>
@@ -150,6 +177,19 @@
 </html>
 <script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
 <script>
+    $(document).ready(function () {
+        GenerateCaptcha();
+    });
+
+    function formsubmit() {
+        var returnvalue = ValidCaptcha();
+        if (returnvalue == true) {
+            $("#surveyform").submit();
+        }
+        else {
+            alert("Please enter a valid Captcha.");
+        }
+    }
     function ChangeQuestion1(id) {
         $("#Question1").val(id);
     }
@@ -159,4 +199,23 @@
     function ChangeQuestion6(id) {
         $("#Question6").val(id);
     }
+    //Start: Captcha
+    function GenerateCaptcha() {
+        var chr1 = Math.ceil(Math.random() * 10) + '';
+        var chr2 = Math.ceil(Math.random() * 10) + '';
+        var chr3 = Math.ceil(Math.random() * 10) + '';
+        var str = new Array(4).join().replace(/(.|$)/g, function () { return ((Math.random() * 36) | 0).toString(36)[Math.random() < .5 ? "toString" : "toUpperCase"](); });
+        var captchaCode = str + chr1 + ' ' + chr2 + ' ' + chr3;
+        document.getElementById("txtCaptcha").value = captchaCode
+    }
+    function ValidCaptcha() {
+        var str1 = removeSpaces(document.getElementById('txtCaptcha').value);
+        var str2 = removeSpaces(document.getElementById('txtCompare').value);
+        if (str1 == str2) return true;
+        return false;
+    }
+    function removeSpaces(string) {
+        return string.split(' ').join('');
+    }
+    //End: Captcha
 </script>
