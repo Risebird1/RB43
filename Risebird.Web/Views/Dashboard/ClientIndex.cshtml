@@ -331,7 +331,7 @@
             { y: @Model.CandidatesCountObj.NoShowCount, label:"No Show"},
             { y: @Model.CandidatesCountObj.ScheduledCount, label:"Scheduled"},
             { y: @Model.CandidatesCountObj.DroppedCount, label:"Dropped"},
-            { y: @Model.CandidatesCountObj.Pending, label: "Pending" }]
+            { y: @Model.CandidatesCountObj.QCPending, label:"Quality Check Pending"}]
 
             var chart = new CanvasJS.Chart("candidatesPieId", {
                 theme: "light2",
@@ -361,7 +361,8 @@
             { y: @Model.MeetingResultCountObj.BorderLineCount, label:"Border Line"},
             { y: @Model.MeetingResultCountObj.NoShowCount, label:"No Show"},
             { y: @Model.MeetingResultCountObj.ScheduledCount, label:"Scheduled"},
-            { y: @Model.MeetingResultCountObj.DroppedCount, label:"Dropped"},
+            { y: @Model.MeetingResultCountObj.DroppedCount, label: "Dropped" },
+            { y: @Model.MeetingResultCountObj.Pending, label:"Pending"}
             @*{ y: @Model.MeetingResultCountObj.StatusPendingCount, label:"Status Pending"}*@
             @*{y : @Model.MeetingResultCountObj.NoResultCount, label:"No Results"}*@]
 
@@ -437,49 +438,6 @@
 
 </script>
 
-@*<script>
-        function getInterviewStatus() {
-            var date = document.getElementById('statusTrackingDate').value;
-            $.ajax({
-                url: '/Dashboard/GetDateWiseInterviewStatus',
-                data: { 'date': date },
-                success: function (data) {
-                    $('#statusTrackingId').html('');
-                    $('#statusTrackingId').html(data);
-
-
-                }
-            });
-        }
-
-        function getInterviewSlots() {
-            var date = document.getElementById('interviewSlotsDate').value;
-            $.ajax({
-                url: '/Dashboard/GetDateWiseMeetingsSlots',
-                data: { 'date': date },
-                success: function (data) {
-                    $('#slotsId').html('');
-                    $('#slotsId').html(data);
-
-
-                }
-            });
-        }
-
-        function getIRFProgress() {
-            var date = document.getElementById('ProgressDate_Date').value;
-            $.ajax({
-                url: '/Dashboard/GetDateWiseIRFProgress',
-                data: { 'date': date },
-                success: function (data) {
-                    $('#progressTableId').html('');
-                    $('#progressTableId').html(data);
-
-
-                }
-            });
-        }
-    </script>*@
 
 <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>

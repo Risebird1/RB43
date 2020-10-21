@@ -54,63 +54,7 @@
 
 
 
-<script>
-    function dropDwnToolTips(id) {
 
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value
-        }
-    }
-
-
-</script>
-
-<script type="text/javascript">
-
-    function getOption(id) {
-        selectElement = document.querySelector('#droplevel');
-        output =
-            selectElement.options[selectElement.selectedIndex].text;
-
-
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = output
-        }
-
-
-    }
-</script>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $('.dropques option').wrap('<span>');
-
-        var selectedOption = $('.dropques').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-
-    })
-
-    $(document).ready(function () {
-        $('.droprating option').wrap('<span>');
-
-        var selectedOption = $('.droprating').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-</script>
-
-
-<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
 
@@ -168,7 +112,7 @@
                                 @Html.ActionLink("Back to List", "Index", "CommonPool", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                             }
                         }
-                        <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
+
                     </div>
                 </div>
             </div>
@@ -2502,7 +2446,33 @@
 </div>
 
 <!-- Bootstrap core JavaScript-->
+
+
+
+
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
@@ -2510,6 +2480,40 @@
 <script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
 <!-- Owl Carousel -->
 <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
+
+<script>
+    function dropDwnToolTips(id) {
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+    function getOption(id) {
+        selectElement = document.querySelector('#droplevel');
+        output =
+            selectElement.options[selectElement.selectedIndex].text;
+
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = output
+        }
+
+
+    }
+</script>
+
 <!-- Custom scripts for all pages-->
 <script src="~/RiseTube/js/custom.js"></script>
 <script>
@@ -2762,7 +2766,7 @@
 <script>
 
     window.onload = function () {
-        
+
         if (localStorage.getItem('isTheaterMode') == "true") {
             getThMode();
             document.getElementById("1").value = "THEATER-MODE-OFF";

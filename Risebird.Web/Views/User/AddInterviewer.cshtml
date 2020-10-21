@@ -3,16 +3,9 @@
     ViewData["Title"] = "InterviewerAdd";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js?v7"></script>
+
 <link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v7" defer></script>
-<script type="text/javascript">
-    jQuery(document).ready(function () {
-        jQuery("#select").select2({ multiple: true });
-    });
-
-</script>
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <div class="main-panel" id="main-panel">
@@ -186,10 +179,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @*<div class="form-group">*@
+                                 
 
 
-                                    @*</div>*@
+                          
                                 </div>
 
 
@@ -216,7 +209,14 @@
 
 </div>
 
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js?v7"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v7" defer></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#select").select2({ multiple: true });
+    });
 
+</script>
 
 <script>
     function RadioChanged(val) {
