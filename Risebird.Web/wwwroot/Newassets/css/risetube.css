@@ -71,6 +71,7 @@
     color: #423f3f;
     padding: 3px 4px;
     font-size: 12px;
+    line-height: 20px;
 }
 .remove-btn input {
     border: 0px;

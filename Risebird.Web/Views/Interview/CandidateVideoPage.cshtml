@@ -37,79 +37,21 @@
     IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
 }
 <link href="~/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.css?v=1" rel="stylesheet" />
-<script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js?v=1"></script>
+
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css?v=1" rel="stylesheet">
 
 <link href="~/Newassets/css/risetube.css?v=6" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js?v=1"></script>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=1" defer />
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v=1"></script>
-<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=1" defer></script>
+
 <script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
     amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/2.3.3/techs/SmoothStreamingPlayer.xap"
 </script>
 
-<script>
-    function dropDwnToolTips(id) {
 
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value
-        }
-    }
-
-
-</script>
-
-<script type="text/javascript">
-
-    function getOption(id) {
-        selectElement = document.querySelector('#droplevel');
-        output =
-            selectElement.options[selectElement.selectedIndex].text;
-
-
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = output
-        }
-
-
-    }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $('.dropques option').wrap('<span>');
-
-        var selectedOption = $('.dropques').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-
-    })
-
-    $(document).ready(function () {
-        $('.droprating option').wrap('<span>');
-
-        var selectedOption = $('.droprating').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-</script>
-
-
-<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
 <!-- Owl Carousel -->
@@ -184,7 +126,7 @@
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
                                                                     {
-                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload" >
+                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}' controlsList="nodownload">
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
 
                                                                         </video>
@@ -218,7 +160,7 @@
 
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
-                                                                                            <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                            <video style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                                 <source src="@videolist.VideoLink" type="video/mp4">
                                                                                             </video>
                                                                                         }
@@ -262,7 +204,7 @@
 
 
                                                                                         @*
-                        <div class="time">3:50</div>
+                                                                                            <div class="time">3:50</div>
                                                                                         *@
                                                                                     </div>
                                                                                     <div class="video-card-body">
@@ -431,7 +373,7 @@
 
                                                                                 @if (videolist.VideoLink.Contains(".mp4"))
                                                                                 {
-                                                                                    <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                    <video style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                         <source src="@videolist.VideoLink" type="video/mp4">
                                                                                     </video>
                                                                                 }
@@ -462,7 +404,7 @@
 
                                                                                 @if (videolist.VideoLink.Contains(".mp4"))
                                                                                 {
-                                                                                    <video  style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
+                                                                                    <video style=" background:black!important;width:100%; height:100% " controlsList="nodownload">
                                                                                         <source src="@videolist.VideoLink" type="video/mp4">
                                                                                     </video>
                                                                                 }
@@ -1205,6 +1147,69 @@
         </div>
     </div>
 </div>
+
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v=1"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=1" defer></script>
+<script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js?v=1"></script>
+
+<script>
+    function dropDwnToolTips(id) {
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value
+        }
+    }
+
+
+</script>
+
+<script type="text/javascript">
+
+    function getOption(id) {
+        selectElement = document.querySelector('#droplevel');
+        output =
+            selectElement.options[selectElement.selectedIndex].text;
+
+
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = output
+        }
+
+
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/table-to-json@1.0.0/lib/jquery.tabletojson.min.js" integrity="sha256-H8xrCe0tZFi/C2CgxkmiGksqVaxhW0PFcUKZJZo1yNU=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
+
+
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <script>
     function datecal() {
         var dtToday = new Date();
@@ -1245,7 +1250,7 @@
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 <!-- Bootstrap core JavaScript-->
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
-<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
@@ -1567,14 +1572,14 @@
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
-             series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})"; 
+             series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
        series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
-                
+
                     return "";
                 }
                 else {
-                
+
                     return text;
                 }
             });

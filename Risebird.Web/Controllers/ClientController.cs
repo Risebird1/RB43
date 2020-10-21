@@ -252,6 +252,8 @@ namespace Risebird.Web.Controllers
                     model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
                     model._clientjddetails.ClientId = ClientId;
                     model._clientjddetails.isClientUser = isClientUser;
+                    model._clientjddetails.iscreated = true;
+
                     return View(model);
                 }
                 else
@@ -296,7 +298,7 @@ namespace Risebird.Web.Controllers
                     model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
                     model._clientjddetails.ClientId = ClientId;
                     model._clientjddetails.isClientUser = isClientUser;
-
+                    model._clientjddetails.iscreated = true;
                     return View(model);
                 }
                 else
@@ -351,7 +353,7 @@ namespace Risebird.Web.Controllers
                         string uploadedvideoFileURL = blob.Uri.ToString();
                         model._clientjddetails.Filelink = uploadedvideoFileURL;
                     }
-                   
+
                     var result = _clientService.AddClientJd(model._clientjddetails);
                     if (result != "")
                     {
@@ -476,18 +478,20 @@ namespace Risebird.Web.Controllers
                     var result = _clientService.FetchClientJd(ClientId);
                     var resultset = _interviewerService.FetchAssessmentGroups();
                     //bind Dropdown values
-                    var model = new ClientDetails();
-                    model._clientjd = result.ToList();
-                    model._clientjddetails = new ClientJdVM();
-                    model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
-                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                     select new { ID = (int)s, Name = s.GetDescription() };
-                    model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
-                    model._clientjddetails.ClientId = ClientId;
-                    model._clientjddetails.isClientUser = isClientUser;
+                    //var model = new ClientDetails();
+                    //model._clientjd = result.ToList();
+                    //model._clientjddetails = new ClientJdVM();
+                    //model._clientjddetails.AssessmentGrouplist = new SelectList(resultset, "id", "AssessmentGroup");
+                    //var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                      //               select new { ID = (int)s, Name = s.GetDescription() };
+                    //model._clientjddetails.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
+                    //model._clientjddetails.ClientId = ClientId;
+                    //model._clientjddetails.isClientUser = isClientUser;
+                    //model._clientjddetails.iscreated = false;
                     var resultdetails = result.Where(x => x.id == assessmentid).FirstOrDefault();
                     resultdetails.StartDatestring = resultdetails.StartDate.ToString("yyyy-MM-dd");
                     resultdetails.EndDatestring = resultdetails.EndDate.ToString("yyyy-MM-dd");
+                    resultdetails.isClientUser = isClientUser;
                     return Json(resultdetails);
                 }
                 else
@@ -639,7 +643,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public JsonResult AddWalletPoints(int points,string comment)
+        public JsonResult AddWalletPoints(int points, string comment)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -654,7 +658,7 @@ namespace Risebird.Web.Controllers
                     var client = _userRepository.GetClientUserDetails(emailid);
                     ClientId = client.Result.ClientId;
                     isClientUser = true;
-                    var result=_clientService.AddWalletPoints(ClientId, emailid, points, comment);
+                    var result = _clientService.AddWalletPoints(ClientId, emailid, points, comment);
                     if (result == "Success")
                     {
                         return Json("Success");

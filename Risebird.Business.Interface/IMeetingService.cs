@@ -97,5 +97,8 @@ namespace Risebird.Business.Interface
         Task<string> BroadcastIRFmembers(BroadcastModel model);
        
         IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId);
+        Task<List<MeetingVM>> GetRiseTubeMeetingsByScore(int clientId, string profile, string Emailid, bool IsClientCurated = false);
+        Task<List<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null);
+        Task<List<MeetingVM>> GetRiseTubeMeetingsForCuratedUserByIRF(string Emailid, string actionStatus, int irfId);
     }
 }

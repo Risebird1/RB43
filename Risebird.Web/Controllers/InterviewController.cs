@@ -3782,6 +3782,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
+                model.PreviousMeetingStatus = model.MeetingStatus;
                 GetStatusList(model, irfId);
                 if (isClient || isClientSelected)
                 {
@@ -3927,17 +3928,17 @@ namespace Risebird.Web.Controllers
                         }
                         if (_meetingService.AddInterviewReport(model).Result)
                         {
-                            //if (model.MeetingStatus == 4)
-                            //{
-                            //    //send mail to candiate or interviewer
-                            //    string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + model.InterviewId;
-                            //    Mail _mail = new Mail
-                            //    {
-                            //        TO = model.CandidateEmail,
-                            //        Subject = "Risebird: Feedback form"
-                            //    };
-                            //    var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
-                            //}
+                            if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
+                            {
+                                //send mail to candiate or interviewer
+                                string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + model.InterviewId;
+                                Mail _mail = new Mail
+                                {
+                                    TO = model.CandidateEmail,
+                                    Subject = "Risebird: Feedback form"
+                                };
+                                var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+                            }
                             TempData["SuccessErrorMessageInterview"] = "Report saved Successfully";
                             if (profileName == "Admin" || profileName == "HR")
                             {

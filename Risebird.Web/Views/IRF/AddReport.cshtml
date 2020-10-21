@@ -7,38 +7,7 @@
 }
 
 
-<script>
-    function dropDwnToolTips(id) {
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value;
-        }
-    }
 
-</script>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $('.dropques option').wrap('<span>');
-
-        var selectedOption = $('.dropques').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-    $(document).ready(function () {
-        $('.droprating option').wrap('<span>');
-
-        var selectedOption = $('.droprating').find("[selected]");
-        $(selectedOption).unwrap();
-
-
-    })
-
-</script>
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
 <div class="main-panel" id="main-panel">
@@ -206,7 +175,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
-                                                <p class="card-text">Overall Score: <span id="totScore"></span></p>
+                                                <p class="card-text">Overall Average Score: <span id="totScore"></span></p>
                                                 <div class="col-lg-6 col-md-6 col-sm-6">
                                                     <div id="scoreChart" style="height: 200px; width:100%;"></div>
                                                 </div>
@@ -535,7 +504,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "select-css form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                 </td>
                                                                 <td>
@@ -988,12 +957,40 @@
     </div>
 
 </div>
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
 
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-
-
 <script>
 
     function RadioChanged(val) {
@@ -1109,9 +1106,7 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
-        //items.forEach(function (item) {
-        //    totalCount = totalCount + item.val();
-        //});
+      
         var average = totalCount / 4;
         $("#OverallScore").val(average);
 
@@ -1173,11 +1168,10 @@
         objSelect.legendText = "Selectability Score";
         arr.push(objSelect.y);
 
-        //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = average;
 
+       
         am4core.ready(function () {
-
             // Themes begin
             am4core.useTheme(am4themes_animated);
             // Themes end
@@ -1877,6 +1871,27 @@
         totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = totalScore;
 
+
+        //var chart = new CanvasJS.Chart("scoreChart", {
+        //    theme: "light2", // "light1", "light2", "dark1", "dark2"
+        //    width: 400,//in pixels
+        //    height: 200,//in pixels
+        //    animationEnabled: true,
+        //    title: {
+        //        text: "Score Chart"
+        //    },
+        //    data: [{
+        //        type: "column",
+        //        //startAngle: 60,
+        //        //innerRadius: 55,
+        //        indexLabelFontSize: 8,
+        //        indexLabel: "{label}  {y}",
+        //        toolTipContent: "<b>{label} </b>({y})",
+        //        dataPoints: arr
+
+        //    }]
+        //});
+        //chart.render();
         am4core.ready(function () {
 
             // Themes begin
