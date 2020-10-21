@@ -1972,11 +1972,11 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        var updatestatus= SqlMapper.QueryAsync<string>(con, "usp_UpdateWalletdetails", parameters,
+                        var updatestatus = SqlMapper.Query<string>(con, "usp_UpdateWalletdetails", parameters,
                             commandType: CommandType.StoredProcedure);
                     }
                 }
-                //Debit 100 Points from Client wallet
+                //Debit Points from Client wallet
                 var finalquery = "Select ul.EmailId as Comment,(ul.Firstname +''+ ul.lastname) as UserName from SuitableCandidate sc Join UserList ul on sc.userid=ul.id where sc.id=@Id ";
                 var finaldynamicParameters = new DynamicParameters();
                 finaldynamicParameters.Add("@Id", vedioid);

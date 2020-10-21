@@ -76,7 +76,7 @@
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                             @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
+                                            @Html.HiddenFor(m => m.CandidateEmail)
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
@@ -1357,7 +1357,7 @@
         html2canvas($(".canvas_div_pdf")[0], { allowTaint: false }).then(function (canvas) {
             canvas.getContext('2d');
 
-            var imgData = canvas.toDataURL("image/png",1.0);
+            var imgData = canvas.toDataURL("image/png", 1.0);
             var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
             pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
 
@@ -2138,7 +2138,7 @@
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             chart.fontSize = 13;
-               categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
+            categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -2188,112 +2188,112 @@
 
 <script src="~/js/FeedbackRecorder/Record.js"></script>
 <script>
-        ; (function () {
+    ; (function () {
 
-            "use strict";
+        "use strict";
 
-            var words = document.getElementById("words"),
-                input = document.getElementById("text, interviewerComment,skillComment, joinability, selectability"),
-                timeout, xhr;
+        var words = document.getElementById("words"),
+            input = document.getElementById("text, interviewerComment,skillComment, joinability, selectability"),
+            timeout, xhr;
 
-            input.addEventListener("keyup", function (e) {
+        input.addEventListener("keyup", function (e) {
 
-                if (timeout) clearTimeout(timeout);
+            if (timeout) clearTimeout(timeout);
 
-                if (!this.value.trim()) words.innerHTML = '';
+            if (!this.value.trim()) words.innerHTML = '';
 
-                timeout = setTimeout(function () {
+            timeout = setTimeout(function () {
 
-                    var test_phrase = shuffle_words(input.value);
+                var test_phrase = shuffle_words(input.value);
 
-                    spell_check(test_phrase);
+                spell_check(test_phrase);
 
-                    timeout = null;
+                timeout = null;
 
-                }, 500);
+            }, 500);
 
+        });
+
+        function shuffle_words(inp) {
+
+            inp = inp.replace(/\s+/g, ' ');
+
+            var arr = inp.split(" "),
+                n = arr.length;
+
+            while (n > 0) {
+                var i = Math.floor(Math.random() * n--),
+                    t = arr[n];
+                arr[n] = arr[i];
+                arr[i] = t;
+            }
+
+            return arr.join(' ');
+        }
+
+        function spell_check(text) {
+
+            if (xhr) xhr.abort();
+
+            xhr = $.ajax({
+                url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
+                headers: {
+                    'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
+                    'Accept': 'application/json'
+                },
+                data: {
+                    'text': text
+                },
+                cache: false,
+                success: function (result) {
+
+                    xhr = null;
+                    suggest_words(result);
+
+                }
             });
 
-            function shuffle_words(inp) {
+        }
 
-                inp = inp.replace(/\s+/g, ' ');
+        function suggest_words(obj) {
 
-                var arr = inp.split(" "),
-                    n = arr.length;
+            if (!obj.corrections) return;
 
-                while (n > 0) {
-                    var i = Math.floor(Math.random() * n--),
-                        t = arr[n];
-                    arr[n] = arr[i];
-                    arr[i] = t;
-                }
+            words.innerHTML = '';
 
-                return arr.join(' ');
-            }
+            for (var key in obj.corrections) {
 
-            function spell_check(text) {
+                if (obj.corrections.hasOwnProperty(key)) {
 
-                if (xhr) xhr.abort();
+                    var div = document.createElement("div");
+                    div.className = "word";
+                    div.innerHTML = obj.corrections[key][0];
+                    div.orig = key;
 
-                xhr = $.ajax({
-                    url: 'https://montanaflynn-spellcheck.p.mashape.com/check/',
-                    headers: {
-                        'X-Mashape-Key': 'U3ogA8RAAMmshGOJkNxkTBbuYYRTp1gMAuGjsniThZuaoKIyaj',
-                        'Accept': 'application/json'
-                    },
-                    data: {
-                        'text': text
-                    },
-                    cache: false,
-                    success: function (result) {
+                    div.onmouseover = function () {
+                        var start = input.value.indexOf(this.orig);
+                        input.selectionStart = start;
+                        input.selectionEnd = start + this.orig.length;
+                    };
 
-                        xhr = null;
-                        suggest_words(result);
-
+                    div.onmouseout = function () {
+                        var len = input.value.length;
+                        input.selectionStart = len;
+                        input.selectionEnd = len;
                     }
-                });
 
-            }
-
-            function suggest_words(obj) {
-
-                if (!obj.corrections) return;
-
-                words.innerHTML = '';
-
-                for (var key in obj.corrections) {
-
-                    if (obj.corrections.hasOwnProperty(key)) {
-
-                        var div = document.createElement("div");
-                        div.className = "word";
-                        div.innerHTML = obj.corrections[key][0];
-                        div.orig = key;
-
-                        div.onmouseover = function () {
-                            var start = input.value.indexOf(this.orig);
-                            input.selectionStart = start;
-                            input.selectionEnd = start + this.orig.length;
-                        };
-
-                        div.onmouseout = function () {
-                            var len = input.value.length;
-                            input.selectionStart = len;
-                            input.selectionEnd = len;
-                        }
-
-                        div.onclick = function () {
-                            input.value = input.value.replace(this.orig, this.innerHTML);
-                            this.parentNode.removeChild(this);
-                        }
-
-                        words.appendChild(div);
-
+                    div.onclick = function () {
+                        input.value = input.value.replace(this.orig, this.innerHTML);
+                        this.parentNode.removeChild(this);
                     }
+
+                    words.appendChild(div);
 
                 }
 
             }
 
-        })();
+        }
+
+    })();
 </script>
