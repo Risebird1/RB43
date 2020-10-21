@@ -312,89 +312,102 @@
                     <div>
                         @Html.HiddenFor(m => m._clientjddetails.ClientId)
                         @Html.HiddenFor(m => m._clientjddetails.id)
-                        <div style="width:100%;height: 620px;">
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                <div class="form-group">
-                                    <label class="control-label  desp-label" for="StartDate"> Start Date </label>
-                                    <div>
-                                        <input id="zclientjddetails_StartDate" name="_clientjddetails.StartDate" type="date" class="form-control">
+
+                        <div style="width:100%;">
+                            <div class="row">
+                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                    <div class="form-group">
+                                        <label class="control-label  desp-label" for="StartDate"> Start Date </label>
+                                        <div>
+                                            <input id="zclientjddetails_StartDate" name="_clientjddetails.StartDate" type="date" class="form-control">
+                                        </div>
                                     </div>
-                                </div>
 
-                            </div>
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                <div class="form-group">
-                                    <label class="control-label  desp-label" for="StartDate"> End Date </label>
-                                    <div>
-                                        <input id="zclientjddetails_EndDate" name="_clientjddetails.EndDate" type="date" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.AssessmentGroup, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.JDTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.JDTitle, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-
-                                @Html.LabelFor(model => model._clientjddetails.Filelink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @*<input type="radio" id="rdupload" name="jdfile" value="Upload" checked onclick="Changefilesystem('Upload')">Uplaod
-                                         <input type="radio" id="rdurl" name="jdfile" value="Url" onclick="Changefilesystem('Url')">File Url
-                                    @Html.TextBoxFor(m => m._clientjddetails.JdFile, new { type = "file", @class = "form-control btn", @accept = ".pdf,.docx" })
-                                         @Html.ValidationMessageFor(model => model._clientjddetails.JdFile, "", new { @class = "text-danger" })
-                                         @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control btn", @style = "display:none" })
-                                         @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })*@
-                                @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.JDBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.JDBudget, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.JDBudget, "", new { @class = "text-danger" })
-                            </div>
-                            @if (!Model._clientjddetails.isClientUser)
-                            {
-                                <div style="clear:both"></div>
-                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                    @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.TextBoxFor(m => m._clientjddetails.ClientEmail, new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(model => model._clientjddetails.ClientEmail, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
-                                    @Html.LabelFor(model => model._clientjddetails.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.DropDownListFor(m => m._clientjddetails.Heuristicsscore, Model._clientjddetails.Heuristicsscorelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
-                                    @Html.ValidationMessageFor(model => model._clientjddetails.Heuristicsscore, "", new { @class = "text-danger" })
+                                    <div class="form-group">
+                                        <label class="control-label  desp-label" for="StartDate"> End Date </label>
+                                        <div>
+                                            <input id="zclientjddetails_EndDate" name="_clientjddetails.EndDate" type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.AssessmentGroup, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.JDTitle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.TextBoxFor(m => m._clientjddetails.JDTitle, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+
+                                    @Html.LabelFor(model => model._clientjddetails.Filelink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                    @Html.TextBoxFor(m => m._clientjddetails.Filelink, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.Filelink, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.JDBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.TextBoxFor(m => m._clientjddetails.JDBudget, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.JDBudget, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            @if (!Model._clientjddetails.isClientUser)
+                            {
+                                <div class="row">
+                                    <div style="clear:both"></div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                        @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.TextBoxFor(m => m._clientjddetails.ClientEmail, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model._clientjddetails.ClientEmail, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                        @Html.LabelFor(model => model._clientjddetails.Heuristicsscore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(m => m._clientjddetails.Heuristicsscore, Model._clientjddetails.Heuristicsscorelist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model._clientjddetails.Heuristicsscore, "", new { @class = "text-danger" })
+                                    </div>
                                 </div>
                             }
 
                             <div style="clear:both"></div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.Location, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.Location, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.JobRole, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.JobRole, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.JobRole, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.ClientUrl, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.ClientUrl, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.ClientUrl, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
-                                @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                @Html.TextBoxFor(m => m._clientjddetails.JobDescription, htmlAttributes: new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model._clientjddetails.JobDescription, "", new { @class = "text-danger" })
-                            </div>
+                            <div class="row">
 
+                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.TextBoxFor(m => m._clientjddetails.Location, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.Location, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.JobRole, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.TextBoxFor(m => m._clientjddetails.JobRole, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.JobRole, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.ClientUrl, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.TextBoxFor(m => m._clientjddetails.ClientUrl, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.ClientUrl, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
+                                    @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @*@Html.TextBoxFor(m => m._clientjddetails.JobDescription, htmlAttributes: new { @class = "form-control" })*@
+                                    @Html.TextAreaFor(m => m._clientjddetails.JobDescription, htmlAttributes: new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model._clientjddetails.JobDescription, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
                         </div>
                     </div>
 
