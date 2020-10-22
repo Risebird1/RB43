@@ -683,5 +683,18 @@ namespace Risebird.Web.Controllers
                 return Json("SignOut");
             }
         }
+        public IActionResult ResetCandidate(int Clientjdid, string candidateEmail)
+        {
+            var result = _clientService.ResetCandidate(Clientjdid, candidateEmail);
+            if (result != "")
+            {
+                TempData["SuccessErrorMessageInterviewer"] = "Candidate reset Successfully";
+            }
+            else
+            {
+                TempData["SuccessErrorMessageInterviewer"] = "Candidate reset is Failed";
+            }
+            return RedirectToAction("CandidateJDScore", "Client", new { id = Clientjdid });
+        }
     }
 }
