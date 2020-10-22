@@ -412,5 +412,25 @@ namespace Risebird.Repository
             }
             return "failed";
         }
+        public string ResetCandidate(int Clientjdid, string candidateEmail)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Clientjdid", Clientjdid);
+                parameters.Add("@candidateEmailid", candidateEmail);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "[Usp_resetCandidateDetails]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
     }
 }

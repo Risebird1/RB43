@@ -11,6 +11,7 @@
         public string IRFDetailsID { get; set; }
         public int Priority { get; set; }
         public string JDTitle { get; set; }
+        public int ClientJdid { get; set; }
 
     }
 }
