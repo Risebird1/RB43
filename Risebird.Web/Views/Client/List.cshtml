@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.Client>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Client";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -65,7 +68,7 @@
                                         <th>Description</th>
                                         <th>GST</th>
                                         <th>Address</th>
-                                        <th>RiseBird Pay Balance</th>
+                                        <th>RB Pay Balance</th>
                                         <th>Per SuccessRate</th>
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
@@ -94,12 +97,18 @@
                                             <td>@item.Balance</td>
                                             <td>@item.PerSuccessRate</td>
                                             <td class="text-right" style="padding-right:30px;">
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
-                                                    <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
-                                                </button>
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
-                                                    <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
-                                                </button>
+                                                @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("profileName")))
+                                                {
+                                                    @if (HttpContextAccessor.HttpContext.Session.GetString("profileName") == "Admin")
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
+                                                            <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
+                                                            <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
+                                                        </button>
+                                                    }
+                                                }
                                                 <button class="mdc-fab app-fab--absolute" aria-label="View Details">
                                                     <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
                                                 </button>
