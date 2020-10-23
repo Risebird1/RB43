@@ -459,6 +459,35 @@ namespace Risebird.Web.Controllers
 
         }
 
+        public async Task<IActionResult> ResetNavigation(int userId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    if (await _userService.ResetNavigation(userId))
+                    {
+                        return Json(true);
+                    }
+                    else
+                    {
+                        return Json(false);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+        }
+
+
         #endregion
 
         #region Interviewer Functions

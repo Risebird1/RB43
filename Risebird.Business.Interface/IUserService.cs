@@ -1,6 +1,7 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
 {
@@ -51,5 +52,6 @@ namespace Risebird.Business.Interface
         string GetCurrenttheme(string emailId);
         List<AssignmentVM> GetInterviewerEntitle();
         List<AssignmentVM> InterviewerEntitleDetails(int id);
+        Task<bool> ResetNavigation(int userId);
     }
 }
