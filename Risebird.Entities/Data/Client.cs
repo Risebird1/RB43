@@ -18,7 +18,7 @@ namespace Risebird.Entities.Data
         [Display(Name = "OfficeAddress")]
 
         public string OfficeAddress { get; set; }
-        [Display(Name = "RBP Balance")]
+        [Display(Name = "RB Pay Balance")]
         public int Balance { get; set; }
         public int PerSuccessRate { get; set; }
         public string Createdby { get; set; }

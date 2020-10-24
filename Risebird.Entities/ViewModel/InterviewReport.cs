@@ -14,6 +14,8 @@ namespace Risebird.Entities.ViewModel
         public string IRFName { get; set; }
 
         public int InterviewId { get; set; }
+        [DisplayName("Total Experience")]
+        public string TotalExperience { get; set; }
 
         [DisplayName("Candidate's Name")]
         //[RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
