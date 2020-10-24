@@ -4,7 +4,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "VideoPage";
+    ViewData["Title"] = "RB Matches Candidates";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -72,7 +72,7 @@
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
-                <a class="navbar-brand card-title">Risetube</a>
+                <a class="navbar-brand card-title">RB Matches Candidates</a>
                 @if (!String.IsNullOrEmpty(Model.LogoUrl))
                 {
                     <img src="@Model.LogoUrl" style="width:60px;height:60px" />
@@ -90,7 +90,7 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
 
-                    <div class="mobile-view"> <h4 class="card-title">Risetube</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title">RB Matches Candidates</h4></div>
                 </div>
 
                 <div class="pull-right">
@@ -113,10 +113,7 @@
                                 <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple  -upgraded card-title-space">Back to List</a>
                             }
 
-                            else
-                            {
-                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
-                            }
+                           
 
 
                         }
@@ -853,18 +850,24 @@
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-                                                                                                    @if (Model.IreportModel.encodedresumeLink != null && Model.IreportModel.encodedresumeLink != "")
-                                                                                                    {
-                                                                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.encodedresumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
-                                                                                                    }
+                                                                            <div class="row">
+                                                                                <div class="col-md-6 col-sm-6">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+                                                                                        @if (Model.IreportModel.encodedresumeLink != null && Model.IreportModel.encodedresumeLink != "")
+                                                                                        {
+                                                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.encodedresumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
+                                                                                        }
 
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6 col-sm-6">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.TotalExperience, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                                     }
 
                                                                                 }
@@ -3967,238 +3970,6 @@
                 enjoyhint_instance.set(enjoyhint_script_steps);
                 enjoyhint_instance.run();
             }, 10000)
-        </script>
-    }
-}
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-    pfName = pfName.Replace("\"", "");
-    @if (pfName == "ExternalUser")
-    {
-        <script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
-            localStorage.setItem('risetube', true)
-            localStorage.setItem('subscribe', false)
-            var enjoyhint_instance = new EnjoyHint({});
-
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Shared Candidates Video will be playing over here and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btnvideo': 'Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .sharebtn1': 'Share the video by clicking here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .item1': 'Interview Report Summary',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemchart': 'Check candidate overall score here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemcomment': 'Check interviewer comments here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item2': 'Candidate Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item3': 'Tech Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interests you',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item6': 'Joinability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item7': 'Selectability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .tooltip1': 'Share and View Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .post': 'Collaborative decision making. Write your comment and click post',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .videosidelist': 'Other Shared Candidates Video ',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .supportmenu': 'Click on Support Menu to see its features'
-                },
-
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 3000)
-        </script>
-    }
-}
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-    pfName = pfName.Replace("\"", "");
-    @if (pfName == "CuratedUser")
-    {
-        <script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
-            localStorage.setItem('risetube', true)
-            localStorage.setItem('subscribe', false)
-            var enjoyhint_instance = new EnjoyHint({});
-
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-
-                {
-                    'next .btnvideo': 'Candidate Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-
-                {
-                    'next .sharebtn1': 'Share the video by clicking here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .shortlist': 'Click here to Shortlist the Candidate',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .showinter': 'Click here to Send interest to the Candidate',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-
-
-                {
-                    'next .item1': 'Interview Report Summary',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemchart': 'Check candidate overall score here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .itemcomment': 'Check interviewer comments, Job Level and Voice BioMetric Score(Optional)',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item2': 'Candidate Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item3': 'Tech Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item4': 'Questions discussed during interview and Watch the specific part of the video by clicking on the question that interest you',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-
-                {
-                    'next .item5': 'General Skill Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item6': 'Joinability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .item7': 'Selectability Report',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .tooltip1': 'Share and View Details',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-
-                },
-                {
-                    'next .videosidelist': 'Similar skill Candidates Video',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .risetubemenu': 'Click on Risetube menu and to see its features',
-                },
-
-            ];
-            setTimeout(function () {
-                enjoyhint_instance.set(enjoyhint_script_steps);
-                enjoyhint_instance.run();
-            }, 3000)
         </script>
     }
 }
