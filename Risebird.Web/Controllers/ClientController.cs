@@ -685,16 +685,26 @@ namespace Risebird.Web.Controllers
         }
         public IActionResult ResetCandidate(int Clientjdid, string candidateEmail)
         {
-            var result = _clientService.ResetCandidate(Clientjdid, candidateEmail);
-            if (result != "")
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                TempData["SuccessErrorMessageInterviewer"] = "Candidate reset Successfully";
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var result = _clientService.ResetCandidate(Clientjdid, candidateEmail, emailid);
+                if (result != "")
+                {
+                    TempData["SuccessErrorMessageInterviewer"] = "Candidate reset Successfully";
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageInterviewer"] = "Candidate reset is Failed";
+                }
+                return RedirectToAction("CandidateJDScore", "Client", new { id = Clientjdid });
+
             }
             else
             {
-                TempData["SuccessErrorMessageInterviewer"] = "Candidate reset is Failed";
+                return RedirectToAction("SignOut", "Session");
             }
-            return RedirectToAction("CandidateJDScore", "Client", new { id = Clientjdid });
         }
     }
 }

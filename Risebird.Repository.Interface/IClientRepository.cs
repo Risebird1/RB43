@@ -20,6 +20,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<CandidateCuratedScore> GetCandidateJDScore(int id);
         IEnumerable<Wallet> FetchClientWallet(int clientid);
         Task<string> AddWalletPoints(int ClientId, string emailid, int points, string comment);
-        string ResetCandidate(int Clientjdid, string candidateEmail);
+        string ResetCandidate(int Clientjdid, string candidateEmail,string emailid);
     }
 }
