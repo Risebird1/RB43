@@ -2884,6 +2884,7 @@ namespace Risebird.Web.Controllers
                         {
                             NewModel.SubVideo_List = modelList1.ToList().Where(x => x.imid != id).ToList();
                         }
+                        NewModel.candidateName = model.candidateName;
                         if (model.IsIntrested != "Interest Accepted")
                         {
                             var usernames1 = model.candidateName.Trim().Split(" ");

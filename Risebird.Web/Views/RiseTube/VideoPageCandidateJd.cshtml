@@ -4,7 +4,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "VideoPage";
+    ViewData["Title"] = "RB Matches";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -72,7 +72,7 @@
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler"> <span class="navbar-toggler-bar bar1"></span> <span class="navbar-toggler-bar bar2"></span> <span class="navbar-toggler-bar bar3"></span> </button>
                 </div>
-                <a class="navbar-brand card-title">Risetube</a>
+                <a class="navbar-brand card-title">RB Matches</a>
                 @if (!String.IsNullOrEmpty(Model.LogoUrl))
                 {
                     <img src="@Model.LogoUrl" style="width:60px;height:60px" />
@@ -90,7 +90,7 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
 
-                    <div class="mobile-view"> <h4 class="card-title">Risetube</h4></div>
+                    <div class="mobile-view"> <h4 class="card-title">RB Matches</h4></div>
                 </div>
 
                 <div class="pull-right">
@@ -861,6 +861,13 @@
                                                                                                     {
                                                                                                         <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.encodedresumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
                                                                                                     }
+
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6 col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    @Html.LabelFor(model => model.IreportModel.Yearsofexperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.Yearsofexperience, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                                                                                 </div>
                                                                                             </div>
