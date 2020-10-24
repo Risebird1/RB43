@@ -11,6 +11,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
   
+  
+
 Create Procedure Usp_resetCandidateDetails  
 @Clientjdid int,  
 @candidateEmailid varchar(150),
@@ -33,10 +35,22 @@ Select @Balance=Balance from Client where id=@Clientid
 Select @Debit=Debit from clientWallet where Clientid=@Clientid and comment like '%'+@candidateEmailid+'%'  
 --Delete from clientWallet where Clientid=@Clientid and comment like '%'+@candidateEmailid+'%'  
 Set @Balance=ISNull(@Balance,0)+IsNull(@Debit,0)  
-set @Comment='Revert points for interviewid: '+@interviewid
+if(ISNull(@Debit,0)>0)
+Begin
+set @Comment='Revert points for interviewid: '+CONVERT(varchar(10),@interviewid)
 Insert Into ClientWallet values(@Clientid,@userid,@Debit,0,Getdate(),@Comment,@Balance)
 Update Client Set Balance=@Balance where id=@Clientid  
+END
 END  
+  
+  
+  
+  
+
+
+  
+
+
   
 
 Go
