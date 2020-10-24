@@ -2255,7 +2255,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var profileName = "CuratedUser";
-                // if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
+               
                 {
                     if (TempData["SuccessErrorMessageInterview"] != null)
                     {
@@ -2266,14 +2266,7 @@ namespace Risebird.Web.Controllers
 
 
                     modelList = await _meetingService.GetSharedRiseTubeMeetings();
-                    //modelList = dataResult.ToList().OrderByDescending(y => y.Score).ToList();
-
-                    //ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
-                    //ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
-                    //ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
-                    //ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
-                    //ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
-                    //ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
+                   
 
                     ViewBag.NextLevelApprovalStatusList =
                         from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
