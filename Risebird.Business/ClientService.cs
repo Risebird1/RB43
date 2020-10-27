@@ -137,7 +137,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore,string candidateProfile)
+        public string AddCandidateJDScore(int IrfId, List<CandidateCuratedScore> candidateCuratedScore, string candidateProfile)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string AddWalletPoints(int ClientId, string emailid, int points,string comment)
+        public string AddWalletPoints(int ClientId, string emailid, int points, string comment)
         {
             try
             {
@@ -190,6 +190,19 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "failed";
+            }
+        }
+        public string ResetCandidate(int Clientjdid, string candidateEmail,string emailid)
+        {
+            try
+            {
+                return _clientRepository.ResetCandidate(Clientjdid, candidateEmail, emailid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
             }
         }
     }

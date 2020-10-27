@@ -263,7 +263,7 @@ namespace Risebird.Repository
                 else
                 {
                     //Set the parameters to be passed to store procedure
-                    var query = "Select cl.*,ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id where Clientid=@ClientId";
+                    var query = "Select cl.*,cl.AssessmentGroupid as AssessmentGroup,ag.AssessmentGroup as AssessmentGroupName from Clientjd cl join AssessmentGroup ag on cl.assessmentgroupid=ag.id where Clientid=@ClientId";
                     DynamicParameters parameters = new DynamicParameters();
                     parameters.Add("@ClientId", clientid);
                     using (SqlConnection con = new SqlConnection(connectionString))
@@ -411,6 +411,28 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return "failed";
+        }
+        public string ResetCandidate(int Clientjdid, string candidateEmail,string emailid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Clientjdid", Clientjdid);
+                parameters.Add("@candidateEmailid", candidateEmail);
+                parameters.Add("@emailid", emailid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query(con, "[Usp_resetCandidateDetails]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
         }
     }
 }

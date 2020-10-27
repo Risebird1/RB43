@@ -200,8 +200,8 @@
                                                         </button>
                                                     }
                                                     @*<button class="mdc-fab app-fab--absolute  fifteen" aria-label="JD">
-                                                        <span onclick="javascript:RelatedJD('@item.id');" title="Related Job Descriptions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
-                                                    </button>*@
+                                                            <span onclick="javascript:RelatedJD('@item.id');" title="Related Job Descriptions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M9 8c1.66 0 2.99-1.34 2.99-3S10.66 2 9 2C7.34 2 6 3.34 6 5s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V16h14v-2.5c0-2.33-4.67-3.5-7-3.5z" /></svg></span>
+                                                        </button>*@
                                                 }
 
                                                 @if (DateTime.Now <= item.interviewDate)
@@ -560,7 +560,7 @@
                 modal.style.display = "block";
                 var html = '';
                 html += '<table style="Width:100%"><div  class="table-responsive-sm">';
-                html += '<tr><td class="client-nme" >Client Name</td><td class="client-date">Intersted Date</td><td class="client-cmt">Comments</td><td class="text-center client-action">Action</td></tr>';
+                html += '<tr><td class="client-nme" >Client Name</td><td class="client-date">Interested Date</td><td class="client-cmt">Comments</td><td class="text-center client-action">Action</td></tr>';
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].status == "Interest Accepted") {
                         html += '<tr id="tablerow_' + data[i].id + '" style="background-color:#adf9ad96">';
@@ -573,11 +573,16 @@
                     }
                     html += '<td class="client-nme" style="border-right: 1px #ccc solid;">' + data[i].clientName.toUpperCase() + '</td>';
                     html += '<td class="client-date" style="border-right: 1px #ccc solid;">' + data[i].dateRequired + '</td>';
+                    if (data[i].approvalComments.length > 40)
+                    {
+                        html += '<td class="client-cmt" style="border-right: 1px #ccc solid;"><c title="' + data[i].approvalComments+ '">' + data[i].approvalComments.substr(0, 40) + '...</c></td><td class="text-center client-action">';
+                    }
+                    else
+                    {
                     html += '<td class="client-cmt" style="border-right: 1px #ccc solid;">' + data[i].approvalComments + '</td><td class="text-center client-action">';
+                    }
+                    //html += '<td class="client-cmt" style="border-right: 1px #ccc solid;">' + data[i].approvalComments + '</td><td class="text-center client-action">';
                     if (data[i].status == "Interest Accepted") {
-                        html += '           <button type="button"  disabled class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
-                        html += '            <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
-                        html += '          </button>';
                         html += '          <button type="button"  class="mdc-fab app-fab--absolute trash-btn" id="btnRejectIntrest_' + data[i].id + '" title="Pass">';
                         html += '            <span  onclick="RejectIntrest(' + data[i].id + ')" title="Pass" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span>';
                         html += '          </button>';
@@ -586,9 +591,6 @@
                         html += '             <button type="button" class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
                         html += '               <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
                         html += '            </button>';
-                        html += '             <button type="button"  disabled class="mdc-fab app-fab--absolute trash-btn" id="btnRejectIntrest_' + data[i].id + '" title="Pass">';
-                        html += '                 <span  onclick="RejectIntrest(' + data[i].id + ')" title="Pass" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span>';
-                        html += '              </button>';
                     }
                     else {
                         html += '             <button type="button"  class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';

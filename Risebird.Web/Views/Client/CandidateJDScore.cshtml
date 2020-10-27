@@ -80,9 +80,9 @@
 
                                                             <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                           
-                                                                <span id="btnMinus" class="mdc-fab app-fab--absolute trash-btn"  onclick="DeleteRow(this, 'CandidateCuratedScores','CandidateEmailId','IRFId', 'Score')"><i class="far fa  fa-trash"></i></span>
-                                                           
+
+                                                            <span id="btnMinus" class="mdc-fab app-fab--absolute trash-btn" onclick="DeleteRow(this, 'CandidateCuratedScores','CandidateEmailId','IRFId', 'Score')"><i class="far fa  fa-trash"></i></span>
+
                                                         </td>
                                                     </tr>
                                                 }
@@ -112,11 +112,10 @@
                                                             </td>
 
                                                             <td class="text-center">
-
+                                                                @Html.ActionLink("Reset", "ResetCandidate", "Client", new { Clientjdid = Model.IRFId, candidateEmail = Model.CandidateCuratedScores[i].CandidateEmailId })
                                                                 <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                              
-                                                                    <span class="mdc-fab app-fab--absolute trash-btn" id="btnMinus" onclick="DeleteRow(this, 'CandidateCuratedScores','CandidateEmailId','IRFId', 'Score')" class="mdc-fab__icon material-icons"><i class="far fa  fa-trash"></i></span>
-                                                               
+                                                                <span class="mdc-fab app-fab--absolute trash-btn" id="btnMinus" onclick="DeleteRow(this, 'CandidateCuratedScores','CandidateEmailId','IRFId', 'Score')" class="mdc-fab__icon material-icons"><i class="far fa  fa-trash"></i></span>
+
                                                             </td>
                                                         </tr>
                                                     }
@@ -134,7 +133,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </form>
                     </div>
                     <!-- end content-->
