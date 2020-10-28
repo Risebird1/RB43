@@ -446,7 +446,7 @@
                                                                 @item.candidateName
                                                             </td>
                                                         }
-                                                        <td> @item.candidateEmail</td>
+                                                        <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         <td> @item.JDTiltle.Split("|")[0] </td>
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {
@@ -902,14 +902,14 @@
                 <span onclick="closeCandidateFeedbackModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
             </button>
 
-
+            <input type="text" hidden id="txtinterviewid" />
             <div class="modal-body" style="padding: 2px 16px;">
                 <div style="padding:10px" id="divcandidatefeedback">
 
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
-
+                        <input style="color: #fff;line-height: 13px;" type="button" onclick="ResendFeedbackForm()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Send Feedback">
                         <input style="color: #fff;line-height: 13px;" type="button" onclick="closeCandidateFeedbackModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
@@ -1348,14 +1348,17 @@
             data: { interviewid: interviewid },
             success: function (data) {
                 openCandidateFeedbackModel();
+                $("#txtinterviewid").val(interviewid);
                 BindCandidateFeedback(data);
             }
         });
     }
     function BindCandidateFeedback(Data) {
         var html = '';
+        document.getElementById("btnresendform").style.display = "none";
         if (Data == null) {
             html = 'No Feedback record found';
+            document.getElementById("btnresendform").style.display = "block";
         } else {
             html += '<p><b>Overall, how would you rate the video interview experience?</b></p>';
             html += '<p>FeedBack: ' + Data.question1 + ' out of 5</p>';
@@ -1380,6 +1383,18 @@
             }
         }
         $("#divcandidatefeedback").empty().html(html);
+    }
+    function ResendFeedbackForm() {
+        var interviewid = $("#txtinterviewid").val();
+        var candidateemail = $("#txtcandidateemail_" + interviewid).val();
+        $.ajax({
+            type: "POST",
+            url: "/Interview/ResendFeedbackform",
+            data: { interviewid: interviewid, CandidateEmail: candidateemail },
+            success: function (data) {
+                alert(data);
+            }
+        });
     }
 </script>
 <script>
