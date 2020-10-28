@@ -15,5 +15,6 @@ namespace Risebird.Entities.ViewModel
         public int Balance { get; set; }
         public string Name { get; set; }
         public int PerSuccessRate { get; set; }
+        public string CreatedOnstring { get; set; }
     }
 }

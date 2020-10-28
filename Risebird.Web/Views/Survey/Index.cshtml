@@ -134,7 +134,11 @@
                     <label for="Q6_1" class="star">&#9733;</label>
                 </div>
                 @Html.ValidationMessageFor(model => model.Question6, "", new { @class = "text-danger" })
-                <p><b>7. Your Details</b></p>
+                <p><b>7. Please share comment for Interviewer.</b></p>
+                <p>
+                    @Html.TextAreaFor(m => m.CommentforInterviewer, new { @class = "form-control" })
+                </p>
+                <p><b>8. Your Details</b></p>
                 <div>
                     @Html.LabelFor(model => model.Name)
                     @Html.TextBoxFor(m => m.Name, new { @class = "form-control mb10" })
