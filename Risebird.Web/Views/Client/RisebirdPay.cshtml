@@ -47,7 +47,7 @@
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card bl-bg razorpay_con ">
+                <div class="mdc-card card bl-bg razorpay_con" style="background: #151515!important;">
 
                     <div class="mdc-card-wrapper__text-section razorpay_btn">
                         <div style="padding:0px">
@@ -187,7 +187,7 @@
                     html += '    <td style="color:red;font-weight:bold;" class="text-center">-' + data[i].debit + '</td>';
                 }
                 else {
-                    html += '   <td></td> ';
+                    html += '   <td class="text-center"></td> ';
                 }
             }
             if (action == "All" || action == "CREDIT") {
@@ -195,11 +195,11 @@
                     html += '    <td style="color:green;font-weight:bold;" class="text-center">+' + data[i].credit + '</td>';
                 }
                 else {
-                    html += '    <td></td> ';
+                    html += '    <td class="text-center"></td> ';
                 }
             }
             if (action == "All") {
-                html += '    <td>' + data[i].balance + '</td> ';
+                html += '    <td class="text-center">' + data[i].balance + '</td> ';
             }
             html += '    </tr> ';
         }

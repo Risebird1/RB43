@@ -7832,6 +7832,7 @@ div.tagsinput {
         position: relative;
         width: 100%;
         margin: 0px auto;
+        background: #151515 !important;
     }
     .razorpay_btn {
         flex: 0 0 100%;
