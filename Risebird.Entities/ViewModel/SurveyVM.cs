@@ -29,6 +29,12 @@ namespace Risebird.Entities.ViewModel
         public string Phone { get; set; }
         public DateTime CreatedOn { get; set; }
         public int interviewid { get; set; }
+        public string CommentforInterviewer { get; set; }
 
+    }
+    public class SurveyCandidateInterviewer
+    {
+        public string Interviewer { get; set; }
+        public string CandidateEmail { get; set; }
     }
 }
