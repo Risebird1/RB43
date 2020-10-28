@@ -6803,5 +6803,24 @@ namespace Risebird.Web.Controllers
             var resultset = result.Where(x => x.interviewid == interviewid).FirstOrDefault();
             return Json(resultset);
         }
+        [HttpPost]
+        public JsonResult ResendFeedbackform(int interviewid, string CandidateEmail)
+        {
+            string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index/" + interviewid;
+            Mail _mail = new Mail
+            {
+                TO = CandidateEmail,
+                Subject = "Risebird: Feedback form"
+            };
+            var emailsend = _notificationHelper.SurveyNotification(_mail, currenturl);
+            if (emailsend == "Mail sent successfully.")
+            {
+                return Json("Feedback Form Send successfully");
+            }
+            else
+            {
+                return Json("Fail to send feedback form, please try again.");
+            }
+        }
     }
 }
