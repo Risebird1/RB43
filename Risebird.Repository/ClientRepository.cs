@@ -412,13 +412,15 @@ namespace Risebird.Repository
             }
             return "failed";
         }
-        public string ResetCandidate(int Clientjdid, string candidateEmail)
+        public string ResetCandidate(int Clientjdid, string candidateEmail,string emailid)
         {
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@Clientjdid", Clientjdid);
                 parameters.Add("@candidateEmailid", candidateEmail);
+                parameters.Add("@emailid", emailid);
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query(con, "[Usp_resetCandidateDetails]", parameters,
