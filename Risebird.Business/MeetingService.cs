@@ -86,7 +86,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<List<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName= null)
+        public async Task<List<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null)
         {
             try
             {
@@ -1870,12 +1870,25 @@ namespace Risebird.Business
                 return "";
             }
         }
-        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId)
+        public IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid, string emailId)
         {
             try
             {
                 return _meetingRespository.GetClientJdIRFs(Clientjdid, emailId);
 
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public SurveyCandidateInterviewer FetchCanddiateInterviewer(int interviewid)
+        {
+            try
+            {
+                var result = _meetingRespository.FetchCanddiateInterviewer(interviewid);
+                return result;
             }
             catch (Exception ex)
             {

@@ -23,7 +23,7 @@ Declare @Balance int
 Declare @Points int  
 Select @Userid=Userid,@Videoid=Interviewid from SuitableCandidate where id=@Interviewid    
 Select @ClientId=ClientId from ClientUser where Userid=@Userid    
-Select @Count=Count(*) from SuitableCandidate sc join ClientUser cu on sc.Userid=cu.Userid where sc.Interviewid=@Videoid and cu.ClientId=@ClientId and Status='Interest Accepted' and sc.Userid!=@Userid    
+Select @Count=Count(*) from SuitableCandidate sc join ClientUser cu on sc.Userid=cu.Userid where sc.Interviewid=@Videoid and cu.ClientId=@ClientId and Status='Interest Accepted'    
 if(@Count=0)    
 Begin    
 select @CandidateEmail=candidateEmail from InterviewMeetings where id=@Videoid    
