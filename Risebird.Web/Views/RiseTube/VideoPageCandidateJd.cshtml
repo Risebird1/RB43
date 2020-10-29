@@ -485,17 +485,17 @@
                                                                                     <img src="../../img/share-tweet-icon.png" style=" width: 28px;padding-left:4px;"> Share
                                                                                 </button>
                                                                                 <div class="dropdown-menu">
-                                                                                    <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
-                                                                                        <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
-                                                                                    </span>
-
+                                                                                    @*<span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                        <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                    </span>*@
+                                                                                    <span class="tooltip--right" data-tooltip="To generate public sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
                                                                                     <span class="tooltip--right" data-tooltip="To convey the act of sharing  through email ">
 
                                                                                         <input type="button" class="share-wrap btninterest sharebtn1 email-share" id="btnShare1" value="Edit/Share" Shortvalue="1" />
 
                                                                                     </span>
                                                                                     @*<span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly "><input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>*@
-                                                                                    <span class="tooltip--right" data-tooltip="To generate public sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+
                                                                                     @*<span class="tooltip--right" data-tooltip="Create / Edit View and Share"><input type="button" class="form-control btninterest sharebtn1 edit-share" id="btnShare4" value="Create / Edit View" Shortvalue="1" /></span>*@
 
                                                                                 </div>
@@ -743,6 +743,7 @@
                                                                             <!-- #tab1 -->
                                                                             <h3 class="tab_drawer_heading" rel="link2">Candidate Details</h3>
                                                                             <div id="link2" class="tab_content">
+                                                                                <input type="text" value="@Model.IreportModel.encodedresumeLink" id="txtresumelink" />
                                                                                 <div class="row">
                                                                                     <div class="col-md-6 col-sm-6">
                                                                                         <div class="form-group">
@@ -1500,7 +1501,22 @@
                         }
                         else
                         {
-                            <div>No Selected Candidate Yet on this Channel.</div>
+                            @if (ViewBag.pagestatus == "ALL")
+                            {
+                                <div>No Selected Candidate Yet on this Channel.</div>
+                            }
+                            else if (ViewBag.pagestatus == "SHORTLIST")
+                            {
+                                <div>No Shortlisted Candidate Yet on this Channel.</div>
+                            }
+                            else if (ViewBag.pagestatus == "INTRESTED")
+                            {
+                                <div>No intrested Candidate Yet on this Channel.</div>
+                            }
+                            else if (ViewBag.pagestatus == "ACCEPT")
+                            {
+                                <div>No interest accepted Candidate Yet on this Channel.</div>
+                            }
                         }
                         @if (Model.MeetingPatch.Count > 0)
                         {
@@ -1665,7 +1681,7 @@
 
 
                                                                     @*
-                                                                        <div class="time">3:50</div>
+                                                    <div class="time">3:50</div>
                                                                     *@
                                                                 </div>
 
@@ -3296,8 +3312,8 @@
                     var modal = document.getElementById("PublicUrlShareModel");
                     modal.style.display = "block";
                     var urlcurrent = window.location.href;
-                    if (urlcurrent.includes("VideoPageCurated")) {
-                        urlcurrent = urlcurrent.split("?")[0].replace("VideoPageCurated", "VideoPage") + "/" + $("#txtVideoId").val();
+                    if (urlcurrent.includes("VideoPageCandidateJd")) {
+                        urlcurrent = urlcurrent.split("?")[0].replace("VideoPageCandidateJd", "VideoPage") + "/" + $("#txtVideoId").val();
                         $("#txtvideoUrls").text(urlcurrent);
                     } else {
                         $("#txtvideoUrls").text(window.location.href);
@@ -3517,7 +3533,7 @@
         $.ajax({
             type: "POST",
             url: "/RiseTube/ShareVideoLinkToMail",
-            data: { Emailids: $("#txtsharetext").val(), videoid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val(), resumeLink: resume },
+            data: { Emailids: $("#txtsharetext").val(), videoid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val(), resumeLink: $("#txtresumelink").val() },
             success: function (data) {
                 closeSharePopUp1();
             }
@@ -3544,7 +3560,7 @@
     function openVideoDetailsModel() {
         $.ajax({
             type: "POST",
-            url: "/RiseTube/VideoDetailsJsonView",
+            url: "/RiseTube/VideoDetailsJsonViewJd",
             data: { interviewid: $("#txtVideoId").val() },
             success: function (data) {
                 var modal = document.getElementById("VideoDetailsModel");
@@ -3652,7 +3668,7 @@
         html += '       </tr>';
         for (var i = 0; i < data.length; i++) {
             html += '   <tr>';
-            html += '                  <td >XXXXXXX@XXX.' + data[i].candidate.split('.')[data[i].candidate.split('.').length - 1] + '</td>';
+            html += '                  <td>' + data[i].candidate + '</td>';
             if (data[i].viewName != null && data[i].viewName != "") {
                 html += '                    <td class="text-center"><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">' + data[i].viewName + '</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             } else {
