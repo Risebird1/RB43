@@ -184,11 +184,21 @@
                                                 <div class="row">
                                                     <div class=" col-md-7 col-sm-7 first">
 
-                                                      
-                                                            <h6 class="assessment-grp">
-                                                                @item.JDTitle</h6>
-                                                     
-                                                     
+                                                        @if (@item.JDTitle.Length > 5)
+                                                        {
+                                                            <a style="text-decoration: none;
+        cursor: pointer;
+" data-tooltip="@item.JDTitle"><h6 class="jd-name assessment-grp">@item.JDTitle</h6> </a>
+}
+else
+{
+<h6 class="assessment-grp">
+    @item.JDTitle
+</h6>
+}
+
+
+
                                                     </div>
 
                                                     <div class="col-md-5 col-sm-5 card-header-buttons action text-right">
