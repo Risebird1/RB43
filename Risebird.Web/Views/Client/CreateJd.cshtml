@@ -402,6 +402,14 @@
                                     @Html.TextBoxFor(m => m._clientjddetails.ClientUrl, new { @class = "form-control" })
                                     @Html.ValidationMessageFor(model => model._clientjddetails.ClientUrl, "", new { @class = "text-danger" })
                                 </div>
+                                @if (!Model._clientjddetails.isClientUser)
+                                {
+                                    <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
+                                        @Html.LabelFor(model => model._clientjddetails.persuccessrate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.TextBoxFor(m => m._clientjddetails.persuccessrate, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model._clientjddetails.persuccessrate, "", new { @class = "text-danger" })
+                                    </div>
+                                }
                             </div>
                             <div class="row">
 
@@ -412,6 +420,7 @@
                                     @Html.ValidationMessageFor(model => model._clientjddetails.JobDescription, "", new { @class = "text-danger" })
                                 </div>
                             </div>
+
                         </div>
                     </div>
 
@@ -511,6 +520,7 @@
                 $("#zclientjddetails_JobRole").val(data.jobRole);
                 $("#zclientjddetails_ClientUrl").val(data.clientUrl);
                 $("#zclientjddetails_JobDescription").val(data.jobDescription);
+                $("#zclientjddetails_persuccessrate").val(data.persuccessrate);
                 if (data.isClientUser == false) {
                     $("#zclientjddetails_ClientEmail").val(data.clientEmail);
                     document.getElementById("zclientjddetails_ClientEmail").disabled = true;
