@@ -16,6 +16,18 @@ CREATE TABLE [dbo].[SuitableCandidate](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Clientjdid')
+      AND Object_ID = Object_ID(N'SuitableCandidate'))
+BEGIN
+    ALTER TABLE SuitableCandidate
+    Add [Clientjdid] int NULL		
+END
+END
 GO
 
 

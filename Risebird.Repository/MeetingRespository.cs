@@ -1940,6 +1940,8 @@ namespace Risebird.Repository
                 parameters.Add("@InterviewId", id);
                 parameters.Add("@EmailId", email);
                 parameters.Add("@Comment", Comment);
+                parameters.Add("@Clientjdid", 0);
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = SqlMapper.Query<string>(con, "usp_AddSuitableCandidate", parameters,
@@ -3025,6 +3027,30 @@ namespace Risebird.Repository
                 return null;
             }
 
+        }
+        public string CandidateSuitableJd(int id, string email, string Comment, int Clientjdid)
+        {
+            try
+            {
+                email = email.Replace("\"", "");
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewId", id);
+                parameters.Add("@EmailId", email);
+                parameters.Add("@Comment", Comment);
+                parameters.Add("@Clientjdid", Clientjdid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<string>(con, "usp_AddSuitableCandidate", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault().ToString();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }
