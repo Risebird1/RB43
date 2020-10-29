@@ -99,8 +99,6 @@
                         <input type="text" hidden id="txtClientjdid" value="@ViewBag.CuratedGroupId" />
                         @if (ViewBag.VideoStatus != "Public")
                         {
-
-
                             @if (ViewBag.actionstatus == "SkillChannelDetails")
                             {
                                 <a href="/Client/CreateJd" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">Back to List</a>
@@ -113,10 +111,6 @@
                             {
                                 <a href="/IRF/CuratedIndex" class="mdc-button mdc-button--raised mdc-ripple  -upgraded card-title-space">Back to List</a>
                             }
-
-
-
-
                         }
 
                     </div>
@@ -3462,8 +3456,8 @@
         if ($("#txtintrestecomment").val().trim() != "") {
             $.ajax({
                 type: "POST",
-                url: "/RiseTube/CandidateSuitable",
-                data: { videoid: $("#txtVideoId").val(), Comment: $("#txtintrestecomment").val() },
+                url: "/RiseTube/CandidateSuitableJd",
+                data: { videoid: $("#txtVideoId").val(), Comment: $("#txtintrestecomment").val(), Clientjdid: $("#txtClientjdid").val() },
                 success: function (data) {
                     if (data == "Success") {
                         $("#btnIntrest").css("background-color", "yellow", "height", "30px", "padding", "0px 5px");

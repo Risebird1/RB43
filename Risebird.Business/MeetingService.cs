@@ -1896,6 +1896,22 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid)
+        {
+            try
+            {
+                var meeting = _meetingRespository.CandidateSuitableJd(id, email, Comment, Clientjdid);
+                return meeting;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
     }
 
 }

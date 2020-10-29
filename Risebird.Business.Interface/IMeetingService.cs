@@ -101,5 +101,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null);
         Task<List<MeetingVM>> GetRiseTubeMeetingsForCuratedUserByIRF(string Emailid, string actionStatus, int irfId);
         SurveyCandidateInterviewer FetchCanddiateInterviewer(int interviewid);
+        string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid);
+
     }
 }
