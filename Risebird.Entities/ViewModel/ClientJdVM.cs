@@ -52,6 +52,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Client Website URL")]
         public string ClientUrl { get; set; }
         public string Name { get; set; }
+        public int persuccessrate { get; set; }
     }
     public class ClientDetails
     {

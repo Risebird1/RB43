@@ -66,6 +66,15 @@ BEGIN
     ALTER TABLE ClientJd
     Add ClientUrl [varchar](max) NULL		
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'persuccessrate')
+      AND Object_ID = Object_ID(N'ClientJd'))
+BEGIN
+    ALTER TABLE ClientJd
+    Add persuccessrate [int] NULL		
+END
 END
 GO
 
