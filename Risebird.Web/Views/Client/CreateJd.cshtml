@@ -67,7 +67,7 @@
                             <div class="mdc-button__ripple"></div>
                         </button>
 
-                        <a onclick="CreateJd(2)" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" style="color:#fff;"></span>Create JD</a>
+                        <a onclick="CreateJd(2)" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-plus-square" style="color:#fff;"></span>&nbsp;Create JD</a>
                     }
                     @*<a href="/User/Interviewers" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"><span class="fa fa-chevron-left"></span> Back to List</a>*@
                 </div>
@@ -184,7 +184,7 @@
                                                 <div class="row">
                                                     <div class=" col-md-7 col-sm-7 first">
 
-                                                        @if (@item.JDTitle.Length > 5)
+                                                        @if (@item.JDTitle.Length > 13)
                                                         {
                                                             <a style="text-decoration: none;
         cursor: pointer;
@@ -282,13 +282,13 @@ else
 
                                                     <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 text-right ">
                                                         <button class="mdc-fab app-fab--absolute item1" aria-label="All">
-                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ALL"})'" title="ALL Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ALL"})'" title="All Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
                                                         </button>
                                                         <button class="mdc-fab app-fab--absolute item1" aria-label="ShortListed">
                                                             <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="SHORTLIST"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg></span>
                                                         </button>
                                                         <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Send">
-                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="INTRESTED"})'" title="Interest Send Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg></span>
+                                                            <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="INTRESTED"})'" title="Interest Sent Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg></span>
                                                         </button>
                                                         <button class="mdc-fab app-fab--absolute item1" aria-label="Interest-Accept">
                                                             <span onclick="location.href='@Url.Action("VideoPageCandidateJd", "RiseTube",new { ClientJdId = item.id, actionstatus="ACCEPT"})'" title="Interest Accepted Candidates" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg></span>
@@ -333,7 +333,7 @@ else
                         @Html.HiddenFor(m => m._clientjddetails.id)
 
                         <div style="width:100%;">
-                            <div class="row">
+                            <div>
                                 <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                     <div class="form-group">
                                         <label class="control-label  desp-label" for="StartDate"> Start Date </label>
@@ -352,7 +352,7 @@ else
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div >
                                 <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                     @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
@@ -364,7 +364,7 @@ else
                                     @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
                                 </div>
                             </div>
-                            <div class="row">
+                            <div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
 
                                     @Html.LabelFor(model => model._clientjddetails.Filelink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -381,7 +381,7 @@ else
 
                             @if (!Model._clientjddetails.isClientUser)
                             {
-                                <div class="row">
+                                <div >
                                     <div style="clear:both"></div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                         @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -397,7 +397,7 @@ else
                             }
 
                             <div style="clear:both"></div>
-                            <div class="row">
+                            <div >
 
                                 <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -410,7 +410,7 @@ else
                                     @Html.ValidationMessageFor(model => model._clientjddetails.JobRole, "", new { @class = "text-danger" })
                                 </div>
                             </div>
-                            <div class="row">
+                            <div>
 
                                 <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.ClientUrl, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -426,7 +426,7 @@ else
                                     </div>
                                 }
                             </div>
-                            <div class="row">
+                            <div >
 
                                 <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -445,12 +445,12 @@ else
                             <font style="font-size:12px;">Close</font>
                         </button>
 
-                        <button type="submit" id="btncreate" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                        <button type="submit" id="btncreate" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-right:5px;">
                             <font style="font-size:12px;">Create</font>
                         </button>
 
 
-                        <button type="submit" id="btnedit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;display:none">
+                        <button type="submit" id="btnedit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-right:5px;display:none">
                             <font style="font-size:12px;">Edit</font>
                         </button>
 
@@ -472,8 +472,8 @@ else
 
     $(document).ready(function () {
         $(".jd-name").each(function () {
-            if ($(this).text().length > 11) {
-                $(this).text($(this).text().substr(0, 5) + "...")
+            if ($(this).text().length > 13) {
+                $(this).text($(this).text().substr(0, 13) + "...")
 
                 $('[role="data-tooltip"]').css("visibility", "visible");
 
