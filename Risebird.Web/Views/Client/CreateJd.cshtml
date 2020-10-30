@@ -333,7 +333,7 @@ else
                         @Html.HiddenFor(m => m._clientjddetails.id)
 
                         <div style="width:100%;">
-                            <div>
+                            <div class="row">
                                 <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                     <div class="form-group">
                                         <label class="control-label  desp-label" for="StartDate"> Start Date </label>
@@ -352,7 +352,7 @@ else
                                     </div>
                                 </div>
                             </div>
-                            <div >
+                            <div class="row">
                                 <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.AssessmentGroup, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                     @Html.DropDownListFor(m => m._clientjddetails.AssessmentGroup, Model._clientjddetails.AssessmentGrouplist, htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
@@ -364,7 +364,7 @@ else
                                     @Html.ValidationMessageFor(model => model._clientjddetails.JDTitle, "", new { @class = "text-danger" })
                                 </div>
                             </div>
-                            <div>
+                            <div class="row">
                                 <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
 
                                     @Html.LabelFor(model => model._clientjddetails.Filelink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -381,7 +381,7 @@ else
 
                             @if (!Model._clientjddetails.isClientUser)
                             {
-                                <div >
+                                <div class="row">
                                     <div style="clear:both"></div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                         @Html.LabelFor(model => model._clientjddetails.ClientEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -397,7 +397,7 @@ else
                             }
 
                             <div style="clear:both"></div>
-                            <div >
+                            <div class="row">
 
                                 <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.Location, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -410,7 +410,7 @@ else
                                     @Html.ValidationMessageFor(model => model._clientjddetails.JobRole, "", new { @class = "text-danger" })
                                 </div>
                             </div>
-                            <div>
+                            <div class="row">
 
                                 <div class="col-lg-6 col-md-6 col-sm-6 pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.ClientUrl, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -426,7 +426,7 @@ else
                                     </div>
                                 }
                             </div>
-                            <div >
+                            <div class="row">
 
                                 <div class="form-group col-lg-12  col-md-12 col-sm-12  pull-left">
                                     @Html.LabelFor(model => model._clientjddetails.JobDescription, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
