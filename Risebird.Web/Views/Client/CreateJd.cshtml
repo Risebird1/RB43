@@ -421,7 +421,7 @@ else
                                 {
                                     <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                         @Html.LabelFor(model => model._clientjddetails.persuccessrate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.TextBoxFor(m => m._clientjddetails.persuccessrate, new { @class = "form-control" })
+                                        @Html.TextBoxFor(m => m._clientjddetails.persuccessrate, new { @class = "form-control",@type="number" })
                                         @Html.ValidationMessageFor(model => model._clientjddetails.persuccessrate, "", new { @class = "text-danger" })
                                     </div>
                                 }
@@ -557,7 +557,7 @@ else
                     $("#zclientjddetails_Heuristicsscore").val(data.heuristicsscore);
                 }
                 document.getElementById("zclientjddetails_AssessmentGroup").value = data.assessmentGroup;
-                $("#zclientjddetails_Filelink").val(data.Filelink);
+                $("#zclientjddetails_Filelink").val(data.filelink);
                 document.getElementById('btncreate').style.display = 'none';
                 document.getElementById('btnedit').style.display = 'block';
                 CreateJd(1);
