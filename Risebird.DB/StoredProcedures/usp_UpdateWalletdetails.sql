@@ -31,7 +31,7 @@ Set @Comment='For Candidate: '+@CandidateEmail
 --Select @Points=PerSuccessRate from Client Where id=@ClientId      
 Select @Points=persuccessrate from ClientJd where id=@Clientjdid
 Select @Balance=(sum(Credit)-sum(debit)) from ClientWallet where Clientid=@ClientId     
-Set @Balance=ISnull(@Balance,0)-@Points    
+Set @Balance=ISnull(@Balance,0)-ISnull(@Points,0)    
 Insert Into ClientWallet values(@ClientId,@Userid,0,@Points,Getdate(),@Comment,@Balance)       
 Update Client Set Balance=@Balance where id=@ClientId      
 END        
