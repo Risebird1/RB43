@@ -100,5 +100,8 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetRiseTubeMeetingsByScore(int clientId, string profile, string Emailid, bool IsClientCurated = false);
         Task<List<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null);
         Task<List<MeetingVM>> GetRiseTubeMeetingsForCuratedUserByIRF(string Emailid, string actionStatus, int irfId);
+        Task<List<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid, int Page, bool IsClientCurated = false);
+        Task<List<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null);
+        Task<int> GetSharedIndexMeetingsCount(string searchValue = null);
     }
 }

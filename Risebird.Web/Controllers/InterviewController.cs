@@ -4442,7 +4442,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:N1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 11;
+                int startColumn = 1; int endColumn = 10;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
@@ -4457,7 +4457,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 8].Value = "Interview Status";
                 Sheet.Cells[1, 9].Value = "Video Link";
                 Sheet.Cells[1, 10].Value = "Interviewer Comment";
-                Sheet.Cells[1, 11].Value = "Report Link";
+                //Sheet.Cells[1, 11].Value = "Report Link";
 
                 int i = 2;
                 //string LastAction = null; ;
@@ -4503,18 +4503,18 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 9].Value = "No Video";
                         }
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                        {
-                            Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        //if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                        //{
+                        //    Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
 
-                            Sheet.Cells[i, 11].Value = "Report Link";
-                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 11].Value = "No Report";
-                        }
+                        //    Sheet.Cells[i, 11].Value = "Report Link";
+                        //    Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                        //    Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, 11].Value = "No Report";
+                        //}
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4921,7 +4921,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:P1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 14;
+                int startColumn = 1; int endColumn = 11;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
@@ -4932,12 +4932,13 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 4].Value = "End Client Name";
                 Sheet.Cells[1, 5].Value = "Primary Skill";
                 Sheet.Cells[1, 6].Value = "Video";
+                //Sheet.Cells[1, 8].Value = "Report Link";
                 Sheet.Cells[1, 7].Value = "Interviewer Comment";
-                Sheet.Cells[1, 8].Value = "Report Link";
-                Sheet.Cells[1, 9].Value = "Approval Status";
-                Sheet.Cells[1, 10].Value = "Approval Comments ";
-                Sheet.Cells[1, 11].Value = "Final Selection Status";
-                Sheet.Cells[1, 12].Value = "Final Selection Comments";
+                Sheet.Cells[1, 8].Value = "Approval Status";
+                Sheet.Cells[1, 9].Value = "Approval Comments ";
+                Sheet.Cells[1, 10].Value = "Final Selection Status";
+                Sheet.Cells[1, 11].Value = "Final Selection Comments";
+
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -4969,15 +4970,16 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 6].Value = "No Video";
                         }
+                        //Sheet.Cells[i, 8].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        //Sheet.Cells[i, 8].Value = "Report Link";
+                        //Sheet.Cells[i, 8].Style.Font.UnderLine = true;
+                        //Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         Sheet.Cells[i, 7].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 8].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
-                        Sheet.Cells[i, 8].Value = "Report Link";
-                        Sheet.Cells[i, 8].Style.Font.UnderLine = true;
-                        Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                        Sheet.Cells[i, 9].Value = item.NextLevelApprovalStat;
-                        Sheet.Cells[i, 10].Value = item.ApprovalComments;
-                        Sheet.Cells[i, 11].Value = item.FinalSelectionStat;
-                        Sheet.Cells[i, 12].Value = item.FinalComments;
+                        Sheet.Cells[i, 8].Value = item.NextLevelApprovalStat;
+                        Sheet.Cells[i, 9].Value = item.ApprovalComments;
+                        Sheet.Cells[i, 10].Value = item.FinalSelectionStat;
+                        Sheet.Cells[i, 11].Value = item.FinalComments;
+
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
