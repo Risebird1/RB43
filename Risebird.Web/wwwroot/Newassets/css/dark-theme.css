@@ -1483,7 +1483,7 @@ div.dataTables_wrapper div.dataTables_info {
     margin-bottom: 5px;
     text-align: left !important;
     text-transform: uppercase;
-    background: rgb(25 25 25) !important;
+    background: rgb(10 10 10) !important;
 }
 .razorpay_details table td {
     color: #9a9a9a;
@@ -1503,6 +1503,7 @@ div.dataTables_wrapper div.dataTables_info {
 
 .razorpay_details table tr:nth-of-type(odd) {
     background: #fff;
+    border-bottom: 1px solid rgb(53 52 52);
 }
 
 

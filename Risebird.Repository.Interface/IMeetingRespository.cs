@@ -116,14 +116,16 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetings();
         Task<IEnumerable<QuestionDetails>> FetchQuestionDetails(int interviewid);
         string UpdateQuestionDetails(List<QuestionDetails> _question);
-       
-      
+
+
         Task<IEnumerable<string>> GetIRFMembersEmails(int irfId);
 
-        
-        IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid,string emailId);
+
+        IEnumerable<MeetingVM> GetClientJdIRFs(int Clientjdid, string emailId);
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null);
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsForCuratedUserByIRF(string EmailId, string actionStatus, int irfId);
+        SurveyCandidateInterviewer FetchCanddiateInterviewer(int interviewid);
+        string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid);
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid, int Page, bool IsClientCurated = false);
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null);
         Task<int> GetSharedIndexMeetingsCount(string searchValue = null);

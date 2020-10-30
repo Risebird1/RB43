@@ -194,7 +194,7 @@ namespace Risebird.Repository
         {
             try
             {
-                if(profileName!=null && profileName =="CuratedUser")
+                if (profileName != null && profileName == "CuratedUser")
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -217,8 +217,8 @@ namespace Risebird.Repository
                             commandType: CommandType.StoredProcedure);
                     }
                 }
-                
-                
+
+
             }
             catch (SqlException ex)
             {
@@ -2000,6 +2000,8 @@ namespace Risebird.Repository
                 parameters.Add("@InterviewId", id);
                 parameters.Add("@EmailId", email);
                 parameters.Add("@Comment", Comment);
+                parameters.Add("@Clientjdid", 0);
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = SqlMapper.Query<string>(con, "usp_AddSuitableCandidate", parameters,
@@ -2017,6 +2019,18 @@ namespace Risebird.Repository
         {
             try
             {
+                //Debit Points from Client wallet
+                if (Status == "Interest Accepted")
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Interviewid", vedioid);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var updatestatus = SqlMapper.Query<string>(con, "usp_UpdateWalletdetails", parameters,
+                            commandType: CommandType.StoredProcedure);
+                    }
+                }
+                //Update Interest status
                 var query = "Update SuitableCandidate set Status=@Status where id=@Id ";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Id", vedioid);
@@ -2025,18 +2039,7 @@ namespace Risebird.Repository
                 {
                     con.Query(query, dynamicParameters);
                 }
-                if (Status == "Interest Accepted")
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@Interviewid", vedioid);
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var updatestatus = SqlMapper.Query<string>(con, "usp_UpdateWalletdetails", parameters,
-                            commandType: CommandType.StoredProcedure);
-                    }
-                }
-                //Debit Points from Client wallet
                 var finalquery = "Select ul.EmailId as Comment,(ul.Firstname +''+ ul.lastname) as UserName from SuitableCandidate sc Join UserList ul on sc.userid=ul.id where sc.id=@Id ";
                 var finaldynamicParameters = new DynamicParameters();
                 finaldynamicParameters.Add("@Id", vedioid);
@@ -3089,6 +3092,27 @@ namespace Risebird.Repository
             }
 
         }
+        public SurveyCandidateInterviewer FetchCanddiateInterviewer(int interviewid)
+        {
+            try
+            {
+                var query = "Select CandidateEmail,Interviewer from interviewmeetings where id=@interviewid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<SurveyCandidateInterviewer>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
 
         public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null)
         {
@@ -3110,6 +3134,30 @@ namespace Risebird.Repository
                 return 0;
             }
             
+        }
+        public string CandidateSuitableJd(int id, string email, string Comment, int Clientjdid)
+        {
+            try
+            {
+                email = email.Replace("\"", "");
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewId", id);
+                parameters.Add("@EmailId", email);
+                parameters.Add("@Comment", Comment);
+                parameters.Add("@Clientjdid", Clientjdid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<string>(con, "usp_AddSuitableCandidate", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault().ToString();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

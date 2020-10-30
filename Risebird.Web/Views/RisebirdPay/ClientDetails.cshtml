@@ -132,7 +132,7 @@
         html += '            <tbody>';
         for (var i = 0; i < data.length; i++) {
             html += '                            <tr>';
-            html += '   <td>' + data[i].createdOn + '</td> ';
+            html += '   <td>' + data[i].createdOnstring + '</td> ';
             html += '   <td>' + data[i].comment + '</td> ';
             if (action == "All" || action == "DEBIT") {
                 if (data[i].debit != 0) {

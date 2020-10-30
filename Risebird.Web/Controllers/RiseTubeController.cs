@@ -3061,5 +3061,27 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [HttpPost]
+        public JsonResult CandidateSuitableJd(string videoid, string Comment, int Clientjdid)
+        {
+            //store data in database
+            int id = Convert.ToInt32(videoid);
+            var email = HttpContext.Session.GetString("email");
+            var Status = _meetingService.CandidateSuitableJd(id, email, Comment, Clientjdid);
+            if (Status != null)
+            {
+                Mail _mail = new Mail
+                {
+                    TO = Status,
+                    Subject = "Client has shown interest in your profile"
+                };
+                email = email.Replace("\"", "");
+                email = email.Split("@")[1].Split(".")[0];
+                StringBuilder bulider = new StringBuilder();
+                bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");
+                var result = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+            }
+            return Json("Success");
+        }
     }
 }

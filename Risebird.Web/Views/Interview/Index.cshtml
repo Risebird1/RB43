@@ -376,10 +376,10 @@
                                                     <th>Aadhar Link</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
-                                                   
+
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
-                                                    
+
                                                     @*<th>Interview Device Details</th>*@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
@@ -417,10 +417,10 @@
                                                     <th>Aadhar Link</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
-                                                 
+
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
-                                                  
+
                                                     @*<th>Interview Device Details</th>*@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
@@ -446,7 +446,7 @@
                                                                 @item.candidateName
                                                             </td>
                                                         }
-                                                        <td> @item.candidateEmail</td>
+                                                        <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
                                                         <td> @item.JDTiltle.Split("|")[0] </td>
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {
@@ -576,7 +576,7 @@
                                                             </div>
                                                         </td>
 
-                                                        
+
 
                                                         <td>
                                                             @item.FinalSelectionStat
@@ -588,9 +588,12 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                       
+
 
                                                         <td class="text-right action">
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Candidate Feedback">
+                                                                <span onclick="CandidateFeedback(@item.imid)" title="Candidate Survey Feedback" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M16 1H2c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h14c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zM7 13H5V8h2v5zm3 0H8V5h2v8zm3 0h-2V9h2v4z" /></svg></span>
+                                                            </button>
                                                             @if (item.IsBiometricEnabled)
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Report">
@@ -881,6 +884,40 @@
     </div>
 </div>
 
+<div id="CandidateFeedbackModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Candidate Feedback </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeCandidateFeedbackModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <input type="text" hidden id="txtinterviewid" />
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div style="padding:10px" id="divcandidatefeedback">
+
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input style="color: #fff;line-height: 13px;" type="button" onclick="ResendFeedbackForm()" id="btnresendform" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Send Feedback">
+                        <input style="color: #fff;line-height: 13px;" type="button" onclick="closeCandidateFeedbackModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 
@@ -1283,9 +1320,6 @@
                 var receiver = ele[i].value;
             }
         }
-
-
-
         $.ajax({
             type: "GET",
             url: "/Interview/Broadcast",
@@ -1299,7 +1333,69 @@
             }
         });
     }
-
+    function openCandidateFeedbackModel() {
+        var modal = document.getElementById("CandidateFeedbackModel");
+        modal.style.display = "block";
+    }
+    function closeCandidateFeedbackModel() {
+        var modal = document.getElementById("CandidateFeedbackModel");
+        modal.style.display = "none";
+    }
+    function CandidateFeedback(interviewid) {
+        $.ajax({
+            type: "POST",
+            url: "/Interview/FetchCandidateFeedback",
+            data: { interviewid: interviewid },
+            success: function (data) {
+                openCandidateFeedbackModel();
+                $("#txtinterviewid").val(interviewid);
+                BindCandidateFeedback(data);
+            }
+        });
+    }
+    function BindCandidateFeedback(Data) {
+        var html = '';
+        document.getElementById("btnresendform").style.display = "none";
+        if (Data == null) {
+            html = 'No Feedback record found';
+            document.getElementById("btnresendform").style.display = "block";
+        } else {
+            html += '<p><b>Overall, how would you rate the video interview experience?</b></p>';
+            html += '<p>FeedBack: ' + Data.question1 + ' out of 5</p>';
+            html += '<p><b>How would you rate the evaluation process of interviewer?</b></p>';
+            html += '<p>FeedBack: ' + Data.question2 + ' out of 5</p>';
+            html += '<p><b>Given a chance would you like to reappear for the video interview?</b></p>';
+            if (Data.question3 == "1") {
+                html += '<p>FeedBack: No, I am satisfied with the interviewer and evaluation process</p>';
+            } else {
+                html += '<p>FeedBack: Yes, I did not get a fair chance and I can do better</p> ';
+            }
+            html += '<p><b>What did you like about the video interviews event?</b></p>';
+            html += '<p>FeedBack: ' + Data.question4 + '</p>';
+            html += '<p><b>What did you dislike about the video interviews event?</b></p>';
+            html += '<p>FeedBack: ' + Data.question5 + '</p>';
+            html += '<p><b>How friendly was the Risebird staff from scheduling to completion of interviews ?</b></p>';
+            html += '<p>FeedBack: ' + Data.question6 + ' out of 5</p>';
+            if (Data.commentforInterviewer != null) {
+                html += '<p><b>Comments:</b> ' + Data.commentforInterviewer + '</p>';
+            } else {
+                html += '<p><b>Comments:</b> </p>';
+            }
+        }
+        $("#divcandidatefeedback").empty().html(html);
+    }
+    function ResendFeedbackForm() {
+        var interviewid = $("#txtinterviewid").val();
+        var candidateemail = $("#txtcandidateemail_" + interviewid).val();
+        $.ajax({
+            type: "POST",
+            url: "/Interview/ResendFeedbackform",
+            data: { interviewid: interviewid, CandidateEmail: candidateemail },
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
 </script>
 <script>
     var start = document.getElementById('start');

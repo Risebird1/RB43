@@ -38,6 +38,7 @@ namespace Risebird.CommonHelper.Interface
 
         string CandidateJDScoreNotification(Mail model, int candidateCount, string JDName);
         string SurveyNotification(Mail model, string UrlDetails);
+        string FeedbackSubmitNotification(Mail model, string candidate);
 
     }
 }

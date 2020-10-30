@@ -9,6 +9,14 @@
 }
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" defer>
+<style>
+    .scroller-height {
+        overflow: auto;
+        height: 300px;
+    }
+</style>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -559,7 +567,7 @@
                 var modal = document.getElementById("myintrestList");
                 modal.style.display = "block";
                 var html = '';
-                html += '<table style="Width:100%"><div  class="table-responsive-sm">';
+                html += '<div class="sb-container scroller-height"><table style="Width:100%"><div  class="table-responsive-sm">';
                 html += '<tr><td class="client-nme" >Client Name</td><td class="client-date">Interested Date</td><td class="client-cmt">Comments</td><td class="text-center client-action">Action</td></tr>';
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].status == "Interest Accepted") {
@@ -603,7 +611,7 @@
                     html += "</td></tr>";
 
                 }
-                html += "</div></table>";
+                html += "</div></table></div>";
                 if (data.length == 0) {
                     html = 'No record found';
                 }
@@ -716,6 +724,12 @@
         });
     }
     }
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
