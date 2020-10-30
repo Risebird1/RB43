@@ -97,18 +97,14 @@
                                             <td>@item.Balance</td>
                                             <td>@item.PerSuccessRate</td>
                                             <td class="text-right" style="padding-right:30px;">
-                                                @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("profileName")))
-                                                {
-                                                    @if (HttpContextAccessor.HttpContext.Session.GetString("profileName") == "Admin")
-                                                    {
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
-                                                            <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
-                                                        </button>
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
-                                                            <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
-                                                        </button>
-                                                    }
-                                                }
+                                               
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
+                                                    <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
+                                                </button>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
+                                                    <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
+                                                </button>
+                                                    
                                                 <button class="mdc-fab app-fab--absolute" aria-label="View Details">
                                                     <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
                                                 </button>
