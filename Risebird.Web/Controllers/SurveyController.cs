@@ -39,6 +39,7 @@ namespace Risebird.Web.Controllers
             }
             try
             {
+
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
                 if (result.Where(x => x.interviewid == model.interviewid).Count() > 0)
@@ -56,14 +57,15 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
+                    //FetchCanddiateInterviewer
+                    var model1 = _meetingService.FetchCanddiateInterviewer(model.interviewid);
                     var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
                     model.PartitionKey = date;
                     model.RowKey = Guid.NewGuid().ToString();
                     model.CreatedOn = DateTime.Now;
+                    model.Interviewerid = model1.id;
                     await _azureTableStorageService.InsertEntity("RisebirdSurvey", model);
                     //Send mail to interviewer with candidate email address
-                    //FetchCanddiateInterviewer
-                    var model1 = _meetingService.FetchCanddiateInterviewer(model.interviewid);
                     Mail _mail = new Mail
                     {
                         TO = model1.Interviewer,
