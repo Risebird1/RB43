@@ -2941,6 +2941,7 @@ namespace Risebird.Web.Controllers
                         NewModel.encodedresumeLink = model.encodedresumeLink;
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
+                        NewModel.TotalExperience = IRListModel.TotalExperience;
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;

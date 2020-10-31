@@ -738,6 +738,7 @@ namespace Risebird.Business
                 {
                     var model = interviewReport.Count() > 0 ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
+                   
                     //get all values from database
                     var levelTech = _meetingRespository.GetLevelTech();
                     var skills = _meetingRespository.GetSkills();
@@ -782,7 +783,7 @@ namespace Risebird.Business
                     }
 
                     model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)genSkillList;
-
+                  
                     model.InterviewId = interviewId;
                     model.CandidateName = interviewDetails.candidateName;
                     model.interviewDate = interviewDetails.interviewDate.ToString();
@@ -809,6 +810,7 @@ namespace Risebird.Business
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
                 reportModel.CandidateName = interviewDetails.candidateName;
+                reportModel.TotalExperience = interviewDetails.TotalExperience+" Years";
                 reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = interviewDetails.candidateEmail;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
