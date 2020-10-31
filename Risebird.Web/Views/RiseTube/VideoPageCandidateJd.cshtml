@@ -743,7 +743,7 @@
                                                                             <!-- #tab1 -->
                                                                             <h3 class="tab_drawer_heading" rel="link2">Candidate Details</h3>
                                                                             <div id="link2" class="tab_content">
-                                                                                <input type="text" value="@Model.IreportModel.encodedresumeLink" id="txtresumelink" />
+                                                                                <input type="text" value="@Model.IreportModel.encodedresumeLink" id="txtresumelink" hidden />
                                                                                 <div class="row">
                                                                                     <div class="col-md-6 col-sm-6">
                                                                                         <div class="form-group">
@@ -826,14 +826,11 @@
                                                                                             </div>
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                                    @{
-                                                                                                        if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
-                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ", "%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                                    }
+                                                                                                    @Html.LabelFor(model => model.IreportModel.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TotalExperience, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
+                                                                                            
                                                                                         </div>
                                                                                         <div class="row">
                                                                                             @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
@@ -842,12 +839,19 @@
                                                                                                     <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                                                                 </div>
                                                                                             }
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TotalExperience, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                </div>
+                                                                                        <div class="col-md-6 col-sm-6">
+                                                                                            <div class="form-group">
+
+                                                                                                @{
+                                                                                                    if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
+                                                                                                    {
+                                                                                                        @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ", "%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> 
+                                                                                                    }
+                                                                                                }
                                                                                             </div>
+                                                                                        </div>
                                                                                         </div>
                                                                                     }
                                                                                     else
