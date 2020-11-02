@@ -2937,19 +2937,35 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null)
+        public async Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName=null)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if(profileName!=null && profileName=="Client")
                 {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@startFrom", ((page - 1) * 12));
-                    parameters.Add("@endWith", page * 12);
-                    parameters.Add("@searchValue", searchValue);
-                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUserPaged", parameters,
-                             commandType: CommandType.StoredProcedure);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@startFrom", ((page - 1) * 12));
+                        parameters.Add("@endWith", page * 12);
+                        parameters.Add("@searchValue", searchValue);
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForClientPaged", parameters,
+                                 commandType: CommandType.StoredProcedure);
+                    }
                 }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@startFrom", ((page - 1) * 12));
+                        parameters.Add("@endWith", page * 12);
+                        parameters.Add("@searchValue", searchValue);
+                        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUserPaged", parameters,
+                                 commandType: CommandType.StoredProcedure);
+                    }
+                }
+                
             }
             catch (SqlException ex)
             {
@@ -3114,18 +3130,34 @@ namespace Risebird.Repository
 
         }
 
-        public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null)
+        public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName=null)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                //usp_GetSharedIndexMeetingsCountforClient
+                if(profileName!=null && profileName=="Client")
                 {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@searchValue", searchValue);
-                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCount", parameters,
-                        commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault();
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@searchValue", searchValue);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCountforClient", parameters,
+                            commandType: CommandType.StoredProcedure);
+                        return result.FirstOrDefault();
+                    }
                 }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@searchValue", searchValue);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCount", parameters,
+                            commandType: CommandType.StoredProcedure);
+                        return result.FirstOrDefault();
+                    }
+                }
+                
 
             }
             catch (SqlException ex)

@@ -657,7 +657,7 @@ namespace Risebird.Web.Controllers
         //                var totalMeetings = modelList.FirstOrDefault().MeetingsCount;
 
         //                var remainder = totalMeetings % 12;
-        //                if(remainder==0)
+        //                if (remainder == 0)
         //                {
         //                    ViewBag.Pages = totalMeetings / 12;
 
@@ -667,7 +667,7 @@ namespace Risebird.Web.Controllers
         //                    ViewBag.Pages = (totalMeetings / 12) + 1;
 
         //                }
-                        
+
         //                //for (int i = 0; i < modelList.Count; i++)
         //                //{
         //                //    modelList[i].interviewVediosequence = modelList.Count;
@@ -688,7 +688,7 @@ namespace Risebird.Web.Controllers
 
         //                //}
         //                //return View(modelList.ToPagedList(Page ?? 1, 12));
-        //                return View("IndexPaged",modelList);
+        //                return View("IndexPaged", modelList);
         //            }
         //            else
         //            {
@@ -2581,13 +2581,110 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [Authorize]
+        public async Task<IActionResult> RBOnDemandTalent(int? Page, string searchvalue)
+        {
+            try
+            {
+
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = "Client"; profileName.Replace("\"", "");
+                    if(profileName=="Client")
+                    {
+
+                        var modelList = new List<MeetingVM>();
+
+                        if (Page == null || Page == 0)
+                        {
+                            Page = 1;
+                        }
+                        modelList = await _meetingService.GetSharedRiseTubeMeetingsPaged(Page.Value, searchvalue, profileName);
+
+                        foreach (var item in modelList)
+                        {
+
+                            var usernames = item.candidateName.Trim().Split(" ");
+                            var namemodel = String.Empty;
+                            foreach (var name in usernames)
+                            {
+                                if (name != null && name.Length >= 2)
+                                    namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                else if (name != null && name.Length == 1)
+                                    namemodel = namemodel + name?.ToCharArray()[0];
+
+                            }
+                            item.candidateName = namemodel;
+
+                        }
+
+
+                        ViewBag.ProfileName = profileName;
+                        if (!String.IsNullOrEmpty(searchvalue))
+                        {
+                            ViewBag.searchvalue = searchvalue;
+                        }
+                        else
+                        {
+                            ViewBag.searchvalue = "";
+                        }
+
+                        //var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                        //if (menus != null)
+                        //{
+                        //    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
+                        //    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                        //}
+
+                        var totalMeetings = await _meetingService.GetSharedIndexMeetingsCount(searchvalue, profileName);
+
+                        var remainder = totalMeetings % 12;
+                        if (remainder == 0)
+                        {
+                            ViewBag.Pages = totalMeetings / 12;
+
+                        }
+                        else
+                        {
+                            ViewBag.Pages = (totalMeetings / 12) + 1;
+
+                        }
+
+                        ViewBag.Page = Page.Value;
+                        ViewBag.MeetingsCount = totalMeetings;
+                        ViewBag.Remainder = remainder;
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+
+                    }
+                }
+
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
         /// <summary>
         /// Method to apply filters on index page
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="Page"></param>
         /// <returns></returns>
-       
+
         [AllowAnonymous]
         public async Task<IActionResult> ResetSharedRisetubeFilter()
         {

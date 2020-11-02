@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE PROCEDURE [dbo].[usp_GetIRFCandidates]
+Create PROCEDURE [dbo].[usp_GetIRFCandidates]
 
 @IRFId int
 
@@ -22,7 +22,7 @@ select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.
 ca.TotalExperience, ca.CurrentSalary, ca.ExpectedSalary, ca.Notice, ca.SelectabilityComments,ca.Heuristicsscore,
 ca.JoinabilityComments, ca.JoinabilityScore, ca.SelectabilityScore, ca.TechSkillComments, ca.SkillGeneralComments,ca.CostEstimate,
 ca.TechSkillScore, ca.SkillGeneralScore, ca.AddedByUserId, ca.VoiceItUserId, ca.InviteDate, ca.[Status], ul.EmailId, ca.Phone,
-ul.FirstName as [Name], IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink
+ul.FirstName as [Name], IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing
 from Candidate ca join IRF on ca.IRFId=IRF.id
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id  
 join UserList ul on ul.id = cm.UserId
@@ -33,6 +33,10 @@ ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join
 on im.candidateEmail= Filtered.candidateEmail and im.interviewDate=Filtered.intereviewDate
 left join InterviewComments ic on ic.InterviewId = im.id) ims on ims.candidateEmail= Cnd.EmailId and Cnd.IRFName = ims.IRFId
 End
+
+
+
+
 
 
 

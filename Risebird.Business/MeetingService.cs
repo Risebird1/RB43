@@ -1859,11 +1859,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<List<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null)
+        public async Task<List<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName = null)
         {
             try
             {
-                var result = await _meetingRespository.GetSharedRiseTubeMeetingsPaged(page, searchValue);
+                var result = await _meetingRespository.GetSharedRiseTubeMeetingsPaged(page, searchValue, profileName);
                 return result.ToList();
             }
             catch (Exception ex)
@@ -1873,11 +1873,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null)
+        public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null)
         {
             try
             {
-                return await _meetingRespository.GetSharedIndexMeetingsCount(searchValue);
+                return await _meetingRespository.GetSharedIndexMeetingsCount(searchValue, profileName);
             }
             catch (Exception ex)
             {

@@ -83,6 +83,20 @@
                                         @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
 
                                     </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.AvailableFreeLancing, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.CheckBoxFor(m => m.AvailableFreeLancing@*, new { @class = "mdc-checkbox__native-control" }*@)
+                                        @*<div class="mdc-checkbox__background">
+                                            <svg class="mdc-checkbox__checkmark"
+                                                 viewBox="0 0 24 24">
+                                                <path class="mdc-checkbox__checkmark-path"
+                                                      fill="none"
+                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                            </svg>
+                                            <div class="mdc-checkbox__mixedmark"></div>
+                                        </div>
+                                        <div class="mdc-checkbox__ripple"></div>*@
+                                    </div>
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
@@ -153,11 +167,27 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CostEstimate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.CostEstimate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })                                     
+                                        @Html.EditorFor(model => model.CostEstimate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
 
                                     </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.AvailableFullTime, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.CheckBoxFor(m => m.AvailableFullTime@*, new { @class = "mdc-checkbox__native-control" }*@)
+                                        @*<div class="mdc-checkbox__background">
+                                            <svg class="mdc-checkbox__checkmark"
+                                                 viewBox="0 0 24 24">
+                                                <path class="mdc-checkbox__checkmark-path"
+                                                      fill="none"
+                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                            </svg>
+                                            <div class="mdc-checkbox__mixedmark"></div>
+                                        </div>
+                                        <div class="mdc-checkbox__ripple"></div>*@
 
+                                    </div>
+
+                                    
                                 </div>
                             </div>
 
@@ -165,13 +195,13 @@
                             @Html.HiddenFor(x => x.IRFId)
                             @Html.HiddenFor(x => x.IRFName)
                             @Html.HiddenFor(x => x.id)
-                              <div class="row">
+                            <div class="row">
 
-         <div class="col-md-12 mc-button-area">
-                        @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
-                    </div>
-        </div>
+                                <div class="col-md-12 mc-button-area">
+                                    @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
+                                </div>
+                            </div>
 
                         }
 

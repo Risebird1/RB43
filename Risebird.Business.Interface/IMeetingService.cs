@@ -104,7 +104,7 @@ namespace Risebird.Business.Interface
         string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid);
 
         Task<List<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid, int Page, bool IsClientCurated = false);
-        Task<List<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null);
-        Task<int> GetSharedIndexMeetingsCount(string searchValue = null);
+        Task<List<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName = null);
+        Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null);
     }
 }

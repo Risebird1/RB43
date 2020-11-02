@@ -35,6 +35,8 @@ CREATE TABLE [dbo].[Candidate](
     [CostEstimate] [nvarchar](200) NULL,
     [EncodedResumeLink] [varchar](500) NULL,
     [Heuristicsscore] int NULL,
+    [AvailableFullTime] [bit] NULL,
+	[AvailableFreeLancing] [bit] NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -310,6 +312,26 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add  [Heuristicsscore] int NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AvailableFullTime')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add AvailableFullTime Bit
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AvailableFreeLancing')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add AvailableFreeLancing Bit
 END
 
 End
