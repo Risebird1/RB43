@@ -485,17 +485,17 @@
                                                                                     <img src="../../img/share-tweet-icon.png" style=" width: 28px;padding-left:4px;"> Share
                                                                                 </button>
                                                                                 <div class="dropdown-menu">
-                                                                                    <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
-                                                                                        <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
-                                                                                    </span>
-
+                                                                                    @*<span class="tooltip--right" data-tooltip="To convey the act of sharing to any user privately ">
+                                                                        <input type="button" class="share-wrap btninterest sharebtn1 private-share" id="btnShare" value="Private Share" Shortvalue="1" />
+                                                                    </span>*@
+                                                                                    <span class="tooltip--right" data-tooltip="To generate public sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
                                                                                     <span class="tooltip--right" data-tooltip="To convey the act of sharing  through email ">
 
                                                                                         <input type="button" class="share-wrap btninterest sharebtn1 email-share" id="btnShare1" value="Edit/Share" Shortvalue="1" />
 
                                                                                     </span>
                                                                                     @*<span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly "><input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>*@
-                                                                                    <span class="tooltip--right" data-tooltip="To generate public sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
+
                                                                                     @*<span class="tooltip--right" data-tooltip="Create / Edit View and Share"><input type="button" class="form-control btninterest sharebtn1 edit-share" id="btnShare4" value="Create / Edit View" Shortvalue="1" /></span>*@
 
                                                                                 </div>
@@ -743,6 +743,7 @@
                                                                             <!-- #tab1 -->
                                                                             <h3 class="tab_drawer_heading" rel="link2">Candidate Details</h3>
                                                                             <div id="link2" class="tab_content">
+                                                                                <input type="text" value="@Model.IreportModel.encodedresumeLink" id="txtresumelink" hidden />
                                                                                 <div class="row">
                                                                                     <div class="col-md-6 col-sm-6">
                                                                                         <div class="form-group">
@@ -825,14 +826,11 @@
                                                                                             </div>
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                                    @{
-                                                                                                        if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
-                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ", "%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
-                                                                                                    }
+                                                                                                    @Html.LabelFor(model => model.IreportModel.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TotalExperience, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                                 </div>
                                                                                             </div>
+                                                                                            
                                                                                         </div>
                                                                                         <div class="row">
                                                                                             @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
@@ -841,12 +839,19 @@
                                                                                                     <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                                                                 </div>
                                                                                             }
-                                                                                            <div class="col-md-6 col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TotalExperience, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                </div>
+                                                                                        <div class="col-md-6 col-sm-6">
+                                                                                            <div class="form-group">
+
+                                                                                                @{
+                                                                                                    if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
+                                                                                                    {
+                                                                                                        @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ", "%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> 
+                                                                                                    }
+                                                                                                }
                                                                                             </div>
+                                                                                        </div>
                                                                                         </div>
                                                                                     }
                                                                                     else
@@ -1500,7 +1505,22 @@
                         }
                         else
                         {
-                            <div>No Selected Candidate Yet on this Channel.</div>
+                            @if (ViewBag.pagestatus == "ALL")
+                            {
+                                <div>No Selected Candidate yet on this Channel.</div>
+                            }
+                            else if (ViewBag.pagestatus == "SHORTLIST")
+                            {
+                                <div>No Shortlisted Candidate yet on this Channel.</div>
+                            }
+                            else if (ViewBag.pagestatus == "INTRESTED")
+                            {
+                                <div>No Interest Sent Candidate yet on this Channel.</div>
+                            }
+                            else if (ViewBag.pagestatus == "ACCEPT")
+                            {
+                                <div>No Interest Accepted Candidate yet on this Channel.</div>
+                            }
                         }
                         @if (Model.MeetingPatch.Count > 0)
                         {
@@ -1665,7 +1685,7 @@
 
 
                                                                     @*
-                                                                        <div class="time">3:50</div>
+                                                    <div class="time">3:50</div>
                                                                     *@
                                                                 </div>
 
@@ -3296,8 +3316,8 @@
                     var modal = document.getElementById("PublicUrlShareModel");
                     modal.style.display = "block";
                     var urlcurrent = window.location.href;
-                    if (urlcurrent.includes("VideoPageCurated")) {
-                        urlcurrent = urlcurrent.split("?")[0].replace("VideoPageCurated", "VideoPage") + "/" + $("#txtVideoId").val();
+                    if (urlcurrent.includes("VideoPageCandidateJd")) {
+                        urlcurrent = urlcurrent.split("?")[0].replace("VideoPageCandidateJd", "VideoPage") + "/" + $("#txtVideoId").val();
                         $("#txtvideoUrls").text(urlcurrent);
                     } else {
                         $("#txtvideoUrls").text(window.location.href);
@@ -3517,7 +3537,7 @@
         $.ajax({
             type: "POST",
             url: "/RiseTube/ShareVideoLinkToMail",
-            data: { Emailids: $("#txtsharetext").val(), videoid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val(), resumeLink: resume },
+            data: { Emailids: $("#txtsharetext").val(), videoid: $("#videoUrl").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val(), comment: $("#comment").val(), resumeLink: $("#txtresumelink").val() },
             success: function (data) {
                 closeSharePopUp1();
             }
@@ -3544,7 +3564,7 @@
     function openVideoDetailsModel() {
         $.ajax({
             type: "POST",
-            url: "/RiseTube/VideoDetailsJsonView",
+            url: "/RiseTube/VideoDetailsJsonViewJd",
             data: { interviewid: $("#txtVideoId").val() },
             success: function (data) {
                 var modal = document.getElementById("VideoDetailsModel");
@@ -3652,7 +3672,7 @@
         html += '       </tr>';
         for (var i = 0; i < data.length; i++) {
             html += '   <tr>';
-            html += '                  <td >XXXXXXX@XXX.' + data[i].candidate.split('.')[data[i].candidate.split('.').length - 1] + '</td>';
+            html += '                  <td>' + data[i].candidate + '</td>';
             if (data[i].viewName != null && data[i].viewName != "") {
                 html += '                    <td class="text-center"><a href="' + data[i].videoUrl + '" title="' + data[i].videoUrl + ' "target="_blank">' + data[i].viewName + '</a><input id="txt_' + i + '" value="' + data[i].videoUrl + '" hidden /></td>';
             } else {

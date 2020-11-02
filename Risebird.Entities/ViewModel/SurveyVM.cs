@@ -30,10 +30,12 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedOn { get; set; }
         public int interviewid { get; set; }
         public string CommentforInterviewer { get; set; }
+        public int Interviewerid { get; set; }
 
     }
     public class SurveyCandidateInterviewer
     {
+        public int id { get; set; }
         public string Interviewer { get; set; }
         public string CandidateEmail { get; set; }
     }
