@@ -182,9 +182,9 @@
                                         <div class="card-content-holder border card-blue">
                                             <div class="card-header">
                                                 <div class="row">
-                                                    <div class=" col-md-7 col-sm-7 first">
+                                                    <div class=" col-md-6 col-sm-6 first">
 
-                                                        @if (@item.JDTitle.Length > 13)
+                                                        @if (@item.JDTitle.Length > 10)
                                                         {
                                                             <a style="text-decoration: none;
         cursor: pointer;
@@ -201,11 +201,11 @@ else
 
                                                     </div>
 
-                                                    <div class="col-md-5 col-sm-5 card-header-buttons action text-right">
+                                                    <div class="col-md-6 col-sm-6 card-header-buttons action text-right">
                                                         @if (!Model._clientjddetails.isClientUser)
                                                         {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Delete">
-                                                                <span onclick="javascript:DeleteJd('@item.id');" title="Delete" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                <span onclick="javascript:DeleteJd('@item.id');" title="Delete" class="mdc-fab__icon material-icons "><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
                                                             </button>
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                 <span onclick="javascript:EditJD('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
@@ -475,8 +475,8 @@ else
 
     $(document).ready(function () {
         $(".jd-name").each(function () {
-            if ($(this).text().length > 13) {
-                $(this).text($(this).text().substr(0, 13) + "...")
+            if ($(this).text().length > 10) {
+                $(this).text($(this).text().substr(0, 10) + "...")
 
                 $('[role="data-tooltip"]').css("visibility", "visible");
 
