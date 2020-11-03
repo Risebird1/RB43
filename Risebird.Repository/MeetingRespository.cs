@@ -20,11 +20,14 @@ namespace Risebird.Repository
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        public MeetingRespository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
+        private readonly INotificationHelper _notificationHelper;
+
+        public MeetingRespository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            _notificationHelper = notificationHelper;
         }
 
         public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings()
@@ -1968,6 +1971,17 @@ namespace Risebird.Repository
                     {
                         var updatestatus = SqlMapper.Query<string>(con, "usp_UpdateWalletdetails", parameters,
                             commandType: CommandType.StoredProcedure);
+                        //mail to client for insuficiant balance
+                        if (!String.IsNullOrEmpty(updatestatus.FirstOrDefault()))
+                        {
+                            Mail _mail = new Mail
+                            {
+                                TO = updatestatus.FirstOrDefault(),
+                                //CC = email,
+                                Subject = "Risebird: Insuficient Balance in your wallet"
+                            };
+                            var result = _notificationHelper.InsuficientBalancNotifiaction(_mail);
+                        }
                     }
                 }
                 //Update Interest status

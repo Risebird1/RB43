@@ -435,5 +435,36 @@ namespace Risebird.Repository
             }
             return "";
         }
+        public string DeleteClientJd(int assessmentid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlCuratedCandidate = "Delete from CandidateJDScore where ClientJdid=@Id";
+                    var affectedRows = con.Execute(sqlCuratedCandidate, new
+                    {
+                        Id = assessmentid
+                    });
+                    string sqljd = "Delete from clientjd where id=@Id";
+                    var affectedRow = con.Execute(sqljd, new
+                    {
+                        Id = assessmentid
+                    });
+                    return "Success";
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
     }
 }

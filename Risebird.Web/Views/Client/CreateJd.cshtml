@@ -204,6 +204,9 @@ else
                                                     <div class="col-md-5 col-sm-5 card-header-buttons action text-right">
                                                         @if (!Model._clientjddetails.isClientUser)
                                                         {
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Delete">
+                                                                <span onclick="javascript:DeleteJd('@item.id');" title="Delete" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                            </button>
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                 <span onclick="javascript:EditJD('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                             </button>
@@ -421,7 +424,7 @@ else
                                 {
                                     <div class="form-group col-lg-6  col-md-6 col-sm-6  pull-left">
                                         @Html.LabelFor(model => model._clientjddetails.persuccessrate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.TextBoxFor(m => m._clientjddetails.persuccessrate, new { @class = "form-control",@type="number" })
+                                        @Html.TextBoxFor(m => m._clientjddetails.persuccessrate, new { @class = "form-control", @type = "number" })
                                         @Html.ValidationMessageFor(model => model._clientjddetails.persuccessrate, "", new { @class = "text-danger" })
                                     </div>
                                 }
@@ -576,6 +579,20 @@ else
             var files = document.getElementById("zclientjddetails_JdFile");
             filesystem.style.display = "block";
             files.style.display = "none";
+        }
+    }
+    function DeleteJd(id) {
+        if (Swal.fire("Are you sure, you want to delete JD?")) {
+            $.ajax({
+                type: "Post",
+                url: "/Client/DeleteJd",
+                data: { assessmentid: id },
+                success: function (data) {
+                    swal.fire(data);
+                    var url = "";
+                    window.location.href = url;
+                }
+            });
         }
     }
 </script>

@@ -2856,7 +2856,7 @@ namespace Risebird.Web.Controllers
 
                         foreach (var itemmodel in modelList)
                         {
-                            if (itemmodel.IsIntrested != "Interest Accepted")
+                            if (itemmodel.IsIntrested != "Interest Accepted" || itemmodel.Pending == true)
                             {
                                 var usernames = itemmodel.candidateName.Trim().Split(" ");
                                 var namemodel = String.Empty;
@@ -2883,7 +2883,7 @@ namespace Risebird.Web.Controllers
                             NewModel.SubVideo_List = modelList1.ToList().Where(x => x.imid != id).ToList();
                         }
                         NewModel.candidateName = model.candidateName;
-                        if (model.IsIntrested != "Interest Accepted")
+                        if (model.IsIntrested != "Interest Accepted" || model.Pending == true)
                         {
                             var usernames1 = model.candidateName.Trim().Split(" ");
                             var namemodel1 = String.Empty;
@@ -2900,7 +2900,7 @@ namespace Risebird.Web.Controllers
 
                         if (IRListModel != null)
                         {
-                            if (model.IsIntrested != "Interest Accepted")
+                            if (model.IsIntrested != "Interest Accepted" || model.Pending == true)
                             {
                                 var usernames = IRListModel.CandidateName.Trim().Split(" ");
                                 var namemodel = String.Empty;
@@ -2930,7 +2930,7 @@ namespace Risebird.Web.Controllers
                         NewModel.candidateEmail = model.candidateEmail;
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
-                        if (model.IsIntrested != "Interest Accepted")
+                        if (model.IsIntrested != "Interest Accepted" || model.Pending == true)
                         {
                             if (!String.IsNullOrEmpty(IRListModel.encodedresumeLink))
                             {
