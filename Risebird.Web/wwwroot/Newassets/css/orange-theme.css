@@ -33,7 +33,7 @@ textarea::-webkit-scrollbar {
     border: 1px solid #dee2e6 !important;
 }
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: whitesmoke;
+    background: whitesmoke!important;
     color: #888 !important;
 }
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
@@ -81,7 +81,7 @@ textarea::-webkit-scrollbar {
 
 .razorpay_details table tr:nth-of-type(odd) {
     background: #fff;
-    border-bottom: 1px solid rgb(53 52 52);
+    border-bottom: 1px solid rgb(229,229,229);
 }
 
 
