@@ -125,6 +125,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsByJD(int clientId, string Emailid, string JDpattern, string profileName = null);
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsForCuratedUserByIRF(string EmailId, string actionStatus, int irfId);
         SurveyCandidateInterviewer FetchCanddiateInterviewer(int interviewid);
-        string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid);
+        string CandidateSuitableJd(int id, string email, string Comment, int Clientjdid);
+        IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst);
     }
 }

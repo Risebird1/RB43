@@ -582,7 +582,7 @@ else
         }
     }
     function DeleteJd(id) {
-        if (Swal.fire("Are you sure, you want to delete JD?")) {
+        if (window.confirm("Are you sure, you want to delete JD?")) {
             $.ajax({
                 type: "Post",
                 url: "/Client/DeleteJd",
