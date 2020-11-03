@@ -2582,6 +2582,8 @@ namespace Risebird.Repository
                 parameters.Add("@CostEstimate", obj.CostEstimate);
                 parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
                 parameters.Add("@Heuristicsscore", obj.Heuristicsscore);
+                parameters.Add("@AvailableFullTime", obj.AvailableFullTime);
+                parameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2738,6 +2740,8 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@CostEstimate", obj.CostEstimate);
                 dynamicParameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
                 dynamicParameters.Add("@Heuristicsscore", obj.Heuristicsscore);
+                dynamicParameters.Add("@AvailableFullTime", obj.AvailableFullTime);
+                dynamicParameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(
