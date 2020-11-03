@@ -2946,9 +2946,9 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@startFrom", ((page - 1) * 12));
-                        parameters.Add("@endWith", page * 12);
-                        parameters.Add("@searchValue", searchValue);
+                        parameters.Add("@startFromParam", ((page - 1) * 12));
+                        parameters.Add("@endWithParam", page * 12);
+                        parameters.Add("@searchValueParam", searchValue);
                         return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForClientPaged", parameters,
                                  commandType: CommandType.StoredProcedure);
                     }
@@ -2958,9 +2958,9 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@startFrom", ((page - 1) * 12));
-                        parameters.Add("@endWith", page * 12);
-                        parameters.Add("@searchValue", searchValue);
+                        parameters.Add("@startFromParam", ((page - 1) * 12));
+                        parameters.Add("@endWithParam", page * 12);
+                        parameters.Add("@searchValueParam", searchValue);
                         return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForCuratedUserPaged", parameters,
                                  commandType: CommandType.StoredProcedure);
                     }
@@ -3140,7 +3140,7 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@searchValue", searchValue);
+                        parameters.Add("@searchValueParam", searchValue);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCountforClient", parameters,
                             commandType: CommandType.StoredProcedure);
                         return result.FirstOrDefault();
@@ -3151,7 +3151,7 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@searchValue", searchValue);
+                        parameters.Add("@searchValueParam", searchValue);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCount", parameters,
                             commandType: CommandType.StoredProcedure);
                         return result.FirstOrDefault();

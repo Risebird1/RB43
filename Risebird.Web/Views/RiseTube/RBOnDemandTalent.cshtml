@@ -258,7 +258,7 @@
                                 var startCount = (page - 1) * 12 + 1;
                                 var endCount = (page) * 12;
                             }
-                            @if (ViewBag.Pages == 0)
+                            @if (ViewBag.MeetingsCount == 0)
                             {
                                 <p>
                                     No interviews matching your requirement!
@@ -290,12 +290,72 @@
                                     @startCount - @endCount of @ViewBag.MeetingsCount
                                 </p>
                             }
+                            <div class="pagination-container">
+                                <ul class="pagination">
 
-                            @for (int i = 1; i <= ViewBag.Pages; i++)
+                                    @{
+                                        var startFrom = 0;
+                                        var endWith = 0;
+                                        if (page % 3 != 0)
+                                        {
+                                            startFrom = ((page / 3) * 3) + 1;
+                                        }
+                                        else
+                                        {
+                                            startFrom = (((page - 1) / 3) * 3) + 1;
+                                        }
+                                        var pages = ViewBag.Pages;
+
+                                        if (pages - startFrom > 2)
+                                        {
+                                            endWith = startFrom + 2;
+                                        }
+                                        else
+                                        {
+                                            endWith = pages;
+                                        }
+
+                                    }
+
+                                    @if (page > 3)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("RBOnDemandTalent", "Risetube", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
+                                               class="PagedList-skipToPrevious">
+                                                &laquo;
+                                            </a>
+                                        </li>
+
+                                    }
+                                    @for (int i = startFrom; i <= endWith; i++)
+
+                                    {
+
+                                        <li class="@(i == ViewBag.page ? "page-item active" : "page-item")">
+                                            @Html.ActionLink(i.ToString(), "RBOnDemandTalent", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "" })
+
+                                        </li>
+                                    }
+
+
+                                    @if (pages > endWith)
+                                    {
+                                        <li class="PagedList-skipToNext">
+                                            <a href="@Url.Action("RBOnDemandTalent", "Risetube", new { page = endWith + 1, searchvalue = ViewBag.searchvalue })">
+                                                &raquo;
+                                            </a>
+                                        </li>
+
+                                    }
+
+
+                                </ul>
+                            </div>
+                            @*@for (int i = 1; i <= ViewBag.Pages; i++)
                             {
                                 @Html.ActionLink(i.ToString(), "RBOnDemandTalent", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" })
 
-                            }
+                            }*@
                         </div>
 
                     </div>

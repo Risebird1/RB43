@@ -2651,7 +2651,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.Pages = (totalMeetings / 12) + 1;
 
                         }
-
+                       
                         ViewBag.Page = Page.Value;
                         ViewBag.MeetingsCount = totalMeetings;
                         ViewBag.Remainder = remainder;
