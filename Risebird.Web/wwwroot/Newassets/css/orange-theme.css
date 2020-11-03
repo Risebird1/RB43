@@ -89,8 +89,23 @@ textarea::-webkit-scrollbar {
     background: #dfe0e5;
 }
 
+.pagination-container > ul > li.active {
+    background: #e96e28 !important;
+    border: 1px #e96e28 solid !important;
+}
 
+    .pagination-container > ul > li.active a {
+        color: #fff !important;
+    }
 
+.pagination-container > ul > li {
+    background: #d4d3d3 !important;
+    border: 1px #d4d3d3 solid !important;
+}
+
+    .pagination-container > ul > li a {
+        color: #716b6b;
+    }
 
 
 .tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
