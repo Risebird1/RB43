@@ -12,11 +12,16 @@ GO
 
 
 Create PROCEDURE [dbo].[usp_GetSharedRiseTubeMeetingsForCuratedUserPaged] 
-	@startFrom int,
-	@endWith int,
-	@searchValue varchar(max) = null
+	@startFromParam int,
+	@endWithParam int,
+	@searchValueParam varchar(max) = null
 AS            
 Begin  
+declare @startFrom INT, @endWith int, @searchValue varchar(max)
+set @startFrom = @startFromParam
+set @endWith = @endWithParam
+set @searchValue=@searchValueParam
+
 declare @tblTechSkill table (InterviewId int, TechSkillScore float);
 	insert into @tblTechSkill
 	select InterviewId, sum(WeightageActual) as TechSkillScore from TechSkillReport group by InterviewId
@@ -100,7 +105,6 @@ Else
 
   
 END      
-  
   
   
 GO

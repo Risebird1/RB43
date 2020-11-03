@@ -11,9 +11,11 @@ GO
 
 
 Create PROCEDURE [dbo].[usp_GetSharedIndexMeetingsCount]  
-@searchValue varchar(max) = null
+@searchValueParam varchar(max) = null
 AS  
 Begin 
+declare @searchValue varchar(max)
+set @searchValue=@searchValueParam
 
 declare @tblTechSkill table (InterviewId int, TechSkillScore float);
 	insert into @tblTechSkill
@@ -71,6 +73,7 @@ Else
 
 
 End
+
 
 GO
 
