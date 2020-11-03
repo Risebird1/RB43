@@ -728,7 +728,7 @@
 
                                                                                             </td>
                                                                                             <td>
-                                                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
+                                                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control", disabled = "disabled" })
 
                                                                                             </td>
 
@@ -1565,7 +1565,7 @@
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
           categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 172;
+            categoryAxis.renderer.labels.template.paddingBottom = 168;
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";
@@ -1584,7 +1584,7 @@
                 }
             });
             series.columns.template.fillOpacity = .8;
-
+            series.columns.template.tooltipY = 8;
             var columnTemplate = series.columns.template;
             columnTemplate.strokeWidth = 0;
             columnTemplate.strokeOpacity = 1;

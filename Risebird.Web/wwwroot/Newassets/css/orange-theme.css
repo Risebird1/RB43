@@ -33,7 +33,7 @@ textarea::-webkit-scrollbar {
     border: 1px solid #dee2e6 !important;
 }
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: whitesmoke;
+    background: whitesmoke!important;
     color: #888 !important;
 }
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {

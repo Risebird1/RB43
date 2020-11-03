@@ -1114,7 +1114,7 @@
                                                                                                                             @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                                         </td>
                                                                                                                         <td>
-                                                                                                                            @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
+                                                                                                                            @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating", disabled = "disabled" })
                                                                                                                         </td>
                                                                                                                         <td>
 
@@ -3068,7 +3068,7 @@
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
             categoryAxis.renderer.grid.template.disabled = true;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 172;
+            categoryAxis.renderer.labels.template.paddingBottom = 168;
             valueAxis.renderer.grid.template.disabled = true;
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
@@ -3090,7 +3090,7 @@
                 }
             });
             series.columns.template.fillOpacity = .8;
-            series.columns.template.tooltipY = 0;
+            series.columns.template.tooltipY = 8;
             series.tooltip.background.strokeOpacity = 0
             series.tooltip.pointerOrientation = "vertical";
             series.columns.template.showTooltipOn = "always";

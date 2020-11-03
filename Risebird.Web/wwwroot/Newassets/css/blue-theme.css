@@ -315,7 +315,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: whitesmoke;
+    background: whitesmoke!important;
     color: #888 !important;
 }
 

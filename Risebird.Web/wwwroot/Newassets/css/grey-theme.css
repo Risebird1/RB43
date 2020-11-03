@@ -328,7 +328,7 @@ table.dataTable thead .sorting:after {
     top: -4px;
 }
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: whitesmoke;
+    background: whitesmoke!important;
     color: #888 !important;
 }
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
