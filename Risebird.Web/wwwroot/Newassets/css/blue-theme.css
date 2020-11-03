@@ -59,7 +59,24 @@ body {
 }
 
 
+.pagination-container > ul > li.active {
+    background: #007bff !important;
+    border: 1px #007bff solid !important;
 
+}
+
+    .pagination-container > ul > li.active a {
+        color: #fff !important;
+    }
+
+.pagination-container > ul > li {
+    background: #d4d3d3 !important;
+    border: 1px #d4d3d3 solid !important;
+}
+
+    .pagination-container > ul > li a {
+        color: #716b6b;
+    }
 
 
     .navbar.navbar.bg-white, .navbar.navbar-transparent {
