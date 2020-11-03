@@ -11,12 +11,7 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" defer>
-<style>
-    .scroller-height {
-        overflow: auto;
-        height: 300px;
-    }
-</style>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -62,7 +57,7 @@
                             @foreach (var item in Model)
                             {
                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                <div class="desktop-view w-full"> <div style="height:20px;"></div></div>
+                          
                                 <div class="col-lg-4 col-sm-6" style="margin-top: 15px;">
                                     <div class="card card-stats border  card-blue">
 
@@ -332,15 +327,18 @@
 
 
             <div class="modal-body">
-                <div class="col-md-12" id="divIntrestedShown">
+                <div class="col-md-12">
 
+                    <div class="sb-container scroller">
 
+                        <div id="divIntrestedShown" ></div>
+                    </div>
+                    </div>
+
+                    <div class="text-center">
+                        <input type="button" onclick="closeIntrestPopUp()" id="hangUpButton" class="btn btn-fill btn-danger" value="Close">
+                    </div>
                 </div>
-
-                <div class="text-center">
-                    <input type="button" onclick="closeIntrestPopUp()" id="hangUpButton" class="btn btn-fill btn-danger" value="Close">
-                </div>
-            </div>
 
         </div>
     </div>
@@ -567,7 +565,7 @@
                 var modal = document.getElementById("myintrestList");
                 modal.style.display = "block";
                 var html = '';
-                html += '<div class="sb-container scroller-height"><table style="Width:100%"><div  class="table-responsive-sm">';
+                html += '<table style="Width:100%"><div  class="table-responsive-sm">';
                 html += '<tr><td class="client-nme" >Client Name</td><td class="client-date">Interested Date</td><td class="client-cmt">Comments</td><td class="text-center client-action">Action</td></tr>';
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].status == "Interest Accepted") {
@@ -611,7 +609,7 @@
                     html += "</td></tr>";
 
                 }
-                html += "</div></table></div>";
+                html += "</div></table>";
                 if (data.length == 0) {
                     html = 'No record found';
                 }
