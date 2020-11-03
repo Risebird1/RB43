@@ -49,8 +49,7 @@ body {
 
 .razorpay_details table tr:nth-of-type(odd) {
     background: #fff;
-    border-bottom: 1px solid rgb(53 52 52);
-
+    border-bottom: 1px solid rgb(229,229,229);
 }
 
 

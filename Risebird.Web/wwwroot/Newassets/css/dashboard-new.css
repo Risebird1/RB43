@@ -6096,6 +6096,7 @@ button.close {
 .razorpay_btn i {
     font-size: 20px;
     margin-right: 13px;
+    font-size:14px;
 }
 
 .razorpay_con {
@@ -7908,10 +7909,17 @@ div.tagsinput {
     .post-image {
         width: 100%;
     }
+
+    .razorpay_details {
+        width: 41% !important;
+    }
 }
 
 @media only screen and (max-width: 1024px) {
-    .page-container .page-sidebar {
+    .razorpay_details {
+        width: 60%!important;
+    }
+        .page-container .page-sidebar {
         position: relative;
         float: left;
         width: 100%;

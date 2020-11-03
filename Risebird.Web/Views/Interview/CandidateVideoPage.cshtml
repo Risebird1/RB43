@@ -604,11 +604,11 @@
                                                                 </div>
                                                                 <div class="col-md-6 col-sm-6">
                                                                     <div class="form-group">
-                                                                        @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
 
                                                                         @{
                                                                             if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
-                                                                            { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                            { @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })<a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
                                                                         }
                                                                     </div>
                                                                 </div>
