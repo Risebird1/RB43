@@ -230,6 +230,7 @@ namespace Risebird.Repository
                 parameters.Add("@JobRole", _client.JobRole);
                 parameters.Add("@Location", _client.Location);
                 parameters.Add("@ClientUrl", _client.ClientUrl);
+                parameters.Add("@persuccessrate", _client.persuccessrate);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "[usp_AddClientJD]", parameters,
@@ -412,7 +413,7 @@ namespace Risebird.Repository
             }
             return "failed";
         }
-        public string ResetCandidate(int Clientjdid, string candidateEmail,string emailid)
+        public string ResetCandidate(int Clientjdid, string candidateEmail, string emailid)
         {
             try
             {

@@ -2255,7 +2255,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var profileName = "CuratedUser";
-               
+
                 {
                     if (TempData["SuccessErrorMessageInterview"] != null)
                     {
@@ -2266,7 +2266,7 @@ namespace Risebird.Web.Controllers
 
 
                     modelList = await _meetingService.GetSharedRiseTubeMeetings();
-                   
+
 
                     ViewBag.NextLevelApprovalStatusList =
                         from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
@@ -2717,26 +2717,31 @@ namespace Risebird.Web.Controllers
 
                         var dataResult = _meetingService.GetClientJdIRFs(ClientJdId, emailId);
                         modelList1 = dataResult.ToList().OrderBy(y => y.Priority).ToList();
+                        ViewBag.pagestatus = "ALL";
                         if (id == 0)
                         {
                             if (actionstatus.ToUpper() == "ALL")
                             {
                                 id = modelList1.OrderBy(x => x.Priority).Select(x => x.imid).FirstOrDefault();
+                                ViewBag.pagestatus = "ALL";
                             }
                             else if (actionstatus.ToUpper() == "SHORTLIST")
                             {
                                 modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
                                 id = modelList1.OrderBy(x => x.Priority).Select(x => x.imid).FirstOrDefault();
+                                ViewBag.pagestatus = "SHORTLIST";
                             }
                             else if (actionstatus.ToUpper() == "INTRESTED")
                             {
                                 modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
                                 id = modelList1.OrderBy(x => x.Priority).Select(x => x.imid).FirstOrDefault();
+                                ViewBag.pagestatus = "INTRESTED";
                             }
                             else if (actionstatus.ToUpper() == "ACCEPT")
                             {
                                 modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Accepted").ToList();
                                 id = modelList1.OrderBy(x => x.Priority).Select(x => x.imid).FirstOrDefault();
+                                ViewBag.pagestatus = "ACCEPT";
                             }
                         }
                         //modelList1 = modelList1.Where(x => irfList.Contains(x.IRFId)).ToList();
@@ -2933,8 +2938,10 @@ namespace Risebird.Web.Controllers
                                 IRListModel.resumeLink = IRListModel.encodedresumeLink;
                             }
                         }
+                        NewModel.encodedresumeLink = model.encodedresumeLink;
                         NewModel.zoomLink = model.zoomLink;
                         NewModel.IreportModel = IRListModel ?? new InterviewReport();
+                        NewModel.TotalExperience = IRListModel.TotalExperience;
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
@@ -3006,6 +3013,63 @@ namespace Risebird.Web.Controllers
                 return null;
             }
 
+        }
+        [HttpPost]
+        public JsonResult CandidateSuitableJd(string videoid, string Comment, int Clientjdid)
+        {
+            //store data in database
+            int id = Convert.ToInt32(videoid);
+            var email = HttpContext.Session.GetString("email");
+            var Status = _meetingService.CandidateSuitableJd(id, email, Comment, Clientjdid);
+            if (Status != null)
+            {
+                Mail _mail = new Mail
+                {
+                    TO = Status,
+                    Subject = "Client has shown interest in your profile"
+                };
+                email = email.Replace("\"", "");
+                email = email.Split("@")[1].Split(".")[0];
+                StringBuilder bulider = new StringBuilder();
+                bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");
+                var result = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
+            }
+            return Json("Success");
+        }
+        public JsonResult VideoDetailsJsonViewJd(int interviewid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    //To get data from db for video displayes
+                    var model = _meetingService.GetVideoSumaryDetails(interviewid);
+                    foreach (var item in model)
+                    {
+                        item.VideoUrl = "https://" + Request.Host + "/RiseTube/" + item.VideoUrl + "/" + item.Videoid.ToString();
+                        item.interviewid = interviewid;
+                        if (item.Candidate.Split("@").Length > 1)
+                        {
+                            item.Candidate = item.Candidate?.ToCharArray()[0] + "XXXXXX@" + item.Candidate.Split("@")[item.Candidate.Split("@").Length - 1];
+                        }
+                        else
+                        {
+                            item.Candidate = item.Candidate?.ToCharArray()[0] + "XXXXXX";
+                        }
+                    }
+                    return Json(model);
+                }
+                else
+                {
+                    return Json("No Data");
+                }
+            }
+            else
+            {
+                return Json("No Data");
+            }
         }
     }
 }

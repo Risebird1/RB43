@@ -635,6 +635,11 @@ namespace Risebird.Web.Controllers
                     {
                         model = model.Where(x => x.Debit > 0).ToList();
                     }
+                    foreach (var item in model)
+                    {
+                        DateTime _local = (DateTime)item.CreatedOn;
+                        item.CreatedOnstring = _local.ToShortDateString();
+                    }
                     return Json(model);
                 }
                 else
