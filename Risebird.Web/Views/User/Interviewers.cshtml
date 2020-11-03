@@ -41,17 +41,7 @@
                 </div>
 
                 <div class="pull-right">
-                    @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
-                    {
-                        var profilename = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-                        profilename = profilename.Replace("\"", "");
-                        if (profilename == "Admin")
-                        {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to view all candidates feedback" onclick="location.href='@Url.Action("CandidateFeedBack","Survey")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Candidate Feedback</font></span>
-                            </button>
-                        }
-                    }
+                   
 
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddInterviewer","User")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add Interviewer</font></span>
