@@ -95,5 +95,13 @@ namespace Risebird.Entities.ViewModel
        
         public SelectList Heuristicsscorelist { get; set; }
 
+        [Display(Name = "Available for Full-time")]
+
+        public bool AvailableFullTime { get; set; }
+
+        [Display(Name = "Available for Freelancing")]
+
+        public bool AvailableFreeLancing { get; set; }
+
     }
 }

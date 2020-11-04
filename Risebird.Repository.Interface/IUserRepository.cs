@@ -53,6 +53,7 @@ namespace Risebird.Repository.Interface
         string GetCurrenttheme(string emailId);
         IEnumerable<AssignmentVM> GetInterviewerEntitle();
         IEnumerable<AssignmentVM> InterviewerEntitleDetails(int id);
+        Task<bool> ResetNavigation(int userId);
 
     }
 }

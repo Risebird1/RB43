@@ -113,7 +113,8 @@
                                                 <th>Interview Date</th>
                                                 <th>Cost Estimate</th>
                                                 <th>Profile Type</th>
-
+                                                <th>Available for Full-time</th>
+                                                <th>Available for Freelancing</th>
 
 
                                             </tr>
@@ -149,7 +150,8 @@
                                                 <th>Interview Date</th>
                                                 <th>Cost Estimate</th>
                                                 <th>Profile Type</th>
-
+                                                <th>Available for Full-time</th>
+                                                <th>Available for Freelancing</th>
 
                                             </tr>
                                         </tfoot>
@@ -356,6 +358,26 @@
                                                     <td></td>
                                                 }
                                                 <td>@item.HeuristicsscoreDesc</td>
+
+                                                @if (item.AvailableFullTime)
+                                                {
+                                                    <td>Yes</td>
+
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
+                                                @if (item.AvailableFreeLancing)
+                                                {
+                                                    <td>Yes</td>
+
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
+
 
                                             </tr>
                                             }
