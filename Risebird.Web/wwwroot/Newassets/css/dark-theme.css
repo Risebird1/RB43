@@ -468,7 +468,7 @@ border-bottom: 2px #121212 solid !important;
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: #181818;
+    background: #181818!important;
     color: #9A9A9A !important;
 }
 
@@ -1478,13 +1478,30 @@ div.dataTables_wrapper div.dataTables_info {
     font-size: 15px;
     border-right: 1px solid rgb(53 52 52);
 }
-.razorpay_btn button.form-control {
-    border-bottom: 2px rgb(45 45 45) solid;
-    margin-bottom: 5px;
-    text-align: left !important;
-    text-transform: uppercase;
-    background: rgb(10 10 10) !important;
+
+.pagination-container > ul > li.active {
+    background: #fff !important;
+    border: 1px #fff solid !important;
+    color: #232121;
 }
+
+    .pagination-container > ul > li.active a {
+        color: #1f1e1e !important
+    }
+
+.pagination-container > ul > li {
+    background: #1f1e1e!important;
+    border: 1px #1f1e1e solid!important;
+}
+
+    .pagination-container > ul > li a{color:#fff}
+    .razorpay_btn button.form-control {
+        border-bottom: 2px rgb(45 45 45) solid;
+        margin-bottom: 5px;
+        text-align: left !important;
+        text-transform: uppercase;
+        background: rgb(10 10 10) !important;
+    }
 .razorpay_details table td {
     color: #9a9a9a;
     padding: 8px;

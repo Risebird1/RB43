@@ -46,7 +46,7 @@
 
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
 
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer/>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer />
 
 <script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
@@ -59,7 +59,7 @@
 
 <link href="~/Newassets/css/risetube.css?v=6" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 <!-- Owl Carousel -->
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
@@ -558,7 +558,7 @@
                                                                                         </span>
                                                                                         <span class="tooltip--right" data-tooltip="To convey the act of sharing to any user publicly "><input type="button" class="form-control btninterest sharebtn1 public-share" id="btnShare2" value="Public Share" Shortvalue="1" /></span>
                                                                                         <span class="tooltip--right" data-tooltip="To generate public sharing url"><input type="button" class="form-control btninterest sharebtn1 publicurl-share" id="btnShare3" value="Public Share Url" Shortvalue="1" /></span>
-                                                                                      
+
 
                                                                                     </div>
                                                                                 </div>
@@ -910,11 +910,11 @@
                                                                                             </div>
                                                                                             <div class="col-md-6 col-sm-6">
                                                                                                 <div class="form-group">
-                                                                                                    @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
 
                                                                                                     @{
                                                                                                         if (Model.IreportModel.AadharFileLink != null && Model.IreportModel.AadharFileLink != "")
-                                                                                                        { <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
+                                                                                                        { @Html.LabelFor(model => model.IreportModel.AadharFileLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })<a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.AadharFileLink.ToString().Replace(" ","%20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a> }
                                                                                                     }
                                                                                                 </div>
                                                                                             </div>
@@ -1114,7 +1114,7 @@
                                                                                                                             @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { ID = "drop", @class = "dropques form-control text-box single-line", @readonly = "readonly", onmouseover = "dropDwnToolTips(this)" })
                                                                                                                         </td>
                                                                                                                         <td>
-                                                                                                                            @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
+                                                                                                                            @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating", disabled = "disabled" })
                                                                                                                         </td>
                                                                                                                         <td>
 
@@ -2548,8 +2548,10 @@
                 <span onclick="closeVideoDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body">
-                <div class="col-md-12 scroller">
-                    <div id="divvideodetailsmodel" class="pdr-20"></div>
+                <div class="col-md-12 ">
+                    <div class="sb-container scroller">
+                        <div id="divvideodetailsmodel" class="pdr-20"></div>
+                    </div>
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
@@ -2707,7 +2709,7 @@
 </script>
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 <!-- Bootstrap core JavaScript-->
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+
 
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -3068,7 +3070,7 @@
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
             categoryAxis.renderer.grid.template.disabled = true;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 172;
+            categoryAxis.renderer.labels.template.paddingBottom = 168;
             valueAxis.renderer.grid.template.disabled = true;
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
@@ -3090,7 +3092,7 @@
                 }
             });
             series.columns.template.fillOpacity = .8;
-            series.columns.template.tooltipY = 0;
+            series.columns.template.tooltipY = 8;
             series.tooltip.background.strokeOpacity = 0
             series.tooltip.pointerOrientation = "vertical";
             series.columns.template.showTooltipOn = "always";
@@ -3303,7 +3305,7 @@
                    // window.location.href = "/risetube/VideoPage/@Model.imid";
             window.location.href = "/Risetube/ResetVideoPageFilter?imid=" +'@Model.imid';
 
-          
+
     }
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
@@ -3905,6 +3907,8 @@
 </script>
 <script src="~/RiseTube/js/custom.js"></script>
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
+<script src="~/Newassets/js/scrollBar.js"></script>
 <script type="text/javascript">
     $(".sb-container").scrollBox();
 </script>
@@ -4020,6 +4024,10 @@
 
     })();
 </script>
+
+
+
+
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {

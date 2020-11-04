@@ -34,5 +34,6 @@ namespace Risebird.Entities.ViewModel
         public SelectList ClientRoles { get; set; }
 
         public int ClientId { get; set; }
+        public int UserId { get; set; }
     }
 }

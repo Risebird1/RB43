@@ -72,6 +72,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<List<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid,int Page, bool IsClientCurated = false)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetRiseTubeMeetingsPaged(clientId, profile, Emailid,Page, IsClientCurated);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public async Task<List<MeetingVM>> GetRiseTubeMeetingsByScore(int clientId, string profile, string Emailid, bool IsClientCurated = false)
         {
             try
@@ -1844,6 +1858,33 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        public async Task<List<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName = null)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetSharedRiseTubeMeetingsPaged(page, searchValue, profileName);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null)
+        {
+            try
+            {
+                return await _meetingRespository.GetSharedIndexMeetingsCount(searchValue, profileName);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
             }
         }
         public async Task<List<QuestionDetails>> FetchQuestionDetails(int interviewid)

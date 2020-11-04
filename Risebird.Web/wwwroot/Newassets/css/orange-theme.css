@@ -33,7 +33,7 @@ textarea::-webkit-scrollbar {
     border: 1px solid #dee2e6 !important;
 }
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: whitesmoke;
+    background: whitesmoke!important;
     color: #888 !important;
 }
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
@@ -81,7 +81,7 @@ textarea::-webkit-scrollbar {
 
 .razorpay_details table tr:nth-of-type(odd) {
     background: #fff;
-    border-bottom: 1px solid rgb(53 52 52);
+    border-bottom: 1px solid rgb(229,229,229);
 }
 
 
@@ -89,8 +89,23 @@ textarea::-webkit-scrollbar {
     background: #dfe0e5;
 }
 
+.pagination-container > ul > li.active {
+    background: #e96e28 !important;
+    border: 1px #e96e28 solid !important;
+}
 
+    .pagination-container > ul > li.active a {
+        color: #fff !important;
+    }
 
+.pagination-container > ul > li {
+    background: #d4d3d3 !important;
+    border: 1px #d4d3d3 solid !important;
+}
+
+    .pagination-container > ul > li a {
+        color: #716b6b;
+    }
 
 
 .tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {

@@ -49,8 +49,7 @@ body {
 
 .razorpay_details table tr:nth-of-type(odd) {
     background: #fff;
-    border-bottom: 1px solid rgb(53 52 52);
-
+    border-bottom: 1px solid rgb(229,229,229);
 }
 
 
@@ -59,7 +58,24 @@ body {
 }
 
 
+.pagination-container > ul > li.active {
+    background: #007bff !important;
+    border: 1px #007bff solid !important;
 
+}
+
+    .pagination-container > ul > li.active a {
+        color: #fff !important;
+    }
+
+.pagination-container > ul > li {
+    background: #d4d3d3 !important;
+    border: 1px #d4d3d3 solid !important;
+}
+
+    .pagination-container > ul > li a {
+        color: #716b6b;
+    }
 
 
     .navbar.navbar.bg-white, .navbar.navbar-transparent {
@@ -315,7 +331,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: whitesmoke;
+    background: whitesmoke!important;
     color: #888 !important;
 }
 

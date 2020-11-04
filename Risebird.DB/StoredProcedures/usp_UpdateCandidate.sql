@@ -13,7 +13,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[usp_UpdateCandidate]  
+Create PROCEDURE [dbo].[usp_UpdateCandidate]  
 @id int,  
 @Name varchar(200),  
 @EmailId varchar(200),  
@@ -31,7 +31,10 @@ CREATE PROCEDURE [dbo].[usp_UpdateCandidate]
 @Notice decimal(10,2),  
 @CostEstimate nvarchar(200),  
 @EncodedResumeLink varchar(500),
-@Heuristicsscore int
+@Heuristicsscore int,
+@AvailableFullTime  bit,
+@AvailableFreeLancing bit
+  
 AS  
 Begin  
 declare  
@@ -55,10 +58,14 @@ ExpectedSalary=@ExpectedSalary,
 Notice=@Notice,  
 CostEstimate=@CostEstimate,  
 EncodedResumeLink=@EncodedResumeLink,
-Heuristicsscore=@Heuristicsscore
+Heuristicsscore=@Heuristicsscore,
+AvailableFullTime=@AvailableFullTime,
+AvailableFreeLancing=@AvailableFreeLancing
 where id=@id  
   
 End
+
+
 
 
 GO

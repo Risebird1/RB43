@@ -7,6 +7,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -188,6 +189,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> ResetNavigation(int userId)
+        {
+            try
+            {
+                return await _userRepository.ResetNavigation(userId);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         #endregion
 
         #region Interviewer Service Functions

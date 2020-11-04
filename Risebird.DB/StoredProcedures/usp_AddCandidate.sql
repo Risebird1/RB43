@@ -9,7 +9,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_AddCandidate]  
+Create PROCEDURE [dbo].[usp_AddCandidate]  
 @IRFId int,  
 @Name varchar(200),  
 @EmailId varchar(200),  
@@ -28,7 +28,9 @@ CREATE PROCEDURE [dbo].[usp_AddCandidate]
 @AddedByUserId int,  
 @CostEstimate nvarchar(200),  
 @EncodedResumeLink varchar(500),
-@Heuristicsscore int
+@Heuristicsscore int,
+@AvailableFullTime  bit,
+@AvailableFreeLancing bit
   
 AS  
 Begin  
@@ -83,7 +85,9 @@ insert into Candidate
 [CandidateMasterId],  
 [CostEstimate],  
 [EncodedResumeLink],
-[Heuristicsscore]
+[Heuristicsscore],
+[AvailableFullTime],
+[AvailableFreeLancing]
 )  
 values(@IRFId,  
 @ResumeLink,  
@@ -102,7 +106,9 @@ values(@IRFId,
 (select id from CandidatesMaster where UserId=@UserId),  
 @CostEstimate,  
 @EncodedResumeLink,
-@Heuristicsscore
+@Heuristicsscore,
+@AvailableFullTime,
+@AvailableFreeLancing
 )  
   
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))  
@@ -141,7 +147,9 @@ insert into Candidate
 [CandidateMasterId],  
 [CostEstimate],  
 [EncodedResumeLink],
-[Heuristicsscore]
+[Heuristicsscore],
+[AvailableFullTime],
+[AvailableFreeLancing]
 )  
 values(@IRFId,  
 @ResumeLink,  
@@ -160,7 +168,9 @@ values(@IRFId,
 (select id from CandidatesMaster where UserId=@CandidateUserId),  
 @CostEstimate,  
 @EncodedResumeLink,
-@Heuristicsscore)  
+@Heuristicsscore,
+@AvailableFullTime,
+@AvailableFreeLancing)  
   
   
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))  
@@ -168,6 +178,8 @@ insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id 
 End  
   
 END
+
+
 
 
 GO
