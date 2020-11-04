@@ -711,5 +711,27 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [HttpPost]
+        public JsonResult DeleteJd(int assessmentid)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin")
+                {
+                    var result = _clientService.DeleteClientJd(assessmentid);
+                    return Json(result);
+                }
+                else
+                {
+                    return Json("fail");
+                }
+            }
+            else
+            {
+                return Json("fail");
+            }
+        }
     }
 }

@@ -21,5 +21,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<Wallet> FetchClientWallet(int clientid);
         Task<string> AddWalletPoints(int ClientId, string emailid, int points, string comment);
         string ResetCandidate(int Clientjdid, string candidateEmail,string emailid);
+        string DeleteClientJd(int assessmentid);
     }
 }
