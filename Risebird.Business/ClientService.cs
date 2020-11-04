@@ -205,5 +205,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public string DeleteClientJd(int assessmentid)
+        {
+            try
+            {
+                return _clientRepository.DeleteClientJd(assessmentid);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "failed";
+            }
+        }
     }
 }
