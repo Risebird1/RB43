@@ -129,7 +129,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid, int Page, bool IsClientCurated = false);
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName = null);
         Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null);
-        string CandidateSuitableJd(int id, string email, string Comment, int Clientjdid);
+       
         IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst);
     }
 }
