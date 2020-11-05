@@ -1887,6 +1887,33 @@ namespace Risebird.Business
                 return 0;
             }
         }
+
+        public async Task<List<MeetingVM>> GetSharedRiseTubeMeetingsForClientPagedFiltered(int page,string primarySkills, string heuristicLevels, string searchValue = null)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetSharedRiseTubeMeetingsForClientPagedFiltered(page,primarySkills, heuristicLevels, searchValue);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels,string searchValue = null)
+        {
+            try
+            {
+                return await _meetingRespository.GetSharedIndexMeetingsCountforClientFiltered(primarySkills, heuristicLevels, searchValue);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
         public async Task<List<QuestionDetails>> FetchQuestionDetails(int interviewid)
         {
             try
