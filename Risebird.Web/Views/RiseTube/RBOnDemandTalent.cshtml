@@ -1,7 +1,27 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+
 @{
     ViewData["Title"] = "RiseTube";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    dynamic filter = null;
+
+    string[] primarySkills = new string[] { };
+    string[] HeuristicType = new string[] { };
+
+
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("TalentOnDemandFilter") != null)
+{
+    filter = JsonConvert.DeserializeObject<TalentOnDemandFilter>(HttpContextAccessor.HttpContext.Session.GetString("TalentOnDemandFilter"));
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    HeuristicType = filter.HeuristicType != null ? filter.HeuristicType : new string[] { };
+
+
 }
 
 <head>
@@ -63,6 +83,13 @@
                             </div>
 
                         </div>
+
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
+
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Risetube", actMethod ="RBOnDemandTalent" } )'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Support</font></span>
                         </button>
@@ -86,7 +113,89 @@
                         </div>
                         <div class="dataloading">
 
+                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("RBOnDemandTalent","risetube", new { searchvalue = ViewBag.searchvalue})" method="post" id="form">
 
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="HeuristicType">
+                                                                Heuristic Type
+                                                            </label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="HeuristicType" name="HeuristicType" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in ViewBag.HeuristicLevels)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+
+                                                                    @foreach (var item in ViewBag.PrimarySkillList)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+
+                                                    <div class="form-group col-md-12 col-sm-12">
+
+
+                                                        <div>
+                                                            <div class="col-md-12 col-sm-12 mc-button-area text-right">
+
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4  reset-filter">
+                                                                    Reset Filter
+                                                                </button>
+
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5 apply-filter">
+                                                                    Apply Filter
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
 
                             <div class="video-block section-padding" id="VideoList">
                                 <div class="row">
@@ -261,7 +370,7 @@
                             @if (ViewBag.MeetingsCount == 0)
                             {
                                 <p>
-                                    No interviews matching your requirement!
+                                    No Candidates matching your requirement!
                                 </p>
                             }
                             else if (ViewBag.Pages == page && ViewBag.Remainder == 0)
@@ -352,10 +461,10 @@
                                 </ul>
                             </div>
                             @*@for (int i = 1; i <= ViewBag.Pages; i++)
-                            {
-                                @Html.ActionLink(i.ToString(), "RBOnDemandTalent", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" })
+                                {
+                                    @Html.ActionLink(i.ToString(), "RBOnDemandTalent", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" })
 
-                            }*@
+                                }*@
                         </div>
 
                     </div>
@@ -481,7 +590,42 @@
         //    });
         //});
 
+        $("#ResetFilter").click(function () {
+                ResetFilter();
+        })
+        if ('@filter' != "") {
+            ApplySessionFilter();
+        }
+
+        $("#PrimarySkill").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
+        $("#HeuristicType").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+
     });
+
+    function ResetFilter() {
+        window.location.href = "/Risetube/ResetRisetubeOnDemandFilter";
+    }
+
+    function ApplySessionFilter() {
+ 
+        var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+        var heuristicType =  @Html.Raw(Json.Serialize(HeuristicType));
+            
+        $("#PrimarySkill").val(primarySkillsArr);
+        $("#HeuristicType").val(heuristicType);
+            
+    }
 
 </script>
 <script>

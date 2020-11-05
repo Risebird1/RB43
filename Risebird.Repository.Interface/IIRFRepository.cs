@@ -125,5 +125,6 @@ namespace Risebird.Repository.Interface
         string Addassignmentgroup(Skilldetails _skilldetails);
         IEnumerable<AssignmentVM> FetchAssessmentdetails(int id);
         string AssessmentLike(int id,string emailid);
+        Task<IEnumerable<string>> GetPrimarySkillFromIRF();
     }
 }

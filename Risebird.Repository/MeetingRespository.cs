@@ -2977,6 +2977,35 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsForClientPagedFiltered(int page, string primarySkills, string heuristicLevels, string searchValue = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startFromParam", ((page - 1) * 12));
+                    parameters.Add("@endWithParam", page * 12);
+                    parameters.Add("@searchValueParam", searchValue);
+                    parameters.Add("@primarySkillsParam", primarySkills);
+                    parameters.Add("@heuristicLevelsParam", heuristicLevels);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForClientPagedFiltered", parameters,
+                             commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<IEnumerable<QuestionDetails>> FetchQuestionDetails(int interviewid)
         {
             try
@@ -3167,6 +3196,33 @@ namespace Risebird.Repository
             }
             
         }
+
+        public async Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels, string searchValue = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@searchValueParam", searchValue);
+                    parameters.Add("@primarySkillsParam", primarySkills);
+                    parameters.Add("@heuristicLevelsParam", heuristicLevels);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCountforClientFiltered", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+
+        }
+
         public string CandidateSuitableJd(int id, string email, string Comment, int Clientjdid)
         {
             try

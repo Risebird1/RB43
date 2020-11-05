@@ -2591,7 +2591,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "Client"; profileName.Replace("\"", "");
+                    profileName.Replace("\"", "");
                     if(profileName=="Client")
                     {
 
@@ -2601,7 +2601,31 @@ namespace Risebird.Web.Controllers
                         {
                             Page = 1;
                         }
-                        modelList = await _meetingService.GetSharedRiseTubeMeetingsPaged(Page.Value, searchvalue, profileName);
+                        int totalMeetings = 0;
+                        var heuristicLevels = (from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                               select (s.GetDescription())).ToArray();
+
+                        ViewBag.HeuristicLevels = heuristicLevels;
+
+                        var primarySkills = await _iRFService.GetPrimarySkillFromIRF();
+                        ViewBag.PrimarySkillList = primarySkills;
+                        if (HttpContext.Session.GetString("TalentOnDemandFilter") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<TalentOnDemandFilter>(HttpContext.Session.GetString("TalentOnDemandFilter"));
+                            
+                            filter.PrimarySkill = filter.PrimarySkill == null ?  primarySkills.ToArray() :  filter.PrimarySkill;
+                            filter.HeuristicType = filter.HeuristicType == null ? heuristicLevels : filter.HeuristicType;
+
+                            modelList = await _meetingService.GetSharedRiseTubeMeetingsForClientPagedFiltered(Page.Value, string.Join(",", filter.PrimarySkill), string.Join(",", filter.HeuristicType), searchvalue);
+
+                            totalMeetings = await _meetingService.GetSharedIndexMeetingsCountforClientFiltered(string.Join(",", filter.PrimarySkill), string.Join(",", filter.HeuristicType),  searchvalue);
+
+                        }
+                        else
+                        {
+                            modelList = await _meetingService.GetSharedRiseTubeMeetingsPaged(Page.Value, searchvalue, profileName);
+                            totalMeetings = await _meetingService.GetSharedIndexMeetingsCount(searchvalue, profileName);
+                        }
 
                         foreach (var item in modelList)
                         {
@@ -2630,15 +2654,6 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.searchvalue = "";
                         }
-
-                        //var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
-                        //if (menus != null)
-                        //{
-                        //    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool").ToList();
-                        //    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
-                        //}
-
-                        var totalMeetings = await _meetingService.GetSharedIndexMeetingsCount(searchvalue, profileName);
 
                         var remainder = totalMeetings % 12;
                         if (remainder == 0)
@@ -2670,6 +2685,135 @@ namespace Risebird.Web.Controllers
 
                 }
 
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RBOnDemandTalent(int? Page,TalentOnDemandFilter filter, string searchvalue=null )
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                       
+                        
+                        if (filter != null)
+                        {
+                            HttpContext.Session.SetString("TalentOnDemandFilter", JsonConvert.SerializeObject(filter));
+                        }
+                        var modelList = new List<MeetingVM>();
+                        if (Page == null || Page == 0)
+                        {
+                            Page = 1;
+                        }
+                        int totalMeetings = 0;
+                        var heuristicLevels = (from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                               select (s.GetDescription())).ToArray();
+
+                        ViewBag.HeuristicLevels = heuristicLevels;
+
+                        var primarySkills = await _iRFService.GetPrimarySkillFromIRF();
+                        ViewBag.PrimarySkillList = primarySkills;
+
+
+
+                        filter.PrimarySkill = filter.PrimarySkill == null ? primarySkills.ToArray() : filter.PrimarySkill;
+                        filter.HeuristicType = filter.HeuristicType == null ? heuristicLevels : filter.HeuristicType;
+
+                        modelList = await _meetingService.GetSharedRiseTubeMeetingsForClientPagedFiltered(Page.Value, string.Join(",", filter.PrimarySkill), string.Join(",", filter.HeuristicType), searchvalue);
+
+                        totalMeetings = await _meetingService.GetSharedIndexMeetingsCountforClientFiltered(string.Join(",", filter.PrimarySkill), string.Join(",", filter.HeuristicType), searchvalue);
+                        foreach (var item in modelList)
+                        {
+
+                            var usernames = item.candidateName.Trim().Split(" ");
+                            var namemodel = String.Empty;
+                            foreach (var name in usernames)
+                            {
+                                if (name != null && name.Length >= 2)
+                                    namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                else if (name != null && name.Length == 1)
+                                    namemodel = namemodel + name?.ToCharArray()[0];
+
+                            }
+                            item.candidateName = namemodel;
+
+                        }
+
+
+                        ViewBag.ProfileName = profileName;
+                        if (!String.IsNullOrEmpty(searchvalue))
+                        {
+                            ViewBag.searchvalue = searchvalue;
+                        }
+                        else
+                        {
+                            ViewBag.searchvalue = "";
+                        }
+
+
+                        var remainder = totalMeetings % 12;
+                        if (remainder == 0)
+                        {
+                            ViewBag.Pages = totalMeetings / 12;
+
+                        }
+                        else
+                        {
+                            ViewBag.Pages = (totalMeetings / 12) + 1;
+
+                        }
+
+                        ViewBag.Page = Page.Value;
+                        ViewBag.MeetingsCount = totalMeetings;
+                        ViewBag.Remainder = remainder;
+                        return View(modelList);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ResetRisetubeOnDemandFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("TalentOnDemandFilter");
+                    return RedirectToAction("RBOnDemandTalent");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
             }
             catch (Exception ex)
             {
