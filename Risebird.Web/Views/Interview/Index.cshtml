@@ -75,7 +75,11 @@
 
                 <div class="pull-right">
                     <div>
-
+                       
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to view all candidates feedback" onclick="location.href='@Url.Action("CandidateFeedBack","Survey")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Candidate Feedback</font></span>
+                        </button>
+                            
 
 
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
@@ -380,7 +384,7 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
 
-                                                    @*<th>Interview Device Details</th>*@
+                                                   
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
                                                 </tr>
@@ -421,7 +425,7 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
 
-                                                    @*<th>Interview Device Details</th>*@
+                                                  
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
                                                 </tr>
@@ -1126,6 +1130,7 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
+        
             order: [],
             responsive: true,
             language: {
@@ -1158,13 +1163,6 @@
 
 
     $(document).ready(function () {
-
-
-        //oTable = $('#example').dataTable();
-
-        $('#dataTables_filter').keyup(function () {
-            oTable.fnFilter($(this).val());
-        });
 
         $("#x").click(function (e) {
             $(".dataTables_filter input").val('');

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -88,6 +89,31 @@ namespace Risebird.Web.Controllers
             model.interviewid = id;
             model.Type = "Interviewer";
             return View("Index", model);
+        }
+        public IActionResult CandidateFeedBack()
+        {
+            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
+            var _resultlist = (from data in result
+                               select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
+            var resultset = _meetingService.FetchSurveyInterviewer(_resultlist);
+            var model = (from pair1 in result
+                         join pair2 in resultset on pair1.Interviewerid equals pair2.Interviewerid
+                         select new SurveyVM
+                         {
+                             interviewid = pair1.interviewid,
+                             Question1 = pair1.Question1,
+                             Question2 = pair1.Question2,
+                             Question3 = pair1.Question3,
+                             Question4 = pair1.Question4,
+                             Question5 = pair1.Question5,
+                             Question6 = pair1.Question6,
+                             Name = pair1.Name,
+                             EmailAddress = pair1.EmailAddress,
+                             interviewerEmail = pair2.Intervieweremail,
+                             CommentforInterviewer = pair1.CommentforInterviewer
+                         }).ToList();
+            return View(model);
         }
     }
 }

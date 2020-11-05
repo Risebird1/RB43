@@ -31,6 +31,7 @@ namespace Risebird.Entities.ViewModel
         public int interviewid { get; set; }
         public string CommentforInterviewer { get; set; }
         public int Interviewerid { get; set; }
+        public string interviewerEmail { get; set; }
 
     }
     public class SurveyCandidateInterviewer
@@ -38,5 +39,10 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public string Interviewer { get; set; }
         public string CandidateEmail { get; set; }
+    }
+    public class SurveyDetails
+    {
+        public int Interviewerid { get; set; }
+        public string Intervieweremail { get; set; }
     }
 }

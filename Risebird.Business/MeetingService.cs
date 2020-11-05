@@ -1966,7 +1966,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid)
+        public string CandidateSuitableJd(int id, string email, string Comment, int Clientjdid)
         {
             try
             {
@@ -1981,6 +1981,21 @@ namespace Risebird.Business
                 return null;
             }
 
+        }
+        public IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchSurveyInterviewer(_lst);
+                return _survey;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 

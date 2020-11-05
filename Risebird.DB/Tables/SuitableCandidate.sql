@@ -27,6 +27,15 @@ BEGIN
     ALTER TABLE SuitableCandidate
     Add [Clientjdid] int NULL		
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Pending')
+      AND Object_ID = Object_ID(N'SuitableCandidate'))
+BEGIN
+    ALTER TABLE SuitableCandidate
+    Add [Pending] bit NULL		
+END
 END
 GO
 
