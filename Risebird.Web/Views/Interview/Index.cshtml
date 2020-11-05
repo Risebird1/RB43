@@ -384,7 +384,7 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
 
-                                                    @*<th>Interview Device Details</th>*@
+                                                   
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
                                                 </tr>
@@ -425,7 +425,7 @@
                                                     <th>Final Selection Status</th>
                                                     <th>Final Selection Comments</th>
 
-                                                    @*<th>Interview Device Details</th>*@
+                                                  
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
                                                 </tr>
@@ -1130,6 +1130,7 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
+        
             order: [],
             responsive: true,
             language: {
@@ -1162,13 +1163,6 @@
 
 
     $(document).ready(function () {
-
-
-        //oTable = $('#example').dataTable();
-
-        $('#dataTables_filter').keyup(function () {
-            oTable.fnFilter($(this).val());
-        });
 
         $("#x").click(function (e) {
             $(".dataTables_filter input").val('');
