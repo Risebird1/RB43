@@ -401,7 +401,7 @@ namespace Risebird.CommonHelper
                 mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
                 mailMessage.To.Add(new MailAddress(candidateMail, "Risebird"));
                 //mailMessage.Bcc.Add(new MailAddress(candidateMail, null));
-                mailMessage.CC.Add(new MailAddress(clientHRMail, null));
+              // mailMessage.CC.Add(new MailAddress(clientHRMail, null));
 
                 mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
 
