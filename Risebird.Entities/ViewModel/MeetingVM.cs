@@ -214,6 +214,8 @@ namespace Risebird.Entities.ViewModel
         public int MeetingsCount { get; set; }
         public int PagesCount { get; set; }
         public bool Pending { get; set; }
+        public int? Heuristicsscore { get; set; }
+        public string HeuristicDesc { get; set; }
     }
     public class VedioComments
     {
