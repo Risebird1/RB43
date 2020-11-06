@@ -1431,7 +1431,13 @@ body.page-container-boxed {
     filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1;
 }
-
+.mdc-card .form-control {
+    border: 0;
+    border-radius: 4px 4px 0 0;
+    height: 40px;
+    font-size: 0.8rem;
+    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+}
 .page-container.page-mode-rtl .x-navigation.x-navigation-minimized li ul {
     top: 0px;
     right: auto;
@@ -5947,6 +5953,11 @@ blockquote {
     position: absolute;
     top: 13px;
     left: 30px;
+}
+.reset-password .field-icon {
+    right: 15px;
+    top: 57%;
+    left: auto;
 }
 
 .field-icon {
