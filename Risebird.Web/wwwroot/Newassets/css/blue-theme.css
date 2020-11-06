@@ -335,6 +335,13 @@ textarea::-webkit-scrollbar-thumb {
     color: #888 !important;
 }
 
+    .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
+        border: 0px !important;
+        border-bottom: 2px rgb(75 146 249) solid !important;
+     
+    }
+
+
 .mdc-button--outlined:not(:disabled) {
     border-color: #42a5f5 !important;
     color: #42a5f5 !important;
