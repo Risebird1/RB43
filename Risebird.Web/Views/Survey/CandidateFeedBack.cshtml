@@ -60,30 +60,32 @@
                                     <thead>
                                         <tr>
                                             <th>Name</th>
-                                            <th>Email Address</th>
-                                            <th>Interviewer EmailAddress</th>
-                                            <th id='start'>Question1</th>
-                                            <th>Question2</th>
-                                            <th>Question3</th>
-                                            <th>Question4</th>
-                                            <th>Question5</th>
-                                            <th>Question6</th>
-                                            <th>Comment</th>
+                                            <th>Candidate Email</th>
+                                            <th>Interviewer</th>
+                                            <th>Primary Skill</th>
+                                            <th id='start' title="Overall, how would you rate the video interview experience?">Question1</th>
+                                            <th title="How would you rate the evaluation process of interviewer?">Question2</th>
+                                            <th title="Given a chance would you like to reappear for the video interview?">Question3</th>
+                                            <th title="What did you like about the video interviews event?">Question4</th>
+                                            <th title="What did you dislike about the video interviews event?">Question5</th>
+                                            <th title="How friendly was the Risebird staff from scheduling to completion of interviews ?">Question6</th>
+                                            <th title="Please share comment for Interviewer">Comment</th>
 
                                         </tr>
                                     </thead>
                                     <tfoot>
                                         <tr>
                                             <th>Name</th>
-                                            <th>Email Address</th>
-                                            <th>Interviewer EmailAddress</th>
-                                            <th>Question1</th>
-                                            <th>Question2</th>
-                                            <th>Question3</th>
-                                            <th>Question4</th>
-                                            <th>Question5</th>
-                                            <th>Question6</th>
-                                            <th>Comment</th>
+                                            <th>Candidate Email </th>
+                                            <th>Interviewer</th>
+                                            <th>Primary Skill</th>
+                                            <th title="Overall, how would you rate the video interview experience?">Question1</th>
+                                            <th title="How would you rate the evaluation process of interviewer?">Question2</th>
+                                            <th title="Given a chance would you like to reappear for the video interview?">Question3</th>
+                                            <th title="What did you like about the video interviews event?">Question4</th>
+                                            <th title="What did you dislike about the video interviews event?">Question5</th>
+                                            <th title="How friendly was the Risebird staff from scheduling to completion of interviews ?">Question6</th>
+                                            <th title="Please share comment for Interviewer">Comment</th>
 
                                         </tr>
                                     </tfoot>
@@ -94,8 +96,9 @@
                                                 <td>@item.Name</td>
                                                 <td>@item.EmailAddress</td>
                                                 <td>@item.interviewerEmail</td>
-                                                <td>@item.Question1</td>
-                                                <td>@item.Question2</td>
+                                                <td>@item.PrimarySkill</td>
+                                                <td>@item.Question1 out of 5</td>
+                                                <td>@item.Question2 out of 5</td>
                                                 @if (item.Question3 == "1")
                                                 {
                                                     <td>
@@ -133,7 +136,7 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>@item.Question6</td>
+                                                <td>@item.Question6 out of 5</td>
                                                 <td>
                                                     <div class="talk-bubble tri-right border-bubble right-in">
                                                         <div class="talktext">
