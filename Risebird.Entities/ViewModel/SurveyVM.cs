@@ -12,16 +12,22 @@ namespace Risebird.Entities.ViewModel
         public string EmailAddress { get; set; }
         public string Type { get; set; }
         [Required]
+        [Display(Name = "Overall, how would you rate the video interview experience?")]
         public string Question1 { get; set; }
         [Required]
+        [Display(Name = "How would you rate the evaluation process of interviewer?")]
         public string Question2 { get; set; }
         [Required]
+        [Display(Name = "Given a chance would you like to reappear for the video interview?")]
         public string Question3 { get; set; }
         [Required]
+        [Display(Name = "What did you like about the video interviews event?")]
         public string Question4 { get; set; }
         [Required]
+        [Display(Name = "What did you dislike about the video interviews event?")]
         public string Question5 { get; set; }
         [Required]
+        [Display(Name = "How friendly was the Risebird staff from scheduling to completion of interviews ?")]
         public string Question6 { get; set; }
         [Required]
         public string Name { get; set; }
@@ -32,6 +38,8 @@ namespace Risebird.Entities.ViewModel
         public string CommentforInterviewer { get; set; }
         public int Interviewerid { get; set; }
         public string interviewerEmail { get; set; }
+        public string PrimarySkill { get; set; }
+
 
     }
     public class SurveyCandidateInterviewer
@@ -39,6 +47,7 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public string Interviewer { get; set; }
         public string CandidateEmail { get; set; }
+        public string PrimarySkill { get; set; }
     }
     public class SurveyDetails
     {
