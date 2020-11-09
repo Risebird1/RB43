@@ -668,7 +668,7 @@
                                     @if (page > 3)
                                     {
                                         <li>
-                                            <a href="@Url.Action("SharedIndex", "Risetube", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
+                                            <a href="@Url.Action("IndexPaged", "Risetube", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
                                                class="PagedList-skipToPrevious">
                                                 &laquo;
                                             </a>
@@ -680,7 +680,7 @@
                                     {
 
                                         <li class="@(i == ViewBag.page ? "page-item active" : "page-item")">
-                                            @Html.ActionLink(i.ToString(), "SharedIndex", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "" })
+                                            @Html.ActionLink(i.ToString(), "IndexPaged", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "" })
 
                                         </li>
                                     }
@@ -689,7 +689,7 @@
                                     @if (pages > endWith)
                                     {
                                         <li class="PagedList-skipToNext">
-                                            <a href="@Url.Action("SharedIndex", "Risetube", new { page = endWith + 1, searchvalue = ViewBag.searchvalue })">
+                                            <a href="@Url.Action("IndexPaged", "Risetube", new { page = endWith + 1, searchvalue = ViewBag.searchvalue })">
                                                 &raquo;
                                             </a>
                                         </li>
@@ -862,7 +862,7 @@
     $(document).ready(function () {
             $("#btnSearch").click(function () {
             var value = $("#txtsearch").val();
-                window.location.href = "/risetube/Index?searchvalue=" + value;
+                window.location.href = "/risetube/IndexPaged?searchvalue=" + value;
                 $('#myForm').trigger("reset");
         });
             $("#ResetFilter").click(function () {
@@ -1034,29 +1034,38 @@
 
 <script type="text/javascript">
     //// script for loader starts here
-    $(".dataloading").hide();
-    $("#VideoList").hide();
-    var loader;
-    function ShowProgress() {
-        $(".dataloading").hide();
-        $("#VideoList").hide();
-        loader = document.getElementsByClassName("loader")[0];
-        loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
-        loader.style.left = left + "px";
-    };
-    ShowProgress();
+    //$(".dataloading").hide();
+    //$("#VideoList").hide();
+    //var loader;
+    //function ShowProgress() {
+    //    $(".dataloading").hide();
+    //    $("#VideoList").hide();
+    //    loader = document.getElementsByClassName("loader")[0];
+    //    loader.style.display = "block";
+    //    var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+    //    var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+    //    loader.style.top = top + "px";
+    //    loader.style.left = left + "px";
+    //};
+    //ShowProgress();
 
-    window.onload = function () {
-        setTimeout(function () {
-            loader.style.display = "none";
-            $(".dataloading").show();
-            $("#VideoList").show();
-        }, 500);
-    };
+    //window.onload = function () {
+    //    setTimeout(function () {
+    //        loader.style.display = "none";
+    //        $(".dataloading").show();
+    //        $("#VideoList").show();
+    //    }, 500);
+    //};
     //// script for loader ends here
+</script>
+<script>
+    var input = document.getElementById("txtsearch");
+    input.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("btnSearch").click();
+        }
+    });
 </script>
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"CuratedUser\"")

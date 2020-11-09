@@ -131,7 +131,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid, int Page,bool IsClientCurated = false)
+        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid, int Page, string searchValue = null, bool IsClientCurated = false)
         {
             try
             {
@@ -170,6 +170,7 @@ namespace Risebird.Repository
                 //            commandType: CommandType.StoredProcedure);
                 //    }
                 //}
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
@@ -177,6 +178,7 @@ namespace Risebird.Repository
                     parameters.Add("@Emailid", Emailid);
                     parameters.Add("@startFrom", ((Page -1)*12));
                     parameters.Add("@endWith", Page*12);
+                    parameters.Add("@searchValue", searchValue);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsPaged", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
@@ -3172,6 +3174,55 @@ namespace Risebird.Repository
             }
 
         }
+
+        public async Task<int> GetRisetubeIndexMeetingsCount(int clientId, string profile, string Emailid, string searchValue=null, bool IsClientCurated = false)
+        {
+            try
+            {
+                //usp_GetSharedIndexMeetingsCountforClient
+                //if (profileName != null && profileName == "Client")
+                //{
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        var parameters = new DynamicParameters();
+                //        parameters.Add("@searchValueParam", searchValue);
+                //        var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCountforClient", parameters,
+                //            commandType: CommandType.StoredProcedure);
+                //        return result.FirstOrDefault();
+                //    }
+                //}
+                //else
+                //{
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        var parameters = new DynamicParameters();
+                //        parameters.Add("@searchValueParam", searchValue);
+                //        var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCount", parameters,
+                //            commandType: CommandType.StoredProcedure);
+                //        return result.FirstOrDefault();
+                //    }
+                //}
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@searchValue", searchValue);
+                    parameters.Add("@Emailid", Emailid);
+                    parameters.Add("@clientid", clientId);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRisetubeIndexMeetingsCount", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+
+        }
+
 
         public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName=null)
         {

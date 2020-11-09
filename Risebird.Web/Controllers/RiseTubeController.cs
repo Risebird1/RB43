@@ -496,13 +496,9 @@ namespace Risebird.Web.Controllers
                         {
                             Page = 1;
                         }
-                        //int pageNumber;
-                        //if(Page.HasValue)
-                        //{
-                        //    pageNumber = Page.Value;
-                        //}
+                        
                         var modelList = new List<MeetingVM>();
-
+                        int totalMeetings = 0;
                         if (isClientUser)
                         {
                             modelList = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailid);
@@ -515,7 +511,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetingsPaged(0, profileName, emailid, Page.Value/*Page.HasValue?Page.Value : 1*/);
+                            modelList = await _meetingService.GetRiseTubeMeetingsPaged(0, profileName, emailid, Page.Value, searchvalue);
                         }
 
                         ViewBag.NextLevelApprovalStatusList =
@@ -654,7 +650,20 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.searchvalue = "";
                         }
-                        var totalMeetings = modelList.FirstOrDefault().MeetingsCount;
+                        //var totalMeetings = modelList.FirstOrDefault().MeetingsCount;
+                        if(profileName=="Client")
+                        {
+                            totalMeetings = modelList.FirstOrDefault().MeetingsCount;
+                        }
+                        else if(profileName=="CuratedUser")
+                        {
+                            totalMeetings = modelList.FirstOrDefault().MeetingsCount;
+                        }
+                        else
+                        {
+                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(0, profileName, emailid, searchvalue);
+
+                        }
 
                         var remainder = totalMeetings % 12;
                         if (remainder == 0)
