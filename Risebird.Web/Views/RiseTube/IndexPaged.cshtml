@@ -599,20 +599,112 @@
                                 </div>
                             </div>
                             <hr>
-                            @*@foreach (var item in Model)
-        {
-            <p>
-                @item.PageNumber of @item.interviewVediosequence
-            </p>
-            break;
-        }*@
-                            @for (int i = 1; i <= ViewBag.Pages; i++)
-                            {
-                                @Html.ActionLink(i.ToString(), "IndexPaged", "Risetube", new { Page=i}, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"})
 
-                                @*@Html.ActionLink(i, "Index", i);*@
+                            @{
+                                var page = ViewBag.Page;
+                                var startCount = (page - 1) * 12 + 1;
+                                var endCount = (page) * 12;
                             }
-                            @*@Html.PagedListPager(Model, Page => Url.Action("Index", new { Page = Page }))*@
+                            @if (ViewBag.MeetingsCount == 0)
+                            {
+                                <p>
+                                    No selected candidates are avaialble as per requirement!
+                                </p>
+                            }
+                            else if (ViewBag.Pages == page && ViewBag.Remainder == 0)
+                            {
+                                var endNum = page * 12;
+                                <p>
+                                    @startCount - @endNum of @ViewBag.MeetingsCount
+                                </p>
+                            }
+                            else if (ViewBag.Pages == page && ViewBag.Remainder != 1)
+                            {
+                                var endNum = (page - 1) * 12 + ViewBag.Remainder;
+                                <p>
+                                    @startCount - @endNum of @ViewBag.MeetingsCount
+                                </p>
+                            }
+                            else if (ViewBag.Pages == page && ViewBag.Remainder == 1)
+                            {
+                                <p>
+                                    @startCount of @ViewBag.MeetingsCount
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    @startCount - @endCount of @ViewBag.MeetingsCount
+                                </p>
+                            }
+
+                            <div class="pagination-container">
+                                <ul class="pagination">
+
+                                    @{
+                                        var startFrom = 0;
+                                        var endWith = 0;
+                                        if (page % 3 != 0)
+                                        {
+                                            startFrom = ((page / 3) * 3) + 1;
+                                        }
+                                        else
+                                        {
+                                            startFrom = (((page - 1) / 3) * 3) + 1;
+                                        }
+                                        var pages = ViewBag.Pages;
+
+                                        if (pages - startFrom > 2)
+                                        {
+                                            endWith = startFrom + 2;
+                                        }
+                                        else
+                                        {
+                                            endWith = pages;
+                                        }
+
+                                    }
+
+                                    @if (page > 3)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("SharedIndex", "Risetube", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
+                                               class="PagedList-skipToPrevious">
+                                                &laquo;
+                                            </a>
+                                        </li>
+
+                                    }
+                                    @for (int i = startFrom; i <= endWith; i++)
+
+                                    {
+
+                                        <li class="@(i == ViewBag.page ? "page-item active" : "page-item")">
+                                            @Html.ActionLink(i.ToString(), "SharedIndex", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "" })
+
+                                        </li>
+                                    }
+
+
+                                    @if (pages > endWith)
+                                    {
+                                        <li class="PagedList-skipToNext">
+                                            <a href="@Url.Action("SharedIndex", "Risetube", new { page = endWith + 1, searchvalue = ViewBag.searchvalue })">
+                                                &raquo;
+                                            </a>
+                                        </li>
+
+                                    }
+
+
+                                </ul>
+                            </div>
+
+                            @*@for (int i = 1; i <= ViewBag.Pages; i++)
+        {
+            @Html.ActionLink(i.ToString(), "IndexPaged", "Risetube", new { Page=i}, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"})
+
+        }*@
                         </div>
 
 
