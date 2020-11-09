@@ -133,16 +133,16 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+                                    @*<div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
-                                        </div>
+            </div>
 
-                                    </div>
+                                    </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -150,8 +150,7 @@
                                             @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
+
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -159,6 +158,15 @@
                                             @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row">
+                                    @*<div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
