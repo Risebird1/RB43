@@ -1897,6 +1897,33 @@ namespace Risebird.Business
                 return 0;
             }
         }
+
+        public async Task<List<MeetingVM>> GetSharedRiseTubeMeetingsForClientPagedFiltered(int page,string primarySkills, string heuristicLevels, string searchValue = null)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetSharedRiseTubeMeetingsForClientPagedFiltered(page,primarySkills, heuristicLevels, searchValue);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels,string searchValue = null)
+        {
+            try
+            {
+                return await _meetingRespository.GetSharedIndexMeetingsCountforClientFiltered(primarySkills, heuristicLevels, searchValue);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
         public async Task<List<QuestionDetails>> FetchQuestionDetails(int interviewid)
         {
             try
@@ -1949,7 +1976,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid)
+        public string CandidateSuitableJd(int id, string email, string Comment, int Clientjdid)
         {
             try
             {
@@ -1964,6 +1991,21 @@ namespace Risebird.Business
                 return null;
             }
 
+        }
+        public IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                var _survey = _meetingRespository.FetchSurveyInterviewer(_lst);
+                return _survey;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 

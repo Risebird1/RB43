@@ -44,7 +44,7 @@ if(@searchValue is not null)
 		as ThumbnailImage,    
 		patchvideoCount.MeetingCount as MeetingPatchCount,    
 		(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END)  as CandidateAvailable,      
-		 tsr.TechSkillScore,ca.TotalExperience     
+		 tsr.TechSkillScore,ca.TotalExperience, ca.Heuristicsscore, hl.[Description] as HeuristicDesc      
 		from InterviewMeetings im                
 		inner join IRF on im.IRFId = IRF.IRFId         
 		inner join CuratedIRFMapping cim on cim.IRFId = irf.id     
@@ -52,7 +52,8 @@ if(@searchValue is not null)
 		inner join UserList ul on ul.EmailId = im.candidateEmail        
 		join CandidatesMaster cm on cm.UserId = ul.id            
 		join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id    
-		inner join @tblTechSkill tsr  on tsr.InterviewId= im.id     
+		inner join @tblTechSkill tsr  on tsr.InterviewId= im.id
+		left join HeuristicLevels hl on hl.id = ca.Heuristicsscore
 		outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and VideoLink!='')patchvideoCount    
     
 		where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ic.CandidateAvailable=1 and (im.candidateName like ('%' +@searchValue +'%') or irf.JDTiltle like ('%' +@searchValue +'%')) and ca.AvailableFullTime=1 and ca.AvailableFreeLancing=1     
@@ -63,8 +64,8 @@ if(@searchValue is not null)
 		ca.Phone, ca.EncodedResumeLink ,  ca.CostEstimate,tsr.TechSkillScore,    
 		IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,        
 		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage,patchvideoCount.MeetingCount           
-		 ,ic.CandidateAvailable,ca.TotalExperience)
-		 select * from meetings_rows where row_num>@startFrom and row_num<=@endWith
+		 ,ic.CandidateAvailable,ca.TotalExperience, ca.Heuristicsscore, hl.[Description])
+		 select * from meetings_rows where row_num>@startFrom and row_num<=@endWith 
 
 	End
 
@@ -82,7 +83,7 @@ Else
 		as ThumbnailImage,    
 		patchvideoCount.MeetingCount as MeetingPatchCount,    
 		(CASE WHEN ic.CandidateAvailable = 1 THEN 'Available' ELSE 'NotAvailable' END)  as CandidateAvailable,      
-		 tsr.TechSkillScore,ca.TotalExperience     
+		 tsr.TechSkillScore,ca.TotalExperience, ca.Heuristicsscore, hl.[Description] as HeuristicDesc     
 		from InterviewMeetings im                
 		inner join IRF on im.IRFId = IRF.IRFId         
 		inner join CuratedIRFMapping cim on cim.IRFId = irf.id     
@@ -90,7 +91,8 @@ Else
 		inner join UserList ul on ul.EmailId = im.candidateEmail        
 		join CandidatesMaster cm on cm.UserId = ul.id            
 		join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId = irf.id    
-		inner join @tblTechSkill tsr  on tsr.InterviewId= im.id     
+		inner join @tblTechSkill tsr  on tsr.InterviewId= im.id
+		left join HeuristicLevels hl on hl.id = ca.Heuristicsscore
 		outer apply (select count(*) as MeetingCount from VideoQuestionDetails where Interviewid=ic.InterviewId and VideoLink!='')patchvideoCount    
     
 		where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not null and ic.CandidateAvailable=1 and ca.AvailableFullTime=1 and ca.AvailableFreeLancing=1     
@@ -101,13 +103,16 @@ Else
 		ca.Phone, ca.EncodedResumeLink ,  ca.CostEstimate,tsr.TechSkillScore,    
 		IRF.id ,IRF.JDLink ,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,ic.AadharFileLink,ic.VideoLink,        
 		ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id ,ic.ThumbnailImage,patchvideoCount.MeetingCount           
-		 ,ic.CandidateAvailable,ca.TotalExperience)
+		 ,ic.CandidateAvailable,ca.TotalExperience, ca.Heuristicsscore, hl.[Description])
 		 select * from meetings_rows where row_num>@startFrom and row_num<=@endWith
 	End
 
 
   
 END      
+  
+  
+        
   
   
         

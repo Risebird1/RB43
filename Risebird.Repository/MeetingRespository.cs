@@ -20,11 +20,14 @@ namespace Risebird.Repository
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
-        public MeetingRespository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
+        private readonly INotificationHelper _notificationHelper;
+
+        public MeetingRespository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            _notificationHelper = notificationHelper;
         }
 
         public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings()
@@ -2028,6 +2031,17 @@ namespace Risebird.Repository
                     {
                         var updatestatus = SqlMapper.Query<string>(con, "usp_UpdateWalletdetails", parameters,
                             commandType: CommandType.StoredProcedure);
+                        //mail to client for insuficiant balance
+                        if (!String.IsNullOrEmpty(updatestatus.FirstOrDefault()))
+                        {
+                            Mail _mail = new Mail
+                            {
+                                TO = updatestatus.FirstOrDefault(),
+                                //CC = email,
+                                Subject = "Risebird: Insuficient Balance in your wallet"
+                            };
+                            var result = _notificationHelper.InsuficientBalancNotifiaction(_mail);
+                        }
                     }
                 }
                 //Update Interest status
@@ -2977,6 +2991,35 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsForClientPagedFiltered(int page, string primarySkills, string heuristicLevels, string searchValue = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startFromParam", ((page - 1) * 12));
+                    parameters.Add("@endWithParam", page * 12);
+                    parameters.Add("@searchValueParam", searchValue);
+                    parameters.Add("@primarySkillsParam", primarySkills);
+                    parameters.Add("@heuristicLevelsParam", heuristicLevels);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetSharedRiseTubeMeetingsForClientPagedFiltered", parameters,
+                             commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<IEnumerable<QuestionDetails>> FetchQuestionDetails(int interviewid)
         {
             try
@@ -3112,7 +3155,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select CandidateEmail,Interviewer,ul.id from interviewmeetings im left join userlist ul on im.interviewer=ul.emailid where id=@interviewid";
+                var query = "Select CandidateEmail,Interviewer,ul.id from interviewmeetings im left join userlist ul on im.interviewer=ul.emailid where im.id=@interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
 
@@ -3167,6 +3210,33 @@ namespace Risebird.Repository
             }
             
         }
+
+        public async Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels, string searchValue = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@searchValueParam", searchValue);
+                    parameters.Add("@primarySkillsParam", primarySkills);
+                    parameters.Add("@heuristicLevelsParam", heuristicLevels);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCountforClientFiltered", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+
+        }
+
         public string CandidateSuitableJd(int id, string email, string Comment, int Clientjdid)
         {
             try
@@ -3183,6 +3253,43 @@ namespace Risebird.Repository
                     var result = SqlMapper.Query<string>(con, "usp_AddSuitableCandidate", parameters,
                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault().ToString();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable Surveysetdt = new DataTable();
+                    Surveysetdt.Columns.Add("CuratedGroupId", typeof(int));
+                    Surveysetdt.Columns.Add("IRFId", typeof(int));
+                    Surveysetdt.Columns.Add("IsAdded", typeof(bool));
+
+                    foreach (var item in _lst)
+                    {
+                        Surveysetdt.Rows.Add(item.Interviewerid, 0, true);
+                    }
+
+                    SqlCommand cmdSurveyset = new SqlCommand("usp_SurveyInterviewerDetails", con);
+                    cmdSurveyset.CommandType = CommandType.StoredProcedure;
+                    cmdSurveyset.Parameters.Add(new SqlParameter("@SurveyBulkDetails", SqlDbType.Structured));
+                    cmdSurveyset.Parameters["@SurveyBulkDetails"].Value = Surveysetdt;
+                    con.Open();
+                    var result = new List<SurveyDetails>();
+                    var dr = cmdSurveyset.ExecuteReader();
+                    while (dr.Read())
+                    {
+                        result.Add(new SurveyDetails { Interviewerid = Convert.ToInt32(dr["Interviewid"].ToString()), Intervieweremail = dr["EmailAddress"].ToString() });
+                    }
+                    con.Close();
+                    return result;
                 }
             }
             catch (SqlException ex)

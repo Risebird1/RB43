@@ -3991,5 +3991,25 @@ namespace Risebird.Repository
             }
             return "";
         }
+
+        public async Task<IEnumerable<string>> GetPrimarySkillFromIRF()
+        {
+            try
+            {
+                var query = "select (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle)-1) ELSE JDTiltle END) from IRF where IsDeleted=0";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.QueryAsync<string>(query);
+                    return await results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
