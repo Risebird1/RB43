@@ -1317,8 +1317,18 @@ namespace Risebird.Business
             try
             {
                 //check the receiver and get all their emails from the db
-                var receiverEmails = _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever).Result;
-                var supportEmails = _supportRespository.GetAllSupportHREmails();
+               // var receiverEmails = _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever).Result;
+               // var supportEmails = _supportRespository.GetAllSupportHREmails();
+               // var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
+              //  return result;//
+
+
+                var list = new List<string>();
+                list.Add("ruma_bose@risebird.io");
+               var receiverEmails = _meetingRespository.GetEmailsforBroadcast(model.BroadcastReciever).Result;
+            var supportEmails = _supportRespository.GetAllSupportHREmails();
+                receiverEmails = list;
+                supportEmails = list;
                 var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
                 return result;
 
