@@ -468,7 +468,7 @@ border-bottom: 2px #121212 solid !important;
 }
 
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: #181818!important;
+    background: #181818;
     color: #9A9A9A !important;
 }
 
