@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -716,7 +717,23 @@ namespace Risebird.Business
         {
             try
             {
-                return _meetingRespository.UpdateComments(comments).Result;
+                var result = _meetingRespository.UpdateComments(comments).Result;
+                if(result && ((comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Passed) ||(comments.FinalInterviewMeetingStatus.HasValue && (comments.FinalInterviewMeetingStatus == (int)FinalInterviewMeetingStatus.Selected || comments.FinalInterviewMeetingStatus == (int)FinalInterviewMeetingStatus.Completed))))
+                {
+                    //notify clients
+                    var clientEmails=_meetingRespository.GetIRFClientsEmails(comments.irfIntId).Result;
+                    
+                    var interviewStatus = string.Empty;
+                    if (comments.InterviewStatus.HasValue  && (comments.InterviewStatus == (int)InterviewStatus.Selected || comments.InterviewStatus == (int)InterviewStatus.BorderLine))
+                    {
+                        interviewStatus = ((InterviewStatus)comments.InterviewStatus).GetDescription();
+                    }
+                    if(clientEmails != null && clientEmails.Count()>0 && !string.IsNullOrEmpty(interviewStatus))
+                    {
+                        _notificationHelper.SendQCPassNotificationToClient(clientEmails.ToList(), comments.candidateEmail, comments.PrimarySkill, interviewStatus, comments.interviewDate.ToString("MMMM dd, yyyy"));
+                    }
+                }
+                return result;
             }
             catch (Exception ex)
             {
