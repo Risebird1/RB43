@@ -204,27 +204,13 @@
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
-                                                        @*<span>Expected Salary:</span> @if (item.expectedPerHourRate != null && item.expectedPerHourRate.Length > 5)
+                                                        <span>Expected Salary:</span> @if (item.expectedPerHourRate != null && item.expectedPerHourRate.Length > 5)
                                                         {
-                                                            <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>
-                                                            
-                                                        }
+                                                            <a href="#" data-tooltip="@item.expectedPerHourRate"> <span class="expected-salari">@item.expectedPerHourRate</span></a>}
 
                                                         else
                                                         {
-                                                            <span>@item.expectedPerHourRate</span>
-
-                                                        }*@
-
-
-                                                        <span>Experience:</span>
-                                                        <span>
-                                                            @if (!String.IsNullOrEmpty(item.TotalExperience))
-                                                            {
-                                                                <span>@item.TotalExperience</span>
-                                                            }
-
-                                                        </span>
+                                                            <span>@item.expectedPerHourRate</span>}
                                                     </div>
 
                                                     <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
@@ -244,7 +230,7 @@
                                                         <a href="@item.resumeLink" target="_blank">resume</a>
                                                     </div>
 
-                                                    @*<div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                    <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
 
                                                         <span>Experience:</span>
                                                         <span>
@@ -255,7 +241,7 @@
 
                                                         </span>
 
-                                                    </div>*@
+                                                    </div>
 
 
                                                 </div>
