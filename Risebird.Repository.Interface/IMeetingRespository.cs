@@ -126,7 +126,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsForCuratedUserByIRF(string EmailId, string actionStatus, int irfId);
         SurveyCandidateInterviewer FetchCanddiateInterviewer(int interviewid);
         string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid);
-        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid, int Page, string searchValue = null, bool IsClientCurated = false);
+        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPaged(string profile, string Emailid, int Page, string searchValue = null, int clientId = 0, bool IsClientCurated = false);
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName = null);
         Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null);
        
@@ -134,6 +134,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsForClientPagedFiltered(int page, string primarySkills, string heuristicLevels, string searchValue = null);
         Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels, string searchValue = null);
 
-        Task<int> GetRisetubeIndexMeetingsCount(int clientId, string profile, string Emailid, string searchValue = null, bool IsClientCurated = false);
+        Task<int> GetRisetubeIndexMeetingsCount(string profile, string Emailid, string searchValue = null, int clientId = 0, bool IsClientCurated = false);
     }
 }

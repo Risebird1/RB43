@@ -103,12 +103,12 @@ namespace Risebird.Business.Interface
         SurveyCandidateInterviewer FetchCanddiateInterviewer(int interviewid);
         string CandidateSuitableJd(int id, string email, string Comment,int Clientjdid);
 
-        Task<List<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid, int Page, string searchValue=null, bool IsClientCurated = false);
+        Task<List<MeetingVM>> GetRiseTubeMeetingsPaged(string profile, string Emailid, int Page, string searchValue=null, int clientId=0, bool IsClientCurated = false);
         Task<List<MeetingVM>> GetSharedRiseTubeMeetingsPaged(int page, string searchValue = null, string profileName = null);
         Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null);
         IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst);
         Task<List<MeetingVM>> GetSharedRiseTubeMeetingsForClientPagedFiltered(int page, string primarySkills, string heuristicLevels, string searchValue = null);
         Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels, string searchValue = null);
-        Task<int> GetRisetubeIndexMeetingsCount(int clientId, string profile, string Emailid, string searchValue = null, bool IsClientCurated = false);
+        Task<int> GetRisetubeIndexMeetingsCount(string profile, string Emailid, string searchValue = null, int clientId = 0, bool IsClientCurated = false);
     }
 }

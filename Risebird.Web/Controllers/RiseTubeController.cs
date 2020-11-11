@@ -471,7 +471,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    bool isClientUser = false;
+                    //bool isClientUser = false;
                     int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
@@ -484,7 +484,7 @@ namespace Risebird.Web.Controllers
                         {
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
-                            isClientUser = true;
+                            //isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
@@ -499,19 +499,20 @@ namespace Risebird.Web.Controllers
                         
                         var modelList = new List<MeetingVM>();
                         int totalMeetings = 0;
-                        if (isClientUser)
+                        if (profileName == "Client")
                         {
                             modelList = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailid);
                         }
                         else if (profileName == "CuratedUser")
                         {
 
-                            modelList = await _meetingService.GetRiseTubeMeetingsByScore(0, profileName, emailid);
-                            modelList.ForEach(x => x.IsClientCurated = true);
+                            modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue);
+                            ViewBag.Profile = "CuratedUser";
+                            //modelList.ForEach(x => x.IsClientCurated = true);
                         }
                         else
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetingsPaged(0, profileName, emailid, Page.Value, searchvalue);
+                            modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue);
                         }
 
                         ViewBag.NextLevelApprovalStatusList =
@@ -657,11 +658,11 @@ namespace Risebird.Web.Controllers
                         }
                         else if(profileName=="CuratedUser")
                         {
-                            totalMeetings = modelList.FirstOrDefault().MeetingsCount;
+                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue);
                         }
                         else
                         {
-                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(0, profileName, emailid, searchvalue);
+                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue);
 
                         }
 

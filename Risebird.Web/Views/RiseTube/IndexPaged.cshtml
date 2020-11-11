@@ -490,7 +490,7 @@
                                                             <span class="designation">@item.JDTiltle</span>}
 
 
-                                                        @if (item.MobileNumber != null && !item.IsClientCurated)
+                                                        @if (item.MobileNumber != null && !(ViewBag.Profile == "CuratedUser"))
                                                         {
                                                             <span>
                                                                 <button class="call-btn" aria-label="Call">
@@ -976,13 +976,13 @@
          });
 
 
-  $("#txtsearch").on("keyup", function() {
-    var value = $(this).val().toLowerCase();
-      $("#VideoList div").filter(function () {
-                        selectedClass: 'active1',
-      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-    });
-  });
+  //$("#txtsearch").on("keyup", function() {
+  //  var value = $(this).val().toLowerCase();
+  //    $("#VideoList div").filter(function () {
+  //                      selectedClass: 'active1',
+  //    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+  //  });
+  //});
 
 });
          function ResetFilter() {
