@@ -50,226 +50,226 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="Page"></param>
         /// <returns></returns>        
-        [Authorize]
-        public async Task<IActionResult> Index(int? Page, string searchvalue)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    bool isClientUser = false;
-                    int ClientId = 0;
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
+        //[Authorize]
+        //public async Task<IActionResult> Index(int? Page, string searchvalue)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            bool isClientUser = false;
+        //            int ClientId = 0;
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        if (profileName == "Client")
-                        {
-                            var client = await _userRepository.GetClientUserDetails(emailid);
-                            ClientId = client.ClientId;
-                            isClientUser = true;
-                        }
-                        if (TempData["SuccessErrorMessageInterview"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
-                            TempData.Remove("SuccessErrorMessageInterview");
-                        }
-                        var modelList = new List<MeetingVM>();
+        //            if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
+        //            {
+        //                var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //                emailid = emailid.Replace("\"", "");
+        //                if (profileName == "Client")
+        //                {
+        //                    var client = await _userRepository.GetClientUserDetails(emailid);
+        //                    ClientId = client.ClientId;
+        //                    isClientUser = true;
+        //                }
+        //                if (TempData["SuccessErrorMessageInterview"] != null)
+        //                {
+        //                    ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+        //                    TempData.Remove("SuccessErrorMessageInterview");
+        //                }
+        //                var modelList = new List<MeetingVM>();
 
-                        if (isClientUser)
-                        {
-                            modelList = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailid);
-                        }
-                        else if (profileName == "CuratedUser")
-                        {
+        //                if (isClientUser)
+        //                {
+        //                    modelList = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailid);
+        //                }
+        //                else if (profileName == "CuratedUser")
+        //                {
 
-                            modelList = await _meetingService.GetRiseTubeMeetingsByScore(0, profileName, emailid);
-                            modelList.ForEach(x => x.IsClientCurated = true);
-                        }
-                        else
-                        {
-                            modelList = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
-                        }
+        //                    modelList = await _meetingService.GetRiseTubeMeetingsByScore(0, profileName, emailid);
+        //                    modelList.ForEach(x => x.IsClientCurated = true);
+        //                }
+        //                else
+        //                {
+        //                    modelList = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
+        //                }
 
-                        ViewBag.NextLevelApprovalStatusList =
-                            from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
-                            select (s.GetDescription());
-                        ViewBag.JoiningStatusList =
-                            from JoiningStatus s in Enum.GetValues(typeof(JoiningStatus))
-                            select (s.GetDescription());
-                        ViewBag.OfferStatusList =
-                           from OfferStatus s in Enum.GetValues(typeof(OfferStatus))
-                           select (s.GetDescription());
+        //                ViewBag.NextLevelApprovalStatusList =
+        //                    from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
+        //                    select (s.GetDescription());
+        //                ViewBag.JoiningStatusList =
+        //                    from JoiningStatus s in Enum.GetValues(typeof(JoiningStatus))
+        //                    select (s.GetDescription());
+        //                ViewBag.OfferStatusList =
+        //                   from OfferStatus s in Enum.GetValues(typeof(OfferStatus))
+        //                   select (s.GetDescription());
 
-                        if (HttpContext.Session.GetString("RiseTubefilters") != null)
-                        {
-                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RiseTubefilters"));
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).OrderByDescending(x => x.interviewDate).ToList();
-                            }
-                            modelList = modelList.Select(x =>
-                            {
-                                x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty;
-                                x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
-                                return x;
-                            }).ToList();
+        //                if (HttpContext.Session.GetString("RiseTubefilters") != null)
+        //                {
+        //                    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RiseTubefilters"));
+        //                    if (filter.StartDate != null && filter.EndDate != null)
+        //                    {
+        //                        modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).OrderByDescending(x => x.interviewDate).ToList();
+        //                    }
+        //                    modelList = modelList.Select(x =>
+        //                    {
+        //                        x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty;
+        //                        x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+        //                        return x;
+        //                    }).ToList();
 
-                            if (profileName == "CuratedUser")
-                            {
-                                filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
-                                filter.IsShortListed = filter.IsShortListed == null ? filter.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter.IsShortListed = filter.IsShortListed;
-                                filter.IsIntrested = filter.IsIntrested == null ? filter.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter.IsIntrested = filter.IsIntrested;
-                                filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
+        //                    if (profileName == "CuratedUser")
+        //                    {
+        //                        filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
+        //                        filter.IsShortListed = filter.IsShortListed == null ? filter.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter.IsShortListed = filter.IsShortListed;
+        //                        filter.IsIntrested = filter.IsIntrested == null ? filter.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter.IsIntrested = filter.IsIntrested;
+        //                        filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
 
-                                modelList = modelList.Where(c => (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
-                                && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
-                                && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)
-                                && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == string.Empty)).ToList();
+        //                        modelList = modelList.Where(c => (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
+        //                        && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
+        //                        && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)
+        //                        && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == string.Empty)).ToList();
 
-                                ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
-                                ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
+        //                        ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
+        //                        ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
 
-                            }
-                            else
-                            {
-                                filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                                filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
-                                filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-                                filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = modelList.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
-                                filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = modelList.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
-                                filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = modelList.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
-                                filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                                filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = modelList.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
-                                filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
-                                filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
+        //                    }
+        //                    else
+        //                    {
+        //                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
+        //                        filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
+        //                        filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+        //                        filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = modelList.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+        //                        filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = modelList.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
+        //                        filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = modelList.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
+        //                        filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+        //                        filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = modelList.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+        //                        filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
+        //                        filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
 
-                                modelList = modelList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                                && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                                && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
-                                && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
-                                && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
-                                && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
-                                && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                                && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
-                                && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
-                                && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == string.Empty)).ToList();
+        //                        modelList = modelList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+        //                        && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
+        //                        && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
+        //                        && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+        //                        && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+        //                        && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
+        //                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+        //                        && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
+        //                        && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+        //                        && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == string.Empty)).ToList();
 
-                                ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
-                                ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
-                                ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
-                                ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
-                                //ViewBag.NextLevelApprovalStatusList = modelList.Select(x => x.NextLevelApprovalStat).ToArray();
-                                //ViewBag.JoiningStatusList = modelList.Select(x => x.JoiningStatusStatDesc).ToArray();
-                                //ViewBag.OfferStatusList = modelList.Select(x => x.OfferStatusStatDesc).ToArray();
-                            }
-                            ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
-                            ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
-
-
-
-                        }
-                        else
-                        {
-                            if (profileName == "CuratedUser")
-                            {
-                                ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
-                                ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
-                            }
-                            else
-                            {
-                                ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
-                                ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
-                                ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
-                                ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
-                                //ViewBag.NextLevelApprovalStatusList = modelList.Select(x => x.NextLevelApprovalStat).ToArray();
-                                //ViewBag.JoiningStatusList = modelList.Select(x => x.JoiningStatusStatDesc).ToArray();
-                                //ViewBag.OfferStatusList = modelList.Select(x => x.OfferStatusStatDesc).ToArray();
-                            }
-                            ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
-                            ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
-
-                            modelList = modelList.Where(x => x.CandidateAvailable == "Available").ToList();
-                            modelList = modelList.Select(x =>
-                            {
-                                x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
-                                return x;
-                            }).ToList();
-                        }
-                        if (profileName == "CuratedUser")
-                        {
-                            foreach (var item in modelList)
-                            {
-                                if (item.IsIntrested != "Interest Accepted")
-                                {
-                                    var usernames = item.candidateName.Trim().Split(" ");
-                                    var namemodel = String.Empty;
-                                    foreach (var name in usernames)
-                                    {
-                                        if (name != null && name.Length >= 2)
-                                            namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
-                                        else if (name != null && name.Length == 1)
-                                            namemodel = namemodel + name?.ToCharArray()[0];
-
-                                    }
-                                    item.candidateName = namemodel;
-                                }
-                            }
-                        }
-
-                        ViewBag.ProfileName = profileName;
-                        if (!String.IsNullOrEmpty(searchvalue))
-                        {
-                            modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(searchvalue.ToUpper()) || x.JDTiltle.ToUpper().Contains(searchvalue.ToUpper())).ToList();
-                            ViewBag.searchvalue = searchvalue;
-                        }
-                        else
-                        {
-                            ViewBag.searchvalue = "";
-                        }
+        //                        ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+        //                        ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+        //                        ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+        //                        ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+        //                        //ViewBag.NextLevelApprovalStatusList = modelList.Select(x => x.NextLevelApprovalStat).ToArray();
+        //                        //ViewBag.JoiningStatusList = modelList.Select(x => x.JoiningStatusStatDesc).ToArray();
+        //                        //ViewBag.OfferStatusList = modelList.Select(x => x.OfferStatusStatDesc).ToArray();
+        //                    }
+        //                    ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+        //                    ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
 
 
-                        for (int i = 0; i < modelList.Count; i++)
-                        {
-                            modelList[i].interviewVediosequence = modelList.Count;
-                            var totalpage = modelList.Count / 12;
-                            Page = Page == null ? 1 : Page;
-                            int? initail = 12 * (Page - 1) + 1;
-                            int? endvalue = 0;
-                            if (totalpage >= Page)
-                            {
 
-                                endvalue = 12 * Page;
-                            }
-                            else
-                            {
-                                endvalue = modelList.Count;
-                            }
-                            modelList[i].PageNumber = initail.ToString() + " - " + endvalue.ToString();
+        //                }
+        //                else
+        //                {
+        //                    if (profileName == "CuratedUser")
+        //                    {
+        //                        ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
+        //                        ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
+        //                    }
+        //                    else
+        //                    {
+        //                        ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+        //                        ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+        //                        ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+        //                        ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+        //                        //ViewBag.NextLevelApprovalStatusList = modelList.Select(x => x.NextLevelApprovalStat).ToArray();
+        //                        //ViewBag.JoiningStatusList = modelList.Select(x => x.JoiningStatusStatDesc).ToArray();
+        //                        //ViewBag.OfferStatusList = modelList.Select(x => x.OfferStatusStatDesc).ToArray();
+        //                    }
+        //                    ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+        //                    ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
 
-                        }
-                        return View(modelList.ToPagedList(Page ?? 1, 12));
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
+        //                    modelList = modelList.Where(x => x.CandidateAvailable == "Available").ToList();
+        //                    modelList = modelList.Select(x =>
+        //                    {
+        //                        x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+        //                        return x;
+        //                    }).ToList();
+        //                }
+        //                if (profileName == "CuratedUser")
+        //                {
+        //                    foreach (var item in modelList)
+        //                    {
+        //                        if (item.IsIntrested != "Interest Accepted")
+        //                        {
+        //                            var usernames = item.candidateName.Trim().Split(" ");
+        //                            var namemodel = String.Empty;
+        //                            foreach (var name in usernames)
+        //                            {
+        //                                if (name != null && name.Length >= 2)
+        //                                    namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+        //                                else if (name != null && name.Length == 1)
+        //                                    namemodel = namemodel + name?.ToCharArray()[0];
 
-        }
+        //                            }
+        //                            item.candidateName = namemodel;
+        //                        }
+        //                    }
+        //                }
+
+        //                ViewBag.ProfileName = profileName;
+        //                if (!String.IsNullOrEmpty(searchvalue))
+        //                {
+        //                    modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(searchvalue.ToUpper()) || x.JDTiltle.ToUpper().Contains(searchvalue.ToUpper())).ToList();
+        //                    ViewBag.searchvalue = searchvalue;
+        //                }
+        //                else
+        //                {
+        //                    ViewBag.searchvalue = "";
+        //                }
+
+
+        //                for (int i = 0; i < modelList.Count; i++)
+        //                {
+        //                    modelList[i].interviewVediosequence = modelList.Count;
+        //                    var totalpage = modelList.Count / 12;
+        //                    Page = Page == null ? 1 : Page;
+        //                    int? initail = 12 * (Page - 1) + 1;
+        //                    int? endvalue = 0;
+        //                    if (totalpage >= Page)
+        //                    {
+
+        //                        endvalue = 12 * Page;
+        //                    }
+        //                    else
+        //                    {
+        //                        endvalue = modelList.Count;
+        //                    }
+        //                    modelList[i].PageNumber = initail.ToString() + " - " + endvalue.ToString();
+
+        //                }
+        //                return View(modelList.ToPagedList(Page ?? 1, 12));
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+
+        //}
         /// <summary>
         /// Method to apply filters on index page
         /// </summary>
@@ -465,7 +465,7 @@ namespace Risebird.Web.Controllers
         /// <param name="Page"></param>
         /// <returns></returns>        
         [Authorize]
-        public async Task<IActionResult> IndexPaged(int? Page, string searchvalue)
+        public async Task<IActionResult> Index(int? Page, string searchvalue)
         {
             try
             {
@@ -501,14 +501,14 @@ namespace Risebird.Web.Controllers
                         int totalMeetings = 0;
                         if (profileName == "Client")
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailid);
+                            modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue, ClientId);
+
                         }
                         else if (profileName == "CuratedUser")
                         {
 
                             modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue);
                             ViewBag.Profile = "CuratedUser";
-                            //modelList.ForEach(x => x.IsClientCurated = true);
                         }
                         else
                         {
@@ -651,10 +651,9 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.searchvalue = "";
                         }
-                        //var totalMeetings = modelList.FirstOrDefault().MeetingsCount;
                         if(profileName=="Client")
                         {
-                            totalMeetings = modelList.FirstOrDefault().MeetingsCount;
+                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue, ClientId);
                         }
                         else if(profileName=="CuratedUser")
                         {
@@ -682,26 +681,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.MeetingsCount = totalMeetings;
                         ViewBag.Remainder = remainder;
 
-                        //for (int i = 0; i < modelList.Count; i++)
-                        //{
-                        //    modelList[i].interviewVediosequence = modelList.Count;
-                        //    var totalpage = modelList.Count / 12;
-                        //    Page = Page == null ? 1 : Page;
-                        //    int? initail = 12 * (Page - 1) + 1;
-                        //    int? endvalue = 0;
-                        //    if (totalpage >= Page)
-                        //    {
-
-                        //        endvalue = 12 * Page;
-                        //    }
-                        //    else
-                        //    {
-                        //        endvalue = modelList.Count;
-                        //    }
-                        //    modelList[i].PageNumber = initail.ToString() + " - " + endvalue.ToString();
-
-                        //}
-                        //return View(modelList.ToPagedList(Page ?? 1, 12));
+                        
                         return View("IndexPaged", modelList);
                     }
                     else

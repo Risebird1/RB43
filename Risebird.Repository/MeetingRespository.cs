@@ -177,11 +177,11 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@clientid", clientId);
-                        parameters.Add("@Emailid", Emailid);
-                        parameters.Add("@startFrom", ((Page - 1) * 12));
-                        parameters.Add("@endWith", Page * 12);
-                        parameters.Add("@searchValue", searchValue);
+                        parameters.Add("@clientIdParam", clientId);
+                        parameters.Add("@EmailIdParam", Emailid);
+                        parameters.Add("@startFromParam", ((Page - 1) * 12));
+                        parameters.Add("@endWithParam", Page * 12);
+                        parameters.Add("@searchValueParam", searchValue);
                         return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsPaged", parameters,
                             commandType: CommandType.StoredProcedure);
                     }
@@ -3213,9 +3213,9 @@ namespace Risebird.Repository
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@searchValue", searchValue);
-                        parameters.Add("@Emailid", Emailid);
-                        parameters.Add("@clientid", clientId);
+                        parameters.Add("@searchValueParam", searchValue);
+                        parameters.Add("@EmailIdParam", Emailid);
+                        parameters.Add("@clientIdParam", clientId);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_GetRisetubeIndexMeetingsCount", parameters,
                             commandType: CommandType.StoredProcedure);
                         return result.FirstOrDefault();

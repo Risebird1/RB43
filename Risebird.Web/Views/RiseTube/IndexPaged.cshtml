@@ -101,11 +101,11 @@
 
                         </div>
 
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
+                        @*<button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn4 card-title-space" data-toggle="modal" data-target="#filterModal">
 
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
-                        </button>
+                        </button>*@
                         @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
                         {
                             var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim();
@@ -608,7 +608,7 @@
                             @if (ViewBag.MeetingsCount == 0)
                             {
                                 <p>
-                                    No selected candidates are avaialble as per requirement!
+                                    No selected candidates are available as per requirement!
                                 </p>
                             }
                             else if (ViewBag.Pages == page && ViewBag.Remainder == 0)
@@ -668,7 +668,7 @@
                                     @if (page > 3)
                                     {
                                         <li>
-                                            <a href="@Url.Action("IndexPaged", "Risetube", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
+                                            <a href="@Url.Action("Index", "Risetube", new { page = startFrom - 1, searchvalue = ViewBag.searchvalue })"
                                                class="PagedList-skipToPrevious">
                                                 &laquo;
                                             </a>
@@ -680,7 +680,7 @@
                                     {
 
                                         <li class="@(i == ViewBag.page ? "page-item active" : "page-item")">
-                                            @Html.ActionLink(i.ToString(), "IndexPaged", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "" })
+                                            @Html.ActionLink(i.ToString(), "Index", "Risetube", new { Page = i, searchvalue = ViewBag.searchvalue }, htmlAttributes: new { @class = "" })
 
                                         </li>
                                     }
@@ -689,7 +689,7 @@
                                     @if (pages > endWith)
                                     {
                                         <li class="PagedList-skipToNext">
-                                            <a href="@Url.Action("IndexPaged", "Risetube", new { page = endWith + 1, searchvalue = ViewBag.searchvalue })">
+                                            <a href="@Url.Action("Index", "Risetube", new { page = endWith + 1, searchvalue = ViewBag.searchvalue })">
                                                 &raquo;
                                             </a>
                                         </li>
@@ -700,11 +700,7 @@
                                 </ul>
                             </div>
 
-                            @*@for (int i = 1; i <= ViewBag.Pages; i++)
-        {
-            @Html.ActionLink(i.ToString(), "IndexPaged", "Risetube", new { Page=i}, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space"})
-
-        }*@
+                            
                         </div>
 
 
@@ -862,7 +858,7 @@
     $(document).ready(function () {
             $("#btnSearch").click(function () {
             var value = $("#txtsearch").val();
-                window.location.href = "/risetube/IndexPaged?searchvalue=" + value;
+                window.location.href = "/risetube/Index?searchvalue=" + value;
                 $('#myForm').trigger("reset");
         });
             $("#ResetFilter").click(function () {
