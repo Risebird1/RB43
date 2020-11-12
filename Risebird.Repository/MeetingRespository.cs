@@ -3162,7 +3162,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select CandidateEmail,Interviewer,ul.id from interviewmeetings im left join userlist ul on im.interviewer=ul.emailid where id=@interviewid";
+                var query = "Select CandidateEmail,Interviewer,ul.id,ir.JDTiltle as PrimarySkill from interviewmeetings im join IRF ir on ir.IRFId=im.IRFId left join userlist ul on im.interviewer=ul.emailid where im.id=@interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewid", interviewid);
 
@@ -3357,6 +3357,28 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<IEnumerable<string>> GetIRFClientsEmails(int irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.QueryAsync<string>(con, "usp_GetIRFClientsEmails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.Result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
     }
 }

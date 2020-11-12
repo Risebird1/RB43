@@ -11,23 +11,26 @@ SET QUOTED_IDENTIFIER ON
 GO
 
   
-CREATE PROCEDURE [dbo].[usp_GetInterviewComments]  
+Create PROCEDURE [dbo].[usp_GetInterviewComments]  
   
 @interviewId int  
   
 AS  
 Begin  
   
-SELECT [InterviewStatus], [InterviewerComment], [FraudCheckStatus], [HRComment],[TrainingStatus], [TrainerComment],  
+SELECT [InterviewStatus], [InterviewerComment], [FraudCheckStatus], ic.[HRComment],[TrainingStatus], [TrainerComment],  
 	   [AudioLink], [VideoLink], [L2InterviewStatus], [ClientInterviewStatus] as FinalInterviewMeetingStatus,
 	   [MeetingStatus], [OfferStatus], [PreparationStatus], [JoiningStatus], [AadharFileLink],[CandidateAvailable],
-	   qcfr.QCStatus, qcfr.QCComment
+	   qcfr.QCStatus, qcfr.QCComment, im.candidateEmail, irf.id as irfIntId, irf.IRFId as IRFName,(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle)-1) ELSE JDTiltle END) as PrimarySkill, im.interviewDate
 
-FROM [dbo].[InterviewComments]  
-left join QCFeedbackReport qcfr on qcfr.InterviewId =InterviewComments.InterviewId
+FROM [dbo].[InterviewComments] ic 
+left join QCFeedbackReport qcfr on qcfr.InterviewId =ic.InterviewId
+left join InterviewMeetings im on im.id = ic.InterviewId
+left join IRF on irf.IRFId=im.IRFId
 WHERE  
-     InterviewComments.InterviewId = @interviewId  
+     ic.InterviewId =@interviewId  
 End  
+   
   
 GO
 

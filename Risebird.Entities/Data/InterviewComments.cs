@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.Data
@@ -80,5 +81,11 @@ namespace Risebird.Entities.Data
         public string AadharFileLink { get; set; }
         [Display(Name = "Candidate Available")]
         public bool CandidateAvailable { get; set; }
+        public string IRFName { get; set; }
+        public int irfIntId { get; set; }
+        public string PrimarySkill { get; set; }
+        public string candidateEmail { get; set; }
+        public DateTime interviewDate { get; set; }
+
     }
 }

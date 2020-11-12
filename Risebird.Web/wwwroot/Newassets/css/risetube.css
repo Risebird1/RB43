@@ -890,10 +890,10 @@ textarea::-webkit-scrollbar-thumb {
 }
 
     #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
-        background: url("../../img/audio-button-set-4-transparent.png");
-        background-size: 25px;
-        background-repeat: no-repeat;
-        background-position: 45%;
+        background: url("../../img/audio-button-set-4-transparent.png") !important;
+        background-size: 25px !important;
+        background-repeat: no-repeat !important;
+        background-position: 45% !important;
         z-index: 1000;
     }
 

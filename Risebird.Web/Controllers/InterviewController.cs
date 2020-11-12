@@ -3121,7 +3121,7 @@ namespace Risebird.Web.Controllers
                     {
 
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1);
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && x.InterviewStatus==2 &&x.confirmationStatus=="1" );
                         if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
@@ -5895,7 +5895,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         //[HttpPost]
-        public IActionResult Broadcast(string message, string subject, string receiver, string irfid)
+        public IActionResult Broadcast(string message, string subject, string receiver, int irfid)
         {
 
             try
@@ -5922,10 +5922,10 @@ namespace Risebird.Web.Controllers
                         else
                         {
 
-                            model.IRFId = Convert.ToInt16(irfid);
+                            model.IRFId = irfid;
                             var result = _meetingService.BroadcastIRFmembers(model);
 
-                            TempData["SuccessErrorMessageInterview"] = result;
+                            TempData["SuccessErrorMessageInterview"] = result.Result;
                             return Json(result);
                         }
 
@@ -5945,7 +5945,7 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterview"] = "Broadcast failed.";
-                return RedirectToAction("SignOut", "Session");
+                return RedirectToAction("Index");
             }
         }
 

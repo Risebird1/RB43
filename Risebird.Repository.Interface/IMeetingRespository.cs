@@ -133,6 +133,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<SurveyDetails> FetchSurveyInterviewer(List<SurveyDetails> _lst);
         Task<IEnumerable<MeetingVM>> GetSharedRiseTubeMeetingsForClientPagedFiltered(int page, string primarySkills, string heuristicLevels, string searchValue = null);
         Task<int> GetSharedIndexMeetingsCountforClientFiltered(string primarySkills, string heuristicLevels, string searchValue = null);
+        Task<IEnumerable<string>> GetIRFClientsEmails(int irfId);
 
         Task<int> GetRisetubeIndexMeetingsCount(string profile, string Emailid, string searchValue = null, int clientId = 0, bool IsClientCurated = false);
     }
