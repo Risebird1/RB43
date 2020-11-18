@@ -4,8 +4,84 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 5px;
 }
+.callout {
+    background-color: #fff;
+    border: 0.4rem solid #9cd3ff;
+    border-radius: 0.4rem;
+    padding: 15px;
+}
+.callno {
+    float: left;
+    display: inline-block;
+    border: 1px #9cd3ff solid;
+    min-height: 85%;
+    padding: 0px 5px;
+    background: #e4f1fb;
+}
 
-#startRecButton {
+
+.callsubmit {
+    border: 0px;
+    border-radius: 0px;
+    padding: 7px 12px;
+    line-height: 25px;
+    float: right;
+    margin: 10px 0px 20px 10px;
+    color: #fff;
+    font-size: 15px!important;
+    text-align: center;
+    width: 130px;
+    outline: none;
+    text-transform:uppercase;
+}
+.callout h1 {
+    display: inline-block;
+    margin-bottom: .5rem;
+    font-family: Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: inherit;
+    font-size: 1.4rem;
+    text-rendering: optimizeLegibility;
+    margin: 0px 10px 20px 10px;
+}
+.calloption {
+    border-radius: 290486px;
+    padding: 9px 18px;
+    margin: 0 0px;
+    margin-bottom: 12px;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+    cursor: pointer;
+    font-size: 18px;
+    background-color: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.85);
+    border: transparent 1px solid;
+}
+
+.callhead {
+    text-align: left;
+    background: #9cd3ff;
+    padding: 5px 20px;
+    font-size: 28px;
+    color: #181f1e;
+    font-weight:normal;
+}
+    .calloption input[type=checkbox], .calloption input[type=radio] {
+        width: 18px;
+        height: 18px;
+        margin-right: 5px;
+    }
+.callbox {
+    width: 30px;
+    height: 30px;
+    border: 1px #6f6c6c solid;
+    float: left;
+    margin: 5px 5px 5px 0px;
+    text-align: center;
+    color: #443e3e;
+}
+    #startRecButton {
     background: url(../../img/play-recrd.png) no-repeat;
     text-indent: -999px;
 

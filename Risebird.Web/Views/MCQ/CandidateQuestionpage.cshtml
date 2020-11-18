@@ -6,73 +6,84 @@
 <html>
 <head>
     <link href="~/Newassets/css/bootstrap.min.css?v=7" rel="stylesheet" />
+    <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
     <title>MCQ Questions</title>
 
 </head>
 <body>
-    <p class="text-center"><img src="~/images/risebird.png" /></p>
-    <div class="container row">
-        <div class="col-md-4">
-            @foreach (var item in Model._questionlist)
-            {
-                @if (item.QuestionAnswered == true)
-                {
-                    <div class="col-md-3" style="background-color:green">@item.QuestionNumber</div> @*Answered*@
-                }
-                else
-                {
-                    <div class="col-md-3" style="background-color:lightgray">@item.QuestionNumber</div> @*Unanswered*@
-                }
-            }
-        </div>
-        <div class="col-md-8">
+    <p class="text-center" style="height:100px"><img src="~/images/risebird.png" width="150" style="margin-top:-20px;" /></p>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-3 callno">
+                    @foreach (var item in Model._questionlist)
+                    {
+                        @if (item.QuestionAnswered == true)
+                        {
+                            <div class="callbox" style=" background-color: #74af53">@item.QuestionNumber</div> @*Answered*@
+                        }
+                        else
+                        {
+                            <div class="callbox" style="background-color:white">@item.QuestionNumber</div> @*Unanswered*@
+                        }
+                    }
+                </div>
+                <div class="col-md-9" style="float:left;">
+                    <h2 class="callhead">Answer the following questions</h2>
+                    @using (Html.BeginForm("CandidateQuestions", "MCQ", FormMethod.Post, new { currentpage = Model._question.QuestionNumber }))
+                    {<div class="callout">
+                            <div>
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(m => m._question.QuestionType)
+                                <div>
+                                    <h1>@Model._question.QuestionNumber ) @Model._question.Question </h1>
+                                    <input id="zquestion_QuestionNumber" name="_question.QuestionNumber" value="@Model._question.QuestionNumber" type="hidden" />
+                                    <div>
+                                        @if (Model._question.QuestionType == "Multiple")
+                                        {
+                                            <p class="calloption">@Html.CheckBoxFor(m => m._question.MultiAnswerOption1, "1") @Model._question.Option1</p>
+                                            <p class="calloption">@Html.CheckBoxFor(m => m._question.MultiAnswerOption2, "2") @Model._question.Option2</p>
+                                            <p class="calloption">@Html.CheckBoxFor(m => m._question.MultiAnswerOption3, "3") @Model._question.Option3</p>
+                                            <p class="calloption">@Html.CheckBoxFor(m => m._question.MultiAnswerOption4, "4") @Model._question.Option4</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "1") @Model._question.Option1</p>
+                                            <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "2") @Model._question.Option2</p>
+                                            <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "3") @Model._question.Option3</p>
+                                            <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "4") @Model._question.Option4</p>
+                                            @*<p><input type="radio" name="option_@Model.QuestionNumber" /> @Model.Option4</p>*@
+                                        }
+                                    </div>
+                                </div>
+                                <input id="zquestion_final" name="_question.final" value="@Model._question.final" type="hidden" />
+                            </div>
 
-            @using (Html.BeginForm("CandidateQuestions", "MCQ", FormMethod.Post, new { currentpage = Model._question.QuestionNumber }))
-            {
-                <div>
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    @Html.HiddenFor(m => m._question.QuestionType)
-                    <div>
-                        <label>@Model._question.QuestionNumber ) @Model._question.Question </label>
-                        <input id="zquestion_QuestionNumber" name="_question.QuestionNumber" value="@Model._question.QuestionNumber" type="hidden" />
-                        <div style="margin-left:3%">
-                            @if (Model._question.QuestionType == "Multiple")
+                        </div>
+                        <!--button: Start-->
+                        <div>
+                            @if (Model._question.final == "true")
                             {
-                                <p>@Html.CheckBoxFor(m => m._question.MultiAnswerOption1, "1") @Model._question.Option1</p>
-                                <p>@Html.CheckBoxFor(m => m._question.MultiAnswerOption2, "2") @Model._question.Option2</p>
-                                <p>@Html.CheckBoxFor(m => m._question.MultiAnswerOption3, "3") @Model._question.Option3</p>
-                                <p>@Html.CheckBoxFor(m => m._question.MultiAnswerOption4, "4") @Model._question.Option4</p>
+                                <input type="submit" value="Submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded callsubmit" />
                             }
                             else
                             {
-                                <p>@Html.RadioButtonFor(m => m._question.SingleAnswer, "1") @Model._question.Option1</p>
-                                <p>@Html.RadioButtonFor(m => m._question.SingleAnswer, "2") @Model._question.Option2</p>
-                                <p>@Html.RadioButtonFor(m => m._question.SingleAnswer, "3") @Model._question.Option3</p>
-                                <p>@Html.RadioButtonFor(m => m._question.SingleAnswer, "4") @Model._question.Option4</p>
-                                @*<p><input type="radio" name="option_@Model.QuestionNumber" /> @Model.Option4</p>*@
+                                <input type="submit" value="NEXT" class="mdc-button mdc-button--raised mdc-ripple-upgraded callsubmit" />
                             }
                         </div>
-                    </div>
-                    <input id="zquestion_final" name="_question.final" value="@Model._question.final" type="hidden" />
-                </div>
-                <!--button: Start-->
-                <div>
-                    @if (Model._question.final == "true")
-                    {
-                        <input type="submit" value="Submit" />
+                        <!--button: END-->
                     }
-                    else
-                    {
-                        <input type="submit" value="NEXT" />
-                    }
-                </div>
-                <!--button: END-->
-            }
-        </div>
-        <div>
 
+                </div>
+
+
+
+
+                <div>
+                </div>
+            </div>
+            </div>
         </div>
-    </div>
 </body>
 </html>
 <script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
