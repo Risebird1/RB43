@@ -1537,7 +1537,11 @@ top:3px;
         .skill .table-responsive, .daily-interview .table-responsive {
             border: 0px;
         }
-        .daily-interview .table-responsive{margin-bottom:2px;}
+        .mobpad{padding:0px;}
+        .callno{min-height:auto;}
+        .daily-interview .table-responsive {
+            margin-bottom: 2px;
+        }
         .min-h {
             min-height: 100%;
         }
