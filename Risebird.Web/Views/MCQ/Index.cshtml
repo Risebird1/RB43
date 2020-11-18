@@ -1,0 +1,241 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MCQVMset>
+
+@{
+    ViewData["Title"] = "MCQ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    MCQ
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <!--  <div class="panel-header panel-header-sm"></div>-->
+
+
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">  MCQ</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Add MCQ Set" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add MCQ</font></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card  bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+
+
+                        <!-- Start Card -->
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                    <div class="card-content-holder border card-blue">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class=" col-md-5 col-sm-5 first">
+                                                    <a href="@Url.Action("Questionpage","MCQ",new { Id=item.PartitionKey})">@item.Title</a>
+                                                </div>
+
+                                                <div class="col-md-7 col-sm-7 card-header-buttons action">
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- irf body-->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12">
+                                                    Questions: @item.QuestionCount
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-footer action">
+                                            <div class="row">
+
+                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 " id="irf-card-footer">
+
+                                                </div>
+
+                                                <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+                        <!-- End Card-->
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="CreateMCQPopUp" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z" /></svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">MCQ Set </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeCreatePopUp()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding:10px">
+                    <div class="col-md-12"><a href="@Url.Action("Download","MCQ",new { filename="MCQSet.xlsx"})">Download Template</a></div>
+                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%">
+                        <div class="talktext">
+                            <input type="text" class="form-control" placeholder="MCQ Set Title" id="txtMCQTitle" />
+                            <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <input type="button" onclick="CreateMCQ()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Interested">
+                        <input style="color: #fff;line-height: 13px;" type="button" onclick="closeCreatePopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*@if (Model.Message != null)
+    {
+        <script type="text/javascript">
+
+            function my_code() {
+                var msg = '@Model.Message';
+
+
+
+                if (msg.toLowerCase().includes("success")) {
+                    swal({
+                        title: 'Successful',
+                        text: '@Model.Message',
+                        type: 'success',
+                        showConfirmButton: true
+
+                    },
+                        function (value) //confirm
+                        {
+                            //if Yes do this
+                            window.location.href = '/IRF/Index';
+                        }
+                    )
+
+                }
+                else {
+                    swal({
+                        title: 'Failed',
+                        text: '@Model.Message',
+                        type: 'error',
+                        showConfirmButton: true
+
+                    },
+                        function () {
+                            window.location.href = '/IRF/Index';
+                        }
+                    )
+                }
+
+            }
+
+            window.onload = my_code();
+        </script>
+
+    }*@
+<script>
+    function closeCreatePopUp() {
+        var modal = document.getElementById("CreateMCQPopUp");
+        modal.style.display = "none";
+    }
+    function openCreatePopUp() {
+        var modal = document.getElementById("CreateMCQPopUp");
+        modal.style.display = "block";
+    }
+    function CreateMCQ() {
+        var file_data = $("#Mcqfile").prop("files")[0];
+        var form_data = new FormData();
+        form_data.append("file", file_data);
+        form_data.append("title", $("#txtMCQTitle").val());
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/UploadQuestions",
+            data: form_data,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            success: function (data) {
+                alert(data);
+                closeCreatePopUp();
+                window.location.href = 'Index';
+            }
+        });
+    }
+</script>
+
+
