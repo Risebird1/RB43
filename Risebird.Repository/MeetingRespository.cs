@@ -135,7 +135,7 @@ namespace Risebird.Repository
         {
             try
             {
-                if (profile == "CuratedUser" /*|| IsClientCurated*/)
+                if (profile == "CuratedUser")
                 {
                     Emailid = Emailid.Replace("\"", "");
                     using (SqlConnection con = new SqlConnection(connectionString))
@@ -149,29 +149,7 @@ namespace Risebird.Repository
                                  commandType: CommandType.StoredProcedure);
                     }
                 }
-                //else if (profile == "ExternalUser")
-                //{
-                //    Emailid = Emailid.Replace("\"", "");
-                //    using (SqlConnection con = new SqlConnection(connectionString))
-                //    {
-                //        var parameters = new DynamicParameters();
-                //        parameters.Add("clientid", clientId);
-                //        parameters.Add("Emailid", Emailid);
-                //        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters,//create sp
-                //                commandType: CommandType.StoredProcedure);
-                //    }
-                //}
-                //else
-                //{
-                //    using (SqlConnection con = new SqlConnection(connectionString))
-                //    {
-                //        var parameters = new DynamicParameters();
-                //        parameters.Add("@clientid", clientId);
-                //        parameters.Add("@Emailid", Emailid);
-                //        return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
-                //            commandType: CommandType.StoredProcedure);
-                //    }
-                //}
+                
                 else
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
@@ -3184,7 +3162,6 @@ namespace Risebird.Repository
         {
             try
             {
-                //usp_GetSharedIndexMeetingsCountforClient
                 if (profile == "CuratedUser")
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
@@ -3197,17 +3174,7 @@ namespace Risebird.Repository
                         return result.FirstOrDefault();
                     }
                 }
-                //else
-                //{
-                //    using (SqlConnection con = new SqlConnection(connectionString))
-                //    {
-                //        var parameters = new DynamicParameters();
-                //        parameters.Add("@searchValueParam", searchValue);
-                //        var result = await SqlMapper.QueryAsync<int>(con, "usp_GetSharedIndexMeetingsCount", parameters,
-                //            commandType: CommandType.StoredProcedure);
-                //        return result.FirstOrDefault();
-                //    }
-                //}
+                
                 else
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
