@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Risebird.Entities.ViewModel
@@ -23,6 +24,8 @@ namespace Risebird.Entities.ViewModel
         public bool MultiAnswerOption4 { get; set; }
         public string final { get; set; }
         public string QuestionAnswer { get; set; }
+        public int Rating { get; set; }
+        public string QuestionId { get; set; }
     }
     public class MCQVMset : TableEntity
     {
@@ -38,5 +41,25 @@ namespace Risebird.Entities.ViewModel
     {
         public List<QuestionList> _questionlist { get; set; }
         public MCQVM _question { get; set; }
+    }
+    public class CandidateDetailsForTest : TableEntity
+    {
+        [Required]
+        [Display(Name = "Candidate Email")]
+        public string CandidateEmail { get; set; }
+        [Required]
+        [Display(Name = "Applying For(Company)")]
+        public string ApplyingCompany { get; set; }
+        [Required]
+        [Display(Name = "Client HR Name")]
+        public string ClientHR { get; set; }
+        [Required]
+        [Display(Name = "Total Exprience")]
+        public string TotalExprience { get; set; }
+        [Required]
+        public string Skills { get; set; }
+        public string Id { get; set; }
+        public int CandidateScore { get; set; }
+        public int TotalQuestions { get; set; }
     }
 }

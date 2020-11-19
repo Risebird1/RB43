@@ -40,6 +40,7 @@
 
                 <div class="pull-right">
                     <div>
+                        @*//add validation*@
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to Add MCQ Set" onclick="openCreatePopUp()" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Add MCQ</font></span>
                         </button>
@@ -74,7 +75,9 @@
                                                 </div>
 
                                                 <div class="col-md-7 col-sm-7 card-header-buttons action">
-
+                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="Candidate Test Details">
+                                                        <span onclick="javascript:CandidateTestDetails('@item.PartitionKey');" title="Candidate Curated Score Priority" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M14 5h8v2h-8zm0 5.5h8v2h-8zm0 5.5h8v2h-8zM2 11.5C2 15.08 4.92 18 8.5 18H9v2l3-3-3-3v2h-.5C6.02 16 4 13.98 4 11.5S6.02 7 8.5 7H12V5H8.5C4.92 5 2 7.92 2 11.5z" /></svg></span>
+                                                    </button>
 
                                                 </div>
                                             </div>
@@ -235,6 +238,10 @@
                 window.location.href = 'Index';
             }
         });
+    }
+    function CandidateTestDetails(id) {
+        var url = '/MCQ/CandidateTestDetails?id=' + id;
+        window.location.href = url;
     }
 </script>
 

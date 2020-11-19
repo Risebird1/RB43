@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects.DataClasses;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper;
 using Risebird.Entities.ViewModel;
+using Twilio.Rest.Trunking.V1;
 
 namespace Risebird.Web.Controllers
 {
@@ -18,6 +20,7 @@ namespace Risebird.Web.Controllers
     {
         private readonly IConfiguration _configuration;
 
+        #region MCQDetails
         public MCQController(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -25,6 +28,7 @@ namespace Risebird.Web.Controllers
 
         public IActionResult Index()
         {
+            //add validation 
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var result = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
             var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
@@ -163,16 +167,41 @@ namespace Risebird.Web.Controllers
         }
         public IActionResult Questionpage(string Id)
         {
+            //add validation 
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
             var model = questions.Where(x => x.Id == Id).OrderBy(x => x.QuestionNumber).ToList();
             return View(model);
         }
-        public IActionResult CandidateQuestionpage(string Id)
+        #endregion
+
+        #region CandidateSkillTest
+        public IActionResult SkillTest(string Id)
         {
+            ViewBag.Questionsetid = Id;
+            return View();
+        }
+        [HttpPost]
+        public IActionResult CandidateQuestionpage(CandidateDetailsForTest values)
+        {
+            string Id = values.Id;
+            if (!ModelState.IsValid)
+            {
+                return View("SkillTest", values);
+            }
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
+            if (candidateDetails.Where(x => x.Id == Id && x.CandidateEmail.ToUpper() == values.CandidateEmail.ToUpper()).Count() > 0)
+            {
+                return RedirectToAction("TestComplete", new { status = "TestCompleted" });
+            }
+            HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
             var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
             var model = questions.Where(x => x.Id == Id).OrderBy(x => x.QuestionNumber).ToList();
+            foreach (var item in model)
+            {
+                item.QuestionId = item.PartitionKey;
+            }
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(model));
             var result = model.Where(x => x.QuestionNumber == 1).FirstOrDefault();
             if (model.Count() == 1)
@@ -191,10 +220,12 @@ namespace Risebird.Web.Controllers
             return View(modelset);
         }
         [HttpPost]
-        public IActionResult CandidateQuestions(QuestionDetailsList modelset)
+        public async Task<IActionResult> CandidateQuestions(QuestionDetailsList modelset)
         {
             var model = modelset._question;
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
+            var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
+            HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
             foreach (var item in resultset.Where(x => x.QuestionNumber == model.QuestionNumber))
             {
                 item.MultiAnswerOption1 = model.MultiAnswerOption1;
@@ -205,12 +236,21 @@ namespace Risebird.Web.Controllers
                 if (model.QuestionType == "Single")
                 {
                     item.QuestionAnswer = model.SingleAnswer;
+                    if (model.SingleAnswer.ToUpper() == item.Answer.ToUpper())
+                    {
+                        item.Rating = 1;
+                    }
                 }
                 else
                 {
+                    var flag = true;
                     if (model.MultiAnswerOption1 == true)
                     {
                         item.QuestionAnswer = "1";
+                        if (!item.Answer.ToUpper().Contains("1"))
+                        {
+                            flag = false;
+                        }
                     }
                     if (model.MultiAnswerOption2 == true)
                     {
@@ -218,6 +258,10 @@ namespace Risebird.Web.Controllers
                             item.QuestionAnswer = "2";
                         else
                             item.QuestionAnswer = item.QuestionAnswer + ",2";
+                        if (!item.Answer.ToUpper().Contains("2"))
+                        {
+                            flag = false;
+                        }
                     }
                     if (model.MultiAnswerOption3 == true)
                     {
@@ -225,6 +269,10 @@ namespace Risebird.Web.Controllers
                             item.QuestionAnswer = "3";
                         else
                             item.QuestionAnswer = item.QuestionAnswer + ",3";
+                        if (!item.Answer.ToUpper().Contains("3"))
+                        {
+                            flag = false;
+                        }
                     }
                     if (model.MultiAnswerOption4 == true)
                     {
@@ -232,14 +280,48 @@ namespace Risebird.Web.Controllers
                             item.QuestionAnswer = "4";
                         else
                             item.QuestionAnswer = item.QuestionAnswer + ",4";
+                        if (!item.Answer.ToUpper().Contains("4"))
+                        {
+                            flag = false;
+                        }
+                    }
+                    if (model.MultiAnswerOption1 == false && model.MultiAnswerOption2 == false && model.MultiAnswerOption3 == false && model.MultiAnswerOption4 == false)
+                    {
+                        flag = false;
+                    }
+                    if (flag == true)
+                    {
+                        item.Rating = 1;
+                    }
+                    else
+                    {
+                        item.Rating = 0;
                     }
                 }
                 break;
             }
             if (model.final == "true")
             {
-                //save into db
-                //Redirect to finish page
+                values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
+                var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                var _list = new CandidateDetailsForTest();
+                _list.PartitionKey = date;
+                _list.RowKey = Guid.NewGuid().ToString();
+                _list.Id = values.Id;
+                _list.Skills = values.Skills;
+                _list.TotalExprience = values.TotalExprience;
+                _list.CandidateEmail = values.CandidateEmail;
+                _list.ApplyingCompany = values.ApplyingCompany;
+                _list.ClientHR = values.ClientHR;
+                _list.CandidateScore = resultset.Sum(x => x.Rating);
+                _list.TotalQuestions = resultset.Count();
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
+                foreach (var item in resultset)
+                {
+                    await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
+                }
+                return RedirectToAction("TestComplete", new { status = "TestSubmit" });
             }
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
             var questionvalue = model.QuestionNumber + 1;
@@ -258,6 +340,19 @@ namespace Risebird.Web.Controllers
             modeldetailset._question = result;
             modeldetailset._questionlist = _questionlist;
             return View("CandidateQuestionpage", modeldetailset);
+        }
+        public IActionResult TestComplete(string status)
+        {
+            ViewBag.Action = status;
+            return View();
+        }
+        #endregion
+
+        public IActionResult CandidateTestDetails(string id)
+        {
+            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
+            return View();
         }
     }
 }

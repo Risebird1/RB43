@@ -1,0 +1,68 @@
+﻿@model Risebird.Entities.ViewModel.CandidateDetailsForTest
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Newassets/css/bootstrap.min.css?v=7" rel="stylesheet" />
+    <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+    <title>Skill Test</title>
+</head>
+<body>
+    <p class="text-center" style="height:100px"><img src="~/images/risebird.png" width="150" style="margin-top:-20px;" /></p>
+    <div class="container">
+        @using (Html.BeginForm("CandidateQuestionpage", "MCQ", FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                        @Html.TextBoxFor(m => m.CandidateEmail, new { @class = "form-control text-box single-line" })
+
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ApplyingCompany, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                        @Html.TextBoxFor(m => m.ApplyingCompany, new { @class = "form-control text-box single-line" })
+
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ClientHR, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                        @Html.TextBoxFor(m => m.ClientHR, new { @class = "form-control text-box single-line" })
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                        @Html.TextBoxFor(m => m.Skills, new { @class = "form-control text-box single-line" })
+
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalExprience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                        @Html.TextBoxFor(m => m.TotalExprience, new { @class = "form-control text-box single-line" })
+
+                    </div>
+                </div>
+                <input type="hidden" id="Id" name="Id" value="@ViewBag.Questionsetid" />
+            </div>
+            <div>
+                <input type="submit" value="Begin!>>" class="mdc-button mdc-button--raised mdc-ripple-upgraded callsubmit" />
+            </div>
+        }
+    </div>
+</body>
+</html>
+<script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
+

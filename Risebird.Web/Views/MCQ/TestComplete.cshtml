@@ -1,0 +1,27 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Newassets/css/bootstrap.min.css?v=7" rel="stylesheet" />
+    <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+    <title>Skill Test</title>
+</head>
+<body>
+    <p class="text-center" style="height:100px"><img src="~/images/risebird.png" width="150" style="margin-top:-20px;" /></p>
+    <div class="container">
+        @if (ViewBag.Action == "TestSubmit")
+        {
+            <p>Thank you for attempting the test.</p>
+        }
+        else
+        {
+            <p>You have already attempted this test.</p>
+        }
+    </div>
+</body>
+</html>
