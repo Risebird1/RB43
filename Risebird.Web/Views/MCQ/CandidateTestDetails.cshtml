@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.Data.Client>
+﻿@model IEnumerable<Risebird.Entities.ViewModel.CandidateDetailsForTest>
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
@@ -65,11 +65,11 @@
                                     <tr>
                                         <th hidden></th>
                                         <th>Name</th>
-                                        <th>Description</th>
-                                        <th>GST</th>
-                                        <th>Address</th>
-                                        <th>RB Pay Balance</th>
-                                        <th>Per SuccessRate</th>
+                                        <th>Company</th>
+                                        <th>Client HR</th>
+                                        <th>Total Exprience</th>
+                                        <th>Skills</th>
+                                        <th>Score</th>
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
                                 </thead>
@@ -77,35 +77,29 @@
                                     <tr>
                                         <th hidden></th>
                                         <th>Name</th>
-                                        <th>Description</th>
-                                        <th>GST</th>
-                                        <th>Address</th>
-                                        <th>RiseBird Pay Balance</th>
-                                        <th>Per SuccessRate</th>
+                                        <th>Company</th>
+                                        <th>Client HR</th>
+                                        <th>Total Exprience</th>
+                                        <th>Skills</th>
+                                        <th>Score</th>
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        <tr id=@item.id>
-                                            <td hidden>@item.id</td>
-                                            <td>@item.Name</td>
-                                            <td>@item.Description</td>
-                                            <td>@item.GST</td>
-                                            <td style="white-space:normal;">@item.OfficeAddress</td>
-                                            <td>@item.Balance</td>
-                                            <td>@item.PerSuccessRate</td>
+                                        <tr id=@item.Id>
+                                            <td hidden>@item.Id</td>
+                                            <td>@item.CandidateEmail</td>
+                                            <td>@item.ApplyingCompany</td>
+                                            <td>@item.ClientHR</td>
+                                            <td>@item.TotalExprience</td>
+                                            <td>@item.Skills</td>
+                                            <td>@item.CandidateScore/@item.TotalQuestions</td>
                                             <td class="text-right" style="padding-right:30px;">
-
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
-                                                    <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                </button>
                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                    <span onclick="javascript:DeleteCandidateFromTest('@item.PartitionKey');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                 </button>
-
-
                                             </td>
                                         </tr>
                                     }
@@ -219,5 +213,52 @@
         });
 
     });
-
+    function DeleteCandidateFromTest(id) {
+        swal.fire({
+            title: 'Are you sure you want to delete Candidate?',
+            text: "It will be permanently deleted !",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/MCQ/DeleteCandidate',
+                        data: { 'id': id },
+                        type: 'POST',
+                        success: function (result) {
+                            resolve(result)
+                        },
+                        error: function () {
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>Your file has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/MCQ/CandidateTestDetails";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not deleted!',
+                    'error'
+                )
+            }
+        })
+    }
 </script>

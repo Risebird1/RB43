@@ -319,6 +319,10 @@ namespace Risebird.Web.Controllers
                 await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
                 foreach (var item in resultset)
                 {
+                    var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                    item.PartitionKey = date1;
+                    item.RowKey = Guid.NewGuid().ToString();
+                    item.CandidateID = date;
                     await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
                 }
                 return RedirectToAction("TestComplete", new { status = "TestSubmit" });
@@ -352,7 +356,23 @@ namespace Risebird.Web.Controllers
         {
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
-            return View();
+            return View(candidateDetails);
+        }
+        [HttpPost]
+        public async Task<JsonResult> DeleteCandidate(string id)
+        {
+            //validation
+            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
+            var model = candidateDetails.Where(x => x.PartitionKey == id).FirstOrDefault();
+            await _azureTableStorageService.DeleteEntity("RisebirdMCQCandidate", model);
+            var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQCandidateQuestions");
+            questions = questions.Where(x => x.CandidateID == id).ToList();
+            foreach (var item in questions)
+            {
+                await _azureTableStorageService.DeleteEntity("RisebirdMCQCandidateQuestions", item);
+            }
+            return Json("success");
         }
     }
 }
