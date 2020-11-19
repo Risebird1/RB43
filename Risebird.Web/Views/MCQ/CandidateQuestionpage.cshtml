@@ -50,7 +50,16 @@
                                         }
                                         else
                                         {
-                                            <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "1") @Model._question.Option1</p>
+                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
+                                                <div class="mdc-radio mdc-radio--touch">
+                                                    <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "1", new { @class = "mdc-radio__native-control" }) @Model._question.Option1</p>
+                                                    <div class="mdc-radio__background">
+                                                        <div class="mdc-radio__outer-circle"></div>
+                                                        <div class="mdc-radio__inner-circle"></div>
+                                                    </div>
+                                                    <div class="mdc-radio__ripple"></div>
+                                                </div>
+                                            </div>
                                             <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "2") @Model._question.Option2</p>
                                             <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "3") @Model._question.Option3</p>
                                             <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "4") @Model._question.Option4</p>
