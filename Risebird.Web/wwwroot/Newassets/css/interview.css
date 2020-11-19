@@ -10,17 +10,17 @@
     padding: 15px;
 }
 
-    .callouts h1 {
-        display: inline-block;
-        margin-bottom: .5rem;
-        font-family: Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
-        font-weight: 400;
-        font-style: normal;
-        color: inherit;
-        font-size: 1.4rem;
-        text-rendering: optimizeLegibility;
-        margin: 0px 10px 20px 10px;
-    }
+.callouts h1 {
+    display: inline-block;
+    margin-bottom: .5rem;
+    font-family: Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: inherit;
+    font-size: 1.4rem;
+    text-rendering: optimizeLegibility;
+    margin: 0px 10px 20px 10px;
+}
 
 #countdown {
     width: 180px;

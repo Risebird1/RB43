@@ -1,6 +1,6 @@
 ﻿@model Risebird.Entities.ViewModel.QuestionDetailsList
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
 }
 <!DOCTYPE html>
 <html>
@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="~/Newassets/css/bootstrap.min.css?v=7" rel="stylesheet" />
     <link href="~/Newassets/css/interview.css" rel="stylesheet" />
-   
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
     <title>MCQ Questions</title>
     <style>
     </style>
@@ -36,18 +36,20 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8 offset-md-2">
-                <div class="callno">
-                    @foreach (var item in Model._questionlist)
-                    {
-                        @if (item.QuestionAnswered == true)
+                <div class="callno ">
+                    <div class="sb-container ">
+                        @foreach (var item in Model._questionlist)
                         {
-                            <div class="callbox" style=" background-color: #ff5800; color: #fff;">@item.QuestionNumber</div> @*Answered*@
+                            @if (item.QuestionAnswered == true)
+                            {
+                                <div class="callbox" style=" background-color: #ff5800; color: #fff;">@item.QuestionNumber</div> @*Answered*@
+                            }
+                            else
+                            {
+                                <div class="callbox" style="background-color:white">@item.QuestionNumber</div> @*Unanswered*@
+                            }
                         }
-                        else
-                        {
-                            <div class="callbox" style="background-color:white">@item.QuestionNumber</div> @*Unanswered*@
-                        }
-                    }
+                    </div>
                 </div>
                 <div class="mobpad" style="float:left;width:100%">
 
@@ -163,4 +165,11 @@
         return (n < 10 ? '0' : '') + n;
     }
 
+</script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
 </script>
