@@ -6,6 +6,7 @@
 }
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=8" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -50,30 +51,41 @@
 
     <div class="content client">
         <div class="row bl-bg">
-            <div class="col-md-12">
+            <div class="col-md-8 offset-md-2">
                 <div class="mdc-card card  bl-bg">
-                    <div class="mdc-card-wrapper__text-section" style="margin-left:12%;margin-right:3%">
+                    <div class="mdc-card-wrapper__text-section">
                         @foreach (var item in Model)
                         {
-                            <div>
-                                <label>@item.QuestionNumber ) @item.Question </label>
-                                <div style="margin-left:3%">
-                                    @if (item.QuestionType == "Multiple")
-                                    {
-                                        <p><input type="checkbox" /> @item.Option1</p>
-                                        <p><input type="checkbox" /> @item.Option2</p>
-                                        <p><input type="checkbox" /> @item.Option3</p>
-                                        <p><input type="checkbox" /> @item.Option4</p>
-                                    }
-                                    else
-                                    {
-                                        <p><input type="radio" name="option_@item.QuestionNumber" /> @item.Option1</p>
-                                        <p><input type="radio" name="option_@item.QuestionNumber" /> @item.Option2</p>
-                                        <p><input type="radio" name="option_@item.QuestionNumber" /> @item.Option3</p>
-                                        <p><input type="radio" name="option_@item.QuestionNumber" /> @item.Option4</p>
-                                    }
+                        <div>
+
+                            <div class="x-text">
+                                <div style="float:left;width:100%">
+                                    <h4 style="float:left">01</h4>
+
+                                    <!--button: Start-->
+
                                 </div>
                             </div>
+                            <div class="man">@item.QuestionNumber ) @item.Question </div>
+                            <div>
+                                @if (item.QuestionType == "Multiple")
+                                {
+                                    <p class="calloption"><input type="checkbox" /> @item.Option1</p>
+                                    <p class="calloption"><input type="checkbox" /> @item.Option2</p>
+                                    <p class="calloption"><input type="checkbox" /> @item.Option3</p>
+                                    <p class="calloption"><input type="checkbox" /> @item.Option4</p>
+                                    <hr />
+                                }
+
+                                else
+                                {
+                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option1</p>
+                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option2</p>
+                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option3</p>
+                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option4</p>
+                                }
+                            </div>
+                        </div>
                         }
                     </div>
 

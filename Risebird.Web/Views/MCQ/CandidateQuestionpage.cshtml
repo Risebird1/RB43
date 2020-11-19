@@ -7,38 +7,74 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="~/Newassets/css/bootstrap.min.css?v=7" rel="stylesheet" />
-    <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
+    <link href="~/Newassets/css/interview.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
     <title>MCQ Questions</title>
-
+    <style>
+    </style>
 </head>
 <body>
-    <p class="text-center" style="height:100px"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.ico" width="150" style="margin-top:-20px;" /></p>
+    <div class="text-center" style="        background-color: #363c43;
+        padding: 15px 5px 5px 10px;
+        width: 100%;
+        display: inline-block;
+        position: relative;">
+        <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.ico" style="width:180px;" /></div>
+        <div style="float:right">
+            <div id="countdown">
+                <div id='tiles'></div>
+                <div class="labels">
+
+                    <li>Hours</li>
+                    <li>Mins</li>
+                    <li>Secs</li>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                <div class="col-md-3 callno">
-                    @foreach (var item in Model._questionlist)
-                    {
-                        @if (item.QuestionAnswered == true)
+            <div class="col-md-8 offset-md-2">
+                <div class="callno ">
+                    <div class="sb-container ">
+                        @foreach (var item in Model._questionlist)
                         {
-                            <div class="callbox" style=" background-color: #74af53">@item.QuestionNumber</div> @*Answered*@
+                            @if (item.QuestionAnswered == true)
+                            {
+                                <div class="callbox" style=" background-color: #ff5800; color: #fff;">@item.QuestionNumber</div> @*Answered*@
+                            }
+                            else
+                            {
+                                <div class="callbox" style="background-color:white">@item.QuestionNumber</div> @*Unanswered*@
+                            }
                         }
-                        else
-                        {
-                            <div class="callbox" style="background-color:white">@item.QuestionNumber</div> @*Unanswered*@
-                        }
-                    }
+                    </div>
                 </div>
-                <div class="col-md-9 mobpad" style="float:left;">
-                    <h2 class="callhead">Answer the following question</h2>
+                <div class="mobpad" style="float:left;width:100%">
+
                     @using (Html.BeginForm("CandidateQuestions", "MCQ", FormMethod.Post, new { currentpage = Model._question.QuestionNumber }))
-                    {<div class="callout">
+                    {<div class="callouts">
                             <div>
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <input id="zquestion_QuestionType" name="_question.QuestionType" value="@Model._question.QuestionType" type="hidden" />
                                 <div>
-                                    <h1>@Model._question.QuestionNumber ) @Model._question.Question </h1>
+                                    <div class="x-text">
+                                        <div style="float:left;width:100%">
+                                            <h4 style="float:left">01</h4>
+
+                                            <!--button: Start-->
+
+                                        </div>
+                                    </div>
+                                    <!--button: END-->
+
+
+                                    <div class="man">@Model._question.QuestionNumber ) @Model._question.Question</div>
+
+
+
+
                                     <input id="zquestion_QuestionNumber" name="_question.QuestionNumber" value="@Model._question.QuestionNumber" type="hidden" />
                                     <div>
                                         @if (Model._question.QuestionType == "Multiple")
@@ -70,18 +106,16 @@
                             </div>
 
                         </div>
-                        <!--button: Start-->
                         <div>
                             @if (Model._question.final == "true")
                             {
-                                <input type="submit" value="Submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded callsubmit" />
+                                <input type="submit" value="Submit" class="callsubmit" />
                             }
                             else
                             {
-                                <input type="submit" value="NEXT" class="mdc-button mdc-button--raised mdc-ripple-upgraded callsubmit" />
+                                <input type="submit" value="NEXT" class="callsubmit" />
                             }
                         </div>
-                        <!--button: END-->
                     }
 
                 </div>
@@ -97,4 +131,45 @@
 </body>
 </html>
 <script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    var target_date = new Date().getTime() + (1000 * 3600 * 48); // set the countdown date
+    var days, hours, minutes, seconds; // variables for time units
 
+    var countdown = document.getElementById("tiles"); // get tag element
+
+    getCountdown();
+
+    setInterval(function () { getCountdown(); }, 1000);
+
+    function getCountdown() {
+
+        // find the amount of "seconds" between now and target
+        var current_date = new Date().getTime();
+        var seconds_left = (target_date - current_date) / 1000;
+
+        days = pad(parseInt(seconds_left / 86400));
+        seconds_left = seconds_left % 86400;
+
+        hours = pad(parseInt(seconds_left / 3600));
+        seconds_left = seconds_left % 3600;
+
+        minutes = pad(parseInt(seconds_left / 60));
+        seconds = pad(parseInt(seconds_left % 60));
+
+        // format countdown string + set tag value
+        countdown.innerHTML = "<span>" + hours + "</span><span>" + minutes + "</span><span>" + seconds + "</span>";
+    }
+
+    function pad(n) {
+        return (n < 10 ? '0' : '') + n;
+    }
+
+</script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+
+
+
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script>
