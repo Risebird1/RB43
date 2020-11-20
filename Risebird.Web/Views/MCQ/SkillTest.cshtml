@@ -19,65 +19,65 @@
         display: inline-block;
         position: relative;">
         <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.ico" style="width:180px;" /></div>
-        
+
     </div>
     <div class="container">
         @using (Html.BeginForm("CandidateQuestionpage", "MCQ", FormMethod.Post))
         {
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
 
-                <div class="callno" style="margin-bottom:10px;">
-                   
-                   
-                    <h2>Fill up the details</h2> 
-                </div>
-                <div class="col-md-6 col-sm-12" style="float:left">
+                    <div class="callno" style="margin-bottom:10px;">
+
+
+                        <h2>Fill up the details</h2>
+                    </div>
+                    <div class="col-md-6 col-sm-12" style="float:left">
+                        <div>
+                            @Html.LabelFor(model => model.CandidateEmail, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.CandidateEmail, new { @class = "calloption text-box single-line" })
+                            @Html.ValidationMessageFor(m => m.CandidateEmail)
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12" style="float:left">
+                        <div>
+                            @Html.LabelFor(model => model.ApplyingCompany, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.ApplyingCompany, new { @class = "calloption text-box single-line" })
+                            @Html.ValidationMessageFor(m => m.ApplyingCompany)
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12" style="float:left">
+                        <div>
+                            @Html.LabelFor(model => model.ClientHR, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.ClientHR, new { @class = "calloption text-box single-line" })
+                            @Html.ValidationMessageFor(m => m.ClientHR)
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-12" style="float:left">
+                        <div>
+                            @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.Skills, new { @class = "calloption text-box single-line" })
+                            @Html.ValidationMessageFor(m => m.Skills)
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12" style="float:left">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.TotalExprience, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                            @Html.TextBoxFor(m => m.TotalExprience, new { @class = "calloption text-box single-line", @type = "number" })
+                            @Html.ValidationMessageFor(m => m.TotalExprience)
+                        </div>
+                    </div>
+                    <input type="hidden" id="Id" name="Id" value="@ViewBag.Questionsetid" />
+
                     <div>
-                        @Html.LabelFor(model => model.CandidateEmail, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.TextBoxFor(m => m.CandidateEmail, new { @class = "calloption text-box single-line" })
-
+                        <input type="submit" value="Begin >>" class="callsubmit" />
                     </div>
+
                 </div>
-                <div class="col-md-6 col-sm-12" style="float:left">
-                    <div>
-                        @Html.LabelFor(model => model.ApplyingCompany, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.TextBoxFor(m => m.ApplyingCompany, new { @class = "calloption text-box single-line" })
-
-                    </div>
-                </div>
-                <div class="col-md-6 col-sm-12" style="float:left">
-                    <div>
-                        @Html.LabelFor(model => model.ClientHR, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.TextBoxFor(m => m.ClientHR, new { @class = "calloption text-box single-line" })
-
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-sm-12" style="float:left">
-                    <div>
-                        @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.TextBoxFor(m => m.Skills, new { @class = "calloption text-box single-line" })
-
-                    </div>
-                </div>
-                <div class="col-md-12 col-sm-12" style="float:left">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.TotalExprience, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                        @Html.TextBoxFor(m => m.TotalExprience, new { @class = "calloption text-box single-line" })
-
-                    </div>
-                </div>
-                <input type="hidden" id="Id" name="Id" value="@ViewBag.Questionsetid" />
-
-                <div>
-                    <input type="submit" value="Begin >>" class="callsubmit" />
-                </div>
-
             </div>
-        </div>
-            }
-        </div>
+        }
+    </div>
 </body>
 </html>
 <script src="~/Newassets/js/core/jquery.min.js?v=7"></script>

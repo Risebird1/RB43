@@ -189,6 +189,7 @@ namespace Risebird.Web.Controllers
             string Id = values.Id;
             if (!ModelState.IsValid)
             {
+                ViewBag.Questionsetid = Id;
                 return View("SkillTest", values);
             }
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
@@ -221,7 +222,7 @@ namespace Risebird.Web.Controllers
             modelset._question = result;
             modelset._questionlist = _questionlist;
             modelset._timmerdetails = questionstimmer.Where(x => x.PartitionKey == Id).FirstOrDefault();
-            modelset._timmerdetails.Timer = "1200";
+            modelset._timmerdetails.Timer = "1200";//(Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
             return View(modelset);
         }
         [HttpPost]
@@ -362,8 +363,11 @@ namespace Risebird.Web.Controllers
 
         public IActionResult CandidateTestDetails(string id)
         {
+            //valiadate
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
+            var isclient = false;
+            ViewBag.Isclient = isclient;
             return View(candidateDetails);
         }
         [HttpPost]

@@ -52,16 +52,18 @@ namespace Risebird.Entities.ViewModel
     public class CandidateDetailsForTest : TableEntity
     {
         [Required]
+        [EmailAddress]
         [Display(Name = "Candidate Email")]
         public string CandidateEmail { get; set; }
         [Required]
         [Display(Name = "Applying For(Company)")]
         public string ApplyingCompany { get; set; }
         [Required]
+        [EmailAddress]
         [Display(Name = "Client HR Email")]
         public string ClientHR { get; set; }
         [Required]
-        [Display(Name = "Total Exprience")]
+        [Display(Name = "Total Exprience(in Years)")]
         public string TotalExprience { get; set; }
         [Required]
         public string Skills { get; set; }
