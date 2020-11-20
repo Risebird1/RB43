@@ -401,7 +401,7 @@ namespace Risebird.CommonHelper
                 mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
                 mailMessage.To.Add(new MailAddress(candidateMail, "Risebird"));
                 //mailMessage.Bcc.Add(new MailAddress(candidateMail, null));
-              // mailMessage.CC.Add(new MailAddress(clientHRMail, null));
+                // mailMessage.CC.Add(new MailAddress(clientHRMail, null));
 
                 mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
 
@@ -1023,6 +1023,36 @@ namespace Risebird.CommonHelper
                 }
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InsuficientBalanceNotification.html");
                 string msgBody = string.Format(rawEmail);
+
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+        public string SharedTestLink(Mail model, string title, string timeduration, string url)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { title, timeduration, url };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateInvitationTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
 
                 mailMessage.Subject = model.Subject;
                 mailMessage.IsBodyHtml = true;

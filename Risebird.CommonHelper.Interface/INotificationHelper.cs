@@ -40,5 +40,6 @@ namespace Risebird.CommonHelper.Interface
         string SurveyNotification(Mail model, string UrlDetails);
         string FeedbackSubmitNotification(Mail model, string candidate);
         string InsuficientBalancNotifiaction(Mail model);
+        string SharedTestLink(Mail model, string title, string timeduration, string Url);
     }
 }

@@ -71,4 +71,10 @@ namespace Risebird.Entities.ViewModel
         public int CandidateScore { get; set; }
         public int TotalQuestions { get; set; }
     }
+    public class MCQVMShare : TableEntity
+    {
+        public string EmailAddress { get; set; }
+        public string Id { get; set; }
+        public string status { get; set; }
+    }
 }

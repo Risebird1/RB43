@@ -1,42 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Objects.DataClasses;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.ViewModel;
-using Twilio.Rest.Trunking.V1;
+using Risebird.Repository.Interface;
 
 namespace Risebird.Web.Controllers
 {
     public class MCQController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly IUserRepository _userRepository;
+        private readonly INotificationHelper _notificationHelper;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper)
         {
             _configuration = configuration;
+            _userRepository = userRepository;
+            _notificationHelper = notificationHelper;
         }
 
         public IActionResult Index()
         {
-            //add validation 
-            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-            var result = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
-            var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
-            foreach (var item in result)
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                    var result = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
+                    var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
+                    foreach (var item in result)
+                    {
+                        item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
+                    }
+                    return View(result);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
             }
-            return View(result);
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+
         }
         public async Task<IActionResult> Download(string filename)
         {
@@ -58,7 +77,6 @@ namespace Risebird.Web.Controllers
             var ext = Path.GetExtension(path).ToLowerInvariant();
             return types[ext];
         }
-
         private Dictionary<string, string> GetMimeTypes()
         {
             return new Dictionary<string, string>
@@ -81,6 +99,8 @@ namespace Risebird.Web.Controllers
         {
             var value = Request.Form["title"].ToString();
             var time = Request.Form["time"].ToString();
+            var status = Request.Form["status"].ToString();
+            var partialid = Request.Form["PartialId"].ToString();
             int number = 1;
             MCQVMset _lstset = new MCQVMset();
             var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -88,6 +108,10 @@ namespace Risebird.Web.Controllers
             _lstset.RowKey = Guid.NewGuid().ToString();
             _lstset.Title = value;
             _lstset.Timer = time;
+            if (status == "Edit")
+            {
+                _lstset.PartitionKey = partialid;
+            }
             if (Request.Form.Files.Count() > 0)
             {
                 var file = Request.Form.Files[0];
@@ -151,7 +175,24 @@ namespace Risebird.Web.Controllers
                 System.IO.File.Delete(path);
 
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                await _azureTableStorageService.InsertEntity("RisebirdMCQSet", _lstset);
+                if (status == "Edit")
+                {
+                    var result = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
+                    var list = result.Where(x => x.PartitionKey == _lstset.PartitionKey).FirstOrDefault();
+                    list.Title = _lstset.Title;
+                    list.Timer = _lstset.Timer;
+                    await _azureTableStorageService.InsertEntity("RisebirdMCQSet", list);
+                    var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
+                    questions = questions.Where(x => x.Id == partialid).ToList();
+                    foreach (var item in questions)
+                    {
+                        await _azureTableStorageService.DeleteEntity("RisebirdMCQquestions", item);
+                    }
+                }
+                else
+                {
+                    await _azureTableStorageService.InsertEntity("RisebirdMCQSet", _lstset);
+                }
                 foreach (var item in _lstMCQ)
                 {
                     try
@@ -169,11 +210,26 @@ namespace Risebird.Web.Controllers
         }
         public IActionResult Questionpage(string Id)
         {
-            //add validation 
-            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-            var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
-            var model = questions.Where(x => x.Id == Id).OrderBy(x => x.QuestionNumber).ToList();
-            return View(model);
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                    var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
+                    var model = questions.Where(x => x.Id == Id).OrderBy(x => x.QuestionNumber).ToList();
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
         #endregion
 
@@ -184,7 +240,7 @@ namespace Risebird.Web.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult CandidateQuestionpage(CandidateDetailsForTest values)
+        public async Task<IActionResult> CandidateQuestionpage(CandidateDetailsForTest values)
         {
             string Id = values.Id;
             if (!ModelState.IsValid)
@@ -193,6 +249,15 @@ namespace Risebird.Web.Controllers
                 return View("SkillTest", values);
             }
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            var candidateShare = _azureTableStorageService.GetAllEntities<MCQVMShare>("RisebirdMCQShareList");
+            if (candidateShare.Where(x => x.EmailAddress.ToUpper() == values.CandidateEmail.ToUpper() && x.Id == Id).Count() == 0)
+            {
+                return RedirectToAction("TestComplete", new { status = "Unauthorized" });
+            }
+            var itemshareupdate = candidateShare.FirstOrDefault();
+            itemshareupdate.status = "1";
+            await _azureTableStorageService.InsertEntity("RisebirdMCQShareList", itemshareupdate);
+            //Retest functionlity
             var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
             if (candidateDetails.Where(x => x.Id == Id && x.CandidateEmail.ToUpper() == values.CandidateEmail.ToUpper()).Count() > 0)
             {
@@ -222,7 +287,7 @@ namespace Risebird.Web.Controllers
             modelset._question = result;
             modelset._questionlist = _questionlist;
             modelset._timmerdetails = questionstimmer.Where(x => x.PartitionKey == Id).FirstOrDefault();
-            modelset._timmerdetails.Timer = "1200";//(Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
+            modelset._timmerdetails.Timer = (Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
             return View(modelset);
         }
         [HttpPost]
@@ -306,7 +371,6 @@ namespace Risebird.Web.Controllers
                 }
                 break;
             }
-            //set timmer validation modelset._timmerdetails.Timer
             if (model.final == "true")
             {
                 values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
@@ -361,14 +425,41 @@ namespace Risebird.Web.Controllers
         }
         #endregion
 
+        #region MCQ Actions
         public IActionResult CandidateTestDetails(string id)
         {
-            //valiadate
-            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-            var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
-            var isclient = false;
-            ViewBag.Isclient = isclient;
-            return View(candidateDetails);
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var isclient = false;
+                var clientname = string.Empty;
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                    var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
+                    if (profileName == "Client")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var client = _userRepository.GetClientUserDetails(emailid);
+                        clientname = client.Result.ClientName.ToUpper();
+                        isclient = true;
+                        candidateDetails = candidateDetails.Where(x => x.ApplyingCompany.ToUpper() == clientname);
+                    }
+
+                    ViewBag.Isclient = isclient;
+                    return View(candidateDetails);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
         [HttpPost]
         public async Task<JsonResult> DeleteCandidate(string id)
@@ -386,5 +477,42 @@ namespace Risebird.Web.Controllers
             }
             return Json("success");
         }
+        [HttpPost]
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id)
+        {
+            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            var resultset = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
+            var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
+            var timmer = details.Timer + " min";
+            string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest/" + Id;
+            Mail _mail = new Mail
+            {
+                TO = Emailids,
+                Subject = "Risebird: Test Link"
+            };
+            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl);
+            if (result.Contains("Mail sent successfully"))
+            {
+                MCQVMShare _list = new MCQVMShare();
+                _list.status = "0";
+                foreach (var item in Emailids.Split(";"))
+                {
+                    var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                    _list.PartitionKey = date;
+                    _list.RowKey = Guid.NewGuid().ToString();
+                    _list.Id = Id;
+                    _list.EmailAddress = item;
+                    await _azureTableStorageService.InsertEntity("RisebirdMCQShareList", _list);
+                }
+                return Json("success");
+            }
+            else
+            {
+                return Json("Fail");
+            }
+        }
+        #endregion
+
+        // retest functionlity
     }
 }

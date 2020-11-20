@@ -26,6 +26,10 @@
             <img style=" width: 180px; margin: 0px auto; text-align: center; display: block; padding: 50px 0px;" src="../../img/thanks.png" />
             <h1 style="text-align:center; font-weight:400;line-height:50px;"><b>THANK YOU</b><br />for attempting the test.</h1>
         }
+        else if (ViewBag.Action == "Unauthorized")
+        {
+            <div style="display:table;height:400px;width:100%"> <h1 style="text-align: center; font-weight: 500; height: 100%; vertical-align: middle; display: table-cell;">You are not authorized to take this test.</h1></div>
+        }
         else
         {
             <div style="display:table;height:400px;width:100%"> <h1 style="text-align: center; font-weight: 500; height: 100%; vertical-align: middle; display: table-cell;">You have already attempted this test.</h1></div>
