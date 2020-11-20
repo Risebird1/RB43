@@ -1471,7 +1471,10 @@
 
         }
         else {
-            $("#" + skillName + "_" + index + "__WeightageActual").val("0");
+            
+            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+            var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
+            $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
             $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
         }
 
@@ -1677,7 +1680,9 @@
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
             }
             else {
-                $("#" + skillName + digit + "__WeightageActual").val("0");
+                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+                $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
 
             }
