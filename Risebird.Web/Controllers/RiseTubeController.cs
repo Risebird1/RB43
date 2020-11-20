@@ -99,7 +99,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, filter.StartDate.Value, filter.EndDate.Value, searchvalue, ClientId);
-                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
+                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, filter.StartDate.Value, filter.EndDate.Value, searchvalue, ClientId);
 
                         }
 
@@ -228,7 +228,7 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, filter.StartDate.Value, filter.EndDate.Value, searchvalue, ClientId);
-                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
+                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, filter.StartDate.Value, filter.EndDate.Value, searchvalue, ClientId);
 
                             }
                         }
