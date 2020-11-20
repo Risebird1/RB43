@@ -39,7 +39,7 @@
             <div class="col-md-8 offset-md-2">
                 <div class="callno ">
                     <div class="sb-container ">
-                        <input type="hidden" id="textcallno" value="@Model._questionlist.Count()"/>
+                        <input type="hidden" id="textcallno" value="@Model._questionlist.Count()" />
                         @foreach (var item in Model._questionlist)
                         {
                             @if (item.QuestionAnswered == true)
@@ -176,6 +176,6 @@
 
 
 <script type="text/javascript">
-  if (parseInt($("#textcallno").val()) >20)
-    $(".sb-container").scrollBox();
+    if (parseInt($("#textcallno").val()) > 20)
+        $(".sb-container").scrollBox();
 </script>

@@ -80,12 +80,14 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> UploadQuestions()
         {
             var value = Request.Form["title"].ToString();
+            var time = Request.Form["time"].ToString();
             int number = 1;
             MCQVMset _lstset = new MCQVMset();
             var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
             _lstset.PartitionKey = date;
             _lstset.RowKey = Guid.NewGuid().ToString();
             _lstset.Title = value;
+            _lstset.Timer = time;
             if (Request.Form.Files.Count() > 0)
             {
                 var file = Request.Form.Files[0];

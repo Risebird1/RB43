@@ -58,7 +58,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Applying For(Company)")]
         public string ApplyingCompany { get; set; }
         [Required]
-        [Display(Name = "Client HR Name")]
+        [Display(Name = "Client HR Email")]
         public string ClientHR { get; set; }
         [Required]
         [Display(Name = "Total Exprience")]
