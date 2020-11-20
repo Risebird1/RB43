@@ -52,13 +52,12 @@ namespace Risebird.Web.Controllers
         /// <param name="Page"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Index(InterviewFilter filter, int? Page)
+        public async Task<IActionResult> Index(int? Page, InterviewFilter filter, string searchvalue = null)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    bool isClientUser = false;
                     int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
@@ -70,7 +69,6 @@ namespace Risebird.Web.Controllers
                         {
                             var client = await _userRepository.GetClientUserDetails(emailid);
                             ClientId = client.ClientId;
-                            isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
@@ -82,87 +80,31 @@ namespace Risebird.Web.Controllers
                             HttpContext.Session.SetString("RiseTubefilters", JsonConvert.SerializeObject(filter));
                         }
                         var modelList = new List<MeetingVM>();
-
-                        if (isClientUser)
+                        if (Page == null || Page == 0)
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailid);
+                            Page = 1;
                         }
-                        else if (profileName == "CuratedUser")
-                        {
-
-                            modelList = await _meetingService.GetRiseTubeMeetingsByScore(0, profileName, emailid);
-                            modelList.ForEach(x => x.IsClientCurated = true);
-                        }
-                        else
-                        {
-                            modelList = await _meetingService.GetRiseTubeMeetings(0, profileName, emailid);
-                        }
-
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                        }
+                        int totalMeetings = 0;
 
 
-                        modelList = modelList.Select(x =>
-                        {
-                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
-
+                        filter.StartDate = filter.StartDate == null ? new DateTime(1753, 1, 1) : filter.StartDate;
+                        filter.EndDate = filter.EndDate == null ? DateTime.MaxValue : filter.EndDate;
 
                         if (profileName == "CuratedUser")
                         {
-                            filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
-                            filter.IsShortListed = filter.IsShortListed == null ? filter.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter.IsShortListed = filter.IsShortListed;
-                            filter.IsIntrested = filter.IsIntrested == null ? filter.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter.IsIntrested = filter.IsIntrested;
-                            filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
-
-                            modelList = modelList.Where(c => (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
-                            && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
-                            && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)
-                            && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == string.Empty)).ToList();
-
-                            ViewBag.IsShortListed = modelList.Select(x => x.ShortListstatus).Distinct().ToList();
-                            ViewBag.IsIntrested = modelList.Select(x => x.IsIntrested).Distinct().ToList();
+                            modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
+                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
 
                         }
                         else
                         {
-                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = modelList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = modelList.Select(x => x.ClientHrContact).ToArray() : filter.ClientHR = filter.ClientHR;
-                            filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = modelList.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-                            filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = modelList.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
-                            filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = modelList.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
-                            filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = modelList.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
-                            filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                            filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = modelList.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
-                            filter.CandidateLocation = filter.CandidateLocation == null ? filter.CandidateLocation = modelList.Select(x => x.preferredLocation).ToArray() : filter.CandidateLocation = filter.CandidateLocation;
-                            filter.CandidateAvailable = filter.CandidateAvailable == null ? filter.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).ToArray() : filter.CandidateAvailable = filter.CandidateAvailable;
+                            modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, filter.StartDate.Value, filter.EndDate.Value, searchvalue, ClientId);
+                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
 
-                            modelList = modelList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                            && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
-                            && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
-                            && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
-                            && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
-                            && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
-                            && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                            && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
-                            && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
-                            && (filter.CandidateAvailable.Count() > 0 ? filter.CandidateAvailable.Contains(c.CandidateAvailable) : c.CandidateAvailable == string.Empty)).ToList();
-
-                            ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
-                            ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
-                            ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
-                            ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
-                            ViewBag.NextLevelApprovalStatusList = modelList.Select(x => x.NextLevelApprovalStat).ToArray();
-                            ViewBag.JoiningStatusList = modelList.Select(x => x.JoiningStatusStatDesc).ToArray();
-                            ViewBag.OfferStatusList = modelList.Select(x => x.OfferStatusStatDesc).ToArray();
                         }
 
-                        ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
-                        ViewBag.CandidateAvailable = modelList.Select(x => x.CandidateAvailable).Distinct().ToList();
 
+                        
                         if (profileName == "CuratedUser")
                         {
                             foreach (var item in modelList)
@@ -184,36 +126,33 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         ViewBag.ProfileName = profileName;
-                        if (!String.IsNullOrEmpty(filter.SearchFillter))
+                        if (!String.IsNullOrEmpty(searchvalue))
                         {
-                            modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(filter.SearchFillter.ToUpper()) || x.JDTiltle.ToUpper().Contains(filter.SearchFillter.ToUpper())).ToList();
-                            ViewBag.searchvalue = filter.SearchFillter;
+                            ViewBag.searchvalue = searchvalue;
                         }
                         else
                         {
                             ViewBag.searchvalue = "";
                         }
+                        
 
-                        for (int i = 0; i < modelList.Count; i++)
+                        var remainder = totalMeetings % 12;
+                        if (remainder == 0)
                         {
-                            Page = Page == null ? 1 : Page;
-                            modelList[i].interviewVediosequence = modelList.Count;
-                            var totalpage = modelList.Count / 12;
-                            int? initail = 12 * (Page - 1) + 1;
-                            int? endvalue = 0;
-                            if (totalpage >= Page)
-                            {
-
-                                endvalue = 12 * Page;
-                            }
-                            else
-                            {
-                                endvalue = modelList.Count;
-                            }
-                            modelList[i].PageNumber = initail.ToString() + " - " + endvalue.ToString();
+                            ViewBag.Pages = totalMeetings / 12;
 
                         }
-                        return View(modelList.ToPagedList(Page ?? 1, 12));
+                        else
+                        {
+                            ViewBag.Pages = (totalMeetings / 12) + 1;
+
+                        }
+
+                        ViewBag.Page = Page.Value;
+                        ViewBag.MeetingsCount = totalMeetings;
+                        ViewBag.Remainder = remainder;
+
+                        return View(modelList);
                     }
                     else
                     {
@@ -272,24 +211,51 @@ namespace Risebird.Web.Controllers
                         
                         var modelList = new List<MeetingVM>();
                         int totalMeetings = 0;
-                        if (profileName == "Client")
-                        {
-                            modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue, ClientId);
 
-                        }
-                        else if (profileName == "CuratedUser")
+                        if (HttpContext.Session.GetString("RiseTubefilters") != null)
                         {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RiseTubefilters"));
 
-                            modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue);
-                            ViewBag.Profile = "CuratedUser";
+                            filter.StartDate = filter.StartDate == null ? new DateTime(1753, 1, 1) : filter.StartDate;
+                            filter.EndDate = filter.EndDate == null ? DateTime.MaxValue : filter.EndDate;
+
+                            if(profileName == "CuratedUser")
+                            {
+                                modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
+                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
+
+                            }
+                            else
+                            {
+                                modelList = await _meetingService.GetRiseTubeMeetingsPagedFiltered(profileName, emailid, Page.Value, filter.StartDate.Value, filter.EndDate.Value, searchvalue, ClientId);
+                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsFilteredCount(profileName, emailid, filter.StartDate.Value, filter.EndDate.Value, searchvalue);
+
+                            }
                         }
                         else
                         {
-                            modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue);
+                            if (profileName == "Client")
+                            {
+                                modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue, ClientId);
+                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue, ClientId);
+
+                            }
+                            else if (profileName == "CuratedUser")
+                            {
+
+                                modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue);
+                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue);
+
+                                ViewBag.Profile = "CuratedUser";
+                            }
+                            else
+                            {
+                                modelList = await _meetingService.GetRiseTubeMeetingsPaged(profileName, emailid, Page.Value, searchvalue);
+                                totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue);
+
+                            }
                         }
 
-
-                        modelList = modelList.Where(x => x.CandidateAvailable == "Available").ToList();
                         
                         if (profileName == "CuratedUser")
                         {
@@ -315,26 +281,13 @@ namespace Risebird.Web.Controllers
                         ViewBag.ProfileName = profileName;
                         if (!String.IsNullOrEmpty(searchvalue))
                         {
-                            modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(searchvalue.ToUpper()) || x.JDTiltle.ToUpper().Contains(searchvalue.ToUpper())).ToList();
                             ViewBag.searchvalue = searchvalue;
                         }
                         else
                         {
                             ViewBag.searchvalue = "";
                         }
-                        if(profileName=="Client")
-                        {
-                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue, ClientId);
-                        }
-                        else if(profileName=="CuratedUser")
-                        {
-                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue);
-                        }
-                        else
-                        {
-                            totalMeetings = await _meetingService.GetRisetubeIndexMeetingsCount(profileName, emailid, searchvalue);
-
-                        }
+                        
 
                         var remainder = totalMeetings % 12;
                         if (remainder == 0)
@@ -352,8 +305,8 @@ namespace Risebird.Web.Controllers
                         ViewBag.MeetingsCount = totalMeetings;
                         ViewBag.Remainder = remainder;
 
-                        
-                        return View("IndexPaged", modelList);
+
+                        return View(modelList);
                     }
                     else
                     {

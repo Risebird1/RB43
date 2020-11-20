@@ -136,5 +136,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<string>> GetIRFClientsEmails(int irfId);
 
         Task<int> GetRisetubeIndexMeetingsCount(string profile, string Emailid, string searchValue = null, int clientId = 0, bool IsClientCurated = false);
+        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetingsPagedFiltered(string profile, string Emailid, int Page, DateTime startDate, DateTime endDate, string searchValue = null, int clientId = 0);
+        Task<int> GetRisetubeIndexMeetingsFilteredCount(string profile, string Emailid, DateTime startDate, DateTime endDate, string searchValue = null, int clientId = 0);
     }
 }

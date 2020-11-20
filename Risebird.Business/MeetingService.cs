@@ -87,6 +87,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<List<MeetingVM>> GetRiseTubeMeetingsPagedFiltered(string profile, string Emailid, int Page,DateTime startDate, DateTime endDate, string searchValue = null, int clientId = 0)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetRiseTubeMeetingsPagedFiltered(profile, Emailid, Page, startDate, endDate, searchValue, clientId);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public async Task<List<MeetingVM>> GetRiseTubeMeetingsByScore(int clientId, string profile, string Emailid, bool IsClientCurated = false)
         {
             try
@@ -1898,6 +1912,19 @@ namespace Risebird.Business
             try
             {
                 return await _meetingRespository.GetRisetubeIndexMeetingsCount(profile, Emailid, searchValue,clientId, IsClientCurated);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<int> GetRisetubeIndexMeetingsFilteredCount(string profile, string Emailid, DateTime startDate, DateTime endDate, string searchValue = null, int clientId = 0)
+        {
+            try
+            {
+                return await _meetingRespository.GetRisetubeIndexMeetingsFilteredCount(profile, Emailid, startDate, endDate, searchValue, clientId);
             }
             catch (Exception ex)
             {
