@@ -74,11 +74,25 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<List<MeetingVM>> GetRiseTubeMeetingsPaged(int clientId, string profile, string Emailid,int Page, bool IsClientCurated = false)
+        public async Task<List<MeetingVM>> GetRiseTubeMeetingsPaged(string profile, string Emailid,int Page, string searchValue = null, int clientId=0, bool IsClientCurated = false)
         {
             try
             {
-                var result = await _meetingRespository.GetRiseTubeMeetingsPaged(clientId, profile, Emailid,Page, IsClientCurated);
+                var result = await _meetingRespository.GetRiseTubeMeetingsPaged(profile, Emailid,Page, searchValue, clientId, IsClientCurated);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<List<MeetingVM>> GetRiseTubeMeetingsPagedFiltered(string profile, string Emailid, int Page,DateTime startDate, DateTime endDate, string searchValue = null, int clientId = 0)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetRiseTubeMeetingsPagedFiltered(profile, Emailid, Page, startDate, endDate, searchValue, clientId);
                 return result.ToList();
             }
             catch (Exception ex)
@@ -1893,6 +1907,31 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<int> GetRisetubeIndexMeetingsCount(string profile, string Emailid, string searchValue = null, int clientId = 0, bool IsClientCurated = false)
+        {
+            try
+            {
+                return await _meetingRespository.GetRisetubeIndexMeetingsCount(profile, Emailid, searchValue,clientId, IsClientCurated);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<int> GetRisetubeIndexMeetingsFilteredCount(string profile, string Emailid, DateTime startDate, DateTime endDate, string searchValue = null, int clientId = 0)
+        {
+            try
+            {
+                return await _meetingRespository.GetRisetubeIndexMeetingsFilteredCount(profile, Emailid, startDate, endDate, searchValue, clientId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
         public async Task<int> GetSharedIndexMeetingsCount(string searchValue = null, string profileName = null)
         {
             try
