@@ -197,6 +197,7 @@ namespace Risebird.Web.Controllers
             }
             HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
             var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
+            var questionstimmer = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
             var model = questions.Where(x => x.Id == Id).OrderBy(x => x.QuestionNumber).ToList();
             foreach (var item in model)
             {
@@ -217,6 +218,8 @@ namespace Risebird.Web.Controllers
                                  }).ToList();
             modelset._question = result;
             modelset._questionlist = _questionlist;
+            modelset._timmerdetails = questionstimmer.Where(x => x.PartitionKey == Id).FirstOrDefault();
+            modelset._timmerdetails.Timer = "1200";
             return View(modelset);
         }
         [HttpPost]
@@ -300,6 +303,7 @@ namespace Risebird.Web.Controllers
                 }
                 break;
             }
+            //set timmer validation modelset._timmerdetails.Timer
             if (model.final == "true")
             {
                 values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
@@ -343,6 +347,8 @@ namespace Risebird.Web.Controllers
                                  }).ToList();
             modeldetailset._question = result;
             modeldetailset._questionlist = _questionlist;
+            modeldetailset._timmerdetails = new MCQVMset();
+            modeldetailset._timmerdetails.Timer = modelset._timmerdetails.Timer;
             return View("CandidateQuestionpage", modeldetailset);
         }
         public IActionResult TestComplete(string status)

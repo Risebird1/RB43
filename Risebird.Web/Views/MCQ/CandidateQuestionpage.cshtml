@@ -25,6 +25,7 @@
                 <div id='tiles'></div>
                 <div class="labels">
 
+                    @*<input id="ztimmerdetails_Timer" name="_timmerdetails.Timer" value="@Model._timmerdetails.Timer" type="hidden" />*@
                     <li>Hours</li>
                     <li>Mins</li>
                     <li>Secs</li>
@@ -61,7 +62,7 @@
                                 <div>
                                     <div class="x-text">
                                         <div style="float:left;width:100%">
-                                            <h4 style="float:left">01</h4>
+                                            <h4 style="float:left">@Model._question.QuestionNumber</h4>
 
                                             <!--button: Start-->
 
@@ -70,8 +71,8 @@
                                     <!--button: END-->
 
 
-                                    <div class="man">@Model._question.QuestionNumber ) @Model._question.Question</div>
-
+                                    @*<div class="man">@Model._question.QuestionNumber ) @Model._question.Question</div>*@
+                                    <div class="man"> @Model._question.Question</div>
 
 
 
@@ -103,17 +104,18 @@
                                     </div>
                                 </div>
                                 <input id="zquestion_final" name="_question.final" value="@Model._question.final" type="hidden" />
+                                <input id="ztimmerdetails_Timer" name="_timmerdetails.Timer" value="@Model._timmerdetails.Timer" type="hidden" />
                             </div>
 
                         </div>
                         <div>
                             @if (Model._question.final == "true")
                             {
-                                <input type="submit" value="Submit" class="callsubmit" />
+                                <input type="submit" value="Submit" class="callsubmit" id="btnsubmit" />
                             }
                             else
                             {
-                                <input type="submit" value="NEXT" class="callsubmit" />
+                                <input type="submit" value="NEXT" class="callsubmit" id="btnsubmit" />
                             }
                         </div>
                     }
@@ -133,21 +135,15 @@
 <script src="~/Newassets/js/core/jquery.min.js?v=7"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script>
-    var target_date = new Date().getTime() + (1000 * 3600 * 48); // set the countdown date
-    var days, hours, minutes, seconds; // variables for time units
+    var target_date = new Date().getTime() + (1000 * parseInt($("#ztimmerdetails_Timer").val()));
+    var days, hours, minutes, seconds;
 
-    var countdown = document.getElementById("tiles"); // get tag element
-
+    var countdown = document.getElementById("tiles");
     getCountdown();
-
-    setInterval(function () { getCountdown(); }, 1000);
-
+    var myVar = setInterval(function () { getCountdown(); }, 1000);
     function getCountdown() {
-
-        // find the amount of "seconds" between now and target
         var current_date = new Date().getTime();
         var seconds_left = (target_date - current_date) / 1000;
-
         days = pad(parseInt(seconds_left / 86400));
         seconds_left = seconds_left % 86400;
 
@@ -157,8 +153,16 @@
         minutes = pad(parseInt(seconds_left / 60));
         seconds = pad(parseInt(seconds_left % 60));
 
-        // format countdown string + set tag value
         countdown.innerHTML = "<span>" + hours + "</span><span>" + minutes + "</span><span>" + seconds + "</span>";
+
+        var timmertime = parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
+        if (parseInt(timmertime) == 0) {
+            //submit finally
+            $("#zquestion_final").val("true");
+            clearInterval(myVar);
+            $("#btnsubmit").click();
+        }
+        $("#ztimmerdetails_Timer").val(timmertime);
     }
 
     function pad(n) {

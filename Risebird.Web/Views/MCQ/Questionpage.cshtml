@@ -56,36 +56,33 @@
                     <div class="mdc-card-wrapper__text-section">
                         @foreach (var item in Model)
                         {
-                        <div>
+                            <div>
 
-                            <div class="x-text">
-                                <div style="float:left;width:100%">
-                                    <h4 style="float:left">01</h4>
+                                <div class="x-text">
 
                                     <!--button: Start-->
 
                                 </div>
-                            </div>
-                            <div class="man">@item.QuestionNumber ) @item.Question </div>
-                            <div>
-                                @if (item.QuestionType == "Multiple")
-                                {
-                                    <p class="calloption"><input type="checkbox" /> @item.Option1</p>
-                                    <p class="calloption"><input type="checkbox" /> @item.Option2</p>
-                                    <p class="calloption"><input type="checkbox" /> @item.Option3</p>
-                                    <p class="calloption"><input type="checkbox" /> @item.Option4</p>
-                                    <hr />
-                                }
+                                <div class="man">@item.QuestionNumber ) @item.Question </div>
+                                <div>
+                                    @if (item.QuestionType == "Multiple")
+                                    {
+                                        <p class="calloption"><input type="checkbox" /> @item.Option1</p>
+                                        <p class="calloption"><input type="checkbox" /> @item.Option2</p>
+                                        <p class="calloption"><input type="checkbox" /> @item.Option3</p>
+                                        <p class="calloption"><input type="checkbox" /> @item.Option4</p>
+                                        <hr />
+                                    }
 
-                                else
-                                {
-                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option1</p>
-                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option2</p>
-                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option3</p>
-                                    <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option4</p>
-                                }
+                                    else
+                                    {
+                                        <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option1</p>
+                                        <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option2</p>
+                                        <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option3</p>
+                                        <p class="calloption"><input type="radio" name="option_@item.QuestionNumber" /> @item.Option4</p>
+                                    }
+                                </div>
                             </div>
-                        </div>
                         }
                     </div>
 

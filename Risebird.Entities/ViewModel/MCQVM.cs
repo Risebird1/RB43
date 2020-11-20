@@ -32,6 +32,7 @@ namespace Risebird.Entities.ViewModel
     {
         public string Title { get; set; }
         public int QuestionCount { get; set; }
+        public string Timer { get; set; }
     }
     public class QuestionList
     {
@@ -40,8 +41,13 @@ namespace Risebird.Entities.ViewModel
     }
     public class QuestionDetailsList
     {
+        public QuestionDetailsList()
+        {
+            _timmerdetails = new MCQVMset();
+        }
         public List<QuestionList> _questionlist { get; set; }
         public MCQVM _question { get; set; }
+        public MCQVMset _timmerdetails { get; set; }
     }
     public class CandidateDetailsForTest : TableEntity
     {
