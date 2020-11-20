@@ -61,19 +61,12 @@
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <input id="zquestion_QuestionType" name="_question.QuestionType" value="@Model._question.QuestionType" type="hidden" />
                                 <div>
-                                    <div class="x-text">
-                                        <div style="float:left;width:100%">
-                                            <h4 style="float:left">@Model._question.QuestionNumber</h4>
-
-                                            <!--button: Start-->
-
-                                        </div>
-                                    </div>
+                                    
                                     <!--button: END-->
 
 
-                                    @*<div class="man">@Model._question.QuestionNumber ) @Model._question.Question</div>*@
-                                    <div class="man"> @Model._question.Question</div>
+
+                                    <div>   <span style="color: #ff5800; font-weight: 600; font-size: 2.3rem; margin: 0 5px 0px 0px;"> @Model._question.QuestionNumber.</span>  <span class="man"> @Model._question.Question</span></div>
 
 
 
