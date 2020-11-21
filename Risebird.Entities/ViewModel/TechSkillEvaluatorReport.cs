@@ -11,8 +11,8 @@
         public int SkillId { get; set; }
         public string ActualLevel { get; set; }
         public int ActualLevelId { get; set; }
-        public int WeightageRequired { get; set; }
-        public int WeightageActual { get; set; }
+        public float WeightageRequired { get; set; }
+        public float WeightageActual { get; set; }
         //public bool IsEdited { get;set; }
     }
 }
