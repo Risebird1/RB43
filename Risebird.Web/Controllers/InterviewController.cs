@@ -5895,7 +5895,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         //[HttpPost]
-        public IActionResult Broadcast(string message, string subject, string receiver, string irfid)
+        public IActionResult Broadcast(string message, string subject, string receiver, int irfid)
         {
 
             try
@@ -5922,10 +5922,10 @@ namespace Risebird.Web.Controllers
                         else
                         {
 
-                            model.IRFId = Convert.ToInt16(irfid);
+                            model.IRFId = irfid;
                             var result = _meetingService.BroadcastIRFmembers(model);
 
-                            TempData["SuccessErrorMessageInterview"] = result;
+                            TempData["SuccessErrorMessageInterview"] = result.Result;
                             return Json(result);
                         }
 
@@ -5945,7 +5945,7 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterview"] = "Broadcast failed.";
-                return RedirectToAction("SignOut", "Session");
+                return RedirectToAction("Index");
             }
         }
 

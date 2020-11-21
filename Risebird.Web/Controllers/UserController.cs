@@ -1400,13 +1400,5 @@ namespace Risebird.Web.Controllers
         #endregion
 
 
-
-        public IActionResult CandidateTimeline()
-        {
-            return View();
-
-
-        }
-
     }
 }
