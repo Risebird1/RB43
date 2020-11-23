@@ -50,18 +50,11 @@
         </div>
     </div>
 
-
-
-
-
-
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card  bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-
-
                         <!-- Start Card -->
                         <div class="row">
                             @foreach (var item in Model)
@@ -70,32 +63,25 @@
                                     <div class="card-content-holder border card-blue">
                                         <div class="card-header">
                                             <div class="row">
-                                                <div class=" col-md-5 col-sm-5 first">
-                                                    <h6 style=" padding-top: 10px;"> <a style="color: #0c2642" href="@Url.Action("Questionpage","MCQ",new { Id=item.PartitionKey})">@item.Title</a></h6>
+                                                <div class=" col-md-12 col-sm-12 first">
+                                                    <h6 style=" padding-top: 10px;">@item.Title</h6>
                                                     <input type="hidden" value="@item.Title" id="txttitlevalue_@item.PartitionKey" />
                                                     <input type="hidden" value="@item.Timer" id="txttimevalue_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.ProfileType" id="txtProfilevalue_@item.PartitionKey" />
                                                 </div>
-
-                                               
                                             </div>
                                         </div>
-
                                         <!-- irf body-->
                                         <div class="card-body">
-
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 10px; width: 100%; float: left">
                                                 <div class="client-field">Questions:</div> <div class="clientName"> @item.QuestionCount</div>
-
+                                            </div>
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 10px; width: 100%; float: left">
+                                                <div class="client-field">Time:</div> <div class="client-name">@item.Timer</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12">
-
-                                                <div class="client-field">Time:</div>
-                                                <div class="client-name">
-                                                    @item.Timer
-                                                </div>
+                                                <div class="client-field">Profile Type:</div> <div class="clientName"> @item.ProfileTypeName</div>
                                             </div>
-
-
                                         </div>
                                         <div class="card-footer action">
                                             <div class="col-md-12">
@@ -105,7 +91,7 @@
                                                         <span onclick="javascript:ShareMCQ('@item.PartitionKey');" title="Share MCQ Set" class=" mdc-fab__icon material-icons">									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>								</span>
                                                     </button>
                                                     <button class="mdc-fab app-fab--absolute priority" aria-label="View">
-                                                        <span title="View" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>								</span>
+                                                        <span onclick="javascript:ViewDetails('@item.PartitionKey');" title="View" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg></span>
                                                     </button>
                                                     <button class="mdc-fab app-fab--absolute priority" aria-label="Edit">
                                                         <span onclick="javascript:EditMcqSet('@item.PartitionKey');" title="Edit" class=" mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
@@ -117,18 +103,12 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
-                                        </div>
                                     </div>
-
+                                </div>
                             }
                         </div>
                         <!-- End Card-->
-
-
                     </div>
-
                 </div>
             </div>
         </div>
@@ -139,14 +119,9 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-
-
-
             <div class="filheader">
                 <div class="filavatar">
                     <span class="publicsharing-icon">
-
-
                         <i class="fa fa-file" aria-hidden="true" style="font-size:21px"></i>
                     </span>
                 </div>
@@ -155,17 +130,19 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeCreatePopUp()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
             </button>
-
-
             <div class="modal-body" style="padding: 2px 16px;">
                 <div class="row" style="padding:10px">
                     <div class="col-md-12"><a class="text-right" href="@Url.Action("Download","MCQ",new { filename="MCQSet.xlsx"})"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>
-
                     <input type="hidden" id="txtpartialid" />
+                    <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;">
+                        @foreach (var item in Model.FirstOrDefault().ProfileTypeList)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
                     <input type="text" class="form-control" placeholder="MCQ Set Title" id="txtMCQTitle" style="margin-bottom: 10px;" />
                     <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" />
-
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
@@ -174,7 +151,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -183,8 +159,6 @@
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-
-
             <div class="filheader">
                 <div class="filavatar">
                     <span><svg class="publicsharing-icon" fill="rgb(255, 255, 255)" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
@@ -194,14 +168,11 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span onclick="closeSharePopUp()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
-
-
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="sharing">
-                        <label class="label-field desp-label" for="Please enter EmailIds" style="font-weight:normal;"> Please Enter Client's Name</label>
+                        <label class="label-field desp-label" for="Please enter Client Name" style="font-weight:normal;"> Please Enter Client's Name</label>
                         <input type="text" placeholder="Client Name" id="txtclientsharename" class="form-control " style="margin-bottom:10px;" />
-
                     </div>
                     <label class="label-field desp-label" for="Please enter EmailIds" style="font-weight:normal;"> Please Enter Email Id's</label>
                     <input type="hidden" id="txtsharePartialid" />
@@ -209,9 +180,7 @@
                         <textarea spellcheck="true" class="form-control " rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%;overflow:hidden;margin-bottom:10px;"></textarea>
                         <div id="words"></div>
                     </div>
-
                 </div>
-
                 <div class="col-md-12 ">
                     <div class="text-right">
                         <input type="button" onclick="shareTestLink()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Share">
@@ -219,7 +188,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -276,6 +244,7 @@
         $("#txtpartialid").val('');
         $("#txtMCQTitle").val('');
         $("#txtTime").val('');
+        document.getElementById("ddlProfileType").value = 0;
     }
     function openCreatePopUp() {
         var modal = document.getElementById("CreateMCQPopUp");
@@ -289,6 +258,7 @@
             form_data.append("title", $("#txtMCQTitle").val());
             form_data.append("time", $("#txtTime").val());
             form_data.append("PartialId", $("#txtpartialid").val());
+            form_data.append("ProfileType", $("#ddlProfileType").val());
             if ($("#txtpartialid").val().trim() != "") {
                 form_data.append("status", "Edit");
             } else {
@@ -320,6 +290,7 @@
         $("#txtpartialid").val(id);
         $("#txtMCQTitle").val($("#txttitlevalue_" + id).val());
         $("#txtTime").val($("#txttimevalue_" + id).val());
+        document.getElementById("ddlProfileType").value = $("#txtProfilevalue_" + id).val();
     }
 
     function closeSharePopUp() {
@@ -351,6 +322,9 @@
         } else {
             alert("Please enter the emailids.");
         }
+    }
+    function ViewDetails(id) {
+        window.location.href = "Questionpage/" + id;
     }
 </script>
 

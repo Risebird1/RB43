@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 
@@ -43,9 +45,13 @@ namespace Risebird.Web.Controllers
                     AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                     var result = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
                     var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
+                    var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
                     foreach (var item in result)
                     {
                         item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
+                        item.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
+                        item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
                     }
                     return View(result);
                 }
@@ -104,6 +110,7 @@ namespace Risebird.Web.Controllers
             var time = Request.Form["time"].ToString();
             var status = Request.Form["status"].ToString();
             var partialid = Request.Form["PartialId"].ToString();
+            var ProfileType = Convert.ToInt32(Request.Form["ProfileType"].ToString());
             int number = 1;
             MCQVMset _lstset = new MCQVMset();
             var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -111,6 +118,7 @@ namespace Risebird.Web.Controllers
             _lstset.RowKey = Guid.NewGuid().ToString();
             _lstset.Title = value;
             _lstset.Timer = time;
+            _lstset.ProfileType = ProfileType;
             if (status == "Edit")
             {
                 _lstset.PartitionKey = partialid;
@@ -184,6 +192,7 @@ namespace Risebird.Web.Controllers
                     var list = result.Where(x => x.PartitionKey == _lstset.PartitionKey).FirstOrDefault();
                     list.Title = _lstset.Title;
                     list.Timer = _lstset.Timer;
+                    list.ProfileType = _lstset.ProfileType;
                     await _azureTableStorageService.InsertEntity("RisebirdMCQSet", list);
                     var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
                     questions = questions.Where(x => x.Id == partialid).ToList();

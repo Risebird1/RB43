@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -33,6 +34,9 @@ namespace Risebird.Entities.ViewModel
         public string Title { get; set; }
         public int QuestionCount { get; set; }
         public string Timer { get; set; }
+        public SelectList ProfileTypeList { get; set; }
+        public int ProfileType { get; set; }
+        public string ProfileTypeName { get; set; }
     }
     public class QuestionList
     {
