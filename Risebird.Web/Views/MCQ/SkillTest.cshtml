@@ -36,21 +36,21 @@
                         <div>
                             @Html.LabelFor(model => model.CandidateEmail, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                             @Html.TextBoxFor(m => m.CandidateEmail, new { @class = "calloption text-box single-line" })
-                            @Html.ValidationMessageFor(m => m.CandidateEmail)
+                            @Html.ValidationMessageFor(m => m.CandidateEmail, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12" style="float:left">
                         <div>
                             @Html.LabelFor(model => model.ApplyingCompany, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                             @Html.TextBoxFor(m => m.ApplyingCompany, new { @class = "calloption text-box single-line" })
-                            @Html.ValidationMessageFor(m => m.ApplyingCompany)
+                            @Html.ValidationMessageFor(m => m.ApplyingCompany, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12" style="float:left">
                         <div>
                             @Html.LabelFor(model => model.ClientHR, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                             @Html.TextBoxFor(m => m.ClientHR, new { @class = "calloption text-box single-line" })
-                            @Html.ValidationMessageFor(m => m.ClientHR)
+                            @Html.ValidationMessageFor(m => m.ClientHR, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
@@ -58,14 +58,14 @@
                         <div>
                             @Html.LabelFor(model => model.Skills, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                             @Html.TextBoxFor(m => m.Skills, new { @class = "calloption text-box single-line" })
-                            @Html.ValidationMessageFor(m => m.Skills)
+                            @Html.ValidationMessageFor(m => m.Skills, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12" style="float:left">
                         <div class="form-group">
                             @Html.LabelFor(model => model.TotalExprience, htmlAttributes: new { @class = "call-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                             @Html.TextBoxFor(m => m.TotalExprience, new { @class = "calloption text-box single-line", @type = "number" })
-                            @Html.ValidationMessageFor(m => m.TotalExprience)
+                            @Html.ValidationMessageFor(m => m.TotalExprience, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <input type="hidden" id="Id" name="Id" value="@ViewBag.Questionsetid" />

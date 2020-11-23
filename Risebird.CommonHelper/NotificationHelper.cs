@@ -1039,7 +1039,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string SharedTestLink(Mail model, string title, string timeduration, string url)
+        public string SharedTestLink(Mail model, string title, string timeduration, string url, string ClientName)
         {
             try
             {
@@ -1050,7 +1050,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
-                object[] parameters = new object[] { title, timeduration, url };
+                object[] parameters = new object[] { title, timeduration, url, ClientName };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateInvitationTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 

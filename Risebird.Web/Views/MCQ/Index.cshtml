@@ -193,6 +193,10 @@
 
             <div class="modal-body">
                 <div class="col-md-12">
+                    <div class="sharing">
+                        <input type="text" placeholder="Client Name" id="txtclientsharename" />
+
+                    </div>
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
                     <input type="hidden" id="txtsharePartialid" />
                     <div class="sharing">
@@ -322,11 +326,11 @@
         $("#txtsharePartialid").val(id);
     }
     function shareTestLink() {
-        if ($("#txtsharetext").val().trim() != "") {
+        if ($("#txtsharetext").val().trim() != "" && $("#txtclientsharename").val().trim() != "") {
             $.ajax({
                 type: "POST",
                 url: "/MCQ/ShareTestLink",
-                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val() },
+                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val() },
                 success: function (data) {
                     if (data == "success") {
                         alert("Successfully share the MCQ set.");

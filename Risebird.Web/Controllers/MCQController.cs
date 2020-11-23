@@ -396,6 +396,7 @@ namespace Risebird.Web.Controllers
                     item.CandidateID = date;
                     await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
                 }
+                //Send mail to support team
                 return RedirectToAction("TestComplete", new { status = "TestSubmit" });
             }
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
@@ -478,7 +479,7 @@ namespace Risebird.Web.Controllers
             return Json("success");
         }
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id,string ClientName)
         {
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var resultset = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
@@ -490,7 +491,8 @@ namespace Risebird.Web.Controllers
                 TO = Emailids,
                 Subject = "Risebird: Test Link"
             };
-            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl);
+            //Invitation for: skillname : company name
+            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName);
             if (result.Contains("Mail sent successfully"))
             {
                 MCQVMShare _list = new MCQVMShare();
