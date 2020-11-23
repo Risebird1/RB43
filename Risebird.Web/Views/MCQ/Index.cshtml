@@ -76,21 +76,7 @@
                                                     <input type="hidden" value="@item.Timer" id="txttimevalue_@item.PartitionKey" />
                                                 </div>
 
-                                                <div class="col-md-7 col-sm-7 card-header-buttons action">
-                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="Share MCQ Set">
-                                                        <span onclick="javascript:ShareMCQ('@item.PartitionKey');" title="Share MCQ Set" class=" mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="View">
-                                                        <span title="View" class="fa fa-eye"></span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="Edit">
-                                                        <span onclick="javascript:EditMcqSet('@item.PartitionKey');" title="Edit" class=" mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="List">
-                                                        <span onclick="javascript:CandidateTestDetails('@item.PartitionKey');" title="Candidate List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
-                                                    </button>
-
-                                                </div>
+                                               
                                             </div>
                                         </div>
 
@@ -111,11 +97,30 @@
 
 
                                         </div>
+                                        <div class="card-footer action">
+                                            <div class="col-md-12">
+
+                                                <div class="text-right card-header-buttons action">
+                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="Share MCQ Set" style="background: #59b259 !important">
+                                                        <span onclick="javascript:ShareMCQ('@item.PartitionKey');" title="Share MCQ Set" class=" mdc-fab__icon material-icons">									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg>								</span>
+                                                    </button>
+                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="View">
+                                                        <span title="View" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" /></svg>								</span>
+                                                    </button>
+                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="Edit">
+                                                        <span onclick="javascript:EditMcqSet('@item.PartitionKey');" title="Edit" class=" mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
+                                                    <button class="mdc-fab app-fab--absolute priority" aria-label="List">
+                                                        <span onclick="javascript:CandidateTestDetails('@item.PartitionKey');" title="Candidate List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                    </button>
+
+                                                </div>
+                                            </div>
+                                        </div>
 
 
-
+                                        </div>
                                     </div>
-                                </div>
 
                             }
                         </div>
@@ -182,7 +187,7 @@
 
             <div class="filheader">
                 <div class="filavatar">
-                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                    <span><svg class="publicsharing-icon" fill="rgb(255, 255, 255)" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" /></svg></span>
                 </div>
                 <h5 class="modal-title pull-left">Share Test Link</h5>
             </div>
@@ -194,13 +199,14 @@
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="sharing">
-                        <input type="text" placeholder="Client Name" id="txtclientsharename" class="form-control " />
+                        <label class="label-field desp-label" for="Please enter EmailIds" style="font-weight:normal;"> Please Enter Client's Name</label>
+                        <input type="text" placeholder="Client Name" id="txtclientsharename" class="form-control " style="margin-bottom:10px;" />
 
                     </div>
-                    <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
+                    <label class="label-field desp-label" for="Please enter EmailIds" style="font-weight:normal;"> Please Enter Email Id's</label>
                     <input type="hidden" id="txtsharePartialid" />
                     <div class="sharing">
-                        <textarea spellcheck="true" class="form-control " rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%"></textarea>
+                        <textarea spellcheck="true" class="form-control " rows="2" id="txtsharetext" placeholder="Please enter EmailIds ';' seprated" style="width:100%;overflow:hidden;margin-bottom:10px;"></textarea>
                         <div id="words"></div>
                     </div>
 
