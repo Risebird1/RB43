@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.ViewModel;
@@ -20,13 +21,15 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
         private readonly INotificationHelper _notificationHelper;
+        private ISupportService _supportService;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService)
         {
             _configuration = configuration;
             _userRepository = userRepository;
             _notificationHelper = notificationHelper;
+            _supportService = supportService;
         }
 
         public IActionResult Index()
@@ -257,7 +260,7 @@ namespace Risebird.Web.Controllers
             var itemshareupdate = candidateShare.FirstOrDefault();
             itemshareupdate.status = "1";
             await _azureTableStorageService.InsertEntity("RisebirdMCQShareList", itemshareupdate);
-            //Retest functionlity
+
             var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
             if (candidateDetails.Where(x => x.Id == Id && x.CandidateEmail.ToUpper() == values.CandidateEmail.ToUpper()).Count() > 0)
             {
@@ -397,6 +400,25 @@ namespace Risebird.Web.Controllers
                     await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
                 }
                 //Send mail to support team
+                var HrEmailaddresslist = _supportService.GetAllSupportHR();
+                string HrEmailaddress = string.Empty;
+                foreach (var item in HrEmailaddresslist)
+                {
+                    if (String.IsNullOrEmpty(HrEmailaddress))
+                    {
+                        HrEmailaddress = item.EmailId;
+                    }
+                    else
+                    {
+                        HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
+                    }
+                }
+                Mail _mail = new Mail
+                {
+                    TO = HrEmailaddress,
+                    Subject = "Candidate " + values.CandidateEmail + " Complete Test for " + values.ApplyingCompany
+                };
+                var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany);
                 return RedirectToAction("TestComplete", new { status = "TestSubmit" });
             }
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
@@ -479,7 +501,7 @@ namespace Risebird.Web.Controllers
             return Json("success");
         }
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id,string ClientName)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName)
         {
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var resultset = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
@@ -489,14 +511,14 @@ namespace Risebird.Web.Controllers
             Mail _mail = new Mail
             {
                 TO = Emailids,
-                Subject = "Risebird: Test Link"
+                Subject = "Invitation for " + details.Title + " : " + ClientName
             };
-            //Invitation for: skillname : company name
             var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName);
             if (result.Contains("Mail sent successfully"))
             {
                 MCQVMShare _list = new MCQVMShare();
                 _list.status = "0";
+                _list.MCQSet = details.Title;
                 foreach (var item in Emailids.Split(";"))
                 {
                     var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -514,7 +536,5 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-
-        // retest functionlity
     }
 }

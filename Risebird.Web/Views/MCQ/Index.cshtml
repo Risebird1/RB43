@@ -194,7 +194,7 @@
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="sharing">
-                        <input type="text" placeholder="Client Name" id="txtclientsharename" />
+                        <input type="text" placeholder="Client Name" id="txtclientsharename" class="form-control " />
 
                     </div>
                     <label class="label-field desp-label" for="Please enter EmailIds"> Please Enter Email Id's</label>
@@ -319,6 +319,7 @@
     function closeSharePopUp() {
         var modal = document.getElementById("MyShareModel");
         modal.style.display = "none";
+        $("#txtsharePartialid").val('');
     }
     function ShareMCQ(id) {
         var modal = document.getElementById("MyShareModel");

@@ -1069,5 +1069,35 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
+        public string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { CandidateEmail, ApplyingCompany };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateCompleteTest.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
     }
 }

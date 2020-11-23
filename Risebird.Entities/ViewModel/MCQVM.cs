@@ -76,5 +76,6 @@ namespace Risebird.Entities.ViewModel
         public string EmailAddress { get; set; }
         public string Id { get; set; }
         public string status { get; set; }
+        public string MCQSet { get; set; }
     }
 }
