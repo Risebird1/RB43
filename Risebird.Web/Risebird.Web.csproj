@@ -39,7 +39,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    
+
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.2.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="2.6.1" />
@@ -201,14 +201,14 @@
     <Content Update="Views\Interview\InterviewComments.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-<Content Update="Views\Interview\UploadAudio.cshtml">
+    <Content Update="Views\Interview\UploadAudio.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
- <Content Update="Views\IRF\FilteredInterviewDashboard.cshtml">
+    <Content Update="Views\IRF\FilteredInterviewDashboard.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
 
-     
+
     <Content Update="Views\IRF\SelectedInterviewMeetings.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -282,6 +282,10 @@
     </Reference>
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties appsettings_1json__JSONSchema="" />
+    </VisualStudio>
+  </ProjectExtensions>
 
 </Project>

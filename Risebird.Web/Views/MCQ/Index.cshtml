@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.MCQVMset>
+﻿@model Risebird.Entities.ViewModel.MCQDropdowndetails
 
 @{
     ViewData["Title"] = "MCQ";
@@ -57,7 +57,7 @@
                     <div class="mdc-card-wrapper__text-section">
                         <!-- Start Card -->
                         <div class="row">
-                            @foreach (var item in Model)
+                            @foreach (var item in Model._MCQVMset)
                             {
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
                                     <div class="card-content-holder border card-blue">
@@ -134,8 +134,15 @@
                 <div class="row" style="padding:10px">
                     <div class="col-md-12"><a class="text-right" href="@Url.Action("Download","MCQ",new { filename="MCQSet.xlsx"})"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>
                     <input type="hidden" id="txtpartialid" />
+
+                    <select class="form-control" id="ddlPrimarySkills" style="margin-bottom: 10px;" multiple>
+                        @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
+                        {
+                            <option>@item.Text</option>
+                        }
+                    </select>
                     <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;">
-                        @foreach (var item in Model.FirstOrDefault().ProfileTypeList)
+                        @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
                         {
                             <option value="@item.Value">@item.Text</option>
                         }

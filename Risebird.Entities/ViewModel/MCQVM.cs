@@ -34,9 +34,9 @@ namespace Risebird.Entities.ViewModel
         public string Title { get; set; }
         public int QuestionCount { get; set; }
         public string Timer { get; set; }
-        public SelectList ProfileTypeList { get; set; }
         public int ProfileType { get; set; }
         public string ProfileTypeName { get; set; }
+        public string PrimarySkills { get; set; }
     }
     public class QuestionList
     {
@@ -81,5 +81,23 @@ namespace Risebird.Entities.ViewModel
         public string Id { get; set; }
         public string status { get; set; }
         public string MCQSet { get; set; }
+    }
+    public class ProfileTypeSkills
+    {
+        public SelectList ProfileTypeList { get; set; }
+        public int ProfileType { get; set; }
+        public string ProfileTypeName { get; set; }
+        public SelectList PrimarySkillsList { get; set; }
+        public string PrimarySkills { get; set; }
+    }
+    public class MCQDropdowndetails
+    {
+        public MCQDropdowndetails()
+        {
+            _ProfileTypeSkills = new ProfileTypeSkills();
+        }
+        public ProfileTypeSkills _ProfileTypeSkills { get; set; }
+        public List<MCQVMset> _MCQVMset { get; set; }
+
     }
 }
