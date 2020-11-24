@@ -69,6 +69,7 @@
                                                     <input type="hidden" value="@item.Title" id="txttitlevalue_@item.PartitionKey" />
                                                     <input type="hidden" value="@item.Timer" id="txttimevalue_@item.PartitionKey" />
                                                     <input type="hidden" value="@item.ProfileType" id="txtProfilevalue_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.PrimarySkills" id="txtPrimarySkill_@item.PartitionKey" />
                                                 </div>
                                             </div>
                                         </div>
@@ -80,8 +81,25 @@
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 10px; width: 100%; float: left">
                                                 <div class="client-field">Time:</div> <div class="client-name">@item.Timer</div>
                                             </div>
-                                            <div class="col-md-12 col-sm-12">
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 10px; width: 100%; float: left">
                                                 <div class="client-field">Profile Type:</div> <div class="clientName"> @item.ProfileTypeName</div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12">
+                                                @if (!String.IsNullOrEmpty(item.PrimarySkills))
+                                                {
+                                                    @if (item.PrimarySkills.Length > 25)
+                                                    {
+                                                        <div class="client-field">Skills:</div> <div class="clientName" title="@item.PrimarySkills"> @item.PrimarySkills.Substring(0, 25)...</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="client-field">Skills:</div> <div class="clientName"> @item.PrimarySkills</div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div class="client-field">Skills:</div> <div class="clientName"> @item.PrimarySkills</div>
+                                                }
                                             </div>
                                         </div>
                                         <div class="card-footer action">
@@ -135,15 +153,19 @@
                 <div class="row" style="padding:10px">
                     <div class="col-md-12"><a class="text-right" href="@Url.Action("Download","MCQ",new { filename="MCQSet.xlsx"})"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>
                     <input type="hidden" id="txtpartialid" />
-                    <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;">
+                    <select class="form-control" id="ddlPrimarySkills" style="width:100% !important">
+                        @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
+                        {
+                            <option value="@item.Text">@item.Text</option>
+                        }
+                    </select>
+                    <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;margin-top:10px">
                         @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
                         {
                             <option value="@item.Value">@item.Text</option>
                         }
                     </select>
-                    <input type="text" class="form-control" placeholder="MCQ Set Title" id="txtMCQTitle" style="        margin-top: 10px;
-        margin-bottom: 10px;
-" />
+                    <input type="text" class="form-control" placeholder="MCQ Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" />
                     <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" />
                 </div>
@@ -248,13 +270,15 @@
         $("#txtMCQTitle").val('');
         $("#txtTime").val('');
         document.getElementById("ddlProfileType").value = 0;
+        $("#ddlPrimarySkills").val('');
+        $("#ddlPrimarySkills").select2().trigger('change');
     }
     function openCreatePopUp() {
         var modal = document.getElementById("CreateMCQPopUp");
         modal.style.display = "block";
     }
     function CreateMCQ() {
-        if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && document.getElementById("Mcqfile").files.length > 0) {
+        if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && document.getElementById("Mcqfile").files.length > 0 && $("#ddlPrimarySkills").val() != null) {
             var file_data = $("#Mcqfile").prop("files")[0];
             var form_data = new FormData();
             form_data.append("file", file_data);
@@ -295,6 +319,9 @@
         $("#txtMCQTitle").val($("#txttitlevalue_" + id).val());
         $("#txtTime").val($("#txttimevalue_" + id).val());
         document.getElementById("ddlProfileType").value = $("#txtProfilevalue_" + id).val();
+        var values = ($("#txtPrimarySkill_" + id).val()).split(",");
+        $("#ddlPrimarySkills").val(values);
+        $("#ddlPrimarySkills").select2().trigger('change');
     }
 
     function closeSharePopUp() {
@@ -337,7 +364,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v7" defer></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        jQuery("#ddlProfileType").select2({ multiple: true });
+        jQuery("#ddlPrimarySkills").select2({ multiple: true });
     });
 
 </script>
