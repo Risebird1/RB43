@@ -2256,7 +2256,7 @@ namespace Risebird.Web.Controllers
                         {
 
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
-                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription());
+                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());
                             candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); x.HeuristicsscoreDesc = ((Heuristicsscorelevel)x.Heuristicsscore).GetDescription(); });
                         }
 
@@ -2307,7 +2307,7 @@ namespace Risebird.Web.Controllers
                         var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(irfId))?.ToList();
                         if (candidateList != null && candidateList.Count > 0)
                         {
-                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatus)x.Status).GetDescription());
+                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
                             candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); });
 
@@ -4330,6 +4330,158 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Fail");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+
+
+                        var model = new CandidateStatusListVM();
+                        model.CandidateStatusList = await _irfService.GetCandidatesStatusList(irfId, candidateId);
+                        model.IRFName = irfName;
+                        model.CandidateName = candidateName;
+                        model.CandidateId = candidateId;
+                        model.IRFId = irfId;
+                       
+
+                        if (TempData["SuccessErrorCandidateStatus"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorCandidateStatus"].ToString();
+                            TempData.Remove("SuccessErrorCandidateStatus");
+                        }
+                        return View(model);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+
+
+        [HttpGet]
+        public IActionResult AddCandidateStatus(int candidateId, int irfId, string rfName, string candidateName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                {
+                    var model = new CandidateStatus();
+                    model.IRFName = rfName;
+                    model.CandidateName = candidateName;
+                    model.CandidateId = candidateId;
+                    //var model = _evaluatorService.GetCandidate(candidateId, irfId);
+                    //model.CandidateAudios = /*(IList<CandidateAudio>)*/_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
+
+                    
+                    //if (TempData["SuccessErrorMessageUploadAudio"] != null)
+                    //{
+                    //    ViewBag.Message = TempData["SuccessErrorMessageUploadAudio"].ToString();
+                    //    TempData.Remove("SuccessErrorMessageUploadAudio");
+                    //}
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName });
+            }
+        }
+
+
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddCandidateStatus(CandidateStatus model)
+        {
+
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (model.AudioFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                //ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
+                                return RedirectToAction("CandidateStatusList", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName, candidateName = model.CandidateName });
+
+                            }
+                            else
+                            {
+                                model.AudioFileLink = uploadedaudioFileURL;
+                            }
+                        }
+
+                        if (await _irfService.AddCandidateStatus(model))
+                        {
+                            TempData["SuccessErrorCandidateStatus"] = "Candidate status saved successfully.";
+                            return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorCandidateStatus"] = "Error saving candidate status.";
+                            return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorCandidateStatus"] = "Error saving candidate status.";
+                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId,  irfName = model.IRFName, candidateName = model.CandidateName });
             }
         }
 

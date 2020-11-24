@@ -1342,5 +1342,34 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+
+        public async Task<bool> AddCandidateStatus(CandidateStatus model)
+        {
+            try
+            {
+                return await _irfRepository.AddCandidateStatus(model);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId)
+        {
+            try
+            {
+                return await _irfRepository.GetCandidatesStatusList(irfId, candidateId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
     }
 }

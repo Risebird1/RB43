@@ -73,5 +73,7 @@ namespace Risebird.Business.Interface
         IEnumerable<AssignmentVM> FetchAssessmentdetails(int id);
         string AssessmentLike(int id,string emailid);
         Task<IEnumerable<string>> GetPrimarySkillFromIRF();
+        Task<bool> AddCandidateStatus(CandidateStatus model);
+        Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId);
     }
 }
