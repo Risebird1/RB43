@@ -7,6 +7,7 @@
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<link href="~/Newassets/css/select2.css?v7" defer rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -134,20 +135,15 @@
                 <div class="row" style="padding:10px">
                     <div class="col-md-12"><a class="text-right" href="@Url.Action("Download","MCQ",new { filename="MCQSet.xlsx"})"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>
                     <input type="hidden" id="txtpartialid" />
-
-                    <select class="form-control" id="ddlPrimarySkills" style="margin-bottom: 10px;" multiple>
-                        @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
-                        {
-                            <option>@item.Text</option>
-                        }
-                    </select>
                     <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;">
                         @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
                         {
                             <option value="@item.Value">@item.Text</option>
                         }
                     </select>
-                    <input type="text" class="form-control" placeholder="MCQ Set Title" id="txtMCQTitle" style="margin-bottom: 10px;" />
+                    <input type="text" class="form-control" placeholder="MCQ Set Title" id="txtMCQTitle" style="        margin-top: 10px;
+        margin-bottom: 10px;
+" />
                     <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" />
                 </div>
@@ -337,3 +333,11 @@
 </script>
 
 
+<script src="ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js?v7"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v7" defer></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery("#ddlProfileType").select2({ multiple: true });
+    });
+
+</script>
