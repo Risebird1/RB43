@@ -24,14 +24,16 @@ namespace Risebird.Web.Controllers
         private readonly IUserRepository _userRepository;
         private readonly INotificationHelper _notificationHelper;
         private ISupportService _supportService;
+        private ISkillService _skillService;
 
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService)
         {
             _configuration = configuration;
             _userRepository = userRepository;
             _notificationHelper = notificationHelper;
             _supportService = supportService;
+            _skillService = skillService;
         }
 
         public IActionResult Index()
@@ -47,13 +49,17 @@ namespace Risebird.Web.Controllers
                     var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
+                    var skillset = _skillService.GetSkills();
+                    var resultset = new MCQDropdowndetails();
+                    resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
+                    resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
                     foreach (var item in result)
                     {
                         item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
-                        item.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
                         item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
                     }
-                    return View(result);
+                    resultset._MCQVMset = (List<MCQVMset>)result;
+                    return View(resultset);
                 }
                 else
                 {
