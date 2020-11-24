@@ -266,6 +266,7 @@
             form_data.append("time", $("#txtTime").val());
             form_data.append("PartialId", $("#txtpartialid").val());
             form_data.append("ProfileType", $("#ddlProfileType").val());
+            form_data.append("PrimarySkill", $("#ddlPrimarySkills").val());
             if ($("#txtpartialid").val().trim() != "") {
                 form_data.append("status", "Edit");
             } else {

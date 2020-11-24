@@ -117,6 +117,7 @@ namespace Risebird.Web.Controllers
             var status = Request.Form["status"].ToString();
             var partialid = Request.Form["PartialId"].ToString();
             var ProfileType = Convert.ToInt32(Request.Form["ProfileType"].ToString());
+            var PrimarySkill = Request.Form["PrimarySkill"].ToString();
             int number = 1;
             MCQVMset _lstset = new MCQVMset();
             var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -125,6 +126,7 @@ namespace Risebird.Web.Controllers
             _lstset.Title = value;
             _lstset.Timer = time;
             _lstset.ProfileType = ProfileType;
+            _lstset.PrimarySkills = PrimarySkill;
             if (status == "Edit")
             {
                 _lstset.PartitionKey = partialid;
@@ -199,6 +201,7 @@ namespace Risebird.Web.Controllers
                     list.Title = _lstset.Title;
                     list.Timer = _lstset.Timer;
                     list.ProfileType = _lstset.ProfileType;
+                    list.PrimarySkills = _lstset.PrimarySkills;
                     await _azureTableStorageService.InsertEntity("RisebirdMCQSet", list);
                     var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
                     questions = questions.Where(x => x.Id == partialid).ToList();
