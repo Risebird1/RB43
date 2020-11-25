@@ -69,7 +69,6 @@ namespace Risebird.Entities.ViewModel
         public string Id { get; set; }
         public int CandidateScore { get; set; }
         public int TotalQuestions { get; set; }
-        public DateTime ShareDate { get; set; }
     }
     public class MCQVMShare : TableEntity
     {
@@ -97,5 +96,25 @@ namespace Risebird.Entities.ViewModel
         public ProfileTypeSkills _ProfileTypeSkills { get; set; }
         public List<MCQVMset> _MCQVMset { get; set; }
 
+    }
+    public class CandidateDetailsForTestDuplicate
+    {
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Candidate Email")]
+        public string CandidateEmail { get; set; }
+        public string ApplyingCompany { get; set; }
+        public string ClientHR { get; set; }
+        [Required]
+        [Display(Name = "Total Exprience(in Years)")]
+        public string TotalExprience { get; set; }
+        [Required]
+        public string Skills { get; set; }
+        public string Id { get; set; }
+        public int CandidateScore { get; set; }
+        public int TotalQuestions { get; set; }
+        public DateTime Sharetime { get; set; }
+        public string PartitionKey { get; set; }
+        public string SameID { get; set; }
     }
 }

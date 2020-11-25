@@ -69,7 +69,7 @@ namespace Risebird.Web.Controllers
                     resultset._MCQVMset = (List<MCQVMset>)result;
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
-
+                    ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
                 else
@@ -117,6 +117,7 @@ namespace Risebird.Web.Controllers
                     resultset._MCQVMset = (List<MCQVMset>)result;
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
+                    ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
                 else
@@ -520,6 +521,34 @@ namespace Risebird.Web.Controllers
             }
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
             var questionvalue = model.QuestionNumber + 1;
+            //var result = resultset.Where(x => x.QuestionNumber == questionvalue).FirstOrDefault();
+            //if (resultset.Count() == questionvalue)
+            //{
+            //    result.final = "true";
+            //}
+            //QuestionDetailsList modeldetailset = new QuestionDetailsList();
+            //var _questionlist = (from _Q in resultset
+            //                     select new QuestionList
+            //                     {
+            //                         QuestionNumber = _Q.QuestionNumber,
+            //                         QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
+            //                     }).ToList();
+            //modeldetailset._question = result;
+            //modeldetailset._questionlist = _questionlist;
+            //modeldetailset._timmerdetails = new MCQVMset();
+            //modeldetailset._timmerdetails.Timer = modelset._timmerdetails.Timer;
+            //return View("CandidateQuestionpage", modeldetailset);
+            return RedirectToAction("CandidateSelectQuestions", new { id = questionvalue, presence = modelset._timmerdetails.Timer });
+        }
+
+        public async Task<IActionResult> CandidateSelectQuestions(string id, string presence)
+        {
+            var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
+            var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
+            HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
+
+            HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
+            var questionvalue = Convert.ToInt32(id);
             var result = resultset.Where(x => x.QuestionNumber == questionvalue).FirstOrDefault();
             if (resultset.Count() == questionvalue)
             {
@@ -535,7 +564,7 @@ namespace Risebird.Web.Controllers
             modeldetailset._question = result;
             modeldetailset._questionlist = _questionlist;
             modeldetailset._timmerdetails = new MCQVMset();
-            modeldetailset._timmerdetails.Timer = modelset._timmerdetails.Timer;
+            modeldetailset._timmerdetails.Timer = presence;
             return View("CandidateQuestionpage", modeldetailset);
         }
         public IActionResult TestComplete(string status)
@@ -566,7 +595,7 @@ namespace Risebird.Web.Controllers
                                         on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
                                         into temp
                                         from a in temp.DefaultIfEmpty()
-                                        select new CandidateDetailsForTest
+                                        select new CandidateDetailsForTestDuplicate
                                         {
                                             CandidateEmail = o.EmailAddress,
                                             ClientHR = o.ClientHR,
@@ -577,7 +606,9 @@ namespace Risebird.Web.Controllers
                                             CandidateScore = a == null ? 0 : a.CandidateScore,
                                             TotalQuestions = a == null ? 0 : a.TotalQuestions,
                                             PartitionKey = o.PartitionKey,
-                                            ShareDate = Convert.ToDateTime(o.Timestamp)
+                                            Sharetime = o.Timestamp.DateTime,
+                                            SameID = o.Id
+
                                         }).ToList();
                     if (profileName == "Client")
                     {
@@ -593,7 +624,7 @@ namespace Risebird.Web.Controllers
                         var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("MCQCandidateList"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            candidateset = candidateset.Where(t => t.ShareDate >= filter.StartDate && t.ShareDate <= filter.EndDate).ToList();
+                            candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
                         }
                         if (profileName != "Client")
                         {
@@ -644,7 +675,7 @@ namespace Risebird.Web.Controllers
                                         on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
                                         into temp
                                         from a in temp.DefaultIfEmpty()
-                                        select new CandidateDetailsForTest
+                                        select new CandidateDetailsForTestDuplicate
                                         {
                                             CandidateEmail = o.EmailAddress,
                                             ClientHR = o.ClientHR,
@@ -655,7 +686,8 @@ namespace Risebird.Web.Controllers
                                             CandidateScore = a == null ? 0 : a.CandidateScore,
                                             TotalQuestions = a == null ? 0 : a.TotalQuestions,
                                             PartitionKey = o.PartitionKey,
-                                            ShareDate = Convert.ToDateTime(o.Timestamp)
+                                            Sharetime = o.Timestamp.DateTime,
+                                            SameID = o.Id
                                         }).ToList();
                     if (profileName == "Client")
                     {
@@ -668,7 +700,7 @@ namespace Risebird.Web.Controllers
                     }
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        candidateset = candidateset.Where(t => t.ShareDate >= filter.StartDate && t.ShareDate <= filter.EndDate).ToList();
+                        candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
                     }
                     if (profileName != "Client")
                     {
@@ -770,5 +802,6 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+
     }
 }
