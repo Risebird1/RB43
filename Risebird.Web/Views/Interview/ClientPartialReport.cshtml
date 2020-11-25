@@ -2226,6 +2226,8 @@
 
                 categoryAxis.renderer.grid.template.disabled = true;
                 valueAxis.renderer.grid.template.disabled = true;
+                valueAxis.min = 0;
+                valueAxis.max = 30;
                 categoryAxis.renderer.labels.template.paddingBottom = 168;
                 // Create series
                 var series = chart.series.push(new am4charts.ColumnSeries());
