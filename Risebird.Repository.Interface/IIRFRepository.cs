@@ -128,5 +128,8 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<string>> GetPrimarySkillFromIRF();
         Task<bool> AddCandidateStatus(CandidateStatus model);
         Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId);
+        Task<CandidateStatus> GetCandidateStatusById(int id);
+        Task<bool> EditCandidateStatus(CandidateStatus model);
+        Task<bool> DeleteCandidateStatus(int id);
     }
 }

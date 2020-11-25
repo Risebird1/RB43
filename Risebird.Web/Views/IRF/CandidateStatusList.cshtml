@@ -42,12 +42,16 @@
 
                 <div class="pull-right">
                     <div>
+                        @if (ViewBag.Profile != "Client")
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Status." onclick="location.href='@Url.Action("AddCandidateStatus", "IRF", new { candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate Status</font></span>
+                            </button>
+                        }
 
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Status." onclick="location.href='@Url.Action("AddCandidateStatus", "IRF", new { candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate Status</font></span>
-                        </button>
 
-                        @Html.ActionLink("Back to List", "Candidates", "IRF",  new { id = Model.IRFId, irfName=Model.IRFName},htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+
+                        @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                     </div>
                 </div>
             </div>
@@ -74,12 +78,10 @@
                                             <tr>
 
                                                 <th>Date</th>
-                                                <th>Audio Link</th>
-                                                <th>Play</th>
-                                                <th>Comments</th>
                                                 <th>Status</th>
+                                                <th>Comments</th>
+                                                <th>Play</th>
                                                 <th>Actions</th>
-
 
                                             </tr>
                                         </thead>
@@ -87,10 +89,9 @@
                                             <tr>
 
                                                 <th>Date</th>
-                                                <th>Audio Link</th>
-                                                <th>Play</th>
-                                                <th>Comments</th>
                                                 <th>Status</th>
+                                                <th>Comments</th>
+                                                <th>Play</th>
                                                 <th>Actions</th>
 
                                             </tr>
@@ -101,21 +102,9 @@
                                             <tr id=@item.id>
 
                                                 <td> @item.Date</td>
+                                                <td> @item.StatusValue</td>
 
-                                                @if (item.AudioFileLink != null && item.AudioFileLink != "")
-                                                {
-
-                                                    <td>
-                                                        <a class="audio-rec" href='@item.AudioFileLink' download>
-                                                            @item.AudioFileLink.Split('/').Last()
-                                                        </a>
-                                                    </td>
-
-                                                }
-                                                else
-                                                {
-                                                    <td>No Audio</td>
-                                                }
+                                                <td> @item.Comments</td>
 
                                                 @if (item.AudioFileLink != null && item.AudioFileLink != "")
                                                 {
@@ -129,27 +118,32 @@
                                                     <td> </td>
                                                 }
 
-                                                <td> @item.Comments</td>
-                                                <td> @item.StatusValue</td>
-
-                                                <td class="text-right action">
 
 
-                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                </span>
-            </button>
+                                            <td class="text-right action">
+
+                                                @if (ViewBag.Profile != "Client")
+                                                {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                        <span onclick="location.href = '@Url.Action("EditCandidateStatus", "IRF", new { id = item.id, candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" title="Edit" class="mdc-fab__icon material-icons">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                        </span>
+                                                    </button>
+
+                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                        <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                        </span>
+                                                    </button>
+                                                }
 
 
-            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                </span>
-            </button>*@
 
 
-                                                </td>
+
+
+
+                                            </td>
 
                                             </tr>
 
@@ -280,15 +274,11 @@
 
 
 <script>
-    function DeleteCandidate(id) {
-
-        //var IdIRF = dataID;
-        var irfName = '@ViewBag.IRFName';
-        var irfId = '@ViewBag.IRFId';
+    function Delete(id) {
 
         swal.fire({
             title: 'Are you sure?',
-            text: "The candidate will be permanently deleted!",
+            text: "The status will be permanently deleted!",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -296,15 +286,19 @@
             confirmButtonText: 'Yes, delete it!',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
-                    //var IdIRF = dataID;
                     $.ajax({
-                        url: '/IRF/DeleteCandidate?id=' + id + '&irfId=' + irfId + '&IRFName=' + irfName,
+                        url: '/IRF/DeleteCandidateStatus?id=' + id ,
                         success: function (result) {
-                            resolve(result)
+                            if (result) {
+                                resolve(result)
 
+                            }
+                            else {
+                                swal.fire("Error deleting!", "Please try again", "error");
+
+                            }
                         },
                         error: function () {
-                            //reject("error message")
                             swal.fire("Error deleting!", "Please try again", "error");
                         }
                     })
@@ -316,20 +310,19 @@
                 swal.fire({
                     title: 'Deleted!',
                     type: 'success',
-                    html: '<p>The candidate has been deleted.</p>',
+                    html: '<p>The status has been deleted.</p>',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',
                     allowOutsideClick: false
                 }).then(function () {
                     location.reload(true);
-                    //window.location = "/IRF/Candidates?id=" + irfId + '&irfName=' + irfName;
                 })
             }
             else if (result.dismiss === 'cancel') {
                 swal.fire(
                     'Cancelled',
-                    'Your file has been not deleted :)',
+                    'The status has been not deleted!',
                     'error'
                 )
             }

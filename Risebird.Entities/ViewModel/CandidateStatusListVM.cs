@@ -11,5 +11,6 @@ namespace Risebird.Entities.ViewModel
         public string IRFName { get; set; }
         public int CandidateId { get; set; }
         public int IRFId { get; set; }
+        public string Profile { get; set; }
     }
 }

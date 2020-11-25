@@ -4342,32 +4342,22 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+
+                    var model = new CandidateStatusListVM();
+                    model.CandidateStatusList = await _irfService.GetCandidatesStatusList(irfId, candidateId);
+                    model.IRFName = irfName;
+                    model.CandidateName = candidateName;
+                    model.CandidateId = candidateId;
+                    model.IRFId = irfId;
+                    model.Profile = profileName;
+
+                    if (TempData["SuccessErrorCandidateStatus"] != null)
                     {
-
-
-                        var model = new CandidateStatusListVM();
-                        model.CandidateStatusList = await _irfService.GetCandidatesStatusList(irfId, candidateId);
-                        model.IRFName = irfName;
-                        model.CandidateName = candidateName;
-                        model.CandidateId = candidateId;
-                        model.IRFId = irfId;
-                       
-
-                        if (TempData["SuccessErrorCandidateStatus"] != null)
-                        {
-                            ViewBag.Message = TempData["SuccessErrorCandidateStatus"].ToString();
-                            TempData.Remove("SuccessErrorCandidateStatus");
-                        }
-                        return View(model);
-
+                        ViewBag.Message = TempData["SuccessErrorCandidateStatus"].ToString();
+                        TempData.Remove("SuccessErrorCandidateStatus");
                     }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+                    return View(model);
+
                 }
                 else
                 {
@@ -4398,15 +4388,8 @@ namespace Risebird.Web.Controllers
                     model.IRFName = rfName;
                     model.CandidateName = candidateName;
                     model.CandidateId = candidateId;
-                    //var model = _evaluatorService.GetCandidate(candidateId, irfId);
-                    //model.CandidateAudios = /*(IList<CandidateAudio>)*/_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
-
-                    
-                    //if (TempData["SuccessErrorMessageUploadAudio"] != null)
-                    //{
-                    //    ViewBag.Message = TempData["SuccessErrorMessageUploadAudio"].ToString();
-                    //    TempData.Remove("SuccessErrorMessageUploadAudio");
-                    //}
+                    model.IRFId = irfId;
+                   
                     return View(model);
                 }
                 else
@@ -4426,6 +4409,7 @@ namespace Risebird.Web.Controllers
 
 
         [ValidateAntiForgeryToken]
+        [HttpPost]
         public async Task<IActionResult> AddCandidateStatus(CandidateStatus model)
         {
 
@@ -4445,9 +4429,8 @@ namespace Risebird.Web.Controllers
                             string uploadedaudioFileURL = blob.Uri.ToString();
                             if (uploadedaudioFileURL == null)
                             {
-                                //ModelState.AddModelError(string.Empty, "Audio Upload failed.");
                                 TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
-                                return RedirectToAction("CandidateStatusList", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName, candidateName = model.CandidateName });
+                                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
 
                             }
                             else
@@ -4485,6 +4468,134 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditCandidateStatus(int id, int candidateId, int irfId, string rfName, string candidateName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName != "Client")
+                {
+                    var model = new CandidateStatus();
+                    model = await _irfService.GetCandidateStatusById(id);
+                    model.IRFName = rfName;
+                    model.CandidateName = candidateName;
+                    model.id =id;
+                   
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("CandidateStatusList", new { irfId = irfId, candidateId = candidateId, irfName = rfName, candidateName = candidateName});
+            }
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> EditCandidateStatus(CandidateStatus model)
+        {
+
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (model.AudioFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
+                                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+
+                            }
+                            else
+                            {
+                                model.AudioFileLink = uploadedaudioFileURL;
+                            }
+                        }
+
+                        if (await _irfService.EditCandidateStatus(model))
+                        {
+                            TempData["SuccessErrorCandidateStatus"] = "Candidate status updated successfully.";
+                            return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorCandidateStatus"] = "Error updating candidate status.";
+                            return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorCandidateStatus"] = "Error updating candidate status.";
+                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+            }
+        }
+
+        [Authorize]
+        public async Task<IActionResult> DeleteCandidateStatus(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if ( profileName != "Client")
+                    {
+                        var result = await _irfService.DeleteCandidateStatus(id);
+                        return Json(result);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+
+        }
 
     }
 }
