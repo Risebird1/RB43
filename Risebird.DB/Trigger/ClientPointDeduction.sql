@@ -13,7 +13,7 @@ GO
 
 CREATE TRIGGER ClientPointDeduction
    ON  ClientWallet
-   INSTEAD OF INSERT
+   After INSERT
 AS 
 BEGIN
 	
