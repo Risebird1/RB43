@@ -44,11 +44,11 @@
                         {
                             @if (item.QuestionAnswered == true)
                             {
-                                <div class="callbox" style=" background-color: #ff5800; color: #fff;">@item.QuestionNumber</div> @*Answered*@
+                                <div class="callbox" style="background-color: #ff5800; color: #fff;" onclick="QuestionSelect(@item.QuestionNumber)">@item.QuestionNumber</div> @*Answered*@
                             }
                             else
                             {
-                                <div class="callbox" style="background-color:white">@item.QuestionNumber</div> @*Unanswered*@
+                                <div class="callbox" style="background-color:white" onclick="QuestionSelect(@item.QuestionNumber)">@item.QuestionNumber</div> @*Unanswered*@
                             }
                         }
                     </div>
@@ -61,7 +61,7 @@
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <input id="zquestion_QuestionType" name="_question.QuestionType" value="@Model._question.QuestionType" type="hidden" />
                                 <div>
-                                    
+
                                     <!--button: END-->
 
 
@@ -81,19 +81,10 @@
                                         }
                                         else
                                         {
-                                            <div class="mdc-touch-target-wrapper" style="top: 4px;position: relative;">
-                                                <div class="mdc-radio mdc-radio--touch">
-                                                    <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "1", new { @class = "mdc-radio__native-control" }) @Model._question.Option1</p>
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
-                                                    <div class="mdc-radio__ripple"></div>
-                                                </div>
-                                            </div>
-                                            <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "2") @Model._question.Option2</p>
-                                            <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "3") @Model._question.Option3</p>
-                                            <p class="calloption">@Html.RadioButtonFor(m => m._question.SingleAnswer, "4") @Model._question.Option4</p>
+                                            <p class="calloption">@Html.RadioButtonFor(Model => Model._question.SingleAnswer, "1") @Model._question.Option1</p>
+                                            <p class="calloption">@Html.RadioButtonFor(Model => Model._question.SingleAnswer, "2") @Model._question.Option2</p>
+                                            <p class="calloption">@Html.RadioButtonFor(Model => Model._question.SingleAnswer, "3") @Model._question.Option3</p>
+                                            <p class="calloption">@Html.RadioButtonFor(Model => Model._question.SingleAnswer, "4") @Model._question.Option4</p>
                                         }
                                     </div>
                                 </div>
@@ -169,6 +160,12 @@
 
 
 <script type="text/javascript">
+    function QuestionSelect(questionnumber) {
+        var timew = $("#ztimmerdetails_Timer").val();
+        window.location.href = "/MCQ/CandidateSelectQuestions/" + questionnumber + "?timer=" + timew;
+    }
+
+
     if (parseInt($("#textcallno").val()) > 20)
         $(".sb-container").scrollBox();
 </script>
