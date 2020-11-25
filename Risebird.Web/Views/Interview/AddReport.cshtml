@@ -1412,6 +1412,7 @@
     function CountProctoring(value) {
 
         if (value == "" || value == null) {
+
             return;
         }
 
@@ -1589,7 +1590,8 @@
             categoryAxis.renderer.minGridDistance = 30;
             chart.fontSize = 13;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            
+            valueAxis.min = 0;
+            valueAxis.max = 30;
             categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
                 if (target.dataItem && target.dataItem.index & 2 == 2) {
                     return dy;
@@ -1597,12 +1599,11 @@
                 return dy;
             });
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
-            categoryAxis.renderer.labels.template.paddingBottom = 172;
+            categoryAxis.renderer.labels.template.paddingBottom = 165;
             categoryAxis.renderer.grid.template.disabled = true;
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
             valueAxis.renderer.grid.template.disabled = true;
-            valueAxis.min = 0;
-            valueAxis.max = 30;
+
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";
@@ -1610,7 +1611,7 @@
             series.name = "Visits";
             series.colorField = "color";
              series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
-       series.tooltip.label.adapter.add("text", function (text, target) {
+              series.tooltip.label.adapter.add("text", function (text, target) {
                 if (target.dataItem && target.dataItem.valueY == 0) {
 
                     return "";
@@ -2165,7 +2166,9 @@
 
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
-            categoryAxis.renderer.labels.template.paddingBottom = 168;
+            valueAxis.min = 0;
+            valueAxis.max = 30;
+            categoryAxis.renderer.labels.template.paddingBottom = 165;
 
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             // Create series

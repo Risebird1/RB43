@@ -1,4 +1,6 @@
-﻿
+﻿/* CSS Document */
+
+
 body {
     font-family: Roboto, sans-serif;
 }
@@ -12,20 +14,25 @@ body {
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
-
 }
 
 textarea::-webkit-scrollbar-thumb {
-
     margin: 2px;
     border-radius: 2px;
 }
-.wrapper {
-    height:auto!important;
+
+.selected-priority .talk-bubble {
+    z-index: 1
 }
+
+.wrapper {
+    height: auto !important;
+}
+
 .pt30 {
     padding-top: 30px;
 }
+
 .transparent-chart {
     position: absolute;
     width: 100%;
@@ -35,8 +42,9 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .client .mdc-card {
-  box-shadow:none; border:0px;
-    border-radius:0px;
+    box-shadow: none;
+    border: 0px;
+    border-radius: 0px;
 }
 
 #uploadDiv #videoId {
@@ -64,7 +72,7 @@ textarea::-webkit-scrollbar-thumb {
 [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
-    padding:10px!important;
+    padding: 10px !important;
 }
 
     [type="date"]::-webkit-inner-spin-button {
@@ -188,11 +196,13 @@ textarea::-webkit-scrollbar-thumb {
 .card-blue .statistics .card-header {
     padding: 10px 0px 10px 0;
 }
+
 .card-header-buttons.action {
     padding: 0px 5px 5px 0px;
     float: right;
     text-align: right;
 }
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -225,6 +235,7 @@ input[type=number] {
 .mdc-fab.trash-btn {
     background: #d20505 !important;
 }
+
 table {
     white-space: nowrap !important;
 }
@@ -263,7 +274,6 @@ td:hover.wordwrap {
     font-size: 10pt;
     display: none;
     position: center !important;
-
     z-index: 999;
     filter: alpha(opacity = 50);
 }
@@ -329,14 +339,12 @@ table {
 }
 
 .call-txt {
-   
     position: relative;
     padding: 5px 15px;
     left: -10px;
     top: 8px;
     font-size: 14px;
     font-family: arial;
-
     border-left: 0px;
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
@@ -374,14 +382,12 @@ table {
 
 
 .client #resumeId, .client #zoomlinkId {
-
     padding: 5px 10px;
     border-radius: 16px;
 }
 
 
 .client #reportId {
-
     padding: 5px 10px;
     border-radius: 16px;
 }
@@ -389,15 +395,14 @@ table {
 
 
 .client #videoId {
-
     padding: 5px 10px;
     border-radius: 16px;
 }
+
 #ProctoringTable .label-type {
     background: #e8f5ff;
     padding: 8px 10px;
     border: 0;
-
 }
 
 .video-choose {
@@ -410,7 +415,6 @@ table {
 }
 
 .click {
-  
     text-decoration: underline;
 }
 
@@ -422,6 +426,7 @@ table {
 .card-text-label {
     font-size: 13px !important;
 }
+
 .talk-bubble {
     display: inline-block;
     position: relative;
@@ -429,7 +434,6 @@ table {
     height: auto;
     border-radius: 10px;
     margin: 5px 0px;
-   
 }
 
 /* Modal */
@@ -458,6 +462,7 @@ table {
 .border-rv {
     border-right: 1px dotted #ccc;
 }
+
 .mt50 {
     margin-top: 60px;
 }
@@ -473,9 +478,11 @@ table {
 .modal-lg {
     max-width: 690px !important;
 }
+
 modal-content .modal-body {
     padding-top: 10px;
 }
+
 .modal-bg {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -489,6 +496,7 @@ modal-content .modal-body {
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4);
 }
+
 .mdc-card-wrapper__text-section {
     padding: 16px;
 }
@@ -515,14 +523,12 @@ modal-content .modal-body {
     height: auto;
     border-radius: 7px;
     margin: 5px 0px;
-
 }
 
 
     .talk-bubble textarea {
         resize: none;
         border: 0;
-    
         padding: 5px;
         width: 100%;
         overflow-x: hidden;
@@ -598,7 +604,6 @@ modal-content .modal-body {
     }
 
 .control-labeled {
-
     font-size: 12px;
     margin-bottom: 5px;
     color: #9A9A9A;
@@ -616,6 +621,7 @@ modal-content .modal-body {
         background: #f5f5f5;
         padding: 5px 0px 0px 0px;
     }
+
 .mc-button-area {
     text-align: right;
 }
@@ -623,10 +629,9 @@ modal-content .modal-body {
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
     border: 0;
     border-radius: 4px 4px 0 0;
- 
     height: 40px;
     font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid!important;
+    border-bottom: 1px rgba(0, 0, 0, 0.29) solid !important;
 }
 
     .mdc-card .form-control:focus {
@@ -640,11 +645,17 @@ modal-content .modal-body {
     border-color: #53a5f5;
 }
 
+@media screen and (max-width:1024px) {
+    .selected-priority .table > tbody > tr > td {
+        padding: 12px 5px;
+    }
+}
 
 @media screen and (max-width:991px) {
     #ProctoringTable .label-type {
         white-space: normal;
     }
+
     .mdc-card-wrapper__text-section {
         padding: 10px !important;
     }
@@ -656,6 +667,7 @@ modal-content .modal-body {
         left: 25%;
         margin-left: 10px;
     }
+
     .mobile-view {
         display: block;
     }
@@ -663,47 +675,46 @@ modal-content .modal-body {
     .desktop-view {
         display: none;
     }
+
     .interviewer-comment .talk-bubble [data-tooltip]:after {
         margin-left: 190px;
     }
+
     .table > tbody > tr > td {
         padding: 12px 5px !important;
     }
+
     #ProctoringTable .label-type {
         white-space: nowrap
     }
+
     .talk-bubble [data-tooltip]:before {
         width: 350px;
         left: 30%;
     }
 }
-@media screen and (max-width:480px){
+
+@media screen and (max-width:480px) {
     .talk-bubble [data-tooltip]:before {
-    width: 350px;
-    left: 25%;
-}
-
-  
-
-
-}
-
-    @media screen and (max-width:375px) {
-
-        .talk-bubble [data-tooltip]:before {
-            width: 250px;
-            left: 30%;
-        }
-
-        .interviewer-comment .talk-bubble [data-tooltip]:before {
-            width: 250px;
-            left: 30%;
-            margin-left: 10px;
-        }
-        .interviewer-comment .talk-bubble [data-tooltip]:after {
-            margin-left: 130px;
-        }
-
-
-
+        width: 350px;
+        left: 25%;
     }
+}
+
+@media screen and (max-width:375px) {
+
+    .talk-bubble [data-tooltip]:before {
+        width: 250px;
+        left: 30%;
+    }
+
+    .interviewer-comment .talk-bubble [data-tooltip]:before {
+        width: 250px;
+        left: 30%;
+        margin-left: 10px;
+    }
+
+    .interviewer-comment .talk-bubble [data-tooltip]:after {
+        margin-left: 130px;
+    }
+}
