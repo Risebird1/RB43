@@ -121,7 +121,10 @@ textarea::-webkit-scrollbar-thumb {
 
 
 
-
+.mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {
+    border: 0px!important;
+    border-bottom: 2px #929292 solid !important;
+}
 
 
 .border-db {
@@ -345,7 +348,7 @@ table.dataTable thead .sorting:after {
     top: -4px;
 }
 .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: whitesmoke!important;
+    background: whitesmoke;
     color: #888 !important;
 }
 #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {

@@ -1099,5 +1099,37 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
+
+        public string SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                foreach (var email in clients)
+                {
+                    mailMessage.CC.Add(new MailAddress(email, null));
+                }
+                
+                object[] parameters = new object[] {interviewDate, candidateEmail, primarySkill, interviewStatus };
+                mailMessage.Subject = "Candidate selected!";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCPassedNotificationTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent Successfully.";
+            }
+            catch (Exception)
+            {
+                return "Broadcast failed.";
+            }
+        }
+
     }
 }

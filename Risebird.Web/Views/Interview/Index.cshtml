@@ -40,7 +40,7 @@
 
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -752,11 +752,11 @@
                                 <label class="control-label desp-label pull-left" style="padding-top: 2px;">IRF LIST</label>
                                 <div class="form-group pull-left col-md-9">
                                     <select id="irflist" class="select-css form-control">
-                                        @foreach (var item in Model.ToList())
+                                        @foreach (var item in Model.Select(x => (x.irfIntId, x.IRFId)).Distinct().ToList())
                                         {
                                             @if (item.IRFId != null && item.IRFId != "")
                                             {
-                                                <option value="@item.interviewer">@item.IRFId</option>
+                                                <option value="@item.irfIntId">@item.IRFId</option>
                                             }
                                         }
                                     </select>
@@ -1326,7 +1326,7 @@
                 'message': message, 'subject': subject, 'receiver': receiver, 'irfid': irfid
             },
             success: function (data) {
-                location.reload(true);
+                window.location.href = '/Interview/Index';
 
             }
         });

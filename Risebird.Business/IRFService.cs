@@ -1328,5 +1328,19 @@ namespace Risebird.Business
                 return "";
             }
         }
+
+        public async Task<IEnumerable<string>> GetPrimarySkillFromIRF()
+        {
+            try
+            {
+                return await _irfRepository.GetPrimarySkillFromIRF();
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
