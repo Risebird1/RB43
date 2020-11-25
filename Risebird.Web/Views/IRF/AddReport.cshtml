@@ -73,15 +73,15 @@
 
                                 <div class="row">
                                     @*<div class="col-md-6 col-sm-6">
-            <div class="form-group">
-                @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                                                @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
-            </div>
+                                            </div>
 
-        </div>*@
+                                        </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -99,12 +99,12 @@
                                 </div>
                                 <div class="row">
                                     @*<div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </div>
-                                    </div>*@
+                                                @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            </div>
+                                        </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -1115,7 +1115,7 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
-      
+
         var average = totalCount / 4;
         $("#OverallScore").val(average);
 
@@ -1179,7 +1179,7 @@
 
         document.getElementById("totScore").innerHTML = average;
 
-       
+
         am4core.ready(function () {
             // Themes begin
             am4core.useTheme(am4themes_animated);
