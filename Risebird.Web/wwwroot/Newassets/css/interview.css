@@ -162,7 +162,7 @@
     #startRecButton {
     background: url(../../img/play-recrd.png) no-repeat;
     text-indent: -999px;
-
+    width: 85px;
     background-size: 40px;
     border: 0;
     height: 60px;
@@ -176,6 +176,7 @@
     background-size: 40px;
     border: 0;
     height: 60px;
+    width: 85px;
     cursor: pointer;
     background-position: 50% 0%;
 }
@@ -187,6 +188,7 @@
     border: 0;
     cursor: pointer;
     height: 60px;
+    width:85px;
     background-position: 50% 0%;
 }
 
@@ -197,6 +199,7 @@
     font-weight: 500;
     line-height: 16px;
     padding-bottom:10px;
+    font-weight:normal;
 }
 textarea::-webkit-scrollbar {
     width: 2px;
@@ -269,11 +272,7 @@ textarea::-webkit-scrollbar-thumb {
     background: pink!important;
 }
 
-select * {
-    background-color: #fff;
-    border:0!important;
-    padding:5px;
-}
+
 
 select{
     padding:10px;
@@ -314,7 +313,14 @@ select{
 .js .spinner {
     display: block;
 }
-
+.excel-file {
+    margin-right: 10px;
+    float: right;
+    color: green;
+    font-size: 35px;
+    margin-left: 3px;
+    border: 0;
+}
 .container:hover .spinner {
     right: 0;
     top: 1px;
@@ -356,10 +362,6 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-
-
-
-
 
 [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
@@ -1205,7 +1207,7 @@ padding:0;
 .modal-bg {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     padding-top: 100px;
     left: 0;
     top: 0;

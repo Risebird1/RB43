@@ -72,16 +72,16 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @*<div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                                                @Html.TextBoxFor(m => m.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
-                                        </div>
+                                            </div>
 
-                                    </div>
+                                        </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -89,8 +89,6 @@
                                             @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -98,6 +96,15 @@
                                             @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row">
+                                    @*<div class="col-md-6 col-sm-6">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            </div>
+                                        </div>*@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -1095,7 +1102,9 @@
 
         }
         else {
-            $("#" + skillName + "_" + index + "__WeightageActual").val("0");
+            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+            var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
+            $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
             $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
         }
 
@@ -1106,7 +1115,7 @@
         for (i = 0; i < items.length; i++) {
             totalCount += parseInt(items[i].value);
         }
-      
+
         var average = totalCount / 4;
         $("#OverallScore").val(average);
 
@@ -1170,7 +1179,7 @@
 
         document.getElementById("totScore").innerHTML = average;
 
-       
+
         am4core.ready(function () {
             // Themes begin
             am4core.useTheme(am4themes_animated);
@@ -1200,7 +1209,8 @@
             var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
             categoryAxis.dataFields.category = "country";
             categoryAxis.renderer.inside = true;
-            categoryAxis.renderer.labels.template.valign = "top";
+            categoryAxis.renderer.labels.template.valign = 0;
+
             categoryAxis.renderer.grid.template.location = 0;
             categoryAxis.renderer.minGridDistance = 30;
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
@@ -1212,19 +1222,40 @@
             });
 
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
+            categoryAxis.renderer.labels.template.paddingBottom = 168;
             categoryAxis.renderer.grid.template.disabled = true;
             valueAxis.renderer.grid.template.disabled = true;
+            valueAxis.min = 0;
+            valueAxis.max = 30;
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";
             series.dataFields.categoryX = "country";
             series.name = "Visits";
             series.colorField = "color";
-            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
-            series.columns.template.fillOpacity = .8;
 
-            var columnTemplate = series.columns.template;
+            series.columns.template.tooltipText = "{valueY.percent}[/] ({valueY})";
+            series.tooltip.label.adapter.add("text", function (text, target) {
+                if (target.dataItem && target.dataItem.valueY == 0) {
+
+                    return "";
+                }
+                else {
+
+                    return text;
+                }
+            });
+            series.columns.template.fillOpacity = .8;
+            series.columns.template.tooltipY = 8;
+            series.tooltip.background.strokeOpacity = 0
+            series.tooltip.pointerOrientation = "vertical";
+            series.columns.template.showTooltipOn = "always";
+            series.tooltip.background.filters.clear();
+            series.tooltip.getFillFromObject = false;
+            series.tooltip.label.fill = am4core.color("#9a9a9a");
+            series.tooltip.background.cornerRadius = 0;
+            series.tooltip.label.textAlign = "middle";
+            series.tooltip.background.fill = 0;
             columnTemplate.strokeWidth = 1;
             columnTemplate.strokeOpacity = 1;
             chart.colors.list = [
@@ -1274,7 +1305,10 @@
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
             }
             else {
-                $("#" + skillName + digit + "__WeightageActual").val("0");
+                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+                $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
+                //$("#" + skillName + digit + "__WeightageActual").val("0");
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
 
             }
@@ -1947,7 +1981,17 @@
             series.colorField = "color";
             series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
             series.columns.template.fillOpacity = .8;
-
+            series.columns.template.tooltipY = 8;
+            series.tooltip.background.strokeOpacity = 0
+            series.tooltip.pointerOrientation = "vertical";
+            series.columns.template.showTooltipOn = "always";
+            series.tooltip.background.filters.clear();
+            series.tooltip.getFillFromObject = false;
+            series.tooltip.label.fill = am4core.color("#9a9a9a");
+            series.tooltip.background.cornerRadius = 0;
+            series.tooltip.label.textAlign = "middle";
+            series.tooltip.background.fill = 0;
+            var columnTemplate = series.columns.template;
             var columnTemplate = series.columns.template;
             columnTemplate.strokeWidth = 2;
             columnTemplate.strokeOpacity = 1;

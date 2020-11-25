@@ -40,6 +40,7 @@ namespace Risebird.CommonHelper.Interface
         string SurveyNotification(Mail model, string UrlDetails);
         string FeedbackSubmitNotification(Mail model, string candidate);
         string InsuficientBalancNotifiaction(Mail model);
+        string SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
         string SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
         string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany);
 

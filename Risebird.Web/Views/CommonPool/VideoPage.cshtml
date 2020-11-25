@@ -2915,6 +2915,8 @@
             categoryAxis.renderer.labels.template.fill = am4core.color("#828080");
             categoryAxis.renderer.labels.template.paddingBottom = 168;
             valueAxis.renderer.grid.template.disabled = true;
+            valueAxis.min = 0;
+            valueAxis.max = 30;
             // Create series
             var series = chart.series.push(new am4charts.ColumnSeries());
             series.dataFields.valueY = "visits";
