@@ -69,7 +69,7 @@ namespace Risebird.Web.Controllers
                     resultset._MCQVMset = (List<MCQVMset>)result;
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
-
+                    ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
                 else
@@ -117,6 +117,7 @@ namespace Risebird.Web.Controllers
                     resultset._MCQVMset = (List<MCQVMset>)result;
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
+                    ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
                 else
