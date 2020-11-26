@@ -575,7 +575,7 @@
                                                         <td>
                                                             <div class="talk-bubble tri-right border-bubble right-in ">
                                                                 <div class="talktext">
-                                                                    @if (item.ApprovalComments.Length > 0)
+                                                                    @if (item.ApprovalComments!=null && item.ApprovalComments.Length > 0)
                                                                     {
 
                                                                         <a href="#" data-tooltip="@item.ApprovalComments">  <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea></a>
@@ -597,7 +597,7 @@
                                                         <td>
                                                             <div class="talk-bubble tri-right border-bubble right-in ">
                                                                 <div class="talktext">
-                                                                    @if (item.FinalComments.Length > 0)
+                                                                    @if (item.FinalComments!=null && item.FinalComments.Length > 0)
                                                                     {
 
                                                                         <a href="#" data-tooltip="@item.FinalComments"><textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea></a>
