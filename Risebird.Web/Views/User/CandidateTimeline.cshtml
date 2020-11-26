@@ -30,7 +30,7 @@
         transition: all 500ms ease;
         position: absolute;
         top: -10px;
-        left: -1px;
+        left: -3px;
     }
 
     table.journey th {
@@ -38,7 +38,7 @@
     }
 
     table.journey th, table.journey td {
-        width: 16.6%;
+        width: 14%;
         text-align: center;
     }
 
@@ -47,7 +47,7 @@
         }
 
     .journey td {
-        padding: 10px 0px;
+        padding: 10px 10px;
         border-right: 1px solid #dee2e6ba;
         z-index: -1;
     }
@@ -177,6 +177,13 @@
     .pl15 {
         padding-left: 15px !important;
     }
+    .select {
+        color: green;
+    }
+
+    .reject {
+        color: #d21111;
+    }
 </style>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -252,8 +259,6 @@
                         </div>
                         <div class="dataloading">
 
-
-
                             <table class="table table-striped" cellspacing="0" width="100%" style="border:0px!important">
 
                                 <thead>
@@ -263,7 +268,8 @@
                                             <table class="journey" cellspacing="0" width="100%">
                                                 <tr>
 
-                                                    <th class="text-left">Candidate Details</th>
+                                                    <th class="text-left">Candidate Name</th>
+                                                    <th class="text-left">HR Email</th>
                                                     <th>Risebird Attempt</th>
 
                                                     <th>Meeting Status</th>
@@ -274,13 +280,14 @@
 
 
                                                 </tr>
+
                                                 <tr>
                                                     <td class="text-left pl15">
-                                                        <p><strong>Name:</strong> Lakshmi Tejasri</p>
-                                                        <p><strong>HR:</strong> Lakshmi Tejasri</p>
-                                                    </td>
+                                                        <p> Lakshmi Tejasri</p>
 
-                                                    <td>
+                                                    </td>
+                                                    <td class="text-left" style="width:20%">prasad_srinivas@risebird.io</td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -347,7 +354,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -389,7 +396,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -435,7 +442,7 @@
 
                                                     <td>
 
-                                                        <p><strong>Selected</strong></p>
+                                                        <p class="select"><strong>Selected</strong></p>
 
 
                                                     </td>
@@ -453,11 +460,11 @@
 
                                                 <tr>
                                                     <td class="text-left pl15">
-                                                        <p><strong>Name: </strong>Omkar Patil </p>
-                                                        <p><strong>HR: </strong> Lakshmi Tejasri</p>
-                                                    </td>
+                                                        <p>Omkar Patil </p>
 
-                                                    <td>
+                                                    </td>
+                                                    <td class="text-left" style="width:20%">prasad_srinivas@risebird.io</td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -511,7 +518,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -553,7 +560,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
                                                             <div class="circle noshow" id="circle0" style="left: 0%;">
@@ -612,13 +619,14 @@
 
                                                         <div class="timeline-section-tl" style="background:none;">
                                                             <div class="tl-round round1" style="background-color:#35353599;"></div>
+                                                            </div>
                                                     </td>
 
                                                     <td>
 
 
 
-                                                        <p><strong>Rejected</strong></p>
+                                                        <p class="reject"><strong>Rejected</strong></p>
 
 
                                                     </td>
@@ -637,11 +645,11 @@
 
                                                 <tr>
                                                     <td class="text-left pl15">
-                                                        <p><strong>Name: </strong>Ashok Mannepalli  </p>
-                                                        <p><strong>HR:</strong> Lakshmi Tejasri</p>
-                                                    </td>
+                                                        <p>Ashok Mannepalli  </p>
 
-                                                    <td>
+                                                    </td>
+                                                    <td class="text-left" style="width:20%">prasad_srinivas@risebird.io</td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -695,7 +703,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -737,7 +745,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
                                                             <div class="circle noshow" id="circle0" style="left: 0%;">
@@ -802,7 +810,7 @@
 
 
 
-                                                        <p><strong>Rejected</strong></p>
+                                                        <p class="reject"><strong>Rejected</strong></p>
 
 
                                                     </td>
@@ -819,14 +827,13 @@
                                                 </tr>
 
 
-
                                                 <tr>
                                                     <td class="text-left pl15">
-                                                        <p><strong>Name:</strong> Lakshmi Tejasri</p>
-                                                        <p><strong>HR:</strong> Lakshmi Tejasri</p>
-                                                    </td>
+                                                        <p> Lakshmi Tejasri</p>
 
-                                                    <td>
+                                                    </td>
+                                                    <td class="text-left" style="width:20%">prasad_srinivas@risebird.io</td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -893,7 +900,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                                    <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -935,7 +942,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                                        <td style="padding:10px 0px;">
                                                         <div class="timeline-section-tl">
                                                             <div class="tl-round round1" style="background-color: #35353599;"></div>
 
@@ -988,7 +995,7 @@
                                                     </td>
 
                                                     <td>
-                                                        <p><strong>Selected</strong></p>
+                                                        <p class="select"><strong>Selected</strong></p>
 
                                                     </td>
                                                     <td>Not Available</td>
@@ -1018,43 +1025,6 @@
             </div>
         </div>
 
-        <div id="myCallModal" class="modal modal-wrap modal-bg">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-
-
-
-
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <span class="publicsharing-icon">
-
-
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
-                            </span>
-                        </div>
-                        <h5 class="modal-title pull-left"> Call Candidate !</h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
-                    </button>
-
-
-
-
-                    <div class="modal-body">
-
-                        <h5 class="modal-title text-center mt-20" id="callingLabel"></h5>
-
-                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
-    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
+        
     </div>
 </div>
