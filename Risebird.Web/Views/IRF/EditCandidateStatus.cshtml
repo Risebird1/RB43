@@ -30,13 +30,14 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
+    <div style="height:20px;"></div>
+    <div class="content client">
 
-        <div class="row">
+        <div class="bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/IRF/EditCandidateStatus" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
@@ -84,7 +85,8 @@
                                     {
                                         <div class="col-md-6 col-sm-6">
                                             <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label"> Uploaded Audio
+                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">
+                                                    Uploaded Audio
                                                 </label>
 
                                                 <a href='@Model.AudioFileLink' asp-append-version="true" download style="margin-left:20px">
@@ -95,44 +97,44 @@
                                         </div>
                                     }
 
-                                <div class="col-md-6 col-sm-6">
-                                    <div class="form-group" id="descDrop">
-                                        @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        <select class="select-css form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<CandidateStatusOptions>()" ></select>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group" id="descDrop">
+                                            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            <select class="select-css form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<CandidateStatusOptions>()"></select>
 
 
-                                    </div>
-                                </div>
-
-                                    
-
-
-                                </div>
-
-
-
-
-                                    @Html.HiddenFor(m => m.IRFId)
-                                    @Html.HiddenFor(m => m.CandidateId)
-                                    @Html.HiddenFor(m => m.IRFName)
-                                    @Html.HiddenFor(m => m.CandidateName)
-                                    @Html.HiddenFor(m => m.id)
-
-                                    <div class="card-footer ">
-                                        <div class="row">
-
-                                            <div class="col-md-12 mc-button-area">
-
-                                                @Html.ActionLink("Back to List", "CandidateStatusList", "IRF", new { irfId = Model.IRFId, candidateId = Model.CandidateId, irfName = Model.IRFName, candidateName = Model.CandidateName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-
-                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnSubmit" value="Save">Save</button>
-
-
-                                            </div>
                                         </div>
                                     </div>
 
+
+
+
                                 </div>
+
+
+
+
+                                @Html.HiddenFor(m => m.IRFId)
+                                @Html.HiddenFor(m => m.CandidateId)
+                                @Html.HiddenFor(m => m.IRFName)
+                                @Html.HiddenFor(m => m.CandidateName)
+                                @Html.HiddenFor(m => m.id)
+
+                                <div class="card-footer ">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area text-right">
+
+                                            @Html.ActionLink("Back to List", "CandidateStatusList", "IRF", new { irfId = Model.IRFId, candidateId = Model.CandidateId, irfName = Model.IRFName, candidateName = Model.CandidateName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnSubmit" value="Save">Save</button>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </form>
 
 
