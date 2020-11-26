@@ -30,7 +30,8 @@ Create PROCEDURE [dbo].[usp_AddCandidate]
 @EncodedResumeLink varchar(500),
 @Heuristicsscore int,
 @AvailableFullTime  bit,
-@AvailableFreeLancing bit
+@AvailableFreeLancing bit,
+@ClientHRAttemptContact varchar(100)
   
 AS  
 Begin  
@@ -87,7 +88,8 @@ insert into Candidate
 [EncodedResumeLink],
 [Heuristicsscore],
 [AvailableFullTime],
-[AvailableFreeLancing]
+[AvailableFreeLancing],
+[ClientHRAttemptContact]
 )  
 values(@IRFId,  
 @ResumeLink,  
@@ -108,7 +110,8 @@ values(@IRFId,
 @EncodedResumeLink,
 @Heuristicsscore,
 @AvailableFullTime,
-@AvailableFreeLancing
+@AvailableFreeLancing,
+@ClientHRAttemptContact
 )  
   
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))  
@@ -149,7 +152,8 @@ insert into Candidate
 [EncodedResumeLink],
 [Heuristicsscore],
 [AvailableFullTime],
-[AvailableFreeLancing]
+[AvailableFreeLancing],
+[ClientHRAttemptContact]
 )  
 values(@IRFId,  
 @ResumeLink,  
@@ -170,7 +174,8 @@ values(@IRFId,
 @EncodedResumeLink,
 @Heuristicsscore,
 @AvailableFullTime,
-@AvailableFreeLancing)  
+@AvailableFreeLancing,
+@ClientHRAttemptContact)  
   
   
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))  
@@ -178,6 +183,10 @@ insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id 
 End  
   
 END
+
+
+
+
 
 
 
