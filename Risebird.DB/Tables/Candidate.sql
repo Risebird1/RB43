@@ -37,7 +37,7 @@ CREATE TABLE [dbo].[Candidate](
     [Heuristicsscore] int NULL,
     [AvailableFullTime] [bit] NULL,
 	[AvailableFreeLancing] [bit] NULL,
-    [ClientHRContact] [varchar](100) NULL,
+    [ClientHRAttemptContact] [varchar](100) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -338,11 +338,11 @@ END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'ClientHRContact')
+    WHERE Name IN (N'ClientHRAttemptContact')
       AND Object_ID = Object_ID(N'Candidate'))
 BEGIN
     ALTER TABLE Candidate
-    Add [ClientHRContact] VARCHAR(100)
+    Add [ClientHRAttemptContact] VARCHAR(100)
 END
 
 End
