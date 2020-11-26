@@ -11,8 +11,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-  
-Create PROCEDURE [dbo].[usp_AddIRFDetails]    
+ Create PROCEDURE [dbo].[usp_AddIRFDetails]    
     
 @IRFId nvarchar(200),    
 @clientName varchar(200),    
@@ -36,58 +35,66 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @CompanyDetails varchar(1000),   
 @Type varchar(5),
 @Heuristicsscore int,
+@PrimarySkillInvite varchar(100),
 @idIrf int output    
     
 AS    
 Begin    
     
 INSERT INTO [dbo].[IRF]    
-           ([IRFId]    
-           ,[clientName]    
-           ,[JDTiltle]    
-           ,[CompanyType]    
-     ,[ClientId]    
-           ,[JobCountry]    
-           ,[StartDate]    
-           ,[EndDate]               
-           ,[JDLink]    
-           ,[NoOfPosition]    
-           ,[NoOfIntterview]    
-           ,[RisebirdHr]    
-           ,[PerMintuteRate]      
-     ,[JobLevel]    
-     ,[CalendlyLink]    
-     ,[CreatedOn]    
-     ,[IsBiometricEnabled]    
-     ,[TotalBudget]    
-     ,[PriorityLevel]    
-            ,[CompanyDetails]    
-     ,[BussinessType],[Heuristicsscore])    
+			([IRFId]    
+			,[clientName]    
+			,[JDTiltle]    
+			,[CompanyType]    
+			,[ClientId]    
+			,[JobCountry]    
+			,[StartDate]    
+			,[EndDate]               
+			,[JDLink]    
+			,[NoOfPosition]    
+			,[NoOfIntterview]    
+			,[RisebirdHr]    
+			,[PerMintuteRate]      
+			,[JobLevel]    
+			,[CalendlyLink]    
+			,[CreatedOn]    
+			,[IsBiometricEnabled]    
+			,[TotalBudget]    
+			,[PriorityLevel]    
+			,[CompanyDetails]    
+			,[BussinessType]
+			,[Heuristicsscore]
+			,[PrimarySkillInvite])    
        VALUES    
            (@IRFId,    
-@clientName,    
-@JDTiltle,    
-@CompanyType,    
-@ClientId,    
-@JobCountry,    
-@StartDate,    
-@EndDate,    
-@JDLink,    
-@NoOfPosition,    
-@NoOfIntterview,    
-@RisebirdHr,    
-@PerMintuteRate,    
-@JobLevel,    
-@CalendlyLink,    
-@CreatedOn,    
-@IsBiometricEnabled,    
-@TotalBudget,    
-@PriorityLevel,    
-@CompanyDetails,  
-@Type,
-@Heuristicsscore)    
+			@clientName,    
+			@JDTiltle,    
+			@CompanyType,    
+			@ClientId,    
+			@JobCountry,    
+			@StartDate,    
+			@EndDate,    
+			@JDLink,    
+			@NoOfPosition,    
+			@NoOfIntterview,    
+			@RisebirdHr,    
+			@PerMintuteRate,    
+			@JobLevel,    
+			@CalendlyLink,    
+			@CreatedOn,    
+			@IsBiometricEnabled,    
+			@TotalBudget,    
+			@PriorityLevel,    
+			@CompanyDetails,  
+			@Type,
+			@Heuristicsscore,
+			@PrimarySkillInvite)    
     
 End    
+
+
+  
+  
 
 
   
