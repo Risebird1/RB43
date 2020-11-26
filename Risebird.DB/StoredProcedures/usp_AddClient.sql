@@ -20,8 +20,6 @@ CREATE PROCEDURE [dbo].[usp_AddClient]
 @clientDescr varchar(250),    
 @GST varchar(MAX),    
 @officeAddress varchar(MAX),  
-@Balance int,  
-@PerSuccessRate int,
 @Createdby varchar(200)
     
 AS    
@@ -34,19 +32,14 @@ INSERT INTO [dbo].[Client]
            ([Name]    
            ,[Description]    
      ,[GST]    
-     ,[OfficeAddress],  
-  [Balance],  
-  [PerSuccessRate]  
+     ,[OfficeAddress] 
      )  
        VALUES    
            (@clientName    
      ,@clientDescr    
      ,@GST    
-     ,@officeAddress,  
-  @Balance,  
-  @PerSuccessRate)    
-  Select @Clientid=id from Client where Name=@clientName and Description=@clientDescr
-  Insert Into ClientWallet values(@Clientid,@Userid,@Balance,0,Getdate(),'FirstTime Entry',@Balance)
+     ,@officeAddress)    
+
 End    
     GO
   

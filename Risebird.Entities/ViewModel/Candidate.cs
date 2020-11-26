@@ -102,6 +102,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Available for Freelancing")]
 
         public bool AvailableFreeLancing { get; set; }
+        public int AttemptsCount { get; set; }
+        [Display(Name = "ClientHR Contact")]
+        public string ClientHRAttemptContact { get; set; }
 
     }
 }
