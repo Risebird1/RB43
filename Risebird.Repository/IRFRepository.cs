@@ -2430,7 +2430,6 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "Select InterviewPlanner.*,IRF.CreatedOn as [IRFCreatedOn] from InterviewPlanner inner join [IRF] on InterviewPlanner.IRFId = [IRF].id  where InterviewPlanner.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2584,6 +2583,7 @@ namespace Risebird.Repository
                 parameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 parameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 parameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
+                parameters.Add("@ClientHRContact", obj.ClientHRContact);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2663,7 +2663,7 @@ namespace Risebird.Repository
                             parameters.Add("@Notice", obj.Notice);
                             parameters.Add("@AddedByUserId", userId);
                             parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
-
+                            
                             SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                         }
@@ -2742,6 +2742,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 dynamicParameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 dynamicParameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
+                dynamicParameters.Add("@ClientHRContact", obj.ClientHRContact);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(

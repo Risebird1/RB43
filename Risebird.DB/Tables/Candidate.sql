@@ -37,6 +37,7 @@ CREATE TABLE [dbo].[Candidate](
     [Heuristicsscore] int NULL,
     [AvailableFullTime] [bit] NULL,
 	[AvailableFreeLancing] [bit] NULL,
+    [ClientHRContact] [varchar](100) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -332,6 +333,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add AvailableFreeLancing Bit
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ClientHRContact')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add [ClientHRContact] VARCHAR(100)
 END
 
 End

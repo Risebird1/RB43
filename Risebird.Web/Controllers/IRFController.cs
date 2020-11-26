@@ -2943,7 +2943,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 12].Value = "Current Salary";
                 Sheet.Cells[1, 13].Value = "Expected Salary";
                 Sheet.Cells[1, 14].Value = "Notice";
-
+                
 
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
 
@@ -4382,7 +4382,7 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                if (profileName != "Client")
                 {
                     var model = new CandidateStatus();
                     model.IRFName = rfName;
@@ -4419,7 +4419,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName != "Client")
                     {
                         if (model.AudioFile != null)
                         {
@@ -4570,8 +4570,6 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
                     if ( profileName != "Client")
                     {
                         var result = await _irfService.DeleteCandidateStatus(id);
