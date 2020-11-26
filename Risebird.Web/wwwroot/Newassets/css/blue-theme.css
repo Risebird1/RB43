@@ -421,11 +421,11 @@ textarea::-webkit-scrollbar-thumb {
     background: #1091f9 !important;
 }
 
-input[type="radio"]:checked:before {
+input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     background: #53a5f5 !important;
 }
 
-input[type="radio"]:checked {
+input[type="radio"]:checked, input[type="checkbox"]:checked {
     border-color: #53a5f5 !important;
 }
 
