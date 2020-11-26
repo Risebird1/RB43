@@ -107,13 +107,16 @@
                                                 <td>
                                                     <div class="talk-bubble tri-right border-bubble right-in ">
                                                         <div class="talktext">
-                                                            @if (item.Comments.Length > 18)
+                                                            @if (item.Comments!=null && item.Comments.Length > 18)
                                                             {
 
                                                                 <a href="#" data-tooltip="@item.Comments"><textarea>@item.Comments</textarea></a>
                                                             }
 
-                                                            else {<textarea>@item.Comments</textarea> }
+                                                            else 
+                                                            {
+                                                                <textarea>@item.Comments</textarea> 
+                                                            }
                                                             </div>
                                                     </div>
 

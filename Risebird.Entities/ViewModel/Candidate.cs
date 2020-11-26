@@ -104,7 +104,7 @@ namespace Risebird.Entities.ViewModel
         public bool AvailableFreeLancing { get; set; }
         public int AttemptsCount { get; set; }
         [Display(Name = "ClientHR Contact")]
-        public string ClientHRContact { get; set; }
+        public string ClientHRAttemptContact { get; set; }
 
     }
 }
