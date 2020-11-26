@@ -461,6 +461,7 @@ namespace Risebird.Business
                 model.PriorityLevel = IRF.PriorityLevel;
                 model.Heuristicsscore = IRF.Heuristicsscore;
                 model.Type = IRF.BussinessType;
+                model.PrimarySkillInvite = IRF.PrimarySkillInvite;
                 var skillCount = transTechSkills.Count();
                 return model;
 
@@ -822,7 +823,9 @@ namespace Risebird.Business
                     var jdLink = irf.JDLink;
                     var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
-                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], calendlyLink, email);
+                    string primarySkill = string.Empty;
+                    primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name);
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
@@ -1340,6 +1343,77 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+
+        public async Task<bool> AddCandidateStatus(CandidateStatus model)
+        {
+            try
+            {
+                return await _irfRepository.AddCandidateStatus(model);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId)
+        {
+            try
+            {
+                return await _irfRepository.GetCandidatesStatusList(irfId, candidateId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+
+        public async Task<CandidateStatus> GetCandidateStatusById(int id)
+        {
+            try
+            {
+                return await _irfRepository.GetCandidateStatusById(id);
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> EditCandidateStatus(CandidateStatus model)
+        {
+            try
+            {
+                return await _irfRepository.EditCandidateStatus(model);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteCandidateStatus(int id)
+        {
+            try
+            {
+                return await _irfRepository.DeleteCandidateStatus(id);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }
