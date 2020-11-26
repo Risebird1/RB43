@@ -81,7 +81,7 @@
                                                 <th>Status</th>
                                                 <th>Comments</th>
                                                 <th>Play</th>
-                                                <th>Actions</th>
+                                                <th class="text-center">Actions</th>
 
                                             </tr>
                                         </thead>
@@ -92,7 +92,7 @@
                                                 <th>Status</th>
                                                 <th>Comments</th>
                                                 <th>Play</th>
-                                                <th>Actions</th>
+                                                <th class="text-center">Actions</th>
 
                                             </tr>
                                         </tfoot>
@@ -104,7 +104,20 @@
                                                 <td> @item.Date</td>
                                                 <td> @item.StatusValue</td>
 
-                                                <td> @item.Comments</td>
+                                                <td>
+                                                    <div class="talk-bubble tri-right border-bubble right-in ">
+                                                        <div class="talktext">
+                                                            @if (item.Comments.Length > 18)
+                                                            {
+
+                                                                <a href="#" data-tooltip="@item.Comments"><textarea>@item.Comments</textarea></a>
+                                                            }
+
+                                                            else {<textarea>@item.Comments</textarea> }
+                                                            </div>
+                                                    </div>
+
+                                                </td>
 
                                                 @if (item.AudioFileLink != null && item.AudioFileLink != "")
                                                 {
@@ -120,7 +133,7 @@
 
 
 
-                                            <td class="text-right action">
+                                            <td class="text-center action">
 
                                                 @if (ViewBag.Profile != "Client")
                                                 {

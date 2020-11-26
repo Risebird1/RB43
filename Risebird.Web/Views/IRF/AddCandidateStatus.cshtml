@@ -30,13 +30,14 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
+    <div style="height:20px;"></div>
+    <div class="content client">
 
-        <div class="row">
+        <div class="bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/IRF/AddCandidateStatus" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
@@ -75,18 +76,19 @@
                                             @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.Comments, new { @class = "form-control text-box single-line", @style = " height:45px" })
                                         </div>
-                                        
+
                                     </div>
 
                                 </div>
                                 <div class="row">
-                                    <div class="form-group" id="descDrop">
-                                        @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        <select class="select-css form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<CandidateStatusOptions>()" style="margin-top: 10px; height: 45px; margin-left:15px"></select>
-
+                                    <div class="col-md-12">
+                                        <div class="form-group " id="descDrop">
+                                            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label  desp-label" })
+                                            <select class="select-css form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<CandidateStatusOptions>()" style="margin-top: 10px; height: 45px;"></select>
+                                        </div>
 
                                     </div>
-                                    
+
 
                                 </div>
 
@@ -98,10 +100,10 @@
                                 @Html.HiddenFor(m => m.IRFName)
                                 @Html.HiddenFor(m => m.CandidateName)
 
-                                <div class="card-footer ">
+                                <div class="card-footer">
                                     <div class="row">
 
-                                        <div class="col-md-12 mc-button-area">
+                                        <div class="col-md-12 mc-button-area text-right">
 
                                             @Html.ActionLink("Back to List", "CandidateStatusList", "IRF", new { irfId = Model.IRFId, candidateId = Model.CandidateId, irfName = Model.IRFName, candidateName = Model.CandidateName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
 
@@ -114,7 +116,7 @@
 
                             </div>
                         </form>
-                       
+
 
 
 
