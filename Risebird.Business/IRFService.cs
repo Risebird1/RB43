@@ -461,6 +461,7 @@ namespace Risebird.Business
                 model.PriorityLevel = IRF.PriorityLevel;
                 model.Heuristicsscore = IRF.Heuristicsscore;
                 model.Type = IRF.BussinessType;
+                model.PrimarySkillInvite = IRF.PrimarySkillInvite;
                 var skillCount = transTechSkills.Count();
                 return model;
 
@@ -822,7 +823,9 @@ namespace Risebird.Business
                     var jdLink = irf.JDLink;
                     var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
-                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], calendlyLink, email);
+                    string primarySkill = string.Empty;
+                    primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name);
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));

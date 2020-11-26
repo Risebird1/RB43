@@ -2235,6 +2235,7 @@ namespace Risebird.Repository
             parameters.Add("@CompanyDetails", entity.CompanyDetails);
             parameters.Add("@Type", entity.Type);
             parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
+            parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;

@@ -119,6 +119,8 @@ namespace Risebird.Entities.ViewModel
         public SelectList PriorityLevelList { get; set; }
         public List<InterviewerIds> InterviewerIds { get; set; }
         public string Type { get; set; }
+        [DisplayName("Primary Skill")]
+        public string PrimarySkillInvite { get; set; }
 
     }
     public class InterviewerIds
@@ -197,5 +199,7 @@ namespace Risebird.Entities.ViewModel
         public int idProgress { get; set; }
         public string Comment { get; set; }
         public string BussinessType { get; set; }
+        public string PrimarySkillInvite { get; set; }
+
     }
 }
