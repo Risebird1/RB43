@@ -86,6 +86,7 @@
 
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>Attempts Count</th>
                                                 <th>Resume</th>
                                                 <th>Coded Resume</th>
                                                 <th>Invite Sent</th>
@@ -93,7 +94,7 @@
                                                 <th>Joinability Score</th>
                                                 <th>Selectability Score</th>
                                                 <th>Client HR</th>
-                                                <th>Attempts Count</th>
+                                               
                                                 <th> Actions </th>
                                                 <th style="text-align:center">Call</th>
                                                 <th>Type</th>
@@ -124,6 +125,7 @@
 
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>Attempts Count</th>
                                                 <th>Resume</th>
                                                 <th>Coded Resume</th>
                                                 <th>Invite Sent</th>
@@ -131,7 +133,7 @@
                                                 <th>Joinability Score</th>
                                                 <th>Selectability Score</th>
                                                 <th>Client HR</th>
-                                                <th>Attempts Count</th>
+                                               
                                                 <th> Actions </th>
                                                 <th style="text-align:center">Call</th>
                                                 <th>Type</th>
@@ -190,6 +192,7 @@
 
                                                 <td> @item.Name</td>
                                                 <td> @item.EmailId</td>
+                                                <td>@item.AttemptsCount</td>
                                                 @if (item.ResumeLink != null && item.ResumeLink != "")
                                                 {
                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
@@ -224,7 +227,7 @@
                                                 {
                                                     <td></td>
                                                 }
-                                                <td>@item.AttemptsCount</td>
+                                              
                                                 <td class="text-right action">
 
                                                     @if (ViewBag.Profile != "Recruiter")
