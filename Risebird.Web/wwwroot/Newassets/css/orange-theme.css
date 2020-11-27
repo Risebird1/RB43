@@ -178,13 +178,20 @@ input[type='radio']:checked:after {
 }
 .can-details a, .callatag {
     color: #ea6e24 !important;
+    background: #f1e5e1;
 }
 
     .can-details a:hover,
     .can-details a:focus {
         color: #ea6e24 !important;
     }
-
+#codedresumeId {
+    border: 1px #fdcfc1 solid;
+    color: #584d4d;
+    padding: 5px 10px;
+    border-radius: 16px;
+    background: #fdcfc1;
+}
 .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
     background: #ea6e24 !important;
 }
