@@ -4437,7 +4437,7 @@ namespace Risebird.Web.Controllers
 
                 int i = 2;
                 //string LastAction = null; ;
-                meetings = meetings.OrderBy(x => x.interviewDate).ToList();
+                meetings = meetings.OrderByDescending(x => x.interviewDate).ToList();
                 if (meetings.Count() > 0)
                 {
                     foreach (var item in meetings)
@@ -4451,8 +4451,7 @@ namespace Risebird.Web.Controllers
 
                         Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
 
-
-                        if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                        if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
                             Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
                         }
@@ -4460,7 +4459,8 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 8].Value = "";
                         }
-                        if (!string.IsNullOrEmpty(item.VideoLink) && (item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+
+                        if (!string.IsNullOrEmpty(item.VideoLink) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         {
                             try
                             {
@@ -4478,7 +4478,18 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 9].Value = "No Video";
                         }
-                        Sheet.Cells[i, 10].Value = item.InterviewerComment;
+
+                        if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                        {
+                            Sheet.Cells[i, 10].Value = item.InterviewerComment;
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 10].Value = "";
+                        }
+
+
+                        //Sheet.Cells[i, 10].Value = item.InterviewerComment;
                         //if ((item.InterviewStatus != 4 || item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                         //{
                         //    Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
