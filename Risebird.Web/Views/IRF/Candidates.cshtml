@@ -86,14 +86,15 @@
 
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>RB Attempts Count</th>
                                                 <th>Resume</th>
                                                 <th>Coded Resume</th>
                                                 <th>Invite Sent</th>
                                                 <th>Invite Confirmation</th>
+
+                                                <th>Client HR</th>
                                                 <th>Joinability Score</th>
                                                 <th>Selectability Score</th>
-                                                <th>Client HR</th>
-                                                <th>Attempts Count</th>
                                                 <th> Actions </th>
                                                 <th style="text-align:center">Call</th>
                                                 <th>Type</th>
@@ -124,14 +125,15 @@
 
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>RB Attempts Count</th>
                                                 <th>Resume</th>
                                                 <th>Coded Resume</th>
                                                 <th>Invite Sent</th>
                                                 <th>Invite Confirmation</th>
+
+                                                <th>Client HR</th>
                                                 <th>Joinability Score</th>
                                                 <th>Selectability Score</th>
-                                                <th>Client HR</th>
-                                                <th>Attempts Count</th>
                                                 <th> Actions </th>
                                                 <th style="text-align:center">Call</th>
                                                 <th>Type</th>
@@ -190,6 +192,7 @@
 
                                                 <td> @item.Name</td>
                                                 <td> @item.EmailId</td>
+                                                <td  class="text-center">@item.AttemptsCount</td>
                                                 @if (item.ResumeLink != null && item.ResumeLink != "")
                                                 {
                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
@@ -207,7 +210,16 @@
                                                     <td>No Coded Resume</td>
                                                 }
                                                 <td class="text-center">@item.TotalInvites</td>
-                                                <td class="text-center">@item.InviteConfirmation</td>
+                                            <td class="text-center">@item.InviteConfirmation</td>
+                                            @if (item.ClientHRAttemptContact != null)
+                                            {
+                                                <td  class="text-center">@item.ClientHRAttemptContact</td>
+
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
                                                 <td class="text-center" style="color:@joinabilityColor;">
                                                     <b>@item.JoinabilityScore</b>
                                                 </td>
@@ -215,16 +227,8 @@
                                                     <b>@item.SelectabilityScore</b>
                                                 </td>
 
-                                                @if (item.ClientHRAttemptContact != null)
-                                                {
-                                                    <td>@item.ClientHRAttemptContact</td>
-
-                                                }
-                                                else
-                                                {
-                                                    <td></td>
-                                                }
-                                                <td>@item.AttemptsCount</td>
+                                               
+                                              
                                                 <td class="text-right action">
 
                                                     @if (ViewBag.Profile != "Recruiter")
