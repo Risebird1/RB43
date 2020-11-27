@@ -222,12 +222,13 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName)
+        public string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail)
         {
             try
             {
                 var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
+                //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
+                mailMessage.From = new MailAddress(clientHREmail, "Interview Invite");
                 mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
 
                 foreach (var clientUser in clientUsers)
@@ -236,7 +237,7 @@ namespace Risebird.CommonHelper
                 }
 
                 object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
-                mailMessage.Subject = ClientName + " Video Interview " + primarySkill;
+                mailMessage.Subject = ClientName + " - Video Interview - " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
