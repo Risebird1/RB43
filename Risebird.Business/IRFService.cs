@@ -825,7 +825,7 @@ namespace Risebird.Business
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
-                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name);
+                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
