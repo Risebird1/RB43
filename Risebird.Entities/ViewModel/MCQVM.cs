@@ -37,6 +37,10 @@ namespace Risebird.Entities.ViewModel
         public int ProfileType { get; set; }
         public string ProfileTypeName { get; set; }
         public string PrimarySkills { get; set; }
+        public string SecondarySkill { get; set; }
+        public int CompentencyLevel { get; set; }
+        public string CompentencyLevelName { get; set; }
+
     }
     public class QuestionList
     {
