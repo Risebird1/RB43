@@ -373,42 +373,29 @@ namespace Risebird.Web.Controllers
                 item.QuestionId = item.PartitionKey;
             }
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(model));
-            var result = model.Where(x => x.QuestionNumber == 1).FirstOrDefault();
-            if (model.Count() == 1)
-            {
-                result.final = "true";
-            }
             QuestionDetailsList modelset = new QuestionDetailsList();
-            var _questionlist = (from _Q in model
-                                 select new QuestionList
-                                 {
-                                     QuestionNumber = _Q.QuestionNumber,
-                                     QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
-                                 }).ToList();
-            modelset._question = result;
-            modelset._questionlist = _questionlist;
             modelset._timmerdetails = questionstimmer.Where(x => x.PartitionKey == Id).FirstOrDefault();
             modelset._timmerdetails.Timer = (Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
             return View(modelset);
         }
+
         [HttpPost]
-        public async Task<IActionResult> CandidateQuestions(QuestionDetailsList modelset)
+        public async Task<JsonResult> CandidateQuestionsD(bool Option1, bool Option2, bool Option3, bool Option4, string SingleAnswer, int QuestionNumber, string final, string QuestionType)
         {
-            var model = modelset._question;
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
             var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
             HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
-            foreach (var item in resultset.Where(x => x.QuestionNumber == model.QuestionNumber))
+            foreach (var item in resultset.Where(x => x.QuestionNumber == QuestionNumber))
             {
-                item.MultiAnswerOption1 = model.MultiAnswerOption1;
-                item.MultiAnswerOption2 = model.MultiAnswerOption2;
-                item.MultiAnswerOption3 = model.MultiAnswerOption3;
-                item.MultiAnswerOption4 = model.MultiAnswerOption4;
-                item.SingleAnswer = model.SingleAnswer;
-                if (model.QuestionType == "Single")
+                item.MultiAnswerOption1 = Option1;
+                item.MultiAnswerOption2 = Option2;
+                item.MultiAnswerOption3 = Option3;
+                item.MultiAnswerOption4 = Option4;
+                item.SingleAnswer = SingleAnswer;
+                if (QuestionType == "Single")
                 {
-                    item.QuestionAnswer = model.SingleAnswer;
-                    if (model.SingleAnswer.ToUpper() == item.Answer.ToUpper())
+                    item.QuestionAnswer = SingleAnswer;
+                    if (SingleAnswer.ToUpper() == item.Answer.ToUpper())
                     {
                         item.Rating = 1;
                     }
@@ -416,7 +403,7 @@ namespace Risebird.Web.Controllers
                 else
                 {
                     var flag = true;
-                    if (model.MultiAnswerOption1 == true)
+                    if (Option1 == true)
                     {
                         item.QuestionAnswer = "1";
                         if (!item.Answer.ToUpper().Contains("1"))
@@ -424,7 +411,7 @@ namespace Risebird.Web.Controllers
                             flag = false;
                         }
                     }
-                    if (model.MultiAnswerOption2 == true)
+                    if (Option2 == true)
                     {
                         if (String.IsNullOrEmpty(item.QuestionAnswer))
                             item.QuestionAnswer = "2";
@@ -435,7 +422,7 @@ namespace Risebird.Web.Controllers
                             flag = false;
                         }
                     }
-                    if (model.MultiAnswerOption3 == true)
+                    if (Option3 == true)
                     {
                         if (String.IsNullOrEmpty(item.QuestionAnswer))
                             item.QuestionAnswer = "3";
@@ -446,7 +433,7 @@ namespace Risebird.Web.Controllers
                             flag = false;
                         }
                     }
-                    if (model.MultiAnswerOption4 == true)
+                    if (Option4 == true)
                     {
                         if (String.IsNullOrEmpty(item.QuestionAnswer))
                             item.QuestionAnswer = "4";
@@ -457,7 +444,7 @@ namespace Risebird.Web.Controllers
                             flag = false;
                         }
                     }
-                    if (model.MultiAnswerOption1 == false && model.MultiAnswerOption2 == false && model.MultiAnswerOption3 == false && model.MultiAnswerOption4 == false)
+                    if (Option1 == false && Option2 == false && Option3 == false && Option4 == false)
                     {
                         flag = false;
                     }
@@ -472,7 +459,7 @@ namespace Risebird.Web.Controllers
                 }
                 break;
             }
-            if (model.final == "true")
+            if (final == "true")
             {
                 values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
                 var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -517,31 +504,30 @@ namespace Risebird.Web.Controllers
                     Subject = "Candidate " + values.CandidateEmail + " Complete Test for " + values.ApplyingCompany
                 };
                 var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany);
-                return RedirectToAction("TestComplete", new { status = "TestSubmit" });
+                return Json("TestSubmit");
             }
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
-            var questionvalue = model.QuestionNumber + 1;
-            //var result = resultset.Where(x => x.QuestionNumber == questionvalue).FirstOrDefault();
-            //if (resultset.Count() == questionvalue)
-            //{
-            //    result.final = "true";
-            //}
-            //QuestionDetailsList modeldetailset = new QuestionDetailsList();
-            //var _questionlist = (from _Q in resultset
-            //                     select new QuestionList
-            //                     {
-            //                         QuestionNumber = _Q.QuestionNumber,
-            //                         QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
-            //                     }).ToList();
-            //modeldetailset._question = result;
-            //modeldetailset._questionlist = _questionlist;
-            //modeldetailset._timmerdetails = new MCQVMset();
-            //modeldetailset._timmerdetails.Timer = modelset._timmerdetails.Timer;
-            //return View("CandidateQuestionpage", modeldetailset);
-            return RedirectToAction("CandidateSelectQuestions", new { id = questionvalue, presence = modelset._timmerdetails.Timer });
-        }
+            var questionvalue = QuestionNumber + 1;
+            var result = resultset.Where(x => x.QuestionNumber == questionvalue).FirstOrDefault();
+            if (resultset.Count() == questionvalue)
+            {
+                result.final = "true";
+            }
+            QuestionDetailsList modeldetailset = new QuestionDetailsList();
+            var _questionlist = (from _Q in resultset
+                                 select new QuestionList
+                                 {
+                                     QuestionNumber = _Q.QuestionNumber,
+                                     QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
+                                 }).ToList();
+            modeldetailset._question = result;
+            modeldetailset._questionlist = _questionlist;
 
-        public async Task<IActionResult> CandidateSelectQuestions(string id, string presence)
+            return Json(modeldetailset);
+
+        }
+        [HttpPost]
+        public async Task<JsonResult> CandidateSelectQuestionsD(string id)
         {
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
             var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
@@ -563,9 +549,7 @@ namespace Risebird.Web.Controllers
                                  }).ToList();
             modeldetailset._question = result;
             modeldetailset._questionlist = _questionlist;
-            modeldetailset._timmerdetails = new MCQVMset();
-            modeldetailset._timmerdetails.Timer = presence;
-            return View("CandidateQuestionpage", modeldetailset);
+            return Json(modeldetailset);
         }
         public IActionResult TestComplete(string status)
         {
