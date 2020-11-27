@@ -1071,7 +1071,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany)
+        public string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany,int score)
         {
             try
             {
@@ -1082,7 +1082,12 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
-                object[] parameters = new object[] { CandidateEmail, ApplyingCompany };
+                var ccMails = model.CC.Split(";");
+                foreach (var mails in ccMails)
+                {
+                    mailMessage.CC.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { CandidateEmail, ApplyingCompany, score };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateCompleteTest.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -1112,8 +1117,8 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.CC.Add(new MailAddress(email, null));
                 }
-                
-                object[] parameters = new object[] {interviewDate, candidateEmail, primarySkill, interviewStatus };
+
+                object[] parameters = new object[] { interviewDate, candidateEmail, primarySkill, interviewStatus };
                 mailMessage.Subject = "Candidate selected!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCPassedNotificationTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);

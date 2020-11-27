@@ -25,7 +25,7 @@
                 <div id='tiles'></div>
                 <div class="labels">
 
-                    @*<input id="ztimmerdetails_Timer" name="_timmerdetails.Timer" value="@Model._timmerdetails.Timer" type="hidden" />*@
+                    <input id="ztimmerdetails_Timer" name="_timmerdetails.Timer" value="@Model._timmerdetails.Timer" type="hidden" />
                     <li>Hours</li>
                     <li>Mins</li>
                     <li>Secs</li>
@@ -36,79 +36,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <div class="callno ">
-                    <div class="sb-container ">
-                        <input type="hidden" id="textcallno" value="@Model._questionlist.Count()" />
-                        @foreach (var item in Model._questionlist)
-                        {
-                            @if (item.QuestionAnswered == true)
-                            {
-                                <div class="callbox" style="background-color: #ff5800; color: #fff;" onclick="QuestionSelect(@item.QuestionNumber)">@item.QuestionNumber</div> @*Answered*@
-                            }
-                            else
-                            {
-                                <div class="callbox" style="background-color:white" onclick="QuestionSelect(@item.QuestionNumber)">@item.QuestionNumber</div> @*Unanswered*@
-                            }
-                        }
-                    </div>
-                </div>
-                <div class="mobpad" style="float:left;width:100%">
-
-                    @using (Html.BeginForm("CandidateQuestions", "MCQ", FormMethod.Post, new { currentpage = Model._question.QuestionNumber }))
-                    {<div class="callouts">
-                            <div>
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                <input id="zquestion_QuestionType" name="_question.QuestionType" value="@Model._question.QuestionType" type="hidden" />
-                                <div>
-
-                                    <!--button: END-->
-
-
-
-                                    <div>   <span style="color: #ff5800; font-weight: 600; font-size: 2.3rem; margin: 0 5px 0px 0px;"> @Model._question.QuestionNumber.</span>  <span class="man"> @Model._question.Question</span></div>
-
-
-
-                                    <input id="zquestion_QuestionNumber" name="_question.QuestionNumber" value="@Model._question.QuestionNumber" type="hidden" />
-                                    <div>
-                                        @if (Model._question.QuestionType == "Multiple")
-                                        {
-                                            <p class="calloption">@Html.CheckBoxFor(m => m._question.MultiAnswerOption1, "1") @Model._question.Option1</p>
-                                            <p class="calloption">@Html.CheckBoxFor(m => m._question.MultiAnswerOption2, "2") @Model._question.Option2</p>
-                                            <p class="calloption">@Html.CheckBoxFor(m => m._question.MultiAnswerOption3, "3") @Model._question.Option3</p>
-                                            <p class="calloption">@Html.CheckBoxFor(m => m._question.MultiAnswerOption4, "4") @Model._question.Option4</p>
-                                        }
-                                        else
-                                        {
-                                            <p class="calloption">@Html.RadioButtonFor(Model => Model._question.SingleAnswer, "1") @Model._question.Option1</p>
-                                            <p class="calloption">@Html.RadioButtonFor(Model => Model._question.SingleAnswer, "2") @Model._question.Option2</p>
-                                            <p class="calloption">@Html.RadioButtonFor(Model => Model._question.SingleAnswer, "3") @Model._question.Option3</p>
-                                            <p class="calloption">@Html.RadioButtonFor(Model => Model._question.SingleAnswer, "4") @Model._question.Option4</p>
-                                        }
-                                    </div>
-                                </div>
-                                <input id="zquestion_final" name="_question.final" value="@Model._question.final" type="hidden" />
-                                <input id="ztimmerdetails_Timer" name="_timmerdetails.Timer" value="@Model._timmerdetails.Timer" type="hidden" />
-                            </div>
-
-                        </div>
-                        <div>
-                            @if (Model._question.final == "true")
-                            {
-                                <input type="submit" value="Submit" class="callsubmit" id="btnsubmit" />
-                            }
-                            else
-                            {
-                                <input type="submit" value="NEXT" class="callsubmit" id="btnsubmit" />
-                            }
-                        </div>
-                    }
-
-                </div>
-
-
-
+            <div class="col-md-8 offset-md-2" id="divMCQSetdetails">
 
                 <div>
                 </div>
@@ -161,11 +89,186 @@
 
 <script type="text/javascript">
     function QuestionSelect(questionnumber) {
-        var timew = $("#ztimmerdetails_Timer").val();
-        window.location.href = "/MCQ/CandidateSelectQuestions/" + questionnumber + "?presence=" + timew;
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/CandidateSelectQuestionsD",
+            data: { id: questionnumber },
+            success: function (data) {
+                if (data == "TestSubmit") {
+                    window.location.href = "/MCQ/TestComplete?status=" + data;
+                } else {
+                    binddata(data);
+                }
+            }
+        });
     }
 
 
     if (parseInt($("#textcallno").val()) > 20)
         $(".sb-container").scrollBox();
+</script>
+<script>
+    $(document).ready(function () {
+        document.addEventListener('click', () => {
+            document.documentElement.requestFullscreen();
+        })
+
+
+        //if (document.documentElement.requestFullscreen) {
+        //    document.documentElement.requestFullscreen();
+        //} else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+        //    document.documentElement.webkitRequestFullscreen();
+        //} else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+        //    document.documentElement.msRequestFullscreen();
+        //}
+        InitialLoad();
+
+    });
+    function InitialLoad() {
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/CandidateSelectQuestionsD",
+            data: { id: "1" },
+            success: function (data) {
+                if (data == "TestSubmit") {
+                    window.location.href = "/MCQ/TestComplete?status=" + data;
+                } else {
+                    binddata(data);
+                }
+            }
+        });
+    }
+    function FetchQuestion() {
+        var Singleanswer = "";
+        var option1 = false;
+        var option2 = false;
+        var option3 = false;
+        var option4 = false;
+        if ($("#zquestion_QuestionType").val() == "Single") {
+            if (document.getElementById("SingleAnswer1").checked) {
+                Singleanswer = "1";
+            } else if (document.getElementById("SingleAnswer2").checked) {
+                Singleanswer = "2";
+            } else if (document.getElementById("SingleAnswer3").checked) {
+                Singleanswer = "3";
+            } else if (document.getElementById("SingleAnswer4").checked) {
+                Singleanswer = "4";
+            }
+        } else {
+            if ($("#MultiAnswerOption1").is(':checked')) {
+                option1 = true;
+            }
+            if ($("#MultiAnswerOption2").is(':checked')) {
+                option2 = true;
+            }
+            if ($("#MultiAnswerOption3").is(':checked')) {
+                option3 = true;
+            }
+            if ($("#MultiAnswerOption4").is(':checked')) {
+                option4 = true;
+            }
+        }
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/CandidateQuestionsD",
+            data: { Option1: option1, Option2: option2, Option3: option3, Option4: option4, SingleAnswer: Singleanswer, QuestionNumber: $("#zquestion_QuestionNumber").val(), final: $("#zquestion_final").val(), QuestionType: $("#zquestion_QuestionType").val() },
+            success: function (data) {
+                if (data == "TestSubmit") {
+                    window.location.href = "/MCQ/TestComplete?status=" + data;
+                } else {
+                    binddata(data);
+                }
+            }
+        });
+    }
+    function binddata(Data) {
+
+        var html = '';
+        html += '<div class="callno">';
+        html += '          <div class="sb-container ">';
+        html += '        <input type="hidden" id="textcallno" value="' + Data._questionlist.length + '" />';
+        for (var i = 0; i < Data._questionlist.length; i++) {
+            if (Data._questionlist[i].questionAnswered == true) {
+                html += '       <div class="callbox" style="background-color: #ff5800; color: #fff;" onclick="QuestionSelect(' + Data._questionlist[i].questionNumber + ')">' + Data._questionlist[i].questionNumber + '</div>';
+            }
+            else {
+                html += ' <div class="callbox" style = "background-color:white" onclick = "QuestionSelect(' + Data._questionlist[i].questionNumber + ')" >' + Data._questionlist[i].questionNumber + '</div> ';
+            }
+        }
+        html += '</div>'; html += '</div>';
+        html += '<div class="mobpad" style="float:left;width:100%">';
+
+        html += '          <div class="callouts">';
+        html += '           <div>';
+        html += '               <input id="zquestion_QuestionType" name="_question.QuestionType" value="' + Data._question.questionType + '" type="hidden" />';
+        html += '               <div>';
+        html += '                   <div>   <span style="color: #ff5800; font-weight: 600; font-size: 2.3rem; margin: 0 5px 0px 0px;"> ' + Data._question.questionNumber + '.</span > <span class="man"> ' + Data._question.question + '</span></div>';
+        html += '               <input id="zquestion_QuestionNumber" name="_question.QuestionNumber" value="' + Data._question.questionNumber + '" type="hidden" />';
+        html += '                   <div>';
+        if (Data._question.questionType == "Multiple") {
+            if (Data._question.multiAnswerOption1 == true) {
+                html += '                           <p class="calloption"><input type="checkbox" id="MultiAnswerOption1" checked />' + Data._question.option1 + '</p>';
+            } else {
+                html += '                           <p class="calloption"><input type="checkbox" id="MultiAnswerOption1" />' + Data._question.option1 + '</p>';
+            }
+            if (Data._question.multiAnswerOption2 == true) {
+                html += '                                     <p class="calloption"><input type="checkbox" id="MultiAnswerOption2" checked /> ' + Data._question.option2 + '</p>';
+
+            } else {
+                html += '                                     <p class="calloption"><input type="checkbox" id="MultiAnswerOption2" /> ' + Data._question.option2 + '</p>';
+            }
+            if (Data._question.multiAnswerOption3 == true) {
+                html += '                           <p class="calloption"><input type="checkbox" id="MultiAnswerOption3" checked /> ' + Data._question.option3 + '</p>';
+
+            } else {
+                html += '                           <p class="calloption"><input type="checkbox" id="MultiAnswerOption3" /> ' + Data._question.option3 + '</p>';
+            }
+            if (Data._question.multiAnswerOption4 == true) {
+                html += '                 <p class="calloption"><input type="checkbox" id="MultiAnswerOption4" checked /> ' + Data._question.option4 + '</p>';
+
+            } else {
+                html += '                 <p class="calloption"><input type="checkbox" id="MultiAnswerOption4" /> ' + Data._question.option4 + '</p>';
+            }
+        }
+        else {
+            if (Data._question.singleAnswer == "1") {
+                html += '       <p class="calloption"><input type="radio" id="SingleAnswer1" name="question.SingleAnswer" value="1" checked="true" />' + Data._question.option1 + '</p>';
+            } else {
+                html += '       <p class="calloption"><input type="radio" id="SingleAnswer1" name="question.SingleAnswer" value="1" />' + Data._question.option1 + '</p>';
+            }
+            if (Data._question.singleAnswer == "2") {
+                html += ' <p class="calloption"><input type="radio" id="SingleAnswer2" name="question.SingleAnswer" value="2" checked="true" />' + Data._question.option2 + '</p>';
+            }
+            else {
+                html += ' <p class="calloption"><input type="radio" id="SingleAnswer2" name="question.SingleAnswer" value="2" />' + Data._question.option2 + '</p>';
+            } if (Data._question.singleAnswer == "3") {
+                html += '     <p class="calloption"><input type="radio" id="SingleAnswer3" name="question.SingleAnswer" value="3" checked="true" />' + Data._question.option3 + '</p>';
+            }
+            else {
+                html += '     <p class="calloption"><input type="radio" id="SingleAnswer3" name="question.SingleAnswer" value="3" />' + Data._question.option3 + '</p>';
+            } if (Data._question.singleAnswer == "4") {
+                html += '    <p class="calloption"><input type="radio" id="SingleAnswer4" name="question.SingleAnswer" value="4" checked="true" /> ' + Data._question.option4 + '</p>';
+            } else {
+                html += '    <p class="calloption"><input type="radio" id="SingleAnswer4" name="question.SingleAnswer" value="4" /> ' + Data._question.option4 + '</p>';
+            }
+        }
+        html += ' </div>';
+        html += '               </div>';
+        html += '               <input id="zquestion_final" name="_question.final" value="' + Data._question.final + '" type="hidden" />';
+        html += '               <input id="ztimmerdetails_Timer" name="_timmerdetails.Timer" value="' + Data._timmerdetails.timer + '" type="hidden" />';
+        html += '           </div>';
+
+        html += '       </div>';
+        html += '       <div>';
+        if (Data._question.final == "true") {
+            html += '               <input type="submit" value="Submit" class="callsubmit" id="btnsubmit" onclick="FetchQuestion()" />';
+        }
+        else {
+            html += '     <input type="submit" value="NEXT" class="callsubmit" id="btnsubmit" onclick="FetchQuestion()" />';
+        }
+        html += ' </div>';
+
+        html += ' </div>';
+        $("#divMCQSetdetails").empty().html(html);
+    }
 </script>
