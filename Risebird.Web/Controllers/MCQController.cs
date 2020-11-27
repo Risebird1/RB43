@@ -542,7 +542,7 @@ namespace Risebird.Web.Controllers
                         HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
                     }
                 }
-                int candidatescore = ((resultset.Sum(x => x.Rating)) / resultset.Count());
+                int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
                 Mail _mail = new Mail
                 {
                     TO = values.ClientHR,
