@@ -111,7 +111,7 @@ namespace Risebird.Business
                 var model = new EvaluatorReport();
                 var levels = _meetingRespository.GetLevels();
 
-                if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (selectabilityReport != null && selectabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     model.IsEdited = true;
                     model.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
@@ -128,8 +128,8 @@ namespace Risebird.Business
                         SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport
                         {
                             CandidateId = candidateId,
-                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levels.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levels.FirstOrDefault(x => x.id == item.LevelId).id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,
@@ -178,7 +178,7 @@ namespace Risebird.Business
                 // check whether a feedback for the interviewId has already been submitted
                 var techReport = (IList<TechSkillEvaluatorReport>)_evaluatorRespository.GetTechReport(candidateId, irfId);
 
-                if (techReport == null || techReport.Count() == 0)
+                if (techReport == null || !techReport.Any())
                 {
                     var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
                     var techSkillList = new List<TechSkillEvaluatorReport>();
@@ -192,10 +192,10 @@ namespace Risebird.Business
                         {
                             CandidateId = candidateId,
                             IRFId = irfId,
-                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
-                            SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name,
-                            SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id,
+                            RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
+                            SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
+                            SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
                             WeightageRequired = item.Weightage
                         };
 
@@ -224,7 +224,7 @@ namespace Risebird.Business
                 // check whether a feedback for the interviewId has already been submitted
                 var skillGeneralReport = (IList<SkillGeneralEvaluatorReport>)_evaluatorRespository.GetSkillGeneralReport(candidateId, irfId);
 
-                if (skillGeneralReport == null || skillGeneralReport.Count() == 0)
+                if (skillGeneralReport == null || !skillGeneralReport.Any())
                 {
                     var genSkillsDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
                     var genSkillList = new List<SkillGeneralEvaluatorReport>();
@@ -237,8 +237,8 @@ namespace Risebird.Business
                         {
                             CandidateId = candidateId,
                             IRFId = irfId,
-                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,
@@ -351,7 +351,7 @@ namespace Risebird.Business
                 var model = new HRReport();
                 var levels = _meetingRespository.GetLevels();
 
-                if (joinabilityReport != null && joinabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (joinabilityReport != null && joinabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     model.IsEdited = true;
                     model.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;
@@ -368,8 +368,8 @@ namespace Risebird.Business
                         JoinabilityHRReport obj = new JoinabilityHRReport
                         {
                             CandidateId = candidateId,
-                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levels.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levels.FirstOrDefault(x => x.id == item.LevelId).id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,
@@ -520,7 +520,7 @@ namespace Risebird.Business
                 string voiceItUserId = string.Empty;
                 string finalStatus = "Successful!";
                 //check if the candidate is a  VoiceIt user already
-                if (candidateList != null && (candidateList.First().VoiceItUserId == null || candidateList.First().VoiceItUserId == ""))
+                if (candidateList != null && string.IsNullOrEmpty(candidateList.First().VoiceItUserId))
                 {
                     //create user
                     var result = _voiceItRepository.CreateUser();

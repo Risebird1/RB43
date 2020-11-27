@@ -13,10 +13,10 @@ namespace Risebird.Business
 {
     public class InterviewerService : IInterviewerService
     {
-        private IInterviewerRepository _interviewerRepository;
-        private IApplicationErrorLogger _applicationErrorLogger;
-        private IUserService _userService;
-        private IMeetingRespository _meetingRespository;
+        private readonly IInterviewerRepository _interviewerRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IUserService _userService;
+        private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
 
         public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
@@ -390,7 +390,7 @@ namespace Risebird.Business
             {
                 var assignedMeeting = _interviewerRepository.GetAssignedInterviewerAssessment(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
-                if (checkDateMeeting.Count() > 0)
+                if (checkDateMeeting.Any())
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
                 }
@@ -453,7 +453,7 @@ namespace Risebird.Business
                     return null;
                 }
                 var interviewReport = _interviewerRepository.GetInterviewerReportById(interviewId, irfId);//need to create table for report
-                if (interviewReport != null && interviewReport.Count() > 0)
+                if (interviewReport != null && interviewReport.Any())
                 {
                     //call Edit Feedbackform method
                     reportModel = interviewReport.FirstOrDefault();
@@ -461,7 +461,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var model = interviewReport.Count() > 0 ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    var model = interviewReport.Any() ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                     //get all values from database
                     var levelTech = _meetingRespository.GetLevelTech();// replacement
@@ -475,10 +475,10 @@ namespace Risebird.Business
                     {
                         TechSkillReport obj = new TechSkillReport();
                         obj.InterviewId = interviewId;
-                        obj.RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                        obj.RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                        obj.SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name;
-                        obj.SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id;
+                        obj.RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name;
+                        obj.RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id;
+                        obj.SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name;
+                        obj.SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id;
                         obj.WeightageRequired = item.Weightage;
 
                         techSkillList.Add(obj);
@@ -557,10 +557,10 @@ namespace Risebird.Business
                 {
                     TechSkillReport obj = new TechSkillReport();
                     obj.InterviewId = model.InterviewId;
-                    obj.RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                    obj.RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                    obj.SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name;
-                    obj.SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id;
+                    obj.RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name;
+                    obj.RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id;
+                    obj.SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name;
+                    obj.SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id;
                     obj.WeightageRequired = item.Weightage;
 
                     techSkillList.Add(obj);
