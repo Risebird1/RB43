@@ -2235,6 +2235,7 @@ namespace Risebird.Repository
             parameters.Add("@CompanyDetails", entity.CompanyDetails);
             parameters.Add("@Type", entity.Type);
             parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
+            parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
@@ -2583,7 +2584,7 @@ namespace Risebird.Repository
                 parameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 parameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 parameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
-                parameters.Add("@ClientHRContact", obj.ClientHRContact);
+                parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2742,7 +2743,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 dynamicParameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 dynamicParameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
-                dynamicParameters.Add("@ClientHRContact", obj.ClientHRContact);
+                dynamicParameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(

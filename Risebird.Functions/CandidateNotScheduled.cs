@@ -23,7 +23,7 @@ namespace Risebird.Functions
     public static class CandidateNotScheduled
     {
         [FunctionName("CandidateNotScheduled")]
-        public static void Run([TimerTrigger("0 0 21 * * *")] TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 21 * * *")] TimerInfo myTimer, TraceWriter log)//  0 0 21 * * *
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -31,7 +31,7 @@ namespace Risebird.Functions
                 var candidates = new List<NotScheduledCandidate>(); // will contain the candidates whose interviews arent scheduled.
                 var unfilteredCandidates = new List<NotScheduledCandidate>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-                var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client, ul.EmailId, Candidate.Phone, Candidate.InviteDate from Candidate join CandidatesMaster cm on Candidate.CandidateMasterId=cm.id join UserList ul on cm.UserId = ul.id join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0 and IRF.IsPaused!= 1";
+                var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client, ul.EmailId, Candidate.Phone, Candidate.InviteDate, irf.PrimarySkillInvite, ul.FirstName as [Name], irf.JDLink from Candidate join CandidatesMaster cm on Candidate.CandidateMasterId=cm.id join UserList ul on cm.UserId = ul.id join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0 and IRF.IsPaused!= 1";
 
                 using (SqlConnection con = new SqlConnection(str))
                 {
@@ -57,14 +57,11 @@ namespace Risebird.Functions
                 }
                 if (candidates != null && candidates.Count() != 0)
                 {
-                    var candidateMailList = new List<string>();
-                    candidateMailList = candidates.Select(x => x.EmailId).Distinct().ToList();
-                    foreach (var candidateMail in candidateMailList)
+                   
+                    foreach (var candidate in candidates)
                     {
 
-                        //send mail to each candidate (pass all the irfs for which he has not scheduled any interview despite sending invitation)
-                        var finalList = candidates.Where(x => x.EmailId == candidateMail).ToList();
-                        SendMailToCandidate(candidateMail, finalList);
+                        SendMailToCandidate(candidate);
 
                     }
 
@@ -106,71 +103,36 @@ namespace Risebird.Functions
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 log.Error($"Failed.");
             }
         }
-
-        public static void SendMailToCandidate(string candidateEmail, List<NotScheduledCandidate> irfDetails)
+        public static void SendMailToCandidate(NotScheduledCandidate obj)
         {
             try
             {
                 var mailFrom = "notification@risebird.io";
                 var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                mailMessage.Bcc.Add(new MailAddress(candidateEmail, null));
+                mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
+                mailMessage.To.Add(new MailAddress(obj.EmailId, "Candidate"));
+                string primarySkill = string.Empty;
+                primarySkill = obj.PrimarySkillInvite != null ? obj.PrimarySkillInvite : obj.JDTiltle.Split('|')[0];
 
 
-                DataTable dt = new DataTable();
-                dt.Columns.AddRange(new DataColumn[3] { new DataColumn("Skill Channel", typeof(string)),
-                    new DataColumn("Primary Skill", typeof(string)), new DataColumn("Client", typeof(string)) });
-                foreach (var irf in irfDetails)
-                {
-                    dt.Rows.Add(irf.IRFId, irf.JDTiltle.Split('|')[0], irf.Client);
-                }
-
-                StringBuilder sb = new StringBuilder();
-                //Table start.
-                sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
-
-                //Adding HeaderRow.
-                sb.Append("<tr>");
-                foreach (DataColumn column in dt.Columns)
-                {
-                    sb.Append("<th style='background-color: #B8DBFD;border: 1px solid #ccc; width:200px'>" + column.ColumnName + "</th>");
-                }
-                sb.Append("</tr>");
-
-
-                //Adding DataRow.
-                foreach (DataRow row in dt.Rows)
-                {
-                    sb.Append("<tr>");
-                    foreach (DataColumn column in dt.Columns)
-                    {
-                        sb.Append("<td style='width:100px;border: 1px solid #ccc'>" + row[column.ColumnName].ToString() + "</td>");
-                    }
-                    sb.Append("</tr>");
-                }
-
-                //Table end.
-                sb.Append("</table>");
-
-
-                object[] parameters = new object[] { sb };
+                object[] parameters = new object[] { obj.Name, obj.Client, primarySkill, obj.JDLink };
                 mailMessage.Subject = "Schedule Pending Alert!";
-                string rawEmail = GetBlobData("mailtemplate", "CandidateNotScheduledMailTemplate.html");
+                string rawEmail = GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
-                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
-                smtpClient.Credentials = credentials;
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123"); smtpClient.Credentials = credentials;
 
                 smtpClient.Send(mailMessage);
+                return;
+                
             }
             catch (Exception)
             {
@@ -230,9 +192,11 @@ namespace Risebird.Functions
         public int id { get; set; }
         public string IRFId { get; set; }
         public string EmailId { get; set; }
-        public string CandidateName { get; set; }
+        public string Name { get; set; }
         public string Phone { get; set; }
         public string JDTiltle { get; set; }
+        public string PrimarySkillInvite { get; set; }
+        public string JDLink { get; set; }
         public string Client { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime InviteDate { get; set; }

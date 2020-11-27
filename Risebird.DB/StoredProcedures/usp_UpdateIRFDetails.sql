@@ -35,6 +35,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @CompanyDetails varchar(1000),    
 @Type varchar(5), 
 @Heuristicsscore int,
+@PrimarySkillInvite varchar(100),
 @idIrf int output    
     
 AS    
@@ -43,24 +44,25 @@ Begin
 update IRF     
 set    
 [ClientName]=@ClientName    
-           ,[JDTiltle]=@JDTiltle    
-           ,[CompanyType]=@CompanyType         
-           ,[JobCountry]=@JobCountry    
-           ,[StartDate]=@StartDate    
-           ,[EndDate]=@EndDate               
-           ,[JDLink]=@JDLink    
-           ,[NoOfPosition]=@NoOfPosition    
-           ,[NoOfIntterview]=@NoOfIntterview    
-           ,[RisebirdHr]=@RisebirdHr    
-     ,[JobLevel]=@JobLevel    
-           ,[PerMintuteRate]=@PerMintuteRate    
-     ,[CalendlyLink] =@CalendlyLink    
-     ,[TotalBudget]=@TotalBudget    
-     ,[IsBiometricEnabled]=@IsBiometricEnabled    
-     ,[PriorityLevel]=@PriorityLevel    
-           ,[CompanyDetails]=@CompanyDetails,  
-     [BussinessType]=@Type , 
-	 [Heuristicsscore]=@Heuristicsscore
+			,[JDTiltle]=@JDTiltle    
+			,[CompanyType]=@CompanyType         
+			,[JobCountry]=@JobCountry    
+			,[StartDate]=@StartDate    
+			,[EndDate]=@EndDate               
+			,[JDLink]=@JDLink    
+			,[NoOfPosition]=@NoOfPosition    
+			,[NoOfIntterview]=@NoOfIntterview    
+			,[RisebirdHr]=@RisebirdHr    
+			,[JobLevel]=@JobLevel    
+			,[PerMintuteRate]=@PerMintuteRate    
+			,[CalendlyLink] =@CalendlyLink    
+			,[TotalBudget]=@TotalBudget    
+			,[IsBiometricEnabled]=@IsBiometricEnabled    
+			,[PriorityLevel]=@PriorityLevel    
+			,[CompanyDetails]=@CompanyDetails
+			,[BussinessType]=@Type 
+			,[Heuristicsscore]=@Heuristicsscore
+			,[PrimarySkillInvite]=@PrimarySkillInvite
 Where id =@id    
     
 delete from TransClientUser where IRFId=@id    
@@ -80,6 +82,8 @@ delete from TransHR where IRFId=@id
 delete from TransRecruiter where IRFId=@id    
     
 End    
+ 
+
 
 GO
 
