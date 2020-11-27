@@ -102,111 +102,22 @@
                                             <tr id=@item.id>
 
                                                 <td> @item.Date</td>
-
-                                                @if (item.StatusValue == "In Progress")
-                                                {
-                                                    <td style=" color: green; font-weight: 500;">
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-                                                else if (item.StatusValue == "Scheduled")
-                                                {
-                                                    <td style=" color: cornflowerblue;
-        font-weight: 500;">
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-
-
-                                                else if (item.StatusValue == "New")
-                                                {
-                                                    <td style="color: #009688;
-        font-weight: 500;">
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-
-                                                else if (item.StatusValue == "Waiting For Response")
-                                                {
-                                                    <td style="        color: orangered;
-        font-weight: 500;">
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-
-                                                else if (item.StatusValue == "Irrelevant")
-                                                {
-                                                    <td style="        color: #6d748c;
-        font-weight: 500;">
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-
-
-
-                                                else if (item.StatusValue == "Duplicate")
-                                                {
-                                                    <td style="color: #ce5b00;
-        font-weight: 500;">
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-
-                                                else if (item.StatusValue == "Not Interested")
-                                                {
-                                                    <td style=" color: #557e86;
-        font-weight: 500;">
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-                                                else if (item.StatusValue == "Got Another Offer")
-                                                {
-                                                    <td style=" color: blueviolet;
-        font-weight: 500;">
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-
-
-                                                else if (item.StatusValue == "Hold")
-                                                {
-                                                    <td style=" color: yellow;
-        font-weight: 500;">
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>
-                                                        @item.StatusValue
-
-                                                    </td>
-                                                }
-
+                                                <td> @item.StatusValue</td>
 
                                                 <td>
                                                     <div class="talk-bubble tri-right border-bubble right-in ">
                                                         <div class="talktext">
-                                                            @if (item.Comments != null && item.Comments.Length > 18)
+                                                            @if (item.Comments!=null && item.Comments.Length > 18)
                                                             {
 
                                                                 <a href="#" data-tooltip="@item.Comments"><textarea style="height:60px;">@item.Comments</textarea></a>
                                                             }
 
-                                                            else
+                                                            else 
                                                             {
-                                                                <textarea>@item.Comments</textarea>
+                                                                <textarea>@item.Comments</textarea> 
                                                             }
-                                                        </div>
+                                                            </div>
                                                     </div>
 
                                                 </td>
@@ -225,30 +136,30 @@
 
 
 
-                                                <td class="text-center action">
+                                            <td class="text-center action">
 
-                                                    @if (ViewBag.Profile != "Client")
-                                                    {
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                            <span onclick="location.href = '@Url.Action("EditCandidateStatus", "IRF", new { id = item.id, candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" title="Edit" class="mdc-fab__icon material-icons">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                                                            </span>
-                                                        </button>
+                                                @if (ViewBag.Profile != "Client")
+                                                {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                        <span onclick="location.href = '@Url.Action("EditCandidateStatus", "IRF", new { id = item.id, candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" title="Edit" class="mdc-fab__icon material-icons">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                        </span>
+                                                    </button>
 
-                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                            <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
-                                                            </span>
-                                                        </button>
-                                                    }
-
-
+                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                        <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                        </span>
+                                                    </button>
+                                                }
 
 
 
 
 
-                                                </td>
+
+
+                                            </td>
 
                                             </tr>
 
