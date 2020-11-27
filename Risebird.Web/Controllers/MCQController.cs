@@ -57,18 +57,25 @@ namespace Risebird.Web.Controllers
                     {
                         item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
                         item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
+                        item.CompentencyLevelName = Enum.GetName(typeof(Heuristicsscorelevel), item.CompentencyLevel);
                     }
                     if (HttpContext.Session.GetString("MCQSetList") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("MCQSetList"));
                         filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = result.Select(x => x.PrimarySkills).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                         filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = result.Select(x => x.ProfileTypeName).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                        filter.SecondarySkill = filter.SecondarySkill == null ? filter.SecondarySkill = result.Select(x => x.SecondarySkill).ToArray() : filter.SecondarySkill = filter.SecondarySkill;
+                        filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = result.Select(x => x.CompentencyLevelName).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
                         result = result.Where(c => (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.PrimarySkills) : c.PrimarySkills == null)
-                                && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ProfileTypeName) : c.ProfileTypeName == null)).ToList();
+                                && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ProfileTypeName) : c.ProfileTypeName == null)
+                                && (filter.SecondarySkill.Count() > 0 ? filter.SecondarySkill.Contains(c.SecondarySkill) : c.SecondarySkill == null)
+                                && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevelName) : c.CompentencyLevelName == null)).ToList();
                     }
                     resultset._MCQVMset = (List<MCQVMset>)result;
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
+                    ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
+                    ViewBag.CompentencyLevel = result.Select(x => x.CompentencyLevelName).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
@@ -109,14 +116,21 @@ namespace Risebird.Web.Controllers
                     {
                         item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
                         item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
+                        item.CompentencyLevelName = Enum.GetName(typeof(Heuristicsscorelevel), item.CompentencyLevel);
                     }
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = result.Select(x => x.PrimarySkills).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                     filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = result.Select(x => x.ProfileTypeName).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                    filter.SecondarySkill = filter.SecondarySkill == null ? filter.SecondarySkill = result.Select(x => x.SecondarySkill).ToArray() : filter.SecondarySkill = filter.SecondarySkill;
+                    filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = result.Select(x => x.CompentencyLevelName).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
                     result = result.Where(c => (filter.PrimarySkill.Count() > 0 ? filter.PrimarySkill.Contains(c.PrimarySkills) : c.PrimarySkills == null)
-                            && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ProfileTypeName) : c.ProfileTypeName == null)).ToList();
+                            && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ProfileTypeName) : c.ProfileTypeName == null)
+                            && (filter.SecondarySkill.Count() > 0 ? filter.SecondarySkill.Contains(c.SecondarySkill) : c.SecondarySkill == null)
+                            && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevelName) : c.CompentencyLevelName == null)).ToList();
                     resultset._MCQVMset = (List<MCQVMset>)result;
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
+                    ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
+                    ViewBag.CompentencyLevel = result.Select(x => x.CompentencyLevelName).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
@@ -196,6 +210,8 @@ namespace Risebird.Web.Controllers
             var partialid = Request.Form["PartialId"].ToString();
             var ProfileType = Convert.ToInt32(Request.Form["ProfileType"].ToString());
             var PrimarySkill = Request.Form["PrimarySkill"].ToString();
+            var SecondarySkill = Request.Form["SecondarySkill"].ToString();
+            var CompentencyLevel = Convert.ToInt32(Request.Form["CompentencyLevel"].ToString());
             int number = 1;
             MCQVMset _lstset = new MCQVMset();
             var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -205,6 +221,8 @@ namespace Risebird.Web.Controllers
             _lstset.Timer = time;
             _lstset.ProfileType = ProfileType;
             _lstset.PrimarySkills = PrimarySkill;
+            _lstset.CompentencyLevel = CompentencyLevel;
+            _lstset.SecondarySkill = SecondarySkill;
             if (status == "Edit")
             {
                 _lstset.PartitionKey = partialid;
@@ -280,6 +298,8 @@ namespace Risebird.Web.Controllers
                     list.Timer = _lstset.Timer;
                     list.ProfileType = _lstset.ProfileType;
                     list.PrimarySkills = _lstset.PrimarySkills;
+                    list.CompentencyLevel = _lstset.CompentencyLevel;
+                    list.SecondarySkill = _lstset.SecondarySkill;
                     await _azureTableStorageService.InsertEntity("RisebirdMCQSet", list);
                     var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
                     questions = questions.Where(x => x.Id == partialid).ToList();
@@ -378,7 +398,31 @@ namespace Risebird.Web.Controllers
             modelset._timmerdetails.Timer = (Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
             return View(modelset);
         }
+        [HttpPost]
+        public async Task<JsonResult> CandidateSelectQuestionsD(string id)
+        {
+            var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
+            var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
+            HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
 
+            HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
+            var questionvalue = Convert.ToInt32(id);
+            var result = resultset.Where(x => x.QuestionNumber == questionvalue).FirstOrDefault();
+            if (resultset.Count() == questionvalue)
+            {
+                result.final = "true";
+            }
+            QuestionDetailsList modeldetailset = new QuestionDetailsList();
+            var _questionlist = (from _Q in resultset
+                                 select new QuestionList
+                                 {
+                                     QuestionNumber = _Q.QuestionNumber,
+                                     QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
+                                 }).ToList();
+            modeldetailset._question = result;
+            modeldetailset._questionlist = _questionlist;
+            return Json(modeldetailset);
+        }
         [HttpPost]
         public async Task<JsonResult> CandidateQuestionsD(bool Option1, bool Option2, bool Option3, bool Option4, string SingleAnswer, int QuestionNumber, string final, string QuestionType)
         {
@@ -498,12 +542,14 @@ namespace Risebird.Web.Controllers
                         HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
                     }
                 }
+                int candidatescore = ((resultset.Sum(x => x.Rating)) / resultset.Count());
                 Mail _mail = new Mail
                 {
-                    TO = HrEmailaddress,
-                    Subject = "Candidate " + values.CandidateEmail + " Complete Test for " + values.ApplyingCompany
+                    TO = values.ClientHR,
+                    CC = HrEmailaddress,
+                    Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
                 };
-                var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany);
+                var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
                 return Json("TestSubmit");
             }
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
@@ -526,31 +572,7 @@ namespace Risebird.Web.Controllers
             return Json(modeldetailset);
 
         }
-        [HttpPost]
-        public async Task<JsonResult> CandidateSelectQuestionsD(string id)
-        {
-            var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
-            var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
-            HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
 
-            HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
-            var questionvalue = Convert.ToInt32(id);
-            var result = resultset.Where(x => x.QuestionNumber == questionvalue).FirstOrDefault();
-            if (resultset.Count() == questionvalue)
-            {
-                result.final = "true";
-            }
-            QuestionDetailsList modeldetailset = new QuestionDetailsList();
-            var _questionlist = (from _Q in resultset
-                                 select new QuestionList
-                                 {
-                                     QuestionNumber = _Q.QuestionNumber,
-                                     QuestionAnswered = String.IsNullOrEmpty(_Q.QuestionAnswer) ? false : true
-                                 }).ToList();
-            modeldetailset._question = result;
-            modeldetailset._questionlist = _questionlist;
-            return Json(modeldetailset);
-        }
         public IActionResult TestComplete(string status)
         {
             ViewBag.Action = status;

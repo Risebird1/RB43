@@ -9,12 +9,17 @@
     dynamic filter = null;
     string[] PrimarySkill = new string[] { };
     string[] SelectionStatus = new string[] { };
+    string[] SecondarySkill = new string[] { };
+    string[] CompentencyLevel = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("MCQSetList") != null)
 {
     filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("MCQSetList"));
     SelectionStatus = filter.SelectionStatus != null ? filter.SelectionStatus : new string[] { };
     PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    SecondarySkill = filter.SecondarySkill != null ? filter.SecondarySkill : new string[] { };
+    CompentencyLevel = filter.CompentencyLevel != null ? filter.CompentencyLevel : new string[] { };
+
 }
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
@@ -119,7 +124,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">
                                                             Skills
@@ -127,6 +132,42 @@
                                                         <div class="col-md-12 col-sm-12">
                                                             <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
                                                                 @foreach (var item in ViewBag.Skills)
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="CompentencyLevel">
+                                                            Compentency Level
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="CompentencyLevel" name="CompentencyLevel" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in ViewBag.CompentencyLevel)
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                                                            Secondary Skills
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="SecondarySkill" name="SecondarySkill" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in ViewBag.SecondarySkills)
                                                                 {
                                                                     @if (item != null && item != "")
                                                                     {
@@ -171,35 +212,44 @@
                                                     <input type="hidden" value="@item.Timer" id="txttimevalue_@item.PartitionKey" />
                                                     <input type="hidden" value="@item.ProfileType" id="txtProfilevalue_@item.PartitionKey" />
                                                     <input type="hidden" value="@item.PrimarySkills" id="txtPrimarySkill_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.SecondarySkill" id="txtSecondarySkill_@item.PartitionKey" />
+                                                    <input type="hidden" value="@item.CompentencyLevel" id="txtCompentencyLevel_@item.PartitionKey" />
+
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- irf body-->
                                         <div class="card-body">
-                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 10px; width: 100%; float: left">
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
                                                 <div class="client-field">Questions:</div> <div class="clientName"> @item.QuestionCount</div>
                                             </div>
-                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 10px; width: 100%; float: left">
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
                                                 <div class="client-field">Time:</div> <div class="client-name">@item.Timer Mins</div>
                                             </div>
-                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 10px; width: 100%; float: left">
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
                                                 <div class="client-field">Level:</div> <div class="clientName"> @item.ProfileTypeName</div>
                                             </div>
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
+                                                <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px"> @item.CompentencyLevelName</div>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
+                                                <div class="client-field">Skill:</div> <div class="clientName"> @item.PrimarySkills </div>
+                                            </div>
                                             <div class="col-md-12 col-sm-12">
-                                                @if (!String.IsNullOrEmpty(item.PrimarySkills))
+                                                @if (!String.IsNullOrEmpty(item.SecondarySkill))
                                                 {
-                                                    @if (item.PrimarySkills.Length > 35)
+                                                    @if (item.SecondarySkill.Length > 25)
                                                     {
-                                                        <div class="client-field">Skills:</div> <div class="clientName" title="@item.PrimarySkills"> @item.PrimarySkills.Substring(0, 35)...</div>
+                                                        <div class="client-field">Secondary: </div> <div class="clientName" style="width:180px" title="@item.SecondarySkill"> @item.SecondarySkill.Substring(0, 25)...</div>
                                                     }
                                                     else
                                                     {
-                                                        <div class="client-field">Skills:</div> <div class="clientName"> @item.PrimarySkills</div>
+                                                        <div class="client-field">Secondary:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <div class="client-field">Skills:</div> <div class="clientName"> @item.PrimarySkills</div>
+                                                    <div class="client-field">Secondary:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
                                                 }
                                             </div>
                                         </div>
@@ -255,18 +305,66 @@
                     @*<div class="col-md-12"><a class="text-right" href="@Url.Action("Download","MCQ",new { filename="MCQSet.xlsx"})"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>*@
                     <div class="col-md-12"><a class="text-right" href="@ViewBag.TemplateUrl" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>
                     <input type="hidden" id="txtpartialid" />
-                    <select class="form-control" id="ddlPrimarySkills" style="width:100% !important">
-                        @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
-                        {
-                            <option value="@item.Text">@item.Text</option>
-                        }
-                    </select>
-                    <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;margin-top:10px">
-                        @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
-                    </select>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                                Primary Skills
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlPrimarySkills" style="width:100% !important">
+                                    @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
+                                    {
+                                        <option value="@item.Text">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                                Secondary Skills
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlSecondarySkills" style="width:100% !important">
+                                    @foreach (var item in Model._ProfileTypeSkills.PrimarySkillsList)
+                                    {
+                                        <option value="@item.Text">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                                Profile Type
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlProfileType" style="margin-bottom: 10px;margin-top:10px">
+                                    @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                                Compentency Level
+                            </label>
+                            <div class="col-md-12 col-sm-12">
+                                <select class="form-control" id="ddlCompentencyLevel" style="margin-bottom: 10px;margin-top:10px">
+                                    @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     <input type="text" class="form-control" placeholder="MCQ Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" />
                     <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
                     <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" />
@@ -383,9 +481,19 @@
             buttonWidth: '100%',
             maxHeight: 200
         });
-
-
         $("#SelectionStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#SecondarySkill").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        $("#CompentencyLevel").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
@@ -399,8 +507,10 @@
         $("#txtMCQTitle").val('');
         $("#txtTime").val('');
         document.getElementById("ddlProfileType").value = 0;
-        $("#ddlPrimarySkills").val('');
-        $("#ddlPrimarySkills").select2().trigger('change');
+        document.getElementById("ddlCompentencyLevel").value = 0;
+        document.getElementById("ddlPrimarySkills").value = 0;
+        $("#ddlSecondarySkills").val('');
+        $("#ddlSecondarySkills").select2().trigger('change');
     }
     function openCreatePopUp() {
         var modal = document.getElementById("CreateMCQPopUp");
@@ -416,6 +526,8 @@
             form_data.append("PartialId", $("#txtpartialid").val());
             form_data.append("ProfileType", $("#ddlProfileType").val());
             form_data.append("PrimarySkill", $("#ddlPrimarySkills").val());
+            form_data.append("SecondarySkill", $("#ddlSecondarySkills").val());
+            form_data.append("CompentencyLevel", $("#ddlCompentencyLevel").val());
             if ($("#txtpartialid").val().trim() != "") {
                 form_data.append("status", "Edit");
             } else {
@@ -448,9 +560,12 @@
         $("#txtMCQTitle").val($("#txttitlevalue_" + id).val());
         $("#txtTime").val($("#txttimevalue_" + id).val());
         document.getElementById("ddlProfileType").value = $("#txtProfilevalue_" + id).val();
-        var values = ($("#txtPrimarySkill_" + id).val()).split(",");
-        $("#ddlPrimarySkills").val(values);
-        $("#ddlPrimarySkills").select2().trigger('change');
+        document.getElementById("ddlPrimarySkills").value = $("#txtPrimarySkill_" + id).val();
+        document.getElementById("ddlCompentencyLevel").value = $("#txtCompentencyLevel_" + id).val();
+        var values = ($("#txtSecondarySkill_" + id).val()).split(",");
+        $("#ddlSecondarySkills").val(values);
+        $("#ddlSecondarySkills").select2().trigger('change');
+
     }
 
     function closeSharePopUp() {
@@ -492,8 +607,14 @@
     function ApplySessionFilter() {
             var skillsset = @Html.Raw(Json.Serialize(PrimarySkill));
             var levelset =  @Html.Raw(Json.Serialize(SelectionStatus));
+            var Secondaryskills =  @Html.Raw(Json.Serialize(SecondarySkill));
+            var CompentencyLevels=  @Html.Raw(Json.Serialize(CompentencyLevel));
+
             $("#SelectionStatus").val(levelset);
             $("#PrimarySkill").val(skillsset);
+            $("#SecondarySkill").val(Secondaryskills);
+            $("#CompentencyLevel").val(CompentencyLevels);
+
     }
 </script>
 
@@ -502,7 +623,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v7" defer></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        jQuery("#ddlPrimarySkills").select2({ multiple: true });
+        jQuery("#ddlSecondarySkills").select2({ multiple: true });
     });
 
 </script>
