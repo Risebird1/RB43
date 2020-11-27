@@ -5,14 +5,13 @@ body {
 
 .can-details a, .callatag {
     color: #9a9a9a !important;
+    background: #151515 !important;
 }
 
     .can-details a:hover,
     .can-details a:focus {
-        body
 
-{
-    background: #151515 !important;
+
     color: #9a9a9a !important
 }
 
@@ -28,7 +27,13 @@ body {
 .card-blue:hover {
     box-shadow: 0 0 15px #1d1c1c;
 }
-
+#codedresumeId {
+    border: 1px #0c0d0d solid;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 16px;
+    background: #232424;
+}
 input[type='radio']:checked:after {
     background-color: #929292 !important;
     top: 1px !important;
