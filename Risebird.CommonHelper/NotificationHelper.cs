@@ -236,7 +236,7 @@ namespace Risebird.CommonHelper
                 }
 
                 object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
-                mailMessage.Subject = ClientName + " Video Interview " + primarySkill;
+                mailMessage.Subject = ClientName + " - Video Interview - " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
