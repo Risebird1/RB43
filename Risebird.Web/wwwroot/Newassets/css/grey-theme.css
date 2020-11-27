@@ -156,12 +156,20 @@ table.dataTable thead .sorting:after {
 }
 .can-details a, .callatag {
     color: #929292 !important;
+    background: #9c9c9c !important;
 }
 
     .can-details a:hover,
     .can-details a:focus {
         color: #929292 !important;
     }
+#codedresumeId {
+    border: 1px #d5d8d9 solid;
+    color: #1d3b5e;
+    padding: 5px 10px;
+    border-radius: 16px;
+    background: #d5d8d9;
+}
  .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
         background: #9c9c9c!important;
 }
