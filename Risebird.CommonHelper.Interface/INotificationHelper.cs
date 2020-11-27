@@ -42,7 +42,7 @@ namespace Risebird.CommonHelper.Interface
         string InsuficientBalancNotifiaction(Mail model);
         string SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
         string SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
-        string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany);
+        string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany,int score);
 
     }
 }

@@ -27,7 +27,8 @@ namespace Risebird.Entities.ViewModel
         public string[] CandidateAvailable { get; set; }
 
         public string[] Client { get; set; }
-
+        public string[] SecondarySkill { get; set; }
+        public string[] CompentencyLevel { get; set; }
 
     }
 }
