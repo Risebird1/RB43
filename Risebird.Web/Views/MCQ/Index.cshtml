@@ -109,7 +109,7 @@
                                                 <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectionStatus">
-                                                            Level
+                                                            Profile Level
                                                         </label>
                                                         <div class="col-md-12 col-sm-12">
                                                             <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
@@ -127,7 +127,7 @@
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
                                                         <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">
-                                                            Skills
+                                                            Primary Skills
                                                         </label>
                                                         <div class="col-md-12 col-sm-12">
                                                             <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
@@ -227,29 +227,29 @@
                                                 <div class="client-field">Time:</div> <div class="client-name">@item.Timer Mins</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Level:</div> <div class="clientName"> @item.ProfileTypeName</div>
+                                                <div class="client-field">Profile Level:</div> <div class="clientName"> @item.ProfileTypeName</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
                                                 <div class="client-field">Compentency:</div> <div class="clientName" style="width:180px"> @item.CompentencyLevelName</div>
                                             </div>
                                             <div class="col-md-12 col-sm-12" style=" margin-bottom: 1px; width: 100%; float: left">
-                                                <div class="client-field">Skill:</div> <div class="clientName"> @item.PrimarySkills </div>
+                                                <div class="client-field">Primary Skill:</div> <div class="clientName"> @item.PrimarySkills </div>
                                             </div>
                                             <div class="col-md-12 col-sm-12">
                                                 @if (!String.IsNullOrEmpty(item.SecondarySkill))
                                                 {
                                                     @if (item.SecondarySkill.Length > 25)
                                                     {
-                                                        <div class="client-field">Secondary: </div> <div class="clientName" style="width:180px" title="@item.SecondarySkill"> @item.SecondarySkill.Substring(0, 25)...</div>
+                                                        <div class="client-field">Secondary Skill: </div> <div class="clientName" style="width:180px" title="@item.SecondarySkill"> @item.SecondarySkill.Substring(0, 25)...</div>
                                                     }
                                                     else
                                                     {
-                                                        <div class="client-field">Secondary:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
+                                            <div class="client-field">Secondary Skill:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <div class="client-field">Secondary:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
+                                            <div class="client-field">Secondary Skill:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
                                                 }
                                             </div>
                                         </div>

@@ -218,7 +218,13 @@
                                             }
                                             else
                                             {
-                                                <td>@item.CandidateScore/@item.TotalQuestions</td>
+
+                                                {
+                                                    var valuescore = (@item.CandidateScore*100 )/ @item.TotalQuestions;
+                                                    <td>@valuescore %</td>
+                                                };
+                                                 
+
                                             }
                                             @if (ViewBag.Isclient == false)
                                             {
