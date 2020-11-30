@@ -104,20 +104,26 @@
                                                 <td> @item.Date</td>
                                                 @if (item.StatusValue == "In Progress")
                                                 {
-                                                    <td style="color:green"> @item.StatusValue</td>
+                                                    <td style="color:green;font-weight:500"> @item.StatusValue</td>
                                                 }
                                                 else if (item.StatusValue == "New")
                                                 {
-                                                    <td style="color:dodgerblue"> @item.StatusValue</td>
+                                                    <td style="color: dodgerblue;
+        font-weight: 500
+"> @item.StatusValue</td>
                                                 }
 
                                                 else if (item.StatusValue == "Waiting For Response")
                                                 {
-                                                    <td style="color:orange"> @item.StatusValue</td>
+                                                    <td style="color: orange;
+        font-weight: 500
+"> @item.StatusValue</td>
                                                 }
                                                 else if (item.StatusValue == "Scheduled")
                                                 {
-                                                    <td style="color:deepskyblue"> @item.StatusValue</td>
+                                                    <td style="color: deepskyblue;
+        font-weight: 500
+"> @item.StatusValue</td>
                                                 }
                                                 else if (item.StatusValue == "Irrelevant")
                                                 {
@@ -125,19 +131,27 @@
                                                 }
                                                 else if (item.StatusValue == "Duplicate")
                                                 {
-                                                    <td style="color:hotpink"> @item.StatusValue</td>
+                                                    <td style=" color: hotpink;
+        font-weight: 500
+"> @item.StatusValue</td>
                                                 }
                                                 else if (item.StatusValue == "Not Interested")
                                                 {
-                                                    <td style="color:purple"> @item.StatusValue</td>
+                                                    <td style=" color: purple;
+        font-weight: 500
+"> @item.StatusValue</td>
                                                 }
                                                 else if (item.StatusValue == "Got Another Offer")
                                                 {
-                                                    <td style="color:darkgreen"> @item.StatusValue</td>
+                                                    <td style=" color: darkgreen;
+        font-weight: 500
+"> @item.StatusValue</td>
                                                 }
                                                 else if (item.StatusValue == "Hold")
                                                 {
-                                                    <td style="color:orangered"> @item.StatusValue</td>
+                                                    <td style="color: orangered;
+        font-weight: 500
+"> @item.StatusValue</td>
                                                 }
                                                 else
                                                 {
