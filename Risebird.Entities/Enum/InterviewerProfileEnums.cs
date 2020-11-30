@@ -1169,6 +1169,19 @@ namespace Risebird.Entities.Enum
         [Description("Expert")]
         Expert = 3
     }
+    public enum CompetencyLevel
+    {
+        [Description("Novice")]
+        Novice = 1,
+        [Description("Beginner")]
+        Beginner = 2,
+        [Description("Competent")]
+        Competent = 3,
+        [Description("Proficient")]
+        Proficient = 4,
+        [Description("Expert")]
+        Expert = 5
+    }
     public enum Heuristicsscorelevel
     {
         [Description("Basic")]
