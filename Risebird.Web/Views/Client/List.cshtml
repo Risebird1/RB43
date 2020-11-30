@@ -69,7 +69,9 @@
                                         <th>GST</th>
                                         <th>Address</th>
                                         <th>RB Pay Balance</th>
-                                      
+                                        <th>Logo</th>
+                                        <th>URL</th>
+
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
                                 </thead>
@@ -81,6 +83,8 @@
                                         <th>GST</th>
                                         <th>Address</th>
                                         <th>RiseBird Pay Balance</th>
+                                        <th>Logo</th>
+                                        <th>URL</th>
                                         
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
@@ -88,37 +92,60 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        <tr id=@item.id>
-                                            <td hidden>@item.id</td>
-                                            <td>@item.Name</td>
-                                            <td>@item.Description</td>
-                                            <td>@item.GST</td>
-                                            <td style="white-space:normal;">@item.OfficeAddress</td>
-                                            <td>@item.Balance</td>
-                                           
-                                            <td class="text-right" style="padding-right:30px;">
-                                               
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
-                                                    <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
-                                                </button>
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
-                                                    <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
-                                                </button>
-                                                    
-                                                <button class="mdc-fab app-fab--absolute" aria-label="View Details">
-                                                    <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
-                                                </button>
+                                    <tr id=@item.id>
+                                        <td hidden>@item.id</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Description</td>
+                                        <td>@item.GST</td>
+                                        <td style="white-space:normal;">@item.OfficeAddress</td>
+                                        <td>@item.Balance</td>
+                                        @if (item.LogoLink != null && item.LogoLink != "")
+                                        {
+                                            <td>
 
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
-                                                    <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                </button>
-                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                </button>
-
-
+                                                <a target="_blank" title="Logo" href=@item.LogoLink>Logo</a>
                                             </td>
-                                        </tr>
+                                        }
+                                        else
+                                        {
+                                            <td>No Logo</td>
+                                        }
+
+                                        @if (item.CompanyLink != null && item.CompanyLink != "")
+                                        {
+                                            <td>
+
+                                                <a target="_blank" title="Company URL" href=@item.CompanyLink>Company URL</a>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>No URL</td>
+                                        }
+
+                                        <td class="text-right" style="padding-right:30px;">
+
+                                            <button class="mdc-fab app-fab--absolute" aria-label="Add Points">
+                                                <span onclick="OpenAddpointmodel(@item.id)" title="Add Points" class="fa fa-plus-circle"></span>
+                                            </button>
+                                            <button class="mdc-fab app-fab--absolute" aria-label="Deduct Points">
+                                                <span onclick="OpenDeductpointmodel(@item.id)" title="Deduct Points" class="fa fa-minus-circle"></span>
+                                            </button>
+
+                                            <button class="mdc-fab app-fab--absolute" aria-label="View Details">
+                                                <span onclick="location.href = '@Url.Action("ClientDetails", "RisebirdPay", new { id = item.id})'" title="View Details" class="fa fa-fw fa-eye"></span>
+                                            </button>
+
+                                            <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit client user">
+                                                <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                            </button>
+                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete client">
+                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                            </button>
+
+
+                                        </td>
+                                    </tr>
                                     }
                                 </tbody>
                             </table>
