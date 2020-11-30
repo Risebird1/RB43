@@ -101,32 +101,60 @@
                                             {
                                             <tr id=@item.id>
 
-
+                                                <td> @item.Date</td>
                                                 @if (item.StatusValue == "In Progress")
                                                 {
                                                     <td style="color:green"> @item.StatusValue</td>
                                                 }
-                                                else if (item.StatusValue == "Hold")
+                                                else if (item.StatusValue == "New")
+                                                {
+                                                    <td style="color:dodgerblue"> @item.StatusValue</td>
+                                                }
+
+                                                else if (item.StatusValue == "Waiting For Response")
                                                 {
                                                     <td style="color:orange"> @item.StatusValue</td>
-}
+                                                }
+                                                else if (item.StatusValue == "Scheduled")
+                                                {
+                                                    <td style="color:deepskyblue"> @item.StatusValue</td>
+                                                }
+                                                else if (item.StatusValue == "Irrelevant")
+                                                {
+                                                    <td style="color:orange"> @item.StatusValue</td>
+                                                }
+                                                else if (item.StatusValue == "Duplicate")
+                                                {
+                                                    <td style="color:hotpink"> @item.StatusValue</td>
+                                                }
+                                                else if (item.StatusValue == "Not Interested")
+                                                {
+                                                    <td style="color:purple"> @item.StatusValue</td>
+                                                }
+                                                else if (item.StatusValue == "Got Another Offer")
+                                                {
+                                                    <td style="color:darkgreen"> @item.StatusValue</td>
+                                                }
+                                                else if (item.StatusValue == "Hold")
+                                                {
+                                                    <td style="color:orangered"> @item.StatusValue</td>
+                                                }
                                                 else
                                                 {
-                                                    <td > @item.StatusValue</td>
-}
+                                                    <td> @item.StatusValue</td>
+                                                }
+
                                                 <td>
                                                     <div class="talk-bubble tri-right border-bubble right-in ">
                                                         <div class="talktext">
-                                                            @if (item.Comments != null && item.Comments.Length > 18)
+                                                            @if (item.Comments.Length > 18)
                                                             {
 
                                                                 <a href="#" data-tooltip="@item.Comments"><textarea style="height:60px;">@item.Comments</textarea></a>
                                                             }
 
                                                             else
-                                                            {
-                                                                <textarea>@item.Comments</textarea>
-                                                            }
+                                                            {<textarea style="height:60px;">@item.Comments</textarea>}
                                                         </div>
                                                     </div>
 
