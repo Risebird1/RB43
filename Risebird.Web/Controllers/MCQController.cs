@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ExcelDataReader;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -36,6 +37,7 @@ namespace Risebird.Web.Controllers
             _skillService = skillService;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -49,15 +51,19 @@ namespace Risebird.Web.Controllers
                     var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
+                    var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
+                    resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
+
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
                     foreach (var item in result)
                     {
                         item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
                         item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
-                        item.CompentencyLevelName = Enum.GetName(typeof(Heuristicsscorelevel), item.CompentencyLevel);
+                        item.CompentencyLevelName = Enum.GetName(typeof(CompetencyLevel), item.CompentencyLevel);
                     }
                     if (HttpContext.Session.GetString("MCQSetList") != null)
                     {
@@ -75,7 +81,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
                     ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
-                    ViewBag.CompentencyLevel = result.Select(x => x.CompentencyLevelName).Distinct().ToList();
+                    ViewBag.CompentencyLevel = Compentencs.Select(x => x.Name).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
@@ -90,6 +96,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        
         [HttpPost]
         public IActionResult Index(InterviewFilter filter)
         {
@@ -108,15 +116,18 @@ namespace Risebird.Web.Controllers
                     var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
+                    var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
+                    resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
                     foreach (var item in result)
                     {
                         item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
                         item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
-                        item.CompentencyLevelName = Enum.GetName(typeof(Heuristicsscorelevel), item.CompentencyLevel);
+                        item.CompentencyLevelName = Enum.GetName(typeof(CompetencyLevel), item.CompentencyLevel);
                     }
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = result.Select(x => x.PrimarySkills).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                     filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = result.Select(x => x.ProfileTypeName).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
@@ -130,7 +141,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
                     ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
-                    ViewBag.CompentencyLevel = result.Select(x => x.CompentencyLevelName).Distinct().ToList();
+                    ViewBag.CompentencyLevel = Compentencs.Select(x => x.Name).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
@@ -201,6 +212,7 @@ namespace Risebird.Web.Controllers
                 {".csv", "text/csv"}
             };
         }
+       
         [HttpPost]
         public async Task<JsonResult> UploadQuestions()
         {
@@ -542,7 +554,7 @@ namespace Risebird.Web.Controllers
                         HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
                     }
                 }
-                int candidatescore = ((resultset.Sum(x => x.Rating)) / resultset.Count());
+                int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
                 Mail _mail = new Mail
                 {
                     TO = values.ClientHR,

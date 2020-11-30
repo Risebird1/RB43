@@ -136,7 +136,7 @@ namespace Risebird.Business
             {
                 var vmPropList = new List<VMProperties>();
                 var triggeredVMList = new List<TriggeredVM>();
-                if (vmList != null && vmList.Count() > 0)
+                if (vmList != null && vmList.Any())
                 {
                     foreach (var vm in vmList)
                     {

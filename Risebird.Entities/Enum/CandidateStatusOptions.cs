@@ -36,6 +36,9 @@ namespace Risebird.Entities.Enum
         Cold,
         [Display(Name = "Hold")]
         [Description("Hold")]
-        Hold
+        Hold,
+        [Display(Name = "Invitation Sent")]
+        [Description("Invitation Sent")]
+        InvitationSent,
     }
 }
