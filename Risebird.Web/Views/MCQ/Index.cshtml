@@ -244,12 +244,12 @@
                                                     }
                                                     else
                                                     {
-                                            <div class="client-field">Secondary Skill:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
+                                                        <div class="client-field">Secondary Skill:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
                                                     }
                                                 }
                                                 else
                                                 {
-                                            <div class="client-field">Secondary Skill:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
+                                                    <div class="client-field">Secondary Skill:</div> <div class="clientName" style="width:180px"> @item.SecondarySkill</div>
                                                 }
                                             </div>
                                         </div>
@@ -357,7 +357,7 @@
                             </label>
                             <div class="col-md-12 col-sm-12">
                                 <select class="form-control" id="ddlCompentencyLevel" style="margin-bottom: 10px;margin-top:10px">
-                                    @foreach (var item in Model._ProfileTypeSkills.ProfileTypeList)
+                                    @foreach (var item in Model._ProfileTypeSkills.CompentencyLevelList)
                                     {
                                         <option value="@item.Value">@item.Text</option>
                                     }

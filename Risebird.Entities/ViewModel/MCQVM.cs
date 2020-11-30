@@ -90,6 +90,7 @@ namespace Risebird.Entities.ViewModel
         public string ProfileTypeName { get; set; }
         public SelectList PrimarySkillsList { get; set; }
         public string PrimarySkills { get; set; }
+        public SelectList CompentencyLevelList { get; set; }
     }
     public class MCQDropdowndetails
     {
