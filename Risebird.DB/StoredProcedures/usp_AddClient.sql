@@ -14,13 +14,15 @@ GO
     
     
     
-CREATE PROCEDURE [dbo].[usp_AddClient]    
+Create PROCEDURE [dbo].[usp_AddClient]    
     
 @clientName varchar(150),    
 @clientDescr varchar(250),    
 @GST varchar(MAX),    
 @officeAddress varchar(MAX),  
-@Createdby varchar(200)
+@Createdby varchar(200),
+@LogoLink varchar(max),
+@CompanyLink varchar(max)
     
 AS    
 Begin    
@@ -29,16 +31,20 @@ Declare @Clientid int
 Declare @Userid int
 Select @Userid=id from USerList where Emailid=@Createdby
 INSERT INTO [dbo].[Client]    
-           ([Name]    
-           ,[Description]    
-     ,[GST]    
-     ,[OfficeAddress] 
+			   ([Name]    
+			   ,[Description]    
+			   ,[GST]    
+			   ,[OfficeAddress] 
+			   ,[LogoLink]
+			   ,[CompanyLink ]
      )  
        VALUES    
-           (@clientName    
-     ,@clientDescr    
-     ,@GST    
-     ,@officeAddress)    
+				(@clientName    
+				,@clientDescr    
+				,@GST    
+				,@officeAddress
+				,@LogoLink
+				,@CompanyLink)    
 
 End    
     GO

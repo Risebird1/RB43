@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.Data
 {
@@ -22,5 +23,14 @@ namespace Risebird.Entities.Data
         public int Balance { get; set; }
         public int PerSuccessRate { get; set; }
         public string Createdby { get; set; }
+
+        [Display(Name = "Logo URL")]
+        public string LogoLink { get; set; }
+
+        [Display(Name = "Upload Company Logo")]
+        public IFormFile LogoFile { get; set; }
+
+        [Display(Name = "Company URL")]
+        public string CompanyLink { get; set; }
     }
 }
