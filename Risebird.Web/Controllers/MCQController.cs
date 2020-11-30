@@ -81,7 +81,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
                     ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
-                    ViewBag.CompentencyLevel = result.Select(x => x.CompentencyLevelName).Distinct().ToList();
+                    ViewBag.CompentencyLevel = Compentencs.Select(x => x.Name).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
@@ -141,7 +141,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
                     ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
-                    ViewBag.CompentencyLevel = result.Select(x => x.CompentencyLevelName).Distinct().ToList();
+                    ViewBag.CompentencyLevel = Compentencs.Select(x => x.Name).Distinct().ToList();
                     ViewBag.TemplateUrl = _configuration["MCQTemplateUrl"].ToString();
                     return View(resultset);
                 }
