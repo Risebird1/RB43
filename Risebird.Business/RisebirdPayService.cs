@@ -12,7 +12,7 @@ namespace Risebird.Business
 
     public class RisebirdPayService : IRisebirdPayService
     {
-        private IRisebirdPayRepository _risebirdPayRepository;
+        private readonly IRisebirdPayRepository _risebirdPayRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         public RisebirdPayService(IRisebirdPayRepository risebirdPayRepository, IApplicationErrorLogger applicationErrorLogger)
         {

@@ -228,7 +228,7 @@ namespace Risebird.CommonHelper
             {
                 var mailMessage = new MailMessage();
                 //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
-                mailMessage.From = new MailAddress(clientHREmail, "Interview Invite");
+                mailMessage.From = new MailAddress(clientHREmail.Trim(), "Interview Invite");
                 mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
 
                 foreach (var clientUser in clientUsers)

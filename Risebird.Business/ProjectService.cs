@@ -82,15 +82,15 @@ namespace Risebird.Business
         {
             try
             {
-                var project = _projectRepository.GetAllProjects().Where(x => x.id == id).FirstOrDefault();
+                var project = _projectRepository.GetAllProjects().FirstOrDefault(x => x.id == id);
                 var projectCluster = _projectRepository.GetProjectCluster(id);
                 var allIRFs = _projectRepository.GetAllIRF();
-                if (projectCluster != null && projectCluster.Count() != 0)
+                if (projectCluster != null && projectCluster.Any())
                 {
                     foreach (var item in projectCluster)
                     {
-                        item.PrimarySkills = allIRFs.Where(x => x.id == item.IRFId).FirstOrDefault().JDTiltle.Split("|")[0];
-                        item.Client = allIRFs.Where(x => x.id == item.IRFId).FirstOrDefault().ClientCompName;
+                        item.PrimarySkills = allIRFs.FirstOrDefault(x => x.id == item.IRFId).JDTiltle.Split("|")[0];
+                        item.Client = allIRFs.FirstOrDefault(x => x.id == item.IRFId).ClientCompName;
                         allIRFs = allIRFs.Where(x => x.id != item.IRFId);
                     }
                 }
@@ -98,7 +98,7 @@ namespace Risebird.Business
 
                 var objList = new List<ProjectIRFMapping>();
 
-                if (projectCluster != null && projectCluster.Count() != 0)
+                if (projectCluster != null && projectCluster.Any())
                 {
                     foreach (var item in projectCluster)
                     {
@@ -132,8 +132,13 @@ namespace Risebird.Business
                     };
                     objList.Add(obj);
                 }
-                project.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
-                return project;
+
+                if (project != null)
+                {
+                    project.ProjectIRFMappings = (IList<ProjectIRFMapping>) (objList);
+                    return project;
+                }
+                return null;
             }
 
             catch (Exception e)
@@ -289,18 +294,18 @@ namespace Risebird.Business
                 {
                     var irfName = _irfRepository.GetIRFNameBasedOnId(irfId);
                     var candidates = _irfRepository.GetIRFCandidates(irfId);
-                    if (candidates.Count() == 0)
+                    if (!candidates.Any())
                     {
                         //get candidates from Meeting table by passing IRFId
                         emailList = _irfRepository.GetIRFCandidatesEmail(irfName).ToList();
-                        funnelData.TotalCandidates = funnelData.TotalCandidates + emailList.Count();
-                        funnelData.TotalInvites = funnelData.TotalInvites + emailList.Count();
+                        funnelData.TotalCandidates = funnelData.TotalCandidates + emailList.Count;
+                        funnelData.TotalInvites = funnelData.TotalInvites + emailList.Count;
                     }
                     else
                     {
                         emailList = candidates.Select(x => x.EmailId).ToList();
                         funnelData.TotalCandidates = funnelData.TotalCandidates + candidates.Count();
-                        funnelData.TotalInvites = funnelData.TotalInvites + candidates.Where(x => x.TotalInvites > 0).Count();
+                        funnelData.TotalInvites = funnelData.TotalInvites + candidates.Count(x => x.TotalInvites > 0);
                     }
 
                     var interviewIdList = new List<int>();
@@ -313,7 +318,7 @@ namespace Risebird.Business
                         }
                     }
 
-                    funnelData.TotalConfirmations = funnelData.TotalConfirmations + interviewIdList.Count();
+                    funnelData.TotalConfirmations = funnelData.TotalConfirmations + interviewIdList.Count;
                     //funnelData.ConfirmationRate = funnelData.TotalInvites != 0 ? ((funnelData.TotalConfirmations * 100 / funnelData.TotalInvites)) : 0;
 
                     string ids = string.Join<int>(",", interviewIdList);
@@ -327,18 +332,18 @@ namespace Risebird.Business
                         var approved = risebirdSelected.Where(x => x.IsApproved.HasValue && x.IsApproved == 1);
                         funnelData.TotalApproved = funnelData.TotalApproved + approved.Count();
                         var approvalFilter = risebirdSelected.Where(x => x.IsApproved.HasValue && x.IsApproved > 2);
-                        waste = waste + approvalFilter.Where(x => x.IsApproved > 3).Count();
+                        waste = waste + approvalFilter.Count(x => x.IsApproved > 3);
                         var finalSelected = approved.Where(x => x.IsSelected.HasValue && x.IsSelected == 1);
                         funnelData.TotalFinalSelections = funnelData.TotalFinalSelections + finalSelected.Count();
-                        waste = waste + approved.Where(x => x.IsSelected.HasValue && x.IsSelected > 7).Count();
+                        waste = waste + approved.Count(x => x.IsSelected.HasValue && x.IsSelected > 7);
                         var offered = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus == 1);
                         funnelData.TotalOffered = funnelData.TotalOffered + offered.Count();
                         var offerDeductions = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus > 3);
-                        waste = waste + offerDeductions.Where(x => x.OfferStatus.HasValue && x.OfferStatus != 4).Count();
+                        waste = waste + offerDeductions.Count(x => x.OfferStatus.HasValue && x.OfferStatus != 4);
                         var joined = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus == 1);
                         funnelData.TotalJoined = funnelData.TotalJoined + joined.Count();
                         var joinedDeductions = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus > 2);
-                        waste += joinedDeductions.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus >= 5).Count();
+                        waste += joinedDeductions.Count(x => x.JoiningStatus.HasValue && x.JoiningStatus >= 5);
                     }
 
 

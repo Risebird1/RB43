@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ExcelDataReader;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -36,6 +37,7 @@ namespace Risebird.Web.Controllers
             _skillService = skillService;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -90,6 +92,8 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        
         [HttpPost]
         public IActionResult Index(InterviewFilter filter)
         {
@@ -201,6 +205,7 @@ namespace Risebird.Web.Controllers
                 {".csv", "text/csv"}
             };
         }
+       
         [HttpPost]
         public async Task<JsonResult> UploadQuestions()
         {
@@ -542,7 +547,7 @@ namespace Risebird.Web.Controllers
                         HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
                     }
                 }
-                int candidatescore = ((resultset.Sum(x => x.Rating)) / resultset.Count());
+                int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
                 Mail _mail = new Mail
                 {
                     TO = values.ClientHR,

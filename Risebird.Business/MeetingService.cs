@@ -556,7 +556,7 @@ namespace Risebird.Business
             {
                 var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
-                if (checkDateMeeting.Count() > 0)
+                if (checkDateMeeting.Any())
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
                 }
@@ -742,7 +742,7 @@ namespace Risebird.Business
                     {
                         interviewStatus = ((InterviewStatus)comments.InterviewStatus).GetDescription();
                     }
-                    if(clientEmails != null && clientEmails.Count()>0 && !string.IsNullOrEmpty(interviewStatus))
+                    if(clientEmails != null && clientEmails.Any() && !string.IsNullOrEmpty(interviewStatus))
                     {
                         _notificationHelper.SendQCPassNotificationToClient(clientEmails.ToList(), comments.candidateEmail, comments.PrimarySkill, interviewStatus, comments.interviewDate.ToString("MMMM dd, yyyy"));
                     }
@@ -773,7 +773,7 @@ namespace Risebird.Business
                 }
                 // check whether a feedback for the interviewId has already been submitted
                 var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
-                if (interviewReport != null && interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (interviewReport != null && interviewReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     //call Edit Feedbackform method
                     reportModel = interviewReport.FirstOrDefault();
@@ -781,7 +781,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var model = interviewReport.Count() > 0 ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    var model = interviewReport.Any() ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                    
                     //get all values from database
@@ -799,10 +799,10 @@ namespace Risebird.Business
                         TechSkillReport obj = new TechSkillReport
                         {
                             InterviewId = interviewId,
-                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
-                            SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name,
-                            SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id,
+                            RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
+                            SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
+                            SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
                             WeightageRequired = item.Weightage
                         };
 
@@ -817,8 +817,8 @@ namespace Risebird.Business
                         SkillGeneralReport obj = new SkillGeneralReport
                         {
                             InterviewId = interviewId,
-                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,
@@ -861,7 +861,7 @@ namespace Risebird.Business
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
                 reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
                 var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
-                if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (selectabilityReport != null && selectabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
 
@@ -875,8 +875,8 @@ namespace Risebird.Business
                         SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport
                         {
                             CandidateId = reportModel.CandidateId,
-                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levels.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levels.FirstOrDefault(x => x.id == item.LevelId).id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,
@@ -890,7 +890,7 @@ namespace Risebird.Business
 
                 reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
                 var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
-                if (joinabilityReport != null && joinabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (joinabilityReport != null && joinabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;
 
@@ -904,8 +904,8 @@ namespace Risebird.Business
                         JoinabilityHRReport obj = new JoinabilityHRReport
                         {
                             CandidateId = reportModel.CandidateId,
-                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levels.FirstOrDefault(x => x.id == item.LevelId).Name,
+                            RequiredLevelId = levels.FirstOrDefault(x => x.id == item.LevelId).id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,
@@ -935,7 +935,7 @@ namespace Risebird.Business
             var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
             //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
 
-            if (techReportCollection.Count() == 0)
+            if (!techReportCollection.Any())
             {
                 var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(model.IRFId);
                 var techSkillList = new List<TechSkillReport>();
@@ -948,10 +948,10 @@ namespace Risebird.Business
                     TechSkillReport obj = new TechSkillReport
                     {
                         InterviewId = model.InterviewId,
-                        RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                        RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
-                        SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name,
-                        SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id,
+                        RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                        RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
+                        SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
+                        SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
                         WeightageRequired = item.Weightage
                     };
 
@@ -1036,7 +1036,7 @@ namespace Risebird.Business
                     CandidateAudios = (IList<CandidateAudio>)_evaluatorRespository.GetCandidateAudios(candidateId, irfId).Where(x => x.IsVoiceBiometric == true).ToList(),
                     CandidateId = candidateId
                 };
-                if (model.CandidateAudios.Count() > 0)
+                if (model.CandidateAudios.Any())
                 {
                     model.CandidateName = model.CandidateAudios.First().CandidateName;
                     model.IRFId = irfId;
@@ -1515,7 +1515,7 @@ namespace Risebird.Business
                 }
                 // check whether a feedback for the interviewId has already been submitted
                 var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
-                if (interviewReport != null && interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (interviewReport != null && interviewReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     //call Edit Feedbackform method
                     reportModel = interviewReport.FirstOrDefault();
@@ -1523,7 +1523,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var model = interviewReport.Count() > 0 ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    var model = interviewReport.Any() ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                     //get all values from database
                     var levelTech = _meetingRespository.GetLevelTech();
@@ -1539,10 +1539,10 @@ namespace Risebird.Business
                         TechSkillReport obj = new TechSkillReport
                         {
                             InterviewId = interviewId,
-                            RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
-                            SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name,
-                            SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id,
+                            RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
+                            SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
+                            SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
                             WeightageRequired = item.Weightage
                         };
 
@@ -1605,7 +1605,7 @@ namespace Risebird.Business
                 reportModel.InterviewerComment = candidatedetails.InterviewerComments;
 
                 var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
-                if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (selectabilityReport != null && selectabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
 
@@ -1619,8 +1619,8 @@ namespace Risebird.Business
                         SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport
                         {
                             CandidateId = reportModel.CandidateId,
-                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levels.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levels.FirstOrDefault(x => x.id == item.LevelId).id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,
@@ -1633,7 +1633,7 @@ namespace Risebird.Business
 
                 reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
                 var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
-                if (joinabilityReport != null && joinabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (joinabilityReport != null && joinabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;
 
@@ -1647,8 +1647,8 @@ namespace Risebird.Business
                         JoinabilityHRReport obj = new JoinabilityHRReport
                         {
                             CandidateId = reportModel.CandidateId,
-                            RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                            RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id,
+                            RequiredLevel = levels.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                            RequiredLevelId = levels.FirstOrDefault(x => x.id == item.LevelId).id,
                             Type = item.Type,
                             Name = item.Name,
                             Value = item.Value,
@@ -1676,7 +1676,7 @@ namespace Risebird.Business
             var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetSharedTechSkillReport(id));
             //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
 
-            if (techReportCollection.Count() == 0)
+            if (!techReportCollection.Any())
             {
                 var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(model.IRFId);
                 var techSkillList = new List<TechSkillReport>();
@@ -1689,10 +1689,10 @@ namespace Risebird.Business
                     TechSkillReport obj = new TechSkillReport
                     {
                         InterviewId = model.InterviewId,
-                        RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name,
-                        RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id,
-                        SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name,
-                        SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id,
+                        RequiredLevel = levelTech.FirstOrDefault(x => x.id == item.LevelId)?.Name,
+                        RequiredLevelId = levelTech.FirstOrDefault(x => x.id == item.LevelId).id,
+                        SkillName = skills.FirstOrDefault(x => x.id == item.SkillId)?.Name,
+                        SkillId = skills.FirstOrDefault(x => x.id == item.SkillId).id,
                         WeightageRequired = item.Weightage
                     };
 
