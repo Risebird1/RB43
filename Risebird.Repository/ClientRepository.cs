@@ -197,6 +197,8 @@ namespace Risebird.Repository
             parameters.Add("@GST", entity.GST);
             parameters.Add("@officeAddress", entity.OfficeAddress);          
             parameters.Add("@Createdby", entity.Createdby);
+            parameters.Add("@LogoLink", entity.LogoLink);
+            parameters.Add("@CompanyLink", entity.CompanyLink);
             return parameters;
         }
         public async Task<string> AddClientJd(ClientJdVM _client)

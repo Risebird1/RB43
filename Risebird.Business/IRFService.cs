@@ -821,11 +821,21 @@ namespace Risebird.Business
                 if (email != null && calendlyLink != null)
                 {
                     var jdLink = irf.JDLink;
-                    var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
+                    var client = _clientService.GetClient(irf.ClientId);
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                     string primarySkill = string.Empty;
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
-                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
+
+                    if(irf.BussinessType == "B2B")
+                    {
+                        _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink);
+
+                    }
+                    else
+                    {
+                        _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
+
+                    }
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));

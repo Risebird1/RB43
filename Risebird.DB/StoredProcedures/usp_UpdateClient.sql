@@ -13,14 +13,16 @@ GO
     
     
     
-CREATE PROCEDURE [dbo].[usp_UpdateClient]    
+Create PROCEDURE [dbo].[usp_UpdateClient]    
     
 @id int,    
 @clientName varchar(150),    
 @clientDescr varchar(250),    
 @GST varchar(MAX),    
 @officeAddress varchar(MAX),
-@Createdby varchar(200)
+@Createdby varchar(200),
+@LogoLink varchar(max),
+@CompanyLink varchar(max)
     
 AS    
 Begin    
@@ -30,15 +32,17 @@ Select @Userid=id from USerList where Emailid=@Createdby
 
 UPDATE [dbo].[CLIENT]    
 SET     
-      [Name]=@clientName    
-     ,[Description] = @clientDescr    
-  ,[GST] = @GST    
-  ,[OfficeAddress] = @officeAddress
+		[Name]=@clientName    
+		,[Description] = @clientDescr    
+		,[GST] = @GST    
+		,[OfficeAddress] = @officeAddress
+		,[LogoLink]=@LogoLink
+		,[CompanyLink]=@CompanyLink
 WHERE    
       Id = @id    
 
 
-End    
+End   
     
     GO
   

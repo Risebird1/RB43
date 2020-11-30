@@ -1144,5 +1144,46 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null)
+        {
+            try
+            {
+                string companyLogoLink = string.Empty;
+                string companyURL = string.Empty;
+                companyLogoLink = clientLogo != null ? clientLogo : _configuration["RisebirdDetails:RisebirdLogo"];
+                companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
+                var mailMessage = new MailMessage();
+
+                //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
+
+                mailMessage.From = new MailAddress(clientHREmail.Trim(), "Interview Invite");
+                mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
+
+
+                foreach (var clientUser in clientUsers)
+                {
+                    mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
+                }
+
+                object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink };
+                mailMessage.Subject = ClientName + " - Video Interview - " + primarySkill;
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
     }
 }

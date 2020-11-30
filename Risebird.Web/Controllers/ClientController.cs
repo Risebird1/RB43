@@ -94,6 +94,15 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        string uploadedFileURL = string.Empty;
+                        if (client.LogoFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(client.LogoFile.FileName, "clientlogos", client.LogoFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientlogos");
+                            var blob = containerRef.GetBlockBlobReference(client.LogoFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            client.LogoLink = uploadedFileURL;
+                        }
                         if (_clientService.AddClient(client))
                         {
                             TempData["SuccessErrorMessage"] = "Client is added Successfully";
@@ -158,6 +167,15 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        string uploadedFileURL = string.Empty;
+                        if (client.LogoFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(client.LogoFile.FileName, "clientlogos", client.LogoFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientlogos");
+                            var blob = containerRef.GetBlockBlobReference(client.LogoFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            client.LogoLink = uploadedFileURL;
+                        }
                         if (_clientService.UpdateClient(client))
                         {
                             TempData["SuccessErrorMessage"] = "Client is updated Successfully";
