@@ -71,6 +71,7 @@
                                         <th>RB Pay Balance</th>
                                         <th>Logo</th>
                                         <th>URL</th>
+                                        <th>Company Video(GIF)</th>
 
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
@@ -85,7 +86,8 @@
                                         <th>RiseBird Pay Balance</th>
                                         <th>Logo</th>
                                         <th>URL</th>
-                                        
+                                        <th>Company Video(GIF)</th>
+
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
                                 </tfoot>
@@ -121,6 +123,18 @@
                                         else
                                         {
                                             <td>No URL</td>
+                                        }
+
+                                        @if (item.CompanyVideoLink != null && item.CompanyVideoLink != "")
+                                        {
+                                            <td>
+
+                                                <a target="_blank" title="Company Video URL(GIF)" href=@item.CompanyVideoLink>Video URL(GIF)</a>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td>No Video(GIF)</td>
                                         }
 
                                         <td class="text-right" style="padding-right:30px;">

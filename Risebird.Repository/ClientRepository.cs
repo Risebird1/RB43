@@ -199,6 +199,7 @@ namespace Risebird.Repository
             parameters.Add("@Createdby", entity.Createdby);
             parameters.Add("@LogoLink", entity.LogoLink);
             parameters.Add("@CompanyLink", entity.CompanyLink);
+            parameters.Add("@CompanyVideoLink", entity.CompanyVideoLink);
             return parameters;
         }
         public async Task<string> AddClientJd(ClientJdVM _client)
