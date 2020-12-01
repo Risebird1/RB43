@@ -32,5 +32,11 @@ namespace Risebird.Entities.Data
 
         [Display(Name = "Company URL")]
         public string CompanyLink { get; set; }
+
+        [Display(Name = "Company Video(GIF)")]
+        public string CompanyVideoLink { get; set; }
+
+        [Display(Name = "Upload Company Video(GIF)")]
+        public IFormFile VideoFile { get; set; }
     }
 }

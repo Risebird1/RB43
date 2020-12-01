@@ -43,6 +43,6 @@ namespace Risebird.CommonHelper.Interface
         string SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
         string SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
         string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany,int score);
-        string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null);
+        string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL = null);
     }
 }

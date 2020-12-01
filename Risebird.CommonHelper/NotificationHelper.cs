@@ -1121,7 +1121,7 @@ namespace Risebird.CommonHelper
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 foreach (var email in clients)
                 {
-                    mailMessage.CC.Add(new MailAddress(email, null));
+                    mailMessage.CC.Add(new MailAddress(email, email.Split("@").First()));
                 }
 
                 object[] parameters = new object[] { interviewDate, candidateEmail, primarySkill, interviewStatus };
@@ -1144,7 +1144,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null)
+        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL= null)
         {
             try
             {
@@ -1156,16 +1156,15 @@ namespace Risebird.CommonHelper
 
                 //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
 
-                mailMessage.From = new MailAddress(clientHREmail.Trim(), "Interview Invite");
+                mailMessage.From = new MailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
                 mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
-
 
                 foreach (var clientUser in clientUsers)
                 {
                     mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
                 }
 
-                object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink };
+                object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL };
                 mailMessage.Subject = ClientName + " - Video Interview - " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);

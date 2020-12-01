@@ -8,7 +8,8 @@ CREATE TABLE [dbo].[Client](
             [OfficeAddress] [varchar](MAX) NULL,
             [GST] [varchar](MAX) NULL,	
             [LogoLink] [varchar](MAX) NULL,	
-            [CompanyLink] [varchar](MAX) NULL	
+            [CompanyLink] [varchar](MAX) NULL,
+            [CompanyVideoLink] [varchar](MAX) NULL
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -83,6 +84,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add [CompanyLink] [varchar](MAX) NULL		
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CompanyVideoLink')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [CompanyVideoLink] [varchar](MAX) NULL		
 END
 END
 
