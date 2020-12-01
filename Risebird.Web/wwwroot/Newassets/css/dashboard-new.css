@@ -1042,7 +1042,7 @@ body {
     /* font-size: 14px; */
     line-height: 1.3;
     white-space: normal;
-    border-radius: 15px;
+    border-radius: 5px;
 }
 
 .interviewer-comment .talk-bubble [data-tooltip]:before {
@@ -1140,7 +1140,7 @@ body {
 }
 
 #resumeId, .callatag {
-    background: #e2f0ff;
+
     padding: 5px 10px;
     border-radius: 10px;
 }

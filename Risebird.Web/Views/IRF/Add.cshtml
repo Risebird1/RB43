@@ -191,6 +191,13 @@
 
 
                                     </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @class = "text-danger" })
+
+                                    </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
@@ -260,6 +267,7 @@
                                         @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
                                     </div>
+                                    
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
 

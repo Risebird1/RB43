@@ -273,7 +273,7 @@ namespace Risebird.Business
                 foreach (var item in skills ?? new List<TransSkill>())
                 {
 
-                    var obj = result.Where(x => x.id == item.SkillId).FirstOrDefault();
+                    var obj = result.FirstOrDefault(x => x.id == item.SkillId);
                     list.Add(obj);
                 }
 
@@ -461,6 +461,7 @@ namespace Risebird.Business
                 model.PriorityLevel = IRF.PriorityLevel;
                 model.Heuristicsscore = IRF.Heuristicsscore;
                 model.Type = IRF.BussinessType;
+                model.PrimarySkillInvite = IRF.PrimarySkillInvite;
                 var skillCount = transTechSkills.Count();
                 return model;
 
@@ -728,7 +729,7 @@ namespace Risebird.Business
             {
                 //check if the candidate email exists for the IRFId
                 var duplicate = _irfRepository.GetIRFCandidates(obj.IRFId).Where(x => x.EmailId.ToLower() == obj.EmailId?.Trim().ToLower());
-                if (duplicate != null && duplicate.Count() > 0)
+                if (duplicate != null && duplicate.Any())
                 {
                     return "Sorry! Candidate already exists for the IRF.";
                 }
@@ -763,7 +764,7 @@ namespace Risebird.Business
                 {
                     //check if the candidate email exists for the IRFId
                     var duplicate = candidates.Where(x => x.EmailId == candidate.EmailId);
-                    if (duplicate != null && duplicate.Count() > 0)
+                    if (duplicate != null && duplicate.Any())
                     {
                         return "Sorry! One or more candidates already exist for the IRF.";
                     }
@@ -782,7 +783,7 @@ namespace Risebird.Business
         {
             try
             {
-                var candidate = _irfRepository.GetIRFCandidates(irfId).Where(x => x.id == id).FirstOrDefault();
+                var candidate = _irfRepository.GetIRFCandidates(irfId).FirstOrDefault(x => x.id == id);
                 return candidate;
             }
 
@@ -815,14 +816,26 @@ namespace Risebird.Business
                 var irf = _irfRepository.GetIRFbyId(irfId);
                 var inviteCount = irf.TotalInvites;
                 var calendlyLink = irf.CalendlyLink;
-                var candidate = _irfRepository.GetIRFCandidates(irfId).Where(x => x.EmailId == email).FirstOrDefault();
+                var candidate = _irfRepository.GetIRFCandidates(irfId).FirstOrDefault(x => x.EmailId == email);
                 //var candidateInviteCount = candidate.TotalInvites;
                 if (email != null && calendlyLink != null)
                 {
                     var jdLink = irf.JDLink;
-                    var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
+                    var client = _clientService.GetClient(irf.ClientId);
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
-                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], calendlyLink, email);
+                    string primarySkill = string.Empty;
+                    primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+
+                    if(irf.BussinessType == "B2B")
+                    {
+                        _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink);
+
+                    }
+                    else
+                    {
+                        _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
+
+                    }
                     if (candidate.TotalInvites == 0)
                     {
                         _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
@@ -848,7 +861,7 @@ namespace Risebird.Business
                 var irf = _irfRepository.GetIRFbyId(irfId);
                 //var inviteCount = irf.TotalInvites;
                 //var calendlyLink = irf.CalendlyLink;
-                var candidate = _irfRepository.GetIRFCandidates(irfId).Where(x => x.EmailId == email).FirstOrDefault();
+                var candidate = _irfRepository.GetIRFCandidates(irfId).FirstOrDefault(x => x.EmailId == email);
                 //var candidateInviteCount = candidate.TotalInvites;
                 if (email != null)
                 {
@@ -937,24 +950,24 @@ namespace Risebird.Business
 
                     funnelData.TotalApproved = approved.Count();
                     var approvalFilter = risebirdSelected.Where(x => x.IsApproved.HasValue && x.IsApproved > 2);
-                    waste = waste + approvalFilter.Where(x => x.IsApproved > 3).Count();
+                    waste = waste + approvalFilter.Count(x => x.IsApproved > 3);
                     var finalSelected = approved.Where(x => x.IsSelected.HasValue && x.IsSelected == 1);
 
                     funnelData.TotalFinalSelections = finalSelected.Count();
-                    waste = waste + approved.Where(x => x.IsSelected.HasValue && x.IsSelected > 7).Count();
+                    waste = waste + approved.Count(x => x.IsSelected.HasValue && x.IsSelected > 7);
                     var offered = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus == 1);
 
                     funnelData.TotalOffered = offered.Count();
                     var offerDeductions = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus > 3);
 
-                    waste = waste + offerDeductions.Where(x => x.OfferStatus.HasValue && x.OfferStatus != 4).Count();
+                    waste = waste + offerDeductions.Count(x => x.OfferStatus.HasValue && x.OfferStatus != 4);
                     var joined = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus == 1);
                     //var totalJoined = joined.Count();
                     funnelData.TotalJoined = joined.Count();
                     var joinedDeductions = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus > 2);
                     //var joinedDenominator = totalOffered - joinedDeductions.Count();
                     //funnelData.JoiningRate = joinedDenominator != 0 ? ((totalJoined * 100 / joinedDenominator) * 100) : 0;
-                    waste += joinedDeductions.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus >= 5).Count();
+                    waste += joinedDeductions.Count(x => x.JoiningStatus.HasValue && x.JoiningStatus >= 5);
                     funnelData.WasteRate = risebirdSelected.Count() != 0 ? (waste * 100 / risebirdSelected.Count()) : 0;
                 }
 
@@ -1340,6 +1353,77 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+
+        public async Task<bool> AddCandidateStatus(CandidateStatus model)
+        {
+            try
+            {
+                return await _irfRepository.AddCandidateStatus(model);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId)
+        {
+            try
+            {
+                return await _irfRepository.GetCandidatesStatusList(irfId, candidateId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+
+        public async Task<CandidateStatus> GetCandidateStatusById(int id)
+        {
+            try
+            {
+                return await _irfRepository.GetCandidateStatusById(id);
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> EditCandidateStatus(CandidateStatus model)
+        {
+            try
+            {
+                return await _irfRepository.EditCandidateStatus(model);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteCandidateStatus(int id)
+        {
+            try
+            {
+                return await _irfRepository.DeleteCandidateStatus(id);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

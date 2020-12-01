@@ -222,20 +222,22 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId)
+        public string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail)
         {
             try
             {
                 var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
+                //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
+                mailMessage.From = new MailAddress(clientHREmail.Trim(), "Interview Invite");
                 mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
 
                 foreach (var clientUser in clientUsers)
                 {
                     mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
                 }
-                object[] parameters = new object[] { ClientName, primarySkill, jdLink, calendlyLink };
-                mailMessage.Subject = ClientName + " Video Interview " + primarySkill;
+
+                object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
+                mailMessage.Subject = ClientName + " - Video Interview - " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -401,7 +403,7 @@ namespace Risebird.CommonHelper
                 mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
                 mailMessage.To.Add(new MailAddress(candidateMail, "Risebird"));
                 //mailMessage.Bcc.Add(new MailAddress(candidateMail, null));
-              // mailMessage.CC.Add(new MailAddress(clientHRMail, null));
+                // mailMessage.CC.Add(new MailAddress(clientHRMail, null));
 
                 mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
 
@@ -1039,6 +1041,71 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
+        public string SharedTestLink(Mail model, string title, string timeduration, string url, string ClientName)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { title, timeduration, url, ClientName };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateInvitationTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+        public string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany,int score)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                var ccMails = model.CC.Split(";");
+                foreach (var mails in ccMails)
+                {
+                    mailMessage.CC.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { CandidateEmail, ApplyingCompany, score };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateCompleteTest.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
 
         public string SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate)
         {
@@ -1050,8 +1117,8 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.CC.Add(new MailAddress(email, null));
                 }
-                
-                object[] parameters = new object[] {interviewDate, candidateEmail, primarySkill, interviewStatus };
+
+                object[] parameters = new object[] { interviewDate, candidateEmail, primarySkill, interviewStatus };
                 mailMessage.Subject = "Candidate selected!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCPassedNotificationTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -1068,6 +1135,47 @@ namespace Risebird.CommonHelper
             catch (Exception)
             {
                 return "Broadcast failed.";
+            }
+        }
+
+        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null)
+        {
+            try
+            {
+                string companyLogoLink = string.Empty;
+                string companyURL = string.Empty;
+                companyLogoLink = clientLogo != null ? clientLogo : _configuration["RisebirdDetails:RisebirdLogo"];
+                companyURL = clientURL != null ? clientURL : _configuration["RisebirdDetails:RisebirdURL"];
+                var mailMessage = new MailMessage();
+
+                //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
+
+                mailMessage.From = new MailAddress(clientHREmail.Trim(), "Interview Invite");
+                mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
+
+
+                foreach (var clientUser in clientUsers)
+                {
+                    mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
+                }
+
+                object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink };
+                mailMessage.Subject = ClientName + " - Video Interview - " + primarySkill;
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
             }
         }
 

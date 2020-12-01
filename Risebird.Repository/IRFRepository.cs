@@ -2235,6 +2235,7 @@ namespace Risebird.Repository
             parameters.Add("@CompanyDetails", entity.CompanyDetails);
             parameters.Add("@Type", entity.Type);
             parameters.Add("@Heuristicsscore", entity.Heuristicsscore);
+            parameters.Add("@PrimarySkillInvite", entity.PrimarySkillInvite);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
@@ -2430,7 +2431,6 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "Select InterviewPlanner.*,IRF.CreatedOn as [IRFCreatedOn] from InterviewPlanner inner join [IRF] on InterviewPlanner.IRFId = [IRF].id  where InterviewPlanner.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -2584,6 +2584,7 @@ namespace Risebird.Repository
                 parameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 parameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 parameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
+                parameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
@@ -2663,7 +2664,7 @@ namespace Risebird.Repository
                             parameters.Add("@Notice", obj.Notice);
                             parameters.Add("@AddedByUserId", userId);
                             parameters.Add("@EncodedResumeLink", obj.EncodedResumeLink);
-
+                            
                             SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                         }
@@ -2742,6 +2743,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Heuristicsscore", obj.Heuristicsscore);
                 dynamicParameters.Add("@AvailableFullTime", obj.AvailableFullTime);
                 dynamicParameters.Add("@AvailableFreeLancing", obj.AvailableFreeLancing);
+                dynamicParameters.Add("@ClientHRAttemptContact", obj.ClientHRAttemptContact);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(
@@ -4010,6 +4012,143 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+
+        public async Task<bool> AddCandidateStatus(CandidateStatus model)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", model.IRFId); // Normal parametersmeters           
+                parameters.Add("@CandidateId", model.CandidateId);
+                parameters.Add("@Comments", model.Comments);
+                parameters.Add("@Date", DateTime.Now);
+                parameters.Add("@AudioFileLink", model.AudioFileLink);
+                parameters.Add("@Status", model.Status);
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_AddCandidateStatus", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return false;
+        }
+
+        public async Task<IEnumerable<CandidateStatus>> GetCandidatesStatusList(int irfId, int candidateId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@CandidateId", candidateId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<CandidateStatus>(con, "usp_GetCandidateStatusList", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<CandidateStatus> GetCandidateStatusById(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await  SqlMapper.QueryAsync<CandidateStatus>(con, "usp_GetCandidateStatusById", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> EditCandidateStatus(CandidateStatus model)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", model.id); // Normal parametersmeters           
+                parameters.Add("@IRFId", model.IRFId); // Normal parametersmeters           
+                parameters.Add("@CandidateId", model.CandidateId);
+                parameters.Add("@Comments", model.Comments);
+                parameters.Add("@Date", DateTime.Now);
+                parameters.Add("@AudioFileLink", model.AudioFileLink);
+                parameters.Add("@Status", model.Status);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_UpdateCandidateStatus", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return false;
+        }
+
+        public async Task<bool> DeleteCandidateStatus(int id)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteCandidateStatus", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
         }
     }
 }

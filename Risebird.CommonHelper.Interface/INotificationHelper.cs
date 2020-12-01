@@ -12,7 +12,7 @@ namespace Risebird.CommonHelper.Interface
         string SendInterviewerMailOnAssinment(string interviwers, string meetingDate);
         string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer);
         string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle, string candidateName, string reportLink, string interviewStatus, string videoLink, string interviewerComments);
-        string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId);
+        string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail);
         string CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId);
         string SendQCInterviewerMail(List<string> interviwers, string meetingDate);
         string SendInterviewCancelledMail(List<string> interviewers, string interviewDate);
@@ -41,5 +41,8 @@ namespace Risebird.CommonHelper.Interface
         string FeedbackSubmitNotification(Mail model, string candidate);
         string InsuficientBalancNotifiaction(Mail model);
         string SendQCPassNotificationToClient(List<string> clients, string candidateEmail, string primarySkill, string interviewStatus, string interviewDate);
+        string SharedTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
+        string CandidateCompleteTestLink(Mail model, string CandidateEmail, string ApplyingCompany,int score);
+        string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null);
     }
 }

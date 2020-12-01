@@ -1163,12 +1163,10 @@ input[type=number] {
 }
 
 #resumeId, #zoomlinkId {
-    background: #e2f0ff;
-    color: #1d3b5e;
+
     padding: 5px 10px;
     border-radius: 16px;
 }
-
 
 #reportId {
     background: #b3d2f1;
@@ -1195,7 +1193,22 @@ input[type=number] {
     background: none;
     text-decoration: none;
 }
-
+#statusTable .talk-bubble textarea{height:60px;}
+.scorecolor {
+    border-radius: 30px !important;
+    transition: all .3s;
+    padding: 6px 11px;
+    margin: 10px 3px;
+    min-width: 30px;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    color: #2c2c2c;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+    background: #dfd2d266;
+}
 .interviewr-cmt #videoId {
     background: none;
     text-decoration: none;

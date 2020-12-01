@@ -6,7 +6,9 @@ CREATE TABLE [dbo].[Client](
 			[Name] [varchar](150) NULL,		
 			[Description] [varchar](250) NULL,
             [OfficeAddress] [varchar](MAX) NULL,
-            [GST] [varchar](MAX) NULL	
+            [GST] [varchar](MAX) NULL,	
+            [LogoLink] [varchar](MAX) NULL,	
+            [CompanyLink] [varchar](MAX) NULL	
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -61,6 +63,26 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add Balance int NULL 	
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'LogoLink')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [LogoLink] [varchar](MAX) NULL		
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CompanyLink')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add [CompanyLink] [varchar](MAX) NULL		
 END
 END
 

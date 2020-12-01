@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.Enum
 {
-    public enum CandidateStatus
+    public enum CandidateStatusOptions
     {
         [Description("New")]
         New = 1,
@@ -36,6 +36,9 @@ namespace Risebird.Entities.Enum
         Cold,
         [Display(Name = "Hold")]
         [Description("Hold")]
-        Hold
+        Hold,
+        [Display(Name = "Invitation Sent")]
+        [Description("Invitation Sent")]
+        InvitationSent,
     }
 }

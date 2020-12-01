@@ -33,7 +33,8 @@ Create PROCEDURE [dbo].[usp_UpdateCandidate]
 @EncodedResumeLink varchar(500),
 @Heuristicsscore int,
 @AvailableFullTime  bit,
-@AvailableFreeLancing bit
+@AvailableFreeLancing bit,
+@ClientHRAttemptContact varchar(100)
   
 AS  
 Begin  
@@ -60,10 +61,15 @@ CostEstimate=@CostEstimate,
 EncodedResumeLink=@EncodedResumeLink,
 Heuristicsscore=@Heuristicsscore,
 AvailableFullTime=@AvailableFullTime,
-AvailableFreeLancing=@AvailableFreeLancing
+AvailableFreeLancing=@AvailableFreeLancing,
+ClientHRAttemptContact = @ClientHRAttemptContact
 where id=@id  
   
 End
+
+
+
+
 
 
 

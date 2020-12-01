@@ -102,6 +102,12 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Available for Freelancing")]
 
         public bool AvailableFreeLancing { get; set; }
+        public int AttemptsCount { get; set; }
+        [Display(Name = "Client HR EmailId")]
+        [Required]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
+        public string ClientHRAttemptContact { get; set; }
 
     }
 }
