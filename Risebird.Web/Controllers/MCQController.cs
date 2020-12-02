@@ -277,28 +277,35 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                if (reader.GetValue(1).ToString() == "" || reader.GetValue(2).ToString() == "" || reader.GetValue(3).ToString() == "" || reader.GetValue(4).ToString() == ""
-                                   || reader.GetValue(5).ToString() == "" || reader.GetValue(6).ToString() == "" || reader.GetValue(7).ToString() == "")
+                                if (reader.GetValue(1) == null || reader.GetValue(2) == null || reader.GetValue(3) == null || reader.GetValue(4) == null
+                                   || reader.GetValue(5) == null || reader.GetValue(6) == null || reader.GetValue(7) == null)
                                 {
                                     return Json("Question Fileds should not be blank.");
                                 }
                                 else
                                 {
-                                    var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                                    _lstMCQ.Add(new MCQVM
+                                    try
                                     {
-                                        PartitionKey = date1,
-                                        RowKey = Guid.NewGuid().ToString(),
-                                        QuestionType = reader.GetValue(1).ToString(),
-                                        Question = reader.GetValue(2).ToString(),
-                                        Option1 = reader.GetValue(3).ToString(),
-                                        Option2 = reader.GetValue(4).ToString(),
-                                        Option3 = reader.GetValue(5).ToString(),
-                                        Option4 = reader.GetValue(6).ToString(),
-                                        Answer = reader.GetValue(7).ToString(),
-                                        Id = _lstset.PartitionKey,
-                                        QuestionNumber = number
-                                    });
+                                        var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                                        _lstMCQ.Add(new MCQVM
+                                        {
+                                            PartitionKey = date1,
+                                            RowKey = Guid.NewGuid().ToString(),
+                                            QuestionType = reader.GetValue(1).ToString(),
+                                            Question = reader.GetValue(2).ToString(),
+                                            Option1 = reader.GetValue(3).ToString(),
+                                            Option2 = reader.GetValue(4).ToString(),
+                                            Option3 = reader.GetValue(5).ToString(),
+                                            Option4 = reader.GetValue(6).ToString(),
+                                            Answer = reader.GetValue(7).ToString(),
+                                            Id = _lstset.PartitionKey,
+                                            QuestionNumber = number
+                                        });
+                                    }
+                                    catch (Exception ex)
+                                    {
+
+                                    }
                                     number++;
                                 }
                             }
@@ -415,6 +422,7 @@ namespace Risebird.Web.Controllers
             QuestionDetailsList modelset = new QuestionDetailsList();
             modelset._timmerdetails = questionstimmer.Where(x => x.PartitionKey == Id).FirstOrDefault();
             modelset._timmerdetails.Timer = (Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
+            ViewBag.VideoRecording = itemshareupdate.Videorecording;
             return View(modelset);
         }
         [HttpPost]
@@ -809,7 +817,7 @@ namespace Risebird.Web.Controllers
             return Json("success");
         }
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, string videoRecording)
         {
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var resultset = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
@@ -829,6 +837,7 @@ namespace Risebird.Web.Controllers
                 _list.MCQSet = details.Title;
                 _list.ClientHR = ClientEmail;
                 _list.ApplyingCompany = ClientName;
+                _list.Videorecording = videoRecording;
                 foreach (var item in Emailids.Split(";"))
                 {
                     var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");

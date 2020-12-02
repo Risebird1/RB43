@@ -83,6 +83,7 @@ namespace Risebird.Entities.ViewModel
         public string MCQSet { get; set; }
         public string ApplyingCompany { get; set; }
         public string ClientHR { get; set; }
+        public string Videorecording { get; set; }
     }
     public class ProfileTypeSkills
     {
