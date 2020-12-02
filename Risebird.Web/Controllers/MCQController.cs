@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
@@ -26,15 +28,16 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private ISupportService _supportService;
         private ISkillService _skillService;
-
+        private readonly IAzureStorageHelper _azureStorageHelper;
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper)
         {
             _configuration = configuration;
             _userRepository = userRepository;
             _notificationHelper = notificationHelper;
             _supportService = supportService;
             _skillService = skillService;
+            _azureStorageHelper = azureStorageHelper;
         }
 
         [Authorize]
@@ -97,7 +100,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-        
+
         [HttpPost]
         public IActionResult Index(InterviewFilter filter)
         {
@@ -117,7 +120,7 @@ namespace Risebird.Web.Controllers
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
-                                     select new { ID = (int)s, Name = s.GetDescription() };
+                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
@@ -212,7 +215,7 @@ namespace Risebird.Web.Controllers
                 {".csv", "text/csv"}
             };
         }
-       
+
         [HttpPost]
         public async Task<JsonResult> UploadQuestions()
         {
@@ -268,30 +271,41 @@ namespace Risebird.Web.Controllers
                                     return Json("File format is invilid, please download templete");
                                 }
                             }
+                            else if (i == 1)
+                            {
+
+                            }
                             else
                             {
-                                if (reader.GetValue(1).ToString() == "" || reader.GetValue(2).ToString() == "" || reader.GetValue(3).ToString() == "" || reader.GetValue(4).ToString() == ""
-                                   || reader.GetValue(5).ToString() == "" || reader.GetValue(6).ToString() == "" || reader.GetValue(7).ToString() == "")
+                                if (reader.GetValue(1) == null || reader.GetValue(2) == null || reader.GetValue(3) == null || reader.GetValue(4) == null
+                                   || reader.GetValue(5) == null || reader.GetValue(6) == null || reader.GetValue(7) == null)
                                 {
                                     return Json("Question Fileds should not be blank.");
                                 }
                                 else
                                 {
-                                    var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                                    _lstMCQ.Add(new MCQVM
+                                    try
                                     {
-                                        PartitionKey = date1,
-                                        RowKey = Guid.NewGuid().ToString(),
-                                        QuestionType = reader.GetValue(1).ToString(),
-                                        Question = reader.GetValue(2).ToString(),
-                                        Option1 = reader.GetValue(3).ToString(),
-                                        Option2 = reader.GetValue(4).ToString(),
-                                        Option3 = reader.GetValue(5).ToString(),
-                                        Option4 = reader.GetValue(6).ToString(),
-                                        Answer = reader.GetValue(7).ToString(),
-                                        Id = _lstset.PartitionKey,
-                                        QuestionNumber = number
-                                    });
+                                        var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                                        _lstMCQ.Add(new MCQVM
+                                        {
+                                            PartitionKey = date1,
+                                            RowKey = Guid.NewGuid().ToString(),
+                                            QuestionType = reader.GetValue(1).ToString(),
+                                            Question = reader.GetValue(2).ToString(),
+                                            Option1 = reader.GetValue(3).ToString(),
+                                            Option2 = reader.GetValue(4).ToString(),
+                                            Option3 = reader.GetValue(5).ToString(),
+                                            Option4 = reader.GetValue(6).ToString(),
+                                            Answer = reader.GetValue(7).ToString(),
+                                            Id = _lstset.PartitionKey,
+                                            QuestionNumber = number
+                                        });
+                                    }
+                                    catch (Exception ex)
+                                    {
+
+                                    }
                                     number++;
                                 }
                             }
@@ -408,6 +422,7 @@ namespace Risebird.Web.Controllers
             QuestionDetailsList modelset = new QuestionDetailsList();
             modelset._timmerdetails = questionstimmer.Where(x => x.PartitionKey == Id).FirstOrDefault();
             modelset._timmerdetails.Timer = (Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
+            ViewBag.VideoRecording = itemshareupdate.Videorecording;
             return View(modelset);
         }
         [HttpPost]
@@ -436,8 +451,18 @@ namespace Risebird.Web.Controllers
             return Json(modeldetailset);
         }
         [HttpPost]
-        public async Task<JsonResult> CandidateQuestionsD(bool Option1, bool Option2, bool Option3, bool Option4, string SingleAnswer, int QuestionNumber, string final, string QuestionType)
+        public async Task<JsonResult> CandidateQuestionsD()
         {
+            var Option1 = Convert.ToBoolean(Request.Form["Option1"].ToString());
+            var Option2 = Convert.ToBoolean(Request.Form["Option2"].ToString());
+            var Option3 = Convert.ToBoolean(Request.Form["Option3"].ToString());
+            var Option4 = Convert.ToBoolean(Request.Form["Option4"].ToString());
+            var SingleAnswer = Request.Form["SingleAnswer"].ToString();
+            var QuestionNumber = Convert.ToInt32(Request.Form["QuestionNumber"].ToString());
+            var final = Request.Form["final"].ToString();
+            var QuestionType = Request.Form["QuestionType"].ToString();
+
+
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
             var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
             HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
@@ -530,6 +555,15 @@ namespace Risebird.Web.Controllers
                 _list.ClientHR = values.ClientHR;
                 _list.CandidateScore = resultset.Sum(x => x.Rating);
                 _list.TotalQuestions = resultset.Count();
+                if (Request.Form.Files.Count() > 0)
+                {
+                    var file = Request.Form.Files[0];
+                    await _azureStorageHelper.InsertBlob(file.FileName, "videos", file);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                    var blob = containerRef.GetBlockBlobReference(file.FileName);
+                    string uploadedvideoFileURL = blob.Uri.ToString();
+                    _list.VideoLink = uploadedvideoFileURL;
+                }
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
                 foreach (var item in resultset)
@@ -783,7 +817,7 @@ namespace Risebird.Web.Controllers
             return Json("success");
         }
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, string videoRecording)
         {
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var resultset = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
@@ -803,6 +837,7 @@ namespace Risebird.Web.Controllers
                 _list.MCQSet = details.Title;
                 _list.ClientHR = ClientEmail;
                 _list.ApplyingCompany = ClientName;
+                _list.Videorecording = videoRecording;
                 foreach (var item in Emailids.Split(";"))
                 {
                     var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -821,5 +856,20 @@ namespace Risebird.Web.Controllers
         }
         #endregion
 
+        [HttpPost]
+        public JsonResult UploadVideo()
+        {
+            if (Request.Form.Files.Count() > 0)
+            {
+                var file = Request.Form.Files[0];
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", file.FileName);
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+            }
+            return Json("");
+        }
     }
 }
