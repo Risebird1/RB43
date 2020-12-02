@@ -195,6 +195,13 @@ input[type='radio']:checked:after {
 .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
     background: #ea6e24 !important;
 }
+
+.mcq-dnbutton {
+    color: #fff !important;
+    background: #ea6e24 !important; border-radius: 3px;
+    padding: 5px;
+    background: #42a5f5;
+}
 table.journey {
     color: #504e4e;
 }

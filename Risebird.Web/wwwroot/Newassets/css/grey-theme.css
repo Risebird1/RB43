@@ -209,6 +209,15 @@ table.journey {
     table.journey th {
         color: #000;
     }
+
+.mcq-dnbutton {
+    color: #fff !important;
+
+    border-radius: 3px;
+    padding: 5px;
+    background: #929292!important;
+}
+
 #IRFList a, #ProjectList a {
     color: #47484a !important;
 }
