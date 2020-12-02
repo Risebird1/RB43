@@ -1440,28 +1440,29 @@ namespace Risebird.Web.Controllers
             });
 
             var b = new List<TimelineStatus>();
+            b.Add(new TimelineStatus
+            {
+                Status = "Schedule",
+                StatusDate = " May 2020",
+                Date = "4",
+                Day = "Monday"
+            });
             b.Add(new TimelineStatus {
                 Status = "Pending",
                 StatusDate = "May 2020",
-                Date = "5",
-                Day = "Monday"
+                Date = "7",
+                Day = "Wednesday"
             });
 
             b.Add(new TimelineStatus
             {
                 Status = "Completed",
                 StatusDate = " May 2020",
-                Date = "7",
-                Day = "Wednesday"
+                Date = "8",
+                Day = "Thursday"
             });
 
-            b.Add(new TimelineStatus
-            {
-                Status = "Schedule",
-                StatusDate = " May 2020",
-                Date = "7",
-                Day = "Wednesday"
-            });
+          
             var c = new List<TimelineStatus>();
             c.Add(new TimelineStatus
             {
@@ -1535,25 +1536,90 @@ namespace Risebird.Web.Controllers
             var f = new List<TimelineStatus>();
            f.Add(new TimelineStatus
             {
-                Status = "BorderLine",
+                Status = "NoShow",
                 StatusDate = "May 2020",
-               Date = "2",
+               Date = "12",
                Day = "Monday"
            });
 
             f.Add(new TimelineStatus
             {
-                Status = "Selected",
+                Status = "BorderLine",
                 StatusDate = "May 2020",
-                Date = "5",
+                Date = "16",
+                Day = "Thursday"
+            });
+
+            f.Add(new TimelineStatus
+            {
+                Status = "Rejected",
+                StatusDate = "May 2020",
+                Date = "17",
+                Day = "Friday"
+            });
+
+
+            var g = new List<TimelineStatus>();
+            g.Add(new TimelineStatus
+            {
+                Status = "Onboarding",
+                StatusDate = "April 2020",
+                Date = "27",
+                Day = "Monday"
+            });
+
+
+            g.Add(new TimelineStatus
+            {
+                Status = "First Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
                 Day = "Wednesday"
             });
+
+
+
+            var h = new List<TimelineStatus>();
+        
+
+            h.Add(new TimelineStatus
+            {
+                Status = "Schedule",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Wednesday"
+            });
+
+            h.Add(new TimelineStatus
+            {
+                Status = "Completed",
+                StatusDate = "May 2020",
+                Date = "9",
+                Day = "Friday"
+            });
+
+
+
+            var i = new List<TimelineStatus>();
+
+            i.Add(new TimelineStatus
+            {
+                Status = "Selected",
+                StatusDate = "May 2020",
+                Date = "17",
+                Day = "Friday"
+            });
+
+
+
+
+
 
             var model = new List<CandidateTimelineVM>();
             model.Add(new CandidateTimelineVM
             {
                 CandidateName = "Lakshmi Tejasri",
-                HREmail = "prasad_srinivas@risebird.io	",
+                HREmail = "kamini@risebird.io",
                 CurrentStatus = "Selected",
                 Report = "Available",
                 RisebirdAttempt = a,
@@ -1568,7 +1634,7 @@ namespace Risebird.Web.Controllers
                 CandidateName = "Omkar Patil",
                 HREmail = "prasad_srinivas@risebird.io	",
                 CurrentStatus = "Rejected",
-                Report = "NotbAvailable",
+                Report = "Not Available",
                 RisebirdAttempt = d,
                 MeetingStatus = e,
                 InterviewStatus = f
@@ -1576,7 +1642,18 @@ namespace Risebird.Web.Controllers
 
             });
 
+            model.Add(new CandidateTimelineVM
+            {
+                CandidateName = "Ashok Mannepalli",
+                HREmail = "prasad_srinivas@risebird.io	",
+                CurrentStatus = "Selected",
+                Report = "Available",
+                RisebirdAttempt = g,
+                MeetingStatus = h,
+                InterviewStatus = i
 
+
+            });
 
             return View(model);
         }

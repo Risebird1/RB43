@@ -889,6 +889,14 @@ hr {
     border-color: #464141;
 }
 
+
+table.journey td {
+    color: #9A9A9A;
+}
+
+table.journey th {
+        color: #9A9A9A;
+}
 .comment-tri-right.left-tp:after {
     border-color: #2b2b2b transparent transparent transparent !important;
 }

@@ -202,7 +202,13 @@ table.dataTable thead .sorting:after {
 .filavatar {
     background: #929292 !important;
 }
+table.journey {
+    color: #504e4e;
+}
 
+    table.journey th {
+        color: #000;
+    }
 #IRFList a, #ProjectList a {
     color: #47484a !important;
 }

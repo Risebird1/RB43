@@ -195,7 +195,13 @@ input[type='radio']:checked:after {
 .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
     background: #ea6e24 !important;
 }
+table.journey {
+    color: #504e4e;
+}
 
+    table.journey th {
+        color: #000;
+    }
 .trash-btn .mdc-fab__icon {
     fill: #fff !important;
 }
