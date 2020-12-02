@@ -526,6 +526,7 @@
     }
     function CreateMCQ() {
         if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && document.getElementById("Mcqfile").files.length > 0 && $("#ddlPrimarySkills").val() != null) {
+            $(".loader").show();
             var file_data = $("#Mcqfile").prop("files")[0];
             var form_data = new FormData();
             form_data.append("file", file_data);
@@ -549,6 +550,7 @@
                 enctype: 'multipart/form-data',
                 processData: false,
                 success: function (data) {
+                    $(".loader").hide();
                     alert(data);
                     closeCreatePopUp();
                     window.location.href = 'Index';
