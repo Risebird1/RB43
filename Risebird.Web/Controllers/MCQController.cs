@@ -271,6 +271,10 @@ namespace Risebird.Web.Controllers
                                     return Json("File format is invilid, please download templete");
                                 }
                             }
+                            else if (i == 1)
+                            {
+
+                            }
                             else
                             {
                                 if (reader.GetValue(1).ToString() == "" || reader.GetValue(2).ToString() == "" || reader.GetValue(3).ToString() == "" || reader.GetValue(4).ToString() == ""
