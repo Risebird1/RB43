@@ -398,6 +398,14 @@
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="sharing">
+                        <label class="label-field desp-label" for="Video Recording" style="font-weight:normal;"> Video Recording</label>
+                        <select id="txtvideorecording" class="form-control " style="margin-bottom:10px;">
+                            <option value="0">None</option>
+                            <option value="1">Recording Only</option>
+                            <option value="2">Recording and Upoading</option>
+                        </select>
+                    </div>
+                    <div class="sharing">
                         <label class="label-field desp-label" for="Please enter Client Name" style="font-weight:normal;"> Please Enter Client's Name</label>
                         <input type="text" placeholder="Client Name" id="txtclientsharename" class="form-control " style="margin-bottom:10px;" />
                     </div>
@@ -520,6 +528,7 @@
     }
     function CreateMCQ() {
         if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && document.getElementById("Mcqfile").files.length > 0 && $("#ddlPrimarySkills").val() != null) {
+            $(".loader").show();
             var file_data = $("#Mcqfile").prop("files")[0];
             var form_data = new FormData();
             form_data.append("file", file_data);
@@ -543,6 +552,7 @@
                 enctype: 'multipart/form-data',
                 processData: false,
                 success: function (data) {
+                    $(".loader").hide();
                     alert(data);
                     closeCreatePopUp();
                     window.location.href = 'Index';
@@ -585,7 +595,7 @@
             $.ajax({
                 type: "POST",
                 url: "/MCQ/ShareTestLink",
-                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val() },
+                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), videoRecording: $("#txtvideorecording").val() },
                 success: function (data) {
                     if (data == "success") {
                         alert("Successfully share the MCQ set.");

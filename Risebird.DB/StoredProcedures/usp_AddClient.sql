@@ -22,7 +22,8 @@ Create PROCEDURE [dbo].[usp_AddClient]
 @officeAddress varchar(MAX),  
 @Createdby varchar(200),
 @LogoLink varchar(max),
-@CompanyLink varchar(max)
+@CompanyLink varchar(max),
+@CompanyVideoLink varchar(max)
     
 AS    
 Begin    
@@ -36,7 +37,8 @@ INSERT INTO [dbo].[Client]
 			   ,[GST]    
 			   ,[OfficeAddress] 
 			   ,[LogoLink]
-			   ,[CompanyLink ]
+			   ,[CompanyLink]
+			   ,[CompanyVideoLink]
      )  
        VALUES    
 				(@clientName    
@@ -44,8 +46,9 @@ INSERT INTO [dbo].[Client]
 				,@GST    
 				,@officeAddress
 				,@LogoLink
-				,@CompanyLink)    
+				,@CompanyLink
+				,@CompanyVideoLink)    
 
-End    
+End     
     GO
   
