@@ -724,6 +724,189 @@ table {
             margin: 0;
             border: 1px #53a5f5 solid;
         }
+
+.timeline-section-tl {
+    width: 100%;
+    height: auto;
+    min-height: 2px;
+    display: inline-block;
+    height: 2px;
+    /*background-color: rgb(191 193 195);*/
+    position: relative;
+    border: dashed 1px #a5a5a5;
+}
+
+.tl-round {
+    width: 2px;
+    height: 25px;
+    background-color: rgb(85, 69, 69);
+    margin: auto;
+    -webkit-transition: all 100ms ease;
+    -moz-transition: all 500ms ease;
+    -ms-transition: all 500ms ease;
+    -o-transition: all 500ms ease;
+    transition: all 500ms ease;
+    float: left;
+    transition: all 500ms ease;
+    position: absolute;
+    top: -10px;
+    left: -3px;
+}
+
+table.journey th {
+    border-right: 2px solid #dee2e6;
+}
+
+table.journey th, table.journey td {
+    width: 14%;
+    text-align: center;
+}
+
+    table.journey td p {
+        margin-bottom: 5px;
+    }
+
+.journey td {
+    padding: 10px 10px;
+    border-right: 1px solid #dee2e6ba;
+    z-index: -1;
+}
+
+.circle {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #d4d4d4;
+    border-radius: 15px;
+    float: left;
+    margin: -8px 10px;
+    background: #e97162;
+    cursor: pointer;
+}
+
+.popupSpan {
+    display: none;
+    z-index: 100;
+}
+
+.circle:hover .popupSpan {
+    width: auto;
+    height: auto;
+    padding: 10px;
+    white-space: nowrap;
+    color: #000;
+    display: block;
+    position: absolute;
+    transition: all 0.1s ease-out;
+}
+
+
+
+.event2Bubble {
+    position: absolute;
+    background-color: #dadadad4;
+    width: 139px;
+    height: 60px;
+    left: -105px;
+    top: 33px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(158, 158, 158, 0.64);
+}
+
+    .event2Bubble:before {
+        bottom: 59px;
+        left: 103px;
+        border-top-color: rgba(222, 222, 222, 0.66) !important;
+        border-width: 12px;
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+        transform: rotate(180deg);
+    }
+
+    .event1Bubble:after, .event1Bubble:before, .event2Bubble:after, .event2Bubble:before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent;
+        border-bottom: 0;
+    }
+
+.eventTime {
+    display: flex;
+}
+
+.DayDigit {
+    font-size: 27px;
+    font-family: "Arial Black", Gadget, sans-serif;
+    margin-left: 10px;
+    color: #4C4A4A;
+}
+
+.Day {
+    font-size: 11px;
+    margin-left: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #4C4A4A;
+}
+
+.eventTitle {
+    font-family: "Arial Black", Gadget, sans-serif;
+    color: #a71930;
+    font-size: 11px;
+    text-transform: uppercase;
+    flex: 1;
+    display: flex;
+    margin-left: 13px;
+    text-align: center;
+    margin-top: -2px;
+}
+
+.borderline {
+    background: hotpink;
+}
+
+.noshow {
+    background: grey
+}
+
+.selected {
+    background: green;
+}
+
+.pending {
+    background: orangered;
+}
+
+.completed {
+    background: #2ea72e;
+}
+
+.rejected {
+    background: red;
+}
+
+.schedule {
+    background: cornflowerblue;
+}
+
+.pl15 {
+    padding-left: 15px !important;
+}
+
+.select {
+    color: green;
+}
+
+.reject {
+    color: #d21111;
+}
+
+
 .card-blue {
     border-radius: 4px;
     background-color: #fff;

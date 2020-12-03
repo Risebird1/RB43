@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\HomeController1.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\Newassets\css\chat.cs" />
   </ItemGroup>
 
