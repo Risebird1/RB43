@@ -73,7 +73,19 @@ body {
     border: 1px #007bff solid !important;
 
 }
-
+.mcq-dnbutton {
+    color: #42a5f5 !important;
+    border: 2px #42a5f5 solid;
+    border-radius: 3px;
+    padding: 5px;
+    background: #42a5f5;
+}
+table.journey {
+    color: #504e4e;
+}
+ table.journey th {
+        color: #000;
+ }
     .pagination-container > ul > li.active a {
         color: #fff !important;
     }
