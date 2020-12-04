@@ -725,20 +725,53 @@ table {
             border: 1px #53a5f5 solid;
         }
 
+/*.timeline-section-tl {
+    width: 100%;
+    height: auto;
+    min-height: 2px;
+    display: inline-block;
+    height: 2px;
+    
+position: relative;
+border: dashed 1px #a5a5a5;*/
+}
+
+
 .timeline-section-tl {
     width: 100%;
     height: auto;
     min-height: 2px;
     display: inline-block;
     height: 2px;
-    /*background-color: rgb(191 193 195);*/
     position: relative;
-    border: dashed 1px #a5a5a5;
+
+   
 }
+
+/*.tl-round {
+    width: 2px;
+    height: 25px;
+    background-color: rgb(85, 69, 69);
+    margin: auto;
+    -webkit-transition: all 100ms ease;
+    -moz-transition: all 500ms ease;
+    -ms-transition: all 500ms ease;
+    -o-transition: all 500ms ease;
+    transition: all 500ms ease;
+    float: left;
+    transition: all 500ms ease;
+    position: absolute;
+    top: -10px;
+    left: -3px;
+}*/
+
+
+
+
 
 .tl-round {
     width: 2px;
-    height: 25px;
+    /* height: 25px; */
     background-color: rgb(85, 69, 69);
     margin: auto;
     -webkit-transition: all 100ms ease;
@@ -771,6 +804,17 @@ table.journey th, table.journey td {
     border-right: 1px solid #dee2e6ba;
     z-index: -1;
 }
+.circle-wrap {
+    margin: 0px 10px 0px 10px;;
+   
+
+}
+
+
+
+.circle:nth-of-type(even)::before {
+    border: none;
+}
 
 .circle {
     width: 18px;
@@ -778,10 +822,28 @@ table.journey th, table.journey td {
     border: 2px solid #d4d4d4;
     border-radius: 15px;
     float: left;
-    margin: -8px 10px;
+    margin: 0px 5px 3px 5px;
     background: #e97162;
     cursor: pointer;
+    position: relative;
 }
+/*  .circle::before {
+        position: relative;
+        border: dashed 1px #979c9c;
+        content: "";
+        transform: rotate(-100);
+        display: flex;
+        align-items: center;
+        top: 5px;
+        left: -14px;
+        -moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        -o-transform: scaleX(-1);
+        -ms-filter: fliph;
+        filter: fliph;
+        
+    }*/
+
 
 .popupSpan {
     display: none;
@@ -889,7 +951,9 @@ table.journey th, table.journey td {
 .rejected {
     background: red;
 }
-
+.dropped {
+    background: orange;
+}
 .schedule {
     background: cornflowerblue;
 }
