@@ -189,7 +189,9 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="50%">Skill Channel</th>
-                                                                        <th width="20%">Status</th>
+                                                                        <th width="20%">Activity Type</th>
+                                                                        <th>Assigned To</th>
+                                                                        <th>Status</th>
                                                                         <th width="30%">Comment</th>
                                                                     </tr>
                                                                 </thead>
@@ -201,9 +203,11 @@
                                                                         <tr>
                                                                             <td><strong>@Model.IrfProgressList[i].IRFnSkill</strong></td>
                                                                             <td>
-                                                                                @Html.DropDownListFor(m => m.IrfProgressList[i].idProgress, Model.ProgressOptions, new { @class = "form-control" })
+                                                                                @Html.DropDownListFor(m => m.IrfProgressList[i].idProgress, Model.ProgressOptions, new { @class = "form-control", @onchange = "ChangeAssignvalues(" + @Model.IrfProgressList[i].id + "," + i + ")" })
 
                                                                             </td>
+                                                                            <td>@Html.TextBoxFor(m => m.IrfProgressList[i].AssignTo, new { htmlAttributes = new { @class = "form-control text-box single-line" } })</td>
+                                                                            <td>@Html.TextBoxFor(m => m.IrfProgressList[i].AssignStatus, new { htmlAttributes = new { @class = "form-control text-box single-line" } })</td>
                                                                             <td>
                                                                                 @Html.EditorFor(m => m.IrfProgressList[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
@@ -669,6 +673,23 @@
             }
         });
     }
+    function ChangeAssignvalues(id, index) {
+        $.ajax({
+            url: '/Dashboard/FetchActivityDetails',
+            data: { id: id, idprogess: $("#IrfProgressList_" + index + "__idProgress").val() },
+            success: function (data) {
+                if (data != null) {
+                    $("#IrfProgressList_" + index + "__AssignTo").val(data.assignTo);
+                    $("#IrfProgressList_" + index + "__AssignStatus").val(data.assignStatus);
+                    $("#IrfProgressList_" + index + "__Comment").val(data.comment);
+                } else {
+                    $("#IrfProgressList_" + index + "__AssignTo").val('');
+                    $("#IrfProgressList_" + index + "__AssignStatus").val('');
+                    $("#IrfProgressList_" + index + "__Comment").val('');
+                }
+            }
+        });
+    }
 </script>
 
 <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=1"></script>
@@ -693,5 +714,5 @@
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip();
     });
-    </script>
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

@@ -138,27 +138,37 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
 
-                    DataTable progressDt = new DataTable();
-                    progressDt.Columns.Add("id", typeof(int));
-                    progressDt.Columns.Add("Comment", typeof(string));
-                    progressDt.Columns.Add("idProgress", typeof(int));
+                    //DataTable progressDt = new DataTable();
+                    //progressDt.Columns.Add("id", typeof(int));
+                    //progressDt.Columns.Add("Comment", typeof(string));
+                    //progressDt.Columns.Add("idProgress", typeof(int));
 
+                    DataTable activityprogressDt = new DataTable();
+                    activityprogressDt.Columns.Add("id", typeof(int));
+                    activityprogressDt.Columns.Add("Comment", typeof(string));
+                    activityprogressDt.Columns.Add("idProgress", typeof(int));
+                    activityprogressDt.Columns.Add("Userid", typeof(string));
+                    activityprogressDt.Columns.Add("Status", typeof(string));
 
+                    //foreach (var item in irfProgressList)
+                    //{
+                    //    progressDt.Rows.Add(item.id, item.Comment, item.idProgress);
+                    //}
                     foreach (var item in irfProgressList)
                     {
-                        progressDt.Rows.Add(item.id, item.Comment, item.idProgress);
+                        activityprogressDt.Rows.Add(item.id, item.Comment, item.idProgress, item.AssignTo, item.AssignStatus);
                     }
 
                     SqlCommand cmdProgress = new SqlCommand("usp_IRFProgressStatusBulkUpdate", con);
                     cmdProgress.CommandType = CommandType.StoredProcedure;
                     cmdProgress.Parameters.Add(new SqlParameter("@ProgressBulkData", SqlDbType.Structured));
-                    cmdProgress.Parameters["@ProgressBulkData"].Value = progressDt;
+                    cmdProgress.Parameters["@ProgressBulkData"].Value = activityprogressDt;
                     con.Open();
                     if (cmdProgress.ExecuteNonQuery() != 0)
                     {
                         con.Close();
                     }
-
+                    //Create Sp and Update/Insert value into db
                     return true;
                 }
 
@@ -321,6 +331,30 @@ namespace Risebird.Repository
             }
             return null;
         }
-
+        public IRF FetchActivityDetails(int id, int idprogess)
+        {
+            try
+            {
+                var query = "Select ul.EmailId as AssignTo,IR.Status AssignStatus,IR.Comment from IRFActivityStatus IR join UserList ul on IR.Userid=ul.id where IR.IRFID=@id and IR.idProgress=@idprogess";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@idprogess", idprogess);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<IRF>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

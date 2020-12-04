@@ -200,6 +200,7 @@ namespace Risebird.Entities.ViewModel
         public string Comment { get; set; }
         public string BussinessType { get; set; }
         public string PrimarySkillInvite { get; set; }
-
+        public string AssignTo { get; set; }
+        public string AssignStatus { get; set; }
     }
 }

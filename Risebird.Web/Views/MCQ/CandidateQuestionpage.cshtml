@@ -60,6 +60,7 @@
     var countdown = document.getElementById("tiles");
     getCountdown();
     var myVar = setInterval(function () { getCountdown(); }, 1000);
+    var timehave = 0;
     function getCountdown() {
         var current_date = new Date().getTime();
         var seconds_left = (target_date - current_date) / 1000;
@@ -75,11 +76,15 @@
         countdown.innerHTML = "<span>" + hours + "</span><span>" + minutes + "</span><span>" + seconds + "</span>";
 
         var timmertime = parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
+        timehave = parseInt(timehave) + 1;
         if (parseInt(timmertime) == 0) {
             //submit finally
             $("#zquestion_final").val("true");
             clearInterval(myVar);
             $("#btnsubmit").click();
+        }
+        if (parseInt(timehave) == 60) {
+            document.getElementById('btnStop').click();
         }
         $("#ztimmerdetails_Timer").val(timmertime);
     }
@@ -115,6 +120,7 @@
 
         InitialLoad();
     });
+    var file;
     function InitialLoad() {
         $.ajax({
             type: "POST",
@@ -161,35 +167,11 @@
         }
         if ($("#zquestion_final").val() == "true") {
             document.getElementById('btnStop').click();
-            if ($("#txtrecordingvideo").val() == "1" || $("#txtrecordingvideo").val() == "0" || $("#txtrecordingvideo").val() == "") {
-                callquestions(option1, option2, option3, option4, Singleanswer);
-            }
+            //if ($("#txtrecordingvideo").val() == "1" || $("#txtrecordingvideo").val() == "0" || $("#txtrecordingvideo").val() == "") {
+            callquestions(option1, option2, option3, option4, Singleanswer);
+            // }
         } else {
             callquestions(option1, option2, option3, option4, Singleanswer);
-            //var form_data = new FormData();
-            //form_data.append("Option1", option1);
-            //form_data.append("Option2", option2);
-            //form_data.append("Option3", option3);
-            //form_data.append("Option4", option4);
-            //form_data.append("SingleAnswer", Singleanswer);
-            //form_data.append("QuestionNumber", $("#zquestion_QuestionNumber").val());
-            //form_data.append("final", $("#zquestion_final").val());
-            //form_data.append("QuestionType", $("#zquestion_QuestionType").val());
-            //$.ajax({
-            //    type: "POST",
-            //    url: "/MCQ/CandidateQuestionsD",
-            //    data: form_data,
-            //    contentType: false,
-            //    enctype: 'multipart/form-data',
-            //    processData: false,
-            //    success: function (data) {
-            //        if (data == "TestSubmit") {
-            //            window.location.href = "/MCQ/TestComplete?status=" + data;
-            //        } else {
-            //            binddata(data);
-            //        }
-            //    }
-            //});
         }
     }
     function callquestions(option1, option2, option3, option4, Singleanswer) {
@@ -202,6 +184,9 @@
         form_data.append("QuestionNumber", $("#zquestion_QuestionNumber").val());
         form_data.append("final", $("#zquestion_final").val());
         form_data.append("QuestionType", $("#zquestion_QuestionType").val());
+        if ($("#zquestion_final").val() == "true") {
+            form_data.append("file", file);
+        }
         $.ajax({
             type: "POST",
             url: "/MCQ/CandidateQuestionsD",
@@ -311,7 +296,7 @@
     }
 </script>
 <script>
-    if ($("#txtrecordingvideo").val() == "2" || $("#txtrecordingvideo").val() == "1") {
+    if ($("#txtrecordingvideo").val() == "2" || $("#txtrecordingvideo").val() == "1" || $("#txtrecordingvideo").val() == "") {
         let vidSave = document.getElementById('vid2');
         let chunks = [];
 
@@ -375,63 +360,63 @@
                     let videoURL = window.URL.createObjectURL(blob);
                     vidSave.src = videoURL;
                     console.log(videoURL);
-                    if ($("#txtrecordingvideo").val() == "2") {
-                        var Singleanswer = "";
-                        var option1 = false;
-                        var option2 = false;
-                        var option3 = false;
-                        var option4 = false;
-                        var file = "";
-                        if ($("#zquestion_QuestionType").val() == "Single") {
-                            if (document.getElementById("SingleAnswer1").checked) {
-                                Singleanswer = "1";
-                            } else if (document.getElementById("SingleAnswer2").checked) {
-                                Singleanswer = "2";
-                            } else if (document.getElementById("SingleAnswer3").checked) {
-                                Singleanswer = "3";
-                            } else if (document.getElementById("SingleAnswer4").checked) {
-                                Singleanswer = "4";
-                            }
-                        } else {
-                            if ($("#MultiAnswerOption1").is(':checked')) {
-                                option1 = true;
-                            }
-                            if ($("#MultiAnswerOption2").is(':checked')) {
-                                option2 = true;
-                            }
-                            if ($("#MultiAnswerOption3").is(':checked')) {
-                                option3 = true;
-                            }
-                            if ($("#MultiAnswerOption4").is(':checked')) {
-                                option4 = true;
-                            }
-                        }
-                        var form_data = new FormData();
-                        form_data.append("file", blob);
-                        form_data.append("Option1", option1);
-                        form_data.append("Option2", option2);
-                        form_data.append("Option3", option3);
-                        form_data.append("Option4", option4);
-                        form_data.append("SingleAnswer", Singleanswer);
-                        form_data.append("QuestionNumber", $("#zquestion_QuestionNumber").val());
-                        form_data.append("final", $("#zquestion_final").val());
-                        form_data.append("QuestionType", $("#zquestion_QuestionType").val());
-                        $.ajax({
-                            type: "POST",
-                            url: "/MCQ/CandidateQuestionsD",
-                            data: form_data,
-                            contentType: false,
-                            enctype: 'multipart/form-data',
-                            processData: false,
-                            success: function (data) {
-                                if (data == "TestSubmit") {
-                                    window.location.href = "/MCQ/TestComplete?status=" + data;
-                                } else {
-                                    binddata(data);
-                                }
-                            }
-                        });
-                    }
+                    file = blob;
+                    //if ($("#txtrecordingvideo").val() == "2") {
+                    //    var Singleanswer = "";
+                    //    var option1 = false;
+                    //    var option2 = false;
+                    //    var option3 = false;
+                    //    var option4 = false;
+                    //    if ($("#zquestion_QuestionType").val() == "Single") {
+                    //        if (document.getElementById("SingleAnswer1").checked) {
+                    //            Singleanswer = "1";
+                    //        } else if (document.getElementById("SingleAnswer2").checked) {
+                    //            Singleanswer = "2";
+                    //        } else if (document.getElementById("SingleAnswer3").checked) {
+                    //            Singleanswer = "3";
+                    //        } else if (document.getElementById("SingleAnswer4").checked) {
+                    //            Singleanswer = "4";
+                    //        }
+                    //    } else {
+                    //        if ($("#MultiAnswerOption1").is(':checked')) {
+                    //            option1 = true;
+                    //        }
+                    //        if ($("#MultiAnswerOption2").is(':checked')) {
+                    //            option2 = true;
+                    //        }
+                    //        if ($("#MultiAnswerOption3").is(':checked')) {
+                    //            option3 = true;
+                    //        }
+                    //        if ($("#MultiAnswerOption4").is(':checked')) {
+                    //            option4 = true;
+                    //        }
+                    //    }
+                    //    var form_data = new FormData();
+                    //    form_data.append("file", blob);
+                    //    form_data.append("Option1", option1);
+                    //    form_data.append("Option2", option2);
+                    //    form_data.append("Option3", option3);
+                    //    form_data.append("Option4", option4);
+                    //    form_data.append("SingleAnswer", Singleanswer);
+                    //    form_data.append("QuestionNumber", $("#zquestion_QuestionNumber").val());
+                    //    form_data.append("final", $("#zquestion_final").val());
+                    //    form_data.append("QuestionType", $("#zquestion_QuestionType").val());
+                    //    $.ajax({
+                    //        type: "POST",
+                    //        url: "/MCQ/CandidateQuestionsD",
+                    //        data: form_data,
+                    //        contentType: false,
+                    //        enctype: 'multipart/form-data',
+                    //        processData: false,
+                    //        success: function (data) {
+                    //            if (data == "TestSubmit") {
+                    //                window.location.href = "/MCQ/TestComplete?status=" + data;
+                    //            } else {
+                    //                binddata(data);
+                    //            }
+                    //        }
+                    //    });
+                    //}
                 }
             })
             .catch(function (err) {

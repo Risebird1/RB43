@@ -280,5 +280,11 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        public JsonResult FetchActivityDetails(int id, int idprogess)
+        {
+            var result = _dashboardService.FetchActivityDetails(id, idprogess);
+            return Json(result);
+        }
     }
 }
