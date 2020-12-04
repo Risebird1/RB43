@@ -5,7 +5,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Candidate Journey";
+    ViewData["Title"] = "Candidate Timeline";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
 
@@ -38,7 +38,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">Risetube</a>
+                <a class="navbar-brand">Candidate Timeline</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -204,7 +204,7 @@
 
                                                     <th class="text-left">Candidate Name</th>
                                                     <th class="text-left">HR Email</th>
-                                                    <th>Risebird Attempt</th>
+                                                    <th>Schedule Status</th>
 
                                                     <th>Meeting Status</th>
                                                     <th>Interview Status</th>
