@@ -1533,7 +1533,53 @@ namespace Risebird.Web.Controllers
                 Date = "25",
                 Day = "Wednesday"
             });
+            a.Add(new TimelineStatus
+            {
+                Status = "Fourth Attempt",
+                StatusDate = "April 2020",
+                Date = "27",
+                Day = "Friday"
+            });
 
+            a.Add(new TimelineStatus
+            {
+                Status = "Fifth Attempt",
+                StatusDate = "April 2020",
+                Date = "30",
+                Day = "Monday"
+            });
+
+
+            a.Add(new TimelineStatus
+            {
+                Status = "Sixth Attempt",
+                StatusDate = "May 2020",
+                Date = "1",
+                Day = "Tuesday"
+            });
+            a.Add(new TimelineStatus
+            {
+                Status = "Seventh Attempt",
+                StatusDate = "May 2020",
+                Date = "3",
+                Day = "Thursday"
+            });
+
+
+            a.Add(new TimelineStatus
+            {
+                Status = "Eight Attempt",
+                StatusDate = "May 2020",
+                Date = "4",
+                Day = "Friday"
+            });
+            a.Add(new TimelineStatus
+            {
+                Status = "Nineth Attempt",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Monday"
+            });
             var b = new List<TimelineStatus>();
             b.Add(new TimelineStatus
             {
@@ -1708,6 +1754,194 @@ namespace Risebird.Web.Controllers
 
 
 
+            var j = new List<TimelineStatus>();
+            j.Add(new TimelineStatus
+            {
+                Status = "Onboarding",
+                StatusDate = "April 2020",
+                Date = "27",
+                Day = "Monday"
+            });
+
+
+           j.Add(new TimelineStatus
+            {
+                Status = "First Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+
+            j.Add(new TimelineStatus
+            {
+                Status = "Second Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+
+
+            j.Add(new TimelineStatus
+            {
+                Status = "Third Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+
+
+            j.Add(new TimelineStatus
+            {
+                Status = "Fourth Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+            var k = new List<TimelineStatus>();
+
+
+            k.Add(new TimelineStatus
+            {
+                Status = "Schedule",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Wednesday"
+            });
+
+            k.Add(new TimelineStatus
+            {
+                Status = "Completed",
+                StatusDate = "May 2020",
+                Date = "9",
+                Day = "Friday"
+            });
+
+
+
+            var l = new List<TimelineStatus>();
+
+            l.Add(new TimelineStatus
+            {
+                Status = "Selected",
+                StatusDate = "May 2020",
+                Date = "17",
+                Day = "Friday"
+            });
+
+
+
+
+         
+
+
+
+
+            var m = new List<TimelineStatus>();
+            m.Add(new TimelineStatus
+            {
+                Status = "Onboarding",
+                StatusDate = "April 2020",
+                Date = "27",
+                Day = "Monday"
+            });
+
+
+            m.Add(new TimelineStatus
+            {
+                Status = "First Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+
+           m.Add(new TimelineStatus
+            {
+                Status = "Second Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+
+
+           m.Add(new TimelineStatus
+            {
+                Status = "Third Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+
+
+            m.Add(new TimelineStatus
+            {
+                Status = "Fourth Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+
+
+
+
+            var n = new List<TimelineStatus>();
+
+          
+            n.Add(new TimelineStatus
+            {
+                Status = "Schedule",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Wednesday"
+            });
+
+            n.Add(new TimelineStatus
+            {
+                Status = "Completed",
+                StatusDate = "May 2020",
+                Date = "9",
+                Day = "Friday"
+            });
+
+
+
+
+
+            var o = new List<TimelineStatus>();
+            o.Add(new TimelineStatus
+            {
+                Status = "NoShow",
+                StatusDate = "May 2020",
+                Date = "12",
+                Day = "Monday"
+            });
+
+           o.Add(new TimelineStatus
+            {
+                Status = "BorderLine",
+                StatusDate = "May 2020",
+                Date = "16",
+                Day = "Thursday"
+            });
+
+            o.Add(new TimelineStatus
+            {
+                Status = "Dropped",
+                StatusDate = "May 2020",
+                Date = "17",
+                Day = "Friday"
+            });
+            o.Add(new TimelineStatus
+            {
+                Status = "Rejected",
+                StatusDate = "May 2020",
+                Date = "20",
+                Day = "Monday"
+            });
+
+
+
+
+
 
 
             var model = new List<CandidateTimelineVM>();
@@ -1749,6 +1983,39 @@ namespace Risebird.Web.Controllers
 
 
             });
+
+
+            model.Add(new CandidateTimelineVM
+            {
+                CandidateName = "Srinivas Avoonuri",
+                HREmail = "kamini@risebird.io",
+                CurrentStatus = "Selected",
+                Report = "Available",
+                RisebirdAttempt = j,
+                MeetingStatus = k,
+                InterviewStatus = l
+
+
+            });
+
+
+
+
+            model.Add(new CandidateTimelineVM
+            {
+                CandidateName = "khushboo kumari",
+                HREmail = "kamini@risebird.io",
+                CurrentStatus = "Rejected",
+                Report = "Available",
+                RisebirdAttempt = m,
+                MeetingStatus = n,
+                InterviewStatus = o
+
+
+            });
+
+
+
             if (HttpContext.Session.GetString("CandidateTimeLineFilter") != null)
             {
                 var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CandidateTimeLineFilter"));
@@ -1810,6 +2077,39 @@ namespace Risebird.Web.Controllers
                 Date = "25",
                 Day = "Wednesday"
             });
+
+            a.Add(new TimelineStatus
+            {
+                Status = "Fourth Attempt",
+                StatusDate = "April 2020",
+                Date = "27",
+                Day = "Friday"
+            });
+
+            a.Add(new TimelineStatus
+            {
+                Status = "Fifth Attempt",
+                StatusDate = "April 2020",
+                Date = "30",
+                Day = "Monday"
+            });
+
+
+            a.Add(new TimelineStatus
+            {
+                Status = "Sixth Attempt",
+                StatusDate = "May 2020",
+                Date = "1",
+                Day = "Tuesday"
+            });
+            a.Add(new TimelineStatus
+            {
+                Status = "Seventh Attempt",
+                StatusDate = "May 2020",
+                Date = "3",
+                Day = "Thursday"
+            });
+
 
             var b = new List<TimelineStatus>();
             b.Add(new TimelineStatus
