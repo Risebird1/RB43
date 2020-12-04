@@ -745,6 +745,13 @@ namespace Risebird.Business
                     var hrs = _irfRepository.GetHRsMailIds(obj.IRFId);
                     //send mails
                     _notificationHelper.SendCandidateOnboardedMail(hrs.ToList(), obj.Name, obj.IRFName, "HR");
+
+                    //get candidateId
+                    var candidateId =await  _irfRepository.GetCandidateIdByEmail(obj.EmailId);
+
+                    //add candidate status 
+                    await AddCandidateStatus(emailId, candidateId, obj.IRFId, "Candidate added", (int)CandidateStatusOptions.Added);
+
                 }
                 return result;
             }
@@ -1355,7 +1362,26 @@ namespace Risebird.Business
                 return null;
             }
         }
+        private async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink=null)
+        {
+            try
+            {
+                var model = new CandidateStatus();
+                model.CandidateId = candidateId;
+                model.IRFId = irfId;
+                model.AudioFileLink = audioLink;
+                model.Comments = comments;
+                model.Status = status;
+                model.PerformedBy = performedBy;
+                return await _irfRepository.AddCandidateStatus(model);
+            }
 
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
         public async Task<bool> AddCandidateStatus(CandidateStatus model)
         {

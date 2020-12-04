@@ -4419,8 +4419,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName != "Client")
                     {
+                        model.PerformedBy = emailid;
                         if (model.AudioFile != null)
                         {
                             await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
@@ -4512,8 +4515,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        model.PerformedBy = emailid;
                         if (model.AudioFile != null)
                         {
                             await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);

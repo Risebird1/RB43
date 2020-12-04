@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[CandidateStatus](
 	[Comments] [varchar](max) NULL,
 	[Date] [datetime] NULL,
 	[Status] [int] NULL,
+	[PerformedBy] [varchar](100) NULL
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([CandidateId]) REFERENCES [dbo].[CandidatesMaster] ([id]),
  CONSTRAINT [PK_CandidateStatus] PRIMARY KEY CLUSTERED 
@@ -20,17 +21,36 @@ CREATE TABLE [dbo].[CandidateStatus](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 End
+Else
+
+Begin
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PerformedBy')
+      AND Object_ID = Object_ID(N'CandidateStatus'))
+BEGIN
+    ALTER TABLE CandidateStatus
+    Add [PerformedBy] VARCHAR(100)
+END
+
+End
+
+
 GO
 
 
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (1, N'New')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (2, N'In Progress')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (3, N'Waiting For Response')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (4, N'Scheduled')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (5, N'Irrelevant')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (6, N'Duplicate')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (7, N'Not Interested')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (8, N'Got Another Offer')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (9, N'Cold')
-INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (10, N'Hold')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (1, N'New')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (2, N'In Progress')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (3, N'Waiting For Response')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (4, N'Scheduled')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (5, N'Irrelevant')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (6, N'Duplicate')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (7, N'Not Interested')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (8, N'Got Another Offer')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (9, N'Cold')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (10, N'Hold')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (11, N'Invitation Sent')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (12, N'Added')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (13, N'Updated')
 
