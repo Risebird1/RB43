@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OfficeOpenXml;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -496,15 +498,18 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
                     if (TempData["SuccessErrorMessageInterviewer"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
                         TempData.Remove("SuccessErrorMessageInterviewer");
 
                     }
-
+                    ViewBag.Profile = profileName;
                     return View(_userService.GetInterviewers());
                 }
                 else
@@ -794,6 +799,96 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessageInterviewer"] = "Deletion of Interviewer Failed";
                 return RedirectToAction("Interviewers");
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public FileContentResult InterviewwersExporttoExcel()
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("All Interviewers");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_All_Interviewers" + ".xlsx";
+            try
+            {
+               
+                var interviewers = _userService.GetInterviewers();
+
+                Sheet.Cells["A1:K1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:K1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:K1"].Style.WrapText = true;
+
+                int startColumn = 1; int endColumn = 10;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "First Name";
+                Sheet.Cells[1, 2].Value = "Last Name";
+                Sheet.Cells[1, 3].Value = "Email Id";
+                Sheet.Cells[1, 4].Value = "Mobile No";
+                Sheet.Cells[1, 5].Value = "Primary Skills";
+                Sheet.Cells[1, 6].Value = "Resume Link";
+                Sheet.Cells[1, 7].Value = "Approved";
+                Sheet.Cells[1, 8].Value = "Slots";
+                Sheet.Cells[1, 9].Value = "No of Interviews";
+                Sheet.Cells[1, 10].Value = "Success rate";
+
+                int i = 2;
+                if (interviewers.Count() > 0)
+                {
+                    foreach (var item in interviewers)
+                    {
+                        Sheet.Cells[i, 1].Value = item.FirstName;
+                        Sheet.Cells[i, 2].Value = item.LastName;
+                        Sheet.Cells[i, 3].Value = item.EmailId;
+                        Sheet.Cells[i, 4].Value = item.MobileNumber;
+                        Sheet.Cells[i, 5].Value = item.PrimarySkill;
+
+                        if (!string.IsNullOrEmpty(item.ResumeLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 6].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                                Sheet.Cells[i, 6].Value = "Resume Link";
+                                Sheet.Cells[i, 6].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 6].Value = "No Resume";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 6].Value = "No Resume";
+                        }
+                        var approvalStatus = item.IsApproved ? "Approved" : "Not Approved";
+                        Sheet.Cells[i, 7].Value = approvalStatus;
+
+                        Sheet.Cells[i, 8].Value = item.Slots;
+                        Sheet.Cells[i, 9].Value = item.NoOfInterview.ToString();
+                        Sheet.Cells[i, 10].Value = item.SuccessRate.ToString();
+
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+
+            }
+
         }
 
         #endregion
@@ -1398,7 +1493,580 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
+        public IActionResult CandidateTimeline()
+        {
 
+
+            var a = new List<TimelineStatus>();
+            a.Add(new TimelineStatus
+            {
+                Status = "Onboarding",
+                StatusDate = "April 2020",
+                Date = "17",
+                Day = "Wednesday"
+            });
+
+
+            a.Add(new TimelineStatus
+            {
+                Status = "First Attempt",
+                StatusDate = "April 2020",
+                Date = "19",
+                Day = "Friday"
+            });
+
+
+
+            a.Add(new TimelineStatus
+            {
+                Status = "Second Attempt",
+                StatusDate = "April 2020",
+                Date = "23",
+                Day = "Monday"
+            });
+
+
+            a.Add(new TimelineStatus
+            {
+                Status = "Third Attempt",
+                StatusDate = "April 2020",
+                Date = "25",
+                Day = "Wednesday"
+            });
+
+            var b = new List<TimelineStatus>();
+            b.Add(new TimelineStatus
+            {
+                Status = "Schedule",
+                StatusDate = " May 2020",
+                Date = "4",
+                Day = "Monday"
+            });
+            b.Add(new TimelineStatus {
+                Status = "Pending",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Wednesday"
+            });
+
+            b.Add(new TimelineStatus
+            {
+                Status = "Completed",
+                StatusDate = " May 2020",
+                Date = "8",
+                Day = "Thursday"
+            });
+
+          
+            var c = new List<TimelineStatus>();
+            c.Add(new TimelineStatus
+            {
+                Status = "BorderLine",
+                StatusDate = " May 2020",
+                Date = "2",
+                Day = "Monday"
+
+            });
+
+            c.Add(new TimelineStatus
+            {
+                Status = "Selected",
+                StatusDate = "May 2020",
+                Date = "5",
+                Day = "Wednesday"
+            });
+
+
+            var d = new List<TimelineStatus>();
+            d.Add(new TimelineStatus
+            {
+                Status = "Onboarding",
+                StatusDate = "April 2020",
+                Date = "17",
+                Day = "Wednesday"
+            });
+
+
+            d.Add(new TimelineStatus
+            {
+                Status = "First Attempt",
+                StatusDate = "April 2020",
+                Date = "19",
+                Day = "Friday"
+            });
+
+
+
+            d.Add(new TimelineStatus
+            {
+                Status = "Second Attempt",
+                StatusDate = "April 2020",
+                Date = "23",
+                Day = "Monday"
+            });
+
+
+        
+
+
+            var e = new List<TimelineStatus>();
+            e.Add(new TimelineStatus
+            {
+                Status = "Pending",
+                StatusDate = "May 2020",
+                Date = "5",
+                Day = "Monday"
+
+            });
+
+            e.Add(new TimelineStatus
+            {
+                Status = "Completed",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Wednesday"
+            });
+
+
+            var f = new List<TimelineStatus>();
+           f.Add(new TimelineStatus
+            {
+                Status = "NoShow",
+                StatusDate = "May 2020",
+               Date = "12",
+               Day = "Monday"
+           });
+
+            f.Add(new TimelineStatus
+            {
+                Status = "BorderLine",
+                StatusDate = "May 2020",
+                Date = "16",
+                Day = "Thursday"
+            });
+
+            f.Add(new TimelineStatus
+            {
+                Status = "Rejected",
+                StatusDate = "May 2020",
+                Date = "17",
+                Day = "Friday"
+            });
+
+
+            var g = new List<TimelineStatus>();
+            g.Add(new TimelineStatus
+            {
+                Status = "Onboarding",
+                StatusDate = "April 2020",
+                Date = "27",
+                Day = "Monday"
+            });
+
+
+            g.Add(new TimelineStatus
+            {
+                Status = "First Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+
+
+
+            var h = new List<TimelineStatus>();
+        
+
+            h.Add(new TimelineStatus
+            {
+                Status = "Schedule",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Wednesday"
+            });
+
+            h.Add(new TimelineStatus
+            {
+                Status = "Completed",
+                StatusDate = "May 2020",
+                Date = "9",
+                Day = "Friday"
+            });
+
+
+
+            var i = new List<TimelineStatus>();
+
+            i.Add(new TimelineStatus
+            {
+                Status = "Selected",
+                StatusDate = "May 2020",
+                Date = "17",
+                Day = "Friday"
+            });
+
+
+
+
+
+
+            var model = new List<CandidateTimelineVM>();
+            model.Add(new CandidateTimelineVM
+            {
+                CandidateName = "Lakshmi Tejasri",
+                HREmail = "kamini@risebird.io",
+                CurrentStatus = "Selected",
+                Report = "Available",
+                RisebirdAttempt = a,
+                MeetingStatus = b,
+                InterviewStatus = c
+
+            });
+
+
+            model.Add(new CandidateTimelineVM
+            {
+                CandidateName = "Omkar Patil",
+                HREmail = "prasad_srinivas@risebird.io	",
+                CurrentStatus = "Rejected",
+                Report = "Not Available",
+                RisebirdAttempt = d,
+                MeetingStatus = e,
+                InterviewStatus = f
+
+
+            });
+
+            model.Add(new CandidateTimelineVM
+            {
+                CandidateName = "Ashok Mannepalli",
+                HREmail = "prasad_srinivas@risebird.io	",
+                CurrentStatus = "Selected",
+                Report = "Available",
+                RisebirdAttempt = g,
+                MeetingStatus = h,
+                InterviewStatus = i
+
+
+            });
+            if (HttpContext.Session.GetString("CandidateTimeLineFilter") != null)
+            {
+                var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CandidateTimeLineFilter"));
+                filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = model.Select(x => x.HREmail).ToArray() : filter.ClientHR = filter.ClientHR;
+                filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
+                // filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.MeetingStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+                // filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = model.Select(x => x.InterviewStatus).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+
+                model = model.Where(x => ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(x.HREmail) : x.HREmail == null)
+                 && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(x.CurrentStatus) : x.CurrentStatus == null)).ToList();
+
+
+            }
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public IActionResult CandidateTimeline(InterviewFilter filter)
+        {
+            if (filter != null)
+            {
+                HttpContext.Session.SetString("CandidateTimeLineFilter", JsonConvert.SerializeObject(filter));
+            }
+
+            var a = new List<TimelineStatus>();
+            a.Add(new TimelineStatus
+            {
+                Status = "Onboarding",
+                StatusDate = "April 2020",
+                Date = "17",
+                Day = "Wednesday"
+            });
+
+
+            a.Add(new TimelineStatus
+            {
+                Status = "First Attempt",
+                StatusDate = "April 2020",
+                Date = "19",
+                Day = "Friday"
+            });
+
+
+
+            a.Add(new TimelineStatus
+            {
+                Status = "Second Attempt",
+                StatusDate = "April 2020",
+                Date = "23",
+                Day = "Monday"
+            });
+
+
+            a.Add(new TimelineStatus
+            {
+                Status = "Third Attempt",
+                StatusDate = "April 2020",
+                Date = "25",
+                Day = "Wednesday"
+            });
+
+            var b = new List<TimelineStatus>();
+            b.Add(new TimelineStatus
+            {
+                Status = "Schedule",
+                StatusDate = " May 2020",
+                Date = "4",
+                Day = "Monday"
+            });
+            b.Add(new TimelineStatus
+            {
+                Status = "Pending",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Wednesday"
+            });
+
+            b.Add(new TimelineStatus
+            {
+                Status = "Completed",
+                StatusDate = " May 2020",
+                Date = "8",
+                Day = "Thursday"
+            });
+
+
+            var c = new List<TimelineStatus>();
+            c.Add(new TimelineStatus
+            {
+                Status = "BorderLine",
+                StatusDate = " May 2020",
+                Date = "2",
+                Day = "Monday"
+
+            });
+
+            c.Add(new TimelineStatus
+            {
+                Status = "Selected",
+                StatusDate = "May 2020",
+                Date = "5",
+                Day = "Wednesday"
+            });
+
+
+            var d = new List<TimelineStatus>();
+            d.Add(new TimelineStatus
+            {
+                Status = "Onboarding",
+                StatusDate = "April 2020",
+                Date = "17",
+                Day = "Wednesday"
+            });
+
+
+            d.Add(new TimelineStatus
+            {
+                Status = "First Attempt",
+                StatusDate = "April 2020",
+                Date = "19",
+                Day = "Friday"
+            });
+
+
+
+            d.Add(new TimelineStatus
+            {
+                Status = "Second Attempt",
+                StatusDate = "April 2020",
+                Date = "23",
+                Day = "Monday"
+            });
+
+
+
+
+
+            var e = new List<TimelineStatus>();
+            e.Add(new TimelineStatus
+            {
+                Status = "Pending",
+                StatusDate = "May 2020",
+                Date = "5",
+                Day = "Monday"
+
+            });
+
+            e.Add(new TimelineStatus
+            {
+                Status = "Completed",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Wednesday"
+            });
+
+
+            var f = new List<TimelineStatus>();
+            f.Add(new TimelineStatus
+            {
+                Status = "NoShow",
+                StatusDate = "May 2020",
+                Date = "12",
+                Day = "Monday"
+            });
+
+            f.Add(new TimelineStatus
+            {
+                Status = "BorderLine",
+                StatusDate = "May 2020",
+                Date = "16",
+                Day = "Thursday"
+            });
+
+            f.Add(new TimelineStatus
+            {
+                Status = "Rejected",
+                StatusDate = "May 2020",
+                Date = "17",
+                Day = "Friday"
+            });
+
+
+            var g = new List<TimelineStatus>();
+            g.Add(new TimelineStatus
+            {
+                Status = "Onboarding",
+                StatusDate = "April 2020",
+                Date = "27",
+                Day = "Monday"
+            });
+
+
+            g.Add(new TimelineStatus
+            {
+                Status = "First Attempt",
+                StatusDate = "April 2020",
+                Date = "29",
+                Day = "Wednesday"
+            });
+
+
+
+            var h = new List<TimelineStatus>();
+
+
+            h.Add(new TimelineStatus
+            {
+                Status = "Schedule",
+                StatusDate = "May 2020",
+                Date = "7",
+                Day = "Wednesday"
+            });
+
+            h.Add(new TimelineStatus
+            {
+                Status = "Completed",
+                StatusDate = "May 2020",
+                Date = "9",
+                Day = "Friday"
+            });
+
+
+
+            var i = new List<TimelineStatus>();
+
+            i.Add(new TimelineStatus
+            {
+                Status = "Selected",
+                StatusDate = "May 2020",
+                Date = "17",
+                Day = "Friday"
+            });
+
+
+
+
+
+
+            var model = new List<CandidateTimelineVM>();
+            model.Add(new CandidateTimelineVM
+            {
+                CandidateName = "Lakshmi Tejasri",
+                HREmail = "kamini@risebird.io",
+                CurrentStatus = "Selected",
+                Report = "Available",
+                RisebirdAttempt = a,
+                MeetingStatus = b,
+                InterviewStatus = c
+
+            });
+
+
+            model.Add(new CandidateTimelineVM
+            {
+                CandidateName = "Omkar Patil",
+                HREmail = "prasad_srinivas@risebird.io	",
+                CurrentStatus = "Rejected",
+                Report = "Not Available",
+                RisebirdAttempt = d,
+                MeetingStatus = e,
+                InterviewStatus = f
+
+
+            });
+
+            model.Add(new CandidateTimelineVM
+            {
+                CandidateName = "Ashok Mannepalli",
+                HREmail = "prasad_srinivas@risebird.io	",
+                CurrentStatus = "Selected",
+                Report = "Available",
+                RisebirdAttempt = g,
+                MeetingStatus = h,
+                InterviewStatus = i
+
+
+            });
+
+            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = model.Select(x => x.HREmail).ToArray() : filter.ClientHR = filter.ClientHR;
+            filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
+            // filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.MeetingStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
+            // filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = model.Select(x => x.InterviewStatus).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+
+            model = model.Where(x => ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(x.HREmail) : x.HREmail == null)
+             && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(x.CurrentStatus) : x.CurrentStatus == null)).ToList();
+
+
+
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> ResetInterviewFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("CandidateTimeLineFilter");
+                    return RedirectToAction("CandidateTimeline");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("CandidateTimeline");
+            }
+
+        }
 
     }
+
+    
 }
+
+

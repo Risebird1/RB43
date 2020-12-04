@@ -918,9 +918,7 @@ input[type=number] {
     height: auto;
 }
 
-.modal .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default .select2-selection--multiple {
-    background: #fff !important
-}
+
 
 .candidate .table > tbody > tr > td {
     padding: 12px 5px;
