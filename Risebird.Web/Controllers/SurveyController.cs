@@ -112,8 +112,8 @@ namespace Risebird.Web.Controllers
                              EmailAddress = pair1.EmailAddress,
                              interviewerEmail = pair2.Intervieweremail,
                              CommentforInterviewer = pair1.CommentforInterviewer,
-                             PrimarySkill=pair1.PrimarySkill
-                         }).ToList();
+                             PrimarySkill = pair1.PrimarySkill
+                         }).ToList().Distinct();
             return View(model);
         }
     }
