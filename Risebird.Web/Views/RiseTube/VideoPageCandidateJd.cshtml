@@ -64,6 +64,7 @@
 <!-- Owl Carousel -->
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 <div class="main-panel bg-white" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -2419,7 +2420,7 @@
                 <span onclick="closeVideoDetailsModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
             </button>
             <div class="modal-body">
-                <div class="col-md-12 scroller">
+                <div class="col-md-12 sb-container scroller">
                     <div id="divvideodetailsmodel" class="pdr-20"></div>
                 </div>
                 <div class="col-md-12 ">
@@ -2435,7 +2436,10 @@
 <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" defer></script>
 <script src="//amp.azure.net/libs/amp/2.3.3/azuremediaplayer.min.js"></script>
 <script src="~/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-<script>
+<script src="~/Newassets/js/scrollBar.js"></script>
+<script type="text/javascript">
+    $(".sb-container").scrollBox();
+</script><script>
     function dropDwnToolTips(id) {
 
         if (id.value == 0) {
