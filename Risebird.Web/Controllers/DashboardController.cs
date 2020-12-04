@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using Risebird.CommonHelper;
 
 namespace Risebird.Web.Controllers
 {
@@ -64,7 +65,9 @@ namespace Risebird.Web.Controllers
 
                         model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                         model.ProgressOptions = new SelectList(_dashboardService.GetProgressOptions(), "id", "Name");
-
+                        var Assassination = from AssassinationStatus s in Enum.GetValues(typeof(AssassinationStatus))
+                                            select new { ID = (int)s, Name = s.GetDescription() };
+                        model.AssassinationList = new SelectList(Assassination, "ID", "Name");
                         return View(model);
                     }
                     else
