@@ -23,6 +23,6 @@ namespace Risebird.Entities.ViewModel
         public IList<IRF> IrfProgressList { get; set; }
         public SelectList ProgressOptions { get; set; }
         public DateTime ProgressDate { get; set; }
-
+        public SelectList AssassinationList { get; set; }
     }
 }

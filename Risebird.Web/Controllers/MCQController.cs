@@ -80,7 +80,7 @@ namespace Risebird.Web.Controllers
                                 && (filter.SecondarySkill.Count() > 0 ? filter.SecondarySkill.Contains(c.SecondarySkill) : c.SecondarySkill == null)
                                 && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevelName) : c.CompentencyLevelName == null)).ToList();
                     }
-                    resultset._MCQVMset = (List<MCQVMset>)result;
+                    resultset._MCQVMset = (List<MCQVMset>)result.Distinct();
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
                     ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
@@ -140,7 +140,7 @@ namespace Risebird.Web.Controllers
                             && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ProfileTypeName) : c.ProfileTypeName == null)
                             && (filter.SecondarySkill.Count() > 0 ? filter.SecondarySkill.Contains(c.SecondarySkill) : c.SecondarySkill == null)
                             && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevelName) : c.CompentencyLevelName == null)).ToList();
-                    resultset._MCQVMset = (List<MCQVMset>)result;
+                    resultset._MCQVMset = (List<MCQVMset>)result.Distinct();
                     ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct().ToList();
                     ViewBag.Skills = result.Select(x => x.PrimarySkills).Distinct().ToList();
                     ViewBag.SecondarySkills = result.Select(x => x.SecondarySkill).Distinct().ToList();
