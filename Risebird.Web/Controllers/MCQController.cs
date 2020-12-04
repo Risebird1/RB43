@@ -281,7 +281,15 @@ namespace Risebird.Web.Controllers
                                 if (reader.GetValue(1) == null || reader.GetValue(2) == null || reader.GetValue(3) == null || reader.GetValue(4) == null
                                    || reader.GetValue(5) == null || reader.GetValue(6) == null || reader.GetValue(7) == null)
                                 {
-                                    return Json("Question Fileds should not be blank.");
+                                    if (reader.GetValue(1) == null && reader.GetValue(2) == null && reader.GetValue(3) == null && reader.GetValue(4) == null
+                                   && reader.GetValue(5) == null && reader.GetValue(6) == null && reader.GetValue(7) == null)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        return Json("Question Fileds should not be blank.");
+                                    }
                                 }
                                 else
                                 {
@@ -293,7 +301,7 @@ namespace Risebird.Web.Controllers
                                             PartitionKey = date1,
                                             RowKey = Guid.NewGuid().ToString(),
                                             QuestionType = reader.GetValue(1).ToString(),
-                                            Question = reader.GetValue(2).ToString(),
+                                            Question = reader.GetValue(2).ToString().Replace("\n", "<br/>"),
                                             Option1 = reader.GetValue(3).ToString(),
                                             Option2 = reader.GetValue(4).ToString(),
                                             Option3 = reader.GetValue(5).ToString(),
