@@ -335,7 +335,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ul.EmailId as AssignTo,IR.Status AssignStatus,IR.Comment from IRFActivityStatus IR join UserList ul on IR.Userid=ul.id where IR.IRFID=@id and IR.idProgress=@idprogess";
+                var query = "Select ul.EmailId as AssignTo,IR.Status AssignStatus,IR.Comment from IRFActivityStatus IR Left join UserList ul on IR.Userid=ul.id where IR.IRFID=@id and IR.idProgress=@idprogess";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 dynamicParameters.Add("@idprogess", idprogess);
