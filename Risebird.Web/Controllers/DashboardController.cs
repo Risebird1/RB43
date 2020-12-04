@@ -169,7 +169,6 @@ namespace Risebird.Web.Controllers
             {
                 await _dashboardService.UpdateIRFProgress(model.IrfProgressList);
                 return RedirectToAction("Index");
-
             }
             catch (Exception ex)
             {
