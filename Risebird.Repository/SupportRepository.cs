@@ -30,7 +30,7 @@ namespace Risebird.Repository
             try
             {
                 //var query = "Select * from Support";
-                var query = "Select distinct st.id,st.Name,st.EmailId,st.MobileNumber,st.WhatsappNumber,st.OnVoiceCall,st.OnWhatsapp,st.OnEmail,st.AvailabilityHours,ul.isonline as IsOnline from support st join userlist ul on ul.EmailId = st.EmailId";
+                var query = "Select st.id,st.Name,st.EmailId,st.MobileNumber,st.WhatsappNumber,st.OnVoiceCall,st.OnWhatsapp,st.OnEmail,st.AvailabilityHours,1 from support st";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<Support>(query);
