@@ -801,16 +801,22 @@ namespace Risebird.Business
             }
         }
 
-        public bool UpdateCandidate(Candidate obj)
+        public async Task<bool> UpdateCandidate(Candidate obj, string emailId)
         {
             try
             {
+                var result = _irfRepository.UpdateCandidate(obj);
+                if(result)
+                {
+                   await  AddCandidateStatus(emailId, obj.CandidateMasterId, obj.IRFId, "Candidate updated", (int)CandidateStatusOptions.Updated);
+
+                }
                 return _irfRepository.UpdateCandidate(obj);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }

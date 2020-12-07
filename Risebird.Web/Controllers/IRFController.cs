@@ -1721,6 +1721,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         if (model.AudioFile != null)
@@ -1770,7 +1772,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.VideoLink = model.PageVideoLink;
                         }
-                        if (_meetingService.AddInterviewReport(model).Result)
+                        if (_meetingService.AddInterviewReport(model, emailid).Result)
                         {
                             TempData["SuccessErrorMessage"] = "Report saved Successfully";
                             return RedirectToAction("AddReport", new { interviewId = model.InterviewId, irfId = model.IRFId });
@@ -2699,7 +2701,7 @@ namespace Risebird.Web.Controllers
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                     {
-                        if (_irfService.UpdateCandidate(model))
+                        if (await _irfService.UpdateCandidate(model, emailid))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Candidate updated successfully!";
                             return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });

@@ -48,5 +48,13 @@ namespace Risebird.Entities.Enum
         [Display(Name = "Updated")]
         [Description("Updated")]
         Updated,
+
+        [Display(Name = "Meeting Status")]
+        [Description("Meeting Status")]
+        MeetingStatus,
+
+        [Display(Name = "Interview Status")]
+        [Description("Interview Status")]
+        InterviewStatus,
     }
 }
