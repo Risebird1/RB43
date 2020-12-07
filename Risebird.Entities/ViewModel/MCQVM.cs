@@ -124,5 +124,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime Sharetime { get; set; }
         public string PartitionKey { get; set; }
         public string SameID { get; set; }
+        public string VideoLink { get; set; }
     }
 }
