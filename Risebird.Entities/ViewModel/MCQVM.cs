@@ -28,6 +28,7 @@ namespace Risebird.Entities.ViewModel
         public int Rating { get; set; }
         public string QuestionId { get; set; }
         public string CandidateID { get; set; }
+        public string Explanation { get; set; }
     }
     public class MCQVMset : TableEntity
     {

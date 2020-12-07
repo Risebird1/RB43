@@ -196,6 +196,19 @@ input[type='radio']:checked:after {
     background: #ea6e24 !important;
 }
 
+.mcq-dnbutton {
+    color: #fff !important;
+    background: #ea6e24 !important; border-radius: 3px;
+    padding: 5px;
+    background: #42a5f5;
+}
+table.journey {
+    color: #504e4e;
+}
+
+    table.journey th {
+        color: #000;
+    }
 .trash-btn .mdc-fab__icon {
     fill: #fff !important;
 }

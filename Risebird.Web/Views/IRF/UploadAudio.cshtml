@@ -30,13 +30,14 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+    <div class="mt50">
     </div>
-    <div class="content">
+    <div style="height:20px;"></div>
+    <div class="content client">
 
-        <div class="row">
+        <div class="bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
                         <form action="/IRF/UploadAudio" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
@@ -119,7 +120,7 @@
                                             {
                                                 @Html.DropDownListFor(m => m.PhraseDetail, Model.PhraseList, new { @class = "form-control", @style = "margin-top:10px; height:45px", @disabled = "disabled" })
                                                 Model.PhraseDetail = Model.PhraseList.SelectedValue.ToString();
-                                                @Html.HiddenFor(m=>m.PhraseDetail)
+                                                @Html.HiddenFor(m => m.PhraseDetail)
                                             }
                                             else
                                             {
@@ -140,7 +141,7 @@
                                 <div class="card-footer ">
                                     <div class="row">
 
-                                        <div class="col-md-12 mc-button-area">
+                                        <div class="col-md-12 mc-button-area text-right">
                                             @if (Model.CandidateAudios == null || Model.CandidateAudios.Count() == 0)
                                             {
                                                 @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
@@ -189,64 +190,64 @@
                                                         {
                                                             @for (int i = 0; i < Model.CandidateAudios.Count(); i++)
                                                             {
-                                                        <tr>
+                                                                <tr>
 
-                                                            <td>
-                                                                <a class="audio-rec" href='@Model.CandidateAudios[i].AudioFileLink' download>
-                                                                    @Model.CandidateAudios[i].AudioFileLink.Split('/').Last()
-                                                                </a>
-                                                            </td>
-                                                            <td>@Model.CandidateAudios[i].PhraseDetail</td>
-                                                            <td>@Model.CandidateAudios[i].Description</td>
-                                                            @if (Model.CandidateAudios[i].IsEnrolled)
-                                                            {
-                                                                <td>Enrolled</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>Not Enrolled</td>
+                                                                    <td>
+                                                                        <a class="audio-rec" href='@Model.CandidateAudios[i].AudioFileLink' download>
+                                                                            @Model.CandidateAudios[i].AudioFileLink.Split('/').Last()
+                                                                        </a>
+                                                                    </td>
+                                                                    <td>@Model.CandidateAudios[i].PhraseDetail</td>
+                                                                    <td>@Model.CandidateAudios[i].Description</td>
+                                                                    @if (Model.CandidateAudios[i].IsEnrolled)
+                                                                    {
+                                                                        <td>Enrolled</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>Not Enrolled</td>
 
-                                                            }
-                                                            @if (Model.CandidateAudios[i].EnrollmentMessage != null)
-                                                            {
-                                                                if (Model.CandidateAudios[i].EnrollmentMessage.ToLower().Contains("success"))
-                                                                {
-                                                                    <td>Successful</td>
-                                                                }
-                                                                else if (Model.CandidateAudios[i].EnrollmentMessage.ToLower().Contains("for"))
-                                                                {
-                                                                    var startIndex = Model.CandidateAudios[i].EnrollmentMessage.IndexOf("for") -1;
-                                                                    var endIndex = Model.CandidateAudios[i].EnrollmentMessage.IndexOf(",");
-                                                                    var length = endIndex - startIndex;
-                                                                    var subSt = Model.CandidateAudios[i].EnrollmentMessage.Substring(startIndex, length);
+                                                                    }
+                                                                    @if (Model.CandidateAudios[i].EnrollmentMessage != null)
+                                                                    {
+                                                                        if (Model.CandidateAudios[i].EnrollmentMessage.ToLower().Contains("success"))
+                                                                        {
+                                                                            <td>Successful</td>
+                                                                        }
+                                                                        else if (Model.CandidateAudios[i].EnrollmentMessage.ToLower().Contains("for"))
+                                                                        {
+                                                                            var startIndex = Model.CandidateAudios[i].EnrollmentMessage.IndexOf("for") - 1;
+                                                                            var endIndex = Model.CandidateAudios[i].EnrollmentMessage.IndexOf(",");
+                                                                            var length = endIndex - startIndex;
+                                                                            var subSt = Model.CandidateAudios[i].EnrollmentMessage.Substring(startIndex, length);
 
 
-                                                                    <td>@Model.CandidateAudios[i].EnrollmentMessage.Replace(subSt, "")</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>Failed</td>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>NA</td>
+                                                                            <td>@Model.CandidateAudios[i].EnrollmentMessage.Replace(subSt, "")</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td>Failed</td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>NA</td>
 
-                                                            }
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].id)
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].IRFId)
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].IRFName)
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].CandidateId)
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].IsEnrolled)
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].AudioFileLink)
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].PhraseDetail)
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].VoiceItUserId)
-                                                            @*@if (Model.CandidateAudios[i].VoiceItUserId != null)
-        {
+                                                                    }
+                                                                    @Html.HiddenFor(m => Model.CandidateAudios[i].id)
+                                                                    @Html.HiddenFor(m => Model.CandidateAudios[i].IRFId)
+                                                                    @Html.HiddenFor(m => Model.CandidateAudios[i].IRFName)
+                                                                    @Html.HiddenFor(m => Model.CandidateAudios[i].CandidateId)
+                                                                    @Html.HiddenFor(m => Model.CandidateAudios[i].IsEnrolled)
+                                                                    @Html.HiddenFor(m => Model.CandidateAudios[i].AudioFileLink)
+                                                                    @Html.HiddenFor(m => Model.CandidateAudios[i].PhraseDetail)
+                                                                    @Html.HiddenFor(m => Model.CandidateAudios[i].VoiceItUserId)
+                                                                    @*@if (Model.CandidateAudios[i].VoiceItUserId != null)
+                                                                        {
 
-        }*@
+                                                                        }*@
 
-                                                        </tr>
+                                                                </tr>
 
                                                             }
 
@@ -263,7 +264,7 @@
 
                                     <div class="card-footer ">
                                         <div class="row">
-                                            <div class="col-md-12 mc-button-area">
+                                            <div class="col-md-12 mc-button-area text-right">
 
                                                 @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                 @if (Model.ContainsUnEnrolled)
@@ -283,7 +284,7 @@
                                 </div>
                             </form>
                         }
-                        
+
 
 
                     </div>
@@ -297,7 +298,7 @@
         <!-- end row -->
 
     </div>
- 
+
 </div>
 
 

@@ -189,5 +189,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IRF FetchActivityDetails(int id, int idprogess)
+        {
+            try
+            {
+                return _dashboardRespository.FetchActivityDetails(id, idprogess);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

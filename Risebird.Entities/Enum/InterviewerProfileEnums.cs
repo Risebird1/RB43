@@ -1195,5 +1195,12 @@ namespace Risebird.Entities.Enum
         [Description("Elite")]
         Elite = 4
     }
+    public enum AssassinationStatus
+    {
+        [Description("Assigned")]
+        Assigned,
+        [Description("Resolved")]
+        Resolved
+    }
 }
 
