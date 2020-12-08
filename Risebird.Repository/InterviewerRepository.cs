@@ -1543,7 +1543,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query(query, null);
+                    var result = con.Query(query, dynamicParameters);
                     return "Success";
                 }
             }
