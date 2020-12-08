@@ -821,7 +821,7 @@ namespace Risebird.Business
             }
         }
 
-        public bool SendInvite(int irfId, string email)
+        public async Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId)
         {
             try
             {
@@ -855,13 +855,18 @@ namespace Risebird.Business
 
                     }
                     _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+
+                    //add candidate status
+                     await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent to the candidate", (int)CandidateStatusOptions.InvitationSent);
+
+
                     return true;
                 }
                 return false;
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }

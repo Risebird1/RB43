@@ -56,5 +56,12 @@ namespace Risebird.Entities.Enum
         [Display(Name = "Interview Status")]
         [Description("Interview Status")]
         InterviewStatus,
+
+        [Display(Name = "Called")]
+        [Description("Called")]
+        Called,
+        [Display(Name = "Not Responding")]
+        [Description("Not Responding")]
+        NotResponding,
     }
 }

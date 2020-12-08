@@ -31,3 +31,7 @@ INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (12, N'Add
 INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (13, N'Updated')
 INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (14, N'Meeting Status')
 INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (15, N'Interview Status')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (16, N'Called')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (17, N'Not Responding')
+
+
