@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OfficeOpenXml;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -497,15 +498,18 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
                     if (TempData["SuccessErrorMessageInterviewer"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
                         TempData.Remove("SuccessErrorMessageInterviewer");
 
                     }
-
+                    ViewBag.Profile = profileName;
                     return View(_userService.GetInterviewers());
                 }
                 else
@@ -795,6 +799,96 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessageInterviewer"] = "Deletion of Interviewer Failed";
                 return RedirectToAction("Interviewers");
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public FileContentResult InterviewwersExporttoExcel()
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("All Interviewers");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_All_Interviewers" + ".xlsx";
+            try
+            {
+               
+                var interviewers = _userService.GetInterviewers();
+
+                Sheet.Cells["A1:K1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:K1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:K1"].Style.WrapText = true;
+
+                int startColumn = 1; int endColumn = 10;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "First Name";
+                Sheet.Cells[1, 2].Value = "Last Name";
+                Sheet.Cells[1, 3].Value = "Email Id";
+                Sheet.Cells[1, 4].Value = "Mobile No";
+                Sheet.Cells[1, 5].Value = "Primary Skills";
+                Sheet.Cells[1, 6].Value = "Resume Link";
+                Sheet.Cells[1, 7].Value = "Approved";
+                Sheet.Cells[1, 8].Value = "Slots";
+                Sheet.Cells[1, 9].Value = "No of Interviews";
+                Sheet.Cells[1, 10].Value = "Success rate";
+
+                int i = 2;
+                if (interviewers.Count() > 0)
+                {
+                    foreach (var item in interviewers)
+                    {
+                        Sheet.Cells[i, 1].Value = item.FirstName;
+                        Sheet.Cells[i, 2].Value = item.LastName;
+                        Sheet.Cells[i, 3].Value = item.EmailId;
+                        Sheet.Cells[i, 4].Value = item.MobileNumber;
+                        Sheet.Cells[i, 5].Value = item.PrimarySkill;
+
+                        if (!string.IsNullOrEmpty(item.ResumeLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 6].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                                Sheet.Cells[i, 6].Value = "Resume Link";
+                                Sheet.Cells[i, 6].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 6].Value = "No Resume";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 6].Value = "No Resume";
+                        }
+                        var approvalStatus = item.IsApproved ? "Approved" : "Not Approved";
+                        Sheet.Cells[i, 7].Value = approvalStatus;
+
+                        Sheet.Cells[i, 8].Value = item.Slots;
+                        Sheet.Cells[i, 9].Value = item.NoOfInterview.ToString();
+                        Sheet.Cells[i, 10].Value = item.SuccessRate.ToString();
+
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+
+            }
+
         }
 
         #endregion

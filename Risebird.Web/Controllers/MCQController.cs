@@ -100,7 +100,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-
+        [Authorize]
         [HttpPost]
         public IActionResult Index(InterviewFilter filter)
         {
@@ -158,6 +158,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [Authorize]
         public async Task<IActionResult> ResetMCQFilter()
         {
             try
@@ -262,7 +263,7 @@ namespace Risebird.Web.Controllers
                             if (i == 0)
                             {
                                 if (reader.GetValue(1).ToString() == "QuestionType" && reader.GetValue(2).ToString() == "Question" && reader.GetValue(3).ToString() == "Option1" && reader.GetValue(4).ToString() == "Option2"
-                                    && reader.GetValue(5).ToString() == "Option3" && reader.GetValue(6).ToString() == "Option4" && reader.GetValue(7).ToString() == "Answer")
+                                    && reader.GetValue(5).ToString() == "Option3" && reader.GetValue(6).ToString() == "Option4" && reader.GetValue(7).ToString() == "Answer" && reader.GetValue(8).ToString() == "Explanation")
                                 {
 
                                 }
@@ -280,7 +281,15 @@ namespace Risebird.Web.Controllers
                                 if (reader.GetValue(1) == null || reader.GetValue(2) == null || reader.GetValue(3) == null || reader.GetValue(4) == null
                                    || reader.GetValue(5) == null || reader.GetValue(6) == null || reader.GetValue(7) == null)
                                 {
-                                    return Json("Question Fileds should not be blank.");
+                                    if (reader.GetValue(1) == null && reader.GetValue(2) == null && reader.GetValue(3) == null && reader.GetValue(4) == null
+                                   && reader.GetValue(5) == null && reader.GetValue(6) == null && reader.GetValue(7) == null)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        return Json("Question Fileds should not be blank.");
+                                    }
                                 }
                                 else
                                 {
@@ -292,12 +301,13 @@ namespace Risebird.Web.Controllers
                                             PartitionKey = date1,
                                             RowKey = Guid.NewGuid().ToString(),
                                             QuestionType = reader.GetValue(1).ToString(),
-                                            Question = reader.GetValue(2).ToString(),
+                                            Question = reader.GetValue(2).ToString().Replace("\n", "<br/>"),
                                             Option1 = reader.GetValue(3).ToString(),
                                             Option2 = reader.GetValue(4).ToString(),
                                             Option3 = reader.GetValue(5).ToString(),
                                             Option4 = reader.GetValue(6).ToString(),
                                             Answer = reader.GetValue(7).ToString(),
+                                            Explanation = reader.GetValue(8) != null ? reader.GetValue(7).ToString() : "",
                                             Id = _lstset.PartitionKey,
                                             QuestionNumber = number
                                         });
@@ -353,6 +363,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Successfully Uploaded");
         }
+        [Authorize]
         public IActionResult Questionpage(string Id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -555,6 +566,7 @@ namespace Risebird.Web.Controllers
                 _list.ClientHR = values.ClientHR;
                 _list.CandidateScore = resultset.Sum(x => x.Rating);
                 _list.TotalQuestions = resultset.Count();
+                _list.VideoLink = "";
                 if (Request.Form.Files.Count() > 0)
                 {
                     var file = Request.Form.Files[0];
@@ -627,6 +639,7 @@ namespace Risebird.Web.Controllers
         #endregion
 
         #region MCQ Actions
+        [Authorize]
         public IActionResult CandidateTestDetails(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -659,8 +672,8 @@ namespace Risebird.Web.Controllers
                                             TotalQuestions = a == null ? 0 : a.TotalQuestions,
                                             PartitionKey = o.PartitionKey,
                                             Sharetime = o.Timestamp.DateTime,
-                                            SameID = o.Id
-
+                                            SameID = o.Id,
+                                            VideoLink = a.VideoLink
                                         }).ToList();
                     if (profileName == "Client")
                     {
@@ -702,6 +715,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [Authorize]
         [HttpPost]
         public IActionResult CandidateTestDetails(InterviewFilter filter, string id)
         {
@@ -739,7 +753,8 @@ namespace Risebird.Web.Controllers
                                             TotalQuestions = a == null ? 0 : a.TotalQuestions,
                                             PartitionKey = o.PartitionKey,
                                             Sharetime = o.Timestamp.DateTime,
-                                            SameID = o.Id
+                                            SameID = o.Id,
+                                            VideoLink = a.VideoLink
                                         }).ToList();
                     if (profileName == "Client")
                     {
@@ -856,20 +871,5 @@ namespace Risebird.Web.Controllers
         }
         #endregion
 
-        [HttpPost]
-        public JsonResult UploadVideo()
-        {
-            if (Request.Form.Files.Count() > 0)
-            {
-                var file = Request.Form.Files[0];
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", file.FileName);
-
-                using (var stream = new FileStream(path, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                }
-            }
-            return Json("");
-        }
     }
 }

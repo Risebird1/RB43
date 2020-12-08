@@ -179,8 +179,10 @@
                                         <th>Company</th>
                                         <th>Client HR Email</th>
                                         <th>Total Exprience</th>
+                                     
                                         <th>Skills</th>
                                         <th>Score</th>
+                                        <th>Video Link</th>
                                         @if (ViewBag.Isclient == false)
                                         {
                                             <th class="disabled-sorting text-right">Actions</th>
@@ -194,8 +196,10 @@
                                         <th>Company</th>
                                         <th>Client HR Email</th>
                                         <th>Total Exprience</th>
+                                       
                                         <th>Skills</th>
                                         <th>Score</th>
+                                        <th>Video Link</th>
                                         @if (ViewBag.Isclient == false)
                                         {
                                             <th class="disabled-sorting text-right">Actions</th>
@@ -211,6 +215,7 @@
                                             <td>@item.ApplyingCompany</td>
                                             <td>@item.ClientHR</td>
                                             <td>@item.TotalExprience</td>
+                                           
                                             <td>@item.Skills</td>
                                             @if (Convert.ToInt32(item.TotalQuestions) == 0)
                                             {
@@ -220,11 +225,19 @@
                                             {
 
                                                 {
-                                                    var valuescore = (@item.CandidateScore*100 )/ @item.TotalQuestions;
+                                                    var valuescore = (@item.CandidateScore * 100) / @item.TotalQuestions;
                                                     <td>@valuescore %</td>
                                                 };
-                                                 
 
+
+                                            }
+                                            @if (String.IsNullOrEmpty(item.VideoLink))
+                                            {
+                                                <td></td>
+                                            }
+                                            else
+                                            {
+                                                <td><a href="@item.VideoLink">Click Here</a></td>
                                             }
                                             @if (ViewBag.Isclient == false)
                                             {
