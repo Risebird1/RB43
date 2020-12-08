@@ -566,6 +566,7 @@ namespace Risebird.Web.Controllers
                 _list.ClientHR = values.ClientHR;
                 _list.CandidateScore = resultset.Sum(x => x.Rating);
                 _list.TotalQuestions = resultset.Count();
+                _list.VideoLink = "";
                 if (Request.Form.Files.Count() > 0)
                 {
                     var file = Request.Form.Files[0];
@@ -671,8 +672,8 @@ namespace Risebird.Web.Controllers
                                             TotalQuestions = a == null ? 0 : a.TotalQuestions,
                                             PartitionKey = o.PartitionKey,
                                             Sharetime = o.Timestamp.DateTime,
-                                            SameID = o.Id
-
+                                            SameID = o.Id,
+                                            VideoLink = a.VideoLink
                                         }).ToList();
                     if (profileName == "Client")
                     {
@@ -752,7 +753,8 @@ namespace Risebird.Web.Controllers
                                             TotalQuestions = a == null ? 0 : a.TotalQuestions,
                                             PartitionKey = o.PartitionKey,
                                             Sharetime = o.Timestamp.DateTime,
-                                            SameID = o.Id
+                                            SameID = o.Id,
+                                            VideoLink = a.VideoLink
                                         }).ToList();
                     if (profileName == "Client")
                     {
