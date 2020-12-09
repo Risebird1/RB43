@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+﻿@*@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>*@
+@model X.PagedList.IPagedList<Risebird.Entities.ViewModel.MeetingVM>
+@using X.PagedList.Mvc.Core;
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
@@ -45,18 +47,7 @@
 }
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css"/>
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-<style>
-    td.details-control {
-        background: url(https://datatables.net/examples/resources/details_open.png) no-repeat center center;
-        cursor: pointer;
-    }
-    tr.shown td.details-control {
-        background: url(https://datatables.net/examples/resources/details_close.png) no-repeat center center;
-    }
-</style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -414,14 +405,37 @@
                                 </div>
 
                             </div>
-                            <div >
+                            <div>
+                                <div ><div class="col-sm-12 col-md-6">
+                                    <div class="dataTables_length" id="meeting_length">
+                                    <label>Show <select name="meeting_length" aria-controls="meeting" class="custom-select custom-select-sm form-control form-control-sm">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="-1">All</option></select> entries</label>
+                                        </div></div>
+                                <div class="col-sm-12 col-md-6">
+                                    <div id="meeting_filter" class="dataTables_filter">
+                                  
+                                        <div class="searchCon">
+                                        
+                                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
+
+
+
+                                                <button style="display:none;" type="button" id="x">x</button>
+                                         
+                                    </div>
+                                    </div>
+                                </div>
+
+
                                 <div id="tableID" class="second">
-
-
                                     <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
-                                                
+                                                <th></th>
                                                 <th id='start'>Interview Date</th>
                                                 <th>Candidate Name</th>
                                                 <th>Primary Skill</th>
@@ -434,7 +448,7 @@
                                         </thead>
                                         <tfoot>
                                             <tr>
-                                                
+                                                <th></th>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
                                                 <th>Client HR</th>
@@ -443,16 +457,15 @@
                                                 <th>Primary Skill</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Video</th>
-
                                             </tr>
                                         </tfoot>
                                         <tbody>
 
+
                                             @foreach (var item in Model)
                                             {
-
-                                                <tr id="@item.imid" >
-                                                 
+                                                <tr  id="@item.imid" >
+                                                    <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row">&nbsp;</td>
                                                     <td> @item.interviewDate </td>
                                                     @if (item.IsOnline == 1)
                                                     {
@@ -518,8 +531,91 @@
 
 
 
+                                                <tr class="collapse @item.imid">
+                                                    <th></th>
+                                                    <th class="itemInterviewLink">Interview Link</th>
+                                                    <th>End Client Name</th>
+                                                    <th>Aadhar Link</th>
+                                                    <th>Approval Status</th>
+                                                    <th>Final Selection Status</th>
+                                                    <th>Offer Status</th>
+                                                    <th>Joining Status</th>
+                                                    <th></th>
+
+                                                </tr>
 
 
+                                                <tr class="collapse @item.imid">
+                                                    <td></td>
+                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                    {
+                                                        <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Interview Link</td>
+                                                    }
+                                                    <td> @item.ClientName </td>
+
+
+                                                    @if (item.AadharFileLink != null && item.AadharFileLink != "")
+                                                    {
+                                                        <td>
+
+                                                            <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink.ToString().Replace(" ","%20")>Aadhar</a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No document</td>
+                                                    }
+
+
+
+
+                                                    @if (item.NextLevelApprovalStat != null && item.NextLevelApprovalStat != "")
+                                                    {
+                                                        <td>
+
+                                                            @item.NextLevelApprovalStat
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No document</td>
+                                                    }
+                                                    @if (item.FinalSelectionStat != null && item.FinalSelectionStat != "")
+                                                    {
+
+                                                        <td>@item.FinalSelectionStat </td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No document</td>
+                                                    }
+
+                                                    @if (item.OfferStatusStatDesc != null && item.OfferStatusStatDesc != "")
+                                                    {
+                                                        <td>@item.OfferStatusStatDesc</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No document</td>
+                                                    }
+
+                                                    @if (item.JoiningStatusStatDesc != null && item.JoiningStatusStatDesc != "")
+                                                    {
+                                                        <td>@item.JoiningStatusStatDesc</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No document</td>
+                                                    }
+
+                                                    <td></td>
+
+                                                </tr>
 
 
 
@@ -527,22 +623,16 @@
                                             }
 
 
+
                                         </tbody>
                                     </table>
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+                                            Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries</div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                        <div class="col-sm-12 col-md-7 dataTables_paginate ">
+                                            @Html.PagedListPager(Model, Page => Url.Action("AllPriorityClientMeetings", new { Page = Page }))</div>
+                                        </div>
                                 </div>
 
                             </div>
@@ -561,100 +651,6 @@
     </div>
 
 </div>
-<script>
-    function format(d) {
-        // `d` is the original data object for the row
-        var html = '';
-        html += '<table cellpadding="5" cellspacing="0" border="0" >';
-        html +=  '<tr>';
-        html +=  '<th class="itemInterviewLink">Interview Link</th>';
-        html += '<th>End Client Name</th>';
-        html +=  '<th> Aadhar Link</th>';
-        html +=  '<th>Approval Status</th>';
-        html +=  '<th>Final Selection Status</th>';
-        html += '<th>Offer Status</th>';
-        html += ' <th>Joining Status</th>';
-        html +=  '</tr>';
-        html +=   '<tr>';
-        if (d.zoomLink != null && d.zoomLink != "")
-         {
-            html += '<td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=' + d.zoomLink +'>Interview Link</a> </td>';
-        }
-   else
- {
-            html += '<td>No Interview Link</td>';
-}
-        html +=   '<td>d.ClientName</td>';
-
-        if (item.AadharFileLink != null && item.AadharFileLink != "")
- {
-            html += '<td><a id="aadharLinkId" target="_blank" title="Aadhar" href= ' + d.AadharFileLink.ToString().Replace(" ", "%20") + '>Aadhar</a></td>';
-
- }
- else
- {
-            html +='<td>No document</td>';
-        }
-        if (d.NextLevelApprovalStat != null && d.NextLevelApprovalStat != "")
-                                                                    {
-            html += '<td> ' + d.NextLevelApprovalStat + ' </td>';
-                                                                    }
-                                                                    else
-                                                                    {
-            html += '<td>No document</td>';
-        }
-
-        if (d.FinalSelectionStat != null && d.FinalSelectionStat != "")
-                                                                    {
-
-            html += '<td>' + d.FinalSelectionStat + ' </td>';
-
-                                                                    }
-                                                                    else
-                                                                    {
-            html += ' <td>No document</td>';
-        }
-
-         if (d.OfferStatusStatDesc != null && d.OfferStatusStatDesc != "")
-                                                                    {
-             html +='<td>' + d.OfferStatusStatDesc + '</td>';
-                                                                    }
-                                                                    else
-                                                                    {
-             html += '<td>No document</td>';
-                                                                    }
-         if (d.JoiningStatusStatDesc != null && d.JoiningStatusStatDesc != "")
-                                                                    {
-             html += '<td>'+d.JoiningStatusStatDesc+'</td>';
-                                                                    }
-                                                                    else
-                                                                    {
-             html +='<td>No document</td>';
-                                                                    }
-        html += '</tr>';
-
-        html += '</table>';
-        return html;
-    }
-
-
-    $('#meeting tbody').on('click', 'td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row(tr);
-
-        if (row.child.isShown()) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-        }
-        else {
-            // Open this row
-            row.child(format(row.data())).show();
-            tr.addClass('shown');
-        }
-    });
-</script>
-
 
 <script>
     $(document).ready(function () {
@@ -737,59 +733,53 @@
 
 
         //FilterInterviews("All");// on page load default dropdownlist value set
-        $('#meeting').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            "ajax": "../ajax/data/objects.txt",
+     //$('#meeting').DataTable({
+     //       "pagingType": "full_numbers",
+     //       "lengthMenu": [
+     //           [10, 25, 50, -1],
+     //           [10, 25, 50, "All"]
+     //       ],
+     //       order: [],
+     //       responsive: false,
+     //       language: {
+     //           search: "_INPUT_",
+     //           searchPlaceholder: "Search records",
+     //       },
+     //       "fnInitComplete": function () {
+     //           $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+     //           $(".dataTables_filter").keyup(function (e) {
+     //               if ($(this).val() != "") { $("#x").hide(); }
+     //               else { $("#x").show(); }
+     //           });
+     //       }
 
-            "columns": [
-                {
-                    "className": 'details-control',
-                    "orderable": false,
-                    "data": null,
-                    "defaultContent": ''
-                },
-                { "data": "Interview Date" },
-                { "data": "Candidate Name" },
-                { "data": "Primary Skill" },
-                { "data": "Confirmation Status" },
-                 { "data": "Meeting Status" },
-                    { "data": "Interview Status" },
-                       { "data": "Report" },
-                          { "data": "Video" }
-            ],
-            order: [],
-            responsive: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search records",
-            },
-            "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
-                $(".dataTables_filter").keyup(function (e) {
-                    if ($(this).val() != "") { $("#x").hide(); }
-                    else { $("#x").show(); }
-                });
-            }
-
-        });
-        var table = $('#meeting').DataTable();
-
-
+     //   });
+     //   var table = $('#meeting').DataTable();
     });
 
-
     $(document).ready(function () {
+        
+        $(".dataTables_filter").keyup(function (e) {
+     
+            if ($('#txtmeeting_filter').val() == "") {
+
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+          });
         $("#x").click(function (e) {
             $(".dataTables_filter input").val('');
             $(this).hide();
         });
 
-    });
 
+    });
+    function searchResult() {
+        window.location.href = "/Interview/AllPriorityClientMeetings?searchValue=" + $('#txtmeeting_filter').val();
+
+    }
     function ResetFilter() {
        window.location.href = "/Interview/ResetAllPriorityClientMeetingsFilter";
 
@@ -914,15 +904,15 @@
 
                 $('#meeting').DataTable({
                     "pagingType": "full_numbers",
-
-                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                   
-                    order: [],
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
                     responsive: true,
                     language: {
                         search: "_INPUT_",
                         searchPlaceholder: "Search records",
-                    },
+                    }
 
                 });
                 var table = $('#meeting').DataTable();
@@ -985,11 +975,27 @@
     }
 </script>
 
+<script>
 
 
 
+    $('#meeting tbody').on('click', 'td.detail-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('show');
+        }
+        else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('show');
+        }
+    });
 
 
+</script>
 
 <!-- Keep the Page Content Here.-->
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")

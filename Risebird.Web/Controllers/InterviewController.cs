@@ -2745,7 +2745,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult AllPriorityClientMeetings()
+        public IActionResult AllPriorityClientMeetings(int? Page, string searchValue)
         {
             try
             {
@@ -2853,7 +2853,36 @@ namespace Risebird.Web.Controllers
                         ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, meetings);
                         ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, meetings);
                         ViewBag.IRFList = _meetingService.GetIRFList(emailid, meetings);
-                        return View(meetings);
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            meetings = meetings.Where(x => x.candidateName == null ? x.candidateName == "" : x.candidateName.Contains(searchValue) || x.confirmationStatus == null ? x.confirmationStatus == "" : x.confirmationStatus.Contains(searchValue) ||
+                    x.InterviewStatus == null ? x.InterviewStatus == 0 : x.InterviewStatus.ToString().Contains(searchValue) ||
+                      x.MeetingStatusStatusDesc == null ? x.MeetingStatusStatusDesc == "" : x.MeetingStatusStatusDesc.ToString().Contains(searchValue)).ToList();
+                        }
+                        ViewBag.TotalCount = meetings.Count;
+
+                        ViewBag.PageStartCount = 10 * (Convert.ToInt32(Page)) + 1;
+                        int a = meetings.Count / 10;
+                        if (meetings.Count % 10 == 0)
+                        {
+
+                            ViewBag.PageEndCount = 10 * (Page + 1);
+                        }
+                        else
+                        {
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = meetings.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Page + 1);
+                            }
+
+                        }
+                          
+               
+                        return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
                     {
@@ -2875,7 +2904,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult AllPriorityClientMeetings(InterviewFilter filter)
+        public IActionResult AllPriorityClientMeetings(InterviewFilter filter, int? Page, string searchValue)
         {
             try
             {
@@ -2974,9 +3003,34 @@ namespace Risebird.Web.Controllers
                         && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
                         && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
                         && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            meetings = meetings.Where(x => x.candidateName == null ? x.candidateName == "" : x.candidateName.Contains(searchValue) || x.confirmationStatus == null ? x.confirmationStatus == "" : x.confirmationStatus.Contains(searchValue) ||
+                        x.InterviewStatus == null ? x.InterviewStatus == 0 : x.InterviewStatus.ToString().Contains(searchValue) ||
+                          x.MeetingStatusStatusDesc == null ? x.MeetingStatusStatusDesc == "" : x.MeetingStatusStatusDesc.ToString().Contains(searchValue)).ToList();
+                        }
+                        ViewBag.TotalCount = meetings.Count;
 
+                        ViewBag.PageStartCount = 10 * (Convert.ToInt32(Page)) + 1;
+                        int a = meetings.Count / 10;
+                        if (meetings.Count % 10 == 0) {
 
-                        return View(meetings);
+                            ViewBag.PageEndCount = 10 * (Page + 1);
+                        }
+                        else
+                        {
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = meetings.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Page + 1);
+                            }
+
+                        }
+                       
+                        return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
                     {
@@ -2996,8 +3050,11 @@ namespace Risebird.Web.Controllers
 
         }
 
-        [Authorize]
+      
+
+       [Authorize]
         [HttpGet]
+
         public IActionResult GetAllPriorityClientFilteredMeetings(string filterValue)
         {
             try

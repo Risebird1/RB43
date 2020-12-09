@@ -2747,8 +2747,15 @@ ul.panel-controls > li > .dropdown-menu {
 .f1 .input-error {
     border-color: #f35b3f;
 }
-
-
+td.detail-row {
+    background: url(https://datatables.net/examples/resources/details_open.png) no-repeat center center;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+tr.show td.detail-row {
+    background: url(https://datatables.net/examples/resources/details_close.png) no-repeat center center;
+}
 input[type="text"],
 input[type="password"],
 textarea,
@@ -5950,12 +5957,22 @@ button.close {
     #dataTables_filter input::-webkit-search-cancel-button, #clientduser_filter input::-webkit-search-decoration {
         display: none;
     }
-
+#search {
+    right: 10px;
+    position: absolute;
+    width: 27px;
+    height: 27px;
+    top: 5px;
+    position: absolute;
+    border: 0px;
+    background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat right;
+    z-index: 1000;
+}
     .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
-        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+       
         border: solid 1px #ccc;
-        padding: 9px 10px 9px 32px;
-        width: 150px;
+        padding: 9px 10px 9px 10px;
+        width: 200px;
         height: 40px;
         font-family: arial;
         -webkit-border-radius: 10em;
@@ -5966,7 +5983,11 @@ button.close {
         transition: all .5s;
         position: relative;
     }
-
+.searchCon {
+    width: 200px;
+    float: left;
+    position: relative;
+}
         .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
             width: 200px;
             background-color: #fff;
