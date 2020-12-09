@@ -1370,6 +1370,7 @@ namespace Risebird.Business
             {
                 var receiverEmails = _meetingRespository.GetIRFMembersEmails(model.IRFId).Result;
                 var supportEmails = _supportRespository.GetAllSupportHREmails();
+                model.BroadcastReciever = "Interviewers";
                 var result = _notificationHelper.SendBroadcastMail(receiverEmails.ToList(), supportEmails.ToList(), model);
                 return result;
 
