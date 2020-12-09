@@ -2,7 +2,7 @@
 
 
 body {
-    font-family: Roboto, sans-serif;
+    /* font-family: Roboto, sans-serif;*/
 }
 
 #style-2::-webkit-scrollbar-track {
@@ -279,7 +279,7 @@ td:hover.wordwrap {
 }
 
 table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-    max-width: 300px !important;
+    /* max-width: 300px !important;*/
 }
 
 table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
@@ -382,8 +382,8 @@ table {
 
 
 .client #resumeId, .client #zoomlinkId {
-    padding: 5px 10px;
-    border-radius: 16px;
+    border-radius: 3px;
+    padding: 0.1em .45em 0.25em .45em;
 }
 
 
@@ -398,6 +398,7 @@ table {
     padding: 5px 10px;
     border-radius: 16px;
 }
+
 
 #ProctoringTable .label-type {
     background: #e8f5ff;
