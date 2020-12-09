@@ -7,9 +7,10 @@ namespace Risebird.Entities.Data
     public class CandidateTimelineData
     {
         public int CandidateId { get; set; }
+        public int CandidateMasterId { get; set; }
         public string EmailId { get; set; }
         public string Name { get; set; }
-        public string ClientHR { get; set; }
+        public string HREmail { get; set; }
         public int IRFId { get; set; }
         public int InterviewId { get; set; }
         public DateTime OnboardingDate { get; set; }
