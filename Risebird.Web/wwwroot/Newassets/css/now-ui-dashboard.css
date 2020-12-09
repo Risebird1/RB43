@@ -7637,7 +7637,7 @@ input.theatre-btn:focus {
 .control-label, .control-labeled {
     color: #5f5c5c !important;
     font-weight: normal !important;
-    font-size: 13.5px !important;
+    font-size: 14px !important;
 }
 
 
@@ -10959,7 +10959,7 @@ svg {
 
 
 .table-responsive-sm .table > thead > tr > th {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .trash-btn {

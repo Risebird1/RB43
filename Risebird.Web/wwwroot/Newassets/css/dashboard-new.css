@@ -38,6 +38,7 @@ body {
     margin: 0px;
     position: relative;
     color: #22262e;
+
 }
 
 .body-full-height {
@@ -86,7 +87,10 @@ body {
     transform: rotate(180deg);
 }
 
-
+.icon-lst {
+    position: relative !important;
+    top: -3px !important;
+}
 
 .label-num {
     background: #ccc;
@@ -1099,7 +1103,7 @@ body {
 /* Triangle hack to make tooltip look like a speech bubble */
 .talk-bubble [data-tooltip]:after {
     position: absolute;
-    bottom: 150%;
+    bottom: 75%;
     left: 50%;
     margin-left: -5px;
     width: 0;
