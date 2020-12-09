@@ -11,20 +11,57 @@
     <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
     <title>MCQ Questions</title>
     <style>
+        .star-rating {
+            /*border: solid 1px #ccc;*/
+            border: solid 1px white;
+            display: flex;
+            flex-direction: row-reverse;
+            font-size: 2.0em;
+            justify-content: space-around;
+            padding: 0 .2em;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 10px;
+            background-color: lightgray;
+        }
+
+            .star-rating input {
+                display: none;
+            }
+
+            .star-rating label {
+                /*color: #ccc;*/
+                color: white;
+                cursor: pointer;
+            }
+
+            .star-rating :checked ~ label {
+                color: #f90;
+            }
+
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #fc0;
+            }
+
+        .card-title-space {
+            margin: 20px 0px;
+            float: right
+        }
+
+        .mb10 {
+            margin-bottom: 10px
+        }
     </style>
 </head>
 <body>
-    <button id="btnStart" hidden>START RECORDING</button><br />
+    <button id="btnStart" hidden>START RECORDING</button>
     <button id="btnStop" hidden>STOP RECORDING</button>
     <input type="hidden" value="@ViewBag.VideoRecording" id="txtrecordingvideo" />
     <video controls hidden></video>
 
     <video id="vid2" hidden controls></video>
-    <div class="text-center" style="        background-color: #363c43;
-        padding: 15px 5px 5px 10px;
-        width: 100%;
-        display: inline-block;
-        position: relative;">
+    <div class="text-center" style="background-color: #363c43;padding: 15px 5px 5px 10px;width: 100%;display: inline-block;position: relative;">
         <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.ico" style="width:180px;" /></div>
         <div style="float:right">
             <div id="countdown">
@@ -46,6 +83,26 @@
 
                 <div>
                 </div>
+            </div>
+            <div class="col-md-8 offset-md-2" id="divfeedback" style="display:none">
+                <p><b>Rating</b></p>
+                <input type="hidden" id="txtfeedbackreting" />
+                <div class="star-rating">
+                    <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
+                    <label for="Q1_5" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeQuestion1(4)" />
+                    <label for="Q1_4" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_3" name="rating1" value="3" onclick="ChangeQuestion1(3)" />
+                    <label for="Q1_3" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_2" name="rating1" value="2" onclick="ChangeQuestion1(2)" />
+                    <label for="Q1_2" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
+                    <label for="Q1_1" class="star">&#9733;</label>
+                </div>
+
+                <input type="text" id="txtfeedbackComment" placeholder="Please Enter Comments" class="form-control" />
+                <input type="button" value="Submit" class="callsubmit" onclick="SubmitTest()" />
+
             </div>
         </div>
     </div>
@@ -135,6 +192,27 @@
             }
         });
     }
+    function SubmitTest() {
+        var form_data = new FormData();
+        form_data.append("rating", $("#txtfeedbackreting").val());
+        form_data.append("comments", $("#txtfeedbackComment").val());
+        form_data.append("file", file);
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/SubmitTest",
+            data: form_data,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            success: function (data) {
+                if (data == "TestSubmit") {
+                    window.location.href = "/MCQ/TestComplete?status=" + data;
+                } else {
+                    binddata(data);
+                }
+            }
+        });
+    }
     function FetchQuestion() {
         var Singleanswer = "";
         var option1 = false;
@@ -195,10 +273,16 @@
             enctype: 'multipart/form-data',
             processData: false,
             success: function (data) {
-                if (data == "TestSubmit") {
-                    window.location.href = "/MCQ/TestComplete?status=" + data;
+                if ($("#zquestion_final").val() == "true") {
+                    document.getElementById("divfeedback").style.display = "block";
+                    document.getElementById("divMCQSetdetails").style.display = "none";
+                    clearInterval(myVar);
                 } else {
-                    binddata(data);
+                    if (data == "TestSubmit") {
+                        window.location.href = "/MCQ/TestComplete?status=" + data;
+                    } else {
+                        binddata(data);
+                    }
                 }
             }
         });
@@ -283,12 +367,8 @@
 
         html += '       </div>';
         html += '       <div>';
-        if (Data._question.final == "true") {
-            html += '               <input type="submit" value="Submit" class="callsubmit" id="btnsubmit" onclick="FetchQuestion()" />';
-        }
-        else {
-            html += '     <input type="submit" value="NEXT" class="callsubmit" id="btnsubmit" onclick="FetchQuestion()" />';
-        }
+        html += '               <input type="submit" value="NEXT" class="callsubmit" id="btnsubmit" onclick="FetchQuestion()" />';
+
         html += ' </div>';
 
         html += ' </div>';
@@ -422,5 +502,8 @@
             .catch(function (err) {
                 console.log(err.name, err.message);
             });
+    }
+    function ChangeQuestion1(id) {
+        $("#txtfeedbackreting").val(id);
     }
 </script>
