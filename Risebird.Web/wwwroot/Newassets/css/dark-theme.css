@@ -649,9 +649,8 @@ div.dataTables_wrapper div.dataTables_info {
     .mdc-card .modal .modal-content .modal-body .mdc-button--raised:not(:disabled), .mdc-card .modal .modal-content .modal-body .mdc-button--unelevated:not(:disabled), .modal .modal-content .modal-body .mdc-button--raised:not(:disabled), .modal .modal-content .modal-body .mdc-button--unelevated:not(:disabled) {
         border: 1px #77737359 solid !important;
     }
-.child-section {
-    background: #e5e5e5;
- 
+.child-section table {
+    border: 1px #383636 solid !important;
 }
     .child-section table th {
         color: #676767;

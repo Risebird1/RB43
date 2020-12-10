@@ -4919,7 +4919,9 @@ Created using IcoMoon - icomoon.io
     background-color: #FF3636;
 }
 
-
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+}
 
 .tab-content.tab-subcategories {
     margin-top: 20px;

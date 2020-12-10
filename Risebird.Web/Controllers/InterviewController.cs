@@ -3165,7 +3165,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SelectedPriorityClientMeetings()
+        public IActionResult SelectedPriorityClientMeetings(int? Page, string searchValue)
         {
             try
             {
@@ -3290,8 +3290,35 @@ namespace Risebird.Web.Controllers
                         }
                         ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, selectedMeeting);
                         ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, selectedMeeting);
+                        //if (!String.IsNullOrEmpty(searchValue))
+                        //{
+                        //    selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.Contains(searchValue) : x.confirmationStatus == "")
+                        //    || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                        //    || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
-                        return View(selectedMeeting);
+                        //}
+                        ViewBag.TotalCount = selectedMeeting.Count;
+
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)-1) + 1;
+                        int a = selectedMeeting.Count / 10;
+                        if (selectedMeeting.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = selectedMeeting.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                            }
+
+                        }
+                        return View(selectedMeeting.ToPagedList(Page ?? 1, 10));
                     }
                     else
                     {

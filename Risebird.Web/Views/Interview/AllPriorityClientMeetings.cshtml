@@ -413,16 +413,7 @@
 
                                         <div class="row">
                                             <div class="col-sm-12 col-md-6">
-                                                <div class="dataTables_length" id="meeting_length">
-                                                    <label>
-                                                        Show <select name="meeting_length" aria-controls="meeting" class="custom-select custom-select-sm form-control form-control-sm">
-                                                            <option value="10">10</option>
-                                                            <option value="25">25</option>
-                                                            <option value="50">50</option>
-                                                            <option value="-1">All</option>
-                                                        </select> entries
-                                                    </label>
-                                                </div>
+                                                
                                             </div>
                                             <div class="col-sm-12 col-md-6">
                                                 <div id="meeting_filter" class="dataTables_filter">
@@ -500,7 +491,7 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td class="text-center"><span class="status-success"> @item.confirmationStatus</span></td>
+                                                                    <td class="text-center"> @item.confirmationStatus</td>
                                                                 }
                                                                 @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                                 {
@@ -542,7 +533,7 @@
                                                                     <table class="table table-striped">
 
                                                                         <tr>
-                                                                            
+                                                                            <th>Client HR</th>
                                                                             <th class="itemInterviewLink">Interview Link</th>
                                                                             <th>End Client Name</th>
                                                                             <th>Aadhar Link</th>
@@ -550,13 +541,24 @@
                                                                             <th>Final Selection Status</th>
                                                                             <th>Offer Status</th>
                                                                             <th>Joining Status</th>
-                                                                         
+
 
                                                                         </tr>
 
 
                                                                         <tr>
-                                                                            
+                                                                            @if (item.IsHrOnline == 1)
+                                                                            {
+                                                                                <td>
+                                                                                    <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                                                                                </td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td>
+                                                                                    <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                                                </td>
+                                                                            }
                                                                             @if (item.zoomLink != null && item.zoomLink != "")
                                                                             {
                                                                                 <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>

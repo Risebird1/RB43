@@ -1127,7 +1127,7 @@ body {
 /* Triangle hack to make tooltip look like a speech bubble */
 .talk-bubble [data-tooltip]:after {
     position: absolute;
-    bottom: 150%;
+    bottom: 70%;
     left: 50%;
     margin-left: -5px;
     width: 0;
