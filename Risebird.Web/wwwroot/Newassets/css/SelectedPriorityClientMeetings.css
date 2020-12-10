@@ -282,10 +282,7 @@ table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.data
     /* max-width: 300px !important;*/
 }
 
-table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
-    padding: 7px;
-    font-weight: normal !important;
-}
+
 
 .table > thead > tr > th, .table > tfoot > tr > th {
     padding: 7px;
@@ -499,7 +496,7 @@ modal-content .modal-body {
 }
 
 .mdc-card-wrapper__text-section {
-    padding: 16px;
+    padding: 15px;
 }
 
 .mdc-fab {

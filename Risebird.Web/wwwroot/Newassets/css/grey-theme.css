@@ -52,9 +52,14 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 
+td.detail-row {
+    background-color: #e6e6e6;
+}
 
+.child-section {
+    background: #e5e5e5;
 
-
+}
 .mdc-card .form-control.active-razorbtn {
     background: #929292 !important;
     color: #fff !important;
