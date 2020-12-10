@@ -2862,21 +2862,22 @@ namespace Risebird.Web.Controllers
                         }
                         ViewBag.TotalCount = meetings.Count;
 
-                        ViewBag.PageStartCount = 10 * (Convert.ToInt32(Page)) + 1;
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
                         int a = meetings.Count / 10;
                         if (meetings.Count % 10 == 0)
                         {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) + 1);
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
                         }
                         else
                         {
+                            a = a + 1;
                             if (a == Page)
                             {
                                 ViewBag.PageEndCount = meetings.Count;
                             }
                             else
                             {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) + 1);
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
 
                             }
 
@@ -3012,21 +3013,22 @@ namespace Risebird.Web.Controllers
                         }
                         ViewBag.TotalCount = meetings.Count;
 
-                        ViewBag.PageStartCount = 10 * (Convert.ToInt32(Page)) + 1;
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
                         int a = meetings.Count / 10;
                         if (meetings.Count % 10 == 0)
                         {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) + 1);
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
                         }
                         else
                         {
+                            a = a + 1;
                             if (a == Page)
                             {
                                 ViewBag.PageEndCount = meetings.Count;
                             }
                             else
                             {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) + 1);
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
                             }
                         }
                         return View(meetings.ToPagedList(Page ?? 1, 10));
