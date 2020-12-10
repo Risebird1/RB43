@@ -2855,9 +2855,10 @@ namespace Risebird.Web.Controllers
                         ViewBag.IRFList = _meetingService.GetIRFList(emailid, meetings);
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            meetings = meetings.Where(x => x.candidateName == null ? x.candidateName == "" : x.candidateName.Contains(searchValue) || x.confirmationStatus == null ? x.confirmationStatus == "" : x.confirmationStatus.Contains(searchValue) ||
-                    x.InterviewStatus == null ? x.InterviewStatus == 0 : x.InterviewStatus.ToString().Contains(searchValue) ||
-                      x.MeetingStatusStatusDesc == null ? x.MeetingStatusStatusDesc == "" : x.MeetingStatusStatusDesc.ToString().Contains(searchValue)).ToList();
+                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.Contains(searchValue) : x.confirmationStatus == "")
+                            || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                            || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+
                         }
                         ViewBag.TotalCount = meetings.Count;
 
@@ -2865,8 +2866,7 @@ namespace Risebird.Web.Controllers
                         int a = meetings.Count / 10;
                         if (meetings.Count % 10 == 0)
                         {
-
-                            ViewBag.PageEndCount = 10 * (Page + 1);
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) + 1);
                         }
                         else
                         {
@@ -2876,12 +2876,13 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                ViewBag.PageEndCount = 10 * (Page + 1);
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) + 1);
+
                             }
 
                         }
-                          
-               
+
+
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
@@ -3005,17 +3006,17 @@ namespace Risebird.Web.Controllers
                         && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            meetings = meetings.Where(x => x.candidateName == null ? x.candidateName == "" : x.candidateName.Contains(searchValue) || x.confirmationStatus == null ? x.confirmationStatus == "" : x.confirmationStatus.Contains(searchValue) ||
-                        x.InterviewStatus == null ? x.InterviewStatus == 0 : x.InterviewStatus.ToString().Contains(searchValue) ||
-                          x.MeetingStatusStatusDesc == null ? x.MeetingStatusStatusDesc == "" : x.MeetingStatusStatusDesc.ToString().Contains(searchValue)).ToList();
+                            meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.Contains(searchValue) : x.confirmationStatus == "")
+                            || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                            || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
                         }
                         ViewBag.TotalCount = meetings.Count;
 
                         ViewBag.PageStartCount = 10 * (Convert.ToInt32(Page)) + 1;
                         int a = meetings.Count / 10;
-                        if (meetings.Count % 10 == 0) {
-
-                            ViewBag.PageEndCount = 10 * (Page + 1);
+                        if (meetings.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) + 1);
                         }
                         else
                         {
@@ -3025,11 +3026,9 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                ViewBag.PageEndCount = 10 * (Page + 1);
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) + 1);
                             }
-
                         }
-                       
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
@@ -3050,9 +3049,9 @@ namespace Risebird.Web.Controllers
 
         }
 
-      
 
-       [Authorize]
+
+        [Authorize]
         [HttpGet]
 
         public IActionResult GetAllPriorityClientFilteredMeetings(string filterValue)
@@ -3180,7 +3179,7 @@ namespace Risebird.Web.Controllers
                     {
 
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && x.InterviewStatus==2 &&x.confirmationStatus=="1" );
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && x.InterviewStatus == 2 && x.confirmationStatus == "1");
                         if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
