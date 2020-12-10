@@ -23,7 +23,7 @@ namespace Risebird.Web.Controllers
         }
 
 
-        public IActionResult Index(string controllerName = null, string actMethod = null)
+        public IActionResult Index(string controllerName = null, string actMethod = null,)
         {
             try
             {

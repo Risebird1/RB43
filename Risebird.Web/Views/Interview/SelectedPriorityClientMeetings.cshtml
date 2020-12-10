@@ -373,266 +373,266 @@
 
                             <div id="tableID" class="second">
                                 <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-6">
 
-                                        </div>
-                                        <div class="col-sm-12 col-md-6">
-                                            <div id="meeting_filter" class="dataTables_filter">
+                                    <div class="col-sm-12 col-md-6">
 
-                                                <div class="searchCon">
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 pull-right">
+                                        <div id="meeting_filter" class="dataTables_filter">
 
-                                                    <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                                    <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
+                                            <div class="searchCon">
+
+                                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
 
 
 
-                                                    <button style="display:none;" type="button" id="x">x</button>
+                                                <button style="display:none;" type="button" id="x">x</button>
 
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-sm-12">
+                                    <div class="clearfix"></div>
 
-                                            <table id="meeting" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
-                                                <thead>
+                                    <div class="col-sm-12">
+
+                                        <table id="meeting" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th style="border-right: 0px !important;"></th>
+                                                    <th style="border-left: 0px !important;" id='start'>Interview Date</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Primary Skill</th>
+                                                    <th>Video</th>
+                                                    <th>Interviewer Comment</th>
+                                                    <th>Report Link</th>
+                                                    <th>Action</th>
+                                                    <th>Call</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th style="border-right: 0px !important;"></th>
+                                                    <th style="border-left: 0px !important;">Interview Date</th>
+                                                    <th>Candidate Name</th>
+
+                                                    <th>Primary Skill</th>
+                                                    <th>Video</th>
+                                                    <th>Interviewer Comment</th>
+
+
+
+
+                                                    <th>Report Link</th>
+
+
+                                                    <th>Action</th>
+                                                    <th>Call</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+
+                                                @if (Model.Count == 0)
+                                                {
                                                     <tr>
-                                                        <th></th>
-                                                        <th id='start'>Interview Date</th>
-                                                        <th>Candidate Name</th>
-
-                                                        <th>Primary Skill</th>
-                                                        <th>Video</th>
-                                                        <th>Interviewer Comment</th>
-
-
-
-
-                                                        <th>Report Link</th>
-
-
-                                                        <th>Action</th>
-                                                        <th>Call</th>
+                                                        <td colspan="9" class="text-center">No data available in table</td>
                                                     </tr>
-                                                </thead>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th></th>
-                                                        <th>Interview Date</th>
-                                                        <th>Candidate Name</th>
+                                                }
+                                                @foreach (var item in Model)
+                                                {
+                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                        <th>Primary Skill</th>
-                                                        <th>Video</th>
-                                                        <th>Interviewer Comment</th>
-
-
-
-
-                                                        <th>Report Link</th>
-
-
-                                                        <th>Action</th>
-                                                        <th>Call</th>
-                                                    </tr>
-                                                </tfoot>
-                                                <tbody>
-                                                    @foreach (var item in Model)
-                                                    {
-                                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-
-                                                        <tr id=@item.imid>
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row">&nbsp;</td>
-                                                            <td> @item.interviewDate </td>
-                                                            @if (item.IsOnline == 1)
-                                                            {
-                                                                <td>
-                                                                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>
-                                                                    <a onclick=""><span class="dot"></span> @item.candidateName </a>
-                                                                </td>
-                                                            }
-
-
-                                                            <td> @item.JDTiltle.Split("|")[0] </td>
-
-                                                            @if (item.VideoLink != null && item.VideoLink != "")
-                                                            {
-                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Video</td>
-                                                            }
+                                                    <tr id=@item.imid>
+                                                        <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row">&nbsp;</td>
+                                                        <td> @item.interviewDate </td>
+                                                        @if (item.IsOnline == 1)
+                                                        {
                                                             <td>
-                                                                <div class="talk-bubble tri-right border-bubble right-in ">
-                                                                    <div class="talktext">
-                                                                        <a href="#" data-tooltip="@item.InterviewerComment"><textarea>@item.InterviewerComment</textarea></a>
-                                                                    </div>
-                                                                </div>
-
-
-
-
-
+                                                                <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
                                                             </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                            </td>
+                                                        }
+
+
+                                                        <td> @item.JDTiltle.Split("|")[0] </td>
+
+                                                        @if (item.VideoLink != null && item.VideoLink != "")
+                                                        {
+                                                            <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Video</td>
+                                                        }
+                                                        <td>
+                                                            <div class="talk-bubble tri-right border-bubble right-in ">
+                                                                <div class="talktext">
+                                                                    <a href="#" data-tooltip="@item.InterviewerComment"><textarea>@item.InterviewerComment</textarea></a>
+                                                                </div>
+                                                            </div>
 
 
 
-                                                            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
 
 
-                                                            <td class="text-center action">
+                                                        </td>
 
 
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
-                                                                    <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+
+                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+
+
+                                                        <td class="text-center action">
+
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
+                                                                <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                            </button>
+
+                                                            @if (item.IsBiometricEnabled)
+                                                            {
+
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Verify">
+                                                                    <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
                                                                 </button>
 
-                                                                @if (item.IsBiometricEnabled)
-                                                                {
-
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Verify">
-                                                                        <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                                    </button>
 
 
 
 
-
-                                                                }
-                                                            </td>
-                                                            <td>
-
+                                                            }
+                                                        </td>
+                                                        <td>
 
 
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                {
-                                                                    <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
 
 
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
 
 
 
 
 
-                                                                }
+                                                            }
 
-                                                            </td>
-                                                        </tr>
+                                                        </td>
+                                                    </tr>
 
-                                                        <tr class="collapse @item.imid">
+                                                    <tr class="collapse @item.imid">
 
-                                                            <td colspan="999" class="child-section">
-                                                                <table class="table table-striped">
-                                                                    <tr>
-                                                                        <th>Client HR</th>
-                                                                        <th>End Client Name</th>
-                                                                        <th>Aadhar Link</th>
-                                                                        <th>Approval Status</th>
-                                                                        <th>Final Selection Status</th>
-                                                                        <th>Offer Status</th>
-                                                                        <th>Joining Status</th>
-                                                                    </tr>
-
-
-                                                                    <tr>
-                                                                        @if (item.IsHrOnline == 1)
-                                                                        {
-                                                                            <td>
-                                                                                <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
-                                                                            </td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>
-                                                                                <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
-                                                                            </td>
-                                                                        }
-                                                                        <td> @item.ClientName </td>
-                                                                        @if (item.AadharFileLink != null && item.AadharFileLink != "")
-                                                                        {
-                                                                            <td>
-
-                                                                                <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink.ToString().Replace(" ","%20")>Aadhar</a>
-                                                                            </td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>No document</td>
-                                                                        }
+                                                        <td colspan="999" class="child-section">
+                                                            <table class="table table-striped">
+                                                                <tr>
+                                                                    <th>Client HR</th>
+                                                                    <th>End Client Name</th>
+                                                                    <th>Aadhar Link</th>
+                                                                    <th>Approval Status</th>
+                                                                    <th>Final Selection Status</th>
+                                                                    <th>Offer Status</th>
+                                                                    <th>Joining Status</th>
+                                                                </tr>
 
 
+                                                                <tr>
+                                                                    @if (item.IsHrOnline == 1)
+                                                                    {
+                                                                        <td>
+                                                                            <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>
+                                                                            <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
+                                                                        </td>
+                                                                    }
+                                                                    <td> @item.ClientName </td>
+                                                                    @if (item.AadharFileLink != null && item.AadharFileLink != "")
+                                                                    {
+                                                                        <td>
+
+                                                                            <a id="aadharLinkId" target="_blank" title="Aadhar" href=@item.AadharFileLink.ToString().Replace(" ","%20")>Aadhar</a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No document</td>
+                                                                    }
 
 
-                                                                        @if (item.NextLevelApprovalStat != null && item.NextLevelApprovalStat != "")
-                                                                        {
-                                                                            <td>
-
-                                                                                @item.NextLevelApprovalStat
-                                                                            </td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>No document</td>
-                                                                        }
-                                                                        @if (item.FinalSelectionStat != null && item.FinalSelectionStat != "")
-                                                                        {
-
-                                                                            <td>@item.FinalSelectionStat </td>
-
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>No document</td>
-                                                                        }
-
-                                                                        @if (item.OfferStatusStatDesc != null && item.OfferStatusStatDesc != "")
-                                                                        {
-                                                                            <td>@item.OfferStatusStatDesc</td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>No document</td>
-                                                                        }
-
-                                                                        @if (item.JoiningStatusStatDesc != null && item.JoiningStatusStatDesc != "")
-                                                                        {
-                                                                            <td>@item.JoiningStatusStatDesc</td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>No document</td>
-                                                                        }
 
 
-                                                                    </tr>
-                                                                </table>
-                                                            </td>
-                                                        </tr>
+                                                                    @if (item.NextLevelApprovalStat != null && item.NextLevelApprovalStat != "")
+                                                                    {
+                                                                        <td>
 
-                                                    }
-                                                </tbody>
-                                            </table>
+                                                                            @item.NextLevelApprovalStat
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No document</td>
+                                                                    }
+                                                                    @if (item.FinalSelectionStat != null && item.FinalSelectionStat != "")
+                                                                    {
 
-                                        </div>
+                                                                        <td>@item.FinalSelectionStat </td>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No document</td>
+                                                                    }
+
+                                                                    @if (item.OfferStatusStatDesc != null && item.OfferStatusStatDesc != "")
+                                                                    {
+                                                                        <td>@item.OfferStatusStatDesc</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No document</td>
+                                                                    }
+
+                                                                    @if (item.JoiningStatusStatDesc != null && item.JoiningStatusStatDesc != "")
+                                                                    {
+                                                                        <td>@item.JoiningStatusStatDesc</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No document</td>
+                                                                    }
+
+
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+
+                                                }
+                                            </tbody>
+                                        </table>
+
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-5">
-                                            Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
-                                        </div>
 
-                                        <div class="col-sm-12 col-md-7 dataTables_paginate ">
-                                            @Html.PagedListPager(Model, Page => Url.Action("SelectedPriorityClientMeetings", new { Page = Page }))
-                                        </div>
+
+                                    <div class="col-sm-12 col-md-5 pull-left">
+                                        Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                     </div>
+
+                                    <div class="col-sm-12 col-md-7 dataTables_paginate pull-right">
+                                        @Html.PagedListPager(Model, Page => Url.Action("SelectedPriorityClientMeetings", new { Page = Page }))
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -965,28 +965,28 @@
                     buttonWidth: '100%',
                     maxHeight: 200
                 });
-                $('#meeting').DataTable({
-                    "pagingType": "full_numbers",
-                    "lengthMenu": [
-                        [10, 25, 50, -1],
-                        [10, 25, 50, "All"]
-                    ],
-                    order: [],
-                    responsive: true,
-                    language: {
-                        search: "_INPUT_",
-                        searchPlaceholder: "Search records",
-                    },
-                    "fnInitComplete": function () {
-                        $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
-                        $(".dataTables_filter").keyup(function (e) {
-                            if ($(this).val() != "") { $("#x").hide(); }
-                            else { $("#x").show(); }
-                        });
-                    }
+                //$('#meeting').DataTable({
+                //    "pagingType": "full_numbers",
+                //    "lengthMenu": [
+                //        [10, 25, 50, -1],
+                //        [10, 25, 50, "All"]
+                //    ],
+                //    order: [],
+                //    responsive: true,
+                //    language: {
+                //        search: "_INPUT_",
+                //        searchPlaceholder: "Search records",
+                //    },
+                //    "fnInitComplete": function () {
+                //        $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+                //        $(".dataTables_filter").keyup(function (e) {
+                //            if ($(this).val() != "") { $("#x").hide(); }
+                //            else { $("#x").show(); }
+                //        });
+                //    }
 
-                });
-                var table = $('#meeting').DataTable();
+                //});
+                //var table = $('#meeting').DataTable();
             });
 
         $(document).ready(function () {

@@ -4585,8 +4585,7 @@ Created using IcoMoon - icomoon.io
     .pagination .page-item.active > .page-link,
     .pagination .page-item.active > .page-link:focus,
     .pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
-        background-color: #42a5f5!important;
-        border-color: #42a5f5!important;
+ 
         color: #FFFFFF;
     }
 

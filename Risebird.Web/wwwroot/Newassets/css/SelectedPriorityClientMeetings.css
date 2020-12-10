@@ -254,7 +254,7 @@ table {
 }
 .selected-priority .table > tbody > tr > td {
     vertical-align: top;
-    padding: 7px 7px!important;
+    padding: 10px 7px!important;
 }
 
 .table > tfoot > tr > th {
