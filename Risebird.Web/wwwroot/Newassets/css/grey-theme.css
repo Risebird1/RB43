@@ -51,15 +51,39 @@ textarea::-webkit-scrollbar-thumb {
     color: #dee2e6;
 }
 
-
 td.detail-row {
-    background-color: #e6e6e6;
+    background-color: #fff;
 }
 
 .child-section {
     background: #e5e5e5;
-
 }
+
+    .child-section table th {
+        color: #676767;
+        padding: 7px 7px !important;
+        background: #f0f0f0;
+        font-weight: 600;
+    }
+
+    .child-section table {
+        margin-bottom: 0px;
+    }
+
+    .child-section .table-striped tbody tr:nth-of-type(even) {
+        background: #fff;
+    }
+
+table.dataTable > thead > tr {
+    background: #f0f0f0;
+}
+
+    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
+        padding: 7px;
+        font-weight: 600 !important;
+        color: #676767;
+        font-weight: normal;
+    }
 .mdc-card .form-control.active-razorbtn {
     background: #929292 !important;
     color: #fff !important;
@@ -106,18 +130,19 @@ td.detail-row {
 
 
 
-.pagination-container > ul > li.active {
+.pagination .page-item.active > .page-link,
+.pagination .page-item.active > .page-link:focus,
+.pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
     background: #8a8a8a !important;
-    border: 1px #8a8a8a solid !important;
 }
 
     .pagination-container > ul > li.active a {
         color: #fff !important;
     }
 
-.pagination-container > ul > li {
-    background: #d4d3d3 !important;
-    border: 1px #d4d3d3 solid !important;
+.pagination-container > ul > li a:hover {
+    background: #d4d3d369 !important;
+    text-decoration: none !important;
 }
 
     .pagination-container > ul > li a {
