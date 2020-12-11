@@ -928,7 +928,84 @@ table.journey th, table.journey td {
     text-align: center;
     margin-top: -2px;
 }
+#candidateTable_length{float:left}
+div.dataTables_wrapper div#candidateTable_length label {
+    font-weight: normal;
+    text-align: left;
+    white-space: nowrap;
+}
 
+div.dataTables_wrapper div#candidateTable_length select {
+    width: 75px !important;
+    display: inline-block;
+}
+.dataTables_length select {
+    background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e);
+    border: 1px solid #E3E3E3 !important;
+    background-repeat: no-repeat;
+    background-position: 90% center;
+    background-color: #fff;
+    background-size: 12%;
+    border-radius: 30px !important;
+    color: #2c2c2c;
+    line-height: normal;
+    height: auto;
+    font-size: 13px !important;
+    -webkit-transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    -moz-transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    -o-transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    -ms-transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    padding: 8px 8px;
+}
+div.dataTables_wrapper div.dataTables_filter {
+    text-align: right;
+}
+
+    div.dataTables_wrapper div.dataTables_filter label {
+        font-weight: normal;
+        white-space: nowrap;
+        text-align: left;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter input {
+        margin-left: 0.5em;
+        display: inline-block;
+        width: auto;
+    }
+
+div.dataTables_wrapper div.dataTables_info {
+    padding-top: 8px;
+    white-space: nowrap;
+}
+
+div.dataTables_wrapper div.dataTables_paginate {
+    margin: 0;
+    white-space: nowrap;
+    text-align: right;
+}
+
+    div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+        margin: 2px 0;
+        white-space: nowrap;
+        -ms-flex-pack: end !important;
+        justify-content: flex-end !important;
+    }
+
+div.dataTables_wrapper div.dataTables_processing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    margin-left: -100px;
+    margin-top: -26px;
+    text-align: center;
+    padding: 1em 0;
+}
+
+table.dataTable thea
 .borderline {
     background: hotpink;
 }
