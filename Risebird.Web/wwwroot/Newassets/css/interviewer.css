@@ -914,6 +914,7 @@ table.journey th, table.journey td {
     margin-top: 10px;
     font-family: Arial, Helvetica, sans-serif;
     color: #4C4A4A;
+    text-align:left;
 }
 
 .eventTitle {
