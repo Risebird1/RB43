@@ -24,7 +24,7 @@ namespace Risebird.Web.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> CandidateTimeline(int? Page,string searchValue)
+        public async Task<IActionResult> CandidateTimeline(int? Page, string searchValue)
         {
             var model = new List<CandidateTimelineVM>();
             //foreach (var item in Model.Select(x => (x.irfIntId, x.IRFId)).Distinct().ToList())
@@ -123,7 +123,8 @@ namespace Risebird.Web.Controllers
             }
             if (!String.IsNullOrEmpty(searchValue))
             {
-                model = model.Where(x => (!String.IsNullOrEmpty(x.CandidateName) ? x.CandidateName.Contains(searchValue) : x.CandidateName == "") || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.Contains(searchValue) : x.HREmail == "")).ToList();
+                searchValue = searchValue.ToUpper();
+                model = model.Where(x => (!String.IsNullOrEmpty(x.CandidateName) ? x.CandidateName.ToUpper().Contains(searchValue) : x.CandidateName == "") || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.ToUpper().Contains(searchValue) : x.HREmail == "")).ToList();
             }
             ViewBag.TotalCount = model.Count;
             ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
