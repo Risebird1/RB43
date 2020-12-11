@@ -471,7 +471,7 @@
                                                     @foreach (var item in Model)
                                                     {
                                                         <tr id="@item.imid">
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row">&nbsp;</td>
+                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
                                                             <td> @item.interviewDate </td>
                                                             @if (item.IsOnline == 1)
                                                             {
@@ -800,6 +800,9 @@
 
 
     });
+    function changeicon(id) {
+        //add or remove class
+    }
     function searchResult() {
         window.location.href = "/Interview/AllPriorityClientMeetings?searchValue=" + $('#txtmeeting_filter').val();
 
