@@ -821,9 +821,14 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
+                        if (selectedMeeting.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
                         return View(selectedMeeting.ToPagedList(Page ?? 1, 10));
 
-                       
+
                     }
                     else
                     {
@@ -1747,7 +1752,7 @@ namespace Risebird.Web.Controllers
 
                         }
                         return View(meetings.ToPagedList(Page ?? 1, 10));
-                       
+
                     }
                     else
                     {
@@ -1979,13 +1984,13 @@ namespace Risebird.Web.Controllers
 
                         if (!String.IsNullOrEmpty(searchValue))
                         {
-                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "")  || (!String.IsNullOrEmpty(x.MeetingStatusDesc) ? x.MeetingStatusDesc.Contains(searchValue) : x.MeetingStatusDesc == "")
+                            myInterview = myInterview.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.MeetingStatusDesc) ? x.MeetingStatusDesc.Contains(searchValue) : x.MeetingStatusDesc == "")
                             || (!String.IsNullOrEmpty(x.InterviewStatusDesc) ? x.InterviewStatusDesc.Contains(searchValue) : x.InterviewStatusDesc == "")).ToList();
 
                         }
                         ViewBag.TotalCount = myInterview.Count;
 
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page))-1) + 1;
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
                         int a = myInterview.Count / 10;
                         if (myInterview.Count % 10 == 0)
                         {
@@ -1993,7 +1998,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            a = a+1;
+                            a = a + 1;
                             if (a == Page)
                             {
                                 ViewBag.PageEndCount = myInterview.Count;
@@ -2006,9 +2011,13 @@ namespace Risebird.Web.Controllers
 
                         }
 
-
+                        if (myInterview.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
                         return View(myInterview.ToPagedList(Page ?? 1, 10));
-                 
+
                     }
                     else
                     {
@@ -2241,10 +2250,14 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-
+                        if (myInterview.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
 
                         return View(myInterview.ToPagedList(Page ?? 1, 10));
-                
+
                     }
                     else
                     {
@@ -3002,7 +3015,11 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-
+                        if (meetings.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
 
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
@@ -3150,6 +3167,11 @@ namespace Risebird.Web.Controllers
                             {
                                 ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
                             }
+                        }
+                        if (meetings.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
                         }
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
@@ -3419,14 +3441,15 @@ namespace Risebird.Web.Controllers
                         }
                         ViewBag.TotalCount = selectedMeeting.Count;
 
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page))-1) + 1;
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
                         int a = selectedMeeting.Count / 10;
                         if (selectedMeeting.Count % 10 == 0)
                         {
                             ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
                         }
                         else
-                        { a= a+1;
+                        {
+                            a = a + 1;
                             if (a == Page)
                             {
                                 ViewBag.PageEndCount = selectedMeeting.Count;
@@ -3437,6 +3460,11 @@ namespace Risebird.Web.Controllers
 
                             }
 
+                        }
+                        if (selectedMeeting.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
                         }
                         return View(selectedMeeting.ToPagedList(Page ?? 1, 10));
                     }
@@ -5569,7 +5597,7 @@ namespace Risebird.Web.Controllers
 
                         }
                         return View(meetings.ToPagedList(Page ?? 1, 10));
-               
+
                     }
                     else
                     {
