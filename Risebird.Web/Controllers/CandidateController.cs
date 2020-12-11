@@ -37,15 +37,18 @@ namespace Risebird.Web.Controllers
                 var candidateTimeline = new CandidateTimelineVM();
 
                 candidateTimeline.HREmail = firstData.HREmail;
+                candidateTimeline.CandidateEmailId = firstData.EmailId;
                 candidateTimeline.CandidateName = firstData.Name;
                 candidateTimeline.IRFId = firstData.IRFId;
                 candidateTimeline.InterviewId = firstData.InterviewId;
                 candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
                 candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                candidateTimeline.QCStatus = firstData.QCStatus;
+                candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                 //onboarding 
                 var onboardingData = data.FirstOrDefault().OnboardingDate;
-                //var onboardingData = DateTime.Now;
-                //var minDate = DateTime.MinValue;
                 if (onboardingData != DateTime.MinValue)
                 {
                     var onboardingTimeLineObj = new TimelineStatus();
@@ -54,7 +57,8 @@ namespace Risebird.Web.Controllers
                     onboardingTimeLineObj.Day = onboardingData.Date.ToString("dddd");
                     onboardingTimeLineObj.Status = "Onboarded";
                     onboardingTimeLineObj.StatusDate = onboardingData.ToString("MMMM yyyy");
-                    candidateTimeline.OnboardingDetails = onboardingTimeLineObj;
+                    //candidateTimeline.OnboardingDetails = onboardingTimeLineObj;
+                    candidateTimeline.ScheduleStatus.Add(onboardingTimeLineObj);
                 }
                 //invitation attempts
                 var invitationData = data.Select(x => x.InvitationDate).Distinct();
@@ -75,7 +79,8 @@ namespace Risebird.Web.Controllers
                         attemptObjList.Add(attemptObj);
                         y++;
                     }
-                    candidateTimeline.RisebirdAttempt = attemptObjList;
+                    //candidateTimeline.RisebirdAttempt = attemptObjList;
+                    candidateTimeline.ScheduleStatus.AddRange(attemptObjList);
                 }
                 //meeting status 
                 var meetingStatusData = data.Select(x => (x.MeetingStatusDate, x.MeetingStatus)).Distinct();

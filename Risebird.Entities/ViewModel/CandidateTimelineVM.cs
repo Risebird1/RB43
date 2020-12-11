@@ -7,6 +7,7 @@ namespace Risebird.Entities.ViewModel
     public class CandidateTimelineVM
     {
         public string CandidateName { get; set; }
+        public string CandidateEmailId { get; set; }
         public string HREmail { get; set; }
         public string CurrentStatus { get; set; }
         public string Report { get; set; }
@@ -14,6 +15,7 @@ namespace Risebird.Entities.ViewModel
         public List<TimelineStatus> RisebirdAttempt { get; set; }
         public List<TimelineStatus> MeetingStatus { get; set; }
         public List<TimelineStatus> InterviewStatus { get; set; }
+        public List<TimelineStatus> ScheduleStatus { get; set; }
         public TimelineStatus OnboardingDetails { get; set; }
         public TimelineStatus CurrentStatusDetails { get; set; }
 
@@ -21,6 +23,9 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public int CandidateId { get; set; }
         public int CandidateMasterId { get; set; }
+        public int? CurrentInterviewStatus { get; set; }
+        public int? QCStatus { get; set; }
+        public int? CurrentMeetingStatus { get; set; }
 
 
     }

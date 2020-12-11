@@ -857,7 +857,7 @@ namespace Risebird.Business
                     _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
 
                     //add candidate status
-                     await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent to the candidate", (int)CandidateStatusOptions.InvitationSent);
+                     await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
 
 
                     return true;
