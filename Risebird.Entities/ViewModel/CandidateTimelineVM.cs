@@ -16,8 +16,8 @@ namespace Risebird.Entities.ViewModel
         public List<TimelineStatus> MeetingStatus { get; set; }
         public List<TimelineStatus> InterviewStatus { get; set; }
         public List<TimelineStatus> ScheduleStatus { get; set; }
-        public TimelineStatus OnboardingDetails { get; set; }
-        public TimelineStatus CurrentStatusDetails { get; set; }
+        //public TimelineStatus OnboardingDetails { get; set; }
+        //public TimelineStatus CurrentStatusDetails { get; set; }
 
         public int? InterviewId { get; set; }
         public int IRFId { get; set; }

@@ -152,21 +152,7 @@ namespace Risebird.Web.Controllers
             }
             return View(model.ToPagedList(Page ?? 1, 10));
         }
-        //    //if (HttpContext.Session.GetString("CandidateTimeLineFilter") != null)
-        //    //{
-        //    //    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CandidateTimeLineFilter"));
-        //    //    filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = model.Select(x => x.HREmail).ToArray() : filter.ClientHR = filter.ClientHR;
-        //    //    filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = model.Select(x => x.CurrentStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
-        //    //    // filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = model.Select(x => x.MeetingStatus).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
-        //    //    // filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = model.Select(x => x.InterviewStatus).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
-
-        //    //    model = model.Where(x => ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(x.HREmail) : x.HREmail == null)
-        //    //     && ((filter.ConfirmationStatus != null && filter.ConfirmationStatus.Count() > 0) ? filter.ConfirmationStatus.Contains(x.CurrentStatus) : x.CurrentStatus == null)).ToList();
-
-
-        //    //}
-        //    return View(model);
-        //}
+        
 
     }
 }
