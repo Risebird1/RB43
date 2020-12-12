@@ -68,10 +68,17 @@ body {
 #resumeId, #zoomlinkId {
     background: #e2f0ff;
 }
-    .pagination-container > ul > li.active {
-    background: #007bff !important;
-    border: 1px #007bff solid !important;
-
+.pagination-container > ul > li.active, .pagination-container > ul > li.active:hover {
+    background-color: rgb(66, 165, 245)!important;
+    color: rgb(255, 255, 255);
+    border-color: rgb(66, 165, 245);
+}
+.pagination-container > ul > li:hover {
+    background: #d4d3d3 !important;
+    border: 0px !important;
+}
+.pagination-container > ul > li a{
+    text-decoration:none;
 }
 .mcq-dnbutton {
     color: #42a5f5 !important;
@@ -90,11 +97,11 @@ table.journey {
         color: #fff !important;
     }
 
-.pagination-container > ul > li {
-    background: #d4d3d3 !important;
-    border: 1px #d4d3d3 solid !important;
-}
 
+.pagination-container > ul > li:hover {
+    background: rgba(212, 211, 211, 0.41) !important;
+    border: 0px;
+}
     .pagination-container > ul > li a {
         color: #716b6b;
     }
@@ -459,6 +466,12 @@ input[type="radio"]:checked, input[type="checkbox"]:checked {
     background: #908f8f !important;
     color: #fff !important;
     border: 1px #fff solid !important;
+}
+
+.pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+    background: rgb(66, 165, 245) !important;
+    color: rgb(6, 165, 245);
+    border-color: rgb(6, 165, 245);
 }
 
 [data-tooltip]:after {

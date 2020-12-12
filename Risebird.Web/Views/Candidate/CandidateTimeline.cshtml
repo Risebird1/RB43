@@ -523,7 +523,7 @@
                                             Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                         </div>
 
-                                        <div class="col-sm-12 col-md-7 dataTables_paginate pull-right">
+                                        <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" style=" margin: 10px 0;">
                                             @Html.PagedListPager(Model, Page => Url.Action("CandidateTimeline", new { Page = Page }))
                                         </div>
 

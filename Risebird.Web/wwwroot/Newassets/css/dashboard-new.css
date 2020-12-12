@@ -5926,22 +5926,71 @@ button.close {
     #dataTables_filter input::-webkit-search-cancel-button, #clientduser_filter input::-webkit-search-decoration {
         display: none;
     }
+.dataTables_filter .searchCon input[type="search"] {
+    background: none !important;
+    text-align: left !important;
+    padding-left:0px;
+ 
+}
+#search {
+    right: 120px;
+    width: 18px;
+    height: 19px;
+    top: 12px;
+    position: absolute;
+    z-index: 1;
+    border-width: 0px;
+    background-image: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png);
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
 
-    .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
-        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-        border: solid 1px #ccc;
-        padding: 9px 10px 9px 32px;
-        width: 150px;
-        height: 40px;
-        font-family: arial;
-        -webkit-border-radius: 10em;
-        -moz-border-radius: 10em;
-        border-radius: 10em;
-        -webkit-transition: all .5s;
-        -moz-transition: all .5s;
-        transition: all .5s;
-        position: relative;
-    }
+.searchCon {
+    position: relative;
+    margin-bottom: 10px;
+}
+.pagination-container > ul > li.disabled {
+    color: rgb(119, 119, 119);
+    cursor: not-allowed;
+    background: transparent !important;
+    border:0px!important;
+}
+ .pagination > li {
+    min-width: 30px;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    color: rgb(44, 44, 44);
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+    border-width: 0px;
+    border-style: initial;
+    border-color: initial;
+    border-image: initial;
+    transition: all 0.3s ease 0s;
+    padding: 0px 11px;
+    margin: 0px 3px;
+    background: transparent;
+    outline: none;
+    border-radius: 30px !important;
+}
+.dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
+    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+    border: solid 1px #ccc;
+    padding: 9px 10px 9px 32px;
+    width: 150px;
+    height: 40px;
+    font-family: arial;
+    -webkit-border-radius: 10em;
+    -moz-border-radius: 10em;
+    border-radius: 10em;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
+    position: relative;
+}
 
         .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
             width: 200px;
