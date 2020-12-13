@@ -470,7 +470,7 @@
                                                     }
                                                     @foreach (var item in Model)
                                                     {
-                                                        <tr id="@item.imid">
+                                                        <tr id="@item.imid" data-changes="1">
                                                             <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
                                                             <td> @item.interviewDate </td>
                                                             @if (item.IsOnline == 1)
@@ -801,7 +801,14 @@
 
     });
     function changeicon(id) {
-        //add or remove class
+        if ($("#" + id).attr("data-changes") == "1") {
+            $("#" + id).addClass("show");
+            $("#" + id).attr("data-changes", "2");
+        }
+        else {
+            $("#" + id).removeClass("show");
+            $("#" + id).attr("data-changes", "1");
+        }
     }
     function searchResult() {
         window.location.href = "/Interview/AllPriorityClientMeetings?searchValue=" + $('#txtmeeting_filter').val();
