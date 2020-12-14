@@ -126,7 +126,7 @@ namespace Risebird.Web.Controllers
                     }
                     //current status 
                     //add candidate to final model
-                    if(candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus!=null || (candidateTimeline.ScheduleStatus!=null && candidateTimeline.ScheduleStatus.Count()!=0))
+                    if(candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus!=null || (candidateTimeline.ScheduleStatus!=null && candidateTimeline.ScheduleStatus.Count()!=0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
                     {
                         model.Add(candidateTimeline);
 
