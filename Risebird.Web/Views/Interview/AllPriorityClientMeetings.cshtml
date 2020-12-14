@@ -442,6 +442,7 @@
                                                         <th>Candidate Email</th>
                                                         <th>Primary Skill</th>
                                                         <th>Confirmation Status</th>
+                                                        <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Report Link</th>
                                                         <th>Video</th>
@@ -455,6 +456,7 @@
                                                         <th>Candidate Email</th>
                                                         <th>Primary Skill</th>
                                                         <th>Confirmation Status</th>
+                                                        <th>Meeting Status</th>
                                                         <th>Interview Status</th>
                                                         <th>Report Link</th>
                                                         <th>Video</th>
@@ -470,61 +472,68 @@
                                                     }
                                                     @foreach (var item in Model)
                                                     {
-                                                        <tr id="@item.imid" data-changes="1">
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                            <td> @item.interviewDate </td>
-                                                            @if (item.IsOnline == 1)
+                                                <tr id="@item.imid" data-changes="1">
+                                                    <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                    <td> @item.interviewDate </td>
+                                                    @if (item.IsOnline == 1)
                                                             {
-                                                                <td>
-                                                                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
-                                                                </td>
+                                                    <td>
+                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
+                                                    </td>
                                                             }
                                                             else
                                                             {
-                                                                <td>
-                                                                    @item.candidateName
-                                                                </td>
+                                                    <td>
+                                                        @item.candidateName
+                                                    </td>
                                                             }
-                                                            <td>@item.candidateEmail</td>
-                                                            <td> @item.JDTiltle.Split("|")[0] </td>
-                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                    <td>@item.candidateEmail</td>
+                                                    <td> @item.JDTiltle.Split("|")[0] </td>
+                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
                                                             {
-                                                                <td class="text-center">
+                                                    <td class="text-center">
 
-                                                                    <a><span class="status-cancel"> @item.confirmationStatus</span></a>
-                                                                </td>
+                                                        <a><span class="status-cancel"> @item.confirmationStatus</span></a>
+                                                    </td>
                                                             }
                                                             else
                                                             {
-                                                                <td class="text-center"> @item.confirmationStatus</td>
+                                                    <td class="text-center"> @item.confirmationStatus</td>
                                                             }
+                                                    @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                                                                        {
+                                                    <td>Scheduled</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                    <td> @item.MeetingStatusStatusDesc</td>
+                                                                        }
+                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                            {
+                                                    <td> @item.intervieweStatusStatDesc</td>
+                                                            }
+                                                            else
+                                                            {
+                                                    <td></td>
+                                                            }
+                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                            {
 
-                                                            @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                            {
-                                                                <td> @item.intervieweStatusStatDesc</td>
+                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                             }
                                                             else
                                                             {
-                                                                <td></td>
+                                                    <td>No Report</td>
                                                             }
-                                                            @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                    @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                             {
-
-                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                    <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
                                                             }
                                                             else
                                                             {
-                                                                <td>No Report</td>
+                                                    <td>No Video</td>
                                                             }
-                                                            @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                            {
-                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Video</td>
-                                                            }
-                                                        </tr>
+                                                </tr>
 
                                                         <tr class="collapse @item.imid">
                                                             <td colspan="999" class="child-section">
@@ -534,7 +543,7 @@
                                                                         <th>Client HR</th>
                                                                         <th class="itemInterviewLink">Interview Link</th>
                                                                         <th>End Client Name</th>
-                                                                        <th>Meeting Status</th>
+                                                                       
                                                                         <th>Aadhar Link</th>
                                                                         <th>Approval Status</th>
                                                                         <th>Final Selection Status</th>
@@ -568,14 +577,7 @@
                                                                         }
                                                                         <td> @item.ClientName </td>
 
-                                                                        @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
-                                                                        {
-                                                                            <td>Scheduled</td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td> @item.MeetingStatusStatusDesc</td>
-                                                                        }
+                                                                       
                                                                         @if (item.AadharFileLink != null && item.AadharFileLink != "")
                                                                         {
                                                                             <td>
