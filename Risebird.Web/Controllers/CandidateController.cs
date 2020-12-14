@@ -35,6 +35,8 @@ namespace Risebird.Web.Controllers
             {
                 var model = new List<CandidateTimelineVM>();
                 var candidateData = await _candidateService.GetCandidateTimeline();
+                if (candidateData == null)
+                    return  View(model.ToPagedList(Page ?? 1, 10));
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
