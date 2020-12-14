@@ -699,8 +699,8 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1);
-                       
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && (x.InterviewStatus == 2 || x.InterviewStatus == 4) && x.confirmationStatus == "1");
+
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                        
 
@@ -3320,7 +3320,7 @@ namespace Risebird.Web.Controllers
                     {
 
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && x.InterviewStatus == 2 && x.confirmationStatus == "1");
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue &&( x.InterviewStatus == 2 || x.InterviewStatus == 4) && x.confirmationStatus == "1");
                        
 
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
@@ -4961,7 +4961,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
 
                 var selectedMeeting = new List<MeetingVM>();
-                var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0);
+                var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && (x.InterviewStatus == 2 || x.InterviewStatus == 4) && x.confirmationStatus == "1");
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                 foreach (var meeting in meetings)
                 {
