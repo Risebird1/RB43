@@ -82,7 +82,10 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
     background: #fff;
     border-bottom: 1px solid rgb(229,229,229);
 }
-
+.pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    color: #FFFFFF;
+    BACKGROUND: #42a5f5;
+}
 
 .razorpay_details table tr:nth-of-type(even) {
     background: #f5f5f5b8;
