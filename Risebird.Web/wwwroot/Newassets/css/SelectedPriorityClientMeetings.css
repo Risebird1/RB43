@@ -284,6 +284,9 @@ td:hover.wordwrap {
     z-index: 999;
     filter: alpha(opacity = 50);
 }
+.selected-priority td.talk-bubble-wrap {
+    width: 265px;
+}
 
 table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
     /* max-width: 300px !important;*/
