@@ -700,12 +700,9 @@ namespace Risebird.Web.Controllers
                     {
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1);
-                        if (filter.StartDate == null && filter.EndDate == null)
-                        {
-                            meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
-                        }
+                       
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        //ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct().ToList();
+                       
 
                         foreach (var meeting in meetings)
                         {
@@ -3324,14 +3321,7 @@ namespace Risebird.Web.Controllers
 
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0 && x.QCStatus == 1 && x.InterviewStatus.HasValue && x.InterviewStatus == 2 && x.confirmationStatus == "1");
-                        if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
-                        {
-                            var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
-                            if (filter.StartDate == null && filter.EndDate == null)
-                            {
-                                meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
-                            }
-                        }
+                       
 
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         foreach (var meeting in meetings)
