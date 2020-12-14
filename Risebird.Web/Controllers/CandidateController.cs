@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using X.PagedList;
 
@@ -34,7 +35,7 @@ namespace Risebird.Web.Controllers
             if(profileName == "Admin" || profileName == "HR" || profileName == "Client")
             {
                 var model = new List<CandidateTimelineVM>();
-                var candidateData = await _candidateService.GetCandidateTimeline();
+                var candidateData = await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null);
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
@@ -52,6 +53,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
                     candidateTimeline.QCStatus = firstData.QCStatus;
                     candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //onboarding 
                     var onboardingData = data.FirstOrDefault().OnboardingDate;
@@ -126,7 +128,7 @@ namespace Risebird.Web.Controllers
                     }
                     //current status 
                     //add candidate to final model
-                    if(candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus!=null || (candidateTimeline.ScheduleStatus!=null && candidateTimeline.ScheduleStatus.Count()!=0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
+                    if(candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
                     {
                         model.Add(candidateTimeline);
 

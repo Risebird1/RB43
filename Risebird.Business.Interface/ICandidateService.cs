@@ -8,6 +8,6 @@ namespace Risebird.Business.Interface
 {
     public interface ICandidateService
     {
-        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline();
+        Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null);
     }
 }
