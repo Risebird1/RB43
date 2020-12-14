@@ -5933,15 +5933,14 @@ button.close {
  
 }
 #search {
-    right: 120px;
-    width: 18px;
+    width: 42px;
     height: 19px;
     top: 12px;
     position: absolute;
     z-index: 1;
     border-width: 0px;
     background-image: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png);
-    background-position: left center;
+    background-position: 15px center;
     background-repeat: no-repeat;
     background-color: transparent;
 }
