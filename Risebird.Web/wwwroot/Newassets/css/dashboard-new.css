@@ -38,6 +38,7 @@ body {
     margin: 0px;
     position: relative;
     color: #22262e;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji!important";
 }
 
 .body-full-height {
@@ -48,8 +49,35 @@ body {
         height: 100%;
     }
 
+.status-success {
+    display: inline-block;
+    padding: 0.45em .45em;
+    font-size: 100%;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+  
+    color: rgb(112, 189, 50);
+    border-radius: 3px;
+}
 
-
+.collapsed{display:block!important}
+.status-cancel {
+    display: inline-block;
+    padding: 0.45em .45em;
+    font-size: 100%;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+ 
+    border-radius: 3px;
+    color: #f44545;
+}
 /* PAGE CONTAINER */
 .page-container .page-content .page-content-wrap {
     float: left;
@@ -1099,7 +1127,7 @@ body {
 /* Triangle hack to make tooltip look like a speech bubble */
 .talk-bubble [data-tooltip]:after {
     position: absolute;
-    bottom: 150%;
+    bottom: 70%;
     left: 50%;
     margin-left: -5px;
     width: 0;
@@ -2719,8 +2747,16 @@ ul.panel-controls > li > .dropdown-menu {
 .f1 .input-error {
     border-color: #f35b3f;
 }
-
-
+td.detail-row {
+    background-image: url(../../Newassets/img/details_open.png);
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    background-position: center 10px;
+}
+tr.show td.detail-row {
+    background: url(../../Newassets/img/details_close.png) no-repeat center center;
+}
 input[type="text"],
 input[type="password"],
 textarea,
@@ -5898,6 +5934,24 @@ button.close {
     top: 20px;
 }
 
+.pagination li {
+    border: 0;
+    border-radius: 30px !important;
+    transition: all .3s;
+    padding: 0px 11px;
+    margin: 10px 3px;
+    min-width: 30px;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    color: #2c2c2c;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+    background: transparent;
+    outline: none;
+}
+
 .desktop-view {
     display: block;
 }
@@ -5922,11 +5976,30 @@ button.close {
     #dataTables_filter input::-webkit-search-cancel-button, #clientduser_filter input::-webkit-search-decoration {
         display: none;
     }
-
+#x {
+    border: 0px;
+    background: none;
+    color: #595963;
+    font-weight: bold;
+    position: absolute;
+    right: 7px;
+    top: 9px;
+}
+#search {
+    right: 25px;
+    position: absolute;
+    width: 18px;
+    height: 19px;
+    top: 12px;
+    position: absolute;
+    border: 0px;
+    background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat right;
+    z-index: 1;
+}
     .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
-        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+       
         border: solid 1px #ccc;
-        padding: 9px 10px 9px 32px;
+        padding: 9px 10px 9px 10px;
         width: 150px;
         height: 40px;
         font-family: arial;
@@ -5937,15 +6010,38 @@ button.close {
         -moz-transition: all .5s;
         transition: all .5s;
         position: relative;
+        background:#fff;
     }
 
+.collapse {
+    display: none;
+}
+
+    .collapse.in {
+        display: block;
+    }
+
+tr.collapse.in {
+    display: table-row;
+}
+
+tbody.collapse.in {
+    display: table-row-group;
+}
+
+
+.searchCon {
+    position: relative;
+    margin-bottom:10px;
+}
         .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
             width: 200px;
             background-color: #fff;
             border-color: #4a93de;
             font-family: arial;
             margin: 3px;
-            border: 1px rgba(80, 158, 235, 0.58) solid !important;
+            box-shadow:none!important;
+            border: 1px #ccc solid !important;
         }
 
 
