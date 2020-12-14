@@ -4533,12 +4533,12 @@ Created using IcoMoon - icomoon.io
 }
 
 
-.pagination .page-item .page-link {
+.pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
     border: 0;
     border-radius: 30px !important;
     transition: all .3s;
     padding: 0px 11px;
-    margin: 10px 3px;
+    margin: 0px 3px;
     min-width: 30px;
     text-align: center;
     height: 30px;
@@ -4550,12 +4550,18 @@ Created using IcoMoon - icomoon.io
     background: transparent;
     outline: none;
 }
-
-    .pagination .page-item .page-link:hover,
-    .pagination .page-item .page-link:focus {
+.pagination > li {
+    display: contents!important;
+}
+.pagination > .disabled > a, .pagination > .disabled > a:focus, .pagination > .disabled > a:hover, .pagination > .disabled > span, .pagination > .disabled > span:focus, .pagination > .disabled > span:hover {
+    color: #777;
+    cursor: not-allowed;
+    background-color: transparent !important;
+}
+    .pagination .page-item .page-link:hover, .pagination .page-item .page-link:focus {
         color: #2c2c2c;
         background-color: rgba(222, 222, 222, 0.3);
-        border: none;
+        border: 1px rgba(222, 222, 222, 0.3) solid;
     }
 
 .pagination .arrow-margin-left,
@@ -4578,10 +4584,14 @@ Created using IcoMoon - icomoon.io
 
     .pagination .page-item.active > .page-link,
     .pagination .page-item.active > .page-link:focus,
-    .pagination .page-item.active > .page-link:hover {
-        background-color: #42a5f5;
-        border-color: #42a5f5; color: #FFFFFF;
+    .pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+ 
+        color: #FFFFFF;
     }
+
+
+
+.pagination > li > a, .pagination > li > span{border:0px!important;background:none;}
 
 .pagination .page-item.disabled > .page-link {
     opacity: .5;
@@ -4908,7 +4918,9 @@ Created using IcoMoon - icomoon.io
     background-color: #FF3636;
 }
 
-
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+}
 
 .tab-content.tab-subcategories {
     margin-top: 20px;
@@ -11597,8 +11609,8 @@ table.dataTable > thead > tr > td,
 table.dataTable > tbody > tr > td,
 table.dataTable > tfoot > tr > td {
     outline: 0;
-    max-width: 150px;
-    width: 150px;
+    /* max-width: 150px;*/
+    /* width: 150px;*/
     border-right: 0;
     border-bottom: 0;
 }
@@ -11611,7 +11623,7 @@ table.dataTable > thead > tr > th {
 .dataTables_paginate a {
     outline: 0;
 }
-#x{display:none!important;}
+
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.child,
 table.dataTable.dtr-inline.collapsed > tbody > tr > th.child,
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dataTables_empty {
