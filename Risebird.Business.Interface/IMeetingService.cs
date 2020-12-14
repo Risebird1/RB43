@@ -25,7 +25,7 @@ namespace Risebird.Business.Interface
         bool UpdateComments(InterviewComments comments);
         InterviewComments GetInterviewComments(int interviewId);
         Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
-        Task<bool> AddInterviewReport(InterviewReport reportModel);
+        Task<bool> AddInterviewReport(InterviewReport reportModel, string emailId);
         IEnumerable<SkillComment> GetTechSkillComments(int IRFid);
         SelectList GetIRFList();
         IEnumerable<TransClientUser> GetClientsByRoles(string IRF);

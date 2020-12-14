@@ -976,15 +976,52 @@ namespace Risebird.Business
             model.encodedresumeLink = interviewMeetingsDetails.encodedresumeLink;
             model.currentEmployerName = model.currentEmployerName;
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
+            model.OldInterviewStatus = model.InterviewStatus;
+            model.OldMeetingStatus = model.MeetingStatus;
 
             return model;
         }
 
-        public async Task<bool> AddInterviewReport(InterviewReport reportModel)
+        public async Task<bool> AddInterviewReport(InterviewReport reportModel, string emailId)
         {
             try
             {
                 var result = await _meetingRespository.AddInterviewReport(reportModel);
+                if(result)
+                {
+                    if(!reportModel.IsEdited)
+                    {
+                        if (reportModel.MeetingStatus.HasValue)
+                        {
+                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus);
+                            if (reportModel.MeetingStatus.Value == 4)
+                            {
+                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
+                            }
+
+                        }
+                        
+                    }
+                    else
+                    {
+                        if (reportModel.MeetingStatus != reportModel.OldMeetingStatus)
+                        {
+                            if (reportModel.MeetingStatus.HasValue)
+                            {
+                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription(), (int)CandidateStatusOptions.MeetingStatus);
+
+                            }
+                        }
+                        if (reportModel.OldInterviewStatus != reportModel.InterviewStatus)
+                        {
+                            if (reportModel.MeetingStatus.Value == 4)
+                            {
+                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
+
+                            }
+                        }
+                    }
+                }
                 if (reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
                 {
                     if (reportModel.InterviewStatus.Value == 2 || reportModel.InterviewStatus.Value == 4)
@@ -1018,6 +1055,27 @@ namespace Risebird.Business
                 }
 
                 return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        private async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink = null)
+        {
+            try
+            {
+                var model = new CandidateStatus();
+                model.CandidateId = candidateId;
+                model.IRFId = irfId;
+                model.AudioFileLink = audioLink;
+                model.Comments = comments;
+                model.Status = status;
+                model.PerformedBy = performedBy;
+                return await _irfRepository.AddCandidateStatus(model);
             }
 
             catch (Exception e)

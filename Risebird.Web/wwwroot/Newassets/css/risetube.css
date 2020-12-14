@@ -900,7 +900,7 @@ textarea::-webkit-scrollbar-thumb {
 .pagination-container > ul > li {
     padding: 5px 12px !important;
     border-radius: 21px !important;
-
+    color: #fff;
     margin: 2px 4px !important;
 }
 
