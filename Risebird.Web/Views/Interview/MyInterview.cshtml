@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+﻿@*@model IEnumerable<Risebird.Entities.Data.Meeting>*@
+@model X.PagedList.IPagedList<Risebird.Entities.Data.Meeting>
+@using X.PagedList.Mvc.Core;
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
@@ -262,58 +264,78 @@
                                 </div>
 
                             </div>
-                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                            <div>
                                 <div id="tableID" class="second">
-                                    <table id="MyInterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th style="text-align:center">Call Candidate</th>
-                                                <th style="text-align:center">Call Coordinating HR</th>
-                                                <th>Duration</th>
-                                                <th>Job Level</th>
-                                                <th>Candidate Name</th>
-                                                <th>Candidate Email</th>
-                                                <th>Resume</th>
-                                                <th>JD Link</th>
-                                                <th>Company Detail</th>
-                                                <th>Zoom ID</th>
-                                                <th>Meeting Status</th>
-                                                <th>Interview Status</th>
-                                                <th>Co-ordinating HR</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
+                                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
-                                            </tr>
+                                        <div class="col-sm-12 col-md-6">
 
-                                        </thead>
-                                        <tfoot>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th style="text-align:center">Call Candidate</th>
-                                                <th style="text-align:center">Call Coordinating HR</th>
-                                                <th>Duration</th>
-                                                <th>Job Level</th>
-                                                <th>Candidate Name</th>
-                                                <th>Candidate Email</th>
-                                                <th>Resume</th>
-                                                <th>JD Link</th>
-                                                <th>Company Detail</th>
-                                                <th>Zoom ID</th>
-                                                <th>Meeting Status</th>
-                                                <th>Interview Status</th>
-                                                <th>Co-ordinating HR</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
+                                        </div>
+                                        <div class="col-sm-12 col-md-6 pull-right">
+                                            <div id="meeting_filter" class="dataTables_filter">
 
-                                            </tr>
-                                        </tfoot>
-                                        <tbody>
+                                                <div class="searchCon">
+
+                                                    <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                                    <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
 
 
-                                            @foreach (var item in Model)
-                                            {
-                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                                    <button style="display:none;" type="button" id="x">x</button>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12">
+                                            <table id="MyInterviewList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="border-right: 0px !important;"></th>
+                                                        <th style="border-left: 0px !important;">Date</th>
+                                                        <th style="text-align:center">Call Candidate</th>
+                                                        <th style="text-align:center">Call Coordinating HR</th>
+                                                        <th>Candidate Name</th>
+                                                        <th>Duration</th>
+                                                        <th>JD Link</th>
+                                                        <th>Resume</th>
+                                                        <th>Zoom ID</th>
+                                                        <th class="disabled-sorting text-right">Actions</th>
+
+                                                    </tr>
+
+                                                </thead>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th style="border-right: 0px !important;"></th>
+                                                        <th style="border-left: 0px !important;">Date</th>
+                                                        <th style="text-align:center">Call Candidate</th>
+                                                        <th style="text-align:center">Call Coordinating HR</th>
+                                                        <th>Candidate Name</th>
+                                                        <th>Duration</th>
+                                                        <th>JD Link</th>
+                                                        <th>Resume</th>
+                                                        <th>Zoom ID</th>
+                                                        <th class="disabled-sorting text-right">Actions</th>
+
+                                                    </tr>
+
+                                                </tfoot>
+                                                <tbody>
+                                                    @if (Model.Count == 0)
+                                                    {
+                                                        <tr>
+                                                            <td colspan="9" class="text-center">No data available in table</td>
+                                                        </tr>
+                                                    }
+
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
                                                 <tr id=@item.id>
+                                                    <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row">&nbsp;</td>
                                                     <td> @item.interviewDate </td>
                                                     <td class="callcandidatebtn" style="text-align:center">
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
@@ -340,21 +362,19 @@
 
                                                     </td>
 
+                                                    <td>
+                                                        @item.candidateName
+                                                    </td>
+
                                                     <td> @item.interviewDuration </td>
-                                                    <td> @item.JobLevelDesc </td>
-                                                    @if (item.IsOnilne == 1)
+                                                    @if (item.JDLink != null && item.JDLink != "")
                                                     {
-                                                        <td>
-                                                            <a onclick="directopenChat('@item.candidateEmail')"> @item.candidateName   <span class="dot" style="background-color:green"></span></a>
-                                                        </td>
+                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
                                                     }
                                                     else
                                                     {
-                                                        <td>
-                                                            @item.candidateName
-                                                        </td>
+                                                        <td>No JD</td>
                                                     }
-                                                    <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
 
                                                     @if (item.resumeLink != null && item.resumeLink != "")
                                                     {
@@ -364,27 +384,7 @@
                                                     {
                                                         <td>No Resume</td>
                                                     }
-                                                    @if (item.JDLink != null && item.JDLink != "")
-                                                    {
-                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No JD</td>
-                                                    }
-                                                    @if (item.CompanyDetails != null && item.CompanyDetails != "")
-                                                    {
-                                                        <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Company Instructions</a></td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Company Instructions</td>
-                                                    }
-
                                                     <td> @item.risebirdHR</td>
-                                                    <td>@item.MeetingStatusDesc</td>
-                                                    <td>@item.InterviewStatusDesc</td>
-                                                    <td>@item.HRCoordinatorEmailId</td>
                                                     <td class="text-right">
                                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Interview Survey">
                                                             <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M16 1H2c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h14c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1zM7 13H5V8h2v5zm3 0H8V5h2v8zm3 0h-2V9h2v4z" /></svg></span>
@@ -410,9 +410,70 @@
                                                     </td>
 
                                                 </tr>
-                                            }
-                                        </tbody>
-                                    </table>
+
+                                                        <tr class="collapse @item.id">
+                                                            <td colspan="999" class="child-section">
+                                                                <table class="table table-striped">
+                                                                    <tr>
+
+                                                                        <th>Job Level</th>
+                                                                        <th>Candidate Email</th>
+                                                                        <th>Meeting Status</th>
+                                                                        <th>Interview Status</th>
+                                                                        <th>Co-ordinating HR</th>
+                                                                       
+                                                                        <th>Company Detail</th>
+
+
+                                                                    </tr>
+
+                                                                    <tr>
+                                                                        <td> @item.JobLevelDesc </td>
+                                                                        @if (item.IsOnilne == 1)
+                                                                        {
+                                                                            <td>
+                                                                                <a onclick="directopenChat('@item.candidateEmail')"> @item.candidateName   <span class="dot" style="background-color:green"></span></a>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+
+                                                                            <td> @Regex.Replace(@item.candidateEmail, "[a-zA-Z0-9.-]", "*")</td>
+                                                                        }
+                                                                        <td>@item.MeetingStatusDesc</td>
+                                                                        <td>@item.InterviewStatusDesc</td>
+                                                                        <td>@item.HRCoordinatorEmailId</td>
+                                                                       
+                                                                        @if (item.CompanyDetails != null && item.CompanyDetails != "")
+                                                                        {
+                                                                            <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Company Instructions</a></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td>No Company Instructions</td>
+                                                                        }
+
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+
+                                        <div class="col-sm-12 col-md-5 pull-left">
+                                            Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
+                                        </div>
+
+                                        <div class="col-sm-12 col-md-7 dataTables_paginate pull-right ">
+                                            @Html.PagedListPager(Model, Page => Url.Action("MyInterview", new { Page = Page }))
+                                        </div>
+
+
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -538,31 +599,31 @@
             maxHeight: 200
         });
 
-        $('#MyInterviewList').DataTable({
-            "pagingType": "full_numbers",
+        //$('#MyInterviewList').DataTable({
+        //    "pagingType": "full_numbers",
 
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
+        //    "lengthMenu": [
+        //        [10, 25, 50, -1],
+        //        [10, 25, 50, "All"]
+        //    ],
 
-            columnDefs: [{ type: 'date', 'targets': [0] }],
-            responsive: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search records",
-            },
-            "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
-                $(".dataTables_filter").keyup(function (e) {
-                    if ($(this).val() != "") { $("#x").hide(); }
-                    else { $("#x").show(); }
-                });
-            },
+        //    columnDefs: [{ type: 'date', 'targets': [0] }],
+        //    responsive: true,
+        //    language: {
+        //        search: "_INPUT_",
+        //        searchPlaceholder: "Search records",
+        //    },
+        //    "fnInitComplete": function () {
+        //        $(".dataTables_filter input:eq(0)").after("<button style=display:none; type=button id=x>x</button>");
+        //        $(".dataTables_filter").keyup(function (e) {
+        //            if ($(this).val() != "") { $("#x").hide(); }
+        //            else { $("#x").show(); }
+        //        });
+        //    },
 
 
-        });
-        var table = $('#MyInterviewList').DataTable();
+        //});
+        //var table = $('#MyInterviewList').DataTable();
 
     });
 
@@ -955,7 +1016,12 @@
         });
     }
 </script>
+<script>
+    function searchResult() {
+        window.location.href = "/Interview/MyInterview?searchValue=" + $('#txtmeeting_filter').val();
 
+    }
+</script>
 
 
 @if (ViewBag.Message != null)
