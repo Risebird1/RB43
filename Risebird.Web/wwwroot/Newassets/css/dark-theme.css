@@ -1524,9 +1524,9 @@ div.dataTables_wrapper div.dataTables_info {
         color: #1f1e1e !important
     }
 
-.pagination-container > ul > li a:hover {
-    background: #1f1e1e !important;
-    text-decoration: none !important;
+.pagination-container > ul > li {
+    background: #1f1e1e!important;
+    border: 1px #1f1e1e solid!important;
 }
 
     .pagination-container > ul > li a{color:#fff}

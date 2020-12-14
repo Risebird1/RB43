@@ -109,7 +109,10 @@ table.dataTable > thead > tr {
     text-transform: uppercase;
     background: #fff !important;
 }
-
+.pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    color: #FFFFFF;
+    BACKGROUND: #42a5f5;
+}
 .razorpay_details table td {
     color: #504e4e;
     padding: 8px;
@@ -140,10 +143,11 @@ table.dataTable > thead > tr {
         color: #fff !important;
     }
 
-.pagination-container > ul > li a:hover {
-    background: #d4d3d369 !important;
-    text-decoration: none !important;
+.pagination-container > ul > li {
+    background: #d4d3d3 !important;
+    border: 1px #d4d3d3 solid !important;
 }
+
 
     .pagination-container > ul > li a {
         color: #716b6b;
@@ -489,7 +493,15 @@ table.journey {
     background: url('data:image/svg+xml;charset=UTF-8,<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd"  fill="rgb(146, 146, 146)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"/></svg>') #fff no-repeat !important;
 }
 
-
+.pagination-container > ul > li.active, .pagination-container > ul > li.active:hover {
+    background: #9a9a9a !important;
+    border: 1px #9a9a9a solid !important;
+    color: rgb(255, 255, 255);
+}
+.pagination-container > ul > li:hover {
+    background: #d4d3d3 !important;
+    border: 0px !important;
+}
 .msger-send-btn {
     background-image: url(../../img/grey-send.png) !important;
 }

@@ -1721,6 +1721,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         if (model.AudioFile != null)
@@ -1770,7 +1772,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.VideoLink = model.PageVideoLink;
                         }
-                        if (_meetingService.AddInterviewReport(model).Result)
+                        if (_meetingService.AddInterviewReport(model, emailid).Result)
                         {
                             TempData["SuccessErrorMessage"] = "Report saved Successfully";
                             return RedirectToAction("AddReport", new { interviewId = model.InterviewId, irfId = model.IRFId });
@@ -2699,7 +2701,7 @@ namespace Risebird.Web.Controllers
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                     {
-                        if (_irfService.UpdateCandidate(model))
+                        if (await _irfService.UpdateCandidate(model, emailid))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Candidate updated successfully!";
                             return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
@@ -2815,7 +2817,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SendInvite(string irfId, string IRFName, string emailId, DateTime endDate)
+        public async Task<IActionResult> SendInvite(string irfId, string IRFName, string emailId, DateTime endDate)
         {
             try
             {
@@ -2823,8 +2825,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
+                    var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
+                    loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         if (endDate < DateTime.Now)
@@ -2832,7 +2834,7 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite! The requested IRF positions have been filled.";
                             return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
-                        if (_irfService.SendInvite(Convert.ToInt32(irfId), emailId))
+                        if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Invitation sent successfully!";
                             return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
@@ -2856,7 +2858,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
                 return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
             }
@@ -4419,8 +4421,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName != "Client")
                     {
+                        model.PerformedBy = emailid;
                         if (model.AudioFile != null)
                         {
                             await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
@@ -4512,8 +4517,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        model.PerformedBy = emailid;
                         if (model.AudioFile != null)
                         {
                             await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);

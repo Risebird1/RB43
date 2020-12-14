@@ -4019,6 +4019,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
@@ -4123,7 +4125,7 @@ namespace Risebird.Web.Controllers
 
 
                         }
-                        if (_meetingService.AddInterviewReport(model).Result)
+                        if (_meetingService.AddInterviewReport(model, emailid).Result)
                         {
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
