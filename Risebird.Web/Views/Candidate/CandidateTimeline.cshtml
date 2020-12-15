@@ -56,12 +56,27 @@
                     <div class="mobile-view"> <h4 class="card-title risetubeid">Journey</h4></div>
                 </div>
 
+                <div class="pull-right">
+                    <div id="meeting_filter" class="dataTables_filter mt-20">
 
+                        <div class="searchCon">
+
+                            <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
+
+
+
+                            <button style="display:none;" type="button" id="x">x</button>
+
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="content video client">
+    <div class="content video client candidate">
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
@@ -169,24 +184,7 @@
                                 <div id="tableID" class="second">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
-                                        <div class="col-sm-12 col-md-6">
 
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 pull-right">
-                                            <div id="meeting_filter" class="dataTables_filter">
-
-                                                <div class="searchCon">
-
-                                                    <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                                    <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
-
-
-
-                                                    <button style="display:none;" type="button" id="x">x</button>
-
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="clearfix"></div>
 
                                         <div class="col-sm-12">
@@ -229,17 +227,56 @@
                                                     @foreach (var item in Model)
                                                     {
                                                 <tr>
-                                                    <td class="text-left pl15">
-                                                        <p>@item.CandidateName</p>
-                                                    </td>
-                                                    <td class="text-left pl15">
-                                                        <p>@item.CandidateEmailId</p>
-                                                    </td>
+
+                                                    @if (item.CandidateName.Length > 25)
+                                                    {
+
+
+                                                        <td class="cadName text-left pl15">
+                                                            <a class="candidateName" onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName </a>
+                                                        </td>
+                                                    }
+
+
+                                                    else
+                                                    {
+                                                        <td class="text-left pl15">
+                                                            <a onclick=""> @item.CandidateName </a>
+                                                        </td>
+                                                    }
+
+
+
+
+                                                    @if (item.CandidateName.Length > 10)
+                                                    {
+
+
+                                                        <td class="cadEmail text-left pl15">
+                                                            <a class="candidateEmail" onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId </a>
+                                                        </td>
+                                                    }
+
+
+                                                    else
+                                                    {
+                                                        <td class="text-left pl15">
+                                                            <a onclick=""> @item.CandidateEmailId </a>
+                                                        </td>
+                                                    }
+
+
+
+
+
+
+
+                                                 
 
                                                     @if (!string.IsNullOrEmpty(item.PrimarySkill))
                                                     {
                                                         <td class="text-left pl15">
-                                                            <p>@item.PrimarySkill</p>
+                                                            @item.PrimarySkill
                                                         </td>
                                                     }
                                                     else
@@ -500,11 +537,16 @@
                                                     <td>
                                                         @if (item.CurrentStatus == "Selected")
                                                         {
-                                                            <p class="select"><strong>@item.CurrentStatus</strong></p>
+                                                            <p class="select">@item.CurrentStatus</p>
+                                                        }
+
+                                                        @if (item.CurrentStatus == "Rejected")
+                                                        {
+                                                            <p class="reject">@item.CurrentStatus</p>
                                                         }
                                                         else
                                                         {
-                                                            <p class="reject"><strong>@item.CurrentStatus</strong></p>
+                                                            <p>@item.CurrentStatus</p>
                                                         }
                                                     </td>
 
@@ -618,4 +660,37 @@
             else { $("#x").show(); }
         });
     });
+</script>
+
+
+
+<script>
+    $(".candidateName").each(function () {
+        if ($(this).text().length > 25) {
+            $(this).text($(this).text().substr(0, 25) + "...")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
+
+
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+
+
+
+    $(".candidateEmail").each(function () {
+        if ($(this).text().length > 10) {
+            $(this).text($(this).text().substr(0, 10) + "...")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
+
+
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+
+
+ 
 </script>
