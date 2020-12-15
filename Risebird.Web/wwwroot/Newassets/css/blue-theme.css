@@ -119,9 +119,10 @@ table.journey {
  table.journey th {
         color: #000;
  }
-    .pagination-container > ul > li.active a {
-        color: #fff !important;
-    }
+.pagination-container > ul > li.active a {
+    color: #fff !important;
+    background: rgb(66, 165, 245) !important;
+}
 
 .pagination-container > ul > li {
     background: #d4d3d3 !important;
@@ -495,7 +496,7 @@ input[type="radio"]:checked, input[type="checkbox"]:checked {
 
 .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
     background: rgb(66, 165, 245) !important;
-    color: rgb(6, 165, 245);
+    color: #fff;
     border-color: rgb(6, 165, 245);
 }
 
