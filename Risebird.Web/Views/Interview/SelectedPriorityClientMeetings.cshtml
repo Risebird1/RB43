@@ -75,22 +75,32 @@
                     <div>
 
 
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three card-title-space pull-left" data-toggle="modal" data-target="#filterModal">
 
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
 
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four card-title-space">
-                            <span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Meeting Details</font></span>
-                        </button>
 
 
 
 
-                        <i type="submit" class="fa fa-file-excel-o excel-file export five  card-title-space" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"></i>
+
+                        <i type="submit" class="fa fa-file-excel-o excel-file export five  card-title-space pull-left" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"></i>
+
+                        <div id="meeting_filter" class="dataTables_filter pull-right mt-20">
+
+                            <div class="searchCon">
+
+                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
 
 
+
+                                <button style="display:none;" type="button" id="x">x</button>
+
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -374,24 +384,7 @@
                             <div id="tableID" class="second">
                                 <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
-                                    <div class="col-sm-12 col-md-6">
-
-                                    </div>
-                                    <div class="col-sm-12 col-md-6 pull-right">
-                                        <div id="meeting_filter" class="dataTables_filter">
-
-                                            <div class="searchCon">
-
-                                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
-
-
-
-                                                <button style="display:none;" type="button" id="x">x</button>
-
-                                            </div>
-                                        </div>
-                                    </div>
+                             
                                     <div class="clearfix"></div>
 
                                     <div class="col-sm-12">
@@ -405,7 +398,7 @@
                                                     <th>Primary Skill</th>
                                                     <th>Video</th>
                                                     <th>Interviewer Comment</th>
-                                                    <th>Report Link</th>
+                                                    <th>Report</th>
                                                     <th>Action</th>
                                                     <th>Call</th>
                                                 </tr>
@@ -419,13 +412,7 @@
                                                     <th>Primary Skill</th>
                                                     <th>Video</th>
                                                     <th>Interviewer Comment</th>
-
-
-
-
-                                                    <th>Report Link</th>
-
-
+                                                    <th>Report</th>
                                                     <th>Action</th>
                                                     <th>Call</th>
                                                 </tr>
@@ -442,86 +429,135 @@
                                                 {
                                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                    <tr id=@item.imid data-changes="1">
-                                                        <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                        <td> @item.interviewDate </td>
-                                                        @if (item.IsOnline == 1)
-                                                        {
-                                                            <td>
-                                                                <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>
-                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
-                                                            </td>
-                                                        }
+                                            <tr id=@item.imid data-changes="1">
+                                                <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                <td> @item.interviewDate </td>
+                                                @if (item.IsOnline == 1)
+                                                {
+                                                    <td>
+                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
+                                                    </td>
+                                                }
+                                                else
+                                                {
+
+                                                    @if (item.candidateName.Length > 25)
+                                                    {
 
 
-                                                        <td> @item.JDTiltle.Split("|")[0] </td>
+                                                        <td class="cadName">
+                                                            <a class="candidateName" onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName </a>
+                                                        </td>
+                                                    }
 
-                                                        @if (item.VideoLink != null && item.VideoLink != "")
-                                                        {
-                                                            <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No Video</td>
-                                                        }
+
+                                                    else
+                                                    {
                                                         <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in ">
-                                                                <div class="talktext">
-                                                                    <a href="#" data-tooltip="@item.InterviewerComment"><textarea>@item.InterviewerComment</textarea></a>
-                                                                </div>
-                                                            </div>
-
+                                                            <a onclick=""><span class="dot"></span> @item.candidateName </a>
                                                         </td>
+                                                    }
 
-
-
-                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-
-
-                                                        <td class="text-center action">
-
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
-                                                                <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                            </button>
-
-                                                            @if (item.IsBiometricEnabled)
-                                                            {
-
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Verify">
-                                                                    <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                                </button>
+                                                }
 
 
 
 
 
-                                                            }
-                                                        </td>
-                                                        <td>
+
+                                                @if (item.JDTiltle.Split("|")[0].Length > 20)
+                                                {
+
+
+                                                    <td class="cadSkill">
+                                                        <a class="candidateSkill" onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0] </a>
+                                                    </td>
+                                                }
+
+
+                                                else
+                                                {
+                                                    <td>
+                                                        <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
+                                                    </td>
+                                                }
 
 
 
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                                <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
-
-
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
 
 
 
 
 
-                                                            }
 
-                                                        </td>
-                                                    </tr>
+                                                @if (item.VideoLink != null && item.VideoLink != "")
+                                                {
+                                                    <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Video</td>
+                                                }
+                                                <td>
+                                                    <div class="talk-bubble tri-right border-bubble right-in ">
+                                                        <div class="talktext">
+                                                            <a href="#" data-tooltip="@item.InterviewerComment"><textarea>@item.InterviewerComment</textarea></a>
+                                                        </div>
+                                                    </div>
+
+                                                </td>
+
+
+                                                @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                {
+                                                    <td>
+                                                        <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a>
+                                                    </td>
+                                                }
+
+                                                else
+                                                {
+                                                    <td>No Report</td>
+                                                }
+                                                <td class="text-center action">
+
+
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
+                                                        <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                    </button>
+
+                                                    @if (item.IsBiometricEnabled)
+                                                    {
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Verify">
+                                                            <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                        </button>
+
+
+
+
+
+                                                    }
+                                                </td>
+                                                <td>
+
+
+
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                    {
+                                                        <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+
+
+                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+
+
+
+
+
+                                                    }
+
+                                                </td>
+                                            </tr>
 
                                                     <tr class="collapse @item.imid">
 
@@ -842,11 +878,9 @@
 
         <!-- end row -->
     </div>
-    <style>
-        .tooltip-text {
-            display: none;
-        }
-    </style>
+
+    </div>
+    
 
 
     @if (ViewBag.Message != null)
@@ -1354,6 +1388,33 @@
             window.location.href = "/Interview/SelectedPriorityClientMeetings?searchValue=" + $('#txtmeeting_filter').val();
 
         }
+    </script>
+
+    <script>
+        $(".candidateName").each(function () {
+            if ($(this).text().length > 25) {
+                $(this).text($(this).text().substr(0, 25) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
+
+
+        $(".candidateSkill").each(function () {
+            if ($(this).text().length > 20) {
+                $(this).text($(this).text().substr(0, 20) + "...")
+
+                $('[role="data-tooltip"]').css("visibility", "visible");
+
+            }
+
+
+            else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+        });
     </script>
 
     <script>
