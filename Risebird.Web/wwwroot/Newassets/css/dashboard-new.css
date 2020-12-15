@@ -1026,7 +1026,7 @@ body {
     border-radius: .25em;
 }
 
-.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip] {
+.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip], .cadName [data-tooltip], .cadName [data-tooltip], .cadSkill [data-tooltip], .cadSkill[data-tooltip], .cadEmail [data-tooltip], .cadEmail [data-tooltip] {
     position: relative;
     z-index: 2;
     cursor: pointer;
@@ -1038,7 +1038,10 @@ body {
     .talk-bubble [data-tooltip]:after, .video-info [data-tooltip]:before,
     .video-info [data-tooltip]:after, .video-title [data-tooltip]:before,
     .video-title [data-tooltip]:after, .jd-title [data-tooltip]:before,
-    .jd-title [data-tooltip]:after {
+    .jd-title [data-tooltip]:after, .cadName [data-tooltip]:before,
+    .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:before,
+    .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:before,
+    .cadEmail [data-tooltip]:after {
         visibility: hidden;
         -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
         filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
@@ -1047,19 +1050,68 @@ body {
     }
 
 /* Position tooltip above the element */
-.selected-priority .talk-bubble [data-tooltip]:before {
+.selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before,  .cadEmail [data-tooltip]:before {
     bottom: 72%;
 }
 
-.talk-bubble [data-tooltip]:before {
+    .talk-bubble [data-tooltip]:before {
+        position: absolute;
+        bottom: 150%;
+        left: 10%;
+        margin-bottom: 5px;
+        margin-left: -80px;
+        font-weight: 300;
+        padding: 7px;
+        width: 300px;
+        font-size: 13px;
+        height: auto;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+        content: attr(data-tooltip);
+        text-align: center;
+        /* font-size: 14px; */
+        line-height: 1.3;
+        white-space: normal;
+        border-radius: 5px;
+    }
+.candidate .cadName [data-tooltip]:before {
+    left: 40%;
+}
+    .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
+        position: absolute;
+        bottom: 90%;
+        left: 10%;
+        margin-bottom: 5px;
+        margin-left: -80px;
+        font-weight: 300;
+        padding: 7px;
+        width: 200px;
+        font-size: 13px;
+        height: auto;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+        content: attr(data-tooltip);
+        text-align: center;
+        /* font-size: 14px; */
+        line-height: 1.3;
+        white-space: normal;
+        border-radius: 5px;
+    }
+
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
     position: absolute;
-    bottom: 150%;
+    bottom: 90%;
     left: 10%;
     margin-bottom: 5px;
     margin-left: -80px;
     font-weight: 300;
     padding: 7px;
-    width: 300px;
+    width: 200px;
     font-size: 13px;
     height: auto;
     -webkit-border-radius: 3px;
@@ -1073,6 +1125,8 @@ body {
     white-space: normal;
     border-radius: 5px;
 }
+
+
 
 .interviewer-comment .talk-bubble [data-tooltip]:before {
     width: 400px;
@@ -1127,7 +1181,7 @@ body {
 
 
 /* Triangle hack to make tooltip look like a speech bubble */
-.talk-bubble [data-tooltip]:after {
+.talk-bubble [data-tooltip]:after, .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:after {
     position: absolute;
     bottom: 70%;
     left: 50%;
@@ -1223,7 +1277,10 @@ body {
 
 /* Show tooltip content on hover */
 .talk-bubble [data-tooltip]:hover:before,
-.talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after, .jd-title [data-tooltip]:hover:before, .jd-title [data-tooltip]:hover:after {
+.talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after, .jd-title [data-tooltip]:hover:before, .jd-title [data-tooltip]:hover:after, .cadName [data-tooltip]:hover:before,
+.cadName [data-tooltip]:hover:after, .cadEmail [data-tooltip]:hover:before,
+.cadEmail [data-tooltip]:hover:after, .cadSkill [data-tooltip]:hover:before,
+.cadSkill [data-tooltip]:hover:after {
     visibility: visible;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
@@ -2756,11 +2813,11 @@ td.detail-row {
     background-repeat: no-repeat;
     width: 20px;
     height: 20px;
-    background-position: center 10px;
+    background-position: right 12px;
 }
 
 tr.show td.detail-row {
-    background: url(../../Newassets/img/details_close.png) no-repeat center center;
+    background: url(../../Newassets/img/details_close.png) no-repeat right 12px;
 }
 
 input[type="text"],
@@ -3048,7 +3105,9 @@ input[type='radio'] {
 .mt50 {
     margin-top: 55px;
 }
-
+.mt-20 {
+    margin-top: 20px;
+}
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
     border-color: rgb(146, 146, 146);
 }
@@ -5873,11 +5932,10 @@ button.close {
     }
 /* end To top */
 .excel-file {
-    margin-right: 10px;
-    float: right;
+    margin-right: 5px;
     color: green;
     font-size: 35px;
-    margin-left: 3px;
+    margin-left: 5px;
     border: 0;
 }
 
@@ -6013,7 +6071,7 @@ button.close {
 .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
     border: solid 1px #ccc;
     padding: 9px 10px 9px 10px;
-    width: 150px;
+    width: 190px;
     height: 40px;
     font-family: arial;
     -webkit-border-radius: 10em;
@@ -6045,7 +6103,7 @@ tbody.collapse.in {
 
 .searchCon {
     position: relative;
-    margin-bottom: 10px;
+    
 }
 
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {

@@ -83,17 +83,34 @@
 
                 <div class="pull-right">
                     <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three card-title-space" data-toggle="modal" data-target="#filterModal">
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three card-title-space pull-left" data-toggle="modal" data-target="#filterModal">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four card-title-space">
-                            <span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Click here to get all the meetings' details." onclick="location.href='@Url.Action("ClientMeetings", "Interview", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Meeting Details</font></span>
-                        </button>
+                      
 
 
 
-                        <i type="submit" class="fa fa-file-excel-o excel-file export five  card-title-space" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview")'"></i>
+
+
+                        <i type="submit" class="fa fa-file-excel-o excel-file export five  card-title-space pull-left" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview")'"></i>
+
+
+
+                        <div id="meeting_filter" class="dataTables_filter pull-right mt-20">
+
+                            <div class="searchCon">
+
+                                <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
+
+
+
+                                <button style="display:none;" type="button" id="x">x</button>
+
+                            </div>
+                        </div>
+
 
                     </div>
                 </div>
@@ -411,28 +428,10 @@
 
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
-
-                                        <div class="col-sm-12 col-md-6">
-
-                                        </div>
-                                        <div class="col-sm-12 col-md-6 pull-right">
-                                            <div id="meeting_filter" class="dataTables_filter">
-
-                                                <div class="searchCon">
-
-                                                    <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                                    <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
-
-
-
-                                                    <button style="display:none;" type="button" id="x">x</button>
-
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="clearfix"></div>
 
-                                        <div class="col-sm-12">
+                                        <div class="col-sm-12 nopad">
+                                            <div class="table-responsive">
                                             <table id="meeting" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
@@ -444,7 +443,7 @@
                                                         <th>Confirmation Status</th>
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
-                                                        <th>Report Link</th>
+                                                        <th>Report</th>
                                                         <th>Video</th>
                                                     </tr>
                                                 </thead>
@@ -458,7 +457,7 @@
                                                         <th>Confirmation Status</th>
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
-                                                        <th>Report Link</th>
+                                                        <th>Report</th>
                                                         <th>Video</th>
                                                     </tr>
                                                 </tfoot>
@@ -472,68 +471,118 @@
                                                     }
                                                     @foreach (var item in Model)
                                                     {
-                                                <tr id="@item.imid" data-changes="1">
-                                                    <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                    <td> @item.interviewDate </td>
-                                                    @if (item.IsOnline == 1)
+                                                        <tr id="@item.imid" data-changes="1">
+                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                            <td> @item.interviewDate </td>
+                                                            @if (item.IsOnline == 1)
                                                             {
-                                                    <td>
-                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
-                                                    </td>
+                                                                <td>
+                                                                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
+                                                                </td>
                                                             }
                                                             else
                                                             {
-                                                    <td>
-                                                        @item.candidateName
-                                                    </td>
-                                                            }
-                                                    <td>@item.candidateEmail</td>
-                                                    <td> @item.JDTiltle.Split("|")[0] </td>
-                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                            {
-                                                    <td class="text-center">
+                                                                @if (item.candidateName.Length > 15)
+                                                                {
 
-                                                        <a><span class="status-cancel"> @item.confirmationStatus</span></a>
-                                                    </td>
+
+                                                                    <td class="cadName">
+                                                                        <a class="candidateName" onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName </a>
+                                                                    </td>
+                                                                }
+
+
+                                                                else
+                                                                {
+                                                                    <td>
+                                                                        <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                                    </td>
+                                                                }
                                                             }
-                                                            else
-                                                            {
-                                                    <td class="text-center"> @item.confirmationStatus</td>
-                                                            }
-                                                    @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
-                                                                        {
-                                                    <td>Scheduled</td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                    <td> @item.MeetingStatusStatusDesc</td>
-                                                                        }
-                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                            {
-                                                    <td> @item.intervieweStatusStatDesc</td>
-                                                            }
-                                                            else
-                                                            {
-                                                    <td></td>
-                                                            }
-                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+
+
+
+
+
+                                                            @if (item.candidateEmail.Length > 12)
                                                             {
 
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+
+                                                                <td class="cadEmail">
+                                                                    <a class="candidateEmail" onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail </a>
+                                                                </td>
+                                                            }
+
+
+                                                            else
+                                                            {
+                                                                <td>
+                                                                    <a onclick=""> @item.candidateEmail </a>
+                                                                </td>
+                                                            }
+
+                                                            @if (item.JDTiltle.Split("|")[0].Length > 10)
+                                                            {
+
+
+                                                                <td class="cadSkill">
+                                                                    <a class="candidateSkill" onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0] </a>
+                                                                </td>
+                                                            }
+
+
+                                                            else
+                                                            {
+                                                                <td>
+                                                                    <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
+                                                                </td>
+                                                            }
+
+                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                            {
+                                                                <td class="text-center">
+
+                                                                    <a><span class="status-cancel"> @item.confirmationStatus</span></a>
+                                                                </td>
                                                             }
                                                             else
                                                             {
-                                                    <td>No Report</td>
+                                                                <td class="text-center"> @item.confirmationStatus</td>
                                                             }
-                                                    @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                            @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
                                                             {
-                                                    <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                                <td>Scheduled</td>
                                                             }
                                                             else
                                                             {
-                                                    <td>No Video</td>
+                                                                <td> @item.MeetingStatusStatusDesc</td>
                                                             }
-                                                </tr>
+                                                            @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                            {
+                                                                <td> @item.intervieweStatusStatDesc</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                            {
+
+                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Report</td>
+                                                            }
+                                                            @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                            {
+                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Video</td>
+                                                            }
+                                                        </tr>
 
                                                         <tr class="collapse @item.imid">
                                                             <td colspan="999" class="child-section">
@@ -543,7 +592,7 @@
                                                                         <th>Client HR</th>
                                                                         <th class="itemInterviewLink">Interview Link</th>
                                                                         <th>End Client Name</th>
-                                                                       
+
                                                                         <th>Aadhar Link</th>
                                                                         <th>Approval Status</th>
                                                                         <th>Final Selection Status</th>
@@ -577,7 +626,7 @@
                                                                         }
                                                                         <td> @item.ClientName </td>
 
-                                                                       
+
                                                                         @if (item.AadharFileLink != null && item.AadharFileLink != "")
                                                                         {
                                                                             <td>
@@ -647,6 +696,7 @@
                                             </table>
 
                                         </div>
+                                    </div>
 
 
                                         <div class="col-sm-12 col-md-5 pull-left">
@@ -786,7 +836,7 @@
     $(document).ready(function () {
 
         $(".dataTables_filter").keyup(function (e) {
-
+            $('#txtmeeting_filter').val();
             if ($('#txtmeeting_filter').val() == "") {
 
                 $("#x").hide();
@@ -800,6 +850,8 @@
             $(this).hide();
         });
 
+
+ 
 
     });
     function changeicon(id) {
@@ -1031,6 +1083,46 @@
     });
 
 
+</script>
+<script>
+    $(".candidateName").each(function () {
+        if ($(this).text().length > 15) {
+            $(this).text($(this).text().substr(0, 15) + "...")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
+
+
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+
+
+    $(".candidateSkill").each(function () {
+        if ($(this).text().length > 10) {
+            $(this).text($(this).text().substr(0, 10) + "...")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
+
+
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+
+
+
+    $(".candidateEmail").each(function () {
+        if ($(this).text().length > 12) {
+            $(this).text($(this).text().substr(0, 12) + "...")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
+
+
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
 </script>
 
 <!-- Keep the Page Content Here.-->
