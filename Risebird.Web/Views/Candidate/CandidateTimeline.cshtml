@@ -196,7 +196,8 @@
                                                     <tr>
                                                         <th class="text-left">Candidate Name</th>
                                                         <th class="text-left">Candidate EmailId</th>
-                                                        <th class="text-left">HR Email</th>
+                                                        <th class="text-left">Primary Skill</th>
+                                                        <th class="text-left">Client HR Email</th>
                                                         <th class="text-left">Schedule Status</th>
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
@@ -208,7 +209,8 @@
                                                     <tr>
                                                         <th class="text-left">Candidate Name</th>
                                                         <th class="text-left">Candidate EmailId</th>
-                                                        <th class="text-left">HR Email</th>
+                                                        <th class="text-left">Primary Skill</th>
+                                                        <th class="text-left">Client HR Email</th>
                                                         <th class="text-left">Schedule Status</th>
                                                         <th>Meeting Status</th>
                                                         <th>Interview Status</th>
@@ -226,55 +228,142 @@
                                                     }
                                                     @foreach (var item in Model)
                                                     {
-                                                        <tr>
-                                                            <td class="text-left pl15">
-                                                                <p>@item.CandidateName</p>
-                                                            </td>
-                                                            <td class="text-left pl15">
-                                                                <p>@item.CandidateEmailId</p>
-                                                            </td>
-                                                            <td class="text-left" style="width:20%">@item.HREmail</td>
+                                                <tr>
+                                                    <td class="text-left pl15">
+                                                        <p>@item.CandidateName</p>
+                                                    </td>
+                                                    <td class="text-left pl15">
+                                                        <p>@item.CandidateEmailId</p>
+                                                    </td>
 
-                                                            @*@if (item.OnboardingDetails != null)
-                {
-                    <td style="padding:10px 0px;">
-                        <div class="timeline-section-tl">
-                            <div class="tl-round round1" style="background-color: #35353599;"></div>
-                            <div class="circle-wrap">
-                                <div class="circle" id="circle0" style="left: 0%;">
-                                    <div class="popupSpan">
-                                        <div class="event2Bubble">
-                                            <div class="eventTime">
-                                                <div class="DayDigit">@item.OnboardingDetails.Date</div>
-                                                <div class="Day">
-                                                    @item.OnboardingDetails.Day
-                                                    <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
-                                                </div>
-                                            </div>
-                                            <div class="eventTitle">@item.OnboardingDetails.Status</div>
+                                                    @if (!string.IsNullOrEmpty(item.PrimarySkill))
+                                                    {
+                                                        <td class="text-left pl15">
+                                                            <p>@item.PrimarySkill</p>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-left pl15">
+                                                            <p></p>
+                                                        </td>
+                                                    }
+                                                    <td class="text-left" style="width:20%">@item.HREmail</td>
+
+                                                    @*@if (item.OnboardingDetails != null)
+        {
+            <td style="padding:10px 0px;">
+                <div class="timeline-section-tl">
+                    <div class="tl-round round1" style="background-color: #35353599;"></div>
+                    <div class="circle-wrap">
+                        <div class="circle" id="circle0" style="left: 0%;">
+                            <div class="popupSpan">
+                                <div class="event2Bubble">
+                                    <div class="eventTime">
+                                        <div class="DayDigit">@item.OnboardingDetails.Date</div>
+                                        <div class="Day">
+                                            @item.OnboardingDetails.Day
+                                            <div class="MonthYear">@item.OnboardingDetails.StatusDate</div>
                                         </div>
                                     </div>
+                                    <div class="eventTitle">@item.OnboardingDetails.Status</div>
                                 </div>
                             </div>
                         </div>
-                    </td>
-                }
-                else
-                {
-                    <td></td>
-                }*@
-                                                            @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
-                                                            {
-                                                                <td style="padding:10px 0px;">
-                                                                    <div class="timeline-section-tl">
-                                                                        @foreach (var status in item.ScheduleStatus)
+                    </div>
+                </div>
+            </td>
+        }
+        else
+        {
+            <td></td>
+        }*@
+                                                    @if (item.ScheduleStatus != null && item.ScheduleStatus.Count() != 0)
+                                                    {
+                                                        <td style="padding:10px 0px;">
+                                                            <div class="timeline-section-tl">
+                                                                @foreach (var status in item.ScheduleStatus)
+                                                                {
+                                                                    <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                    <div class="circle-wrap">
+
+                                                                        <div class="circle" id="circle0" style="left: 0%;">
+                                                                            <div class="popupSpan">
+
+                                                                                <div class="event2Bubble">
+                                                                                    <div class="eventTime">
+                                                                                        <div class="DayDigit">@status.Date</div>
+                                                                                        <div class="Day">
+                                                                                            @status.Day
+                                                                                            <div class="MonthYear">@status.StatusDate</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="eventTitle">@status.Status</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+                                                            </div>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+                                                    @if (item.MeetingStatus != null && item.MeetingStatus.Count() != 0)
+                                                    {
+                                                        <td style="padding:10px 0px;">
+                                                            <div class="timeline-section-tl">
+                                                                <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                <div class="circle-wrap">
+                                                                    @foreach (var status in item.MeetingStatus)
+                                                                    {
+                                                                        @if (status.Status == "Scheduled")
                                                                         {
-                                                                            <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                            <div class="circle-wrap">
-
-                                                                                <div class="circle" id="circle0" style="left: 0%;">
+                                                                            <div class="circle schedule" id="circle0" style="left: 0%;">
+                                                                                <div class="popupSpan">
                                                                                     <div class="popupSpan">
-
+                                                                                        <div class="event2Bubble">
+                                                                                            <div class="eventTime">
+                                                                                                <div class="DayDigit">@status.Date</div>
+                                                                                                <div class="Day">
+                                                                                                    @status.Day
+                                                                                                    <div class="MonthYear">@status.StatusDate</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="eventTitle">@status.Status</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        else if (status.Status == "Completed")
+                                                                        {
+                                                                            <div class="circle completed" id="circle0" style="left: 0%;">
+                                                                                <div class="popupSpan">
+                                                                                    <div class="popupSpan">
+                                                                                        <div class="event2Bubble">
+                                                                                            <div class="eventTime">
+                                                                                                <div class="DayDigit">@status.Date</div>
+                                                                                                <div class="Day">
+                                                                                                    @status.Day
+                                                                                                    <div class="MonthYear">@status.StatusDate</div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="eventTitle">@status.Status</div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="circle pending" id="circle0" style="left: 0%;">
+                                                                                <div class="popupSpan">
+                                                                                    <div class="popupSpan">
                                                                                         <div class="event2Bubble">
                                                                                             <div class="eventTime">
                                                                                                 <div class="DayDigit">@status.Date</div>
@@ -290,224 +379,150 @@
                                                                             </div>
                                                                         }
 
-                                                                    </div>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    @if (item.InterviewStatus != null && item.InterviewStatus.Count() != 0)
+                                                    {
+                                                        <td style="padding:10px 0px;">
+                                                            <div class="timeline-section-tl">
+                                                                <div class="tl-round round1" style="background-color: #35353599;"></div>
+                                                                <div class="circle-wrap">
+                                                                    @foreach (var status in item.InterviewStatus)
+                                                                    {
+                                                                        @if (status.Status == "BorderLine")
+                                                                        {
+                                                                            <div class="circle borderline" id="circle0" style="left: 0%;">
+                                                                                <div class="popupSpan">
 
-                                                            @if (item.MeetingStatus != null && item.MeetingStatus.Count() != 0)
-                                                            {
-                                                                <td style="padding:10px 0px;">
-                                                                    <div class="timeline-section-tl">
-                                                                        <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                        <div class="circle-wrap">
-                                                                            @foreach (var status in item.MeetingStatus)
-                                                                            {
-                                                                                @if (status.Status == "Scheduled")
-                                                                                {
-                                                                                    <div class="circle schedule" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="popupSpan">
-                                                                                                <div class="event2Bubble">
-                                                                                                    <div class="eventTime">
-                                                                                                        <div class="DayDigit">@status.Date</div>
-                                                                                                        <div class="Day">
-                                                                                                            @status.Day
-                                                                                                            <div class="MonthYear">@status.StatusDate</div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div class="eventTitle">@status.Status</div>
-                                                                                                </div>
+                                                                                    <div class="event2Bubble">
+                                                                                        <div class="eventTime">
+                                                                                            <div class="DayDigit">@status.Date</div>
+                                                                                            <div class="Day">
+                                                                                                @status.Day
+                                                                                                <div class="MonthYear">@status.StatusDate</div>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <div class="eventTitle">@status.Status</div>
                                                                                     </div>
-                                                                                }
-                                                                                else if (status.Status == "Completed")
-                                                                                {
-                                                                                    <div class="circle completed" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="popupSpan">
-                                                                                                <div class="event2Bubble">
-                                                                                                    <div class="eventTime">
-                                                                                                        <div class="DayDigit">@status.Date</div>
-                                                                                                        <div class="Day">
-                                                                                                            @status.Day
-                                                                                                            <div class="MonthYear">@status.StatusDate</div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div class="eventTitle">@status.Status</div>
-                                                                                                </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        else if (status.Status == "Selected")
+                                                                        {
+                                                                            <div class="circle selected" id="circle0" style="left: 0%;">
+                                                                                <div class="popupSpan">
+                                                                                    <div class="event2Bubble">
+                                                                                        <div class="eventTime">
+                                                                                            <div class="DayDigit">@status.Date</div>
+                                                                                            <div class="Day">
+                                                                                                @status.Day
+                                                                                                <div class="MonthYear">@status.StatusDate</div>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <div class="eventTitle">@status.Status</div>
                                                                                     </div>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <div class="circle pending" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="popupSpan">
-                                                                                                <div class="event2Bubble">
-                                                                                                    <div class="eventTime">
-                                                                                                        <div class="DayDigit">@status.Date</div>
-                                                                                                        <div class="Day">
-                                                                                                            @status.Day
-                                                                                                            <div class="MonthYear">@status.StatusDate</div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div class="eventTitle">@status.Status</div>
-                                                                                                </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        else if (status.Status == "NoShow")
+                                                                        {
+                                                                            <div class="circle noshow" id="circle0" style="left: 0%;">
+                                                                                <div class="popupSpan">
+                                                                                    <div class="event2Bubble">
+                                                                                        <div class="eventTime">
+                                                                                            <div class="DayDigit">@status.Date</div>
+                                                                                            <div class="Day">
+                                                                                                @status.Day
+                                                                                                <div class="MonthYear">@status.StatusDate</div>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <div class="eventTitle">@status.Status</div>
                                                                                     </div>
-                                                                                }
+                                                                                </div>
+                                                                            </div>
+                                                                        }
 
-                                                                            }
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-                                                            @if (item.InterviewStatus != null && item.InterviewStatus.Count() != 0)
-                                                            {
-                                                                <td style="padding:10px 0px;">
-                                                                    <div class="timeline-section-tl">
-                                                                        <div class="tl-round round1" style="background-color: #35353599;"></div>
-                                                                        <div class="circle-wrap">
-                                                                            @foreach (var status in item.InterviewStatus)
-                                                                            {
-                                                                                @if (status.Status == "BorderLine")
-                                                                                {
-                                                                                    <div class="circle borderline" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
-
-                                                                                            <div class="event2Bubble">
-                                                                                                <div class="eventTime">
-                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                    <div class="Day">
-                                                                                                        @status.Day
-                                                                                                        <div class="MonthYear">@status.StatusDate</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="eventTitle">@status.Status</div>
-                                                                                            </div>
-
-                                                                                        </div>
-                                                                                    </div>
-                                                                                }
-                                                                                else if (status.Status == "Selected")
-                                                                                {
-                                                                                    <div class="circle selected" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="event2Bubble">
-                                                                                                <div class="eventTime">
-                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                    <div class="Day">
-                                                                                                        @status.Day
-                                                                                                        <div class="MonthYear">@status.StatusDate</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="eventTitle">@status.Status</div>
+                                                                        else if (status.Status == "Dropped")
+                                                                        {
+                                                                            <div class="circle dropped" id="circle0" style="left: 0%;">
+                                                                                <div class="popupSpan">
+                                                                                    <div class="event2Bubble">
+                                                                                        <div class="eventTime">
+                                                                                            <div class="DayDigit">@status.Date</div>
+                                                                                            <div class="Day">
+                                                                                                @status.Day
+                                                                                                <div class="MonthYear">@status.StatusDate</div>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <div class="eventTitle">@status.Status</div>
                                                                                     </div>
-                                                                                }
-                                                                                else if (status.Status == "NoShow")
-                                                                                {
-                                                                                    <div class="circle noshow" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="event2Bubble">
-                                                                                                <div class="eventTime">
-                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                    <div class="Day">
-                                                                                                        @status.Day
-                                                                                                        <div class="MonthYear">@status.StatusDate</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="eventTitle">@status.Status</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="circle rejected" id="circle0" style="left: 0%;">
+                                                                                <div class="popupSpan">
+                                                                                    <div class="event2Bubble">
+                                                                                        <div class="eventTime">
+                                                                                            <div class="DayDigit">@status.Date</div>
+                                                                                            <div class="Day">
+                                                                                                @status.Day
+                                                                                                <div class="MonthYear">@status.StatusDate</div>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <div class="eventTitle">@status.Status</div>
                                                                                     </div>
-                                                                                }
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <div class="timeline-section-tl" style="background:none; border:none">
+                                                                <div class="tl-round round1" style="background-color:#35353599;"></div>
+                                                            </div>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
 
-                                                                                else if (status.Status == "Dropped")
-                                                                                {
-                                                                                    <div class="circle dropped" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="event2Bubble">
-                                                                                                <div class="eventTime">
-                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                    <div class="Day">
-                                                                                                        @status.Day
-                                                                                                        <div class="MonthYear">@status.StatusDate</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="eventTitle">@status.Status</div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <div class="circle rejected" id="circle0" style="left: 0%;">
-                                                                                        <div class="popupSpan">
-                                                                                            <div class="event2Bubble">
-                                                                                                <div class="eventTime">
-                                                                                                    <div class="DayDigit">@status.Date</div>
-                                                                                                    <div class="Day">
-                                                                                                        @status.Day
-                                                                                                        <div class="MonthYear">@status.StatusDate</div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="eventTitle">@status.Status</div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                }
-                                                                            }
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="timeline-section-tl" style="background:none; border:none">
-                                                                        <div class="tl-round round1" style="background-color:#35353599;"></div>
-                                                                    </div>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
+                                                    }
+                                                    <td>
+                                                        @if (item.CurrentStatus == "Selected")
+                                                        {
+                                                            <p class="select"><strong>@item.CurrentStatus</strong></p>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p class="reject"><strong>@item.CurrentStatus</strong></p>
+                                                        }
+                                                    </td>
 
-                                                            }
-                                                            <td>
-                                                                @if (item.CurrentStatus == "Selected")
-                                                                {
-                                                                    <p class="select"><strong>@item.CurrentStatus</strong></p>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <p class="reject"><strong>@item.CurrentStatus</strong></p>
-                                                                }
-                                                            </td>
-                                                            
-                                                            <td>
-                                                                @if ((item.CurrentMeetingStatus==4) && (item.confirmationStatus.HasValue && item.confirmationStatus==1) && ((item.CurrentInterviewStatus != 4 && item.CurrentInterviewStatus != 2) || (item.QCStatus == 1 && (item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2))))
-                                                                {
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new {  interviewId = item.InterviewId, irfId= item.IRFId, isClient = true})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"></path></svg></span>
-                                                                    </button>
+                                                    <td>
+                                                        @if ((item.CurrentMeetingStatus == 4) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1) && ((item.CurrentInterviewStatus != 4 && item.CurrentInterviewStatus != 2) || (item.QCStatus == 1 && (item.CurrentInterviewStatus == 4 || item.CurrentInterviewStatus == 2))))
+                                                        {
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new {  interviewId = item.InterviewId, irfId= item.IRFId, isClient = true})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"></path></svg></span>
+                                                            </button>
 
-                                                                }
-                                                                else
-                                                                {
-                                                                    <p></p>
-                                                                }
-                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <p></p>
+                                                        }
+                                                    </td>
 
-                                                        </tr>
+                                                </tr>
 
                                                     }
 

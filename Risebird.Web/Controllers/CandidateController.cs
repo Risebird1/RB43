@@ -54,6 +54,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.QCStatus = firstData.QCStatus;
                     candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
                     candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     
                     //schedule status

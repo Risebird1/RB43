@@ -41,7 +41,9 @@ declare  @meetingStatusId int, @interviewStatusId int;
 	ast.[Date] as ScheduleStatusDate, ast.Comments as ScheduleStatusComments, ast.[StatusValue] as ScheduleStatusValue,
 	mst.Comments as MeetingStatus, mst.[Date] as MeetingStatusDate, ist.Comments as InterviewStatus, ist.[Date] as InterviewStatusDate,
 	ic.InterviewStatus as CurrentInterviewStatus, qcfr.QCStatus,
-	ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus from Candidate ca 
+	ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus,
+	(CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill
+	from Candidate ca 
 	join CandidatesMaster cm on cm.id =ca.CandidateMasterId
 	join UserList ul on ul.id =cm.UserId
 	join IRF on IRF.id=ca.IRFId
