@@ -1049,11 +1049,11 @@ body {
         pointer-events: none;
     }
 
-    /* Position tooltip above the element */
-    .selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
-    .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
-        bottom: 72%;
-    }
+/* Position tooltip above the element */
+.selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before,  .cadEmail [data-tooltip]:before {
+    bottom: 72%;
+}
 
     .talk-bubble [data-tooltip]:before {
         position: absolute;
@@ -1102,6 +1102,29 @@ body {
         white-space: normal;
         border-radius: 5px;
     }
+
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
+    position: absolute;
+    bottom: 90%;
+    left: 10%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    font-weight: 300;
+    padding: 7px;
+    width: 200px;
+    font-size: 13px;
+    height: auto;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+    content: attr(data-tooltip);
+    text-align: center;
+    /* font-size: 14px; */
+    line-height: 1.3;
+    white-space: normal;
+    border-radius: 5px;
+}
 
 
 
@@ -3082,11 +3105,9 @@ input[type='radio'] {
 .mt50 {
     margin-top: 55px;
 }
-
 .mt-20 {
     margin-top: 20px;
 }
-
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
     border-color: rgb(146, 146, 146);
 }
@@ -6082,6 +6103,7 @@ tbody.collapse.in {
 
 .searchCon {
     position: relative;
+    
 }
 
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
