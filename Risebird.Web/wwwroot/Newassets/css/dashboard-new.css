@@ -3048,7 +3048,9 @@ input[type='radio'] {
 .mt50 {
     margin-top: 55px;
 }
-
+.mt20 {
+    margin-top: 20px;
+}
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
     border-color: rgb(146, 146, 146);
 }
@@ -6045,7 +6047,7 @@ tbody.collapse.in {
 
 .searchCon {
     position: relative;
-    margin-bottom: 10px;
+
 }
 
 .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
