@@ -20,11 +20,11 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline()
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null)
         {
             try
             {
-                return await _candidateRepository.GetCandidateTimeline();
+                return await _candidateRepository.GetCandidateTimeline(emailId);
             }
 
             catch (Exception e)

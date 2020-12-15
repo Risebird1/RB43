@@ -26,13 +26,15 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline()
+        public async Task<IEnumerable<CandidateTimelineData>> GetCandidateTimeline(string emailId = null)
         {
             try
             {
+                var parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                     return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimeline",
+                     return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimeline", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 

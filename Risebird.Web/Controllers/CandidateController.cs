@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using X.PagedList;
 
@@ -34,9 +35,7 @@ namespace Risebird.Web.Controllers
             if(profileName == "Admin" || profileName == "HR" || profileName == "Client")
             {
                 var model = new List<CandidateTimelineVM>();
-                var candidateData = await _candidateService.GetCandidateTimeline();
-                if (candidateData == null)
-                    return  View(model.ToPagedList(Page ?? 1, 10));
+                var candidateData = await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null);
                 var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
                 foreach (var candidate in distinctCandidates)
                 {
@@ -54,40 +53,47 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
                     candidateTimeline.QCStatus = firstData.QCStatus;
                     candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                    candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                    candidateTimeline.PrimarySkill = firstData.PrimarySkill;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
-                    //onboarding 
-                    var onboardingData = data.FirstOrDefault().OnboardingDate;
-                    if (onboardingData != DateTime.MinValue)
+                    
+                    //schedule status
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    if(scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
                     {
-                        var onboardingTimeLineObj = new TimelineStatus();
-                        onboardingTimeLineObj.Date = onboardingData.ToString("dd");
-                        onboardingTimeLineObj.Day = onboardingData.Date.ToString("dddd");
-                        onboardingTimeLineObj.Status = "Onboarded";
-                        onboardingTimeLineObj.StatusDate = onboardingData.ToString("MMMM yyyy");
-                        //candidateTimeline.OnboardingDetails = onboardingTimeLineObj;
-                        candidateTimeline.ScheduleStatus.Add(onboardingTimeLineObj);
-                    }
-                    //invitation attempts
-                    var invitationData = data.Select(x => x.InvitationDate).Distinct();
-                    if (invitationData.FirstOrDefault() != DateTime.MinValue)
-                    {
-                        invitationData = invitationData.OrderBy(x => x);
-                        var attemptObjList = new List<TimelineStatus>();
-                        //int y = 1;
-                        foreach (var item in invitationData)
+                        scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                        var scheduleStatusObjList = new List<TimelineStatus>();
+                        foreach (var item in scheduleStatusData)
                         {
-                            var attemptObj = new TimelineStatus();
+                            var scheduleStatusObj = new TimelineStatus();
+                            scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
+                            scheduleStatusObj.Day = item.ScheduleStatusDate.Date.ToString("dddd");
+                            if(item.ScheduleStatusValue == "Meeting Status" || item.ScheduleStatusValue=="Interview Status")
+                            {
+                                scheduleStatusObj.Status = item.ScheduleStatusComments;
+                            }
+                            else
+                            {
+                                scheduleStatusObj.Status = item.ScheduleStatusValue;
 
-                            attemptObj.Date = item.ToString("dd");
-                            attemptObj.Day = item.Date.ToString("dddd");
-                            attemptObj.Status = "Invitation Sent";
-                            attemptObj.StatusDate = item.Date.ToString("MMMM yyyy");
-                            attemptObjList.Add(attemptObj);
-                            //y++;
+                            }
+                            scheduleStatusObj.StatusDate = item.ScheduleStatusDate.Date.ToString("MMMM yyyy");
+                            scheduleStatusObjList.Add(scheduleStatusObj);
                         }
-                        //candidateTimeline.RisebirdAttempt = attemptObjList;
-                        candidateTimeline.ScheduleStatus.AddRange(attemptObjList);
+                        candidateTimeline.ScheduleStatus = scheduleStatusObjList;
+                        var lastStatus = scheduleStatusData.LastOrDefault();
+                        if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                        }
+                        else
+                        {
+                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+
+                        }
+                        
                     }
+
                     //meeting status 
                     var meetingStatusData = data.Select(x => (x.MeetingStatusDate, x.MeetingStatus)).Distinct();
 
@@ -126,9 +132,8 @@ namespace Risebird.Web.Controllers
                         }
                         candidateTimeline.InterviewStatus = interviewStatusObjList;
                     }
-                    //current status 
                     //add candidate to final model
-                    if(candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus!=null || (candidateTimeline.ScheduleStatus!=null && candidateTimeline.ScheduleStatus.Count()!=0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
+                    if(candidateTimeline.InterviewStatus != null || candidateTimeline.MeetingStatus != null || (candidateTimeline.ScheduleStatus != null && candidateTimeline.ScheduleStatus.Count() != 0) || !(string.IsNullOrEmpty(candidateTimeline.CurrentStatus)))
                     {
                         model.Add(candidateTimeline);
 
