@@ -1102,12 +1102,14 @@ body {
 }
 
 
-
 .interviewer-comment .talk-bubble [data-tooltip]:before {
     width: 400px;
 }
 
-
+table.journey th, table.journey td {
+    border-right: 1px solid #dee2e6;
+    max-width: 210px;
+}
 
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
     position: absolute;
@@ -2788,11 +2790,12 @@ td.detail-row {
     background-repeat: no-repeat;
     width: 20px;
     height: 20px;
+    background-color: #cccccc47;
     background-position: right 12px;
 }
 
 tr.show td.detail-row {
-    background: url(../../Newassets/img/details_close.png) no-repeat right 12px;
+    background: #cccccc47 url(../../Newassets/img/details_close.png) no-repeat right 12px;
 }
 
 input[type="text"],

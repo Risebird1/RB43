@@ -432,7 +432,7 @@
 
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
-                                            <table id="meeting" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
+                                            <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
                                                         <th style="border-right: 0px !important;"></th>
@@ -471,118 +471,120 @@
                                                     }
                                                     @foreach (var item in Model)
                                                     {
-                                                        <tr id="@item.imid" data-changes="1">
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                            <td> @item.interviewDate </td>
-                                                            @if (item.IsOnline == 1)
-                                                            {
-                                                                <td>
-                                                                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                @if (item.candidateName.Length > 15)
-                                                                {
+                                                <tr id="@item.imid" data-changes="1">
+                                                    <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                    <td> @item.interviewDate </td>
+                                                    @if (item.IsOnline == 1 )
+                                                    {
+                                                        <td>
+                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>  @item.candidateName </a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (item.candidateName.Length > 20)
+                                                        {
 
 
-                                                                    <td class="cadName">
-                                                                        <a class="candidateName" onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName </a>
-                                                                    </td>
-                                                                }
+                                                            <td class="cadName">
+                                                                <a class="candidateName" onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName </a>
+                                                            </td>
+                                                        }
 
 
-                                                                else
-                                                                {
-                                                                    <td>
-                                                                        <a onclick=""><span class="dot"></span> @item.candidateName </a>
-                                                                    </td>
-                                                                }
-                                                            }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <a onclick=""><span class="dot"></span> @item.candidateName </a>
+                                                            </td>
+                                                        }
+
+                                               
+                                                    }
 
 
 
 
 
-                                                            @if (item.candidateEmail.Length > 12)
-                                                            {
+                                                    @if (item.candidateEmail.Length > 22)
+                                                    {
 
 
-                                                                <td class="cadEmail">
-                                                                    <a class="candidateEmail" onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail </a>
-                                                                </td>
-                                                            }
+                                                        <td class="cadEmail">
+                                                            <a class="candidateEmail" onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail </a>
+                                                        </td>
+                                                    }
 
 
-                                                            else
-                                                            {
-                                                                <td>
-                                                                    <a onclick=""> @item.candidateEmail </a>
-                                                                </td>
-                                                            }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick=""> @item.candidateEmail </a>
+                                                        </td>
+                                                    }
 
-                                                            @if (item.JDTiltle.Split("|")[0].Length > 10)
-                                                            {
-
-
-                                                                <td class="cadSkill">
-                                                                    <a class="candidateSkill" onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0] </a>
-                                                                </td>
-                                                            }
+                                                    @if (item.JDTiltle.Split("|")[0].Length > 13)
+                                                    {
 
 
-                                                            else
-                                                            {
-                                                                <td>
-                                                                    <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
-                                                                </td>
-                                                            }
+                                                        <td class="cadSkill">
+                                                            <a class="candidateSkill" onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0] </a>
+                                                        </td>
+                                                    }
 
-                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                            {
-                                                                <td class="text-center">
 
-                                                                    <a><span class="status-cancel"> @item.confirmationStatus</span></a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="text-center"> @item.confirmationStatus</td>
-                                                            }
-                                                            @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
-                                                            {
-                                                                <td>Scheduled</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td> @item.MeetingStatusStatusDesc</td>
-                                                            }
-                                                            @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                            {
-                                                                <td> @item.intervieweStatusStatDesc</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td></td>
-                                                            }
-                                                            @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                            {
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
+                                                        </td>
+                                                    }
 
-                                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Report</td>
-                                                            }
-                                                            @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
-                                                            {
-                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Video</td>
-                                                            }
-                                                        </tr>
+                                                    @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                    {
+                                                        <td class="text-center">
+
+                                                            <a><span class="status-cancel"> @item.confirmationStatus</span></a>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-center"> @item.confirmationStatus</td>
+                                                    }
+                                                    @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
+                                                    {
+                                                        <td>Scheduled</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td> @item.MeetingStatusStatusDesc</td>
+                                                    }
+                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                    {
+                                                        <td> @item.intervieweStatusStatDesc</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                    {
+
+                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Report</td>
+                                                    }
+                                                    @if (item.VideoLink != null && item.VideoLink != "" && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                                                    {
+                                                        <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Video</td>
+                                                    }
+                                                </tr>
 
                                                         <tr class="collapse @item.imid">
                                                             <td colspan="999" class="child-section">
@@ -1086,8 +1088,8 @@
 </script>
 <script>
     $(".candidateName").each(function () {
-        if ($(this).text().length > 15) {
-            $(this).text($(this).text().substr(0, 15) + "...")
+        if ($(this).text().length > 20) {
+            $(this).text($(this).text().substr(0, 20) + "..")
 
             $('[role="data-tooltip"]').css("visibility", "visible");
 
@@ -1099,8 +1101,8 @@
 
 
     $(".candidateSkill").each(function () {
-        if ($(this).text().length > 10) {
-            $(this).text($(this).text().substr(0, 10) + "...")
+        if ($(this).text().length > 13) {
+            $(this).text($(this).text().substr(0, 13) + "..")
 
             $('[role="data-tooltip"]').css("visibility", "visible");
 
@@ -1113,8 +1115,8 @@
 
 
     $(".candidateEmail").each(function () {
-        if ($(this).text().length > 12) {
-            $(this).text($(this).text().substr(0, 12) + "...")
+        if ($(this).text().length > 22) {
+            $(this).text($(this).text().substr(0, 22) + "..")
 
             $('[role="data-tooltip"]').css("visibility", "visible");
 
