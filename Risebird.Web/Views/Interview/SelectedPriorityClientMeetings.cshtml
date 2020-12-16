@@ -389,7 +389,7 @@
 
                                     <div class="col-sm-12 nopad">
 
-                                <div class="table-responsive"><table id="meeting" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
+                                <div class="table-responsive"><table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
     <thead>
         <tr>
             <th style="border-right: 0px !important;"></th>
@@ -432,21 +432,21 @@
             <tr id=@item.imid data-changes="1">
                 <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
                 <td> @item.interviewDate </td>
-                @if (item.IsOnline == 1)
+                @if (item.IsOnline == 1 && item.candidateName.Length > 30)
                 {
                     <td>
-                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
+                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 30)... </a>
                     </td>
                 }
                 else
                 {
 
-                    @if (item.candidateName.Length > 25)
+                    @if (item.candidateName.Length > 30)
                     {
 
 
-                        <td class="cadName">
-                            <a class="candidateName" onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName </a>
+                        <td >
+                            <a  onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0,30)... </a>
                         </td>
                     }
 
@@ -490,7 +490,7 @@
 
 
 
-                @if (item.VideoLink != null && item.VideoLink != "")
+                @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "")
                 {
                     <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
                 }
@@ -508,7 +508,7 @@
                 </td>
 
 
-                @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                 {
                     <td>
                         <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a>

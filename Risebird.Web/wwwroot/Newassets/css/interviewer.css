@@ -787,7 +787,7 @@ border: dashed 1px #a5a5a5;*/
 }
 
 table.journey th, table.journey td {
-    border-right: 1px solid #dee2e6 !important;
+    border-right: 2px solid #dee2e6;
 }
 
 table.journey th, table.journey td {
@@ -795,9 +795,9 @@ table.journey th, table.journey td {
     text-align: center;
 }
 
-    table.journey td p {
+table.journey td p {
         margin-bottom: 5px;
-    }
+ }
 
 .journey td {
     padding: 10px 10px;
