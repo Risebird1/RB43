@@ -756,9 +756,9 @@ namespace Risebird.Web.Controllers
                                             PartitionKey = o.PartitionKey,
                                             Sharetime = o.Timestamp.DateTime,
                                             SameID = o.Id,
-                                            VideoLink = a.VideoLink,
-                                            Feedbackreating = a.Feedbackreating,
-                                            FeedbackComment = a.FeedbackComment
+                                            VideoLink = a == null ? "" : a.VideoLink,
+                                            Feedbackreating = a == null ? 0: a.Feedbackreating,
+                                            FeedbackComment = a == null ? "" : a.FeedbackComment
                                         }).ToList();
                     if (profileName == "Client")
                     {
