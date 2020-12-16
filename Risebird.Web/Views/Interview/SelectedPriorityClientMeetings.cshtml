@@ -490,7 +490,7 @@
 
 
 
-                @if (item.VideoLink != null && item.VideoLink != "")
+                @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "")
                 {
                     <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
                 }
@@ -508,7 +508,7 @@
                 </td>
 
 
-                @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
+                @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                 {
                     <td>
                         <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId = item.irfIntId, isClient = true })'>Report</a>
