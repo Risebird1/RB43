@@ -40,7 +40,7 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
-
+        private static List<MeetingVM> _modelDetails;
 
 
         private readonly HttpClient _httpClient;
@@ -3020,7 +3020,8 @@ namespace Risebird.Web.Controllers
                             ViewBag.PageStartCount = 0;
                             ViewBag.PageEndCount = 0;
                         }
-
+                        _modelDetails = meetings;
+                        HttpContext.Session.SetString("AllPriorityClientMeetingsdetails", JsonConvert.SerializeObject(meetings));
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
@@ -3173,6 +3174,8 @@ namespace Risebird.Web.Controllers
                             ViewBag.PageStartCount = 0;
                             ViewBag.PageEndCount = 0;
                         }
+                        HttpContext.Session.SetString("AllPriorityClientMeetingsdetails", JsonConvert.SerializeObject(meetings));
+                        _modelDetails = meetings;
                         return View(meetings.ToPagedList(Page ?? 1, 10));
                     }
                     else
@@ -7096,6 +7099,57 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("Fail to send feedback form, please try again.");
+            }
+        }
+        [HttpPost]
+        public JsonResult AllPriorityClientMeetingsJson(string searchValue)
+        {
+            try
+            {
+                int Page = 1;
+                var meetings = _modelDetails;
+                if (!String.IsNullOrEmpty(searchValue))
+                {
+                    meetings = meetings.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.Contains(searchValue) : x.confirmationStatus == "")
+                    || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.Contains(searchValue) : x.MeetingStatusStatusDesc == "")
+                    || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+                }
+                int totalcount = meetings.Count;
+                int Pagestart = 0;
+                int Pageend = 0;
+                ViewBag.TotalCount = meetings.Count;
+
+                Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = meetings.Count / 10;
+                if (meetings.Count % 10 == 0)
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        Pageend = meetings.Count;
+                    }
+                    else
+                    {
+                        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                    }
+                }
+                if (meetings.Count == 0)
+                {
+                    Pagestart = 0;
+                    Pageend = 0;
+                }
+
+                return Json(new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage=a,totalentry= meetings.Count });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("failed");
             }
         }
     }
