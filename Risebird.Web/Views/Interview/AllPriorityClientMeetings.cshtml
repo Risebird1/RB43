@@ -102,7 +102,7 @@
                             <div class="searchCon">
 
                                 <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
+                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()">
 
 
 
@@ -566,7 +566,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <td></td>
+                                                        <td>No status</td>
                                                     }
                                                     @if ((item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                     {
