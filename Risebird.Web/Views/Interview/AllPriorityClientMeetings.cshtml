@@ -867,10 +867,15 @@
             html += '  <tr id="' + data[i].imid + '" data-changes="1">';
             html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += ' <td> ' + data[i].interviewDate + ' </td>';
-            if (data[i].IsOnline == 1) {
-                html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName + ' </a> </td>';
+            if (data[i].IsOnline == 1 && data[i].candidateName.Length > 27) {
+                html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 27) + '...</a> </td>';
             } else {
-                html += ' <td>'+data[i].candidateName+' </td>';
+                if (data[i].candidateName.Length > 27) {
+
+                    html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 27) + '...  </a> </td>';
+                } else {
+                    html += ' <td>' + data[i].candidateName + ' </td>';
+                }
             }
             html += '<td>'+data[i].candidateEmail+'</td>';
             html += '<td> ' + data[i].jdTiltle.split("|")[0] + ' </td>';
