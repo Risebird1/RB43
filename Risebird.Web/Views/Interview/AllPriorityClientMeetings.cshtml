@@ -876,7 +876,11 @@
                     html += ' <td>' + data[i].candidateName + ' </td>';
                 }
             }
-            html += '<td>'+data[i].candidateEmail+'</td>';
+            if (data[i].candidateEmail.Length > 20) {
+                html += '<td title="' + + data[i].candidateEmail+'">' + data[i].candidateEmail.substring(0,20) + '...</td>';
+            } else {
+                html += '<td>' + data[i].candidateEmail + '</td>';
+            }
             html += '<td> ' + data[i].jdTiltle.split("|")[0] + ' </td>';
             if (data[i].confirmationStatus.trim() == "Cancelled") {
                 html += '<td class="text-center"><a><span class="status-cancel"> ' + data[i].confirmationStatus + '</span></a></td>';
