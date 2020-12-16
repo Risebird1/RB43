@@ -1108,7 +1108,7 @@ body {
 
 table.journey th, table.journey td {
     border-right: 1px solid #dee2e6;
-    max-width: 210px;
+    max-width: 187px;
 }
 
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
