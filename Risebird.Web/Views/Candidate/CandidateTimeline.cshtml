@@ -540,7 +540,7 @@
                                                             <p class="select">@item.CurrentStatus</p>
                                                         }
 
-                                                        @if (item.CurrentStatus == "Rejected")
+                                                        else if (item.CurrentStatus == "Rejected")
                                                         {
                                                             <p class="reject">@item.CurrentStatus</p>
                                                         }
