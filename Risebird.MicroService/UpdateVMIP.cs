@@ -35,14 +35,14 @@ namespace Risebird.MicroService
         [FunctionName("UpdateVMIP")]
         public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            log.LogInformation($"UpdateVMIP Timer trigger function executed at: {DateTime.Now}");
 
             var vmsInDb = await _proctorInterviewsRepository.GetAllVMs();
-            UpdateAzureVmIPsnOSType(vmsInDb);//update ips of the vms
-
+            UpdateAzureVmIPsnOSType(vmsInDb, log);//update ips of the vms
+            log.LogInformation($"UpdateVMIP Timer trigger function completed at: {DateTime.Now}");
         }
 
-        public void UpdateAzureVmIPsnOSType(IEnumerable<VMProperties> vmListFromDB)
+        public void UpdateAzureVmIPsnOSType(IEnumerable<VMProperties> vmListFromDB, ILogger log)
         {
             var finalVmList = new List<VMProperties>();
             string osType = string.Empty;
@@ -55,28 +55,28 @@ namespace Risebird.MicroService
                 {
                     if (vm.Status == (int)VMState.running)
                     {
-                        if (string.IsNullOrEmpty(vm.PublicIP) && string.IsNullOrEmpty(vm.PrivateIP))
+                        //if (string.IsNullOrEmpty(vm.PublicIP) && string.IsNullOrEmpty(vm.PrivateIP))
+                        //{
+                            
+                        //}
+                        string resourceType = "Microsoft.Network/networkInterfaces";
+                        var credentials = _azureHelper.GetAzureCredential();
+
+
+                        var VMDetails = GetVMDetails(credentials, vm.ResourceGroupName, vm.Name);
+                        if (VMDetails != null)
                         {
-                            string resourceType = "Microsoft.Network/networkInterfaces";
-                            var credentials = _azureHelper.GetAzureCredential();
-
-
-                            var VMDetails = GetVMDetails(credentials, vm.ResourceGroupName, vm.Name);
-                            if (VMDetails != null)
+                            var nicResourceName = VMDetails?.properties.networkProfile
+                              .networkInterfaces.FirstOrDefault()?.id.Split("/").Last();
+                            osType = VMDetails?.properties.storageProfile.osDisk.osType;
+                            var publicPrivateIp = GetPublicIpName(credentials, vm.ResourceGroupName, nicResourceName, resourceType);
+                            string pipname = publicPrivateIp.PipName;
+                            privateIP = publicPrivateIp.PrivateIp;
+                            if (!string.IsNullOrEmpty(pipname))
                             {
-                                var nicResourceName = VMDetails?.properties.networkProfile
-                                  .networkInterfaces.FirstOrDefault()?.id.Split("/").Last();
-                                osType = VMDetails?.properties.storageProfile.osDisk.osType;
-                                var publicPrivateIp = GetPublicIpName(credentials, vm.ResourceGroupName, nicResourceName, resourceType);
-                                string pipname = publicPrivateIp.PipName;
-                                privateIP = publicPrivateIp.PrivateIp;
-                                if (!string.IsNullOrEmpty(pipname))
-                                {
-                                    publicIP = GetVmDnsNameOrIpAddress(credentials, vm.ResourceGroupName, pipname, resourceType = "Microsoft.Network/publicIPAddresses");
-                                }
-                                finalVmList.Add(new VMProperties { id = vm.id, OSType = osType, PublicIP = publicIP, PrivateIP = privateIP });
-
+                                publicIP = GetVmDnsNameOrIpAddress(credentials, vm.ResourceGroupName, pipname, resourceType = "Microsoft.Network/publicIPAddresses");
                             }
+                            finalVmList.Add(new VMProperties { id = vm.id, OSType = osType, PublicIP = publicIP, PrivateIP = privateIP });
 
                         }
                     }
@@ -87,6 +87,7 @@ namespace Risebird.MicroService
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                log.LogInformation($"UpdateVMIP Timer trigger function failed at: {DateTime.Now} with error message: {ex.Message}");
             }
 
         }

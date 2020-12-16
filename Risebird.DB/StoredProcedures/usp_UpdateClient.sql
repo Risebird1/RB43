@@ -22,7 +22,8 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @officeAddress varchar(MAX),
 @Createdby varchar(200),
 @LogoLink varchar(max),
-@CompanyLink varchar(max)
+@CompanyLink varchar(max),
+@CompanyVideoLink varchar(max)
     
 AS    
 Begin    
@@ -38,11 +39,12 @@ SET
 		,[OfficeAddress] = @officeAddress
 		,[LogoLink]=@LogoLink
 		,[CompanyLink]=@CompanyLink
+		,[CompanyVideoLink]=@CompanyVideoLink
 WHERE    
       Id = @id    
 
 
-End   
+End      
     
     GO
   

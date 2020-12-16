@@ -745,6 +745,13 @@ namespace Risebird.Business
                     var hrs = _irfRepository.GetHRsMailIds(obj.IRFId);
                     //send mails
                     _notificationHelper.SendCandidateOnboardedMail(hrs.ToList(), obj.Name, obj.IRFName, "HR");
+
+                    //get candidateId
+                    var candidateId =await  _irfRepository.GetCandidateIdByEmail(obj.EmailId);
+
+                    //add candidate status 
+                    await AddCandidateStatus(emailId, candidateId, obj.IRFId, "Candidate added", (int)CandidateStatusOptions.Added);
+
                 }
                 return result;
             }
@@ -794,21 +801,27 @@ namespace Risebird.Business
             }
         }
 
-        public bool UpdateCandidate(Candidate obj)
+        public async Task<bool> UpdateCandidate(Candidate obj, string emailId)
         {
             try
             {
+                var result = _irfRepository.UpdateCandidate(obj);
+                if(result)
+                {
+                   await  AddCandidateStatus(emailId, obj.CandidateMasterId, obj.IRFId, "Candidate updated", (int)CandidateStatusOptions.Updated);
+
+                }
                 return _irfRepository.UpdateCandidate(obj);
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
 
-        public bool SendInvite(int irfId, string email)
+        public async Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId)
         {
             try
             {
@@ -828,7 +841,7 @@ namespace Risebird.Business
 
                     if(irf.BussinessType == "B2B")
                     {
-                        _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink);
+                        _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
 
                     }
                     else
@@ -842,13 +855,18 @@ namespace Risebird.Business
 
                     }
                     _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+
+                    //add candidate status
+                     await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
+
+
                     return true;
                 }
                 return false;
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
@@ -1355,7 +1373,26 @@ namespace Risebird.Business
                 return null;
             }
         }
+        private async Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, string audioLink=null)
+        {
+            try
+            {
+                var model = new CandidateStatus();
+                model.CandidateId = candidateId;
+                model.IRFId = irfId;
+                model.AudioFileLink = audioLink;
+                model.Comments = comments;
+                model.Status = status;
+                model.PerformedBy = performedBy;
+                return await _irfRepository.AddCandidateStatus(model);
+            }
 
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
         public async Task<bool> AddCandidateStatus(CandidateStatus model)
         {

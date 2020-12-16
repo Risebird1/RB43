@@ -1468,6 +1468,8 @@ namespace Risebird.Repository
                 finaldynamicParameters.Add("@EmployerSize", _assessment.EmployerSize);
                 finaldynamicParameters.Add("@createdby", userid);
                 finaldynamicParameters.Add("@Delivery", _assessment.Delivery);
+                finaldynamicParameters.Add("@Assessmentid", _assessment.id);
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     assessmentid = SqlMapper.Query<int>(con, "usp_AddAssessment", finaldynamicParameters,
@@ -1541,7 +1543,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = con.Query(query, null);
+                    var result = con.Query(query, dynamicParameters);
                     return "Success";
                 }
             }

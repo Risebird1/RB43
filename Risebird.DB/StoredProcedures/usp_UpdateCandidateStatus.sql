@@ -12,14 +12,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE PROCEDURE [dbo].[usp_UpdateCandidateStatus]
+Create PROCEDURE [dbo].[usp_UpdateCandidateStatus]
 @id int,
 @IRFId int,
 @CandidateId int,
 @Comments varchar(max),
 @Date datetime,
 @AudioFileLink nvarchar(max),
-@Status int
+@Status int,
+@PerformedBy varchar(100)
     
 AS
 BEGIN
@@ -34,7 +35,8 @@ BEGIN
 	  AudioFileLink =@AudioFileLink,
 	  Comments=@Comments,
 	  [Date]=@Date,
-	  [Status]=@Status
+	  [Status]=@Status,
+	  [PerformedBy]=@PerformedBy
 
 	  where id =@id
 END

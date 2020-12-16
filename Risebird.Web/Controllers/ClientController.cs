@@ -95,22 +95,33 @@ namespace Risebird.Web.Controllers
                     if (ModelState.IsValid)
                     {
                         string uploadedFileURL = string.Empty;
+                        string uploadedVideoURL = string.Empty;
                         if (client.LogoFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(client.LogoFile.FileName, "clientlogos", client.LogoFile);
+                            var fileName = client.LogoFile.FileName.Replace(" ", "_");
+                            await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientlogos");
-                            var blob = containerRef.GetBlockBlobReference(client.LogoFile.FileName);
+                            var blob = containerRef.GetBlockBlobReference(fileName);
                             uploadedFileURL = blob.Uri.ToString();
                             client.LogoLink = uploadedFileURL;
                         }
+                        if (client.VideoFile != null)
+                        {
+                            var fileName = client.VideoFile.FileName.Replace(" ", "_");
+                            await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientvaluevideosgifs");
+                            var blob = containerRef.GetBlockBlobReference(fileName);
+                            uploadedVideoURL = blob.Uri.ToString();
+                            client.CompanyVideoLink = uploadedVideoURL;
+                        }
                         if (_clientService.AddClient(client))
                         {
-                            TempData["SuccessErrorMessage"] = "Client is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Client added Successfully";
                             return RedirectToAction("List");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Client is Failed";
+                            TempData["SuccessErrorMessage"] = "Failed to add client!";
                             return RedirectToAction("List");
                         }
                     }
@@ -168,13 +179,24 @@ namespace Risebird.Web.Controllers
                     if (ModelState.IsValid)
                     {
                         string uploadedFileURL = string.Empty;
+                        string uploadedVideoURL = string.Empty;
                         if (client.LogoFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(client.LogoFile.FileName, "clientlogos", client.LogoFile);
+                            var fileName = client.LogoFile.FileName.Replace(" ", "_");
+                            await _azureStorageHelper.InsertBlob(fileName, "clientlogos", client.LogoFile);
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientlogos");
-                            var blob = containerRef.GetBlockBlobReference(client.LogoFile.FileName);
+                            var blob = containerRef.GetBlockBlobReference(fileName);
                             uploadedFileURL = blob.Uri.ToString();
                             client.LogoLink = uploadedFileURL;
+                        }
+                        if (client.VideoFile != null)
+                        {
+                            var fileName = client.VideoFile.FileName.Replace(" ", "_");
+                            await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientvaluevideosgifs");
+                            var blob = containerRef.GetBlockBlobReference(fileName);
+                            uploadedVideoURL = blob.Uri.ToString();
+                            client.CompanyVideoLink = uploadedVideoURL;
                         }
                         if (_clientService.UpdateClient(client))
                         {

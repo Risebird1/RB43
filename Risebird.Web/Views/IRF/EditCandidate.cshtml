@@ -27,12 +27,12 @@
         </div>
     </nav>
     <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
+      <div class="mt50">
     </div>
-    <div class="content">
-        <div class="row">
+    <div class="content client">
+        <div class="bl-bg">
             <div class="col-md-12">
-                <div class="mdc-card card">
+                <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
 
 
@@ -85,7 +85,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.AvailableFreeLancing, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.CheckBoxFor(m => m.AvailableFreeLancing@*, new { @class = "mdc-checkbox__native-control" }*@)
+                                        @Html.CheckBoxFor(m => m.AvailableFreeLancing , new {  @style = "position:relative;top:-24px;" })
                                         @*<div class="mdc-checkbox__background">
                                             <svg class="mdc-checkbox__checkmark"
                                                  viewBox="0 0 24 24">
@@ -102,7 +102,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CurrentLocation, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.CurrentLocation, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CurrentLocation, "", new { @class = "text-danger" })
+                                        @Html.ValidationMessageFor(model => model.CurrentLocation, "", new { @class = "text-danger"})
 
                                     </div>
 
@@ -138,7 +138,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.AvailableFullTime, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.CheckBoxFor(m => m.AvailableFullTime@*, new { @class = "mdc-checkbox__native-control" }*@)
+                                        @Html.CheckBoxFor(m => m.AvailableFullTime, new { @style = "position:relative;top:-24px;" })
                                         @*<div class="mdc-checkbox__background">
                 <svg class="mdc-checkbox__checkmark"
                      viewBox="0 0 24 24">
@@ -203,10 +203,11 @@
                             @Html.HiddenFor(x => x.IRFId)
                             @Html.HiddenFor(x => x.IRFName)
                             @Html.HiddenFor(x => x.id)
+                            @Html.HiddenFor(x => x.CandidateMasterId)
                             <div class="row">
 
-                                <div class="col-md-12 mc-button-area">
-                                    @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                <div class="col-md-12 mc-button-area text-right">
+                                    @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button"  })
                                     <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
                                 </div>
                             </div>

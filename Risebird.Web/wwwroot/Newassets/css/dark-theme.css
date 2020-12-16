@@ -816,8 +816,7 @@ input[type="radio"]:checked {
     border: 0px !important;
 }
 .modal .select2-container--default.select2-container--focus .select2-selection--multiple, .modal .select2-container--default .select2-selection--multiple {
-    background-color: white !important;
-    border-bottom: 1px solid #aaa !important;
+    background-color: #181818 !important; border-bottom: 1px solid #aaa !important;
 }
 [data-tooltip]:after {
     border-top: 8px solid hsl(0deg 0% 7%) !important;
@@ -903,6 +902,19 @@ hr {
     border-color: #464141;
 }
 
+.mcq-dnbutton {
+    color: #9A9A9A !important;  
+    border-radius: 3px;
+    padding: 5px;
+    background: #383636;
+}
+table.journey td {
+    color: #9A9A9A;
+}
+
+table.journey th {
+        color: #9A9A9A;
+}
 .comment-tri-right.left-tp:after {
     border-color: #2b2b2b transparent transparent transparent !important;
 }
@@ -1512,9 +1524,9 @@ div.dataTables_wrapper div.dataTables_info {
         color: #1f1e1e !important
     }
 
-.pagination-container > ul > li a:hover {
-    background: #1f1e1e !important;
-    text-decoration: none !important;
+.pagination-container > ul > li {
+    background: #1f1e1e!important;
+    border: 1px #1f1e1e solid!important;
 }
 
     .pagination-container > ul > li a{color:#fff}

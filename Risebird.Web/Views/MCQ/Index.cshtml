@@ -303,9 +303,9 @@
             <div class="modal-body" style="padding: 2px 16px;">
                 <div class="row" style="padding:10px">
                     @*<div class="col-md-12"><a class="text-right" href="@Url.Action("Download","MCQ",new { filename="MCQSet.xlsx"})"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>*@
-                    <div class="col-md-12"><a class="text-right" href="@ViewBag.TemplateUrl" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(103, 99, 99, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #676363;">Download Template</span></a></div>
+                    <div class="col-md-12"><a class="text-right mcq-dnbutton" href="@ViewBag.TemplateUrl" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255, 1)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg> <span style=" font-size: 17px; margin-bottom: 10px; display: inline-block; color: #fff;">Download Template</span></a></div>
                     <input type="hidden" id="txtpartialid" />
-                    <div class="col-md-6">
+                    <div class="col-md-6 nopad">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
                                 Primary Skills
@@ -320,7 +320,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 nopad">
                         <div class="form-group">
                             <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
                                 Secondary Skills
@@ -335,9 +335,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 nopad">
                         <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill" style="margin-bottom:0px;">
                                 Profile Type
                             </label>
                             <div class="col-md-12 col-sm-12">
@@ -350,9 +350,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 nopad">
                         <div class="form-group">
-                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill">
+                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SecondarySkill" style="margin-bottom:0px;">
                                 Compentency Level
                             </label>
                             <div class="col-md-12 col-sm-12">
@@ -365,9 +365,11 @@
                             </div>
                         </div>
                     </div>
-                    <input type="text" class="form-control" placeholder="MCQ Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" />
-                    <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
-                    <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" />
+                    <div class="col-md-12"> <input type="text" class="form-control" placeholder="MCQ Set Title" id="txtMCQTitle" style="margin-top: 10px;margin-bottom: 10px;" /></div>
+                    <div class="col-md-12">
+                        <input type="number" class="form-control" placeholder="Test time(in Min.)" id="txtTime" style="margin-bottom: 10px;" />
+                    </div>
+                   <div class="col-md-12">   <input type="file" class="form-control" accept=".xlsx,xls" id="Mcqfile" style="margin-bottom: 10px;" /></div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
@@ -395,6 +397,14 @@
             </button>
             <div class="modal-body">
                 <div class="col-md-12">
+                    <div class="sharing">
+                        <label class="label-field desp-label" for="Video Recording" style="font-weight:normal;"> Video Recording</label>
+                        <select id="txtvideorecording" class="form-control " style="margin-bottom:10px;">
+                            <option value="0">None</option>
+                            <option value="1">Recording Only</option>
+                            <option value="2">Recording and Upoading</option>
+                        </select>
+                    </div>
                     <div class="sharing">
                         <label class="label-field desp-label" for="Please enter Client Name" style="font-weight:normal;"> Please Enter Client's Name</label>
                         <input type="text" placeholder="Client Name" id="txtclientsharename" class="form-control " style="margin-bottom:10px;" />
@@ -518,6 +528,7 @@
     }
     function CreateMCQ() {
         if ($("#txtMCQTitle").val().trim() != "" && $("#txtTime").val().trim() != "" && document.getElementById("Mcqfile").files.length > 0 && $("#ddlPrimarySkills").val() != null) {
+            $(".loader").show();
             var file_data = $("#Mcqfile").prop("files")[0];
             var form_data = new FormData();
             form_data.append("file", file_data);
@@ -541,6 +552,7 @@
                 enctype: 'multipart/form-data',
                 processData: false,
                 success: function (data) {
+                    $(".loader").hide();
                     alert(data);
                     closeCreatePopUp();
                     window.location.href = 'Index';
@@ -583,7 +595,7 @@
             $.ajax({
                 type: "POST",
                 url: "/MCQ/ShareTestLink",
-                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val() },
+                data: { Emailids: $("#txtsharetext").val(), Id: $("#txtsharePartialid").val(), ClientName: $("#txtclientsharename").val(), ClientEmail: $("#txtclientshareEmail").val(), videoRecording: $("#txtvideorecording").val() },
                 success: function (data) {
                     if (data == "success") {
                         alert("Successfully share the MCQ set.");

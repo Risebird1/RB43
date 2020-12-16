@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Folder Include="Functions\" />
-    <Folder Include="TableTypes\" />
     <Folder Include="Views\" />
   </ItemGroup>
 

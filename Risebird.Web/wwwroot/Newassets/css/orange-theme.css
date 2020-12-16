@@ -88,7 +88,10 @@ textarea::-webkit-scrollbar {
     color: #fff !important;
     text-transform: uppercase;
 }
-
+.pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    color: #FFFFFF;
+    BACKGROUND: #ea6b26;
+}
 .razorpay_details table th {
     background: #dfe0e5;
     padding: 8px;
@@ -125,28 +128,26 @@ textarea::-webkit-scrollbar {
     background: #dfe0e5;
 }
 
-
-
-.pagination .page-item.active > .page-link,
-.pagination .page-item.active > .page-link:focus,
-.pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+.pagination-container > ul > li.active {
     background: #e96e28 !important;
+    border: 1px #e96e28 solid !important;
 }
 
-    .pagination-container > ul > li.active a {
-        color: #fff !important;
-    }
 
-.pagination-container > ul > li a:hover {
-    background: #d4d3d369 !important;
-    text-decoration:none!important;
+.pagination-container > ul > li {
+    background: #d4d3d3 !important;
+    border: 1px #d4d3d3 solid !important;
 }
 
     .pagination-container > ul > li a {
         color: #716b6b;
     }
 
-
+    .pagination-container > ul > li.active, .pagination-container > ul > li.active:hover {
+        background: #e96e28 !important;
+        border: 1px #e96e28 solid !important;
+        color: rgb(255, 255, 255);
+    }
 .tabs-wrap .nav-tabs > li.active > a, .tabs-wrap .nav-tabs > li.active > a:focus, .tabs-wrap .nav-tabs > li.active > a:hover {
     background: #ea6e24;
     border: 0px;
@@ -235,6 +236,19 @@ input[type='radio']:checked:after {
     background: #ea6e24 !important;
 }
 
+.mcq-dnbutton {
+    color: #fff !important;
+    background: #ea6e24 !important; border-radius: 3px;
+    padding: 5px;
+    background: #42a5f5;
+}
+table.journey {
+    color: #504e4e;
+}
+
+    table.journey th {
+        color: #000;
+    }
 .trash-btn .mdc-fab__icon {
     fill: #fff !important;
 }

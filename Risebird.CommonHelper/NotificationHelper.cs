@@ -4,6 +4,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mail;
 using System.Text;
 
@@ -228,12 +229,17 @@ namespace Risebird.CommonHelper
             {
                 var mailMessage = new MailMessage();
                 //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
-                mailMessage.From = new MailAddress(clientHREmail.Trim(), "Interview Invite");
-                mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
+                mailMessage.From = new MailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
+                mailMessage.To.Add(new MailAddress(emailId.ToLower(), emailId.Split("@").First()));
 
-                foreach (var clientUser in clientUsers)
+                if(clientUsers!= null && clientUsers.Count > 0)
+                {foreach (var clientUser in clientUsers)
                 {
-                    mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
+                    mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), clientUser.EmailId.Split("@").First()));
+                }}
+                else
+                {
+                    mailMessage.CC.Add(new MailAddress(clientHREmail.ToLower(), clientHREmail.Split("@").First()));
                 }
 
                 object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
@@ -1115,7 +1121,7 @@ namespace Risebird.CommonHelper
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 foreach (var email in clients)
                 {
-                    mailMessage.CC.Add(new MailAddress(email, null));
+                    mailMessage.CC.Add(new MailAddress(email, email.Split("@").First()));
                 }
 
                 object[] parameters = new object[] { interviewDate, candidateEmail, primarySkill, interviewStatus };
@@ -1138,7 +1144,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null)
+        public string SendB2BCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId, string candidateName, string clientHREmail, string clientLogo = null, string clientURL = null, string clientvideoURL= null)
         {
             try
             {
@@ -1150,16 +1156,15 @@ namespace Risebird.CommonHelper
 
                 //mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
 
-                mailMessage.From = new MailAddress(clientHREmail.Trim(), "Interview Invite");
+                mailMessage.From = new MailAddress(clientHREmail.Trim(), clientHREmail.Split("@").First());
                 mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
-
 
                 foreach (var clientUser in clientUsers)
                 {
                     mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
                 }
 
-                object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink };
+                object[] parameters = new object[] { companyURL, companyLogoLink, candidateName, ClientName, primarySkill, jdLink, calendlyLink, clientvideoURL };
                 mailMessage.Subject = ClientName + " - Video Interview - " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateB2BTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);

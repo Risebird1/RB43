@@ -59,12 +59,14 @@ body {
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: .25rem;
-  
     color: rgb(112, 189, 50);
     border-radius: 3px;
 }
 
-.collapsed{display:block!important}
+.collapsed {
+    display: block !important
+}
+
 .status-cancel {
     display: inline-block;
     padding: 0.45em .45em;
@@ -74,7 +76,6 @@ body {
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
- 
     border-radius: 3px;
     color: #f44545;
 }
@@ -1025,7 +1026,7 @@ body {
     border-radius: .25em;
 }
 
-.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip] {
+.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip], .cadName [data-tooltip], .cadName [data-tooltip], .cadSkill [data-tooltip], .cadSkill[data-tooltip], .cadEmail [data-tooltip], .cadEmail [data-tooltip] {
     position: relative;
     z-index: 2;
     cursor: pointer;
@@ -1037,7 +1038,10 @@ body {
     .talk-bubble [data-tooltip]:after, .video-info [data-tooltip]:before,
     .video-info [data-tooltip]:after, .video-title [data-tooltip]:before,
     .video-title [data-tooltip]:after, .jd-title [data-tooltip]:before,
-    .jd-title [data-tooltip]:after {
+    .jd-title [data-tooltip]:after, .cadName [data-tooltip]:before,
+    .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:before,
+    .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:before,
+    .cadEmail [data-tooltip]:after {
         visibility: hidden;
         -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
         filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
@@ -1046,7 +1050,8 @@ body {
     }
 
 /* Position tooltip above the element */
-.selected-priority .talk-bubble [data-tooltip]:before {
+.selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before,  .cadEmail [data-tooltip]:before {
     bottom: 72%;
 }
 
@@ -1073,13 +1078,40 @@ body {
     border-radius: 5px;
 }
 
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
+    position: absolute;
+    bottom: 90%;
+    left: 10%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    font-weight: 300;
+    padding: 7px;
+    width: 200px;
+    font-size: 13px;
+    height: auto;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+    content: attr(data-tooltip);
+    text-align: center;
+    /* font-size: 14px; */
+    line-height: 1.3;
+    white-space: normal;
+    border-radius: 5px;
+}
+
+
 .interviewer-comment .talk-bubble [data-tooltip]:before {
     width: 400px;
 }
 
+table.journey th, table.journey td {
+    border-right: 1px solid #dee2e6;
+    max-width: 210px;
+}
 
-
-.video-info [data-tooltip]:before, .video-title [data-tooltip]:before{
+.video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
     position: absolute;
     bottom: 100%;
     left: 50%;
@@ -1100,6 +1132,7 @@ body {
     line-height: 1.3;
     white-space: normal;
 }
+
 .jd-title [data-tooltip]:before {
     position: absolute;
     bottom: 100%;
@@ -1125,7 +1158,7 @@ body {
 
 
 /* Triangle hack to make tooltip look like a speech bubble */
-.talk-bubble [data-tooltip]:after {
+.talk-bubble [data-tooltip]:after, .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:after {
     position: absolute;
     bottom: 70%;
     left: 50%;
@@ -1168,7 +1201,6 @@ body {
 }
 
 #resumeId, .callatag {
-
     padding: 5px 10px;
     border-radius: 10px;
 }
@@ -1222,12 +1254,16 @@ body {
 
 /* Show tooltip content on hover */
 .talk-bubble [data-tooltip]:hover:before,
-.talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after, .jd-title [data-tooltip]:hover:before, .jd-title [data-tooltip]:hover:after {
+.talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after, .jd-title [data-tooltip]:hover:before, .jd-title [data-tooltip]:hover:after, .cadName [data-tooltip]:hover:before,
+.cadName [data-tooltip]:hover:after, .cadEmail [data-tooltip]:hover:before,
+.cadEmail [data-tooltip]:hover:after, .cadSkill [data-tooltip]:hover:before,
+.cadSkill [data-tooltip]:hover:after {
     visibility: visible;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1;
 }
+
 .mdc-card .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
@@ -1235,6 +1271,7 @@ body {
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
 }
+
 .page-container.page-mode-rtl .x-navigation.x-navigation-minimized li ul {
     top: 0px;
     right: auto;
@@ -2747,16 +2784,20 @@ ul.panel-controls > li > .dropdown-menu {
 .f1 .input-error {
     border-color: #f35b3f;
 }
+
 td.detail-row {
     background-image: url(../../Newassets/img/details_open.png);
     background-repeat: no-repeat;
     width: 20px;
     height: 20px;
-    background-position: center 10px;
+    background-color: #cccccc47;
+    background-position: right 12px;
 }
+
 tr.show td.detail-row {
-    background: url(../../Newassets/img/details_close.png) no-repeat center center;
+    background: #cccccc47 url(../../Newassets/img/details_close.png) no-repeat right 12px;
 }
+
 input[type="text"],
 input[type="password"],
 textarea,
@@ -2903,6 +2944,7 @@ button.btn {
     .timer {
         font-size: 15px !important;
     }
+
     .navbar {
         padding-top: 0;
     }
@@ -3041,7 +3083,9 @@ input[type='radio'] {
 .mt50 {
     margin-top: 55px;
 }
-
+.mt-20 {
+    margin-top: 20px;
+}
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
     border-color: rgb(146, 146, 146);
 }
@@ -5644,6 +5688,7 @@ blockquote {
     float: left;
     margin: 10px 0px;
 }
+
     .timer span {
         font-size: 15px;
         display: block;
@@ -5759,6 +5804,7 @@ blockquote {
     top: 13px;
     left: 30px;
 }
+
 .reset-password .field-icon {
     right: 15px;
     top: 57%;
@@ -5864,11 +5910,10 @@ button.close {
     }
 /* end To top */
 .excel-file {
-    margin-right: 10px;
-    float: right;
+    margin-right: 5px;
     color: green;
     font-size: 35px;
-    margin-left: 3px;
+    margin-left: 5px;
     border: 0;
 }
 
@@ -5900,38 +5945,58 @@ button.close {
 .mobile-view {
     display: none;
 }
+
 #searchGo button.btn, #btnSearch {
     min-width: auto;
     height: 37px;
 }
 
- #searchGo button.btn svg, #btnSearch svg {
- position: relative;
-       
-}
+    #searchGo button.btn svg, #btnSearch svg {
+        position: relative;
+    }
+
 .razorpay_btn i {
     font-size: 20px;
     margin-right: 13px;
-    font-size:14px;
+    font-size: 14px;
 }
 
 .razorpay_con {
     position: relative;
     width: 1200px;
     margin: 0px auto;
-
 }
+
 .razorpay_btn {
     flex: 0 0 20%;
     max-width: 20%;
-    float:left;
+    float: left;
 }
+
 .razorpay_details {
     width: 78%;
     float: left;
     position: absolute;
     left: 20%;
     top: 20px;
+}
+
+.pagination li {
+    border: 0;
+    border-radius: 30px !important;
+    transition: all .3s;
+    padding: 0px 11px;
+    margin: 10px 3px;
+    min-width: 30px;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    color: #2c2c2c;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+    background: transparent;
+    outline: none;
 }
 
 .desktop-view {
@@ -5958,15 +6023,17 @@ button.close {
     #dataTables_filter input::-webkit-search-cancel-button, #clientduser_filter input::-webkit-search-decoration {
         display: none;
     }
+
 #x {
     border: 0px;
     background: none;
     color: #595963;
     font-weight: bold;
     position: absolute;
-    right: 7px;
-    top: 9px;
+    right: 11px;
+    top: 11px;
 }
+
 #search {
     right: 25px;
     position: absolute;
@@ -5978,22 +6045,22 @@ button.close {
     background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat right;
     z-index: 1;
 }
-    .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
-       
-        border: solid 1px #ccc;
-        padding: 9px 10px 9px 10px;
-        width: 150px;
-        height: 40px;
-        font-family: arial;
-        -webkit-border-radius: 10em;
-        -moz-border-radius: 10em;
-        border-radius: 10em;
-        -webkit-transition: all .5s;
-        -moz-transition: all .5s;
-        transition: all .5s;
-        position: relative;
-        background:#fff;
-    }
+
+.dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
+    border: solid 1px #ccc;
+    padding: 9px 10px 9px 10px;
+    width: 190px;
+    height: 40px;
+    font-family: arial;
+    -webkit-border-radius: 10em;
+    -moz-border-radius: 10em;
+    border-radius: 10em;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
+    position: relative;
+    background: #fff;
+}
 
 .collapse {
     display: none;
@@ -6014,26 +6081,27 @@ tbody.collapse.in {
 
 .searchCon {
     position: relative;
-    margin-bottom:10px;
+    
 }
-        .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
-            width: 200px;
-            background-color: #fff;
-            border-color: #4a93de;
-            font-family: arial;
-            margin: 3px;
-            box-shadow:none!important;
-            border: 1px #ccc solid !important;
-        }
+
+.dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
+    width: 200px;
+    background-color: #fff;
+    border-color: #4a93de;
+    font-family: arial;
+    margin: 3px;
+    box-shadow: none !important;
+    border: 1px #ccc solid !important;
+}
 
 
-    .dataTables_filter input:-moz-placeholder {
-        color: #999;
-    }
+.dataTables_filter input:-moz-placeholder {
+    color: #999;
+}
 
-    .dataTables_filter input::-webkit-input-placeholder {
-        color: #999;
-    }
+.dataTables_filter input::-webkit-input-placeholder {
+    color: #999;
+}
 
 .dataTables_length select.form-control:focus {
     border: 1px rgba(80, 158, 235, 0.58) solid !important;
@@ -7687,12 +7755,14 @@ div.tagsinput {
             height: auto !important;
             width: 100% !important;
         }
+
     .razorpay_con {
         position: relative;
         width: 100%;
         margin: 0px auto;
         background: #151515 !important;
     }
+
     .razorpay_btn {
         flex: 0 0 100%;
         max-width: 100%;
@@ -7707,7 +7777,7 @@ div.tagsinput {
         top: 75px;
     }
 
-  
+
     .mobile-view {
         display: block;
     }
@@ -7775,9 +7845,10 @@ div.tagsinput {
 
 @media only screen and (max-width: 1024px) {
     .razorpay_details {
-        width: 60%!important;
+        width: 60% !important;
     }
-        .page-container .page-sidebar {
+
+    .page-container .page-sidebar {
         position: relative;
         float: left;
         width: 100%;

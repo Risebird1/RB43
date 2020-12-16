@@ -11,14 +11,57 @@
     <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
     <title>MCQ Questions</title>
     <style>
+        .star-rating {
+            /*border: solid 1px #ccc;*/
+            border: solid 1px white;
+            display: flex;
+            flex-direction: row-reverse;
+            font-size: 2.0em;
+            justify-content: space-around;
+            padding: 0 .2em;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 10px;
+            background-color: lightgray;
+        }
+
+            .star-rating input {
+                display: none;
+            }
+
+            .star-rating label {
+                /*color: #ccc;*/
+                color: white;
+                cursor: pointer;
+            }
+
+            .star-rating :checked ~ label {
+                color: #f90;
+            }
+
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #fc0;
+            }
+
+        .card-title-space {
+            margin: 20px 0px;
+            float: right
+        }
+
+        .mb10 {
+            margin-bottom: 10px
+        }
     </style>
 </head>
 <body>
-    <div class="text-center" style="        background-color: #363c43;
-        padding: 15px 5px 5px 10px;
-        width: 100%;
-        display: inline-block;
-        position: relative;">
+    <button id="btnStart" hidden>START RECORDING</button>
+    <button id="btnStop" hidden>STOP RECORDING</button>
+    <input type="hidden" value="@ViewBag.VideoRecording" id="txtrecordingvideo" />
+    <video controls hidden></video>
+
+    <video id="vid2" hidden controls></video>
+    <div class="text-center" style="background-color: #363c43;padding: 15px 5px 5px 10px;width: 100%;display: inline-block;position: relative;">
         <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.ico" style="width:180px;" /></div>
         <div style="float:right">
             <div id="countdown">
@@ -41,6 +84,26 @@
                 <div>
                 </div>
             </div>
+            <div class="col-md-8 offset-md-2" id="divfeedback" style="display:none">
+                <p><b>Rating</b></p>
+                <input type="hidden" id="txtfeedbackreting" />
+                <div class="star-rating">
+                    <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
+                    <label for="Q1_5" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeQuestion1(4)" />
+                    <label for="Q1_4" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_3" name="rating1" value="3" onclick="ChangeQuestion1(3)" />
+                    <label for="Q1_3" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_2" name="rating1" value="2" onclick="ChangeQuestion1(2)" />
+                    <label for="Q1_2" class="star">&#9733;</label>
+                    <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
+                    <label for="Q1_1" class="star">&#9733;</label>
+                </div>
+
+                <input type="text" id="txtfeedbackComment" placeholder="Please Enter Comments" class="form-control" />
+                <input type="button" value="Submit" class="callsubmit" onclick="SubmitTest()" />
+
+            </div>
         </div>
     </div>
 </body>
@@ -54,6 +117,7 @@
     var countdown = document.getElementById("tiles");
     getCountdown();
     var myVar = setInterval(function () { getCountdown(); }, 1000);
+    var timehave = 0;
     function getCountdown() {
         var current_date = new Date().getTime();
         var seconds_left = (target_date - current_date) / 1000;
@@ -69,24 +133,24 @@
         countdown.innerHTML = "<span>" + hours + "</span><span>" + minutes + "</span><span>" + seconds + "</span>";
 
         var timmertime = parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
+        timehave = parseInt(timehave) + 1;
         if (parseInt(timmertime) == 0) {
             //submit finally
             $("#zquestion_final").val("true");
             clearInterval(myVar);
             $("#btnsubmit").click();
         }
+        if (parseInt(timehave) == 60) {
+            document.getElementById('btnStop').click();
+        }
         $("#ztimmerdetails_Timer").val(timmertime);
     }
-
     function pad(n) {
         return (n < 10 ? '0' : '') + n;
     }
 
 </script>
 <script src="~/Newassets/js/scrollBar.js"></script>
-
-
-
 <script type="text/javascript">
     function QuestionSelect(questionnumber) {
         $.ajax({
@@ -102,8 +166,6 @@
             }
         });
     }
-
-
     if (parseInt($("#textcallno").val()) > 20)
         $(".sb-container").scrollBox();
 </script>
@@ -111,24 +173,37 @@
     $(document).ready(function () {
         document.addEventListener('click', () => {
             document.documentElement.requestFullscreen();
-        })
+        });
 
-
-        //if (document.documentElement.requestFullscreen) {
-        //    document.documentElement.requestFullscreen();
-        //} else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
-        //    document.documentElement.webkitRequestFullscreen();
-        //} else if (document.documentElement.msRequestFullscreen) { /* IE11 */
-        //    document.documentElement.msRequestFullscreen();
-        //}
         InitialLoad();
-
     });
+    var file;
     function InitialLoad() {
         $.ajax({
             type: "POST",
             url: "/MCQ/CandidateSelectQuestionsD",
             data: { id: "1" },
+            success: function (data) {
+                if (data == "TestSubmit") {
+                    window.location.href = "/MCQ/TestComplete?status=" + data;
+                } else {
+                    binddata(data);
+                }
+            }
+        });
+    }
+    function SubmitTest() {
+        var form_data = new FormData();
+        form_data.append("rating", $("#txtfeedbackreting").val());
+        form_data.append("comments", $("#txtfeedbackComment").val());
+        form_data.append("file", file);
+        $.ajax({
+            type: "POST",
+            url: "/MCQ/SubmitTest",
+            data: form_data,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
             success: function (data) {
                 if (data == "TestSubmit") {
                     window.location.href = "/MCQ/TestComplete?status=" + data;
@@ -168,19 +243,51 @@
                 option4 = true;
             }
         }
+        if ($("#zquestion_final").val() == "true") {
+            document.getElementById('btnStop').click();
+            //if ($("#txtrecordingvideo").val() == "1" || $("#txtrecordingvideo").val() == "0" || $("#txtrecordingvideo").val() == "") {
+            callquestions(option1, option2, option3, option4, Singleanswer);
+            // }
+        } else {
+            callquestions(option1, option2, option3, option4, Singleanswer);
+        }
+    }
+    function callquestions(option1, option2, option3, option4, Singleanswer) {
+        var form_data = new FormData();
+        form_data.append("Option1", option1);
+        form_data.append("Option2", option2);
+        form_data.append("Option3", option3);
+        form_data.append("Option4", option4);
+        form_data.append("SingleAnswer", Singleanswer);
+        form_data.append("QuestionNumber", $("#zquestion_QuestionNumber").val());
+        form_data.append("final", $("#zquestion_final").val());
+        form_data.append("QuestionType", $("#zquestion_QuestionType").val());
+        if ($("#zquestion_final").val() == "true") {
+            form_data.append("file", file);
+        }
         $.ajax({
             type: "POST",
             url: "/MCQ/CandidateQuestionsD",
-            data: { Option1: option1, Option2: option2, Option3: option3, Option4: option4, SingleAnswer: Singleanswer, QuestionNumber: $("#zquestion_QuestionNumber").val(), final: $("#zquestion_final").val(), QuestionType: $("#zquestion_QuestionType").val() },
+            data: form_data,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
             success: function (data) {
-                if (data == "TestSubmit") {
-                    window.location.href = "/MCQ/TestComplete?status=" + data;
+                if ($("#zquestion_final").val() == "true") {
+                    document.getElementById("divfeedback").style.display = "block";
+                    document.getElementById("divMCQSetdetails").style.display = "none";
+                    clearInterval(myVar);
                 } else {
-                    binddata(data);
+                    if (data == "TestSubmit") {
+                        window.location.href = "/MCQ/TestComplete?status=" + data;
+                    } else {
+                        binddata(data);
+                    }
                 }
             }
         });
     }
+
     function binddata(Data) {
 
         var html = '';
@@ -260,15 +367,143 @@
 
         html += '       </div>';
         html += '       <div>';
-        if (Data._question.final == "true") {
-            html += '               <input type="submit" value="Submit" class="callsubmit" id="btnsubmit" onclick="FetchQuestion()" />';
-        }
-        else {
-            html += '     <input type="submit" value="NEXT" class="callsubmit" id="btnsubmit" onclick="FetchQuestion()" />';
-        }
+        html += '               <input type="submit" value="NEXT" class="callsubmit" id="btnsubmit" onclick="FetchQuestion()" />';
+
         html += ' </div>';
 
         html += ' </div>';
         $("#divMCQSetdetails").empty().html(html);
+    }
+</script>
+<script>
+    if ($("#txtrecordingvideo").val() == "2" || $("#txtrecordingvideo").val() == "1" || $("#txtrecordingvideo").val() == "") {
+        let vidSave = document.getElementById('vid2');
+        let chunks = [];
+
+        let constraintObj = {
+            audio: true,
+            video: true
+
+        };
+
+        if (navigator.mediaDevices === undefined) {
+            navigator.mediaDevices = {};
+            navigator.mediaDevices.getUserMedia = function (constraintObj) {
+                let getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+                if (!getUserMedia) {
+                    return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+                }
+                return new Promise(function (resolve, reject) {
+                    getUserMedia.call(navigator, constraintObj, resolve, reject);
+                });
+            }
+        } else {
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    devices.forEach(device => {
+                        console.log(device.kind.toUpperCase(), device.label);
+                        //, device.deviceId
+                    })
+                })
+                .catch(err => {
+                    console.log(err.name, err.message);
+                })
+        }
+
+        navigator.mediaDevices.getUserMedia(constraintObj)
+            .then(function (mediaStreamObj) {
+                //connect the media stream to the first video element
+                let video = document.querySelector('video');
+                video.onloadedmetadata = function (ev) {
+                    //show in the video element what is being captured by the webcam
+                    video.play();
+                };
+
+                //add listeners for saving video/audio
+                let start = document.getElementById('btnStart');
+                let stop = document.getElementById('btnStop');
+                let mediaRecorder = new MediaRecorder(mediaStreamObj);
+
+                mediaRecorder.start();
+                console.log(mediaRecorder.state);
+                document.getElementById('btnStop').addEventListener('click', (ev) => {
+                    mediaRecorder.stop();
+                    console.log(mediaRecorder.state);
+                });
+
+                mediaRecorder.ondataavailable = function (ev) {
+                    chunks.push(ev.data);
+                }
+                mediaRecorder.onstop = (ev) => {
+                    let blob = new Blob(chunks, { 'type': 'video/mp4;' });
+                    chunks = [];
+                    let videoURL = window.URL.createObjectURL(blob);
+                    vidSave.src = videoURL;
+                    console.log(videoURL);
+                    file = blob;
+                    //if ($("#txtrecordingvideo").val() == "2") {
+                    //    var Singleanswer = "";
+                    //    var option1 = false;
+                    //    var option2 = false;
+                    //    var option3 = false;
+                    //    var option4 = false;
+                    //    if ($("#zquestion_QuestionType").val() == "Single") {
+                    //        if (document.getElementById("SingleAnswer1").checked) {
+                    //            Singleanswer = "1";
+                    //        } else if (document.getElementById("SingleAnswer2").checked) {
+                    //            Singleanswer = "2";
+                    //        } else if (document.getElementById("SingleAnswer3").checked) {
+                    //            Singleanswer = "3";
+                    //        } else if (document.getElementById("SingleAnswer4").checked) {
+                    //            Singleanswer = "4";
+                    //        }
+                    //    } else {
+                    //        if ($("#MultiAnswerOption1").is(':checked')) {
+                    //            option1 = true;
+                    //        }
+                    //        if ($("#MultiAnswerOption2").is(':checked')) {
+                    //            option2 = true;
+                    //        }
+                    //        if ($("#MultiAnswerOption3").is(':checked')) {
+                    //            option3 = true;
+                    //        }
+                    //        if ($("#MultiAnswerOption4").is(':checked')) {
+                    //            option4 = true;
+                    //        }
+                    //    }
+                    //    var form_data = new FormData();
+                    //    form_data.append("file", blob);
+                    //    form_data.append("Option1", option1);
+                    //    form_data.append("Option2", option2);
+                    //    form_data.append("Option3", option3);
+                    //    form_data.append("Option4", option4);
+                    //    form_data.append("SingleAnswer", Singleanswer);
+                    //    form_data.append("QuestionNumber", $("#zquestion_QuestionNumber").val());
+                    //    form_data.append("final", $("#zquestion_final").val());
+                    //    form_data.append("QuestionType", $("#zquestion_QuestionType").val());
+                    //    $.ajax({
+                    //        type: "POST",
+                    //        url: "/MCQ/CandidateQuestionsD",
+                    //        data: form_data,
+                    //        contentType: false,
+                    //        enctype: 'multipart/form-data',
+                    //        processData: false,
+                    //        success: function (data) {
+                    //            if (data == "TestSubmit") {
+                    //                window.location.href = "/MCQ/TestComplete?status=" + data;
+                    //            } else {
+                    //                binddata(data);
+                    //            }
+                    //        }
+                    //    });
+                    //}
+                }
+            })
+            .catch(function (err) {
+                console.log(err.name, err.message);
+            });
+    }
+    function ChangeQuestion1(id) {
+        $("#txtfeedbackreting").val(id);
     }
 </script>

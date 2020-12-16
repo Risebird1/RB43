@@ -40,5 +40,28 @@ namespace Risebird.Entities.Enum
         [Display(Name = "Invitation Sent")]
         [Description("Invitation Sent")]
         InvitationSent,
+
+        [Display(Name = "Added")]
+        [Description("Added")]
+        Added,
+
+        [Display(Name = "Updated")]
+        [Description("Updated")]
+        Updated,
+
+        [Display(Name = "Meeting Status")]
+        [Description("Meeting Status")]
+        MeetingStatus,
+
+        [Display(Name = "Interview Status")]
+        [Description("Interview Status")]
+        InterviewStatus,
+
+        [Display(Name = "Called")]
+        [Description("Called")]
+        Called,
+        [Display(Name = "Not Responding")]
+        [Description("Not Responding")]
+        NotResponding,
     }
 }

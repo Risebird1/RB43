@@ -2209,99 +2209,107 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName.Replace("\"", "");
-                    if(profileName=="Client")
+                    if (profileName != null)
                     {
-
-                        var modelList = new List<MeetingVM>();
-
-                        if (Page == null || Page == 0)
+                        profileName = profileName.Replace("\"", "");
+                        if (profileName == "Client")
                         {
-                            Page = 1;
-                        }
-                        int totalMeetings = 0;
-                        var heuristicLevels = (from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
-                                               select (s.GetDescription())).ToArray();
+                            var modelList = new List<MeetingVM>();
 
-                        ViewBag.HeuristicLevels = heuristicLevels;
-
-                        var primarySkills = await _iRFService.GetPrimarySkillFromIRF();
-                        ViewBag.PrimarySkillList = primarySkills;
-                        if (HttpContext.Session.GetString("TalentOnDemandFilter") != null)
-                        {
-                            var filter = JsonConvert.DeserializeObject<TalentOnDemandFilter>(HttpContext.Session.GetString("TalentOnDemandFilter"));
-                            
-                            filter.PrimarySkill = filter.PrimarySkill == null ?  primarySkills.ToArray() :  filter.PrimarySkill;
-                            filter.HeuristicType = filter.HeuristicType == null ? heuristicLevels : filter.HeuristicType;
-
-                            modelList = await _meetingService.GetSharedRiseTubeMeetingsForClientPagedFiltered(Page.Value, string.Join(",", filter.PrimarySkill), string.Join(",", filter.HeuristicType), searchvalue);
-
-                            totalMeetings = await _meetingService.GetSharedIndexMeetingsCountforClientFiltered(string.Join(",", filter.PrimarySkill), string.Join(",", filter.HeuristicType),  searchvalue);
-
-                        }
-                        else
-                        {
-                            modelList = await _meetingService.GetSharedRiseTubeMeetingsPaged(Page.Value, searchvalue, profileName);
-                            totalMeetings = await _meetingService.GetSharedIndexMeetingsCount(searchvalue, profileName);
-                        }
-
-                        foreach (var item in modelList)
-                        {
-
-                            var usernames = item.candidateName.Trim().Split(" ");
-                            var namemodel = String.Empty;
-                            foreach (var name in usernames)
+                            if (Page == null || Page == 0)
                             {
-                                if (name != null && name.Length >= 2)
-                                    namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
-                                else if (name != null && name.Length == 1)
-                                    namemodel = namemodel + name?.ToCharArray()[0];
-
+                                Page = 1;
                             }
-                            item.candidateName = namemodel;
 
-                        }
+                            int totalMeetings = 0;
+                            var heuristicLevels =
+                                (from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                                    select (s.GetDescription())).ToArray();
+
+                            ViewBag.HeuristicLevels = heuristicLevels;
+
+                            var primarySkills = await _iRFService.GetPrimarySkillFromIRF();
+                            ViewBag.PrimarySkillList = primarySkills;
+                            if (HttpContext.Session.GetString("TalentOnDemandFilter") != null)
+                            {
+                                var filter =
+                                    JsonConvert.DeserializeObject<TalentOnDemandFilter>(
+                                        HttpContext.Session.GetString("TalentOnDemandFilter"));
+
+                                filter.PrimarySkill = filter.PrimarySkill == null
+                                    ? primarySkills.ToArray()
+                                    : filter.PrimarySkill;
+                                filter.HeuristicType =
+                                    filter.HeuristicType == null ? heuristicLevels : filter.HeuristicType;
+
+                                modelList = await _meetingService.GetSharedRiseTubeMeetingsForClientPagedFiltered(
+                                    Page.Value, string.Join(",", filter.PrimarySkill),
+                                    string.Join(",", filter.HeuristicType), searchvalue);
+
+                                totalMeetings = await _meetingService.GetSharedIndexMeetingsCountforClientFiltered(
+                                    string.Join(",", filter.PrimarySkill), string.Join(",", filter.HeuristicType),
+                                    searchvalue);
+                            }
+                            else
+                            {
+                                modelList = await _meetingService.GetSharedRiseTubeMeetingsPaged(Page.Value,
+                                    searchvalue, profileName);
+                                totalMeetings =
+                                    await _meetingService.GetSharedIndexMeetingsCount(searchvalue, profileName);
+                            }
+
+                            foreach (var item in modelList)
+                            {
+                                var usernames = item.candidateName.Trim().Split(" ");
+                                var namemodel = String.Empty;
+                                foreach (var name in usernames)
+                                {
+                                    if (name != null && name.Length >= 2)
+                                        namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                    else if (name != null && name.Length == 1)
+                                        namemodel = namemodel + name?.ToCharArray()[0];
+                                }
+
+                                item.candidateName = namemodel;
+                            }
 
 
-                        ViewBag.ProfileName = profileName;
-                        if (!String.IsNullOrEmpty(searchvalue))
-                        {
-                            ViewBag.searchvalue = searchvalue;
+                            ViewBag.ProfileName = profileName;
+                            if (!String.IsNullOrEmpty(searchvalue))
+                            {
+                                ViewBag.searchvalue = searchvalue;
+                            }
+                            else
+                            {
+                                ViewBag.searchvalue = "";
+                            }
+
+                            var remainder = totalMeetings % 12;
+                            if (remainder == 0)
+                            {
+                                ViewBag.Pages = totalMeetings / 12;
+                            }
+                            else
+                            {
+                                ViewBag.Pages = (totalMeetings / 12) + 1;
+                            }
+
+                            ViewBag.Page = Page.Value;
+                            ViewBag.MeetingsCount = totalMeetings;
+                            ViewBag.Remainder = remainder;
+                            return View(modelList);
                         }
                         else
                         {
-                            ViewBag.searchvalue = "";
+                            return RedirectToAction("SignOut", "Session");
                         }
-
-                        var remainder = totalMeetings % 12;
-                        if (remainder == 0)
-                        {
-                            ViewBag.Pages = totalMeetings / 12;
-
-                        }
-                        else
-                        {
-                            ViewBag.Pages = (totalMeetings / 12) + 1;
-
-                        }
-                       
-                        ViewBag.Page = Page.Value;
-                        ViewBag.MeetingsCount = totalMeetings;
-                        ViewBag.Remainder = remainder;
-                        return View(modelList);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-
                     }
                 }
 
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
+                
+               return RedirectToAction("SignOut", "Session");
 
-                }
+                
 
             }
             catch (Exception ex)

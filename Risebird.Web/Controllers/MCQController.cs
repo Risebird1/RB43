@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Authorization;
@@ -26,15 +28,16 @@ namespace Risebird.Web.Controllers
         private readonly INotificationHelper _notificationHelper;
         private ISupportService _supportService;
         private ISkillService _skillService;
-
+        private readonly IAzureStorageHelper _azureStorageHelper;
         #region MCQDetails
-        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService)
+        public MCQController(IConfiguration configuration, IUserRepository userRepository, INotificationHelper notificationHelper, ISupportService supportService, ISkillService skillService, IAzureStorageHelper azureStorageHelper)
         {
             _configuration = configuration;
             _userRepository = userRepository;
             _notificationHelper = notificationHelper;
             _supportService = supportService;
             _skillService = skillService;
+            _azureStorageHelper = azureStorageHelper;
         }
 
         [Authorize]
@@ -97,7 +100,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-        
+        [Authorize]
         [HttpPost]
         public IActionResult Index(InterviewFilter filter)
         {
@@ -117,7 +120,7 @@ namespace Risebird.Web.Controllers
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
-                                     select new { ID = (int)s, Name = s.GetDescription() };
+                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
@@ -155,6 +158,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [Authorize]
         public async Task<IActionResult> ResetMCQFilter()
         {
             try
@@ -212,7 +216,7 @@ namespace Risebird.Web.Controllers
                 {".csv", "text/csv"}
             };
         }
-       
+
         [HttpPost]
         public async Task<JsonResult> UploadQuestions()
         {
@@ -259,7 +263,7 @@ namespace Risebird.Web.Controllers
                             if (i == 0)
                             {
                                 if (reader.GetValue(1).ToString() == "QuestionType" && reader.GetValue(2).ToString() == "Question" && reader.GetValue(3).ToString() == "Option1" && reader.GetValue(4).ToString() == "Option2"
-                                    && reader.GetValue(5).ToString() == "Option3" && reader.GetValue(6).ToString() == "Option4" && reader.GetValue(7).ToString() == "Answer")
+                                    && reader.GetValue(5).ToString() == "Option3" && reader.GetValue(6).ToString() == "Option4" && reader.GetValue(7).ToString() == "Answer" && reader.GetValue(8).ToString() == "Explanation")
                                 {
 
                                 }
@@ -268,30 +272,50 @@ namespace Risebird.Web.Controllers
                                     return Json("File format is invilid, please download templete");
                                 }
                             }
+                            else if (i == 1)
+                            {
+
+                            }
                             else
                             {
-                                if (reader.GetValue(1).ToString() == "" || reader.GetValue(2).ToString() == "" || reader.GetValue(3).ToString() == "" || reader.GetValue(4).ToString() == ""
-                                   || reader.GetValue(5).ToString() == "" || reader.GetValue(6).ToString() == "" || reader.GetValue(7).ToString() == "")
+                                if (reader.GetValue(1) == null || reader.GetValue(2) == null || reader.GetValue(3) == null || reader.GetValue(4) == null
+                                   || reader.GetValue(5) == null || reader.GetValue(6) == null || reader.GetValue(7) == null)
                                 {
-                                    return Json("Question Fileds should not be blank.");
+                                    if (reader.GetValue(1) == null && reader.GetValue(2) == null && reader.GetValue(3) == null && reader.GetValue(4) == null
+                                   && reader.GetValue(5) == null && reader.GetValue(6) == null && reader.GetValue(7) == null)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        return Json("Question Fileds should not be blank.");
+                                    }
                                 }
                                 else
                                 {
-                                    var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                                    _lstMCQ.Add(new MCQVM
+                                    try
                                     {
-                                        PartitionKey = date1,
-                                        RowKey = Guid.NewGuid().ToString(),
-                                        QuestionType = reader.GetValue(1).ToString(),
-                                        Question = reader.GetValue(2).ToString(),
-                                        Option1 = reader.GetValue(3).ToString(),
-                                        Option2 = reader.GetValue(4).ToString(),
-                                        Option3 = reader.GetValue(5).ToString(),
-                                        Option4 = reader.GetValue(6).ToString(),
-                                        Answer = reader.GetValue(7).ToString(),
-                                        Id = _lstset.PartitionKey,
-                                        QuestionNumber = number
-                                    });
+                                        var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                                        _lstMCQ.Add(new MCQVM
+                                        {
+                                            PartitionKey = date1,
+                                            RowKey = Guid.NewGuid().ToString(),
+                                            QuestionType = reader.GetValue(1).ToString(),
+                                            Question = reader.GetValue(2).ToString().Replace("\n", "<br/>"),
+                                            Option1 = reader.GetValue(3).ToString(),
+                                            Option2 = reader.GetValue(4).ToString(),
+                                            Option3 = reader.GetValue(5).ToString(),
+                                            Option4 = reader.GetValue(6).ToString(),
+                                            Answer = reader.GetValue(7).ToString(),
+                                            Explanation = reader.GetValue(8) != null ? reader.GetValue(7).ToString() : "",
+                                            Id = _lstset.PartitionKey,
+                                            QuestionNumber = number
+                                        });
+                                    }
+                                    catch (Exception ex)
+                                    {
+
+                                    }
                                     number++;
                                 }
                             }
@@ -339,6 +363,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Successfully Uploaded");
         }
+        [Authorize]
         public IActionResult Questionpage(string Id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -408,6 +433,7 @@ namespace Risebird.Web.Controllers
             QuestionDetailsList modelset = new QuestionDetailsList();
             modelset._timmerdetails = questionstimmer.Where(x => x.PartitionKey == Id).FirstOrDefault();
             modelset._timmerdetails.Timer = (Convert.ToInt32(modelset._timmerdetails.Timer) * 60).ToString();
+            ViewBag.VideoRecording = itemshareupdate.Videorecording;
             return View(modelset);
         }
         [HttpPost]
@@ -436,8 +462,18 @@ namespace Risebird.Web.Controllers
             return Json(modeldetailset);
         }
         [HttpPost]
-        public async Task<JsonResult> CandidateQuestionsD(bool Option1, bool Option2, bool Option3, bool Option4, string SingleAnswer, int QuestionNumber, string final, string QuestionType)
+        public async Task<JsonResult> CandidateQuestionsD()
         {
+            var Option1 = Convert.ToBoolean(Request.Form["Option1"].ToString());
+            var Option2 = Convert.ToBoolean(Request.Form["Option2"].ToString());
+            var Option3 = Convert.ToBoolean(Request.Form["Option3"].ToString());
+            var Option4 = Convert.ToBoolean(Request.Form["Option4"].ToString());
+            var SingleAnswer = Request.Form["SingleAnswer"].ToString();
+            var QuestionNumber = Convert.ToInt32(Request.Form["QuestionNumber"].ToString());
+            var final = Request.Form["final"].ToString();
+            var QuestionType = Request.Form["QuestionType"].ToString();
+
+
             var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
             var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
             HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
@@ -515,54 +551,80 @@ namespace Risebird.Web.Controllers
                 }
                 break;
             }
+            //if (final == "true")
+            //{
+            //    values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
+            //    var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+            //    var _list = new CandidateDetailsForTest();
+            //    _list.PartitionKey = date;
+            //    _list.RowKey = Guid.NewGuid().ToString();
+            //    _list.Id = values.Id;
+            //    _list.Skills = values.Skills;
+            //    _list.TotalExprience = values.TotalExprience;
+            //    _list.CandidateEmail = values.CandidateEmail;
+            //    _list.ApplyingCompany = values.ApplyingCompany;
+            //    _list.ClientHR = values.ClientHR;
+            //    _list.CandidateScore = resultset.Sum(x => x.Rating);
+            //    _list.TotalQuestions = resultset.Count();
+            //    _list.VideoLink = "";
+            //    if (Request.Form.Files.Count() > 0)
+            //    {
+            //        var file = Request.Form.Files[0];
+            //        var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
+            //        await _azureStorageHelper.InsertBlob(filename, "videos", file);
+            //        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+            //        var blob = containerRef.GetBlockBlobReference(filename);
+            //        string uploadedvideoFileURL = blob.Uri.ToString();
+            //        _list.VideoLink = uploadedvideoFileURL;
+            //    }
+            //    AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            //    await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
+            //    foreach (var item in resultset)
+            //    {
+            //        var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+            //        item.PartitionKey = date1;
+            //        item.RowKey = Guid.NewGuid().ToString();
+            //        item.CandidateID = date;
+            //        await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
+            //    }
+            //    //Send mail to support team
+            //    var HrEmailaddresslist = _supportService.GetAllSupportHR();
+            //    string HrEmailaddress = string.Empty;
+            //    foreach (var item in HrEmailaddresslist)
+            //    {
+            //        if (String.IsNullOrEmpty(HrEmailaddress))
+            //        {
+            //            HrEmailaddress = item.EmailId;
+            //        }
+            //        else
+            //        {
+            //            HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
+            //        }
+            //    }
+            //    int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
+            //    Mail _mail = new Mail
+            //    {
+            //        TO = values.ClientHR,
+            //        CC = HrEmailaddress,
+            //        Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
+            //    };
+            //    var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
+            //    return Json("TestSubmit");
+            //}
             if (final == "true")
             {
-                values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
-                var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                var _list = new CandidateDetailsForTest();
-                _list.PartitionKey = date;
-                _list.RowKey = Guid.NewGuid().ToString();
-                _list.Id = values.Id;
-                _list.Skills = values.Skills;
-                _list.TotalExprience = values.TotalExprience;
-                _list.CandidateEmail = values.CandidateEmail;
-                _list.ApplyingCompany = values.ApplyingCompany;
-                _list.ClientHR = values.ClientHR;
-                _list.CandidateScore = resultset.Sum(x => x.Rating);
-                _list.TotalQuestions = resultset.Count();
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
-                foreach (var item in resultset)
+                if (Request.Form.Files.Count() > 0)
                 {
-                    var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                    item.PartitionKey = date1;
-                    item.RowKey = Guid.NewGuid().ToString();
-                    item.CandidateID = date;
-                    await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
+                    var file = Request.Form.Files[0];
+                    var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
+                    await _azureStorageHelper.InsertBlob(filename, "videos", file);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                    var blob = containerRef.GetBlockBlobReference(filename);
+                    string uploadedvideoFileURL = blob.Uri.ToString();
+                    values.VideoLink = uploadedvideoFileURL;
                 }
-                //Send mail to support team
-                var HrEmailaddresslist = _supportService.GetAllSupportHR();
-                string HrEmailaddress = string.Empty;
-                foreach (var item in HrEmailaddresslist)
-                {
-                    if (String.IsNullOrEmpty(HrEmailaddress))
-                    {
-                        HrEmailaddress = item.EmailId;
-                    }
-                    else
-                    {
-                        HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
-                    }
-                }
-                int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
-                Mail _mail = new Mail
-                {
-                    TO = values.ClientHR,
-                    CC = HrEmailaddress,
-                    Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
-                };
-                var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
-                return Json("TestSubmit");
+                HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
+                return Json("");
             }
             HttpContext.Session.SetString("QuestionSet", JsonConvert.SerializeObject(resultset));
             var questionvalue = QuestionNumber + 1;
@@ -590,9 +652,77 @@ namespace Risebird.Web.Controllers
             ViewBag.Action = status;
             return View();
         }
+        [HttpPost]
+        public async Task<JsonResult> SubmitTest()
+        {
+            var rating = Convert.ToInt32(Request.Form["rating"].ToString());
+            var comments = Request.Form["comments"].ToString();
+
+            var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
+            var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
+            var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+            var _list = new CandidateDetailsForTest();
+            _list.PartitionKey = date;
+            _list.RowKey = Guid.NewGuid().ToString();
+            _list.Id = values.Id;
+            _list.Skills = values.Skills;
+            _list.TotalExprience = values.TotalExprience;
+            _list.CandidateEmail = values.CandidateEmail;
+            _list.ApplyingCompany = values.ApplyingCompany;
+            _list.ClientHR = values.ClientHR;
+            _list.CandidateScore = resultset.Sum(x => x.Rating);
+            _list.TotalQuestions = resultset.Count();
+            _list.VideoLink = values.VideoLink;
+            _list.FeedbackComment = comments;
+            _list.Feedbackreating = rating;
+            if (Request.Form.Files.Count() > 0)
+            {
+                var file = Request.Form.Files[0];
+                var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
+                await _azureStorageHelper.InsertBlob(filename, "videos", file);
+                var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                var blob = containerRef.GetBlockBlobReference(filename);
+                string uploadedvideoFileURL = blob.Uri.ToString();
+                _list.VideoLink = uploadedvideoFileURL;
+            }
+            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
+            foreach (var item in resultset)
+            {
+                var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                item.PartitionKey = date1;
+                item.RowKey = Guid.NewGuid().ToString();
+                item.CandidateID = date;
+                await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
+            }
+            //Send mail to support team
+            var HrEmailaddresslist = _supportService.GetAllSupportHR();
+            string HrEmailaddress = string.Empty;
+            foreach (var item in HrEmailaddresslist)
+            {
+                if (String.IsNullOrEmpty(HrEmailaddress))
+                {
+                    HrEmailaddress = item.EmailId;
+                }
+                else
+                {
+                    HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
+                }
+            }
+            int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
+            Mail _mail = new Mail
+            {
+                TO = values.ClientHR,
+                CC = HrEmailaddress,
+                Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
+            };
+            var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
+            return Json("TestSubmit");
+        }
         #endregion
 
         #region MCQ Actions
+        [Authorize]
         public IActionResult CandidateTestDetails(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -625,8 +755,10 @@ namespace Risebird.Web.Controllers
                                             TotalQuestions = a == null ? 0 : a.TotalQuestions,
                                             PartitionKey = o.PartitionKey,
                                             Sharetime = o.Timestamp.DateTime,
-                                            SameID = o.Id
-
+                                            SameID = o.Id,
+                                            VideoLink = a.VideoLink,
+                                            Feedbackreating = a.Feedbackreating,
+                                            FeedbackComment = a.FeedbackComment
                                         }).ToList();
                     if (profileName == "Client")
                     {
@@ -668,6 +800,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [Authorize]
         [HttpPost]
         public IActionResult CandidateTestDetails(InterviewFilter filter, string id)
         {
@@ -705,7 +838,10 @@ namespace Risebird.Web.Controllers
                                             TotalQuestions = a == null ? 0 : a.TotalQuestions,
                                             PartitionKey = o.PartitionKey,
                                             Sharetime = o.Timestamp.DateTime,
-                                            SameID = o.Id
+                                            SameID = o.Id,
+                                            VideoLink = a.VideoLink,
+                                            Feedbackreating = a.Feedbackreating,
+                                            FeedbackComment = a.FeedbackComment
                                         }).ToList();
                     if (profileName == "Client")
                     {
@@ -783,7 +919,7 @@ namespace Risebird.Web.Controllers
             return Json("success");
         }
         [HttpPost]
-        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail)
+        public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, string videoRecording)
         {
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
             var resultset = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
@@ -803,6 +939,7 @@ namespace Risebird.Web.Controllers
                 _list.MCQSet = details.Title;
                 _list.ClientHR = ClientEmail;
                 _list.ApplyingCompany = ClientName;
+                _list.Videorecording = videoRecording;
                 foreach (var item in Emailids.Split(";"))
                 {
                     var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
