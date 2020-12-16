@@ -886,11 +886,11 @@
             }
             if (data[i].interviewDate > new Date() && data[i].confirmationStatus.trim() != "Cancelled")
                                                     {
-                                                        <td>Scheduled</td>
+                html += '                                        <td>Scheduled</td>';
                                                     }
                                                     else
                                                     {
-                <td> data[i].meetingStatusStatusDesc</td>
+                html += '<td>'+ data[i].meetingStatusStatusDesc+'</td>';
                                                     }
             if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qCInterview > 0 && data[i].qCStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
                 if (data[i].intervieweStatusStatDesc == null) {
