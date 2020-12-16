@@ -432,21 +432,21 @@
             <tr id=@item.imid data-changes="1">
                 <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
                 <td> @item.interviewDate </td>
-                @if (item.IsOnline == 1)
+                @if (item.IsOnline == 1 && item.candidateName.Length > 30)
                 {
                     <td>
-                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>    @item.candidateName </a>
+                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>@item.candidateName.Substring(0, 30)... </a>
                     </td>
                 }
                 else
                 {
 
-                    @if (item.candidateName.Length > 25)
+                    @if (item.candidateName.Length > 30)
                     {
 
 
-                        <td class="cadName">
-                            <a class="candidateName" onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName </a>
+                        <td >
+                            <a  onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0,30)... </a>
                         </td>
                     }
 
