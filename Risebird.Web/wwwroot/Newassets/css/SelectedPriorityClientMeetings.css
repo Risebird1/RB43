@@ -24,7 +24,9 @@ textarea::-webkit-scrollbar-thumb {
 .selected-priority .talk-bubble {
     z-index: 1
 }
-
+.selected-priority .interview-com .talk-bubble {
+    width: 100%
+}
 .wrapper {
     height: auto !important;
 }
@@ -245,6 +247,8 @@ table {
     line-height: 18px;
     font-size: 13px;
     height: 56px;
+    border:0px;
+    background:transparent;
 }
 .selected-priority .talk-bubble .talktext {
     padding: 4px 4px 4px 4px;

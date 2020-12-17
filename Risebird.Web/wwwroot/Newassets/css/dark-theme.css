@@ -1528,6 +1528,11 @@ div.dataTables_wrapper div.dataTables_info {
     background: #1f1e1e!important;
     border: 1px #1f1e1e solid!important;
 }
+.moreless-button {
+    font-weight: 500;
+    color: #fff;
+    text-decoration: underline;
+}
 
     .pagination-container > ul > li a{color:#fff}
     .razorpay_btn button.form-control {
