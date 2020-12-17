@@ -465,12 +465,12 @@
 
 
 
-                @if (item.JDTiltle.Split("|")[0].Length > 20)
+                @if (item.JDTiltle.Split("|")[0].Length > 30)
                 {
 
 
-                    <td class="cadSkill">
-                        <a class="candidateSkill" onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0] </a>
+                    <td >
+                        <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 30)... </a>
                     </td>
                 }
 
@@ -505,6 +505,16 @@
                         </div>
                     </div>
 
+                </td>
+                <td>
+                    <div>
+                        <div class="text show-more-height">
+
+                            @item.InterviewerComment <br />
+                            
+                        <div class="show-more">(Show More)</div>
+                    </div>
+                        </div>
                 </td>
 
 
