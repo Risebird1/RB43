@@ -41,7 +41,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -50,19 +50,21 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
                     AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                    var result = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
-                    var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
+                    var result = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMset>("RisebirdMCQSet");
+                    var questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQquestions");
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
                                       select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
+                    if(questions != null)
+                        return View(resultset);
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
                     resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
 
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
-                    foreach (var item in result)
+                    foreach (var item in result ?? new List<MCQVMset>())
                     {
                         item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
                         item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
@@ -102,7 +104,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Index(InterviewFilter filter)
+        public async Task<IActionResult> Index(InterviewFilter filter)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -115,18 +117,20 @@ namespace Risebird.Web.Controllers
                         HttpContext.Session.SetString("MCQSetList", JsonConvert.SerializeObject(filter));
                     }
                     AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                    var result = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
-                    var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
+                    var result = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMset>("RisebirdMCQSet");
+                    var questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQquestions");
                     var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                      select new { ID = (int)s, Name = s.GetDescription() };
                     var Compentencs = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
                                       select new { ID = (int)s, Name = s.GetDescription() };
                     var skillset = _skillService.GetSkills();
                     var resultset = new MCQDropdowndetails();
+                    if (questions != null)
+                        return View(resultset);
                     resultset._ProfileTypeSkills.ProfileTypeList = new SelectList(Heuristics, "ID", "Name");
                     resultset._ProfileTypeSkills.CompentencyLevelList = new SelectList(Compentencs, "ID", "Name");
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
-                    foreach (var item in result)
+                    foreach (var item in result ?? new List<MCQVMset>())
                     {
                         item.QuestionCount = questions.Where(x => x.Id == item.PartitionKey).Count();
                         item.ProfileTypeName = Enum.GetName(typeof(Heuristicsscorelevel), item.ProfileType);
@@ -173,7 +177,7 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("SignOut", "Session");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -193,6 +197,7 @@ namespace Risebird.Web.Controllers
             memory.Position = 0;
             return File(memory, GetContentType(path), Path.GetFileName(path));
         }
+
         private string GetContentType(string path)
         {
             var types = GetMimeTypes();
@@ -314,7 +319,7 @@ namespace Risebird.Web.Controllers
                                     }
                                     catch (Exception ex)
                                     {
-
+                                        return Json(ex.Message);
                                     }
                                     number++;
                                 }
@@ -328,7 +333,7 @@ namespace Risebird.Web.Controllers
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
                 if (status == "Edit")
                 {
-                    var result = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
+                    var result = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMset>("RisebirdMCQSet");
                     var list = result.Where(x => x.PartitionKey == _lstset.PartitionKey).FirstOrDefault();
                     list.Title = _lstset.Title;
                     list.Timer = _lstset.Timer;
@@ -337,7 +342,9 @@ namespace Risebird.Web.Controllers
                     list.CompentencyLevel = _lstset.CompentencyLevel;
                     list.SecondarySkill = _lstset.SecondarySkill;
                     await _azureTableStorageService.InsertEntity("RisebirdMCQSet", list);
-                    var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
+                    var questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQquestions");
+                    if(questions!= null)
+                        return Json("No questions found.");
                     questions = questions.Where(x => x.Id == partialid).ToList();
                     foreach (var item in questions)
                     {
@@ -348,13 +355,13 @@ namespace Risebird.Web.Controllers
                 {
                     await _azureTableStorageService.InsertEntity("RisebirdMCQSet", _lstset);
                 }
-                foreach (var item in _lstMCQ)
+                foreach (var item in _lstMCQ ?? new List<MCQVM>())
                 {
                     try
                     {
                         await _azureTableStorageService.InsertEntity("RisebirdMCQquestions", item);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                     }
@@ -363,8 +370,9 @@ namespace Risebird.Web.Controllers
             }
             return Json("Successfully Uploaded");
         }
+
         [Authorize]
-        public IActionResult Questionpage(string Id)
+        public async Task<IActionResult> Questionpage(string Id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -373,7 +381,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
                     AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                    var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
+                    var questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQquestions");
                     var model = questions.Where(x => x.Id == Id).OrderBy(x => x.QuestionNumber).ToList();
                     return View(model);
                 }
@@ -387,6 +395,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         #endregion
 
         #region CandidateSkillTest
@@ -405,7 +414,7 @@ namespace Risebird.Web.Controllers
                 return View("SkillTest", values);
             }
             AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-            var candidateShare = _azureTableStorageService.GetAllEntities<MCQVMShare>("RisebirdMCQShareList");
+            var candidateShare = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMShare>("RisebirdMCQShareList");
             if (candidateShare.Where(x => x.EmailAddress.ToUpper() == values.CandidateEmail.ToUpper() && x.Id == Id).Count() == 0)
             {
                 return RedirectToAction("TestComplete", new { status = "Unauthorized" });
@@ -416,14 +425,14 @@ namespace Risebird.Web.Controllers
 
             values.ApplyingCompany = itemshareupdate.ApplyingCompany;
             values.ClientHR = itemshareupdate.ClientHR;
-            var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
+            var candidateDetails = await _azureTableStorageService.GetAllEntitiesAsync<CandidateDetailsForTest>("RisebirdMCQCandidate");
             if (candidateDetails.Where(x => x.Id == Id && x.CandidateEmail.ToUpper() == values.CandidateEmail.ToUpper()).Count() > 0)
             {
                 return RedirectToAction("TestComplete", new { status = "TestCompleted" });
             }
             HttpContext.Session.SetString("TestCandidateDetails", JsonConvert.SerializeObject(values));
-            var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQquestions");
-            var questionstimmer = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
+            var questions = await _azureTableStorageService.GetAllEntitiesAsync<MCQVM>("RisebirdMCQquestions");
+            var questionstimmer = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMset>("RisebirdMCQSet");
             var model = questions.Where(x => x.Id == Id).OrderBy(x => x.QuestionNumber).ToList();
             foreach (var item in model)
             {
@@ -551,66 +560,8 @@ namespace Risebird.Web.Controllers
                 }
                 break;
             }
-            //if (final == "true")
-            //{
-            //    values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
-            //    var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-            //    var _list = new CandidateDetailsForTest();
-            //    _list.PartitionKey = date;
-            //    _list.RowKey = Guid.NewGuid().ToString();
-            //    _list.Id = values.Id;
-            //    _list.Skills = values.Skills;
-            //    _list.TotalExprience = values.TotalExprience;
-            //    _list.CandidateEmail = values.CandidateEmail;
-            //    _list.ApplyingCompany = values.ApplyingCompany;
-            //    _list.ClientHR = values.ClientHR;
-            //    _list.CandidateScore = resultset.Sum(x => x.Rating);
-            //    _list.TotalQuestions = resultset.Count();
-            //    _list.VideoLink = "";
-            //    if (Request.Form.Files.Count() > 0)
-            //    {
-            //        var file = Request.Form.Files[0];
-            //        var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
-            //        await _azureStorageHelper.InsertBlob(filename, "videos", file);
-            //        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-            //        var blob = containerRef.GetBlockBlobReference(filename);
-            //        string uploadedvideoFileURL = blob.Uri.ToString();
-            //        _list.VideoLink = uploadedvideoFileURL;
-            //    }
-            //    AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-            //    await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
-            //    foreach (var item in resultset)
-            //    {
-            //        var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-            //        item.PartitionKey = date1;
-            //        item.RowKey = Guid.NewGuid().ToString();
-            //        item.CandidateID = date;
-            //        await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
-            //    }
-            //    //Send mail to support team
-            //    var HrEmailaddresslist = _supportService.GetAllSupportHR();
-            //    string HrEmailaddress = string.Empty;
-            //    foreach (var item in HrEmailaddresslist)
-            //    {
-            //        if (String.IsNullOrEmpty(HrEmailaddress))
-            //        {
-            //            HrEmailaddress = item.EmailId;
-            //        }
-            //        else
-            //        {
-            //            HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
-            //        }
-            //    }
-            //    int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
-            //    Mail _mail = new Mail
-            //    {
-            //        TO = values.ClientHR,
-            //        CC = HrEmailaddress,
-            //        Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
-            //    };
-            //    var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
-            //    return Json("TestSubmit");
-            //}
+               
+            
             if (final == "true")
             {
                 if (Request.Form.Files.Count() > 0)
@@ -655,90 +606,100 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> SubmitTest()
         {
-            var rating = Convert.ToInt32(Request.Form["rating"].ToString());
-            var comments = Request.Form["comments"].ToString();
+            try
+            {
+                var rating = Convert.ToInt32(Request.Form["rating"].ToString());
+                var comments = Request.Form["comments"].ToString();
 
-            var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
-            var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
-            var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-            var _list = new CandidateDetailsForTest();
-            _list.PartitionKey = date;
-            _list.RowKey = Guid.NewGuid().ToString();
-            _list.Id = values.Id;
-            _list.Skills = values.Skills;
-            _list.TotalExprience = values.TotalExprience;
-            _list.CandidateEmail = values.CandidateEmail;
-            _list.ApplyingCompany = values.ApplyingCompany;
-            _list.ClientHR = values.ClientHR;
-            _list.CandidateScore = resultset.Sum(x => x.Rating);
-            _list.TotalQuestions = resultset.Count();
-            _list.VideoLink = values.VideoLink;
-            _list.FeedbackComment = comments;
-            _list.Feedbackreating = rating;
-            if (Request.Form.Files.Count() > 0)
-            {
-                var file = Request.Form.Files[0];
-                var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
-                await _azureStorageHelper.InsertBlob(filename, "videos", file);
-                var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                var blob = containerRef.GetBlockBlobReference(filename);
-                string uploadedvideoFileURL = blob.Uri.ToString();
-                _list.VideoLink = uploadedvideoFileURL;
-            }
-            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-            await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
-            foreach (var item in resultset)
-            {
-                var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                item.PartitionKey = date1;
-                item.RowKey = Guid.NewGuid().ToString();
-                item.CandidateID = date;
-                await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
-            }
-            //Send mail to support team
-            var HrEmailaddresslist = _supportService.GetAllSupportHR();
-            string HrEmailaddress = string.Empty;
-            foreach (var item in HrEmailaddresslist)
-            {
-                if (String.IsNullOrEmpty(HrEmailaddress))
+                var resultset = JsonConvert.DeserializeObject<List<MCQVM>>(HttpContext.Session.GetString("QuestionSet"));
+                var values = JsonConvert.DeserializeObject<CandidateDetailsForTest>(HttpContext.Session.GetString("TestCandidateDetails"));
+                var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                var _list = new CandidateDetailsForTest();
+                _list.PartitionKey = date;
+                _list.RowKey = Guid.NewGuid().ToString();
+                _list.Id = values.Id;
+                _list.Skills = values.Skills;
+                _list.TotalExprience = values.TotalExprience;
+                _list.CandidateEmail = values.CandidateEmail;
+                _list.ApplyingCompany = values.ApplyingCompany;
+                _list.ClientHR = values.ClientHR;
+                _list.CandidateScore = resultset.Sum(x => x.Rating);
+                _list.TotalQuestions = resultset.Count();
+                _list.VideoLink = values.VideoLink;
+                _list.FeedbackComment = comments;
+                _list.Feedbackreating = rating;
+                if (Request.Form.Files.Count() > 0)
                 {
-                    HrEmailaddress = item.EmailId;
+                    var file = Request.Form.Files[0];
+                    var filename = values.CandidateEmail.Split("@")[0].ToString() + "_" + Guid.NewGuid().ToString() + ".mp4";
+                    await _azureStorageHelper.InsertBlob(filename, "videos", file);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                    var blob = containerRef.GetBlockBlobReference(filename);
+                    string uploadedvideoFileURL = blob.Uri.ToString();
+                    _list.VideoLink = uploadedvideoFileURL;
                 }
-                else
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                await _azureTableStorageService.InsertEntity("RisebirdMCQCandidate", _list);
+                foreach (var item in resultset)
                 {
-                    HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
+                    var date1 = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                    item.PartitionKey = date1;
+                    item.RowKey = Guid.NewGuid().ToString();
+                    item.CandidateID = date;
+                    await _azureTableStorageService.InsertEntity("RisebirdMCQCandidateQuestions", item);
                 }
+                //Send mail to support team
+                var HrEmailaddresslist = _supportService.GetAllSupportHR();
+                string HrEmailaddress = string.Empty;
+                foreach (var item in HrEmailaddresslist)
+                {
+                    if (String.IsNullOrEmpty(HrEmailaddress))
+                    {
+                        HrEmailaddress = item.EmailId;
+                    }
+                    else
+                    {
+                        HrEmailaddress = HrEmailaddress + ";" + item.EmailId;
+                    }
+                }
+                int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
+                Mail _mail = new Mail
+                {
+                    TO = values.ClientHR,
+                    CC = HrEmailaddress,
+                    Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
+                };
+                var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
+                return Json("TestSubmit");
             }
-            int candidatescore = ((resultset.Sum(x => x.Rating) * 100) / resultset.Count());
-            Mail _mail = new Mail
+            catch(Exception)
             {
-                TO = values.ClientHR,
-                CC = HrEmailaddress,
-                Subject = "Candidate " + values.CandidateEmail + " Completed Test for " + values.ApplyingCompany
-            };
-            var resultretrun = _notificationHelper.CandidateCompleteTestLink(_mail, values.CandidateEmail, values.ApplyingCompany, candidatescore);
-            return Json("TestSubmit");
+                return Json("Failed to submit Test");
+            }
         }
         #endregion
 
         #region MCQ Actions
         [Authorize]
-        public IActionResult CandidateTestDetails(string id)
+        public async Task<IActionResult> CandidateTestDetails(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var isclient = false;
                 var clientname = string.Empty;
+                var candidateset = new List<CandidateDetailsForTestDuplicate>();
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
                     AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                    var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
-                    var candidate = _azureTableStorageService.GetAllEntities<MCQVMShare>("RisebirdMCQShareList");
-                    candidate = candidate.Where(x => x.Id == id).ToList();
-                    candidateDetails = candidateDetails.Where(x => x.Id == id).ToList();
-                    var candidateset = (from o in candidate
+                    var candidateDetails = await _azureTableStorageService.GetAllEntitiesAsync<CandidateDetailsForTest>("RisebirdMCQCandidate");
+                    var candidate = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMShare>("RisebirdMCQShareList");
+                    if (candidateDetails != null && candidate != null)
+                    {
+                        candidate = candidate.Where(x => x.Id == id).ToList();
+                        candidateDetails = candidateDetails.Where(x => x.Id == id).ToList();
+                        candidateset = (from o in candidate
                                         join a in candidateDetails
                                         on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
                                         into temp
@@ -760,34 +721,42 @@ namespace Risebird.Web.Controllers
                                             Feedbackreating = a == null ? 0 : a.Feedbackreating,
                                             FeedbackComment = a == null ? "" : a.FeedbackComment
                                         }).ToList();
-                    if (profileName == "Client")
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var client = _userRepository.GetClientUserDetails(emailid);
-                        clientname = client.Result.ClientName.ToUpper();
-                        isclient = true;
-                        candidateset = candidateset.Where(x => x.ApplyingCompany.ToUpper() == clientname).ToList();
-                    }
-                    if (HttpContext.Session.GetString("MCQCandidateList") != null)
-                    {
-                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("MCQCandidateList"));
-                        if (filter.StartDate != null && filter.EndDate != null)
+                        if (candidateset != null)
                         {
-                            candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
-                        }
-                        if (profileName != "Client")
-                        {
-                            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = candidateset.Select(x => x.ClientHR).ToArray() : filter.ClientHR = filter.ClientHR;
-                            filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = candidateset.Select(x => x.ApplyingCompany).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
-                            candidateset = candidateset.Where(c => (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHR) : c.ClientHR == null)
-                                    && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ApplyingCompany) : c.ApplyingCompany == null)).ToList();
+                            if (profileName == "Client")
+                            {
+                                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                                emailid = emailid.Replace("\"", "");
+                                var client = _userRepository.GetClientUserDetails(emailid);
+                                if (client != null)
+                                {
+                                    clientname = client.Result.ClientName.ToUpper();
+                                    isclient = true;
+                                    candidateset = candidateset.Where(x => x.ApplyingCompany.ToUpper() == clientname).ToList();
+                                }
+                            }
+                            if (HttpContext.Session.GetString("MCQCandidateList") != null)
+                            {
+                                var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("MCQCandidateList"));
+                                if (filter.StartDate != null && filter.EndDate != null)
+                                {
+                                    candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
+                                }
+                                if (profileName != "Client")
+                                {
+                                    filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = candidateset.Select(x => x.ClientHR).ToArray() : filter.ClientHR = filter.ClientHR;
+                                    filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = candidateset.Select(x => x.ApplyingCompany).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                                    candidateset = candidateset.Where(c => (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHR) : c.ClientHR == null)
+                                            && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ApplyingCompany) : c.ApplyingCompany == null)).ToList();
+                                }
+                            }
+                            ViewBag.ID = id;
+                            ViewBag.Isclient = isclient;
+                            ViewBag.Clients = candidateset.Select(x => x.ApplyingCompany).Distinct().ToList();
+                            ViewBag.ClientHR = candidateset.Select(x => x.ClientHR).Distinct().ToList();
+                            return View(candidateset);
                         }
                     }
-                    ViewBag.ID = id;
-                    ViewBag.Isclient = isclient;
-                    ViewBag.Clients = candidateset.Select(x => x.ApplyingCompany).Distinct().ToList();
-                    ViewBag.ClientHR = candidateset.Select(x => x.ClientHR).Distinct().ToList();
                     return View(candidateset);
                 }
                 else
@@ -800,14 +769,16 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         [Authorize]
         [HttpPost]
-        public IActionResult CandidateTestDetails(InterviewFilter filter, string id)
+        public async Task<IActionResult> CandidateTestDetails(InterviewFilter filter, string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var isclient = false;
                 var clientname = string.Empty;
+                var candidateset = new List<CandidateDetailsForTestDuplicate>();
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
@@ -817,56 +788,66 @@ namespace Risebird.Web.Controllers
                         HttpContext.Session.SetString("MCQCandidateList", JsonConvert.SerializeObject(filter));
                     }
                     AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                    var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
-                    var candidate = _azureTableStorageService.GetAllEntities<MCQVMShare>("RisebirdMCQShareList");
-                    candidate = candidate.Where(x => x.Id == id).ToList();
-                    candidateDetails = candidateDetails.Where(x => x.Id == id).ToList();
-                    var candidateset = (from o in candidate
-                                        join a in candidateDetails
-                                        on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
-                                        into temp
-                                        from a in temp.DefaultIfEmpty()
-                                        select new CandidateDetailsForTestDuplicate
-                                        {
-                                            CandidateEmail = o.EmailAddress,
-                                            ClientHR = o.ClientHR,
-                                            ApplyingCompany = o.ApplyingCompany,
-                                            TotalExprience = a == null ? "" : a.TotalExprience,
-                                            Skills = a == null ? "" : a.Skills,
-                                            Id = a == null ? "" : a.PartitionKey,
-                                            CandidateScore = a == null ? 0 : a.CandidateScore,
-                                            TotalQuestions = a == null ? 0 : a.TotalQuestions,
-                                            PartitionKey = o.PartitionKey,
-                                            Sharetime = o.Timestamp.DateTime,
-                                            SameID = o.Id,
-                                            VideoLink = a.VideoLink,
-                                            Feedbackreating = a.Feedbackreating,
-                                            FeedbackComment = a.FeedbackComment
-                                        }).ToList();
-                    if (profileName == "Client")
+                    var candidateDetails = await _azureTableStorageService.GetAllEntitiesAsync<CandidateDetailsForTest>("RisebirdMCQCandidate");
+                    var candidate = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMShare>("RisebirdMCQShareList");
+                    if (candidateDetails != null && candidate != null)
                     {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var client = _userRepository.GetClientUserDetails(emailid);
-                        clientname = client.Result.ClientName.ToUpper();
-                        isclient = true;
-                        candidateset = candidateset.Where(x => x.ApplyingCompany.ToUpper() == clientname).ToList();
+                        candidate = candidate.Where(x => x.Id == id).ToList();
+                        candidateDetails = candidateDetails.Where(x => x.Id == id).ToList();
+                         candidateset = (from o in candidate
+                                            join a in candidateDetails
+                                            on o.EmailAddress.ToUpper() equals a.CandidateEmail.ToUpper()
+                                            into temp
+                                            from a in temp.DefaultIfEmpty()
+                                            select new CandidateDetailsForTestDuplicate
+                                            {
+                                                CandidateEmail = o.EmailAddress,
+                                                ClientHR = o.ClientHR,
+                                                ApplyingCompany = o.ApplyingCompany,
+                                                TotalExprience = a == null ? "" : a.TotalExprience,
+                                                Skills = a == null ? "" : a.Skills,
+                                                Id = a == null ? "" : a.PartitionKey,
+                                                CandidateScore = a == null ? 0 : a.CandidateScore,
+                                                TotalQuestions = a == null ? 0 : a.TotalQuestions,
+                                                PartitionKey = o.PartitionKey,
+                                                Sharetime = o.Timestamp.DateTime,
+                                                SameID = o.Id,
+                                                VideoLink = a == null ? "" : a.VideoLink,
+                                                Feedbackreating = a == null ? 0 : a.Feedbackreating,
+                                                FeedbackComment = a == null ? "" : a.FeedbackComment
+                                            }).ToList();
+                        if (candidateset != null)
+                        {
+                            if (profileName == "Client")
+                            {
+                                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                                emailid = emailid.Replace("\"", "");
+                                var client = _userRepository.GetClientUserDetails(emailid);
+                                if (client != null)
+                                {
+                                    clientname = client.Result.ClientName.ToUpper();
+                                    isclient = true;
+                                    candidateset = candidateset.Where(x => x.ApplyingCompany.ToUpper() == clientname).ToList();
+                                }
+                            }
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
+                            }
+                            if (profileName != "Client")
+                            {
+                                filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = candidateset.Select(x => x.ClientHR).ToArray() : filter.ClientHR = filter.ClientHR;
+                                filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = candidateset.Select(x => x.ApplyingCompany).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                                candidateset = candidateset.Where(c => (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHR) : c.ClientHR == null)
+                                        && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ApplyingCompany) : c.ApplyingCompany == null)).ToList();
+                            }
+                            ViewBag.ID = id;
+                            ViewBag.Isclient = isclient;
+                            ViewBag.Clients = candidateset.Select(x => x.ApplyingCompany).Distinct().ToList();
+                            ViewBag.ClientHR = candidateset.Select(x => x.ClientHR).Distinct().ToList();
+                            return View(candidateset);
+                        }
                     }
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        candidateset = candidateset.Where(t => t.Sharetime >= filter.StartDate && t.Sharetime <= filter.EndDate).ToList();
-                    }
-                    if (profileName != "Client")
-                    {
-                        filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = candidateset.Select(x => x.ClientHR).ToArray() : filter.ClientHR = filter.ClientHR;
-                        filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = candidateset.Select(x => x.ApplyingCompany).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
-                        candidateset = candidateset.Where(c => (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHR) : c.ClientHR == null)
-                                && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.ApplyingCompany) : c.ApplyingCompany == null)).ToList();
-                    }
-                    ViewBag.ID = id;
-                    ViewBag.Isclient = isclient;
-                    ViewBag.Clients = candidateset.Select(x => x.ApplyingCompany).Distinct().ToList();
-                    ViewBag.ClientHR = candidateset.Select(x => x.ClientHR).Distinct().ToList();
                     return View(candidateset);
                 }
                 else
@@ -879,6 +860,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
         public IActionResult ResetMCQCandidateFilter(string id)
         {
             try
@@ -893,7 +875,7 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("SignOut", "Session");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -902,58 +884,80 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> DeleteCandidate(string id, string indexid)
         {
-            //validation
-            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-            var candidate = _azureTableStorageService.GetAllEntities<MCQVMShare>("RisebirdMCQShareList");
-            var candidatemodel = candidate.Where(x => x.PartitionKey == id).FirstOrDefault();
-            await _azureTableStorageService.DeleteEntity("RisebirdMCQShareList", candidatemodel);
-            var candidateDetails = _azureTableStorageService.GetAllEntities<CandidateDetailsForTest>("RisebirdMCQCandidate");
-            var model = candidateDetails.Where(x => x.PartitionKey == indexid).FirstOrDefault();
-            await _azureTableStorageService.DeleteEntity("RisebirdMCQCandidate", model);
-            var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQCandidateQuestions");
-            questions = questions.Where(x => x.CandidateID == indexid).ToList();
-            foreach (var item in questions)
+            try
             {
-                await _azureTableStorageService.DeleteEntity("RisebirdMCQCandidateQuestions", item);
+                //validation
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                var candidate = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMShare>("RisebirdMCQShareList");
+                var candidatemodel = candidate?.Where(x => x.PartitionKey == id).FirstOrDefault();
+                if (candidatemodel != null)
+                {
+                    await _azureTableStorageService.DeleteEntity("RisebirdMCQShareList", candidatemodel);
+                    var candidateDetails = await _azureTableStorageService.GetAllEntitiesAsync<CandidateDetailsForTest>("RisebirdMCQCandidate");
+                    var model = candidateDetails?.Where(x => x.PartitionKey == indexid).FirstOrDefault();
+                    if (model != null)
+                    {
+                        await _azureTableStorageService.DeleteEntity("RisebirdMCQCandidate", model);
+                        var questions = _azureTableStorageService.GetAllEntities<MCQVM>("RisebirdMCQCandidateQuestions");
+                        questions = questions.Where(x => x.CandidateID == indexid).ToList();
+                        foreach (var item in questions ?? new List<MCQVM>())
+                        {
+                            await _azureTableStorageService.DeleteEntity("RisebirdMCQCandidateQuestions", item);
+                        }
+                        return Json("success");
+                    }                   
+                }
+                return Json("failed to delete");
             }
-            return Json("success");
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
         }
+
         [HttpPost]
         public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, string videoRecording)
         {
-            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-            var resultset = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
-            var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
-            var timmer = details.Timer + " min";
-            string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest/" + Id;
-            Mail _mail = new Mail
+            try
             {
-                TO = Emailids,
-                Subject = "Invitation for " + details.Title + " : " + ClientName
-            };
-            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName);
-            if (result.Contains("Mail sent successfully"))
-            {
-                MCQVMShare _list = new MCQVMShare();
-                _list.status = "0";
-                _list.MCQSet = details.Title;
-                _list.ClientHR = ClientEmail;
-                _list.ApplyingCompany = ClientName;
-                _list.Videorecording = videoRecording;
-                foreach (var item in Emailids.Split(";"))
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                var resultset = await _azureTableStorageService.GetAllEntitiesAsync<MCQVMset>("RisebirdMCQSet");
+                var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
+                var timmer = details.Timer + " min";
+                string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest/" + Id;
+                Mail _mail = new Mail
                 {
-                    var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                    _list.PartitionKey = date;
-                    _list.RowKey = Guid.NewGuid().ToString();
-                    _list.Id = Id;
-                    _list.EmailAddress = item;
-                    await _azureTableStorageService.InsertEntity("RisebirdMCQShareList", _list);
+                    TO = Emailids,
+                    Subject = "Invitation for " + details.Title + " : " + ClientName
+                };
+                var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName);
+                if (result.Contains("Mail sent successfully"))
+                {
+                    MCQVMShare _list = new MCQVMShare();
+                    _list.status = "0";
+                    _list.MCQSet = details.Title;
+                    _list.ClientHR = ClientEmail;
+                    _list.ApplyingCompany = ClientName;
+                    _list.Videorecording = videoRecording;
+                    foreach (var item in Emailids.Split(";"))
+                    {
+                        var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                        _list.PartitionKey = date;
+                        _list.RowKey = Guid.NewGuid().ToString();
+                        _list.Id = Id;
+                        _list.EmailAddress = item;
+                        await _azureTableStorageService.InsertEntity("RisebirdMCQShareList", _list);
+                    }
+                    return Json("success");
                 }
-                return Json("success");
+                else
+                {
+                    return Json("Fail");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return Json("Fail");
+                return Json(ex.Message);
             }
         }
         #endregion
