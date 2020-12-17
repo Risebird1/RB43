@@ -248,7 +248,7 @@
 
 
 
-                                                    @if (item.CandidateEmailId.Length > 15)
+                                                    @if (item.CandidateEmailId.Length > 20)
                                                     {
 
 
@@ -332,8 +332,11 @@
                                                                                         <div class="DayDigit">@status.Date</div>
                                                                                         <div class="Day">
                                                                                             @status.Day
-                                                                                            <div class="MonthYear">@status.StatusDate</div>
+                                                                                            <div class="MonthYear">
+                                                                                                @status.StatusDate<br /><i class="fa fa-clock" style="font-size:14px;"></i> @status.Time
+                                                                                                                                                                                    </div>
                                                                                         </div>
+                                                                                        
                                                                                     </div>
                                                                                     <div class="eventTitle">@status.Status</div>
                                                                                 </div>
@@ -680,8 +683,8 @@
 
 
     $(".candidateEmail").each(function () {
-        if ($(this).text().length > 15) {
-            $(this).text($(this).text().substr(0, 15) + "...")
+        if ($(this).text().length > 20) {
+            $(this).text($(this).text().substr(0, 20) + "...")
 
             $('[role="data-tooltip"]').css("visibility", "visible");
 
