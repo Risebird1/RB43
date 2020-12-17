@@ -15,6 +15,7 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7143,9 +7144,10 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            string fileName = model.InterviewId.ToString() + "_InterviewAudio.wav";
+                            await _azureStorageHelper.InsertBlob(fileName, "audios", model.AudioFile);
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            var blob = containerRef.GetBlockBlobReference(fileName);
                             string uploadedaudioFileURL = blob.Uri.ToString();
                             if (uploadedaudioFileURL == null)
                             {
@@ -7157,7 +7159,6 @@ namespace Risebird.Web.Controllers
                                 model.AudioFileUrl = uploadedaudioFileURL;
                             }
                         }
-
 
                         var path = $"http://localhost:7071/api/SpeechToTextService";
                         //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";

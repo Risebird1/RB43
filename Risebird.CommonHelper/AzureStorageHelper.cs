@@ -1127,6 +1127,20 @@ namespace Risebird.CommonHelper
 
         //#endregion
 
+        public CloudBlob GetBlobDataAsBlob(string containerName, string fileName)
+        {
+            try
+            {
+                CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
+                CloudBlob blob = blobContainer.GetBlobReference(fileName);
+
+                return blob;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 
 }

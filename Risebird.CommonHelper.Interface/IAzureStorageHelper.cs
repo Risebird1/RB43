@@ -31,6 +31,7 @@ namespace Risebird.CommonHelper.Interface
         Task<bool> CheckBlobContainerFile(string vhdName, string containerName);
         string GetBlobData(string containerName, string fileName);
         void InsertBatchInTable(string tableName, TableBatchOperation tableBatchOperation);
+        CloudBlob GetBlobDataAsBlob(string containerName, string fileName);
         //string UploadVideo(string filename);
         //Task<string> UploadVideoAsset(string filePath);
 
