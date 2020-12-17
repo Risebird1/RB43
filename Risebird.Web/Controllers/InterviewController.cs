@@ -7125,70 +7125,71 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        //[Authorize]
-        //[HttpPost]
-        //[DisableRequestSizeLimit]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> UploadAudio(CandidateAudio model)
-        //{
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadInterviewAudio(SpeechToTextDTO model)
+        {
 
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("email") != null &&
-        //            HttpContext.Session.GetString("profileName") != null)
-        //        {
-        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-        //            profileName = profileName.Replace("\"", "");
-        //            if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
-        //            {
-        //                if (model.AudioFile != null)
-        //                {
-        //                    await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-        //                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-        //                    var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-        //                    string uploadedaudioFileURL = blob.Uri.ToString();
-        //                    if (uploadedaudioFileURL == null)
-        //                    {
-        //                        ModelState.AddModelError(string.Empty, "Audio Upload failed.");
-        //                        return View("UploadAudio", model);
-        //                    }
-        //                    else
-        //                    {
-        //                        model.AudioFileLink = uploadedaudioFileURL;
-        //                    }
-        //                }
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (model.AudioFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                return View("UploadInterviewAudio", model);
+                            }
+                            else
+                            {
+                                model.AudioFileUrl = uploadedaudioFileURL;
+                            }
+                        }
 
-        //                var emailid = HttpContext.Session.GetString("email")?.Trim();
-        //                emailid = emailid.Replace("\"", "");
 
-        //                if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
-        //                {
-        //                    TempData["SuccessErrorMessageUploadAudio"] = "Audio uploaded successfully";
-        //                    return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
-        //                }
-        //                else
-        //                {
-        //                    TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
-        //                    return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
-        //                }
-        //            }
-        //            else
-        //            {
-        //                return RedirectToAction("SignOut", "Session");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("SignOut", "Session");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
-        //        return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
-        //    }
-        //}
+                        var path = $"http://localhost:7071/api/SpeechToTextService";
+                        //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                        //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+
+                        HttpClient httpClient = new HttpClient();
+                        //httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                        httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken);
+
+                        TempData["SuccessErrorMessageUploadSpeechAudio"] = "Audio uploaded successfully.";
+                        return RedirectToAction("Index");
+
+                        
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageUploadSpeechAudio"] = "Audio Upload failed.";
+                return RedirectToAction("Index");
+            }
+        }
 
     }
 }
