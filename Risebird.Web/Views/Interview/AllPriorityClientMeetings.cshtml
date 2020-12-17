@@ -483,19 +483,19 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    @if (item.candidateName.Length > 20)
+                                                                    @if (item.candidateName.Length > 22)
                                                                     {
 
 
-                                                                        <td>
-                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 20)...  </a>
+                                                                        <td class="cadName">
+                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 22)...  </a>
                                                                         </td>
                                                                     }
 
 
                                                                     else
                                                                     {
-                                                                        <td>
+                                                                        <td class="cadName">
                                                                             <a onclick=""><span class="dot"></span> @item.candidateName </a>
                                                                         </td>
                                                                     }
@@ -507,36 +507,36 @@
 
 
 
-                                                                @if (item.candidateEmail.Length > 23)
+                                                                @if (item.candidateEmail.Length > 25)
                                                                 {
 
 
-                                                                    <td>
-                                                                        <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 23)... </a>
+                                                                    <td class="cadEmail">
+                                                                        <a onclick="" data-tooltip="@item.candidateEmail"> @item.candidateEmail.Substring(0, 25)... </a>
                                                                     </td>
                                                                 }
 
 
                                                                 else
                                                                 {
-                                                                    <td>
+                                                                    <td class="cadEmail">
                                                                         <a onclick=""> @item.candidateEmail </a>
                                                                     </td>
                                                                 }
 
-                                                                @if (item.JDTiltle.Split("|")[0].Length > 13)
+                                                                @if (item.JDTiltle.Split("|")[0].Length >18)
                                                                 {
 
 
                                                                     <td class="cadSkill">
-                                                                        <a class="candidateSkill" onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0] </a>
+                                                                        <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 18)... </a>
                                                                     </td>
                                                                 }
 
 
                                                                 else
                                                                 {
-                                                                    <td>
+                                                                    <td  class="cadSkill">
                                                                         <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
                                                                     </td>
                                                                 }
@@ -881,7 +881,19 @@
             } else {
                 html += '<td>' + data[i].candidateEmail + '</td>';
             }
-            html += '<td> ' + data[i].jdTiltle.split("|")[0] + ' </td>';
+           
+
+
+            if (data[i].jdTiltle.split("|")[0].length > 18) {
+                html += '<td title="' + + data[i].jdTiltle.split("|")[0] + '">' + data[i].jdTiltle.split("|")[0].substring(0, 18) + '...</td>';
+            } else {
+                html += '<td>' + data[i].jdTiltle.split("|")[0] + '</td>';
+            }
+
+
+
+
+
             if (data[i].confirmationStatus.trim() == "Cancelled") {
                 html += '<td class="text-center"><a><span class="status-cancel"> ' + data[i].confirmationStatus + '</span></a></td>';
             }
