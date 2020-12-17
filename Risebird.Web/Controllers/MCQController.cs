@@ -757,7 +757,7 @@ namespace Risebird.Web.Controllers
                                             Sharetime = o.Timestamp.DateTime,
                                             SameID = o.Id,
                                             VideoLink = a == null ? "" : a.VideoLink,
-                                            Feedbackreating = a == null ? 0: a.Feedbackreating,
+                                            Feedbackreating = a == null ? 0 : a.Feedbackreating,
                                             FeedbackComment = a == null ? "" : a.FeedbackComment
                                         }).ToList();
                     if (profileName == "Client")
