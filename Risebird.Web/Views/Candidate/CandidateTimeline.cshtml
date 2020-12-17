@@ -248,7 +248,7 @@
 
 
 
-                                                    @if (item.CandidateEmailId.Length > 15)
+                                                    @if (item.CandidateEmailId.Length > 20)
                                                     {
 
 
@@ -683,8 +683,8 @@
 
 
     $(".candidateEmail").each(function () {
-        if ($(this).text().length > 15) {
-            $(this).text($(this).text().substr(0, 15) + "...")
+        if ($(this).text().length > 20) {
+            $(this).text($(this).text().substr(0, 20) + "...")
 
             $('[role="data-tooltip"]').css("visibility", "visible");
 
