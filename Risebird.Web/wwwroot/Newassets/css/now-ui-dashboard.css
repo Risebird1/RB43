@@ -3726,7 +3726,7 @@ Created using IcoMoon - icomoon.io
 .table > thead > tr > td,
 .table > tbody > tr > td,
 .table > tfoot > tr > td {
-    padding: 12px 7px;
+    padding: 12px 5px;
     vertical-align: middle;
 }
 
@@ -15857,88 +15857,95 @@ be a descendant of the grid when it is being dragged.
         -webkit-overflow-scrolling: touch;
     }
 
-    @media screen and (max-width: 768px) {
-        [class*="pr-"] {
-            padding-right: 15px !important;
+
+
+
+
+
+
+
+        @media screen and (max-width: 768px) {
+            [class*="pr-"] {
+                padding-right: 15px !important;
+            }
+
+            [class*="pl-"] {
+                padding-left: 15px !important;
+            }
+
+            [class*="px-"] {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
         }
 
-        [class*="pl-"] {
-            padding-left: 15px !important;
+
+        .navbar-brand.breadcrumscolor {
+            color: #e3e3e3a3 !important;
         }
 
-        [class*="px-"] {
-            padding-left: 15px !important;
-            padding-right: 15px !important;
+
+
+        .min {
+            width: 250px;
+            height: 35px;
+            overflow: hidden !important;
+            padding: 0px !important;
+            margin: 0px;
+            float: left;
+            position: static !important;
         }
-    }
 
+            .min .modal-dialog, .min .modal-content {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 0px !important;
+            }
 
-    .navbar-brand.breadcrumscolor {
-        color: #e3e3e3a3 !important;
-    }
+            .min .modal-header {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 3px 5px !important;
+            }
 
+        .display-none {
+            display: none;
+        }
 
-
-    .min {
-        width: 250px;
-        height: 35px;
-        overflow: hidden !important;
-        padding: 0px !important;
-        margin: 0px;
-        float: left;
-        position: static !important;
-    }
-
-    .min .modal-dialog, .min .modal-content {
-        height: 100%;
-        width: 100%;
-        margin: 0px !important;
-        padding: 0px !important;
-    }
-
-    .min .modal-header {
-        height: 100%;
-        width: 100%;
-        margin: 0px !important;
-        padding: 3px 5px !important;
-    }
-
-    .display-none {
-        display: none;
-    }
-
-    /*button .fa {
+        /*button .fa {
         font-size: 16px;
         margin-left: 10px;
-    }*/ 
+    }*/
 
-    .min .fa {
-        font-size: 14px;
-    }
+        .min .fa {
+            font-size: 14px;
+        }
 
-    .min .menuTab {
-        display: none;
-    }
+        .min .menuTab {
+            display: none;
+        }
 
-    button:focus {
-        outline: none;
-    }
+        button:focus {
+            outline: none;
+        }
 
-    .minmaxCon {
-        height: 35px;
-        bottom: 1px;
-        position: fixed;
-        right: 5px;
-        z-index: 9999;
-    }
+        .minmaxCon {
+            height: 35px;
+            bottom: 1px;
+            position: fixed;
+            right: 5px;
+            z-index: 9999;
+        }
 
-    .dot {
-        height: 10px;
-        width: 10px;
-        background-color: #bbb;
-        border-radius: 50%;
-        display: inline-block;
-    }
+        .dot {
+            height: 10px;
+            width: 10px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+        }
 
 
-    /*# sourceMappingURL=dashboard-pro.css.map */
+        /*# sourceMappingURL=dashboard-pro.css.map */

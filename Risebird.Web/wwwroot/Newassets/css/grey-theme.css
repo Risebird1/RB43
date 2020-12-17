@@ -321,6 +321,12 @@ table.journey {
 .card-header.bg-w {
     background: #fff !important;
 }
+
+.moreless-button {
+    font-weight: 500;
+    color: #606060;
+    text-decoration:underline;
+}
 .single-video-right .video-card-image {
     border: 2px #ccc solid;
 }
