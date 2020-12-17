@@ -7090,5 +7090,105 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to send feedback form, please try again.");
             }
         }
+
+        [HttpGet]
+        public IActionResult UploadInterviewAudio(int interviewId, string candidateEmail, string irfName, DateTime interviewDate, string candidateName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    var model = new SpeechToTextDTO();
+                    model.InterviewId = interviewId;
+                    model.InterviewDate = interviewDate;
+                    model.CandidateEmailId = candidateEmail;
+                    model.IRFName = irfName;
+                    model.CandidateName = candidateName;
+
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        //[Authorize]
+        //[HttpPost]
+        //[DisableRequestSizeLimit]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> UploadAudio(CandidateAudio model)
+        //{
+
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null &&
+        //            HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+        //            {
+        //                if (model.AudioFile != null)
+        //                {
+        //                    await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+        //                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+        //                    var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+        //                    string uploadedaudioFileURL = blob.Uri.ToString();
+        //                    if (uploadedaudioFileURL == null)
+        //                    {
+        //                        ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+        //                        return View("UploadAudio", model);
+        //                    }
+        //                    else
+        //                    {
+        //                        model.AudioFileLink = uploadedaudioFileURL;
+        //                    }
+        //                }
+
+        //                var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //                emailid = emailid.Replace("\"", "");
+
+        //                if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
+        //                {
+        //                    TempData["SuccessErrorMessageUploadAudio"] = "Audio uploaded successfully";
+        //                    return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
+        //                }
+        //                else
+        //                {
+        //                    TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
+        //                    return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
+        //                }
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
+        //        return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
+        //    }
+        //}
+
     }
 }
