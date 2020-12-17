@@ -58,12 +58,12 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     
                     //schedule status
-                    var scheduleStatusData = data.Where(x=>x.ScheduleStatusValue!= "Meeting Status" && x.ScheduleStatusValue!= "Interview Status").Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
+                    var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
                     if(scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
                     {
                         scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
                         var scheduleStatusObjList = new List<TimelineStatus>();
-                        foreach (var item in scheduleStatusData)
+                        foreach (var item in scheduleStatusData.Where(x => x.ScheduleStatusValue != "Meeting Status" && x.ScheduleStatusValue != "Interview Status"))
                         {
                             var scheduleStatusObj = new TimelineStatus();
                             scheduleStatusObj.Date = item.ScheduleStatusDate.ToString("dd");
