@@ -839,9 +839,9 @@ namespace Risebird.Web.Controllers
                                             PartitionKey = o.PartitionKey,
                                             Sharetime = o.Timestamp.DateTime,
                                             SameID = o.Id,
-                                            VideoLink = a.VideoLink,
-                                            Feedbackreating = a.Feedbackreating,
-                                            FeedbackComment = a.FeedbackComment
+                                            VideoLink = a == null ? "":a.VideoLink,
+                                            Feedbackreating = a == null ? 0: a.Feedbackreating,
+                                            FeedbackComment = a == null ? "":a.FeedbackComment
                                         }).ToList();
                     if (profileName == "Client")
                     {
@@ -921,39 +921,46 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> ShareTestLink(string Emailids, string Id, string ClientName, string ClientEmail, string videoRecording)
         {
-            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-            var resultset = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
-            var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
-            var timmer = details.Timer + " min";
-            string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest/" + Id;
-            Mail _mail = new Mail
+            try
             {
-                TO = Emailids,
-                Subject = "Invitation for " + details.Title + " : " + ClientName
-            };
-            var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName);
-            if (result.Contains("Mail sent successfully"))
-            {
-                MCQVMShare _list = new MCQVMShare();
-                _list.status = "0";
-                _list.MCQSet = details.Title;
-                _list.ClientHR = ClientEmail;
-                _list.ApplyingCompany = ClientName;
-                _list.Videorecording = videoRecording;
-                foreach (var item in Emailids.Split(";"))
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                var resultset = _azureTableStorageService.GetAllEntities<MCQVMset>("RisebirdMCQSet");
+                var details = resultset.Where(x => x.PartitionKey == Id).FirstOrDefault();
+                var timmer = details.Timer + " min";
+                string currenturl = "https://" + Request.Host.ToString() + "/MCQ/SkillTest/" + Id;
+                Mail _mail = new Mail
                 {
-                    var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                    _list.PartitionKey = date;
-                    _list.RowKey = Guid.NewGuid().ToString();
-                    _list.Id = Id;
-                    _list.EmailAddress = item;
-                    await _azureTableStorageService.InsertEntity("RisebirdMCQShareList", _list);
+                    TO = Emailids,
+                    Subject = "Invitation for " + details.Title + " : " + ClientName
+                };
+                var result = _notificationHelper.SharedTestLink(_mail, details.Title, timmer, currenturl, ClientName);
+                if (result.Contains("Mail sent successfully"))
+                {
+                    MCQVMShare _list = new MCQVMShare();
+                    _list.status = "0";
+                    _list.MCQSet = details.Title;
+                    _list.ClientHR = ClientEmail;
+                    _list.ApplyingCompany = ClientName;
+                    _list.Videorecording = videoRecording;
+                    foreach (var item in Emailids.Split(";"))
+                    {
+                        var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                        _list.PartitionKey = date;
+                        _list.RowKey = Guid.NewGuid().ToString();
+                        _list.Id = Id;
+                        _list.EmailAddress = item;
+                        await _azureTableStorageService.InsertEntity("RisebirdMCQShareList", _list);
+                    }
+                    return Json("success");
                 }
-                return Json("success");
+                else
+                {
+                    return Json("Fail");
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return Json("Fail");
+                return Json(ex.Message);
             }
         }
         #endregion
