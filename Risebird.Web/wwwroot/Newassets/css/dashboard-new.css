@@ -114,7 +114,14 @@ body {
 .priority svg {
     transform: rotate(180deg);
 }
+#sections {
+    word-wrap: break-word;
+}
 
+.moretext {
+    display: none;
+    white-space: initial;
+}
 table.journey td.cadName, table.journey td.cadEmail {
     width: 200px;
 }

@@ -41,7 +41,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -511,7 +511,7 @@
                                                                 </td>*@
 
                                                             <td class="interview-com">
-                                                                <div id="section">
+                                                                <div id="sections">
                                                                     @if (item.InterviewerComment.Length > 35)
                                                                     {
                                                                         <div class="article">
@@ -1049,15 +1049,6 @@
                 //var table = $('#meeting').DataTable();
             });
 
-        $(document).ready(function () {
-
-
-            $("#x").click(function (e) {
-                $(".dataTables_filter input").val('');
-                $(this).hide();
-            });
-
-        });
         function changeicon(id) {
             if ($("#" + id).attr("data-changes") == "1") {
                 $("#" + id).addClass("show");
@@ -1642,6 +1633,30 @@
 
         else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
     });
+
+
+
+    $(document).ready(function () {
+
+        $(".dataTables_filter").keyup(function (e) {
+
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            searchResult();
+        });
+
+
+
+
+    });
 </script>
 
 <script>
@@ -1733,16 +1748,7 @@
 <loading></loading>
 
 
-<style>
-    #section {
-        word-wrap: break-word;
-    }
 
-    .moretext {
-        display: none;
-        white-space: initial;
-    }
-</style>
 <script>
 
 
