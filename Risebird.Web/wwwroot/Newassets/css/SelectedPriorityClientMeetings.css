@@ -237,7 +237,7 @@ input[type=number] {
 .mdc-fab.trash-btn {
     background: #d20505 !important;
 }
-
+.container-fluid:before{display:none}
 table {
     white-space: nowrap !important;
 }

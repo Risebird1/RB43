@@ -40,8 +40,8 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=8" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -434,7 +434,7 @@
 
                                                         <tr id=@item.imid data-changes="1">
                                                             <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                            <td> @item.interviewDate </td>
+                                                            <td class="interviewdate"> @item.interviewDate </td>
                                                             @if (item.IsOnline == 1 && item.candidateName.Length > 30)
                                                             {
                                                                 <td>
@@ -512,14 +512,14 @@
 
                                                             <td class="interview-com">
                                                                 <div id="sections">
-                                                                    @if (item.InterviewerComment.Length > 35)
+                                                                    @if (item.InterviewerComment.Length > 45)
                                                                     {
                                                                         <div class="article">
                                                                             <p style="margin-bottom:0px;">
-                                                                                @item.InterviewerComment.Substring(0, 35)
+                                                                                @item.InterviewerComment.Substring(0, 45)
                                                                             </p>
                                                                             <p class="moretext_@item.imid moretext">
-                                                                                @item.InterviewerComment.Substring(35, @item.InterviewerComment.Length - 35)
+                                                                                @item.InterviewerComment.Substring(45, @item.InterviewerComment.Length - 45)
                                                                             </p>
                                                                         </div>
                                                                     }
@@ -1453,7 +1453,7 @@
             ];
             html += '<tr id=' + data[i].imid + ' data-changes="1">';
             html += '                                                <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
-            html += '                                       <td> ' + data[i].interviewDate + '<input type="hidden" id="hidcandidate_' + data[i].imid + '" value="' + data[i].candidateName + '" </td>';
+            html += '                                       <td class="interviewdate"> ' + data[i].interviewDate + '<input type="hidden" id="hidcandidate_' + data[i].imid + '" value="' + data[i].candidateName + '" </td>';
             if (data[i].isOnline == 1 && data[i].candidateName.length > 30) {
                 html += '  <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 30) + '... </a> </td>';
             }
