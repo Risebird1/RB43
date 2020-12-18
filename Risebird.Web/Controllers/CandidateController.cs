@@ -36,7 +36,7 @@ namespace Risebird.Web.Controllers
             {
                 var model = new List<CandidateTimelineVM>();
                 var candidateData = await _candidateService.GetCandidateTimeline(profileName == "Client" ? emailid : null);
-                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId)).Distinct();
+                var distinctCandidates = candidateData.Select(x => (x.IRFId, x.CandidateId, x.Name)).Distinct().OrderBy(x=>x.Name);
                 foreach (var candidate in distinctCandidates)
                 {
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
