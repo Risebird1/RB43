@@ -102,7 +102,7 @@
                             <div class="searchCon">
 
                                 <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()">
+                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
 
 
 
@@ -524,7 +524,7 @@
                                                                     </td>
                                                                 }
 
-                                                                @if (item.JDTiltle.Split("|")[0].Length >18)
+                                                                @if (item.JDTiltle.Split("|")[0].Length > 18)
                                                                 {
 
 
@@ -536,7 +536,7 @@
 
                                                                 else
                                                                 {
-                                                                    <td  class="cadSkill">
+                                                                    <td class="cadSkill">
                                                                         <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
                                                                     </td>
                                                                 }
@@ -881,7 +881,7 @@
             } else {
                 html += '<td>' + data[i].candidateEmail + '</td>';
             }
-           
+
 
 
             if (data[i].jdTiltle.split("|")[0].length > 18) {
@@ -903,7 +903,11 @@
             if (data[i].interviewDate > new Date() && data[i].confirmationStatus.trim() != "Cancelled")
                                                     {
                 html += '                                        <td>Scheduled</td>';
-                                                    }
+            }
+            else if (data[i].meetingStatusStatusDesc == null)
+            {
+                html += '<td></td>';
+                            }
                                                     else
                                                     {
                 html += '<td>'+ data[i].meetingStatusStatusDesc+'</td>';
@@ -918,7 +922,6 @@
                 html += '<td></td>';
             }
             if ((data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qCInterview > 0 && data[i].qCStatus == 1 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
-
                 html += '<td></td>';
             } else {
                 html += '<td>No Report</td>';

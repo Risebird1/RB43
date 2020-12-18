@@ -41,7 +41,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -95,7 +95,7 @@
                             <div class="searchCon">
 
                                 <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting">
+                                <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeyup="searchResult()" value="@ViewBag.Searchvalue">
 
 
 
@@ -420,7 +420,7 @@
                                                         <th>Call</th>
                                                     </tr>
                                                 </tfoot>
-                                                <tbody>
+                                                <tbody id="tblbodySelect">
 
                                                     @if (Model.Count == 0)
                                                     {
@@ -510,32 +510,32 @@
 
                                                                 </td>*@
 
-                                                        <td class="interview-com">
-                                                            <div id="section">
-                                                                @if (item.InterviewerComment.Length > 35)
-                                                                {
-                                                                    <div class="article">
-                                                                        <p style="margin-bottom:0px;"  >
-                                                                            @item.InterviewerComment.Substring(0, 35)
-                                                                        </p>
-                                                                        <p class="moretext_@item.imid moretext">
-                                                                            @item.InterviewerComment.Substring(35, @item.InterviewerComment.Length - 35)
-                                                                        </p>
-                                                                    </div>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="article">
-                                                                       
-                                                                        <p >
-                                                                            @item.InterviewerComment.Substring(0, @item.InterviewerComment.Length - 1)
-                                                                        </p>
-                                                                    </div>}
+                                                            <td class="interview-com">
+                                                                <div id="sections">
+                                                                    @if (item.InterviewerComment.Length > 35)
+                                                                    {
+                                                                        <div class="article">
+                                                                            <p style="margin-bottom:0px;">
+                                                                                @item.InterviewerComment.Substring(0, 35)
+                                                                            </p>
+                                                                            <p class="moretext_@item.imid moretext">
+                                                                                @item.InterviewerComment.Substring(35, @item.InterviewerComment.Length - 35)
+                                                                            </p>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="article">
 
-                                                                <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
-                                                            </div>
+                                                                            <p>
+                                                                                @item.InterviewerComment.Substring(0, @item.InterviewerComment.Length - 1)
+                                                                            </p>
+                                                                        </div>}
 
-                                                        </td>
+                                                                    <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
+                                                                </div>
+
+                                                            </td>
 
                                                             @if ((item.MeetingStatus == 4) && (item.InterviewStatus != 4 && item.InterviewStatus != 2) || (item.QCInterview > 0 && item.QCStatus == 1 && item.MeetingStatus == 4 && (item.InterviewStatus == 4 || item.InterviewStatus == 2)))
                                                             {
@@ -687,11 +687,11 @@
 
 
 
-                                    <div class="col-sm-12 col-md-5 pull-left">
+                                    <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
                                         Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                     </div>
 
-                                    <div class="col-sm-12 col-md-7 dataTables_paginate pull-right">
+                                    <div class="col-sm-12 col-md-7 dataTables_paginate pull-right" id="divmeetingpages">
                                         @Html.PagedListPager(Model, Page => Url.Action("SelectedPriorityClientMeetings", new { Page = Page }))
                                     </div>
 
@@ -1049,15 +1049,6 @@
                 //var table = $('#meeting').DataTable();
             });
 
-        $(document).ready(function () {
-
-
-            $("#x").click(function (e) {
-                $(".dataTables_filter input").val('');
-                $(this).hide();
-            });
-
-        });
         function changeicon(id) {
             if ($("#" + id).attr("data-changes") == "1") {
                 $("#" + id).addClass("show");
@@ -1128,6 +1119,10 @@
 
 </script>
 <script>
+    function ModalButtonClickjson(item) {
+        var obj = list[item];
+        ModalButtonClick(obj);
+    }
     function ModalButtonClick(item) {
         imid = item.imid;
 
@@ -1135,7 +1130,7 @@
         var modal = document.getElementById("myModal");
 
         // Get the button that opens the modal
-        var btn = document.getElementById("myBtn_" + item.imid);
+        //var btn = document.getElementById("myBtn_" + item.imid);
 
 
         // When the user clicks the button, open the modal
@@ -1151,7 +1146,7 @@
         document.getElementById("offComments").value = item.OfferComments;
         document.getElementById("MoveToCP").checked = item.MoveToCP;
 
-
+        ;
         $.ajax({
             type: "GET",
             url: "/Interview/getApprovalStatusList",
@@ -1404,6 +1399,16 @@
         document.getElementById("callingLabel").innerHTML = appendText;
         callCandidate(mobileNumber);
     }
+    function CallButtonClickjson(imid, mobileNumber) {
+        candidate = $("#hidcandidate_" + imid).val();
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
     function closeCallPopUp() {
         hangUp();
         var modal = document.getElementById("myModal");
@@ -1414,8 +1419,191 @@
 </script>
 
 <script>
+    var list;
     function searchResult() {
-        window.location.href = "/Interview/SelectedPriorityClientMeetings?searchValue=" + $('#txtmeeting_filter').val();
+        //window.location.href = "/Interview/SelectedPriorityClientMeetings?searchValue=" + $('#txtmeeting_filter').val();
+        $.ajax({
+            type: "POST",
+            url: "/Interview/SelectedPriorityClientMeetingsJson",
+            data: { 'searchValue': $('#txtmeeting_filter').val() },
+            success: function (data) {
+                if (data != "failed") {
+                    list = data.result;
+                    bindtableData(data.result);
+                    bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
+                }
+            }
+        });
+    }
+    function bindtableData(data) {
+
+        var html = '';
+        if (data.length == 0) {
+            html += '  <tr>';
+            html += ' <td colspan="9" class="text-center">No data available in table</td>';
+            html += ' </tr>';
+        }
+
+        for (var i = 0; i < data.length; i++) {
+            var obj = [{
+                imid: data[i].imid, ApprovalComments: data[i].approvalComments, FinalComments: data[i].finalComments, JoiningComments: data[i].joiningComments,
+                OfferComments: data[i].offerComments, MoveToCP: data[i].moveToCP, IsApproved: data[i].isApproved, IsSelected: data[i].isSelected,
+                OfferStatus: data[i].offerStatus, JoiningStatus: data[i].joiningStatus
+            }
+            ];
+            html += '<tr id=' + data[i].imid + ' data-changes="1">';
+            html += '                                                <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
+            html += '                                       <td> ' + data[i].interviewDate + '<input type="hidden" id="hidcandidate_' + data[i].imid + '" value="' + data[i].candidateName + '" </td>';
+            if (data[i].isOnline == 1 && data[i].candidateName.length > 30) {
+                html += '  <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 30) + '... </a> </td>';
+            }
+            else {
+                if (data[i].candidateName.length > 35) {
+                    html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 35) + '... </a></td>';
+                }
+                else {
+                    html += '  <td class="cadName"><a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a></td>';
+                }
+            }
+            if (data[i].jdTiltle.split("|")[0].length > 35) {
+                html += '   <td class="cadSkill"><a onclick="" data-tooltip="' + data[i].jdTiltle.split("|")[0] + '"> ' + data[i].jdTiltle.split("|")[0].substring(0, 35) + '... </a></td>';
+            }
+            else {
+                html += '     <td class="cadSkill"><a onclick=""> ' + data[i].jdTiltle.split("|")[0] + ' </a></td>';
+            }
+            if ((data[i].meetingStatus == 4) && data[i].videoLink != null && data[i].videoLink != "") {
+                html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
+            }
+            else {
+                html += '<td>No Video</td>';
+            }
+            html += '<td class="interview-com">';
+            html += '                                           <div id="section">';
+            if (data[i].interviewerComment.length > 35) {
+                html += '                                                   <div class="article">';
+                html += '                                              <p style="margin-bottom:0px;">' + data[i].interviewerComment.substring(0, 35) + '</p>';
+                html += '                   <p class="moretext_' + data[i].imid + ' moretext">' + data[i].interviewerComment.substring(35, data[i].interviewerComment.length - 35) + '</p>';
+                html += '</div>';
+            }
+            else {
+                html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>';
+            }
+
+            html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
+            html += '</div>';
+            html += ' </td>';
+
+            if ((data[i].meetingStatus == 4) && (data[i].interviewStatus != 4 && data[i].interviewStatus != 2) || (data[i].qcInterview > 0 && data[i].qcStatus == 1 && data[i].meetingStatus == 4 && (data[i].interviewStatus == 4 || data[i].interviewStatus == 2))) {
+                html += '<td>  <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + data[i].irfIntId + '&isClient= true">Report</a></td>';
+            }
+            else {
+                html += '   <td>No Report</td>';
+            }
+            html += '   <td class="text-center action">';
+            html += '   <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">';
+            html += ' <span onclick="ModalButtonClickjson(' + i + ')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>';
+            html += '                                                     </button>';
+
+            if (data[i].isBiometricEnabled) {
+                html += ' <button class="mdc-fab app-fab--absolute" aria-label="Verify">';
+                html += '  <span onclick="location.href ="/Interview/VerifyJoiningAudio?candidateId = ' + data[i].candidateId + '&CandidateName=' + data[i].candidateName + '&irfId=' + data[i].irfIntId + '&meetingId=' + data[i].imid + '" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>';
+                html += '  </button>';
+            }
+            html += '</td>';
+            html += '                                                <td>';
+            if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
+                html += '    <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClickjson(' + data[i].imid + ',' + data[i].mobileNumber + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
+            }
+            html += '</td>';
+            html += '                                            </tr>';
+
+            html += '                                               <tr class="collapse ' + data[i].imid + '">';
+            html += '                                       <td colspan="999" class="child-section">';
+            html += '                                           <table class="table table-striped">';
+            html += '                                               <tr>';
+            html += '                                                   <th>Client HR</th>';
+            html += '                                                   <th>End Client Name</th>';
+            html += '                                                   <th>Aadhar Link</th>';
+            html += '                                                   <th>Approval Status</th>';
+            html += '                                                   <th>Final Selection Status</th>';
+            html += '                                                   <th>Offer Status</th>';
+            html += '                                                   <th>Joining Status</th>';
+            html += '                                               </tr>';
+            html += '         <tr>';
+            if (data[i].isHrOnline == 1) {
+                html += '   <td><a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span>     ' + data[i].clientHrContact + ' </a></td>';
+            }
+            else {
+                html += '<td> <a onclick=""><span class="dot"></span> ' + data[i].clientHrContact + ' </a></td>';
+            }
+            html += '<td> ' + data[i].clientName + ' </td>';
+            if (data[i].aadharFileLink != null && data[i].aadharFileLink != "") {
+                html += '<td>    <a id="aadharLinkId" target="_blank" title="Aadhar" href=' + data[i].aadharFileLink.tostring().replace(" ", "%20") + '>Aadhar</a></td>';
+            }
+            else {
+                html += '<td>No document</td>';
+            }
+            if (data[i].nextLevelApprovalStat != null && data[i].nextLevelApprovalStat != "") {
+                html += '   <td>    ' + data[i].nextLevelApprovalStat + '</td></td>';
+            }
+            else {
+                html += ' <td>No document</td>';
+            }
+            if (data[i].finalSelectionStat != null && data[i].finalSelectionStat != "") {
+                html += '<td>' + data[i].finalSelectionStat + ' </td>';
+            }
+            else {
+                html += '                                                   <td>No document</td>';
+            }
+
+            if (data[i].offerStatusStatDesc != null && data[i].offerStatusStatDesc != "") {
+                html += ' <td>' + data[i].offerStatusStatDesc + '</td>';
+            }
+            else {
+                html += '<td>No document</td>';
+            }
+
+            if (data[i].joiningStatusStatDesc != null && data[i].joiningStatusStatDesc != "") {
+                html += '   <td>' + data[i].joiningStatusStatDesc + '</td>';
+            }
+            else {
+                html += '<td>No document</td>';
+            }
+            html += '                                                                    </tr>';
+            html += '</table>';
+            html += '                                       </td>';
+            html += '                         </tr>';
+        }
+        $("#tblbodySelect").empty().html(html);
+    }
+    function bindPages(pagecount, startpage, endpage, totalcount) {
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        for (var i = 1; i <= pagecount; i++) {
+            if (i == 1) {
+                html += '   <li class="active"><span>1</span></li>';
+            } else if (i <= 10) {
+                html += '<li><a href="/Interview/SelectedPriorityClientMeetings?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+            } else if (i == 11) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Interview/SelectedPriorityClientMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Interview/SelectedPriorityClientMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            } else {
+                break;
+            }
+            if (pagecount <= 10 && i == pagecount) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/Interview/SelectedPriorityClientMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/Interview/SelectedPriorityClientMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            }
+        }
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
 
     }
 </script>
@@ -1444,6 +1632,30 @@
 
 
         else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+
+
+
+    $(document).ready(function () {
+
+        $(".dataTables_filter").keyup(function (e) {
+
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            searchResult();
+        });
+
+
+
+
     });
 </script>
 
@@ -1536,24 +1748,13 @@
 <loading></loading>
 
 
-<style>
-    #section {
-   
-        word-wrap: break-word;
-    }
 
-    .moretext {
-        display: none;
-        white-space:initial;
-    }
-
-</style>
 <script>
 
 
     function moreless(id) {
 
- $('.moretext_'+id).slideToggle();
+        $('.moretext_' + id).slideToggle();
         if ($('#read_' + id).val() == 'Readmore') {
             $('#read_' + id).empty().html('Read more');
             $('#read_' + id).val('Readless');
