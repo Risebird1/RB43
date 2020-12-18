@@ -131,13 +131,17 @@ table.journey {
     .pagination-container > ul > li a {
         color: #716b6b;
     }
+.moreless-button {
+    font-weight: 500;
+    color: #337ab7;
+    text-decoration: underline;
+}
 
-
-    .navbar.navbar.bg-white, .navbar.navbar-transparent {
-        background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%) !important;
-        border: 0px !important;
-        border-radius: 0px;
-    }
+.navbar.navbar.bg-white, .navbar.navbar-transparent {
+    background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%) !important;
+    border: 0px !important;
+    border-radius: 0px;
+}
 table.dataTable thead .sorting:after {
     color: transparent;
 }

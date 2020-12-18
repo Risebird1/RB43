@@ -115,7 +115,13 @@ body {
     transform: rotate(180deg);
 }
 
+table.journey td.cadName, table.journey td.cadEmail {
+    width: 200px;
+}
 
+table.journey td.cadSkill {
+    width: 150px;
+}
 
 .label-num {
     background: #ccc;
@@ -2816,7 +2822,8 @@ td.detail-row {
     width: 20px;
     height: 20px;
     background-color: #cccccc47;
-    background-position: right 12px;
+    background-position: center 12px;
+    padding: 12px 6.5px !important;
 }
 
 tr.show td.detail-row {
@@ -2960,9 +2967,51 @@ button.btn {
 /***** Media queries *****/
 
 @media (min-width: 992px) and (max-width: 1199px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+
+    .selected-priority table.journey td.cadName {
+        max-width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        max-width: 235px;
+    }
 }
 
+
+.selected-priority table.journey td.cadName {
+    max-width: 250px;
+}
+
+.selected-priority table.journey td.cadSkill {
+    max-width: 235px;
+}
+
+}
+
+
 @media (min-width: 768px) and (max-width: 991px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+
+    .selected-priority table.journey td.cadName {
+        max-width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        max-width: 235px;
+    }
 }
 
 @media (max-width: 767px) {
@@ -7810,6 +7859,16 @@ div.tagsinput {
     .desktop-view {
         display: none;
     }
+
+    .selected-priority table.journey td.cadName {
+        max-width: 250px!important;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        max-width: 235px!important;
+    }
+
+
 }
 
 
@@ -7923,8 +7982,26 @@ div.tagsinput {
     .page-container.page-navigation-top-fixed .page-content {
         padding-top: 0px;
     }
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
 
-    .x-navigation {
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+    .selected-priority table.journey td.cadName {
+        max-width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        max-width: 235px;
+    }
+
+    .selected-priority .journey td.interview-com {
+        max-width: 400px;
+    }
+  
+        .x-navigation {
         max-height: 50px;
         overflow: hidden;
         background: #1b1e24;
@@ -8021,6 +8098,20 @@ div.tagsinput {
     }
 }
 
-.x-navigation-minimized .xn-logo {
-    display: none;
+
+
+
+@media only screen and (max-width: 1400px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+
+    table.journey td.cadSkill {
+        width: 150px;
+    }
 }
+
+
+    .x-navigation-minimized .xn-logo {
+        display: none;
+    }

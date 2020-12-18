@@ -78,11 +78,14 @@
     </div>
 
     <div class="container">
+        <div class="loader text-center">
+            <img src="~/Newassets/img/lazyload.gif" />
+        </div>
         <div class="row">
+
             <div class="col-md-8 offset-md-2" id="divMCQSetdetails">
 
-                <div>
-                </div>
+                
             </div>
             <div class="col-md-8 offset-md-2" id="divfeedback" style="display:none">
                 <p><b>Rating</b></p>
@@ -101,6 +104,7 @@
                 </div>
 
                 <input type="text" id="txtfeedbackComment" placeholder="Please Enter Comments" class="form-control" />
+                <br />
                 <input type="button" value="Submit" class="callsubmit" onclick="SubmitTest()" />
 
             </div>
@@ -197,6 +201,7 @@
         form_data.append("rating", $("#txtfeedbackreting").val());
         form_data.append("comments", $("#txtfeedbackComment").val());
         form_data.append("file", file);
+        $(".loader").show();
         $.ajax({
             type: "POST",
             url: "/MCQ/SubmitTest",
@@ -205,6 +210,7 @@
             enctype: 'multipart/form-data',
             processData: false,
             success: function (data) {
+                $(".loader").hide();
                 if (data == "TestSubmit") {
                     window.location.href = "/MCQ/TestComplete?status=" + data;
                 } else {
@@ -265,6 +271,7 @@
         if ($("#zquestion_final").val() == "true") {
             form_data.append("file", file);
         }
+        $(".loader").show();
         $.ajax({
             type: "POST",
             url: "/MCQ/CandidateQuestionsD",
@@ -273,6 +280,7 @@
             enctype: 'multipart/form-data',
             processData: false,
             success: function (data) {
+                $(".loader").hide();
                 if ($("#zquestion_final").val() == "true") {
                     document.getElementById("divfeedback").style.display = "block";
                     document.getElementById("divMCQSetdetails").style.display = "none";
