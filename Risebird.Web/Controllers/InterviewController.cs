@@ -7109,6 +7109,17 @@ namespace Risebird.Web.Controllers
                     model.IRFName = irfName;
                     model.CandidateName = candidateName;
 
+                    var tableEntries = _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
+                    var requiredEntry = new SpeechToTextServiceModel();
+                    if(tableEntries!=null && tableEntries.Count()!=0)
+                    {
+                        requiredEntry = tableEntries.Where(x => x.InterviewId == interviewId).FirstOrDefault();
+                    }
+                    if(requiredEntry!=null)
+                    {
+                        model.UploadedAudioFileUrl = requiredEntry.AudioFileUrl;
+                    }
+
                     return View(model);
                 }
                 else
@@ -7169,7 +7180,7 @@ namespace Risebird.Web.Controllers
 
                         httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken);
 
-                        TempData["SuccessErrorMessageUploadSpeechAudio"] = "Audio uploaded successfully.";
+                        TempData["SuccessErrorMessageInterview"] = "Audio uploaded successfully.";
                         return RedirectToAction("Index");
 
                         
@@ -7187,7 +7198,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageUploadSpeechAudio"] = "Audio Upload failed.";
+                TempData["SuccessErrorMessageInterview"] = "Audio Upload failed.";
                 return RedirectToAction("Index");
             }
         }

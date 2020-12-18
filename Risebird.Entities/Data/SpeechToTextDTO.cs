@@ -30,5 +30,6 @@ namespace Risebird.Entities.Data
 
         public string KeyWords { get; set; }
         public string ConvertedText { get; set; }
+        public string UploadedAudioFileUrl { get; set; }
     }
 }

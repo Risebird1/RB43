@@ -14,6 +14,7 @@ using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using Risebird.Entities.Enum;
 using MicrosoftSpeechSDKSamples;
+using System.Linq;
 
 namespace Risebird.MicroService
 {
@@ -41,7 +42,6 @@ namespace Risebird.MicroService
            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "SpeechToTextService")] HttpRequest req,
            ILogger log)
         {
-            string path = string.Empty;
             try
             {
                 log.LogInformation($"SpeechToTextService HTTP trigger function executed at: {DateTime.Now}");
@@ -75,7 +75,7 @@ namespace Risebird.MicroService
                                 {
 
                                     var result = await recognizer.RecognizeOnceAsync();
-                                    Console.WriteLine($"RECOGNIZED: Text={result.Text}");
+                                    data.ConvertedText = result.Text;
                                 }
                             }
                         }
@@ -83,7 +83,46 @@ namespace Risebird.MicroService
                     
                 }
 
-                
+
+
+
+                var tableEntries = _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
+                var requiredEntry = new SpeechToTextServiceModel();
+                if (tableEntries != null)
+                {
+                    requiredEntry = tableEntries.Where(x => x.InterviewId == data.InterviewId).FirstOrDefault();
+
+                }
+                if (requiredEntry == null)
+                {
+                    //insert new entry in the azure table
+
+                    var modelData = new SpeechToTextServiceModel();
+                    modelData.PartitionKey = Guid.NewGuid().ToString();
+                    modelData.RowKey = Guid.NewGuid().ToString();
+                    modelData.AudioFileUrl = data.AudioFileUrl;
+                    modelData.ConvertedText = data.ConvertedText;
+                    modelData.InterviewId = data.InterviewId;
+                    modelData.KeyWords = data.KeyWords;
+
+                    await _azureStorageHelper.InsertEntity("SpeechToTextTbl", modelData);
+
+                }
+                else
+                {
+                    //edit the existing entry in the azure table
+                    var updateData = new SpeechToTextServiceModel();
+                    updateData.PartitionKey = requiredEntry.PartitionKey;
+                    updateData.RowKey = requiredEntry.RowKey;
+                    updateData.AudioFileUrl = data.AudioFileUrl;
+                    updateData.ConvertedText = data.ConvertedText;
+                    updateData.InterviewId = requiredEntry.InterviewId;
+                    updateData.KeyWords = data.KeyWords;
+
+                    await _azureStorageHelper.InsertEntity("SpeechToTextTbl", updateData);
+
+                }
+
                 log.LogInformation($"SpeechToTextService HTTP trigger function completed at: {DateTime.Now}");
 
                 return new OkObjectResult("Successful");
