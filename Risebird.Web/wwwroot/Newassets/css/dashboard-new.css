@@ -2983,21 +2983,28 @@ button.btn {
     }
 
     .selected-priority table.journey td.cadName {
-        max-width: 250px;
+       width: 250px;
     }
 
     .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
+       width: 235px;
     }
+}
+.selected-priority table.journey td.interviewdate {
+   width: 160px;
 }
 
 
+.selected-priority .journey td.interview-com {
+   width: 300px;
+}
+
 .selected-priority table.journey td.cadName {
-    max-width: 250px;
+    width: 250px;
 }
 
 .selected-priority table.journey td.cadSkill {
-    max-width: 235px;
+   width: 235px;
 }
 
 }
@@ -3013,11 +3020,19 @@ button.btn {
     }
 
     .selected-priority table.journey td.cadName {
-        max-width: 250px;
+       width: 250px;
     }
 
     .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
+        width: 235px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 160px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 270px;
     }
 }
 
@@ -7867,15 +7882,26 @@ div.tagsinput {
         display: none;
     }
 
-    .selected-priority table.journey td.cadName {
-        max-width: 250px!important;
+     .selected-priority table.journey td.cadName {
+       width: 250px;
     }
 
     .selected-priority table.journey td.cadSkill {
-        max-width: 235px!important;
+        width: 235px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 160px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 270px;
     }
 
 
+    .selected-priority .journey td.interview-com {
+        width:300px;
+    }
 }
 
 
@@ -7997,17 +8023,20 @@ div.tagsinput {
         width: 150px;
     }
     .selected-priority table.journey td.cadName {
-        max-width: 250px;
+       width: 250px;
     }
 
     .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
+       width: 235px;
     }
 
     .selected-priority .journey td.interview-com {
-        max-width: 400px;
+       width: 300px;
     }
-  
+    .selected-priority table.journey td.interviewdate {
+        width: 160px;
+    }
+
         .x-navigation {
         max-height: 50px;
         overflow: hidden;
