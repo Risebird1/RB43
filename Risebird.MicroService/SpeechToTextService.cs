@@ -13,7 +13,6 @@ using Risebird.Entities.Data;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using Risebird.Entities.Enum;
-using MicrosoftSpeechSDKSamples;
 using System.Linq;
 
 namespace Risebird.MicroService
@@ -25,14 +24,16 @@ namespace Risebird.MicroService
         private readonly IAzureHelper _azureHelper;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ISpeechToTextHelper _speechToTextHelper;
         private readonly string connectionString;
 
-        public SpeechToTextService(IAzureHelper azureHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper)
+        public SpeechToTextService(IAzureHelper azureHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISpeechToTextHelper speechToTextHelper)
         {
             _configuration = configuration;
             _azureHelper = azureHelper;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
+            _speechToTextHelper = speechToTextHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
 
         }
@@ -61,7 +62,7 @@ namespace Risebird.MicroService
 
                     using (var reader = new BinaryReader(audioStream))
                     {
-                        using (var audioInputStream = AudioInputStream.CreatePushStream(Helper.readWaveHeader(reader)))
+                        using (var audioInputStream = AudioInputStream.CreatePushStream(_speechToTextHelper.readWaveHeader(reader)))
                         {
                             byte[] readBytes;
                             do

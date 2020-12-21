@@ -739,6 +739,7 @@
                                                                             @if (Model.IsBiometricEnabled)
                                                                             {
                                                                                 <li class="nav-link item8" rel="link8" onclick="GetSentimentAnalysis('@Model.imid')"> Sentiment Analysis</li>
+                                                                                <li class="nav-link item9" rel="link9" onclick="GetMeetingAudioText('@Model.imid')"> Meeting Transcript</li>
 
                                                                             }
                                                                         </ul>
@@ -1382,6 +1383,15 @@
 
 
                                                                                 </div>
+
+                                                                                <h3 class="tab_drawer_heading" rel="link9"> Meeting Transcript</h3>
+
+
+
+                                                                                <div id="link9" class="tab_content text-center">
+                                                                                   
+                                                                                </div>
+                                                                                
                                                                             }
 
 
@@ -2624,7 +2634,30 @@
 
 </script>
 
+<script>
+    function GetMeetingAudioText(imid) {
+        document.getElementById('link9').innerHTML = '';
+        $.ajax({
+            url: '/RiseTube/GetMeetingAudioText',
+            data: { 'imid': imid },
+            success: function (data) {
+                if (data.convertedText == null || data.convertedText == '') {
+                    document.getElementById('link9').innerHTML = 'Not available';
+                }
+                else {
 
+                    var innerText = '<label>Total keywords found:</label>' + data.total + '<br>' + data.convertedText;
+
+                    document.getElementById('link9').innerHTML = innerText;
+  
+                }
+               
+            }
+
+        });
+    }
+
+</script>
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <script>
     function GetSentimentAnalysis(imid) {

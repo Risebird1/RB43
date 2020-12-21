@@ -39,6 +39,7 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IProctorInterviewsService, ProctorInterviewsService>();
             builder.Services.AddScoped<INotificationHelper, NotificationHelper>();
             builder.Services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
+            builder.Services.AddScoped<ISpeechToTextHelper, SpeechToTextHelper>();
 
         }
 

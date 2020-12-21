@@ -2992,5 +2992,49 @@ namespace Risebird.Web.Controllers
                 return Json("No Data");
             }
         }
+
+        public async Task<ActionResult> GetMeetingAudioText(int imid)
+        {
+            try
+            {
+                var model = new MeetingTranscriptModel();
+                int count = 0;
+                model.ConvertedText = string.Empty;
+                var tableEntries =  _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
+                var requiredEntry = new SpeechToTextServiceModel();
+                if (tableEntries != null && tableEntries.Count() != 0)
+                {
+                    requiredEntry = tableEntries.Where(x => x.InterviewId == imid).FirstOrDefault();
+                }
+                if(requiredEntry != null)
+                {
+                    if(!string.IsNullOrEmpty(requiredEntry.KeyWords))
+                    {
+                        var keywords = requiredEntry.KeyWords.Split(",");
+                        foreach (var keyword in keywords)
+                        {
+                            var word = keyword.ToLower().Trim();
+                            if (requiredEntry.ConvertedText.ToLower().Contains(word))
+                            {
+                                count = count + 1;
+                                //word = "<mark>" + word + "</mark>";
+                                word = " <span style=\"background-color:Red;\">" + word + "</span>";
+                                requiredEntry.ConvertedText = requiredEntry.ConvertedText.ToLower().Replace(keyword, word);
+                            }
+
+                        }
+                    }
+                    
+                    model.ConvertedText = requiredEntry.ConvertedText;
+                    model.Total = count;
+                }
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

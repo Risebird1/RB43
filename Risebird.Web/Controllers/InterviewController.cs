@@ -7155,10 +7155,10 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile != null)
                         {
-                            string fileName = model.InterviewId.ToString() + "_InterviewAudio.wav";
-                            await _azureStorageHelper.InsertBlob(fileName, "audios", model.AudioFile);
+                            //string fileName = model.InterviewId.ToString() + "_InterviewAudio.wav";
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
                             string uploadedaudioFileURL = blob.Uri.ToString();
                             if (uploadedaudioFileURL == null)
                             {
