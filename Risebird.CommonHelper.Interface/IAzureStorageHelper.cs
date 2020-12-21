@@ -36,5 +36,7 @@ namespace Risebird.CommonHelper.Interface
         //Task<string> UploadVideoAsset(string filePath);
 
         //string UploadAndPublishVideo(string filePath);
+        Task<CloudTable> GetTableAsync(string tableName);
+        Task<IEnumerable<T>> GetAllEntitiesAsync<T>(string tableName) where T : TableEntity, new();
     }
 }

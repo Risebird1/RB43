@@ -92,6 +92,12 @@ textarea::-webkit-scrollbar {
     color: #FFFFFF;
     BACKGROUND: #ea6b26;
 }
+
+.moreless-button {
+    font-weight: 500;
+    color: #ea6b26;
+    text-decoration: underline;
+}
 .razorpay_details table th {
     background: #dfe0e5;
     padding: 8px;

@@ -114,8 +114,21 @@ body {
 .priority svg {
     transform: rotate(180deg);
 }
+#sections {
+    word-wrap: break-word;
+}
 
+.moretext {
+    display: none;
+    white-space: initial;
+}
+table.journey td.cadName, table.journey td.cadEmail {
+    width: 200px;
+}
 
+table.journey td.cadSkill {
+    width: 150px;
+}
 
 .label-num {
     background: #ccc;
@@ -1127,12 +1140,14 @@ body {
 }
 
 
-
 .interviewer-comment .talk-bubble [data-tooltip]:before {
     width: 400px;
 }
 
-
+table.journey th, table.journey td {
+    border-right: 1px solid #dee2e6;
+    max-width: 187px;
+}
 
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
     position: absolute;
@@ -2813,11 +2828,13 @@ td.detail-row {
     background-repeat: no-repeat;
     width: 20px;
     height: 20px;
-    background-position: right 12px;
+    background-color: #cccccc47;
+    background-position: center 12px;
+    padding: 12px 6.5px !important;
 }
 
 tr.show td.detail-row {
-    background: url(../../Newassets/img/details_close.png) no-repeat right 12px;
+    background: #cccccc47 url(../../Newassets/img/details_close.png) no-repeat right 12px;
 }
 
 input[type="text"],
@@ -2957,9 +2974,66 @@ button.btn {
 /***** Media queries *****/
 
 @media (min-width: 992px) and (max-width: 1199px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+
+    .selected-priority table.journey td.cadName {
+       width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+       width: 235px;
+    }
+}
+.selected-priority table.journey td.interviewdate {
+   width: 160px;
 }
 
+
+.selected-priority .journey td.interview-com {
+   width: 300px;
+}
+
+.selected-priority table.journey td.cadName {
+    width: 250px;
+}
+
+.selected-priority table.journey td.cadSkill {
+   width: 235px;
+}
+
+}
+
+
 @media (min-width: 768px) and (max-width: 991px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+
+    .selected-priority table.journey td.cadName {
+       width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        width: 235px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 160px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 270px;
+    }
 }
 
 @media (max-width: 767px) {
@@ -7807,6 +7881,27 @@ div.tagsinput {
     .desktop-view {
         display: none;
     }
+
+     .selected-priority table.journey td.cadName {
+       width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        width: 235px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 160px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 270px;
+    }
+
+
+    .selected-priority .journey td.interview-com {
+        width:300px;
+    }
 }
 
 
@@ -7920,8 +8015,29 @@ div.tagsinput {
     .page-container.page-navigation-top-fixed .page-content {
         padding-top: 0px;
     }
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
 
-    .x-navigation {
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+    .selected-priority table.journey td.cadName {
+       width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+       width: 235px;
+    }
+
+    .selected-priority .journey td.interview-com {
+       width: 300px;
+    }
+    .selected-priority table.journey td.interviewdate {
+        width: 160px;
+    }
+
+        .x-navigation {
         max-height: 50px;
         overflow: hidden;
         background: #1b1e24;
@@ -8018,6 +8134,20 @@ div.tagsinput {
     }
 }
 
-.x-navigation-minimized .xn-logo {
-    display: none;
+
+
+
+@media only screen and (max-width: 1400px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+
+    table.journey td.cadSkill {
+        width: 150px;
+    }
 }
+
+
+    .x-navigation-minimized .xn-logo {
+        display: none;
+    }
