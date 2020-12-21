@@ -1120,8 +1120,9 @@ table.journey td.cadSkill {
 }
 
 table.journey th, table.journey td {
-    border-right: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6 !important;
     max-width: 187px;
+    vertical-align: top !important;
 }
 
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
@@ -2808,7 +2809,7 @@ td.detail-row {
     padding: 12px 6.5px !important;
 }
 
-tr.show td.detail-row {
+tr.shows td.detail-row {
     background: #cccccc47 url(../../Newassets/img/details_close.png) no-repeat right 12px;
 }
 

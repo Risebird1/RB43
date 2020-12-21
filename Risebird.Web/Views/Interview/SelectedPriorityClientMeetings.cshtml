@@ -41,7 +41,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=8" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10 />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -511,7 +511,7 @@
                                                                 </td>*@
 
                                                             <td class="interview-com">
-                                                                <div id="sections">
+                                                                <div id="section">
                                                                     @if (item.InterviewerComment.Length > 45)
                                                                     {
                                                                         <div class="article">
@@ -1051,11 +1051,11 @@
 
         function changeicon(id) {
             if ($("#" + id).attr("data-changes") == "1") {
-                $("#" + id).addClass("show");
+                $("#" + id).addClass("shows");
                 $("#" + id).attr("data-changes", "2");
             }
             else {
-                $("#" + id).removeClass("show");
+                $("#" + id).removeClass("shows");
                 $("#" + id).attr("data-changes", "1");
             }
         }

@@ -31,6 +31,7 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingService _meetingService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private ISkillService _skillService;
+        private static List<Candidate> _modelDetails;
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService)
         {
@@ -2230,7 +2231,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public IActionResult Candidates(string id, string irfName)
+        public IActionResult Candidates(string id, string irfName, int? Page, string searchValue)
         {
             try
             {
@@ -2267,7 +2268,44 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidate");
                         }
-                        return View(candidateList);
+
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            searchValue = searchValue.ToUpper();
+                            candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+                        }
+                        ViewBag.TotalCount = candidateList.Count;
+
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        int a = candidateList.Count / 10;
+                        if (candidateList.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            a = a + 1;
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = candidateList.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                            }
+
+                        }
+                        if (candidateList.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
+                       _modelDetails = candidateList;
+                        return View(candidateList.ToPagedList(Page ?? 1, 10));
+                  
+                 
 
                     }
                     else
@@ -4601,6 +4639,50 @@ namespace Risebird.Web.Controllers
                 return Json(false);
             }
 
+        }
+        [HttpPost]
+        public JsonResult CandidatesJson(string searchValue)
+        {
+            int Page = 1;
+          var  candidateList = _modelDetails;
+            if (!String.IsNullOrEmpty(searchValue))
+            {
+                searchValue = searchValue.ToUpper();
+                candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+            }
+            int totalcount = candidateList.Count;
+            int Pagestart = 0;
+            int Pageend = 0;
+            ViewBag.TotalCount = candidateList.Count;
+
+            Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+            int a = candidateList.Count / 10;
+            if (candidateList.Count % 10 == 0)
+            {
+                Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+            }
+            else
+            {
+                a = a + 1;
+                if (a == Page)
+                {
+                    Pageend = candidateList.Count;
+                }
+                else
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                }
+
+            }
+            if (candidateList.Count == 0)
+            {
+                Pagestart = 0;
+                Pageend = 0;
+            }
+
+            return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
         }
 
     }
