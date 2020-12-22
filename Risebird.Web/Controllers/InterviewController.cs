@@ -7296,12 +7296,10 @@ namespace Risebird.Web.Controllers
                         }
 
                         var path = $"http://localhost:7071/api/SpeechToTextService";
-                        //var path = $"https://risebirdcognitiveservice.azurewebsites.net/api/SentimentAnalysis";
+                        //var path = $"https://risebirdmicroservice.azurewebsites.net/api/SpeechToTextService";
                         //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
 
                         HttpClient httpClient = new HttpClient();
-                        //httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
-
                         httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken);
 
                         TempData["SuccessErrorMessageInterview"] = "Audio uploaded successfully.";
