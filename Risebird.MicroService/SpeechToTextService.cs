@@ -14,6 +14,7 @@ using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using Risebird.Entities.Enum;
 using System.Linq;
+using System.Text;
 
 namespace Risebird.MicroService
 {
@@ -26,7 +27,7 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly ISpeechToTextHelper _speechToTextHelper;
         private readonly string connectionString;
-
+        private string result = string.Empty;
         public SpeechToTextService(IAzureHelper azureHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISpeechToTextHelper speechToTextHelper)
         {
             _configuration = configuration;
@@ -54,38 +55,9 @@ namespace Risebird.MicroService
                 var fileName = urlArray[urlLength - 1];
                 var audioBlob = _azureStorageHelper.GetBlobDataAsBlob("audios", fileName);
 
-                var speechConfig = SpeechConfig.FromSubscription(_configuration["SpeechCreds:subscriptionKey"], _configuration["SpeechCreds:region"]);
+                RecognitionWithPushAudioStreamAsync(audioBlob.OpenReadAsync().Result).Wait();
 
-
-                using (Stream audioStream = audioBlob.OpenReadAsync().Result)
-                {
-
-                    using (var reader = new BinaryReader(audioStream))
-                    {
-                        using (var audioInputStream = AudioInputStream.CreatePushStream(_speechToTextHelper.readWaveHeader(reader)))
-                        {
-                            byte[] readBytes;
-                            do
-                            {
-                                readBytes = reader.ReadBytes(Convert.ToInt32(audioStream.Length));
-                                audioInputStream.Write(readBytes, readBytes.Length);
-                            } while (readBytes.Length > 0);
-                            using (var audioConfig = AudioConfig.FromStreamInput(audioInputStream))
-                            {
-                                using (var recognizer = new SpeechRecognizer(speechConfig, audioConfig))
-                                {
-
-                                    var result = await recognizer.RecognizeOnceAsync();
-                                    data.ConvertedText = result.Text;
-                                }
-                            }
-                        }
-                    }
-                    
-                }
-
-
-
+                data.ConvertedText = result.ToString();
 
                 var tableEntries = _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
                 var requiredEntry = new SpeechToTextServiceModel();
@@ -135,19 +107,112 @@ namespace Risebird.MicroService
                 return null;
             }
 
+        }
 
+        public async Task RecognitionWithPushAudioStreamAsync(Stream audioStream)
+        {
+            // Creates an instance of a speech config with specified subscription key and service region.
+            // Replace with your own subscription key and service region (e.g., "westus").
+            var config = SpeechConfig.FromSubscription(_configuration["SpeechCreds:subscriptionKey"], _configuration["SpeechCreds:region"]); ;
+
+            var stopRecognition = new TaskCompletionSource<int>();
+
+            // Create a push stream
+            using (var reader = new BinaryReader(audioStream))
+            {
+                using (var pushStream = AudioInputStream.CreatePushStream(_speechToTextHelper.readWaveHeader(reader)))
+                {
+                    using (var audioInput = AudioConfig.FromStreamInput(pushStream))
+                    {
+                        // Creates a speech recognizer using audio stream input.
+                        using (var recognizer = new SpeechRecognizer(config, audioInput))
+                        {
+                            // Subscribes to events.
+                            recognizer.Recognizing += (s, e) =>
+                            {
+                                //Console.WriteLine($"RECOGNIZING: Text={e.Result.Text}");
+                            };
+
+                            recognizer.Recognized += (s, e) =>
+                            {
+                                if (e.Result.Reason == ResultReason.RecognizedSpeech)
+                                {
+                                    if(result==string.Empty)
+                                    {
+                                        result = e.Result.Text;
+                                    }
+                                    else
+                                    {
+                                        result = result + " " + e.Result.Text;
+
+                                    }
+                                    //Console.WriteLine($"RECOGNIZED: Text={e.Result.Text}");
+                                }
+                                else if (e.Result.Reason == ResultReason.NoMatch)
+                                {
+                                    //result=
+                                    //Console.WriteLine($"NOMATCH: Speech could not be recognized.");
+                                }
+                            };
+
+                            recognizer.Canceled += (s, e) =>
+                            {
+                                //Console.WriteLine($"CANCELED: Reason={e.Reason}");
+
+                                if (e.Reason == CancellationReason.Error)
+                                {
+                                    //Console.WriteLine($"CANCELED: ErrorCode={e.ErrorCode}");
+                                    //Console.WriteLine($"CANCELED: ErrorDetails={e.ErrorDetails}");
+                                    //Console.WriteLine($"CANCELED: Did you update the subscription info?");
+                                }
+
+                                stopRecognition.TrySetResult(0);
+                            };
+
+                            recognizer.SessionStarted += (s, e) =>
+                            {
+                                //Console.WriteLine("\nSession started event.");
+                            };
+
+                            recognizer.SessionStopped += (s, e) =>
+                            {
+                                //Console.WriteLine("\nSession stopped event.");
+                                //Console.WriteLine("\nStop recognition.");
+                                stopRecognition.TrySetResult(0);
+                            };
+
+                            // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
+                            await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
+
+                            // open and read the wave file and push the buffers into the recognizer
+                            byte[] readBytes;
+                            do
+                            {
+                                readBytes = reader.ReadBytes(1024);
+                                pushStream.Write(readBytes, readBytes.Length);
+                            } while (readBytes.Length > 0);
+
+                            pushStream.Close();
+
+                            // Waits for completion.
+                            // Use Task.WaitAny to keep the task rooted.
+                            Task.WaitAny(new[] { stopRecognition.Task });
+
+                            // Stops recognition.
+                            await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
+                        }
+                    }
+                }
+
+            }
         }
 
     }
+
 }
 
 
 
-
-//var audioConfig = AudioConfig.FromWavFileInput(@"c:\Users\prashantvm\Desktop\Recording\One.wav");
-//var recognizer = new SpeechRecognizer(speechConfig, audioConfig);
-
-//var result = await recognizer.RecognizeOnceAsync();
 
 
 

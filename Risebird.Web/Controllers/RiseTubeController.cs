@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -3008,18 +3009,24 @@ namespace Risebird.Web.Controllers
                 }
                 if(requiredEntry != null)
                 {
+                    string convertedText = string.Empty;
                     if(!string.IsNullOrEmpty(requiredEntry.KeyWords))
                     {
                         var keywords = requiredEntry.KeyWords.Split(",");
                         foreach (var keyword in keywords)
                         {
                             var word = keyword.ToLower().Trim();
-                            if (requiredEntry.ConvertedText.ToLower().Contains(word))
+                            convertedText = requiredEntry.ConvertedText.ToLower();
+                            if (convertedText.Contains(word))
                             {
-                                count = count + 1;
+                                foreach (Match m in Regex.Matches(convertedText, word))
+                                {
+                                    count = count + 1;
+                                }
+                                
                                 //word = "<mark>" + word + "</mark>";
                                 word = " <span style=\"background-color:Red;\">" + word + "</span>";
-                                requiredEntry.ConvertedText = requiredEntry.ConvertedText.ToLower().Replace(keyword, word);
+                                requiredEntry.ConvertedText = convertedText.Replace(keyword, word);
                             }
 
                         }
