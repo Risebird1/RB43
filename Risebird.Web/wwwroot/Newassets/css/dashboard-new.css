@@ -17,7 +17,14 @@
     .clearfix:after {
         clear: both;
     }
-
+.multiple_row > h2 {
+    font-size: 18px;
+    padding: 8px 10px;
+    text-align: left;
+    color: #ffffff;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
 .background-colorful {
     background: linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
     background: -o-linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
