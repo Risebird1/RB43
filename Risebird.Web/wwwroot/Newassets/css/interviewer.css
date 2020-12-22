@@ -19,7 +19,7 @@ textarea::-webkit-scrollbar-thumb {
     border-radius: 2px;
 }
 
-#candidateTable .journey td {
+#candidateTable.journey td {
     vertical-align: middle;
 }
 
