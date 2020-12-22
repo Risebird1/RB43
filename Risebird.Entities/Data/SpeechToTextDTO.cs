@@ -21,12 +21,12 @@ namespace Risebird.Entities.Data
         [Display(Name = "Interview Date")]
         public DateTime InterviewDate { get; set; }
 
-        [Display(Name = "Candidate EmailId")]
+        [Display(Name = "Candidate's Email")]
         public string CandidateEmailId { get; set; }
         [Display(Name = "Candidate's Name")]
 
         public string CandidateName { get; set; }
-        [Display(Name = "Keywords(comma separated)")]
+        [Display(Name = "Keywords (Comma Separated)")]
 
         public string KeyWords { get; set; }
         public string ConvertedText { get; set; }
