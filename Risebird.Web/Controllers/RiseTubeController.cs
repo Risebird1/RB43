@@ -3026,6 +3026,8 @@ namespace Risebird.Web.Controllers
                                 
                                 //word = "<mark>" + word + "</mark>";
                                 word = " <span style=\"background-color:Red;\">" + word + "</span>";
+                                word = " <span style=\"color:#fff;\">" + word + "</span>";
+                                word = " <span style=\"padding:0px 5px 0px 5px;\">" + word + "</span>";
                                 requiredEntry.ConvertedText = convertedText.Replace(keyword, word);
                             }
 

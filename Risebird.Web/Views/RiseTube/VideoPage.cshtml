@@ -47,7 +47,7 @@
 <link href="//amp.azure.net/libs/amp/2.3.3/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" defer />
-
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
 <script>
     amp.options.flashSS.swf = "//amp.azure.net/libs/amp/2.3.3/techs/StrobeMediaPlayback.2.0.swf"
     amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/2.3.3/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
@@ -1389,9 +1389,9 @@
 
 
                                                                                 <div id="link9" class="tab_content text-center">
-                                                                                   
+
                                                                                 </div>
-                                                                                
+
                                                                             }
 
 
@@ -2646,12 +2646,12 @@
                 }
                 else {
 
-                    var innerText = '<label class="matchtxt">Total Keywords Match Found:</label><span class="matcnum">' + data.total + '</span><br>  <div class="matchdiv">' + data.convertedText + '</div>'
+                    var innerText = '<label class="matchtxt">Total Keywords Match Found:</label><span class="matcnum ">' + data.total + '</span><br>  <div class="matchdiv"><div style="overflow-y:scroll" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
 
                     document.getElementById('link9').innerHTML = innerText;
-  
+
                 }
-               
+
             }
 
         });
@@ -2751,11 +2751,19 @@
 <script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
 <!-- Owl Carousel -->
 <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="~/Newassets/js/scrollBar.js"></script>
 <!-- Custom scripts for all pages-->
 
 <script type="text/javascript">
     $(".sb-container").scrollBox();
+
+
+    (function ($) {
+        $(window).on("load", function () {
+            $(".content").mCustomScrollbar();
+        });
+    })(jQuery);
 </script>
 
 <script>
@@ -3941,6 +3949,7 @@
     }
 </script>
 <script src="~/RiseTube/js/custom.js"></script>
+
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" defer></script>
 <script src="~/Newassets/js/scrollBar.js"></script>
