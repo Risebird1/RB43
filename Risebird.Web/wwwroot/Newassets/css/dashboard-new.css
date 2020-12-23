@@ -5988,7 +5988,7 @@ button.close {
 .excel-file {
     margin-right: 5px;
     color: green;
-    font-size: 35px;
+    font-size: 35px!important;
     margin-left: 5px;
     border: 0;
 }
@@ -6107,7 +6107,7 @@ button.close {
     font-weight: bold;
     position: absolute;
     right: 11px;
-    top: 11px;
+    top: 10px;
 }
 
 #search {

@@ -512,14 +512,14 @@
 
                                                             <td class="interview-com">
                                                                 <div id="section">
-                                                                    @if (item.InterviewerComment.Length > 45)
+                                                                    @if (item.InterviewerComment.Length > 40)
                                                                     {
                                                                         <div class="article">
                                                                             <p style="margin-bottom:0px;">
-                                                                                @item.InterviewerComment.Substring(0, 45)
+                                                                                @item.InterviewerComment.Substring(0, 40)
                                                                             </p>
                                                                             <p class="moretext_@item.imid moretext">
-                                                                                @item.InterviewerComment.Substring(45, @item.InterviewerComment.Length - 45)
+                                                                                @item.InterviewerComment.Substring(40, @item.InterviewerComment.Length - 40)
                                                                             </p>
                                                                         </div>
                                                                     }
