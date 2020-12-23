@@ -54,11 +54,11 @@ namespace Risebird.MicroService
                 var urlLength = urlArray.Length;
                 var fileName = urlArray[urlLength - 1];
                 var audioBlob = _azureStorageHelper.GetBlobDataAsBlob("audios", fileName);
-
+                log.LogInformation($"SpeechToTextService Audio file recieved  and processing started at: {DateTime.Now}");
                 RecognitionWithPushAudioStreamAsync(audioBlob.OpenReadAsync().Result).Wait();
 
                 data.ConvertedText = result.ToString();
-
+                log.LogInformation($"SpeechToTextService Audio file  processing completed at: {DateTime.Now}");
                 var tableEntries = _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
                 var requiredEntry = new SpeechToTextServiceModel();
                 if (tableEntries != null)
@@ -79,7 +79,7 @@ namespace Risebird.MicroService
                     modelData.KeyWords = data.KeyWords;
 
                     await _azureStorageHelper.InsertEntity("SpeechToTextTbl", modelData);
-
+                    log.LogInformation($"SpeechToTextService Audio file text saved in azure table at: {DateTime.Now}");
                 }
                 else
                 {
