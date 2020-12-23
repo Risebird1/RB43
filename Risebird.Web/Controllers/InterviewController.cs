@@ -7295,12 +7295,12 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                        var path = $"http://localhost:7071/api/SpeechToTextService";
-                        //var path = $"https://risebirdmicroservice.azurewebsites.net/api/SpeechToTextService";
-                        //var functionKey = "jiNbkIadJuGB/ms6U4KIWBmFdCTh6DLLku8MrEaaNCLjquJAkZSHbw==";
+                        //var path = $"http://localhost:7071/api/SpeechToTextService";
+                        var path = $"https://risebirdmicroservice.azurewebsites.net/api/SpeechToTextService";
+                        var functionKey = "vGMayAyrQJfXwI27nEjbv7TYEGAqQ5nwNaRJkjBncPXQuj5a5nW5iA==";
 
                         HttpClient httpClient = new HttpClient();
-                        httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken);
+                        httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
 
                         TempData["SuccessErrorMessageInterview"] = "Audio uploaded successfully.";
                         return RedirectToAction("Index");
