@@ -6146,6 +6146,12 @@ tr.collapse.in {
     display: table-row;
 }
 
+.child-section .table-responsive {
+    overflow-x: auto;
+    min-height: .01%;
+    padding-bottom: 10px;
+}
+
 tbody.collapse.in {
     display: table-row-group;
 }
