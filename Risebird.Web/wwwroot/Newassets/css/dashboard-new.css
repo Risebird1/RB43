@@ -1215,7 +1215,7 @@ table.journey th, table.journey td {
 }
 
 #resumeId, .callatag {
-    padding: 5px 10px;
+    padding: 2px 10px;
     border-radius: 10px;
 }
 
@@ -2957,7 +2957,9 @@ button.btn {
     table.journey td.cadSkill {
         width: 150px;
     }
-
+    .candidate table.journey td.cadEmail {
+        width: 160px;
+    }
     .selected-priority table.journey td.cadName {
        width: 250px;
     }
@@ -2990,7 +2992,9 @@ button.btn {
     table.journey td.cadName, table.journey td.cadEmail {
         width: 200px;
     }
-
+    .candidate table.journey td.cadEmail {
+        width: 160px;
+    }
     table.journey td.cadSkill {
         width: 150px;
     }
@@ -8000,6 +8004,9 @@ div.tagsinput {
     table.journey td.cadName, table.journey td.cadEmail {
         width: 200px;
     }
+    .candidate table.journey td.cadEmail {
+        width: 160px;
+    }
 
     table.journey td.cadSkill {
         width: 150px;
@@ -8127,6 +8134,11 @@ div.tagsinput {
     table.journey td.cadSkill {
         width: 150px;
     }
+
+    .candidate table.journey td.cadEmail {
+        width: 160px;
+    }
+
 }
 
 

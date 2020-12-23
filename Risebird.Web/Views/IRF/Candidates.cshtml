@@ -8,7 +8,7 @@
 }
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=10" />
 <input type="hidden" value="@ViewBag.Profile" id="hidprofile"/>
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
@@ -180,12 +180,12 @@
 
 
 
-                                                            @if (item.EmailId.Length > 18)
+                                                            @if (item.EmailId.Length > 25)
                                                             {
 
 
                                                                 <td class="cadEmail">
-                                                                    <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 18)... </a>
+                                                                    <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 25)... </a>
                                                                 </td>
                                                             }
 
@@ -1068,10 +1068,10 @@
 
 
 
-                if (data[i].emailId.length > 18) {
+                if (data[i].emailId.length > 25) {
 
                     html += '  <td class="cadEmail">';
-                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 18) + '... </a>';
+                    html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 25) + '... </a>';
                     html += '   </td>';
                 }
 
