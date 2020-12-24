@@ -48,8 +48,8 @@
                         <div class="form-group  card-title-space" style="width:100px;float:left;    margin-right: 30px;">
                             @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control", onchange = "FilterInterviews(this.value);" })
                         </div>
-                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
-                        <div id="meeting_filter" class="dataTables_filter pull-right mt-20" style="margin-left:10px;">
+
+                        <div id="meeting_filter" class="dataTables_filter pull-left mt-20" style="margin-right:10px;">
 
                             <div class="searchCon">
 
@@ -63,7 +63,7 @@
                             </div>
                         </div>
 
-
+                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                     </div>
                 </div>
             </div>
@@ -131,20 +131,20 @@
                                                         <tr id="@item.imid" data-changes="1">
                                                             <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
                                                             <td> @item.interviewDate </td>
-                                                            @if (item.IsOnline == 1 && item.candidateName.Length > 22)
+                                                            @if (item.IsOnline == 1 && item.candidateName.Length > 18)
                                                             {
                                                                 <td>
-                                                                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 20)...  </a>
+                                                                    <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 18)...  </a>
                                                                 </td>
                                                             }
                                                             else
-                                                            { @if (item.candidateName.Length > 22)
+                                                            { @if (item.candidateName.Length > 20)
                                                                 {
 
 
 
                                                                     <td class="cadName">
-                                                                        <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 22)... </a>
+                                                                        <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 20)... </a>
                                                                     </td>
                                                                 }
 
@@ -173,14 +173,17 @@
                                                                 <td>No Resume</td>
                                                             }
 
-                                                            @if (item.IsHrOnline == 1)
+                                                            @if (item.IsHrOnline == 1 && item.ClientHrContact.Length > 20)
                                                             {
                                                                 <td>
-                                                                    <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact </a>
+                                                                    <a onclick="directopenChat('@item.ClientHrContact')"><span class="dot" style="background-color:green"></span>     @item.ClientHrContact.Substring(0, 20)... </a>
                                                                 </td>
+
+                                                                
                                                             }
                                                             else
                                                             {
+
                                                                 <td>
                                                                     <a onclick=""><span class="dot"></span> @item.ClientHrContact </a>
                                                                 </td>
@@ -395,20 +398,20 @@
             html += '  <tr id="' + data[i].imid + '" data-changes="1">';
             html += '  <td style="width:10px;" data-toggle="collapse" id="'+ data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += '  <td> ' + data[i].interviewDate+' </td>';
-            if (data[i].isOnline == 1 && data[i].candidateName.Length > 22)
+            if (data[i].isOnline == 1 && data[i].candidateName.Length > 20)
                                                             {
-                html += '   <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 22) +'...  </a></td>';
+                html += '   <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 20) +'...  </a></td>';
 
 
                                                             }
                                                             else
             {
-                if (data[i].candidateName.Length > 22)
+                if (data[i].candidateName.length > 20)
                                                                 {
 
 
 
-                    html += '  <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 22) + '... </a> </td>';
+                    html += '  <td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 20) + '... </a> </td>';
 
 
                                                                 }
@@ -439,10 +442,10 @@
                 html += '    <td>No Resume</td>';
                                                                 }
 
-                                                                if (data[i].isHrOnline == 1)
+            if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 20)
                                                                 {
-                                                                    if (data[i].clientHrContact != null) {
-                                                                        html += '   <td>  <a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact + ' </a></td>';
+                if (data[i].clientHrContact != null) {
+                    html += '   <td>  <a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 20 )+ '... </a></td>';
                                                                     }
 
 
