@@ -7237,11 +7237,12 @@ namespace Risebird.Web.Controllers
                     var requiredEntry = new SpeechToTextServiceModel();
                     if(tableEntries!=null && tableEntries.Count()!=0)
                     {
-                        requiredEntry = tableEntries.Where(x => x.InterviewId == interviewId).FirstOrDefault();
+                        requiredEntry = tableEntries.Where(x => x.PartitionKey == interviewId.ToString()).FirstOrDefault();
                     }
                     if(requiredEntry!=null)
                     {
                         model.UploadedAudioFileUrl = requiredEntry.AudioFileUrl;
+                        model.ConvertedText = requiredEntry.ConvertedText;
                     }
 
                     return View(model);
@@ -7293,19 +7294,37 @@ namespace Risebird.Web.Controllers
                             {
                                 model.AudioFileUrl = uploadedaudioFileURL;
                             }
+
+                            var path = $"http://localhost:7071/api/SpeechToTextService";
+                            //var path = $"https://risebirdmicroservice.azurewebsites.net/api/SpeechToTextService";
+                            //var functionKey = "vGMayAyrQJfXwI27nEjbv7TYEGAqQ5nwNaRJkjBncPXQuj5a5nW5iA==";
+
+                            HttpClient httpClient = new HttpClient();
+                            httpClient.SendRequestAsync(HttpMethod.Post, path, model, "", "", _cancellationToken);
+
+                            TempData["SuccessErrorMessageInterview"] = "Audio uploaded successfully.";
+                            return RedirectToAction("Index");
+
+                        }
+                        else
+                        {
+                            var modelData = new SpeechToTextServiceModel();
+                            modelData.PartitionKey = model.InterviewId.ToString();
+                            modelData.RowKey = model.InterviewId.ToString();
+                            modelData.AudioFileUrl = model.UploadedAudioFileUrl;
+                            modelData.ConvertedText = model.ConvertedText;
+                            modelData.InterviewId = model.InterviewId;
+                            modelData.KeyWords = model.KeyWords;
+
+                            await _azureStorageHelper.InsertEntity("SpeechToTextTbl", modelData);
+                            TempData["SuccessErrorMessageInterview"] = "Keywords updated successfully.";
+
+                            return RedirectToAction("Index");
                         }
 
-                        //var path = $"http://localhost:7071/api/SpeechToTextService";
-                        var path = $"https://risebirdmicroservice.azurewebsites.net/api/SpeechToTextService";
-                        var functionKey = "vGMayAyrQJfXwI27nEjbv7TYEGAqQ5nwNaRJkjBncPXQuj5a5nW5iA==";
 
-                        HttpClient httpClient = new HttpClient();
-                        httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
 
-                        TempData["SuccessErrorMessageInterview"] = "Audio uploaded successfully.";
-                        return RedirectToAction("Index");
 
-                        
                     }
                     else
                     {
