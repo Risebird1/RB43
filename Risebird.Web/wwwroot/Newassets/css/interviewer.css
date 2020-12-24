@@ -12,14 +12,17 @@ body {
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
-  
 }
 
 textarea::-webkit-scrollbar-thumb {
-
     margin: 2px;
     border-radius: 2px;
 }
+
+#candidateTable.journey td {
+    vertical-align: middle;
+}
+
 .employee .mdc-card .form-control[disabled] {
     background: transparent !important;
     border: 0px !important;
@@ -193,45 +196,46 @@ table {
     }
 
 
-#MyInterviewList_filter input::-webkit-search-decoration,
-#MyInterviewList_filter input::-webkit-search-cancel-button {
-    display: none;
-}
+        #MyInterviewList_filter input::-webkit-search-decoration,
+        #MyInterviewList_filter input::-webkit-search-cancel-button {
+            display: none;
+        }
 
 
-#MyInterviewList_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-    border: solid 1px #ccc;
-    padding: 9px 10px 9px 32px;
-    width: 135px;
-    font-family: arial;
-    -webkit-border-radius: 10em;
-    -moz-border-radius: 10em;
-    border-radius: 10em;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    transition: all .5s;
-}
+        #MyInterviewList_filter input[type=search] {
+            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+            border: solid 1px #ccc;
+            padding: 9px 10px 9px 32px;
+            width: 135px;
+            font-family: arial;
+            -webkit-border-radius: 10em;
+            -moz-border-radius: 10em;
+            border-radius: 10em;
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+        }
 
-    #MyInterviewList_filter input[type=search]:focus {
-        width: 200px;
-        background-color: #fff;
-        border-color: #4a93de;
-        font-family: arial;
-        margin: 3px;
-        -webkit-box-shadow: 0 0 5px #4a93de;
-        -moz-box-shadow: 0 0 5px #4a93de;
-        box-shadow: 0 0 5px #4a93de;
-    }
+            #MyInterviewList_filter input[type=search]:focus {
+                width: 200px;
+                background-color: #fff;
+                border-color: #4a93de;
+                font-family: arial;
+                margin: 3px;
+                -webkit-box-shadow: 0 0 5px #4a93de;
+                -moz-box-shadow: 0 0 5px #4a93de;
+                box-shadow: 0 0 5px #4a93de;
+            }
 
 
-#MyInterviewList_filter input:-moz-placeholder {
-    color: #999;
-}
+        #MyInterviewList_filter input:-moz-placeholder {
+            color: #999;
+        }
 
-#MyInterviewList_filter input::-webkit-input-placeholder {
-    color: #999;
-}
+        #MyInterviewList_filter input::-webkit-input-placeholder {
+            color: #999;
+        }
+
 #divIntrestedShown table, #divshortlist table {
     border: 1px #ccc solid;
     margin: 20px;
@@ -250,6 +254,7 @@ table {
 #divIntrestedShown table tbody tr:nth-of-type(odd), #divshortlist table tbody tr:nth-of-type(odd) {
     background-color: rgba(0,0,0,.05);
 }
+
 .client-nme {
     width: 25%;
 }
@@ -265,6 +270,7 @@ table {
 .client-action {
     width: 25%;
 }
+
 #OpeninterviewList_length, #OpeninterviewList_filter {
     margin: 10px 0px
 }
@@ -325,6 +331,7 @@ table {
         #OpeninterviewList_filter input::-webkit-input-placeholder {
             color: #999;
         }
+
 .multiselect-selected-text {
     text-transform: capitalize;
     font-weight: normal;
@@ -335,7 +342,6 @@ table {
 
 
 #resumeId, #zoomlinkId {
- 
     padding: 5px 10px;
     border-radius: 16px;
 }
@@ -344,7 +350,7 @@ table {
 [type="date"] {
     background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 5% !important;
-    padding:10px!important;
+    padding: 10px !important;
 }
 
     [type="date"]::-webkit-inner-spin-button {
@@ -354,6 +360,7 @@ table {
     [type="date"]::-webkit-calendar-picker-indicator {
         opacity: 0;
     }
+
 #reportId {
     background: #b3d2f1;
     color: #1d3b5e;
@@ -375,10 +382,12 @@ table {
     padding: 5px 10px;
     border-radius: 16px;
 }
+
 #uploadDiv #videoId {
     background: none;
     text-decoration: none;
 }
+
 .talk-bubble {
     display: inline-block;
     position: relative;
@@ -386,7 +395,6 @@ table {
     height: auto;
     border-radius: 10px;
     margin: 5px 0px;
-
 }
 
 /* Modal */
@@ -507,18 +515,18 @@ table {
     height: auto;
     border-radius: 7px;
     margin: 5px 0px;
-
 }
+
 .cmt-w {
     width: 300px
 }
 
-    .talk-bubble textarea {
-        resize: none;
-        border: 0;
-        padding: 5px;
-        width: 100%;
-    }
+.talk-bubble textarea {
+    resize: none;
+    border: 0;
+    padding: 5px;
+    width: 100%;
+}
 
 
 
@@ -541,9 +549,9 @@ table {
 
 
 
-    .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid;
-    }
+.mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
+    border-bottom: 2px rgb(80, 158, 235) solid;
+}
 
 .mdc-fab.trash-btn {
     background: #d20505 !important;
@@ -562,73 +570,85 @@ table {
     margin: 10px 0px 0px 0px;
 }
 
-.upload a {
-    text-decoration: none;
-    width: 160px;
-    margin: 10px auto;
-    display: block;
-    padding: 8px 0px;
-    font-size: 13px;
-    text-align: center;
-}
+    .upload a {
+        text-decoration: none;
+        width: 160px;
+        margin: 10px auto;
+        display: block;
+        padding: 8px 0px;
+        font-size: 13px;
+        text-align: center;
+    }
+
 .assessment-detail {
     width: 1100px;
     margin: 0px auto;
 }
+
 .assessment-blk {
-   
     border-radius: 5px;
     padding: 10px;
     margin: 20px 0px;
 }
 
 .assessment-blk-h {
-   
     border-radius: 0px;
     padding: 10px;
     margin: 0px 0px;
 }
-.pt10{
-    padding-top:10px;
+
+.pt10 {
+    padding-top: 10px;
 }
+
 .assesment .list-group-item-text {
     min-height: 135px;
 }
 
-.assess-left{width:35%;float:left;padding:0px 10px;}
+.assess-left {
+    width: 35%;
+    float: left;
+    padding: 0px 10px;
+}
+
 .assess-right {
     width: 60%;
     float: left;
     padding: 0px 10px;
 }
+
 .newsletter {
     padding: 0;
     float: left;
 }
+
 .assessment h1 {
     text-transform: uppercase;
     font-size: 15px;
     margin: 0px 0px 10px 0px;
-    font-weight:bold;
+    font-weight: bold;
 }
+
 .assessment h2 {
     font-size: 16px;
     margin: 8px 0px;
 }
+
 .assessment h3 {
     float: left;
     font-size: 15px;
-    padding-left:10px;
-    margin:0px;
+    padding-left: 10px;
+    margin: 0px;
 }
 
- .table-grey thead th {
-      color: #fff;
-    }
+.table-grey thead th {
+    color: #fff;
+}
 
 .table-grey > tbody > tr > td {
     padding: 12px 5px !important;
 }
+
 .br-w {
     border-right: 1px #fff solid;
 }
@@ -637,10 +657,10 @@ table {
     border-right: 1px #ccc solid;
 }
 
-        .input-group .input-group-btn {
-            padding: 0 12px;
-            margin: -11px;
-        }
+.input-group .input-group-btn {
+    padding: 0 12px;
+    margin: -11px;
+}
 
 .newsletter .content {
     max-width: 650px;
@@ -744,8 +764,6 @@ border: dashed 1px #a5a5a5;*/
     display: inline-block;
     height: 2px;
     position: relative;
-
-   
 }
 
 /*.tl-round {
@@ -795,21 +813,23 @@ table.journey th, table.journey td {
     text-align: center;
 }
 
-table.journey td p {
+    table.journey td p {
         margin-bottom: 5px;
- }
+    }
+
 table.table-bordered.journey.dataTable td {
     border-left-width: 1px;
 }
+
 .journey td {
     padding: 10px 10px;
     border-right: 1px solid #dee2e6ba;
     z-index: -1;
 }
-.circle-wrap {
-    margin: 0px 10px 0px 10px;;
-   
 
+.circle-wrap {
+    margin: 0px 10px 0px 10px;
+    ;
 }
 
 
@@ -869,7 +889,7 @@ table.table-bordered.journey.dataTable td {
     position: absolute;
     background-color: #dadadad4;
     width: 139px;
-    height:70px;
+    height: 70px;
     left: -105px;
     top: 33px;
     border-radius: 5px;
@@ -908,6 +928,7 @@ table.table-bordered.journey.dataTable td {
     margin-left: 10px;
     color: #4C4A4A;
 }
+
 .Day {
     font-size: 11px;
     margin-left: 5px;
@@ -930,7 +951,11 @@ table.table-bordered.journey.dataTable td {
     text-align: center;
     margin-top: -2px;
 }
-#candidateTable_length{float:left}
+
+#candidateTable_length {
+    float: left
+}
+
 div.dataTables_wrapper div#candidateTable_length label {
     font-weight: normal;
     text-align: left;
@@ -941,6 +966,7 @@ div.dataTables_wrapper div#candidateTable_length select {
     width: 75px !important;
     display: inline-block;
 }
+
 .dataTables_length select {
     background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e);
     border: 1px solid #E3E3E3 !important;
@@ -962,6 +988,7 @@ div.dataTables_wrapper div#candidateTable_length select {
     box-shadow: none !important;
     padding: 8px 8px;
 }
+
 div.dataTables_wrapper div.dataTables_filter {
     text-align: right;
 }
@@ -1031,9 +1058,11 @@ table.dataTable thea
 .rejected {
     background: red;
 }
+
 .dropped {
     background: orange;
 }
+
 .schedule {
     background: cornflowerblue;
 }
@@ -1068,19 +1097,20 @@ table.dataTable thea
 .assesment .card .card-header {
     padding: 10px 0px 5px 0;
 }
+
 .assessment-grp {
     font-size: 20px !important;
     margin-bottom: 3px;
     text-transform: uppercase;
     font-weight: 600;
 }
- 
-    .fa-spinner {
-        font-size: 18px;
-        position: relative;
-        top: 6px;
-        left: 4px;
-    }
+
+.fa-spinner {
+    font-size: 18px;
+    position: relative;
+    top: 6px;
+    left: 4px;
+}
 
 .webkitEnabled {
     -webkit-appearance: menulist;
@@ -1094,19 +1124,22 @@ table.dataTable thea
 }
 
 .upload #videoId, .upload #resumeId {
-    background:none;
-    padding:8px 0px;
+    background: none;
+    padding: 8px 0px;
     border-radius: 3px;
-    margin-top:0px;
+    margin-top: 0px;
 }
-.uploadfile-txt{
-    padding:20px;
+
+.uploadfile-txt {
+    padding: 20px;
 }
+
 .dob [type="date"] {
     /* background: #fff url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 97% 50% no-repeat !important; */
-    background-size: 5%!important;
+    background-size: 5% !important;
     padding: 10px !important;
 }
+
 .table-responsive-sm .table > tbody > tr > td {
     padding: 12px 5px !important;
 }
@@ -1123,49 +1156,50 @@ table.dataTable thea
         margin: 0px auto;
     }
 }
-    @media screen and (max-width: 980px) {
-        .uploadfile-txt {
-            padding: 0px;
-        }
 
-        .mdc-radio {
-            padding: 15px 0px !important;
-            margin: 0px !important;
-        }
+@media screen and (max-width: 980px) {
+    .uploadfile-txt {
+        padding: 0px;
     }
 
-    @media screen and (max-width: 767px) {
-        .table > tbody > tr > td {
-            padding: 12px 5px !important;
-        }
+    .mdc-radio {
+        padding: 15px 0px !important;
+        margin: 0px !important;
+    }
+}
 
-
-        #interviewer_length, #interviewer_filter {
-            margin: 7px 0px 0px 0px !important;
-        }
-
-        .upload {
-            margin: 10px 0px;
-        }
+@media screen and (max-width: 767px) {
+    .table > tbody > tr > td {
+        padding: 12px 5px !important;
     }
 
-    @media screen and (max-width:640px) {
 
-        .cmt-w, .talk-bubble {
-            width: 98%;
-        }
-
-        .upload a {
-            width: 100%;
-        }
+    #interviewer_length, #interviewer_filter {
+        margin: 7px 0px 0px 0px !important;
     }
 
-    @media screen and (max-width:480px) {
-        .client-cmt {
-            width: 25% !important;
-        }
-
-        .client-action {
-            width: 27% !important;
-        }
+    .upload {
+        margin: 10px 0px;
     }
+}
+
+@media screen and (max-width:640px) {
+
+    .cmt-w, .talk-bubble {
+        width: 98%;
+    }
+
+    .upload a {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width:480px) {
+    .client-cmt {
+        width: 25% !important;
+    }
+
+    .client-action {
+        width: 27% !important;
+    }
+}
