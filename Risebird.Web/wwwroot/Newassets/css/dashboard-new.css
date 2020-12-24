@@ -2973,8 +2973,8 @@ button.btn {
 }
 
 
-.selected-priority .journey td.interview-com {
-   width: 300px;
+.selected-priority .journey td.interview-com, .journey td.interview-com {
+    width: 300px;
 }
 
 .selected-priority table.journey td.cadName {

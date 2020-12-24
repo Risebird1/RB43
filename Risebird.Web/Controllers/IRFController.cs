@@ -1004,7 +1004,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SelectedInterviewMeetings(string id, string irfId)
+        public IActionResult SelectedInterviewMeetings(string id, string irfId, int? Page, string searchValue)
         {
             try
             {
@@ -1084,8 +1084,43 @@ namespace Risebird.Web.Controllers
 
                         ViewData["list"] = list;
                         ViewBag.ProfileName = profileName.ToLower();
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            searchValue = searchValue.ToUpper();
+                            selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "")|| (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "")|| (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")|| (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
-                        return View(selectedMeeting);
+                        }
+                        ViewBag.TotalCount = selectedMeeting.Count;
+
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        int a = selectedMeeting.Count / 10;
+                        if (selectedMeeting.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            a = a + 1;
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = selectedMeeting.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                            }
+
+                        }
+                        if (selectedMeeting.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
+                        _modelDetail = selectedMeeting;
+                        return View(selectedMeeting.ToPagedList(Page ?? 1, 10));
+
+            
                     }
                     else
                     {
@@ -4769,5 +4804,51 @@ namespace Risebird.Web.Controllers
             return Json(new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count });
         }
 
+
+
+
+        public JsonResult SelectedInterviewMeetingsJson(string searchValue)
+        {
+            int Page = 1;
+            var selectedMeeting = _modelDetail;
+            if (!String.IsNullOrEmpty(searchValue))
+            {
+                searchValue = searchValue.ToUpper();
+                selectedMeeting = selectedMeeting.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.ClientHrContact) ? x.ClientHrContact.ToUpper().Contains(searchValue) : x.ClientHrContact == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "") || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
+
+            }
+            int totalcount = selectedMeeting.Count;
+            int Pagestart = 0;
+            int Pageend = 0;
+            ViewBag.TotalCount = selectedMeeting.Count;
+
+            Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+            int a = selectedMeeting.Count / 10;
+            if (selectedMeeting.Count % 10 == 0)
+            {
+                Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+            }
+            else
+            {
+                a = a + 1;
+                if (a == Page)
+                {
+                    Pageend = selectedMeeting.Count;
+                }
+                else
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                }
+
+            }
+            if (selectedMeeting.Count == 0)
+            {
+                Pagestart = 0;
+                Pageend = 0;
+            }
+
+            return Json(new { result = selectedMeeting.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = selectedMeeting.Count });
+        }
     }
 }

@@ -94,10 +94,10 @@
                                         <div class="clearfix"></div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
-                                                <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
-                                                            <th style="border-right: 0px !important;"></th>
+                                                            <th id='start' style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;" id='start'>Interview Date</th>
                                                             <th>Candidate Name</th>
                                                             <th>Report Link</th>
@@ -339,11 +339,11 @@
 <script>
     function changeicon(id) {
         if ($("#" + id).attr("data-changes") == "1") {
-            $("#" + id).addClass("show");
+            $("#" + id).addClass("shows");
             $("#" + id).attr("data-changes", "2");
         }
         else {
-            $("#" + id).removeClass("show");
+            $("#" + id).removeClass("shows");
             $("#" + id).attr("data-changes", "1");
         }
     }
