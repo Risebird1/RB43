@@ -11,7 +11,7 @@ namespace Risebird.Entities.Data
         public int InterviewId { get; set; }
 
         [Display(Name = "Upload Audio File (.wav)")]
-        [Required]
+        //[Required]
         public IFormFile AudioFile { get; set; }
         public string AudioFileUrl { get; set; }
         [Display(Name = "Skill Channel")]

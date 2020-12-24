@@ -55,46 +55,25 @@ namespace Risebird.MicroService
                 var fileName = urlArray[urlLength - 1];
                 var audioBlob = _azureStorageHelper.GetBlobDataAsBlob("audios", fileName);
 
-                RecognitionWithPushAudioStreamAsync(audioBlob.OpenReadAsync().Result).Wait();
+                RecognitionWithPushAudioStreamAsync(audioBlob.OpenReadAsync().Result, log).Wait();
 
-                data.ConvertedText = result.ToString();
 
-                var tableEntries = _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
-                var requiredEntry = new SpeechToTextServiceModel();
-                if (tableEntries != null)
-                {
-                    requiredEntry = tableEntries.Where(x => x.InterviewId == data.InterviewId).FirstOrDefault();
+                log.LogInformation($"Recognition finished  at: {DateTime.Now}");
 
-                }
-                if (requiredEntry == null)
-                {
-                    //insert new entry in the azure table
+                data.ConvertedText = result;
 
-                    var modelData = new SpeechToTextServiceModel();
-                    modelData.PartitionKey = Guid.NewGuid().ToString();
-                    modelData.RowKey = Guid.NewGuid().ToString();
-                    modelData.AudioFileUrl = data.AudioFileUrl;
-                    modelData.ConvertedText = data.ConvertedText;
-                    modelData.InterviewId = data.InterviewId;
-                    modelData.KeyWords = data.KeyWords;
+                var modelData = new SpeechToTextServiceModel();
+                modelData.PartitionKey = data.InterviewId.ToString();
+                modelData.RowKey = data.InterviewId.ToString();
+                modelData.AudioFileUrl = data.AudioFileUrl;
+                modelData.ConvertedText = data.ConvertedText;
+                modelData.InterviewId = data.InterviewId;
+                modelData.KeyWords = data.KeyWords;
 
-                    await _azureStorageHelper.InsertEntity("SpeechToTextTbl", modelData);
+                await _azureStorageHelper.InsertEntity("SpeechToTextTbl", modelData);
 
-                }
-                else
-                {
-                    //edit the existing entry in the azure table
-                    var updateData = new SpeechToTextServiceModel();
-                    updateData.PartitionKey = requiredEntry.PartitionKey;
-                    updateData.RowKey = requiredEntry.RowKey;
-                    updateData.AudioFileUrl = data.AudioFileUrl;
-                    updateData.ConvertedText = data.ConvertedText;
-                    updateData.InterviewId = requiredEntry.InterviewId;
-                    updateData.KeyWords = data.KeyWords;
+                log.LogInformation($"inserted data in azure table  at: {DateTime.Now}");
 
-                    await _azureStorageHelper.InsertEntity("SpeechToTextTbl", updateData);
-
-                }
 
                 log.LogInformation($"SpeechToTextService HTTP trigger function completed at: {DateTime.Now}");
 
@@ -109,11 +88,18 @@ namespace Risebird.MicroService
 
         }
 
-        public async Task RecognitionWithPushAudioStreamAsync(Stream audioStream)
+        public async Task RecognitionWithPushAudioStreamAsync(Stream audioStream, ILogger log)
         {
+            log.LogInformation($"Recognition started at: {DateTime.Now}");
+
+
             // Creates an instance of a speech config with specified subscription key and service region.
             // Replace with your own subscription key and service region (e.g., "westus").
-            var config = SpeechConfig.FromSubscription(_configuration["SpeechCreds:subscriptionKey"], _configuration["SpeechCreds:region"]); ;
+            //var config = SpeechConfig.FromSubscription(_configuration["SpeechCreds:subscriptionKey"], _configuration["SpeechCreds:region"]); ;
+            var config = SpeechConfig.FromSubscription("661a0b33735942bdb0add842d5c6505e", "southeastasia"); ;
+
+            log.LogInformation($"Subscription creds read at: {DateTime.Now}");
+
 
             var stopRecognition = new TaskCompletionSource<int>();
 
@@ -158,6 +144,7 @@ namespace Risebird.MicroService
                             recognizer.Canceled += (s, e) =>
                             {
                                 //Console.WriteLine($"CANCELED: Reason={e.Reason}");
+                                log.LogInformation($"cancelled  at: {DateTime.Now} " + e.ErrorDetails);
 
                                 if (e.Reason == CancellationReason.Error)
                                 {
@@ -183,7 +170,7 @@ namespace Risebird.MicroService
 
                             // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
                             await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
-
+                            log.LogInformation($"StartContinuousRecognition called at: {DateTime.Now}");
                             // open and read the wave file and push the buffers into the recognizer
                             byte[] readBytes;
                             do
@@ -193,13 +180,15 @@ namespace Risebird.MicroService
                             } while (readBytes.Length > 0);
 
                             pushStream.Close();
-
+                            log.LogInformation($"stream read finish at: {DateTime.Now}");
                             // Waits for completion.
                             // Use Task.WaitAny to keep the task rooted.
                             Task.WaitAny(new[] { stopRecognition.Task });
 
                             // Stops recognition.
                             await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
+                            log.LogInformation($"StopContinuousRecognition called at: {DateTime.Now}");
+
                         }
                     }
                 }
