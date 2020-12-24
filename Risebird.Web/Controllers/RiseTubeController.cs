@@ -3005,7 +3005,7 @@ namespace Risebird.Web.Controllers
                 var requiredEntry = new SpeechToTextServiceModel();
                 if (tableEntries != null && tableEntries.Count() != 0)
                 {
-                    requiredEntry = tableEntries.Where(x => x.InterviewId == imid).FirstOrDefault();
+                    requiredEntry = tableEntries.Where(x => x.PartitionKey == imid.ToString()).FirstOrDefault();
                 }
                 if(requiredEntry != null)
                 {

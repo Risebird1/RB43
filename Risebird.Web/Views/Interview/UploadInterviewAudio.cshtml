@@ -39,7 +39,7 @@
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interview/UploadInterviewAudio" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                        <form action="/Interview/UploadInterviewAudio" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit = "return Check()">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -95,8 +95,13 @@
                                     </div>
 
                                 </div>
+                                <div class="row">
+                                    <label class="text-danger" id="error_linkDiv" style="color: red; font-size: 14px"></label>
+                                </div>
 
                                 @Html.HiddenFor(m => m.InterviewId)
+                                @Html.HiddenFor(m => m.ConvertedText)
+                                @Html.HiddenFor(m => m.UploadedAudioFileUrl)
 
                                 <div class="card-footer ">
                                     <div class="row">
@@ -185,7 +190,22 @@
 
 </div>
 
+<script>
+    function Check() {
+        var file = document.getElementById("AudioFile").value;
+        var keyWords = document.getElementById("KeyWords").value
+        if (file == '' && keyWords == '') {
+            document.getElementById("error_linkDiv").innerHTML = "Please fill atleast one field";
+            return false;
+        }
+        else {
+            document.getElementById("error_linkDiv").innerHTML = "";
+            return true;
+        }
 
+    }
+
+</script>
 
 
 
