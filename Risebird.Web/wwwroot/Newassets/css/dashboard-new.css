@@ -1062,9 +1062,17 @@ table.journey td.cadSkill {
         pointer-events: none;
     }
 
+.candidate .cadEmail [data-tooltip]:before {
+    margin-left: -25px;
+}
+#tblbodyCandidate .action .mdc-fab {
+    width: 29px !important;
+    height: 30px !important;
+}
+    #tblbodyCandidate .action{width:235px}
 /* Position tooltip above the element */
 .selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
-.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before,  .cadEmail [data-tooltip]:before {
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
     bottom: 72%;
 }
 

@@ -197,12 +197,12 @@
                                                                 <td class="text-right action">
                                                                     @if (ViewBag.ProfileName == "client")
                                                                     {
-                                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="btn-call"><i class="fa fa-thumbs-up"></i></span>
                                                                     }
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
-                                                                        <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
-                                                                        <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
+                                                                        <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
+                                                                        <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
 
                                                                     }
                                                                 </td>
@@ -626,13 +626,13 @@
 
             if (profile == "client") {
                 html += '    <td class="text-right action">';
-                html += '    <span title="Client Feedback" onclick="ModalButtonClickjson(' + i + ')" id="myBtn_' + data[i].imid + '" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>';
+                html += '    <span title="Client Feedback" onclick="ModalButtonClickjson(' + i + ')" id="myBtn_' + data[i].imid + '" class="btn-call"><i class="fa fa-thumbs-up"></i></span>';
                 html += '     </td>';
             }
             if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
                 html += '    <td class="text-right action">';
-                html += '   <span onclick="callCandidate(' + data[i].mobileNumber + ')" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>';
-                html += ' <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>';
+                html += '   <span onclick="callCandidate(' + data[i].mobileNumber + ')" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>';
+                html += ' <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>';
                 html += '     </td>';
             }
             
