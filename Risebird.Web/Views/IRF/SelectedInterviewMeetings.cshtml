@@ -224,7 +224,7 @@
                                                                             <th>Staffing Agency</th>
                                                                             <th>Approval Status</th>
                                                                             <th>Approval Comments</th>
-                                                                            
+
                                                                             <th>Final Selection Status</th>
                                                                             <th>Final Selection Comments</th>
                                                                         </tr>
@@ -311,7 +311,7 @@
                                                                                             <p>
 
                                                                                             </p>
-                                                                                        </div>          }
+                                                                                        </div>}
 
 
                                                                                 </div>
@@ -552,32 +552,26 @@
             $(this).hide();
             searchResult();
         });
-
-
-
-
     });
     var list;
 
     function searchResult() {
-
         $.ajax({
             type: "POST",
             url: "/IRF/SelectedInterviewMeetingsJson",
             data: { 'searchValue': $('#txtmeeting_filter').val() },
             success: function (data) {
                 if (data != "failed") {
-
-                    bindtableData(data.result);
                     list = data.result;
+                    bindtableData(data.result);
                     bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
                 }
             }
         });
     }
 
-       function bindtableData(data) {
-            var profile = $("#hidprofile").val();
+    function bindtableData(data) {
+        var profile = $("#hidprofile").val();
         var irfid = $("#hidirfid").val();
         var html = '';
         if (data.length == 0) {
@@ -586,36 +580,23 @@
             html += ' </tr>';
         }
         for (var i = 0; i < data.length; i++) {
-
-           
-
-            html += ' <tr id="' + data[i].imid + '"" data-changes="1">';
-            html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid+'" data-target=".' + data[i].imid+'" class="detail-row" onclick="changeicon(' + data[i].imid+')">&nbsp;</td>';
+            html += ' <tr id="' + data[i].imid + '" data-changes="1">';
+            html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += '  <td> ' + data[i].interviewDate + ' </td>';
-            if (data[i].isOnline == 1 && item.candidateName.length > 18)
-                                                                {
-                html += '   <td> <a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    '+data[i].candidateName.Substring(0, 18)+'...  </a></tdl> ';
+            if (data[i].isOnline == 1 && data[i].candidateName.length > 18) {
+                html += '   <td> <a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 18) + '...  </a></td> ';
+            }
+            else {
+                if (data[i].candidateName.length > 20) {
+                    html += '  <td class="cadName"> <a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span>' + data[i].candidateName.substring(0, 20) + '... </a></td>';
+                }
 
-                                                                }
-                                                                else
-                                                                {
-                if (data[i].candidateName.length > 20)
-                                                                    {
+                else {
+                    html += '  <td class="cadName"> <a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a> </td> ';
+                }
+            }
 
-
-
-                    html += '  <td class="cadName"> <a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span>' + data[i].candidateName.Substring(0, 20) + '... </a></td>';
-
-                                                                    }
-
-                                                                    else
-                                                                    {
-                    html += '  <td class="cadName"> <a onclick=""><span class="dot"></span> ' + data[i].candidateName+' </a > </td> ';
-
-                                                                    }
-                                                                }
-
-            html += '  <td> <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId =' + data[i].imid + '&irfId=' + irfid + '"}>Report</a></td>';
+            html += '  <td> <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + irfid + '">Report</a></td>';
             if (data[i].resumeLink != null && data[i].resumeLink != "") {
                 html += '      <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
             }
@@ -623,73 +604,40 @@
                 html += '    <td>No Resume</td>';
             }
 
-
-                                                                if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 20)
-                                                                {
+            if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 20) {
                 if (data[i].clientHrContact != null) {
-                    html += '   <td>  <a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 20 )+ '... </a></td>';
-                                                                    }
-
-
-                                                                    else {
-                                                                        html += ' <td></td>';}
-
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    if (data[i].clientHrContact != null) {
-                                                                        html += '   <td>  <a onclick=""><span class="dot"></span>' + data[i].clientHrContact + ' </a></td>';
-                                                                    }
-                                                                    else { html += ' <td></td>';}
-
-
-                                                                } if (data[i].isHrOnline == 1 && data[i].clientHrContact.length > 10) {
-                if (data[i].clientHrContact != null) {
-                    html += '   <td>  <a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 10) + '... </a></td>';
+                    html += '   <td>  <a onclick="directopenChat(' + data[i].clientHrContact + ')"><span class="dot" style="background-color:green"></span> ' + data[i].clientHrContact.substring(0, 20) + '... </a></td>';
                 }
-
-
                 else {
                     html += ' <td></td>';
                 }
-
-
             }
             else {
                 if (data[i].clientHrContact != null) {
                     html += '   <td>  <a onclick=""><span class="dot"></span>' + data[i].clientHrContact + ' </a></td>';
                 }
                 else { html += ' <td></td>'; }
-
-
             }
+            
 
+            html += '    <td> ' + data[i].confirmationStatus + '</td>';
+            html += '  <td> ' + data[i].meetingStatusStatusDesc + ' </td>';
+            html += '  <td> ' + data[i].intervieweStatusStatDesc + ' </td>';
 
-            html += '    <td> '+data[i].confirmationStatus+'</td>';
-            html += '  <td> ' + data[i].meetingStatusStatusDesc +' </td>';
-            html += '  <td> ' + data[i].intervieweStatusStatDesc +' </td>';
-
-            html += '    <td class="text-right action">';
-            if (profile == "client")
-                                                                    {
-                                                                        html += '    <span title="Client Feedback" onclick="ModalButtonClickjson(' + i+ ')" id="("myBtn_"+ '+data[i].imid+')" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>';
-                                                                    }
-            if (data[i].mobileNumber != null && data[i].mobileNumber != string.Empty)
-                                                                    {
-                                                                        html += '   <span onclick="callCandidate(' + data[i.mobileNumber+ ')" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>';
-                                                                        html += ' <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>';
-
-                                                                    }
-            html += '     </td>';
-
-
-
-
+            if (profile == "client") {
+                html += '    <td class="text-right action">';
+                html += '    <span title="Client Feedback" onclick="ModalButtonClickjson(' + i + ')" id="myBtn_' + data[i].imid + '" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>';
+                html += '     </td>';
+            }
+            if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
+                html += '    <td class="text-right action">';
+                html += '   <span onclick="callCandidate(' + data[i].mobileNumber + ')" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>';
+                html += ' <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>';
+                html += '     </td>';
+            }
+            
             html += '     </tr>';
-
-
-                html += '   <tr class="collapse' + data[i].imid + '">';
+            html += '   <tr class="collapse ' + data[i].imid + '">';
             html += '  <td colspan="999" class="child-section">';
             html += ' <table class="table table-striped">';
             html += '    <tr>';
@@ -704,89 +652,63 @@
             html += '   <th>Final Selection Comments</th>';
             html += '  </tr>';
             html += '    <tr>';
-            html += '   <td> ' + data[i].currentEmployerName+' </td>';
-            html += '   <td> ' + data[i].expectedPerHourRate +'</td>';
-            html += '  <td> ' + data[i].joiningTime +' </td>';
-            html += '   <td> ' + data[i].preferredLocation +'</td>';
-            html += '   <td>' + data[i].staffingAgency +'</td>';
-            html += '    <td>  ' + data[i].nextLevelApprovalStat +' </td>';
-
+            html += '   <td> ' + data[i].currentEmployerName + ' </td>';
+            html += '   <td> ' + data[i].expectedPerHourRate + '</td>';
+            html += '  <td> ' + data[i].joiningTime + ' </td>';
+            html += '   <td> ' + data[i].preferredLocation + '</td>';
+            html += '   <td>' + data[i].staffingAgency + '</td>';
+            html += '    <td>  ' + data[i].nextLevelApprovalStat + ' </td>';
             html += '    <td class="interview-com">';
-
             html += '     <div id="section">';
-            if (data[i].approvalComments != null && data[i].approvalComments!='')
-                                                                                    {
-                if (data[i].approvalComments.length > 40)
-                                                                                        {
+            if (data[i].approvalComments != null && data[i].approvalComments != '') {
+                if (data[i].approvalComments.length > 40) {
 
-                    html += '  <div class="article"> <p style="margin-bottom:0px;">' + data[i].approvalComments.substring(0, 40)+' </p > ';
-                    html += ' <p class="moretext_' + data[i].imid + ' moretext">' + data[i].approvalComments.substring(40, data[i].approvalComments.length - 40) + '</p>';
+                    html += '  <div class="article"> <p style="margin-bottom:0px;">' + data[i].approvalComments.substring(0, 40) + ' </p> ';
+                    html += ' <p class="moretext_' + data[i].imid + ' moretext">' + data[i].approvalComments.substring(40, parseInt(data[i].approvalComments.length) - 40) + '</p>';
 
                     html += '   </div>';
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                    html += '   <div class="article"><p> '+data[i].approvalComments.substring(0, data[i].approvalComments.length - 1)+' </p></div> ';
+                }
+                else {
+                    html += '   <div class="article"><p> ' + data[i].approvalComments.substring(0, parseInt(data[i].approvalComments.length) - 1) + ' </p></div> ';
 
-                                                                                        }
-                html += '    <a onclick="moreless('+ data[i].imid+')" class="moreless-button" value="Readmore" id="read_'+ data[i].imid+'" href="#">Read more</a>';
-                                                                                    }
-                                                                                    else
-                                                                                    {
+                }
+                html += '    <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
+            }
+            else {
                 html += '   <div class="article"> <p></p></div>';
-                                                                                    }
+            }
 
             html += '   </div>';
-
             html += '  </td>';
-
-
-            html += '   <td> '+ data[i].finalSelectionStat+'</td>';
+            html += '   <td> ' + data[i].finalSelectionStat + '</td>';
             html += '   <td class="interview-com">';
 
             html += '  <div id="section">';
-                                                                                    if (data[i].finalComments != null && data[i].finalComments != '')
-                                                                                    {
-                                                                                        if (data[i].finalComments.length > 40)
-                                                                                        {
-                                                                                            html += '    <div class="article"> ';
-                                                                                            html += '   < p style = "margin-bottom:0px;" >'+data[i].finalComments.substring(0, 40)+' </p> ';
-
-
-
-                                                                                            html += '  <p class="moretext_'+data[i].imid+' moretext">'+data[i].finalComments.substring(40, data[i].finalComments.length - 40)+' </p>';
-
-
-                                                                                            html += '   </div>';
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            html += ' <div class="article">';
-html += '
-                                                                                            html += '   <p> '+data[i].finalComments.substring(0, data[i].finalComments.length - 1)+'</p>';
-
-
-                                                                                            html += ' </div>';}
-                                                                                        html += '    <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
-                                                                                    }
-
-                                                                                    else
-                                                                                    {
-                                                                                        html += '<div class="article"> <p></p></div>';
-                                                                                    }
-
+            if (data[i].finalComments != null && data[i].finalComments != '') {
+                if (data[i].finalComments.length > 40) {
+                    html += '    <div class="article"> ';
+                    html += '   < p style = "margin-bottom:0px;" >' + data[i].finalComments.substring(0, 40) + ' </p> ';
+                    html += '  <p class="moretext_' + data[i].imid + ' moretext">' + data[i].finalComments.substring(40, data[i].finalComments.length - 40) + ' </p>';
+                    html += '   </div>';
+                }
+                else {
+                    html += ' <div class="article">';
+                    html += '   <p> ' + data[i].finalComments.substring(0, data[i].finalComments.length - 1) + '</p>';
+                    html += ' </div>';
+                }
+                html += '    <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
+            }
+            else {
+                html += '<div class="article"> <p></p></div>';
+            }
 
             html += '  </div>';
-
-
             html += '  </td>';
             html += ' </tr>';
             html += '   </table>';
             html += '   </td>';
             html += '   </tr>';
- }
-
-
+        }
         $("#tblbodySelectedInterviewMeeting").empty().html(html);
     }
 
