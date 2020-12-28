@@ -33,6 +33,7 @@ namespace Risebird.Web.Controllers
         private ISkillService _skillService;
         private static List<Candidate> _modelDetails;
         private static List<MeetingVM> _modelDetail;
+        private static List<MeetingVM> _modelDetle;
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService)
         {
@@ -1269,7 +1270,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpGet]
         [ActionName("MultipleCandidateInvites")]
-        public async Task<IActionResult> MultipleCandidateInvites(string irfId)
+        public async Task<IActionResult> MultipleCandidateInvites(string irfId, int? Page, string searchValue)
         {
             try
             {
@@ -1287,8 +1288,42 @@ namespace Risebird.Web.Controllers
                             modelList.ForEach(x => x.IsAdmin = true);
                         }
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        if (!String.IsNullOrEmpty(searchValue))
+                        {
+                            searchValue = searchValue.ToUpper();
+                            modelList = modelList.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == "") || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == "") || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == "")|| (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == "")).ToList();
 
-                        return View(modelList);
+                        }
+                        ViewBag.TotalCount = modelList.Count;
+
+                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        int a = modelList.Count / 10;
+                        if (modelList.Count % 10 == 0)
+                        {
+                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        }
+                        else
+                        {
+                            a = a + 1;
+                            if (a == Page)
+                            {
+                                ViewBag.PageEndCount = modelList.Count;
+                            }
+                            else
+                            {
+                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                            }
+
+                        }
+                        if (modelList.Count == 0)
+                        {
+                            ViewBag.PageStartCount = 0;
+                            ViewBag.PageEndCount = 0;
+                        }
+                        _modelDetle = modelList;
+                        return View(modelList.ToPagedList(Page ?? 1, 10));
+                  
                     }
                     else
                     {
@@ -4849,6 +4884,52 @@ namespace Risebird.Web.Controllers
             }
 
             return Json(new { result = selectedMeeting.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = selectedMeeting.Count });
+        }
+
+
+        public JsonResult MultipleCandidateInvitesJson(string searchValue)
+       {
+            int Page = 1;
+            var modelList = _modelDetle;
+            if (!String.IsNullOrEmpty(searchValue))
+            {
+                searchValue = searchValue.ToUpper();
+                modelList = modelList.Where(x => (!String.IsNullOrEmpty(x.candidateName) ? x.candidateName.ToUpper().Contains(searchValue) : x.candidateName == "") || 
+                (!String.IsNullOrEmpty(x.JDTiltle) ? x.JDTiltle.Split("|")[0].ToUpper().Contains(searchValue) : x.JDTiltle == string.Empty) || (!String.IsNullOrEmpty(x.confirmationStatus) ? x.confirmationStatus.ToUpper().Contains(searchValue) : x.confirmationStatus == string.Empty) || (!String.IsNullOrEmpty(x.MeetingStatusStatusDesc) ? x.MeetingStatusStatusDesc.ToUpper().Contains(searchValue) : x.MeetingStatusStatusDesc == null) || (!String.IsNullOrEmpty(x.intervieweStatusStatDesc) ? x.intervieweStatusStatDesc.ToUpper().Contains(searchValue) : x.intervieweStatusStatDesc == null)).ToList();
+
+            }
+            int totalcount = modelList.Count;
+            int Pagestart = 0;
+            int Pageend = 0;
+            ViewBag.TotalCount = modelList.Count;
+
+            Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+            int a = modelList.Count / 10;
+            if (modelList.Count % 10 == 0)
+            {
+                Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+            }
+            else
+            {
+                a = a + 1;
+                if (a == Page)
+                {
+                    Pageend = modelList.Count;
+                }
+                else
+                {
+                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                }
+
+            }
+            if (modelList.Count == 0)
+            {
+                Pagestart = 0;
+                Pageend = 0;
+            }
+
+            return Json(new { result = modelList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = modelList.Count });
         }
     }
 }
