@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using X.PagedList;
 
@@ -2990,6 +2991,58 @@ namespace Risebird.Web.Controllers
             else
             {
                 return Json("No Data");
+            }
+        }
+
+        public async Task<ActionResult> GetMeetingAudioText(int imid)
+        {
+            try
+            {
+                var model = new MeetingTranscriptModel();
+                int count = 0;
+                model.ConvertedText = string.Empty;
+                var tableEntries =  _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
+                var requiredEntry = new SpeechToTextServiceModel();
+                if (tableEntries != null && tableEntries.Count() != 0)
+                {
+                    requiredEntry = tableEntries.Where(x => x.PartitionKey == imid.ToString()).FirstOrDefault();
+                }
+                if(requiredEntry != null)
+                {
+                    string convertedText = string.Empty;
+                    if(!string.IsNullOrEmpty(requiredEntry.KeyWords))
+                    {
+                        var keywords = requiredEntry.KeyWords.Split(",");
+                        foreach (var keyword in keywords)
+                        {
+                            var word = keyword.ToLower().Trim();
+                            convertedText = requiredEntry.ConvertedText.ToLower();
+                            if (convertedText.Contains(word))
+                            {
+                                foreach (Match m in Regex.Matches(convertedText, word))
+                                {
+                                    count = count + 1;
+                                }
+                                
+                                //word = "<mark>" + word + "</mark>";
+                                word = " <span style=\"background-color:Red;\">" + word + "</span>";
+                                word = " <span style=\"color:#fff;\">" + word + "</span>";
+                                word = " <span style=\"padding:0px 5px 0px 5px;\">" + word + "</span>";
+                                requiredEntry.ConvertedText = convertedText.Replace(keyword, word);
+                            }
+
+                        }
+                    }
+                    
+                    model.ConvertedText = requiredEntry.ConvertedText;
+                    model.Total = count;
+                }
+                return Json(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

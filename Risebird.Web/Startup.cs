@@ -202,6 +202,7 @@ namespace Risebird.Web
             services.AddScoped<IRisebirdPayRepository, RisebirdPayRepository>();
             services.AddScoped<ICandidateRepository, CandidateRepository>();
             services.AddScoped<ICandidateService, CandidateService>();
+            services.AddScoped<ISpeechToTextHelper, SpeechToTextHelper>();
 
         }
     }

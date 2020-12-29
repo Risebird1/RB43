@@ -15,6 +15,7 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7214,5 +7215,134 @@ namespace Risebird.Web.Controllers
                 return Json("failed");
             }
         }
+
+        [HttpGet]
+        public IActionResult UploadInterviewAudio(int interviewId, string candidateEmail, string irfName, DateTime interviewDate, string candidateName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    var model = new SpeechToTextDTO();
+                    model.InterviewId = interviewId;
+                    model.InterviewDate = interviewDate;
+                    model.CandidateEmailId = candidateEmail;
+                    model.IRFName = irfName;
+                    model.CandidateName = candidateName;
+
+                    var tableEntries = _azureStorageHelper.GetAllEntities<SpeechToTextServiceModel>("SpeechToTextTbl");
+                    var requiredEntry = new SpeechToTextServiceModel();
+                    if(tableEntries!=null && tableEntries.Count()!=0)
+                    {
+                        requiredEntry = tableEntries.Where(x => x.PartitionKey == interviewId.ToString()).FirstOrDefault();
+                    }
+                    if(requiredEntry!=null)
+                    {
+                        model.UploadedAudioFileUrl = requiredEntry.AudioFileUrl;
+                        model.ConvertedText = requiredEntry.ConvertedText;
+                    }
+
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadInterviewAudio(SpeechToTextDTO model)
+        {
+
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (model.AudioFile != null)
+                        {
+                            //string fileName = model.InterviewId.ToString() + "_InterviewAudio.wav";
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                return View("UploadInterviewAudio", model);
+                            }
+                            else
+                            {
+                                model.AudioFileUrl = uploadedaudioFileURL;
+                            }
+
+                            //var path = $"http://localhost:7071/api/SpeechToTextService";
+                            var path = $"https://risebirdmicroservice.azurewebsites.net/api/SpeechToTextService";
+                            var functionKey = "vGMayAyrQJfXwI27nEjbv7TYEGAqQ5nwNaRJkjBncPXQuj5a5nW5iA==";
+
+                            HttpClient httpClient = new HttpClient();
+                            httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
+
+                            TempData["SuccessErrorMessageInterview"] = "Audio uploaded successfully.";
+                            return RedirectToAction("Index");
+
+                        }
+                        else
+                        {
+                            var modelData = new SpeechToTextServiceModel();
+                            modelData.PartitionKey = model.InterviewId.ToString();
+                            modelData.RowKey = model.InterviewId.ToString();
+                            modelData.AudioFileUrl = model.UploadedAudioFileUrl;
+                            modelData.ConvertedText = model.ConvertedText;
+                            modelData.InterviewId = model.InterviewId;
+                            modelData.KeyWords = model.KeyWords;
+
+                            await _azureStorageHelper.InsertEntity("SpeechToTextTbl", modelData);
+                            TempData["SuccessErrorMessageInterview"] = "Keywords updated successfully.";
+
+                            return RedirectToAction("Index");
+                        }
+
+
+
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Audio Upload failed.";
+                return RedirectToAction("Index");
+            }
+        }
+
     }
 }

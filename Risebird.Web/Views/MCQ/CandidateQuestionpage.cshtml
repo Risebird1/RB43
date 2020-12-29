@@ -61,6 +61,7 @@
     <video controls hidden></video>
 
     <video id="vid2" hidden controls></video>
+
     <div class="text-center" style="background-color: #363c43;padding: 15px 5px 5px 10px;width: 100%;display: inline-block;position: relative;">
         <div style="float:left"><img src="https://risebirdportal.blob.core.windows.net/logo/risebird.ico" style="width:180px;" /></div>
         <div style="float:right">
@@ -78,11 +79,14 @@
     </div>
 
     <div class="container">
+
         <div class="row">
+            <div class="loader text-center col-md-8 offset-md-2" style="position:absolute">
+                <img src="~/Newassets/img/lazyload.gif" />
+            </div>
             <div class="col-md-8 offset-md-2" id="divMCQSetdetails">
 
-                <div>
-                </div>
+
             </div>
             <div class="col-md-8 offset-md-2" id="divfeedback" style="display:none">
                 <p><b>Rating</b></p>
@@ -101,6 +105,7 @@
                 </div>
 
                 <input type="text" id="txtfeedbackComment" placeholder="Please Enter Comments" class="form-control" />
+                <br />
                 <input type="button" value="Submit" class="callsubmit" onclick="SubmitTest()" />
 
             </div>
@@ -197,6 +202,7 @@
         form_data.append("rating", $("#txtfeedbackreting").val());
         form_data.append("comments", $("#txtfeedbackComment").val());
         form_data.append("file", file);
+        $(".loader").show();
         $.ajax({
             type: "POST",
             url: "/MCQ/SubmitTest",
@@ -205,6 +211,7 @@
             enctype: 'multipart/form-data',
             processData: false,
             success: function (data) {
+                $(".loader").hide();
                 if (data == "TestSubmit") {
                     window.location.href = "/MCQ/TestComplete?status=" + data;
                 } else {
@@ -265,6 +272,7 @@
         if ($("#zquestion_final").val() == "true") {
             form_data.append("file", file);
         }
+        $(".loader").show();
         $.ajax({
             type: "POST",
             url: "/MCQ/CandidateQuestionsD",
@@ -273,6 +281,7 @@
             enctype: 'multipart/form-data',
             processData: false,
             success: function (data) {
+                $(".loader").hide();
                 if ($("#zquestion_final").val() == "true") {
                     document.getElementById("divfeedback").style.display = "block";
                     document.getElementById("divMCQSetdetails").style.display = "none";
