@@ -20,7 +20,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 #candidateTable.journey td {
-    vertical-align: middle;
+    vertical-align: middle!important;
 }
 
 .employee .mdc-card .form-control[disabled] {

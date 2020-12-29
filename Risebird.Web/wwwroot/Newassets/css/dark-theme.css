@@ -1515,8 +1515,8 @@ div.dataTables_wrapper div.dataTables_info {
 .pagination .page-item.active > .page-link,
 .pagination .page-item.active > .page-link:focus,
 .pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
-    background: #fff !important;
-    color: #232121;
+    background: #fff!important;
+    color: #232121!important;
 }
 
 
