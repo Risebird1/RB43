@@ -1106,7 +1106,7 @@ table.journey td.cadSkill {
         border-radius: 5px;
     }
 .candidate .cadName [data-tooltip]:before {
-    left: 40%;
+    left: 50%;
 }
     .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
         position: absolute;
