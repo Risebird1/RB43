@@ -47,9 +47,7 @@
 
                 <div class="pull-right">
                     <div class="selectedmeeting">
-                        <div class="form-group card-title-space" style="float:left; margin-right: 30px;width:100px;">
-                            @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "select-css form-control", onchange = "FilterInterviews(this.value);" })
-                        </div>
+                       
                         @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                         <div id="meeting_filter" class="dataTables_filter pull-left mt-20" style="margin-right:10px;">
 
