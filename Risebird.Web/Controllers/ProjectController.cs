@@ -548,7 +548,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult ProjectInterviewMeetings(int id)
+        public async Task<IActionResult> ProjectInterviewMeetings(int id)
         {
             try
             {
@@ -562,7 +562,7 @@ namespace Risebird.Web.Controllers
                     var meetings = new List<MeetingVM>();
                     foreach (var irf in irfList)
                     {
-                        var irfMeetings = _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
+                        var irfMeetings = await _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
                         if (irfMeetings != null)
                         {
                             foreach (var item in irfMeetings)
@@ -638,7 +638,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
 
@@ -646,7 +646,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SelectedInterviewMeetings(int id)
+        public async Task<IActionResult> SelectedInterviewMeetings(int id)
         {
             try
             {
@@ -661,7 +661,7 @@ namespace Risebird.Web.Controllers
                     var meetings = new List<MeetingVM>();
                     foreach (var irf in irfList)
                     {
-                        var irfMeetings = _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
+                        var irfMeetings = await _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
                         if (irfMeetings != null)
                         {
                             foreach (var item in irfMeetings)
@@ -752,7 +752,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
 
@@ -772,7 +772,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult NewChart(string id)
+        public async Task<IActionResult> NewChart(string id)
         {
             try
             {
@@ -790,7 +790,7 @@ namespace Risebird.Web.Controllers
                         var meetings = new List<MeetingVM>();
                         foreach (var irf in irfList)
                         {
-                            var irfMeetings = _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
+                            var irfMeetings = await _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
                             if (irfMeetings != null)
                             {
                                 foreach (var item in irfMeetings)
@@ -854,7 +854,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
 
@@ -864,7 +864,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult NewChartSelected(string id)
+        public async Task<IActionResult> NewChartSelected(string id)
         {
             try
             {
@@ -882,7 +882,7 @@ namespace Risebird.Web.Controllers
                         var meetings = new List<MeetingVM>();
                         foreach (var irf in irfList)
                         {
-                            var irfMeetings = _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
+                            var irfMeetings = await _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
                             if (irfMeetings != null)
                             {
                                 foreach (var item in irfMeetings)
@@ -945,14 +945,14 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult NewChartClientMeetingData(string id)
+        public async Task<IActionResult> NewChartClientMeetingData(string id)
         {
             try
             {
@@ -971,7 +971,7 @@ namespace Risebird.Web.Controllers
                         var meetings = new List<MeetingVM>();
                         foreach (var irf in irfList)
                         {
-                            var irfMeetings = _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
+                            var irfMeetings = await _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
                             if (irfMeetings != null)
                             {
                                 foreach (var item in irfMeetings)
@@ -1044,14 +1044,14 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult NewChartClientFeedbackData(string id)
+        public async Task<IActionResult> NewChartClientFeedbackData(string id)
         {
             try
             {
@@ -1070,7 +1070,7 @@ namespace Risebird.Web.Controllers
                         var meetings = new List<MeetingVM>();
                         foreach (var irf in irfList)
                         {
-                            var irfMeetings = _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
+                            var irfMeetings = await _irfService.GetIRFInterviewMeetings(irf.IRFId, profileName, emailid);
                             if (irfMeetings != null)
                             {
                                 foreach (var item in irfMeetings)

@@ -2156,7 +2156,7 @@ namespace Risebird.Repository
         }
 
 
-        public IEnumerable<MeetingVM> GetIRFInterviewMeetings(int id)
+        public async Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id)
         {
             try
             {
@@ -2164,14 +2164,14 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIRFInterviewMeetings", parameters,
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetIRFInterviewMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
             }
             catch (SqlException e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 
@@ -2427,7 +2427,7 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<Candidate> GetIRFCandidates(int irfId)
+        public async Task<IEnumerable<Candidate>> GetIRFCandidates(int irfId)
         {
             try
             {
@@ -2435,14 +2435,14 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = SqlMapper.Query<Candidate>(con, "usp_GetIRFCandidates", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetIRFCandidates", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -2492,7 +2492,7 @@ namespace Risebird.Repository
         }
 
 
-        public InterviewPlanner GetInterviewPlanner(int id)
+        public async Task<InterviewPlanner> GetInterviewPlanner(int id)
         {
             try
             {
@@ -2501,14 +2501,14 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = SqlMapper.Query<InterviewPlanner>(con, "usp_GetInterviewPlanner", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync<InterviewPlanner>(con, "usp_GetInterviewPlanner", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }

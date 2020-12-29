@@ -28,7 +28,7 @@ namespace Risebird.Repository.Interface
         bool AddSkillComments(TechSkillComments obj);
         Task<IEnumerable<string>> GetListOfInterviwerBasedOnIRFId(string irfId);
         Task<bool> DeleteIRF(int IRFId);
-        IEnumerable<MeetingVM> GetIRFInterviewMeetings(int id);
+        Task<IEnumerable<MeetingVM>> GetIRFInterviewMeetings(int id);
         string GetQCSkills(int userId);
         Task<bool> UpdateIRFDetails(IRFVm irfDetails);
         IEnumerable<SkillComment> GetTechSkillComments(int id);
@@ -44,7 +44,7 @@ namespace Risebird.Repository.Interface
         string GetClientUserRole(int userId);
         string GetIRFNameBasedOnId(int irfID);
         string GetIRFJDTitleBasedOnId(int irfID);
-        IEnumerable<Candidate> GetIRFCandidates(int id);
+        Task<IEnumerable<Candidate>> GetIRFCandidates(int id);
         Task<string> AddCandidate(Candidate obj);
         Task<string> AddMultipleCandidates(List<Candidate> candidateList, int userId);
         Task<bool> DeleteCandidate(int id);
@@ -52,7 +52,7 @@ namespace Risebird.Repository.Interface
         IRF GetIRFbyId(int id);
         bool UpdateIRFInvites(int id, int totalInvites);
         bool UpdateCandidateInvites(int id, int totalInvites);
-        InterviewPlanner GetInterviewPlanner(int id);
+        Task<InterviewPlanner> GetInterviewPlanner(int id);
         Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model);
         Task<bool> UnArchiveIRF(int IRFId);
         IEnumerable<TransEmergencyInterviewer> GetTransEmergencyInterviewer(int id);
