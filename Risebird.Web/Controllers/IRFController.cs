@@ -1005,7 +1005,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> SelectedInterviewMeetings(string id, string irfId)
+        public async Task<IActionResult> SelectedInterviewMeetings(string id, string irfId, int? Page, string searchValue)
         {
             try
             {
@@ -1345,7 +1345,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpGet]
         [ActionName("InterviewMeetings")]
-        public async Task<IActionResult> InterviewMeetings(string id, string irfId)
+        public async Task<IActionResult> InterviewMeetings(string id, string irfId, int? Page, string searchValue)
         {
             try
             {
@@ -2338,7 +2338,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public IActionResult Candidates(string id, string irfName, int? Page, string searchValue)
+        public async Task<IActionResult> Candidates(string id, string irfName, int? Page, string searchValue)
         {
             try
             {
@@ -2355,8 +2355,8 @@ namespace Risebird.Web.Controllers
                         ViewBag.IRFId = id;
                         ViewBag.Profile = profileName;
 
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid)?.ToList();
-                        var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(id))?.ToList();
+                        var meetings = (await _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid))?.ToList();
+                        var candidateList = (await _irfService.GetIRFCandidates(Convert.ToInt32(id)))?.ToList();
                         if (profileName == "Recruiter")
                         {
                             var userId = _irfService.GetUserId(emailid, profileName);
@@ -2432,7 +2432,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-        //}
+        }
 
         //[Authorize]
         //[HttpGet]
