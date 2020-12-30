@@ -49,13 +49,13 @@
                             </button>*@
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Candidate." onclick="location.href='@Url.Action("AddCandidate", "IRF", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate</font></span>
+                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Candidate." onclick="location.href='@Url.Action("Add", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Add Candidate</font></span>
                         </button>
 
 
 
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Candidate List" onclick="location.href='@Url.Action("ExportCandidateList", "IRF", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
+                            <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Candidate List" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
                         </button>
 
                         @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
@@ -238,7 +238,7 @@
                                                             if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">
-                                                                    <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                                    <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                     </span>
                                                                 </button>
@@ -257,7 +257,7 @@
 
 
 
-                                                            <span onclick="location.href = '@Url.Action("CancelInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
+                                                            <span onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
                                                             </span>
 
@@ -279,7 +279,7 @@
 
 
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                            <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
+                                                            <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
                                                             </span>
                                                         </button>
@@ -824,7 +824,7 @@
                 return new Promise(function (resolve, reject) {
                     //var IdIRF = dataID;
                     $.ajax({
-                        url: '/IRF/DeleteCandidate?id=' + id + '&irfId=' + irfId + '&IRFName=' + irfName,
+                        url: '/Candidate/Delete?id=' + id + '&irfId=' + irfId + '&IRFName=' + irfName,
                         success: function (result) {
                             resolve(result)
 
@@ -849,13 +849,12 @@
                     allowOutsideClick: false
                 }).then(function () {
                     location.reload(true);
-                    //window.location = "/IRF/Candidates?id=" + irfId + '&irfName=' + irfName;
                 })
             }
             else if (result.dismiss === 'cancel') {
                 swal.fire(
                     'Cancelled',
-                    'Your file has been not deleted :)',
+                    'The Candidate has not been deleted :)',
                     'error'
                 )
             }
