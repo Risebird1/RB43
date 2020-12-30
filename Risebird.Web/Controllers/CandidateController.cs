@@ -186,8 +186,8 @@ namespace Risebird.Web.Controllers
                 }
                 _modelDetails = model;
                 return View(model.ToPagedList(Page ?? 1, 10));
-
-            }
+      
+        }
             else
             {
                 return RedirectToAction("SignOut", "Session");
@@ -202,7 +202,7 @@ namespace Risebird.Web.Controllers
             {
                 searchValue = searchValue.ToUpper();
                 model = model.Where(x => (!String.IsNullOrEmpty(x.CandidateName) ? x.CandidateName.ToUpper().Contains(searchValue) : x.CandidateName == "") || (!String.IsNullOrEmpty(x.CandidateEmailId) ? x.CandidateEmailId.ToUpper().Contains(searchValue) : x.CandidateEmailId == "")
-                  || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.ToUpper().Contains(searchValue) : x.HREmail == "")).ToList();
+                  || (!String.IsNullOrEmpty(x.HREmail) ? x.HREmail.ToUpper().Contains(searchValue) : x.HREmail == "")|| (!String.IsNullOrEmpty(x.CurrentStatus) ? x.CurrentStatus.ToUpper().Contains(searchValue) : x.CurrentStatus == "")).ToList();
 
             }
             int totalcount = model.Count;

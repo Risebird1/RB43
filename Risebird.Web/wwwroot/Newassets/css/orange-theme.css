@@ -30,7 +30,12 @@ td.detail-row {
     .child-section .table-striped tbody tr:nth-of-type(even) {
         background: #fff;
     }
-
+.pagination .page-item.active > .page-link,
+.pagination .page-item.active > .page-link:focus,
+.pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    background: #e96b28 !important;
+    color: #fff !important;
+}
 table.dataTable > thead > tr {
     background: #f0f0f0;
 }

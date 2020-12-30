@@ -23,6 +23,12 @@ td.detail-row {
     background: #e5e5e5;
   
 }
+.pagination .page-item.active > .page-link,
+.pagination .page-item.active > .page-link:focus,
+.pagination .page-item.active > .page-link:hover, .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    background: #54a5f5!important;
+    color: #fff!important;
+}
 
     .child-section table th {
         color: #676767;
