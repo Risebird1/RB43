@@ -5777,7 +5777,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult VerifyAudio(int candidateId, int irfId, int meetingId)
+        public async Task<IActionResult> VerifyAudio(int candidateId, int irfId, int meetingId)
         {
             try
             {
@@ -5786,7 +5786,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR")
                 {
-                    var model = _meetingService.GetCandidateAudios(candidateId, irfId);
+                    var model = await _meetingService.GetCandidateAudios(candidateId, irfId);
                     model.MeetingId = meetingId;
                     return View(model);
 
@@ -5801,7 +5801,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
         }
@@ -5862,7 +5862,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult VerifyJoiningAudio(int candidateId, string CandidateName, int irfId, int meetingId)
+        public async Task<IActionResult> VerifyJoiningAudio(int candidateId, string CandidateName, int irfId, int meetingId)
         {
             try
             {
@@ -5871,7 +5871,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "Client")
                 {
-                    var model = _meetingService.GetCandidateAudios(candidateId, irfId);
+                    var model = await _meetingService.GetCandidateAudios(candidateId, irfId);
                     model.MeetingId = meetingId;
                     return View(model);
 
@@ -5886,7 +5886,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
         }
@@ -5946,7 +5946,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult VerifyMyInterviewAudio(int candidateId, int irfId, int meetingId)
+        public async Task<IActionResult> VerifyMyInterviewAudio(int candidateId, int irfId, int meetingId)
         {
             try
             {
@@ -5955,7 +5955,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Interviewer")
                 {
-                    var model = _meetingService.GetCandidateAudios(candidateId, irfId);
+                    var model = await _meetingService.GetCandidateAudios(candidateId, irfId);
                     model.MeetingId = meetingId;
                     return View(model);
 
@@ -5968,7 +5968,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyInterview");
             }
         }

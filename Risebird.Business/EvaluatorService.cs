@@ -106,10 +106,10 @@ namespace Risebird.Business
                 //    return null;
                 //}
                 // check whether a feedback for the interviewId has already been submitted
-                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(candidateId, irfId);
+                var selectabilityReport = await _evaluatorRespository.GetSelectabilityReport(candidateId, irfId);
 
                 var model = new EvaluatorReport();
-                var levels = _meetingRespository.GetLevels();
+                var levels = await _meetingRespository.GetLevels();
 
                 if (selectabilityReport != null && selectabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
@@ -176,7 +176,7 @@ namespace Risebird.Business
             {
 
                 // check whether a feedback for the interviewId has already been submitted
-                var techReport = (IList<TechSkillEvaluatorReport>)_evaluatorRespository.GetTechReport(candidateId, irfId);
+                var techReport =  (IList<TechSkillEvaluatorReport>)(await _evaluatorRespository.GetTechReport(candidateId, irfId));
 
                 if (techReport == null || !techReport.Any())
                 {
@@ -222,7 +222,7 @@ namespace Risebird.Business
             {
 
                 // check whether a feedback for the interviewId has already been submitted
-                var skillGeneralReport = (IList<SkillGeneralEvaluatorReport>)_evaluatorRespository.GetSkillGeneralReport(candidateId, irfId);
+                var skillGeneralReport = (IList<SkillGeneralEvaluatorReport>)(await _evaluatorRespository.GetSkillGeneralReport(candidateId, irfId));
 
                 if (skillGeneralReport == null || !skillGeneralReport.Any())
                 {
@@ -346,10 +346,10 @@ namespace Risebird.Business
                 //    return null;
                 //}
                 // check whether a feedback for the interviewId has already been submitted
-                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(candidateId, irfId);
+                var joinabilityReport = await _evaluatorRespository.GetJoinabilityReport(candidateId, irfId);
 
                 var model = new HRReport();
-                var levels = _meetingRespository.GetLevels();
+                var levels = await _meetingRespository.GetLevels();
 
                 if (joinabilityReport != null && joinabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
@@ -454,27 +454,27 @@ namespace Risebird.Business
             }
         }
 
-        public CandidateAudio GetCandidate(int id, int irfId)
+        public async Task<CandidateAudio> GetCandidate(int id, int irfId)
         {
             try
             {
-                return _evaluatorRespository.GetCandidate(id, irfId);
+                return await _evaluatorRespository.GetCandidate(id, irfId);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
-        public IEnumerable<Phrase> GetPhrases()
+        public async Task<IEnumerable<Phrase>> GetPhrases()
         {
             try
             {
-                return _evaluatorRespository.GetPhrases();
+                return await _evaluatorRespository.GetPhrases();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -502,7 +502,7 @@ namespace Risebird.Business
         {
             try
             {
-                var candidateAudios = (IList<CandidateAudio>)_evaluatorRespository.GetCandidateAudios(candidateId, irfId);
+                var candidateAudios = (IList<CandidateAudio>)(await _evaluatorRespository.GetCandidateAudios(candidateId, irfId));
                 return candidateAudios;
             }
 

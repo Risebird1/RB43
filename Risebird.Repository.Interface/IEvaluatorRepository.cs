@@ -19,25 +19,25 @@ namespace Risebird.Repository.Interface
         string AssignYourselfJoinability(int id, string mailId);
         Task<IEnumerable<CandidateHREvaluation>> GetAssignedJoinabilityEvaluations(string emailID);
         bool UnAssignJoinability(int id);
-        IEnumerable<JoinabilityHRReport> GetJoinabilityReport(int id, int irfId);
+        Task<IEnumerable<JoinabilityHRReport>> GetJoinabilityReport(int id, int irfId);
         Task<bool> AddJoinabilityReport(HRReport reportDetails);
         string GetSelectabilityComments(int irfId, string emailId);
         string GetJoinabilityComments(int irfId, string emailId);
-        IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id, int irfId);
-        IEnumerable<TechSkillEvaluatorReport> GetTechReport(int candidateId, int irfId);
+        Task<IEnumerable<SelectabilityEvaluatorReport>> GetSelectabilityReport(int id, int irfId);
+        Task<IEnumerable<TechSkillEvaluatorReport>> GetTechReport(int candidateId, int irfId);
         string GetTechComments(int irfId, int candidateId);
         string GetGeneralSkillComments(int irfId, int candidateId);
         IEnumerable<LevelTech> GetLevelTech();
         Task<bool> AddTechReport(IList<TechSkillEvaluatorReport> reportDetails, int candidateId, int irfId);
-        IEnumerable<SkillGeneralEvaluatorReport> GetSkillGeneralReport(int candidateId, int irfId);
+        Task<IEnumerable<SkillGeneralEvaluatorReport>> GetSkillGeneralReport(int candidateId, int irfId);
         Task<bool> AddSkillGeneralReport(IList<SkillGeneralEvaluatorReport> reportDetails, int candidateId, int irfId);
         Task<IEnumerable<CandidateRecruiter>> GetRecruiterCandidates(int userId);
         int GetUserId(string emailId, string profile);
-        CandidateAudio GetCandidate(int id, int irfId);
+        Task<CandidateAudio> GetCandidate(int id, int irfId);
         Task<bool> AddCandidateAudio(CandidateAudio obj);
-        IEnumerable<CandidateAudio> GetCandidateAudios(int candidateId, int irfId);
+        Task<IEnumerable<CandidateAudio>> GetCandidateAudios(int candidateId, int irfId);
         bool UpdateCandidateVoiceUserId(string userId, int candidateMasterId, int irfId);
         bool UpdateEnrollmentStatus(int id, bool isEnrolled, string message);
-        IEnumerable<Phrase> GetPhrases();
+        Task<IEnumerable<Phrase>> GetPhrases();
     }
 }

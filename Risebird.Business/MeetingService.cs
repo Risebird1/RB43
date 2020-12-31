@@ -762,7 +762,7 @@ namespace Risebird.Business
             {
                 var reportModel = new InterviewReport();
                 var irfDetails = _meetingRespository.GetIRFDetails(irfId);
-                var levels = _meetingRespository.GetLevels();
+                var levels = await _meetingRespository.GetLevels();
                 //check whether an IRF exists for the given IRFId
                 var check = _meetingRespository.GetIRFbyId(irfId);
                 var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
@@ -860,7 +860,7 @@ namespace Risebird.Business
                 reportModel.CandidateEmail = interviewDetails.candidateEmail;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
                 reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
-                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
+                var selectabilityReport = await _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
                 if (selectabilityReport != null && selectabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
@@ -889,7 +889,7 @@ namespace Risebird.Business
                 }
 
                 reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
-                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
+                var joinabilityReport = await _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
                 if (joinabilityReport != null && joinabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;
@@ -1085,13 +1085,13 @@ namespace Risebird.Business
             }
         }
 
-        public VerifyCandidateAudio GetCandidateAudios(int candidateId, int irfId)
+        public async Task<VerifyCandidateAudio> GetCandidateAudios(int candidateId, int irfId)
         {
             try
             {
                 var model = new VerifyCandidateAudio
                 {
-                    CandidateAudios = (IList<CandidateAudio>)_evaluatorRespository.GetCandidateAudios(candidateId, irfId).Where(x => x.IsVoiceBiometric == true).ToList(),
+                    CandidateAudios = (IList<CandidateAudio>)(await _evaluatorRespository.GetCandidateAudios(candidateId, irfId)).Where(x => x.IsVoiceBiometric == true).ToList(),
                     CandidateId = candidateId
                 };
                 if (model.CandidateAudios.Any())
@@ -1107,7 +1107,7 @@ namespace Risebird.Business
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -1562,7 +1562,7 @@ namespace Risebird.Business
             {
                 var reportModel = new InterviewReport();
                 var irfDetails = _meetingRespository.GetIRFDetails(irfId);
-                var levels = _meetingRespository.GetLevels();
+                var levels = await _meetingRespository.GetLevels();
                 //check whether an IRF exists for the given IRFId
                 var check = _meetingRespository.GetIRFbyId(irfId);
                 var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
@@ -1663,7 +1663,7 @@ namespace Risebird.Business
                 reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
                 reportModel.InterviewerComment = candidatedetails.InterviewerComments;
 
-                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
+                var selectabilityReport = await _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
                 if (selectabilityReport != null && selectabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
@@ -1691,7 +1691,7 @@ namespace Risebird.Business
                 }
 
                 reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
-                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
+                var joinabilityReport = await _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
                 if (joinabilityReport != null && joinabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;

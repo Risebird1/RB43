@@ -25,11 +25,15 @@ namespace Risebird.Web.Controllers
         private static List<CandidateTimelineVM> _modelDetails;
         private static List<Candidate> _candidateModelDetails;
         private readonly IIRFService _irfService;
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService)
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly IEvaluatorService _evaluatorService;
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfService;
+            _azureStorageHelper = azureStorageHelper;
+            _evaluatorService = evaluatorService;
         }
         public IActionResult Index()
         {
@@ -916,6 +920,209 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
             }
 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> UploadAudio(int candidateId, int irfId, string rfName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                {
+                    var model = await _evaluatorService.GetCandidate(candidateId, irfId);
+                    model.CandidateAudios = (await _evaluatorService.GetCandidateAudios(candidateId, irfId)).Where(x => x.IsVoiceBiometric == true).ToList();
+
+                    if (model.CandidateAudios.Where(x => x.IsVoiceBiometric).Count() > 0)
+                    {
+                        model.HasVoiceBiometricAudio = true;
+                        model.PhraseList = new SelectList(await _evaluatorService.GetPhrases(), "text", "text", model.CandidateAudios.Where(x => x.IsVoiceBiometric).FirstOrDefault().PhraseDetail);
+                    }
+                    else
+                    {
+                        model.PhraseList = new SelectList(await _evaluatorService.GetPhrases(), "text", "text");
+                    }
+                    if (model.CandidateAudios.Where(x => x.IsVoiceBiometric && !x.IsEnrolled).Count() > 0)
+                    {
+                        model.ContainsUnEnrolled = true;
+                    }
+                    model.EnrollmentList = GetEnrollmentList();
+                    if (TempData["SuccessErrorMessageUploadAudio"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageUploadAudio"].ToString();
+                        TempData.Remove("SuccessErrorMessageUploadAudio");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("GetCandidates", new { id = irfId, irfName = rfName });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadAudio(CandidateAudio model)
+        {
+
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    {
+                        if (model.AudioFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                return View("UploadAudio", model);
+                            }
+                            else
+                            {
+                                model.AudioFileLink = uploadedaudioFileURL;
+                            }
+                        }
+
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+
+                        if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
+                        {
+                            TempData["SuccessErrorMessageUploadAudio"] = "Audio uploaded successfully";
+                            return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
+                            return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageUploadAudio"] = "Audio Upload failed.";
+                return RedirectToAction("UploadAudio", new { candidateId = model.CandidateId, irfId = model.IRFId, rfName = model.IRFName });
+            }
+        }
+
+        private SelectList GetEnrollmentList()
+        {
+            var listItems = new List<SelectListItem>();
+            foreach (var item in Enum.GetValues(typeof(VoiceEnrollment)))
+            {
+                listItems.Add(new SelectListItem { Text = item.ToString(), Value = item.ToString() });
+            }
+
+            return new SelectList(listItems, "Value", "Text", listItems.First().Value);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Report(int candidateId, int irfId, string rfName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                {
+                    var model = await _evaluatorService.GetEvaluatorReport(candidateId, irfId);
+                    model.HRReport = await _evaluatorService.GetHRJoinabilityReport(candidateId, irfId);
+                    model.TechSkillEvaluatorReportCollection = await _evaluatorService.GetTechReport(candidateId, irfId);
+                    model.SkillGeneralEvaluatorReportCollection = await _evaluatorService.GetSkillGeneralReport(candidateId, irfId);
+                    model.CandidateAudioCollection = (await _evaluatorService.GetCandidateAudios(candidateId, irfId)).ToList().Where(x => !x.IsVoiceBiometric).ToList();
+                    ViewBag.Profile = profileName;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("GetCandidates", new { id = irfId, irfName = rfName });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Report(EvaluatorReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    {
+
+                        if (await _evaluatorService.AddSelectabilityReport(model))
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Data saved successfully";
+                            return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                            return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                return RedirectToAction("GetCandidates", new { id = model.IRFId, irfName = model.IRFName });
+            }
         }
     }
 }

@@ -273,7 +273,7 @@
                                                                         @if (ViewBag.profile != "Client")
                                                                         {
                                                                             <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Audio files">
-                                                                                <span onclick="location.href = '@Url.Action("UploadAudio", "IRF", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
+                                                                                <span onclick="location.href = '@Url.Action("UploadAudio", "Candidate", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="mdc-fab__icon material-icons">
 
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>
                                                                                 </span>
@@ -302,7 +302,7 @@
                                                                     @if (ViewBag.profile != "Client")
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                            <span onclick="location.href = '@Url.Action("CandidateReport", "IRF", new { candidateId = item.CandidateMasterId, irfId = item.IRFId })'" title="Report" class="mdc-fab__icon material-icons">
+                                                                            <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
                                                                             </span>
                                                                         </button>

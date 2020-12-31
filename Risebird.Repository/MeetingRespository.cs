@@ -1075,19 +1075,19 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IEnumerable<Level> GetLevels()
+        public async Task<IEnumerable<Level>> GetLevels()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Level>(
+                    return await SqlMapper.QueryAsync<Level>(
                         con, "select * from Level", null, commandType: Text);
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
