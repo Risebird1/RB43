@@ -42,6 +42,12 @@ namespace Risebird.Web.Controllers
                 {
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                     var firstData = data.FirstOrDefault();
+
+                    var condition = (firstData.CurrentMeetingStatus == 4) && (firstData.confirmationStatus.HasValue && firstData.confirmationStatus == 1) && ((firstData.CurrentInterviewStatus != 4 && firstData.CurrentInterviewStatus != 2) || (firstData.QCStatus == 1 && (firstData.CurrentInterviewStatus == 4 || firstData.CurrentInterviewStatus == 2)));
+                    if (!condition)
+                    {
+                        continue;
+                    }
                     var candidateTimeline = new CandidateTimelineVM();
 
                     candidateTimeline.HREmail = firstData.HREmail;
