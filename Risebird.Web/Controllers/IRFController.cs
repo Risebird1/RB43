@@ -4480,318 +4480,318 @@ namespace Risebird.Web.Controllers
                 return Json("Fail");
             }
         }
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> CandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
+        //[Authorize]
+        //[HttpGet]
+        //public async Task<IActionResult> CandidateStatusList(int irfId, int candidateId, string irfName, string candidateName)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
 
-                    var model = new CandidateStatusListVM();
-                    model.CandidateStatusList = await _irfService.GetCandidatesStatusList(irfId, candidateId);
-                    model.IRFName = irfName;
-                    model.CandidateName = candidateName;
-                    model.CandidateId = candidateId;
-                    model.IRFId = irfId;
-                    model.Profile = profileName;
+        //            var model = new CandidateStatusListVM();
+        //            model.CandidateStatusList = await _irfService.GetCandidatesStatusList(irfId, candidateId);
+        //            model.IRFName = irfName;
+        //            model.CandidateName = candidateName;
+        //            model.CandidateId = candidateId;
+        //            model.IRFId = irfId;
+        //            model.Profile = profileName;
 
-                    if (TempData["SuccessErrorCandidateStatus"] != null)
-                    {
-                        ViewBag.Message = TempData["SuccessErrorCandidateStatus"].ToString();
-                        TempData.Remove("SuccessErrorCandidateStatus");
-                    }
-                    return View(model);
+        //            if (TempData["SuccessErrorCandidateStatus"] != null)
+        //            {
+        //                ViewBag.Message = TempData["SuccessErrorCandidateStatus"].ToString();
+        //                TempData.Remove("SuccessErrorCandidateStatus");
+        //            }
+        //            return View(model);
 
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Index");
-            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("Index");
+        //    }
 
-        }
+        //}
 
 
 
-        [HttpGet]
-        public IActionResult AddCandidateStatus(int candidateId, int irfId, string rfName, string candidateName)
-        {
-            try
-            {
+        //[HttpGet]
+        //public IActionResult AddCandidateStatus(int candidateId, int irfId, string rfName, string candidateName)
+        //{
+        //    try
+        //    {
 
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                if (profileName != "Client")
-                {
-                    var model = new CandidateStatus();
-                    model.IRFName = rfName;
-                    model.CandidateName = candidateName;
-                    model.CandidateId = candidateId;
-                    model.IRFId = irfId;
+        //        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //        profileName = profileName.Replace("\"", "");
+        //        if (profileName != "Client")
+        //        {
+        //            var model = new CandidateStatus();
+        //            model.IRFName = rfName;
+        //            model.CandidateName = candidateName;
+        //            model.CandidateId = candidateId;
+        //            model.IRFId = irfId;
                    
-                    return View(model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+        //            return View(model);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
 
 
 
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName });
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName });
+        //    }
+        //}
 
 
-        [ValidateAntiForgeryToken]
-        [HttpPost]
-        public async Task<IActionResult> AddCandidateStatus(CandidateStatus model)
-        {
+        //[ValidateAntiForgeryToken]
+        //[HttpPost]
+        //public async Task<IActionResult> AddCandidateStatus(CandidateStatus model)
+        //{
 
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    if (profileName != "Client")
-                    {
-                        model.PerformedBy = emailid;
-                        if (model.AudioFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
-                            {
-                                TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
-                                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //            emailid = emailid.Replace("\"", "");
+        //            if (profileName != "Client")
+        //            {
+        //                model.PerformedBy = emailid;
+        //                if (model.AudioFile != null)
+        //                {
+        //                    await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+        //                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+        //                    var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+        //                    string uploadedaudioFileURL = blob.Uri.ToString();
+        //                    if (uploadedaudioFileURL == null)
+        //                    {
+        //                        TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
+        //                        return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
 
-                            }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
-                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        model.AudioFileLink = uploadedaudioFileURL;
+        //                    }
+        //                }
 
-                        if (await _irfService.AddCandidateStatus(model))
-                        {
-                            TempData["SuccessErrorCandidateStatus"] = "Candidate status saved successfully.";
-                            return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorCandidateStatus"] = "Error saving candidate status.";
-                            return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
-                        }
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorCandidateStatus"] = "Error saving candidate status.";
-                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId,  irfName = model.IRFName, candidateName = model.CandidateName });
-            }
-        }
+        //                if (await _irfService.AddCandidateStatus(model))
+        //                {
+        //                    TempData["SuccessErrorCandidateStatus"] = "Candidate status saved successfully.";
+        //                    return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+        //                }
+        //                else
+        //                {
+        //                    TempData["SuccessErrorCandidateStatus"] = "Error saving candidate status.";
+        //                    return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+        //                }
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorCandidateStatus"] = "Error saving candidate status.";
+        //        return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId,  irfName = model.IRFName, candidateName = model.CandidateName });
+        //    }
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> EditCandidateStatus(int id, int candidateId, int irfId, string rfName, string candidateName)
-        {
-            try
-            {
+        //[HttpGet]
+        //public async Task<IActionResult> EditCandidateStatus(int id, int candidateId, int irfId, string rfName, string candidateName)
+        //{
+        //    try
+        //    {
 
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                if (profileName != "Client")
-                {
-                    var model = new CandidateStatus();
-                    model = await _irfService.GetCandidateStatusById(id);
-                    model.IRFName = rfName;
-                    model.CandidateName = candidateName;
-                    model.id =id;
+        //        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //        profileName = profileName.Replace("\"", "");
+        //        if (profileName != "Client")
+        //        {
+        //            var model = new CandidateStatus();
+        //            model = await _irfService.GetCandidateStatusById(id);
+        //            model.IRFName = rfName;
+        //            model.CandidateName = candidateName;
+        //            model.id =id;
                    
-                    return View(model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+        //            return View(model);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
 
 
 
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("CandidateStatusList", new { irfId = irfId, candidateId = candidateId, irfName = rfName, candidateName = candidateName});
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("CandidateStatusList", new { irfId = irfId, candidateId = candidateId, irfName = rfName, candidateName = candidateName});
+        //    }
+        //}
 
-        [ValidateAntiForgeryToken]
-        [HttpPost]
-        public async Task<IActionResult> EditCandidateStatus(CandidateStatus model)
-        {
+        //[ValidateAntiForgeryToken]
+        //[HttpPost]
+        //public async Task<IActionResult> EditCandidateStatus(CandidateStatus model)
+        //{
 
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
-                    {
-                        model.PerformedBy = emailid;
-                        if (model.AudioFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-                            if (uploadedaudioFileURL == null)
-                            {
-                                TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
-                                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //            emailid = emailid.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "HR")
+        //            {
+        //                model.PerformedBy = emailid;
+        //                if (model.AudioFile != null)
+        //                {
+        //                    await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+        //                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+        //                    var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+        //                    string uploadedaudioFileURL = blob.Uri.ToString();
+        //                    if (uploadedaudioFileURL == null)
+        //                    {
+        //                        TempData["SuccessErrorCandidateStatus"] = "Audio Upload failed.";
+        //                        return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
 
-                            }
-                            else
-                            {
-                                model.AudioFileLink = uploadedaudioFileURL;
-                            }
-                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        model.AudioFileLink = uploadedaudioFileURL;
+        //                    }
+        //                }
 
-                        if (await _irfService.EditCandidateStatus(model))
-                        {
-                            TempData["SuccessErrorCandidateStatus"] = "Candidate status updated successfully.";
-                            return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorCandidateStatus"] = "Error updating candidate status.";
-                            return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
-                        }
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorCandidateStatus"] = "Error updating candidate status.";
-                return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
-            }
-        }
+        //                if (await _irfService.EditCandidateStatus(model))
+        //                {
+        //                    TempData["SuccessErrorCandidateStatus"] = "Candidate status updated successfully.";
+        //                    return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+        //                }
+        //                else
+        //                {
+        //                    TempData["SuccessErrorCandidateStatus"] = "Error updating candidate status.";
+        //                    return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+        //                }
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorCandidateStatus"] = "Error updating candidate status.";
+        //        return RedirectToAction("CandidateStatusList", new { irfId = model.IRFId, candidateId = model.CandidateId, irfName = model.IRFName, candidateName = model.CandidateName });
+        //    }
+        //}
 
-        [Authorize]
-        public async Task<IActionResult> DeleteCandidateStatus(int id)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if ( profileName != "Client")
-                    {
-                        var result = await _irfService.DeleteCandidateStatus(id);
-                        return Json(result);
+        //[Authorize]
+        //public async Task<IActionResult> DeleteCandidateStatus(int id)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if ( profileName != "Client")
+        //            {
+        //                var result = await _irfService.DeleteCandidateStatus(id);
+        //                return Json(result);
 
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
 
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(false);
-            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return Json(false);
+        //    }
 
-        }
-        [HttpPost]
-        public JsonResult CandidatesJson(string searchValue)
-        {
-            int Page = 1;
-          var  candidateList = _modelDetails;
-            if (!String.IsNullOrEmpty(searchValue))
-            {
-                searchValue = searchValue.ToUpper();
-                candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+        //}
+        //[HttpPost]
+        //public JsonResult CandidatesJson(string searchValue)
+        //{
+        //    int Page = 1;
+        //  var  candidateList = _modelDetails;
+        //    if (!String.IsNullOrEmpty(searchValue))
+        //    {
+        //        searchValue = searchValue.ToUpper();
+        //        candidateList = candidateList.Where(x => (!String.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!String.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
 
-            }
-            int totalcount = candidateList.Count;
-            int Pagestart = 0;
-            int Pageend = 0;
-            ViewBag.TotalCount = candidateList.Count;
+        //    }
+        //    int totalcount = candidateList.Count;
+        //    int Pagestart = 0;
+        //    int Pageend = 0;
+        //    ViewBag.TotalCount = candidateList.Count;
 
-            Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-            int a = candidateList.Count / 10;
-            if (candidateList.Count % 10 == 0)
-            {
-                Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-            }
-            else
-            {
-                a = a + 1;
-                if (a == Page)
-                {
-                    Pageend = candidateList.Count;
-                }
-                else
-                {
-                    Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+        //    Pagestart = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+        //    int a = candidateList.Count / 10;
+        //    if (candidateList.Count % 10 == 0)
+        //    {
+        //        Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+        //    }
+        //    else
+        //    {
+        //        a = a + 1;
+        //        if (a == Page)
+        //        {
+        //            Pageend = candidateList.Count;
+        //        }
+        //        else
+        //        {
+        //            Pageend = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
 
-                }
+        //        }
 
-            }
-            if (candidateList.Count == 0)
-            {
-                Pagestart = 0;
-                Pageend = 0;
-            }
+        //    }
+        //    if (candidateList.Count == 0)
+        //    {
+        //        Pagestart = 0;
+        //        Pageend = 0;
+        //    }
 
-            return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
-        }
+        //    return Json(new { result = candidateList.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = candidateList.Count });
+        //}
 
 
 
