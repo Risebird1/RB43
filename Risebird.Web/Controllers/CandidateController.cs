@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using X.PagedList;
 
@@ -43,11 +45,6 @@ namespace Risebird.Web.Controllers
                     var data = candidateData.Where(x => (x.CandidateId == candidate.CandidateId && x.IRFId == candidate.IRFId));
                     var firstData = data.FirstOrDefault();
 
-                    var condition = (firstData.CurrentMeetingStatus == 4) && (firstData.confirmationStatus.HasValue && firstData.confirmationStatus == 1) && ((firstData.CurrentInterviewStatus != 4 && firstData.CurrentInterviewStatus != 2) || (firstData.QCStatus == 1 && (firstData.CurrentInterviewStatus == 4 || firstData.CurrentInterviewStatus == 2)));
-                    if (!condition)
-                    {
-                        continue;
-                    }
                     var candidateTimeline = new CandidateTimelineVM();
 
                     candidateTimeline.HREmail = firstData.HREmail;
@@ -85,7 +82,15 @@ namespace Risebird.Web.Controllers
                         var lastStatus = scheduleStatusData.LastOrDefault();
                         if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
                         {
-                            candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            if ((lastStatus.ScheduleStatusComments == InterviewStatus.Selected.GetDescription() || lastStatus.ScheduleStatusComments== InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus!=1)
+                            {
+                                candidateTimeline.CurrentStatus = string.Empty;
+                            }
+                            else
+                            {
+                                candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                            }
+                            
                         }
                         else
                         {
@@ -125,6 +130,10 @@ namespace Risebird.Web.Controllers
 
                         foreach (var item in interviewStatusData)
                         {
+                            if((item.InterviewStatus==InterviewStatus.Selected.GetDescription() || item.InterviewStatus== InterviewStatus.BorderLine.GetDescription()) && candidateTimeline.QCStatus!=1)
+                            {
+                                continue;
+                            }
                             var interviewStatusObj = new TimelineStatus();
 
                             interviewStatusObj.Date = item.InterviewStatusDate.ToString("dd");
