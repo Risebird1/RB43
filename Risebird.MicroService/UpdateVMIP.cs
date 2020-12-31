@@ -35,14 +35,14 @@ namespace Risebird.MicroService
         [FunctionName("UpdateVMIP")]
         public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            log.LogInformation($"UpdateVMIP Timer trigger function executed at: {DateTime.Now}");
 
             var vmsInDb = await _proctorInterviewsRepository.GetAllVMs();
-            UpdateAzureVmIPsnOSType(vmsInDb);//update ips of the vms
-
+            UpdateAzureVmIPsnOSType(vmsInDb, log);//update ips of the vms
+            log.LogInformation($"UpdateVMIP Timer trigger function completed at: {DateTime.Now}");
         }
 
-        public void UpdateAzureVmIPsnOSType(IEnumerable<VMProperties> vmListFromDB)
+        public void UpdateAzureVmIPsnOSType(IEnumerable<VMProperties> vmListFromDB, ILogger log)
         {
             var finalVmList = new List<VMProperties>();
             string osType = string.Empty;
@@ -87,6 +87,7 @@ namespace Risebird.MicroService
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                log.LogInformation($"UpdateVMIP Timer trigger function failed at: {DateTime.Now} with error message: {ex.Message}");
             }
 
         }

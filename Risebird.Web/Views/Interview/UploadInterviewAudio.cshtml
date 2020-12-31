@@ -1,0 +1,215 @@
+﻿@model Risebird.Entities.Data.SpeechToTextDTO
+
+
+@{
+    ViewData["Title"] = "Upload Interview Audio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<div class="main-panel" id="main-panel">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Upload Interview Audio
+                </a>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="mt50">
+    </div>
+    <div style="height:20px;"></div>
+    <div class="content client">
+
+        <div class="bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <form action="/Interview/UploadInterviewAudio" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit = "return Check()">
+                            @Html.AntiForgeryToken()
+                            <div class="canvas_div_pdf">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group" style="margin-bottom:10px;">
+                                            @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group" style="margin-bottom:10px;">
+                                            @Html.LabelFor(model => model.CandidateEmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.CandidateEmailId, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group" style="margin-bottom:10px;">
+                                            @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group" style="margin-bottom:10px;">
+                                            @Html.LabelFor(model => model.InterviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.InterviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+
+                                        @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control", @accept = ".wav" })
+                                        @Html.ValidationMessageFor(model => model.AudioFile, "", new { @class = "text-danger" })
+
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+
+                                        <div class="form-group" style="margin-bottom:10px;">
+                                            @Html.LabelFor(model => model.KeyWords, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.KeyWords, new { @class = "form-control text-box single-line", @style = " height:45px" })
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <label class="text-danger" id="error_linkDiv" style="color: red; font-size: 14px"></label>
+                                </div>
+
+                                @Html.HiddenFor(m => m.InterviewId)
+                                @Html.HiddenFor(m => m.ConvertedText)
+                                @Html.HiddenFor(m => m.UploadedAudioFileUrl)
+
+                                <div class="card-footer ">
+                                    <div class="row">
+
+                                        <div class="col-md-12 mc-button-area text-right">
+
+                                            @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+
+                        @if (!string.IsNullOrEmpty(Model.UploadedAudioFileUrl))
+                        {
+                            <div class="ng-pristine ng-valid">
+                                <div class="canvas_div_pdf">
+
+
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Uploaded Audio</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="50%">File</th>
+                                                            <th width="50%">Play</th>
+                                                            
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+
+                                                            <td>
+                                                                <a class="audio-rec" href='@Model.UploadedAudioFileUrl' download>
+                                                                    @Model.UploadedAudioFileUrl.Split('/').Last()
+                                                                </a>
+                                                            </td>
+                                                            <td>
+                                                                <audio src='@Model.UploadedAudioFileUrl' asp-append-version="true" controls></audio>
+                                                            </td>
+
+
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+
+
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+                                    
+
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+
+    </div>
+
+</div>
+
+<script>
+    function Check() {
+        var file = document.getElementById("AudioFile").value;
+        var keyWords = document.getElementById("KeyWords").value
+        if (file == '' && keyWords == '') {
+            document.getElementById("error_linkDiv").innerHTML = "Please fill atleast one field";
+            return false;
+        }
+        else {
+            document.getElementById("error_linkDiv").innerHTML = "";
+            return true;
+        }
+
+    }
+
+</script>
+
+
+
+
+
+
+

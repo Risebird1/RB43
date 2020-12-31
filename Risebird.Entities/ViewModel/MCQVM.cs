@@ -75,6 +75,8 @@ namespace Risebird.Entities.ViewModel
         public int CandidateScore { get; set; }
         public int TotalQuestions { get; set; }
         public string VideoLink { get; set; }
+        public int Feedbackreating { get; set; }
+        public string FeedbackComment { get; set; }
     }
     public class MCQVMShare : TableEntity
     {
@@ -125,5 +127,7 @@ namespace Risebird.Entities.ViewModel
         public string PartitionKey { get; set; }
         public string SameID { get; set; }
         public string VideoLink { get; set; }
+        public int Feedbackreating { get; set; }
+        public string FeedbackComment { get; set; }
     }
 }

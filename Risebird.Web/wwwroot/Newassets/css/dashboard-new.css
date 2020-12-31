@@ -17,7 +17,14 @@
     .clearfix:after {
         clear: both;
     }
-
+.multiple_row > h2 {
+    font-size: 18px;
+    padding: 8px 10px;
+    text-align: left;
+    color: #ffffff;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
 .background-colorful {
     background: linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
     background: -o-linear-gradient(left, #E04B4A 0%, #1caf9a 50%, #95b75d 100%);
@@ -38,7 +45,7 @@ body {
     margin: 0px;
     position: relative;
     color: #22262e;
-
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji!important";
 }
 
 .body-full-height {
@@ -49,8 +56,36 @@ body {
         height: 100%;
     }
 
+.status-success {
+    display: inline-block;
+    padding: 0.45em .45em;
+    font-size: 100%;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    color: rgb(112, 189, 50);
+    border-radius: 3px;
+}
 
+.collapsed {
+    display: block !important
+}
 
+.status-cancel {
+    display: inline-block;
+    padding: 0.45em .45em;
+    font-size: 100%;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 3px;
+    color: #f44545;
+}
 /* PAGE CONTAINER */
 .page-container .page-content .page-content-wrap {
     float: left;
@@ -86,10 +121,20 @@ body {
 .priority svg {
     transform: rotate(180deg);
 }
+#sections {
+    word-wrap: break-word;
+}
 
-.icon-lst {
-    position: relative !important;
-    top: -3px !important;
+.moretext {
+    display: none;
+    white-space: initial;
+}
+table.journey td.cadName, table.journey td.cadEmail {
+    width: 200px;
+}
+
+table.journey td.cadSkill {
+    width: 150px;
 }
 
 .label-num {
@@ -1001,7 +1046,7 @@ body {
     border-radius: .25em;
 }
 
-.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip] {
+.talk-bubble [data-tooltip], .video-info [data-tooltip], .video-title [data-tooltip], .jd-title [data-tooltip], .cadName [data-tooltip], .cadName [data-tooltip], .cadSkill [data-tooltip], .cadSkill[data-tooltip], .cadEmail [data-tooltip], .cadEmail [data-tooltip] {
     position: relative;
     z-index: 2;
     cursor: pointer;
@@ -1013,7 +1058,10 @@ body {
     .talk-bubble [data-tooltip]:after, .video-info [data-tooltip]:before,
     .video-info [data-tooltip]:after, .video-title [data-tooltip]:before,
     .video-title [data-tooltip]:after, .jd-title [data-tooltip]:before,
-    .jd-title [data-tooltip]:after {
+    .jd-title [data-tooltip]:after, .cadName [data-tooltip]:before,
+    .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:before,
+    .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:before,
+    .cadEmail [data-tooltip]:after {
         visibility: hidden;
         -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
         filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
@@ -1021,20 +1069,77 @@ body {
         pointer-events: none;
     }
 
+.candidate .cadEmail [data-tooltip]:before {
+    margin-left: -25px;
+}
+#tblbodyCandidate .action .mdc-fab {
+    width: 29px !important;
+    height: 30px !important;
+}
+    #tblbodyCandidate .action{width:235px}
 /* Position tooltip above the element */
-.selected-priority .talk-bubble [data-tooltip]:before {
+.selected-priority .talk-bubble [data-tooltip]:before, .selected-priority .cadName [data-tooltip]:before, .selected-priority .cadSkill [data-tooltip]:before, .selected-priority .cadEmail [data-tooltip]:before,
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
     bottom: 72%;
 }
 
-.talk-bubble [data-tooltip]:before {
+    .talk-bubble [data-tooltip]:before {
+        position: absolute;
+        bottom: 150%;
+        left: 10%;
+        margin-bottom: 5px;
+        margin-left: -80px;
+        font-weight: 300;
+        padding: 7px;
+        width: 300px;
+        font-size: 13px;
+        height: auto;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+        content: attr(data-tooltip);
+        text-align: center;
+        /* font-size: 14px; */
+        line-height: 1.3;
+        white-space: normal;
+        border-radius: 5px;
+    }
+.candidate .cadName [data-tooltip]:before {
+    left: 50%;
+}
+    .cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
+        position: absolute;
+        bottom: 90%;
+        left: 10%;
+        margin-bottom: 5px;
+        margin-left: -80px;
+        font-weight: 300;
+        padding: 7px;
+        width: 200px;
+        font-size: 13px;
+        height: auto;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.4);
+        content: attr(data-tooltip);
+        text-align: center;
+        /* font-size: 14px; */
+        line-height: 1.3;
+        white-space: normal;
+        border-radius: 5px;
+    }
+
+.cadName [data-tooltip]:before, .cadSkill [data-tooltip]:before, .cadEmail [data-tooltip]:before {
     position: absolute;
-    bottom: 150%;
+    bottom: 90%;
     left: 10%;
     margin-bottom: 5px;
     margin-left: -80px;
     font-weight: 300;
     padding: 7px;
-    width: 300px;
+    width: 200px;
     font-size: 13px;
     height: auto;
     -webkit-border-radius: 3px;
@@ -1049,13 +1154,18 @@ body {
     border-radius: 5px;
 }
 
+
 .interviewer-comment .talk-bubble [data-tooltip]:before {
     width: 400px;
 }
 
+table.journey th, table.journey td {
+    border-right: 1px solid #dee2e6 !important;
+    max-width: 187px;
+    vertical-align: top !important;
+}
 
-
-.video-info [data-tooltip]:before, .video-title [data-tooltip]:before{
+.video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
     position: absolute;
     bottom: 100%;
     left: 50%;
@@ -1076,6 +1186,7 @@ body {
     line-height: 1.3;
     white-space: normal;
 }
+
 .jd-title [data-tooltip]:before {
     position: absolute;
     bottom: 100%;
@@ -1101,9 +1212,9 @@ body {
 
 
 /* Triangle hack to make tooltip look like a speech bubble */
-.talk-bubble [data-tooltip]:after {
+.talk-bubble [data-tooltip]:after, .cadName [data-tooltip]:after, .cadSkill [data-tooltip]:after, .cadEmail [data-tooltip]:after {
     position: absolute;
-    bottom: 75%;
+    bottom: 70%;
     left: 50%;
     margin-left: -5px;
     width: 0;
@@ -1144,8 +1255,7 @@ body {
 }
 
 #resumeId, .callatag {
-
-    padding: 5px 10px;
+    padding: 2px 10px;
     border-radius: 10px;
 }
 
@@ -1198,12 +1308,16 @@ body {
 
 /* Show tooltip content on hover */
 .talk-bubble [data-tooltip]:hover:before,
-.talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after, .jd-title [data-tooltip]:hover:before, .jd-title [data-tooltip]:hover:after {
+.talk-bubble [data-tooltip]:hover:after, .video-info [data-tooltip]:hover:before, .video-info [data-tooltip]:hover:after, .video-title [data-tooltip]:hover:before, .video-title [data-tooltip]:hover:after, .jd-title [data-tooltip]:hover:before, .jd-title [data-tooltip]:hover:after, .cadName [data-tooltip]:hover:before,
+.cadName [data-tooltip]:hover:after, .cadEmail [data-tooltip]:hover:before,
+.cadEmail [data-tooltip]:hover:after, .cadSkill [data-tooltip]:hover:before,
+.cadSkill [data-tooltip]:hover:after {
     visibility: visible;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1;
 }
+
 .mdc-card .form-control {
     border: 0;
     border-radius: 4px 4px 0 0;
@@ -1211,6 +1325,7 @@ body {
     font-size: 0.8rem;
     border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
 }
+
 .page-container.page-mode-rtl .x-navigation.x-navigation-minimized li ul {
     top: 0px;
     right: auto;
@@ -2724,6 +2839,19 @@ ul.panel-controls > li > .dropdown-menu {
     border-color: #f35b3f;
 }
 
+td.detail-row {
+    background-image: url(../../Newassets/img/details_open.png);
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    background-color: #cccccc47;
+    background-position: center 12px;
+    padding: 12px 6.5px !important;
+}
+
+tr.shows td.detail-row {
+    background: #cccccc47 url(../../Newassets/img/details_close.png) no-repeat right 12px;
+}
 
 input[type="text"],
 input[type="password"],
@@ -2862,15 +2990,77 @@ button.btn {
 /***** Media queries *****/
 
 @media (min-width: 992px) and (max-width: 1199px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+    .candidate table.journey td.cadEmail {
+        width: 160px;
+    }
+    .selected-priority table.journey td.cadName {
+       width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+       width: 235px;
+    }
+}
+.selected-priority table.journey td.interviewdate {
+   width: 160px;
 }
 
+
+.selected-priority .journey td.interview-com, .journey td.interview-com {
+    width: 300px;
+}
+
+.selected-priority table.journey td.cadName {
+    width: 250px;
+}
+
+.selected-priority table.journey td.cadSkill {
+   width: 235px;
+}
+
+}
+
+
 @media (min-width: 768px) and (max-width: 991px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+    .candidate table.journey td.cadEmail {
+        width: 160px;
+    }
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+
+    .selected-priority table.journey td.cadName {
+       width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        width: 235px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 160px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 270px;
+    }
 }
 
 @media (max-width: 767px) {
     .timer {
         font-size: 15px !important;
     }
+
     .navbar {
         padding-top: 0;
     }
@@ -3009,7 +3199,9 @@ input[type='radio'] {
 .mt50 {
     margin-top: 55px;
 }
-
+.mt-20 {
+    margin-top: 20px;
+}
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {
     border-color: rgb(146, 146, 146);
 }
@@ -5612,6 +5804,7 @@ blockquote {
     float: left;
     margin: 10px 0px;
 }
+
     .timer span {
         font-size: 15px;
         display: block;
@@ -5727,6 +5920,7 @@ blockquote {
     top: 13px;
     left: 30px;
 }
+
 .reset-password .field-icon {
     right: 15px;
     top: 57%;
@@ -5832,11 +6026,10 @@ button.close {
     }
 /* end To top */
 .excel-file {
-    margin-right: 10px;
-    float: right;
+    margin-right: 5px;
     color: green;
-    font-size: 35px;
-    margin-left: 3px;
+    font-size: 35px!important;
+    margin-left: 5px;
     border: 0;
 }
 
@@ -5868,38 +6061,58 @@ button.close {
 .mobile-view {
     display: none;
 }
+
 #searchGo button.btn, #btnSearch {
     min-width: auto;
     height: 37px;
 }
 
- #searchGo button.btn svg, #btnSearch svg {
- position: relative;
-       
-}
+    #searchGo button.btn svg, #btnSearch svg {
+        position: relative;
+    }
+
 .razorpay_btn i {
     font-size: 20px;
     margin-right: 13px;
-    font-size:14px;
+    font-size: 14px;
 }
 
 .razorpay_con {
     position: relative;
     width: 1200px;
     margin: 0px auto;
-
 }
+
 .razorpay_btn {
     flex: 0 0 20%;
     max-width: 20%;
-    float:left;
+    float: left;
 }
+
 .razorpay_details {
     width: 78%;
     float: left;
     position: absolute;
     left: 20%;
     top: 20px;
+}
+
+.pagination li {
+    border: 0;
+    border-radius: 30px !important;
+    transition: all .3s;
+    padding: 0px 11px;
+    margin: 10px 3px;
+    min-width: 30px;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    color: #2c2c2c;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+    background: transparent;
+    outline: none;
 }
 
 .desktop-view {
@@ -5927,39 +6140,90 @@ button.close {
         display: none;
     }
 
-    .dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
-        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-        border: solid 1px #ccc;
-        padding: 9px 10px 9px 32px;
-        width: 150px;
-        height: 40px;
-        font-family: arial;
-        -webkit-border-radius: 10em;
-        -moz-border-radius: 10em;
-        border-radius: 10em;
-        -webkit-transition: all .5s;
-        -moz-transition: all .5s;
-        transition: all .5s;
-        position: relative;
+#x {
+    border: 0px;
+    background: none;
+    color: #595963;
+    font-weight: bold;
+    position: absolute;
+    right: 11px;
+    top: 10px;
+}
+
+#search {
+    right: 25px;
+    position: absolute;
+    width: 18px;
+    height: 19px;
+    top: 12px;
+    position: absolute;
+    border: 0px;
+    background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat right;
+    z-index: 1;
+}
+
+.dataTables_filter input[type=search], #meeting_filter input[type=search], #risebirduser_filter input[type=search], #clientduser_filter input[type=search], #skill_filter input[type=search], #skillLevel_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search], #profile_filter input[type=search] {
+    border: solid 1px #ccc;
+    padding: 9px 10px 9px 10px;
+    width: 190px;
+    height: 40px;
+    font-family: arial;
+    -webkit-border-radius: 10em;
+    -moz-border-radius: 10em;
+    border-radius: 10em;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
+    position: relative;
+    background: #fff;
+}
+
+.collapse {
+    display: none;
+}
+
+    .collapse.in {
+        display: block;
     }
 
-        .dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
-            width: 200px;
-            background-color: #fff;
-            border-color: #4a93de;
-            font-family: arial;
-            margin: 3px;
-            border: 1px rgba(80, 158, 235, 0.58) solid !important;
-        }
+tr.collapse.in {
+    display: table-row;
+}
+
+.child-section .table-responsive {
+    overflow-x: auto;
+    min-height: .01%;
+    padding-bottom: 10px;
+}
+
+tbody.collapse.in {
+    display: table-row-group;
+}
 
 
-    .dataTables_filter input:-moz-placeholder {
-        color: #999;
-    }
+.searchCon {
+    position: relative;
+    
+}
 
-    .dataTables_filter input::-webkit-input-placeholder {
-        color: #999;
-    }
+.dataTables_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #risebirduser_filter input[type=search]:focus, #clientduser_filter input[type=search]:focus, #skill_filter input[type=search]:focus, #skillLevel_filter input[type=search]:focus, #resumeEvaluator_filter input[type=search]:focus, #recruiterTable_filter input[type=search]:focus, #profile_filter input[type=search]:focus {
+    width: 200px;
+    background-color: #fff;
+    border-color: #4a93de;
+    font-family: arial;
+    margin: 3px;
+    box-shadow: none !important;
+    border: 1px #ccc solid !important;
+}
+
+
+.dataTables_filter input:-moz-placeholder {
+    color: #999;
+}
+
+.dataTables_filter input::-webkit-input-placeholder {
+    color: #999;
+}
 
 .dataTables_length select.form-control:focus {
     border: 1px rgba(80, 158, 235, 0.58) solid !important;
@@ -7613,12 +7877,14 @@ div.tagsinput {
             height: auto !important;
             width: 100% !important;
         }
+
     .razorpay_con {
         position: relative;
         width: 100%;
         margin: 0px auto;
         background: #151515 !important;
     }
+
     .razorpay_btn {
         flex: 0 0 100%;
         max-width: 100%;
@@ -7633,13 +7899,34 @@ div.tagsinput {
         top: 75px;
     }
 
-  
+
     .mobile-view {
         display: block;
     }
 
     .desktop-view {
         display: none;
+    }
+
+     .selected-priority table.journey td.cadName {
+       width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        width: 235px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 160px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        width: 270px;
+    }
+
+
+    .selected-priority .journey td.interview-com {
+        width:300px;
     }
 }
 
@@ -7701,9 +7988,10 @@ div.tagsinput {
 
 @media only screen and (max-width: 1024px) {
     .razorpay_details {
-        width: 60%!important;
+        width: 60% !important;
     }
-        .page-container .page-sidebar {
+
+    .page-container .page-sidebar {
         position: relative;
         float: left;
         width: 100%;
@@ -7753,8 +8041,32 @@ div.tagsinput {
     .page-container.page-navigation-top-fixed .page-content {
         padding-top: 0px;
     }
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+    .candidate table.journey td.cadEmail {
+        width: 160px;
+    }
 
-    .x-navigation {
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+    .selected-priority table.journey td.cadName {
+       width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+       width: 235px;
+    }
+
+    .selected-priority .journey td.interview-com {
+       width: 300px;
+    }
+    .selected-priority table.journey td.interviewdate {
+        width: 160px;
+    }
+
+        .x-navigation {
         max-height: 50px;
         overflow: hidden;
         background: #1b1e24;
@@ -7851,6 +8163,25 @@ div.tagsinput {
     }
 }
 
-.x-navigation-minimized .xn-logo {
-    display: none;
+
+
+
+@media only screen and (max-width: 1400px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        width: 200px;
+    }
+
+    table.journey td.cadSkill {
+        width: 150px;
+    }
+
+    .candidate table.journey td.cadEmail {
+        width: 160px;
+    }
+
 }
+
+
+    .x-navigation-minimized .xn-logo {
+        display: none;
+    }

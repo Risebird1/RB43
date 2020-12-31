@@ -28,6 +28,7 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Upload Audio")]
         public IFormFile AudioFile { get; set; }
+        public string PerformedBy { get; set; }
 
     }
 }

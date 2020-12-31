@@ -202,6 +202,48 @@ namespace Risebird.CommonHelper
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        public async Task<CloudTable> GetTableAsync(string tableName)
+        {
+            CloudStorageAccount account = GetStorageAccount();
+            CloudTableClient client = account.CreateCloudTableClient();
+
+            CloudTable table = client.GetTableReference(tableName);
+            await table.CreateIfNotExistsAsync();
+
+            return table;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<T>> GetAllEntitiesAsync<T>(string tableName) where T : TableEntity, new()
+        {
+            var table = await GetTableAsync(tableName);
+            var entities = new List<T>();
+            try
+            {
+                TableContinuationToken token = null;
+                do
+                {
+                    var queryResult = await table.ExecuteQuerySegmentedAsync(new TableQuery<T>(), token);
+                    entities.AddRange(queryResult);
+                    token = queryResult.ContinuationToken;
+                } while (token != null);
+            }
+            catch (StorageException)
+            {
+                return entities;
+            }
+            return entities;
+        }
+
+        /// <summary>
         /// INSERT NEW SINGLE ROW
         /// </summary>
         /// <param name="tableName"></param>
@@ -1127,6 +1169,20 @@ namespace Risebird.CommonHelper
 
         //#endregion
 
+        public CloudBlob GetBlobDataAsBlob(string containerName, string fileName)
+        {
+            try
+            {
+                CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
+                CloudBlob blob = blobContainer.GetBlobReference(fileName);
+
+                return blob;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 
 }

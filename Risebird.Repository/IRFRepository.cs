@@ -4027,6 +4027,7 @@ namespace Risebird.Repository
                 parameters.Add("@Date", DateTime.Now);
                 parameters.Add("@AudioFileLink", model.AudioFileLink);
                 parameters.Add("@Status", model.Status);
+                parameters.Add("@PerformedBy", model.PerformedBy);
                 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -4101,6 +4102,7 @@ namespace Risebird.Repository
                 parameters.Add("@Date", DateTime.Now);
                 parameters.Add("@AudioFileLink", model.AudioFileLink);
                 parameters.Add("@Status", model.Status);
+                parameters.Add("@PerformedBy", model.PerformedBy);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -4148,6 +4150,26 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        public async Task<int> GetCandidateIdByEmail(string emailId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_GetCandidateIdByEmail", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
             }
         }
     }

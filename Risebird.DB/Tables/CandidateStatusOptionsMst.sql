@@ -16,3 +16,22 @@ End
 GO
 
 
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (1, N'New')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (2, N'In Progress')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (3, N'Waiting For Response')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (4, N'Scheduled')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (5, N'Irrelevant')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (6, N'Duplicate')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (7, N'Not Interested')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (8, N'Got Another Offer')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (9, N'Cold')
+--INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (10, N'Hold')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (11, N'Invitation Sent')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (12, N'Added')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (13, N'Updated')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (14, N'Meeting Status')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (15, N'Interview Status')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (16, N'Called')
+INSERT [dbo].[CandidateStatusOptionsMst] ([id], [StatusValue]) VALUES (17, N'Not Responding')
+
+

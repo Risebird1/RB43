@@ -1394,7 +1394,30 @@ table {
      padding: 7px; 
     font-weight: normal !important;
 }
-.modal-bg {
+.matcnum {
+    background: #d6ccccab;
+    border-radius: 15px;
+    width: 15px;
+    height: 16px;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+}
+.matchtxt {
+    font-size: 20px !important;
+    font-weight: bold;
+    margin-bottom:10px!important;
+}
+.matchdiv {
+    width: 100%;
+    min-height: 200px;
+    padding: 7px;
+    margin: 0px auto;
+    border: 2px #ccc solid;
+    padding: 10px;
+    border-radius: 3px;
+    background: #cccccc24;
+}
+    .modal-bg {
     display: none;
     position: fixed;
     z-index: 2;

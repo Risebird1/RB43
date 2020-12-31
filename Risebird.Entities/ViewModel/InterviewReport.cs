@@ -239,6 +239,10 @@ namespace Risebird.Entities.ViewModel
         public string SharedEmailAddress { get; set; }
         public string ViewName { get; set; }
         public string LogoUrl { get; set; }
+        public int? OldInterviewStatus { get; set; }
+        public int? OldMeetingStatus { get; set; }
+        public string OldconfirmationStatus { get; set; }
+
 
     }
 }

@@ -36,8 +36,8 @@ namespace Risebird.Business.Interface
         Task<string> AddMultipleCandidates(List<Candidate> candidateList, string emailId, string profile);
         Task<bool> DeleteCandidate(int id);
         Candidate GetCandidate(int id, int irfId);
-        bool UpdateCandidate(Candidate obj);
-        bool SendInvite(int irfId, string email);
+        Task<bool> UpdateCandidate(Candidate obj, string emailId);
+        Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId);
         InterviewPlanner GetInterviewPlanner(int id);
         Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model);
         Task<bool> UnArchiveIRF(int id);

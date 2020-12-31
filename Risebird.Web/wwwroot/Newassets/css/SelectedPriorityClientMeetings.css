@@ -2,7 +2,7 @@
 
 
 body {
-    font-family: Roboto, sans-serif;
+    /* font-family: Roboto, sans-serif;*/
 }
 
 #style-2::-webkit-scrollbar-track {
@@ -24,7 +24,9 @@ textarea::-webkit-scrollbar-thumb {
 .selected-priority .talk-bubble {
     z-index: 1
 }
-
+.selected-priority .interview-com .talk-bubble {
+    width: 100%
+}
 .wrapper {
     height: auto !important;
 }
@@ -235,20 +237,29 @@ input[type=number] {
 .mdc-fab.trash-btn {
     background: #d20505 !important;
 }
-
+.container-fluid:before{display:none}
 table {
     white-space: nowrap !important;
 }
 
-.selected-priority .table > tbody > tr > td {
-    padding: 0px 5px;
+
+.selected-priority .talk-bubble textarea {
+    line-height: 18px;
+    font-size: 13px;
+    height: 56px;
+    border:0px;
+    background:transparent;
 }
-
-
-table.dataTable > thead > tr > th {
+.selected-priority .talk-bubble .talktext {
+    padding: 4px 4px 4px 4px;
+}
+    table .dataTable > thead > tr > th {
     padding: 5px;
 }
-
+.selected-priority .table > tbody > tr > td {
+    vertical-align: top;
+    padding: 10px 7px!important;
+}
 
 .table > tfoot > tr > th {
     padding: 5px 7px;
@@ -277,15 +288,15 @@ td:hover.wordwrap {
     z-index: 999;
     filter: alpha(opacity = 50);
 }
+.selected-priority td.talk-bubble-wrap {
+    width: 265px;
+}
 
 table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-    max-width: 300px !important;
+    /* max-width: 300px !important;*/
 }
 
-table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
-    padding: 7px;
-    font-weight: normal !important;
-}
+
 
 .table > thead > tr > th, .table > tfoot > tr > th {
     padding: 7px;
@@ -382,8 +393,8 @@ table {
 
 
 .client #resumeId, .client #zoomlinkId {
-    padding: 5px 10px;
-    border-radius: 16px;
+    border-radius: 3px;
+    padding: 0.1em .45em 0.25em .45em;
 }
 
 
@@ -398,6 +409,7 @@ table {
     padding: 5px 10px;
     border-radius: 16px;
 }
+
 
 #ProctoringTable .label-type {
     background: #e8f5ff;
@@ -498,7 +510,7 @@ modal-content .modal-body {
 }
 
 .mdc-card-wrapper__text-section {
-    padding: 16px;
+    padding: 15px;
 }
 
 .mdc-fab {
