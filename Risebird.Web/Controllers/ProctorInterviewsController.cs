@@ -129,8 +129,8 @@ namespace Risebird.Web.Controllers
                     model.Name = name;
                     model.ResourceGroupName = rgName;
                     model.ActionCommand = action;
-                    var path = $"https://risebirdmicroservice.azurewebsites.net/api/StartStopVM";
-                    var functionKey = "D1fJaqGva3a/p9biA7clekVxAyfOialCKpO3SHpgHCP3WdBa4lOBnA==";
+                    var path = $"https://risebirdmicroservices.azurewebsites.net/api/StartStopVM";
+                    var functionKey = "AqqGT4gu4OCE4Lt6VAFH8noLeSqIGVEisaOJvlnzvZFNTAUmrab11Q==";
 
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
                     if (response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
@@ -198,8 +198,8 @@ namespace Risebird.Web.Controllers
                 if (vmId != 0)
                 {
 
-                    var path = $"https://risebirdmicroservice.azurewebsites.net/api/GetRDPFile";
-                    var functionKey = "rE8wOZBltuOTe44IBcAY28zAydprjs/WjO8tONe4mb2HIOGwtO8onw==";
+                    var path = $"https://risebirdmicroservices.azurewebsites.net/api/GetRDPFile";
+                    var functionKey = "dz9hbdS1f0KJO19KRdRBVEpUxhaaskltduhPq90ImYcvfzWsMiLmAg==";
 
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, functionKey, "", _cancellationToken);
                     if (response != null)

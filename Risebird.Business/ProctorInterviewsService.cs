@@ -97,8 +97,8 @@ namespace Risebird.Business
 
                 //Get All vm from azure portal existing in subscription
 
-                var path = $"https://risebirdmicroservice.azurewebsites.net/api/GetVMList";
-                var functionKey = "IX4USua29CSGnwdutllpMH7xfNY8hagHxtRQwE3AdQ9aCakoky5IMw==";
+                var path = $"https://risebirdmicroservices.azurewebsites.net/api/GetVMList";
+                var functionKey = "PbrGRlaiKh6VXCyfkfaqmvfP/UrMWLi9tZo9BDfi8IeBa0NlD4E10Q==";
 
                 var response = await _httpClient.SendRequestAsync(HttpMethod.Get, path, null, functionKey, "", _cancellationToken);
                 var result = response.Content.ReadAsStringAsync().Result;
@@ -196,8 +196,8 @@ namespace Risebird.Business
                 string Url = $"/resourceGroups/{model.ResourceGroupName}/providers/Microsoft.Compute/virtualMachines/{model.VmName}";
 
 
-                var path = $"https://risebirdmicroservice.azurewebsites.net/api/RunPowerShellScript";
-                var functionKey = "WHofCkAw2PceqzvGNyCXdDRChqLB8zYS5aUGuG313KHdufTjW58NJQ==";
+                var path = $"https://risebirdmicroservices.azurewebsites.net/api/RunPowerShellScript";
+                var functionKey = "PAex7w3dkVaYLXZeIXeHOM3Qlbh7KVgAXyitNyWnj8mSlhJo13ZdSQ==";
                 var dto = new RunPowershellDTO();
                 dto.Script = scripts;
                 dto.Url = Url;

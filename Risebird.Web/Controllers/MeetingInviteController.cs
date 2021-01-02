@@ -81,7 +81,7 @@ namespace Risebird.Web
                 _meeting.onlineMeetingProvider = "teamsForBusiness";
                 var accountEmail = await _meetingInviteService.CheckMeetingAccount(startdate, enddate);
 
-                var functionKey = "Q/8CUsLsbKYeqRMFNPT5QnKsNWzoudpVayC1bN7tQbYK0SEAw1wboQ==";
+                var functionKey = "OxmckBm4R9ufD0shBeHPxvw5epdZy7IIRjyAutYOS9rpvkaSFPdMJQ==";
                 var path = $"MSTeamMeeting";
                 var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, _meeting, functionKey, accountEmail, _cancellationToken);
                 var result = response.Content.ReadAsStringAsync().Result;
