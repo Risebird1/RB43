@@ -153,7 +153,7 @@ namespace Risebird.Web.Controllers
         {
             string userEmailId = string.Empty;
             ExcelPackage Ep = new ExcelPackage();
-            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("My Interviews");
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
             try
             {
@@ -255,6 +255,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 30].Value = "Final Selection Comments";
                 Sheet.Cells[1, 31].Value = "QC Interviewer";
                 Sheet.Cells[1, 32].Value = "Coordinating HR";
+                Sheet.Cells[1, 33].Value = "Job Country";
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -365,6 +366,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 30].Value = item.FinalComments ?? "Comments not submitted.";
                         Sheet.Cells[i, 31].Value = item.QCInterviewer;
                         Sheet.Cells[i, 32].Value = item.HRCoordinatorEmailId;
+                        Sheet.Cells[i, 33].Value = item.JobCountry;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -7300,7 +7302,7 @@ namespace Risebird.Web.Controllers
                             var functionKey = "zcj7Mwl2xZ7j3rBjOFaCyQAIiFdeZo76bvaVIUXCAFF57Y3dvu/3nQ==";
 
                             HttpClient httpClient = new HttpClient();
-                            httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
+                            await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
 
                             TempData["SuccessErrorMessageInterview"] = "Audio uploaded successfully.";
                             return RedirectToAction("Index");
