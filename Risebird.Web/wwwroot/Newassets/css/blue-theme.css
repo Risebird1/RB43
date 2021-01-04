@@ -100,7 +100,7 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
 #codedresumeId {
     border: 1px #a7cdf9 solid;
     color: #1d3b5e;
-    padding: 5px 10px;
+    padding: 5px 5px;
     border-radius: 16px;
     background: #32b2e830;
 }

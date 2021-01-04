@@ -8168,7 +8168,7 @@ div.tagsinput {
 
 @media only screen and (max-width: 1400px) {
     table.journey td.cadName, table.journey td.cadEmail {
-        width: 200px;
+        width: 120px;
     }
 
     table.journey td.cadSkill {
@@ -8176,7 +8176,7 @@ div.tagsinput {
     }
 
     .candidate table.journey td.cadEmail {
-        width: 160px;
+        width: 133px;
     }
 
 }

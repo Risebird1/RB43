@@ -200,7 +200,7 @@ table.dataTable thead .sorting:after {
 #codedresumeId {
     border: 1px #d5d8d9 solid;
     color: #1d3b5e;
-    padding: 5px 10px;
+    padding: 5px 5px;
     border-radius: 16px;
     background: #d5d8d9;
 }
