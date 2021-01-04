@@ -42,7 +42,7 @@ namespace Risebird.Business.Interface
         Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model);
         Task<bool> UnArchiveIRF(int id);
         Task<bool> CancelInvite(int irfId, string email);
-        IEnumerable<Candidate> GetCandidateIRFInvites(string emailId);
+        Task<IEnumerable<Candidate>> GetCandidateIRFInvites(string emailId);
         Task<IRFFunnel> GetFunnelData(int irfId, string irfName);
         Task<InvoiceModel> GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST, string discount, string clientAddress);
         int GetUserId(string emailId, string profile);

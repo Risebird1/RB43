@@ -510,17 +510,17 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<Meeting> GetCandidateInterviews(string emailID, string status)
+        public async Task<List<Meeting>> GetCandidateInterviews(string emailID, string status)
         {
             try
             {
                 ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
-                var assignedMeeting = _meetingRespository.GetCandidateInterviews(emailID, status).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var assignedMeeting = (await _meetingRespository.GetCandidateInterviews(emailID, status)).OrderByDescending(x => x.interviewDate).ToList();
                 return assignedMeeting;
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -1159,21 +1159,21 @@ namespace Risebird.Business
         }
 
 
-        public MeetingVM GetMeetingbyid(int id, string Email)
+        public async Task<MeetingVM> GetMeetingbyid(int id, string Email)
         {
             try
             {
-                var meeting = _meetingRespository.GetMeetingbyid(id, Email);
+                var meeting = await _meetingRespository.GetMeetingbyid(id, Email);
                 if (meeting == null)
                     return null;
                 else
-                    return meeting.Result;
+                    return meeting;
 
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }

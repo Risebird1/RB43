@@ -2469,7 +2469,7 @@ namespace Risebird.Repository
         }
 
         //GetCandidateIRFInvites
-        public IEnumerable<Candidate> GetCandidateIRFInvites(string emailId)
+        public async Task<IEnumerable<Candidate>> GetCandidateIRFInvites(string emailId)
         {
             try
             {
@@ -2479,14 +2479,14 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<Candidate>(query, dynamicParameters);
+                    var results = await con.QueryAsync<Candidate>(query, dynamicParameters);
                     return results;
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }

@@ -38,7 +38,7 @@ namespace Risebird.Business.Interface
         List<Meeting> GetQCOpenInterviews(string emailId);
         string QCAssignYourself(int meetingid, string interviewerMail);
         bool QCUnassignYourself(int meetingid, string email);
-        List<Meeting> GetCandidateInterviews(string emailID, string status);
+        Task<List<Meeting>> GetCandidateInterviews(string emailID, string status);
         bool CancelInterview(int meetingid, string interviewDate, string candidateEmail);
         List<string> GetClientHRContactList(string emailId, List<MeetingVM> meetingList);
         List<string> GetEndClientList(string emailId, List<MeetingVM> meetingList);
@@ -46,7 +46,7 @@ namespace Risebird.Business.Interface
         Task<VerifyCandidateAudio> GetCandidateAudios(int candidateId, int irfId);
         string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId, string type);
 
-        MeetingVM GetMeetingbyid(int id, string Email);
+        Task<MeetingVM> GetMeetingbyid(int id, string Email);
         Task<List<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid, bool IsClientCurated = false);
         MeetingVM VedioLike(string value, string vedioid, string email);
         Task AddTotalViewCount(int id, string emailaddress, string flag);

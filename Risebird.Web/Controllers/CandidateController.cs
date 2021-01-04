@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -13,6 +14,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
 using X.PagedList;
 
 namespace Risebird.Web.Controllers
@@ -27,13 +29,21 @@ namespace Risebird.Web.Controllers
         private readonly IIRFService _irfService;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IEvaluatorService _evaluatorService;
-        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService)
+        private readonly IMeetingService _meetingService;
+        private readonly IUserService _userService;
+        private readonly IIRFRepository _iRFRepository;
+
+
+        public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfService;
             _azureStorageHelper = azureStorageHelper;
             _evaluatorService = evaluatorService;
+            _meetingService = meetingService;
+            _userService = userService;
+            _iRFRepository = iRFRepository;
         }
         public IActionResult Index()
         {
@@ -1332,6 +1342,463 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> OpenInvites()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Candidate")
+                    {
+                        var irfList = (await _irfService.GetCandidateIRFInvites(emailid))?.ToList();
+                        return View(irfList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Interviews(string status)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Candidate")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myInterview = await _meetingService.GetCandidateInterviews(emailid, status);
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
+                        foreach (var item in myInterview)
+                        {
+                            if (!string.IsNullOrEmpty(item.resumeLink))
+                            {
+                                try
+                                {
+                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception)
+                                {
+                                    item.resumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.resumeLink = "";
+                            }
+
+                            if (item.InterviewStatus.HasValue)
+                            {
+                                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                            }
+                            if (item.MeetingStatus.HasValue)
+                            {
+                                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                            }
+
+                            if (item.interviewDate <= DateTime.Now)
+                            {
+                                item.CancelationStatus = "N";
+                            }
+                            else
+                            {
+                                item.CancelationStatus = "Y";
+                            }
+                        }
+                        return View(myInterview);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpPost]
+        public JsonResult ShortListList(string IRFID)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            var model = _meetingService.ShortListedClient(emailid, IRFID);
+            foreach (var item in model)
+            {
+                item.ClientName = item.ClientName.Split("@")[1].Split(".")[0].ToString();
+                item.DateRequired = item.interviewDate.ToString("dd/MMM/yyyy");
+            }
+            return Json(model);
+        }
+        [HttpPost]
+        public JsonResult InterestList(string IRFID)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            var model = _meetingService.InterestListClient(emailid, IRFID);
+            foreach (var item in model)
+            {
+                item.ClientName = item.ClientName.Split("@")[1].Split(".")[0].ToString();
+                item.DateRequired = item.interviewDate.ToString("dd/MMM/yyyy");
+            }
+            return Json(model);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Video(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    ViewBag.actionstatus = "Risetube";
+                    ViewBag.ResultStatus = "VideoPresent";
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Candidate")
+                    {
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
+                        if (TempData["SuccessErrorMessageInterview"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
+                        }
+                        //Start:Save View counts of vedio
+                        if (HttpContext.Session.GetString("UserLogedIn") != null)
+                        {
+                            string values = String.Empty;
+                            var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();
+                            if (valuestatus == "Yes")
+                            {
+                                var emailaddress = HttpContext.Session.GetString("email")?.Trim();
+                                emailaddress = emailaddress.Replace("\"", "");
+                                await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
+                                //save into database to increase view count save into main table from where data is picked
+                                HttpContext.Session.SetString("UserLogedIn", "No");
+                            }
+                            else
+                            {
+                                if (HttpContext.Session.GetString("UserLogedInVedioId") != null)
+                                {
+                                    values = HttpContext.Session.GetString("UserLogedInVedioId")?.Trim();
+                                    var _lst = values.Split(";");
+                                    var flag = true;
+                                    for (int i = 0; i < _lst.Count(); i++)
+                                    {
+                                        if (_lst[i] == id.ToString())
+                                        {
+                                            flag = false;
+                                        }
+                                    }
+                                    if (flag == true)
+                                    {
+                                        var emailaddress = HttpContext.Session.GetString("email")?.Trim();
+                                        emailaddress = emailaddress.Replace("\"", "");
+                                        await _meetingService.AddTotalViewCount(id, emailaddress, "Public");
+                                        //save into database to increase view count save into main table from where data is picked
+                                    }
+                                }
+                            }
+                            values = values + ";" + id;
+                            HttpContext.Session.SetString("UserLogedInVedioId", values);
+                        }
+                        //End:Save View counts of vedio
+
+                        MeetingVM model = await _meetingService.GetMeetingbyid(id, emailId);
+
+                        if (model == null)
+                        {
+                            model = new MeetingVM();
+                            ViewBag.ResultStatus = "VideoNotPresent";
+                            return View(model);
+
+                        }
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
+
+                        MeetingVM NewModel = new MeetingVM();
+                        NewModel.candidateName = model.candidateName;
+                        ViewBag.ProfileName = profileName;
+                        NewModel.CandidateId = model.CandidateId;
+                        NewModel.interviewDate = model.interviewDate;
+                        NewModel.imid = model.imid;
+                        NewModel.IRFId = model.IRFId;
+                        NewModel.ClientName = model.ClientName;
+                        NewModel.InterviewerComment = model.InterviewerComment;
+                        NewModel.InterviewStatus = model.InterviewStatus;
+                        NewModel.JDTiltle = model.JDTiltle;
+                        NewModel.JDLink = model.JDLink;
+                        NewModel.MeetingStatus = model.MeetingStatus;
+                        NewModel.confirmationStatus = model.confirmationStatus;
+                        NewModel.VideoLink = model.VideoLink;
+                        NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.reportLink = model.reportLink;
+                        NewModel.resumeLink = model.resumeLink;
+                        NewModel.zoomLink = model.zoomLink;
+                        NewModel.IreportModel = IRListModel ?? new InterviewReport();
+                        NewModel.IsLike = model.IsLike;
+                        NewModel.TotalView = model.TotalView;
+                        NewModel.IsShared = model.IsShared;
+                        NewModel.TotalVedioLike = model.TotalVedioLike;
+                        NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
+                        NewModel.ShortListCount = model.ShortListCount;
+                        NewModel.IsShortlisted = model.IsShortlisted;
+                        NewModel.ThumbnailImage = model.ThumbnailImage;
+                        NewModel.IsOnline = model.IsOnline;
+                        NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.MeetingPatch = model.MeetingPatch;
+                        if (model.MeetingPatch.Count() > 0)
+                        {
+                            NewModel.VideoLink = model.MeetingPatch.FirstOrDefault().VideoLink;
+                        }
+                        if (NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").Count() > 0)
+                        {
+                            NewModel.IreportModel.QuestionsCollection = NewModel.IreportModel.QuestionsCollection.Where(x => x.VideoLink != null && x.VideoLink != "").ToList();
+                        }
+                        // to get videocount details
+                        var videodetailscount = await _meetingService.GetTotalViewCount(id);
+                        NewModel.VideoCountDetail = videodetailscount.ToList();
+                        NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
+                        if (NewModel.IreportModel.QuestionsCollection == null)
+                        {
+                            ViewBag.QuestionsDiscussedCount = 0;
+                        }
+                        else
+                        {
+                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
+                        }
+                        var comments = _meetingService.GetvedioComments(id);
+                        NewModel.Comments = comments;
+                        bool isQC = false;
+                        NewModel.IreportModel.IsQC = isQC;
+                        if (IRListModel != null)
+                        {
+                            GetStatusList(IRListModel, model.irfIntId);
+                        }
+                        ViewBag.VideoStatus = "Private";
+                        return View(NewModel);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    //Start: Share button functionaly
+                    ViewBag.ResultStatus = "VideoPresent";
+                    MeetingVM model = await _meetingService.GetMeetingbyid(id, "");
+
+                    if (model != null)
+                    {
+
+
+                        var IRListModel = await  _meetingService.GetInteviewReport(model.imid, model.irfIntId);
+                        if (IRListModel == null)
+                        {
+                            IRListModel = new InterviewReport();
+                        }
+
+                        MeetingVM NewModel = new MeetingVM
+                        {
+                            SubVideo_List = new List<MeetingVM>()
+                        };
+                        NewModel.candidateName = model.candidateName;
+                        ViewBag.ProfileName = "";
+                        NewModel.CandidateId = model.CandidateId;
+                        NewModel.interviewDate = model.interviewDate;
+                        NewModel.imid = model.imid;
+                        NewModel.IRFId = model.IRFId;
+                        NewModel.ClientName = model.ClientName;
+
+                        NewModel.InterviewerComment = model.InterviewerComment;
+                        NewModel.InterviewStatus = model.InterviewStatus;
+                        NewModel.JDTiltle = model.JDTiltle;
+                        NewModel.JDLink = model.JDLink;
+                        NewModel.MeetingStatus = model.MeetingStatus;
+                        NewModel.confirmationStatus = model.confirmationStatus;
+                        NewModel.VideoLink = model.VideoLink;
+                        NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.reportLink = model.reportLink;
+                        NewModel.resumeLink = model.resumeLink;
+                        NewModel.zoomLink = model.zoomLink;
+                        NewModel.IreportModel = IRListModel ?? new InterviewReport();
+                        NewModel.IsLike = model.IsLike;
+                        NewModel.TotalView = model.TotalView;
+                        NewModel.IsShared = model.IsShared;
+                        NewModel.TotalVedioLike = model.TotalVedioLike;
+                        NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
+                        NewModel.ShortListCount = model.ShortListCount;
+                        NewModel.IsShortlisted = model.IsShortlisted;
+                        NewModel.ThumbnailImage = model.ThumbnailImage;
+                        NewModel.IsIntrested = model.IsIntrested;
+                        NewModel.IsOnline = model.IsOnline;
+                        NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.FeedbackAudioLink = model.FeedbackAudioLink;
+                        var videodetailscount = await _meetingService.GetTotalViewCount(id);
+                        NewModel.VideoCountDetail = videodetailscount.ToList();
+                        if (NewModel.IreportModel.QuestionsCollection == null)
+                        {
+                            ViewBag.QuestionsDiscussedCount = 0;
+                        }
+                        else
+                        {
+                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
+                        }
+                        bool isQC = false;
+                        NewModel.IreportModel.IsQC = isQC;
+                        ViewBag.VideoStatus = "Public";
+                        //ViewBag.VideoStatus = "Private";
+                        var menus = _userService.GetMenuBasedOnUserEmailld("ExternalUser").GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                        if (menus != null)
+                        {
+                            menus = menus.Where(x => x.functionName != "Support").ToList();
+                            HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                        }
+                        if (IRListModel != null)
+                        {
+                            GetStatusList(IRListModel, model.irfIntId);
+                        }
+                        //desible Like and dilisk button and share button and comment opetion
+                        return View(NewModel);
+                        //END: Share button functionaly
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        private void GetStatusList(InterviewReport model, int irfId = 0)
+        {
+            var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+
+            var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+
+            model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+
+            model.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
+            model.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
+            var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+            model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
+
+            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+        }
+
+        public JsonResult ChangeCandidateStatus(int videoid, string Status)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Candidate")
+                    {
+                        //To update candidate status
+                        var model = _meetingService.UpdateCandidateStatus(videoid, Status);
+                    }
+                    return Json("Success");
+                }
+                else
+                {
+                    return Json("Fail");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Fail");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CancelInterview(int id, DateTime interviewDate, string candidateEmail)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    if (profileName == "Candidate")
+                    {
+                        if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), candidateEmail))
+                        {
+                            //TempData["SuccessErrorMessage"] = "Interview cancelled successfully";
+                            return Json(new { url = Url.Action("Interviews", "Candidate") });
+                        }
+                        else
+                        {
+                            //TempData["SuccessErrorMessage"] = "Sorry! Could not cancel interview!";
+                            return Json(new { url = Url.Action("Interviews", "Candidate") });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
+                return RedirectToAction("Interviews");
+            }
+        }
     }
 }

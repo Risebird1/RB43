@@ -710,15 +710,15 @@ namespace Risebird.Business
 
         }
 
-        public IEnumerable<Candidate> GetCandidateIRFInvites(string emailId)
+        public async Task<IEnumerable<Candidate>> GetCandidateIRFInvites(string emailId)
         {
             try
             {
-                return _irfRepository.GetCandidateIRFInvites(emailId);//.Where(x=> x.EndDate.Date <= DateTime.Now.Date);
+                return await _irfRepository.GetCandidateIRFInvites(emailId);//.Where(x=> x.EndDate.Date <= DateTime.Now.Date);
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 
@@ -1463,5 +1463,7 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        
     }
 }

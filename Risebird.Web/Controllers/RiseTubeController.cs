@@ -392,7 +392,7 @@ namespace Risebird.Web.Controllers
                         MeetingVM model = new MeetingVM();
                         if (isClientUser)
                         {
-                            model = _meetingService.GetMeetingbyid(id, emailId);
+                            model = await _meetingService.GetMeetingbyid(id, emailId);
                             if (model == null)
                             {
                                 model = new MeetingVM();
@@ -408,7 +408,7 @@ namespace Risebird.Web.Controllers
 
                             if (String.IsNullOrEmpty(irfid))
                             {
-                                model = _meetingService.GetMeetingbyid(id, emailId);
+                                model = await _meetingService.GetMeetingbyid(id, emailId);
                                 modelList1 = await _meetingService.GetRiseTubeMeetingsByJD(ClientId, emailId, model.JDTiltle.Split("|")[0], profileName);
 
                             }
@@ -420,7 +420,7 @@ namespace Risebird.Web.Controllers
                                 id = modelList1.Max(x => x.imid);
 
                                 ViewBag.actionstatus = "SkillChannel";
-                                model = _meetingService.GetMeetingbyid(id, emailId);
+                                model = await _meetingService.GetMeetingbyid(id, emailId);
 
                             }
                             if (model == null)
@@ -439,7 +439,7 @@ namespace Risebird.Web.Controllers
                             {
                                 id = modelList1.OrderByDescending(x => x.SharedOn).Select(x => x.imid).FirstOrDefault();
                             }
-                            model = _meetingService.GetMeetingbyid(id, emailId);
+                            model = await _meetingService.GetMeetingbyid(id, emailId);
                             if (model == null)
                             {
                                 model = new MeetingVM();
@@ -450,7 +450,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            model = _meetingService.GetMeetingbyid(id, emailId);
+                            model = await _meetingService.GetMeetingbyid(id, emailId);
                             if (model == null)
                             {
                                 model = new MeetingVM();
@@ -734,7 +734,7 @@ namespace Risebird.Web.Controllers
                 {
                     //Start: Share button functionaly
                     ViewBag.ResultStatus = "VideoPresent";
-                    MeetingVM model = _meetingService.GetMeetingbyid(id, "");
+                    MeetingVM model = await _meetingService.GetMeetingbyid(id, "");
                     var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
                     if (status == "Public")
                     {
@@ -948,7 +948,7 @@ namespace Risebird.Web.Controllers
                         }
 
                         var modelList = new List<MeetingVM>();
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+                        MeetingVM model = await _meetingService.GetMeetingbyid(id, emailId);
 
                         if (isClientUser)
                         {
@@ -1508,7 +1508,7 @@ namespace Risebird.Web.Controllers
                             HttpContext.Session.SetString("UserLogedInVedioId", values);
                         }
                         //End:Save View counts of vedio
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+                        MeetingVM model = await _meetingService.GetMeetingbyid(id, emailId);
                         if (model == null)
                         {
                             model = new MeetingVM();
@@ -1791,7 +1791,7 @@ namespace Risebird.Web.Controllers
                 //Get Video Details From SharedInterviewComments
                 var interviewid = _meetingService.SharedGetInterviewId(id).Result;
 
-                MeetingVM model = _meetingService.GetMeetingbyid(interviewid, "");
+                MeetingVM model = await _meetingService.GetMeetingbyid(interviewid, "");
                 var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
 
                 //update with help of new tables
@@ -2485,7 +2485,7 @@ namespace Risebird.Web.Controllers
             {
                 //Start: Share button functionaly
                 ViewBag.ResultStatus = "VideoPresent";
-                MeetingVM model = _meetingService.GetMeetingbyid(id, "");
+                MeetingVM model = await _meetingService.GetMeetingbyid(id, "");
                 if (model.CandidateAvailable != "Available")
                 {
                     model = new MeetingVM();
@@ -2710,7 +2710,7 @@ namespace Risebird.Web.Controllers
                             HttpContext.Session.SetString("UserLogedInVedioId", values);
                         }
                         //End:Save View counts of vedio
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+                        MeetingVM model = await _meetingService.GetMeetingbyid(id, emailId);
                         if (model == null)
                         {
                             model = new MeetingVM();

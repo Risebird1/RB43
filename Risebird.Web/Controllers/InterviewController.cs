@@ -5632,78 +5632,78 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> CandidateInterviews(string status)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Candidate")
-                    {
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetCandidateInterviews(emailid, status);
-                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
-                        foreach (var item in myInterview)
-                        {
-                            if (!string.IsNullOrEmpty(item.resumeLink))
-                            {
-                                try
-                                {
-                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+        //[Authorize]
+        //[HttpGet]
+        //public async Task<IActionResult> CandidateInterviews(string status)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if (profileName == "Candidate")
+        //            {
+        //                var emailid = HttpContext.Session.GetString("email")?.Trim();
+        //                emailid = emailid.Replace("\"", "");
+        //                var myInterview = _meetingService.GetCandidateInterviews(emailid, status);
+        //                myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
+        //                foreach (var item in myInterview)
+        //                {
+        //                    if (!string.IsNullOrEmpty(item.resumeLink))
+        //                    {
+        //                        try
+        //                        {
+        //                            item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
 
-                                }
-                                catch (Exception)
-                                {
-                                    item.resumeLink = "";
-                                }
-                            }
-                            else
-                            {
-                                item.resumeLink = "";
-                            }
+        //                        }
+        //                        catch (Exception)
+        //                        {
+        //                            item.resumeLink = "";
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        item.resumeLink = "";
+        //                    }
 
-                            if (item.InterviewStatus.HasValue)
-                            {
-                                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                            }
-                            if (item.MeetingStatus.HasValue)
-                            {
-                                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+        //                    if (item.InterviewStatus.HasValue)
+        //                    {
+        //                        item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+        //                    }
+        //                    if (item.MeetingStatus.HasValue)
+        //                    {
+        //                        item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
 
-                            }
+        //                    }
 
-                            if (item.interviewDate <= DateTime.Now)
-                            {
-                                item.CancelationStatus = "N";
-                            }
-                            else
-                            {
-                                item.CancelationStatus = "Y";
-                            }
-                        }
-                        return View(myInterview);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
+        //                    if (item.interviewDate <= DateTime.Now)
+        //                    {
+        //                        item.CancelationStatus = "N";
+        //                    }
+        //                    else
+        //                    {
+        //                        item.CancelationStatus = "Y";
+        //                    }
+        //                }
+        //                return View(myInterview);
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+        //}
 
         [HttpGet]
         public IActionResult UploadAudio(int candidateId, int irfId, string rfName)
@@ -6623,7 +6623,7 @@ namespace Risebird.Web.Controllers
                         }
                         //End:Save View counts of vedio
 
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+                        MeetingVM model = await _meetingService.GetMeetingbyid(id, emailId);
 
                         if (model == null)
                         {
@@ -6705,7 +6705,7 @@ namespace Risebird.Web.Controllers
                 {
                     //Start: Share button functionaly
                     ViewBag.ResultStatus = "VideoPresent";
-                    MeetingVM model = _meetingService.GetMeetingbyid(id, "");
+                    MeetingVM model = await _meetingService.GetMeetingbyid(id, "");
 
                     if (model != null)
                     {
@@ -6882,32 +6882,32 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public JsonResult ChangeCandidateStatus(int videoid, string Status)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Candidate")
-                    {
-                        //To update candidate status
-                        var model = _meetingService.UpdateCandidateStatus(videoid, Status);
-                    }
-                    return Json("Success");
-                }
-                else
-                {
-                    return Json("Fail");
-                }
-            }
-            catch (Exception ex)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json("Fail");
-            }
-        }
+        //public JsonResult ChangeCandidateStatus(int videoid, string Status)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if (profileName == "Candidate")
+        //            {
+        //                //To update candidate status
+        //                var model = _meetingService.UpdateCandidateStatus(videoid, Status);
+        //            }
+        //            return Json("Success");
+        //        }
+        //        else
+        //        {
+        //            return Json("Fail");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return Json("Fail");
+        //    }
+        //}
 
 
         [HttpGet]
