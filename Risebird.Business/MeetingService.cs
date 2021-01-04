@@ -777,7 +777,7 @@ namespace Risebird.Business
                 {
                     //call Edit Feedbackform method
                     reportModel = interviewReport.FirstOrDefault();
-                    EditInterviewReport(reportModel);
+                    await EditInterviewReport(reportModel);
                 }
                 else
                 {
@@ -785,10 +785,10 @@ namespace Risebird.Business
                     model.IsEdited = model.InterviewId > 0;
                    
                     //get all values from database
-                    var levelTech = _meetingRespository.GetLevelTech();
-                    var skills = _meetingRespository.GetSkills();
-                    var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
-                    var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
+                    var levelTech = await _meetingRespository.GetLevelTech();
+                    var skills = await _meetingRespository.GetSkills();
+                    var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(irfId);
+                    var skillGeneralDetails = await _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
 
                     var techSkillList = new List<TechSkillReport>();
 
@@ -856,7 +856,7 @@ namespace Risebird.Business
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
                 reportModel.CandidateName = interviewDetails.candidateName;
                 reportModel.TotalExperience = interviewDetails.TotalExperience+" Years";
-                reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
+                reportModel.SelectabilityComments = await _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = interviewDetails.candidateEmail;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
                 reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
@@ -868,7 +868,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var selectabilityDetails = _evaluatorRespository.GetTransSelectability(irfId);
+                    var selectabilityDetails = await _evaluatorRespository.GetTransSelectability(irfId);
                     var selectabilityList = new List<SelectabilityEvaluatorReport>();
                     foreach (var item in selectabilityDetails ?? new List<TransSelectability>())
                     {
@@ -888,7 +888,7 @@ namespace Risebird.Business
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityList;
                 }
 
-                reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
+                reportModel.JoinabilityComments = await _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
                 var joinabilityReport = await _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
                 if (joinabilityReport != null && joinabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
@@ -897,7 +897,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
+                    var joinabilityDetails = await _meetingRespository.GetTransJoinability(irfId);
                     var joinabilityList = new List<JoinabilityHRReport>();
                     foreach (var item in joinabilityDetails ?? new List<TransJoinability>())
                     {
@@ -930,17 +930,17 @@ namespace Risebird.Business
             }
         }
 
-        private InterviewReport EditInterviewReport(InterviewReport model)
+        private async Task<InterviewReport> EditInterviewReport(InterviewReport model)
         {
             var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
             //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
 
             if (!techReportCollection.Any())
             {
-                var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(model.IRFId);
+                var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(model.IRFId);
                 var techSkillList = new List<TechSkillReport>();
-                var levelTech = _meetingRespository.GetLevelTech();
-                var skills = _meetingRespository.GetSkills();
+                var levelTech =await  _meetingRespository.GetLevelTech();
+                var skills = await _meetingRespository.GetSkills();
 
                 //assign values to model
                 foreach (var item in techSkillsDetails ?? new List<TransSkill>())
@@ -1578,17 +1578,17 @@ namespace Risebird.Business
                 {
                     //call Edit Feedbackform method
                     reportModel = interviewReport.FirstOrDefault();
-                    EditSharedInterviewReport(reportModel, id);
+                    await EditSharedInterviewReport(reportModel, id);
                 }
                 else
                 {
                     var model = interviewReport.Any() ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                     //get all values from database
-                    var levelTech = _meetingRespository.GetLevelTech();
-                    var skills = _meetingRespository.GetSkills();
-                    var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
-                    var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
+                    var levelTech = await _meetingRespository.GetLevelTech();
+                    var skills = await _meetingRespository.GetSkills();
+                    var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(irfId);
+                    var skillGeneralDetails = await _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
                     var techSkillList = new List<TechSkillReport>();
 
 
@@ -1656,7 +1656,7 @@ namespace Risebird.Business
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
                 reportModel.CandidateName = candidatedetails.Name;
-                reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
+                reportModel.SelectabilityComments = await _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = candidatedetails.EmailId;
                 reportModel.LogoUrl = candidatedetails.LogoUrl;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
@@ -1671,7 +1671,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var selectabilityDetails = _evaluatorRespository.GetTransSelectability(irfId);
+                    var selectabilityDetails = await _evaluatorRespository.GetTransSelectability(irfId);
                     var selectabilityList = new List<SelectabilityEvaluatorReport>();
                     foreach (var item in selectabilityDetails ?? new List<TransSelectability>())
                     {
@@ -1690,7 +1690,7 @@ namespace Risebird.Business
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityList;
                 }
 
-                reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
+                reportModel.JoinabilityComments = await _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
                 var joinabilityReport = await _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
                 if (joinabilityReport != null && joinabilityReport.Any() /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
@@ -1699,7 +1699,7 @@ namespace Risebird.Business
                 }
                 else
                 {
-                    var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
+                    var joinabilityDetails = await _meetingRespository.GetTransJoinability(irfId);
                     var joinabilityList = new List<JoinabilityHRReport>();
                     foreach (var item in joinabilityDetails ?? new List<TransJoinability>())
                     {
@@ -1730,17 +1730,17 @@ namespace Risebird.Business
                 return null;
             }
         }
-        private InterviewReport EditSharedInterviewReport(InterviewReport model, int id)
+        private async Task<InterviewReport> EditSharedInterviewReport(InterviewReport model, int id)
         {
             var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetSharedTechSkillReport(id));
             //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
 
             if (!techReportCollection.Any())
             {
-                var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(model.IRFId);
+                var techSkillsDetails = await _meetingRespository.GetSkillsbyIRFid(model.IRFId);
                 var techSkillList = new List<TechSkillReport>();
-                var levelTech = _meetingRespository.GetLevelTech();
-                var skills = _meetingRespository.GetSkills();
+                var levelTech = await _meetingRespository.GetLevelTech();
+                var skills = await  _meetingRespository.GetSkills();
 
                 //assign values to model
                 foreach (var item in techSkillsDetails ?? new List<TransSkill>())

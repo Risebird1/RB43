@@ -23,12 +23,12 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> GetAllAssignedInterview(string emailId);
         Task<bool> UpdateComments(InterviewComments interviewComments);
         Task<InterviewComments> GetInterviewComments(int interviewId);
-        IEnumerable<TransJoinability> GetTransJoinability(int id);
-        IEnumerable<TransSkill> GetSkillsbyIRFid(int id);
-        IEnumerable<TransSkillGeneral> GetSkillsGeneralbyIRFid(int id);
+        Task<IEnumerable<TransJoinability>> GetTransJoinability(int id);
+        Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
+        Task<IEnumerable<TransSkillGeneral>> GetSkillsGeneralbyIRFid(int id);
         IEnumerable<SkillComment> GetTechSkillComments(int id);
         Task<IEnumerable<Level>> GetLevels();
-        IEnumerable<Skill> GetSkills();
+        Task<IEnumerable<Skill>> GetSkills();
         Task<bool> AddInterviewReport(InterviewReport reportDetails);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<InterviewReport> GetInterviewReportById(int id, int irfId = 0);
@@ -39,8 +39,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<TechSkillReport> GetTechSkillReport(int id);
         IEnumerable<SkillGeneralReport> GetSkillGeneralReport(int id);
         ProctoringReport GetProctoringReport(int id);
-        IEnumerable<LevelTech> GetLevelTech();
-        IEnumerable<string> GetIRFName(int id);
+        Task<IEnumerable<LevelTech>> GetLevelTech();
+        Task<IEnumerable<string>> GetIRFName(int id);
         IRFDetails GetIRFDetails(int id);
         bool GetIRFbyId(int irfId);
         IEnumerable<IRF> GetIRFList();
