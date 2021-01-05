@@ -514,11 +514,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     var model = _userService.GetInterviewers();
 
-                    if (String.IsNullOrEmpty(searchValue))
-                    {
-                        searchValue = Searchvalue.ToUpper();
-                    }
-                    ViewBag.Searchvalue = searchValue;
+                 
                     if (!String.IsNullOrEmpty(searchValue))
                     {
                         searchValue = searchValue.ToUpper();
