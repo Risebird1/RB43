@@ -216,6 +216,7 @@ namespace Risebird.Entities.ViewModel
         public bool Pending { get; set; }
         public int? Heuristicsscore { get; set; }
         public string HeuristicDesc { get; set; }
+        public string JobCountry { get; set; }
     }
     public class VedioComments
     {
