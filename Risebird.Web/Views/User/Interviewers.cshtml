@@ -9,8 +9,8 @@
 }
 
 
-<link href="~/Newassets/css/interviewer.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link href="~/Newassets/css/interviewer.css?v=987654312" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9876543" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent   bg-primary navbar-absolute">
@@ -84,20 +84,18 @@
                                 <div class="clearfix"></div>
                                 <div class="col-sm-12 nopad">
                                     <div class="table-responsive">
-                                        <table id="interviewer" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                        <table id="interviewer" class="table table-striped table-bordered interviewertable" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
                                                     <th style="border-right: 0px !important;"></th>
                                                     <th id='start'>First Name</th>
-
+                                                    <th>Last Name</th>
                                                     <th>Email Id</th>
 
                                                     <th>Primary Skills</th>
-                                                   
-                                                    <th>Approved</th>
 
-                                                    <th>No Of Interview</th>
-                                                    <th>SuccessRate</th>
+                                                    <th>Mobile Number</th>
+                                                    <th>Resume</th>
                                                     <th class="disabled-sorting text-right">Actions</th>
                                                     <th style="text-align:center">Call</th>
 
@@ -107,15 +105,14 @@
                                                 <tr>
                                                     <th style="border-right: 0px !important;"></th>
                                                     <th>First Name</th>
-                                                   
+                                                    <th>Last Name</th>
+
                                                     <th>Email Id</th>
-                                                  
+
                                                     <th>Primary Skills</th>
-                                                  
-                                                    <th>Approved</th>
-                                                   
-                                                    <th>No Of Interview</th>
-                                                    <th>SuccessRate</th>
+                                                    <th>Mobile Number</th>
+                                                    <th>Resume</th>
+
                                                     <th class="disabled-sorting text-right">Actions</th>
                                                     <th style="text-align:center">Call</th>
 
@@ -124,26 +121,117 @@
                                             <tbody id="tblbodyInterviewers">
                                                 @foreach (var item in Model)
                                                 {
-                                                    <tr id=@item.id data-changes="1">
-                                                        <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
-                                                      
-                                                        
-                                                        <td>@item.FirstName</td>
-
-                                                        <td>@item.EmailId</td>
-
-                                                        <td class="interview-com">
+                                                <tr id=@item.id data-changes="1">
+                                                    <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
 
 
-                                                            <div id="section">
-                                                                @if (item.PrimarySkill.Length > 30)
+                                                    @if (item.FirstName != null && item.FirstName != "")
+                                                    {
+
+
+                                                        @if (item.FirstName.Length > 20)
+                                                        {
+
+
+                                                            <td class="cadName">
+                                                                <a onclick="" data-tooltip="@item.FirstName"> @item.FirstName.Substring(0, 20)... </a>
+                                                            </td>
+                                                        }
+
+
+                                                        else
+                                                        {
+                                                            <td class="cadName">
+                                                                <a onclick=""> @item.FirstName </a>
+                                                            </td>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+
+
+
+
+
+
+
+                                                    @if (item.LastName != null && item.LastName != "")
+                                                    {
+
+
+                                                        @if (item.LastName.Length > 20)
+                                                        {
+
+
+                                                            <td class="cadLast">
+                                                                <a onclick="" data-tooltip="@item.LastName"> @item.LastName.Substring(0, 20)... </a>
+                                                            </td>
+                                                        }
+
+
+                                                        else
+                                                        {
+                                                            <td class="cadLast">
+                                                                <a onclick=""> @item.LastName </a>
+                                                            </td>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+
+
+
+                                                    @if (item.EmailId != null && item.EmailId != "")
+                                                    {
+
+                                                        @if (item.EmailId.Length > 23)
+                                                        {
+
+
+                                                            <td class="cadEmail">
+                                                                <a onclick="" data-tooltip="@item.EmailId"> @item.EmailId.Substring(0, 23)... </a>
+                                                            </td>
+                                                        }
+
+
+                                                        else
+                                                        {
+                                                            <td class="cadEmail">
+                                                                <a onclick=""> @item.EmailId </a>
+                                                            </td>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+
+
+
+
+                                                    <td class="interview-com">
+
+
+                                                        <div id="section">
+                                                            @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                            {
+                                                                @if (item.PrimarySkill.Length > 40)
                                                                 {
                                                                     <div class="article">
                                                                         <p style="margin-bottom:0px;">
-                                                                            @item.PrimarySkill.Substring(0, 30)
+                                                                            @item.PrimarySkill.Substring(0, 40)
                                                                         </p>
                                                                         <p class="moretext_@item.id moretext">
-                                                                            @item.PrimarySkill.Substring(30, @item.PrimarySkill.Length - 30)
+                                                                            @item.PrimarySkill.Substring(40, @item.PrimarySkill.Length - 40)
                                                                         </p>
                                                                     </div>
                                                                 }
@@ -155,46 +243,41 @@
                                                                             @item.PrimarySkill.Substring(0, @item.PrimarySkill.Length - 1)
                                                                         </p>
                                                                     </div>}
-
-                                                                <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                            </div>
-
-
-
-
-                                                        </td>
-                                                        
-
-                                                        @if (@item.IsApproved == true)
-                                                        {
-                                                            <td>Approved</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>Not Approved</td>
-                                                        }
-
-                                                        <td class="text-center">@item.NoOfInterview</td>
-                                                        <td class="text-center">@item.SuccessRate</td>
-                                                        <td class="text-center action">
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                <span onclick="location.href = '@Url.Action("EditInterviewer", "User", new { id = item.id})'" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" title="Click here to delete interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                                            </button>
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
-                                                            </button>
-                                                        </td>
-                                                        <td>
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the interviewer." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
                                                             }
-                                                        </td>
-                                                    </tr>
+                                                            else
+                                                            { <div></div>}
+
+                                                            <a onclick="moreless(@item.id)" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                        </div>
+
+
+
+
+                                                    </td>
+
+                                                    <td>@item.MobileNumber</td>
+                                                    <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
+
+
+                                                    <td class="text-center action">
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                            <span onclick="location.href = '@Url.Action("EditInterviewer", "User", new { id = item.id})'" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" title="Click here to delete interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                        </button>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                            <span onclick="location.href = '@Url.Action("AssessmentForApproval", "Interviewer", new { EmailAddress = item.EmailId , id = item.id })'" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                        {
+                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the interviewer." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>
+                                                        }
+                                                    </td>
+                                                </tr>
 
 
                                                     <tr class="collapse @item.id">
@@ -202,16 +285,38 @@
                                                         <td colspan="999" class="child-section">
                                                             <table class="table table-striped">
                                                                 <tr>
-                                                                    <th>Last Name</th>
-                                                                    <th>Mobile Number</th>
-                                                                    <th>Resume</th>
+
+                                                                  
+                                                                    <th>Approved</th>
+
+                                                                    <th>No Of Interview</th>
+                                                                    <th>SuccessRate</th>
                                                                     <th>Slots</th>
                                                                 </tr>
 
                                                                 <tr>
-                                                                    <td>@item.LastName</td>
-                                                                    <td>@item.MobileNumber</td>
-                                                                    <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
+
+                                                                   
+
+
+                                                                    @if (@item.IsApproved == true)
+                                                                    {
+                                                                        <td>Approved</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>Not Approved</td>
+                                                                    }
+
+                                                                    <td class="text-center">@item.NoOfInterview</td>
+                                                                    <td class="text-center">@item.SuccessRate</td>
+
+
+
+
+
+
+
                                                                     <td>
 
                                                                         @item.Slots
@@ -485,42 +590,70 @@
 
             html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>';
 
-
-            if (data[i].firstName.length > 35) {
-                html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].firstName + '"> ' + data[i].firstName.substring(0, 35) + '... </a></td>';
+            if (data[i].firstName != null && data[i].firstName != "") {
+                if (data[i].firstName.length > 20) {
+                    html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].firstName + '"> ' + data[i].firstName.substring(0, 20) + '... </a></td>';
+                }
+                else {
+                    html += '  <td class="cadName"><a onclick=""> ' + data[i].firstName + ' </a></td>';
+                }
             }
             else {
-                html += '  <td class="cadName"><a onclick=""> ' + data[i].firstName + ' </a></td>';
+                html += '<td></td>';
+            }
+            if (data[i].lastName != null && data[i].lastName != "") {
+                if (data[i].lastName.length > 20) {
+                    html += '<td class="cadLast"><a onclick="" data-tooltip="' + data[i].lastName + '"> ' + data[i].lastName.substring(0, 20) + '... </a></td>';
+                }
+                else {
+                    html += '  <td class="cadLast"><a onclick=""> ' + data[i].lastName + ' </a></td>';
+                }
+            }
+            else {
+                html += '<td></td>';
+            }
+            //html += '  <td>' + data[i].emailId + '<input id="hidemail' + data[i].id + '" type="hidden" value="' + data[i].emailId + '"/></td>';
+
+
+
+            if (data[i].emailId != null && data[i].emailId != "") {
+                if (data[i].emailId.length > 23) {
+                    html += '<td class="cadEmail"><a onclick="" data-tooltip="' + data[i].emailId + '">' + data[i].emailId + '<input id="hidemail' + data[i].id + '" type="hidden" value="' + data[i].emailId + '"/></a></td>';
+                }
+                else {
+                    html += '  <td class="cadEmail"><a onclick="">' + data[i].emailId + '<input id="hidemail' + data[i].id + '" type="hidden" value="' + data[i].emailId + '"/> </a></td>';
+                }
+            }
+            else {
+                html += '<td></td>';
             }
 
-            html += '  <td>' + data[i].emailId + '<input id="hidemail' + data[i].id + '" type="hidden" value="' + data[i].emailId + '"/></td>';
+
+
 
             html += '<td class="interview-com">';
             html += ' <div id="section">';
-            if (data[i].primarySkill.length > 30) {
-                html += '  <div class="article">';
-                html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 30) + '</p>';
-                html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(35, data[i].primarySkill.length - 30) + '</p>';
-                html += '</div>';
+            if (data[i].primarySkill != null && data[i].primarySkill != "") {
+                if (data[i].primarySkill.length > 40) {
+                    html += '  <div class="article">';
+                    html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 30) + '</p>';
+                    html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(40, data[i].primarySkill.length - 40) + '</p>';
+                    html += '</div>';
+                }
+                else {
+                    html += '<div class="article"><p>' + data[i].primarySkill.substring(0, data[i].primarySkill.length - 1) + '</p></div>';
+                }
             }
             else {
-                html += '<div class="article"><p>' + data[i].primarySkill.substring(0, data[i].primarySkill.length - 1) + '</p></div>';
+                html += '<div></div>';
             }
-
             html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
             html += '</div>';
             html += ' </td>';
 
-            
+            html += '  <td>' + data[i].mobileNumber + '</td>';
 
-            if (data[i].isApproved == true) {
-                html += '<td>Approved</td>';
-            }
-            else {
-                html += ' <td>Not Approved</td>';
-            }
-            html += ' <td class="text-center">' + data[i].noOfInterview + '</td>';
-            html += '  <td class="text-center">' + data[i].successRate + '</td>';
+            html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
             html += '   <td class="text-center action">';
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Edit">';
             html += ' <a href = "/User/EditInterviewer/' + data[i].id + '" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>';
@@ -547,18 +680,24 @@
             html += ' <td colspan="999" class="child-section">';
             html += ' <table class="table table-striped">';
             html += '  <tr>';
-            html += ' <th>Last Name</th>';
-            html += ' <th>Mobile Number</th>';
-            html += ' <th>Resume</th>';
+            html += ' <th>Approved</th>';
+            html += ' <th>No Of Interview</th>';
+            html += ' <th>SuccessRate</th>';
             html += '  <th>Slots</th>';
             html += '   </tr>';
 
             html += '  <tr>';
-            html += '   <td>' + data[i].lastName + '</td>';
 
-            html += '  <td>' + data[i].mobileNumber + '</td>';
-         
-            html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink+'>Resume</a></td>';
+       
+
+            if (data[i].isApproved == true) {
+                html += '<td>Approved</td>';
+            }
+            else {
+                html += ' <td>Not Approved</td>';
+            }
+            html += ' <td class="text-center">' + data[i].noOfInterview + '</td>';
+            html += '  <td class="text-center">' + data[i].successRate + '</td>';
 
     html += '  <td> ' + data[i].slots + '</td>';
     html += '  </tr>';
@@ -592,7 +731,7 @@ for (var i = 1; i <= pagecount; i++) {
     } else {
         break;
     }
-    if (pagecount <= 10 && i == pagecount) {
+    if (pagecount <= 10 && i == pagecount && i != 1) {
         html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
         html += '<li class="PagedList-skipToNext"><a href="/User/Interviewers?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
         html += '<li class="PagedList-skipToLast"><a href="/User/Interviewers?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
@@ -704,8 +843,8 @@ $("#divmeetingentries").empty().html(pagestartdetails);
             searchResult();
         });
 
-
-
+   
+      
 
     });
     var start = document.getElementById('start');
@@ -756,7 +895,16 @@ $("#divmeetingentries").empty().html(pagestartdetails);
 
 
 <script>
-
+    function changeicon(id) {
+        if ($("#" + id).attr("data-changes") == "1") {
+            $("#" + id).addClass("shows");
+            $("#" + id).attr("data-changes", "2");
+        }
+        else {
+            $("#" + id).removeClass("shows");
+            $("#" + id).attr("data-changes", "1");
+        }
+    }
 
     function moreless(id) {
 

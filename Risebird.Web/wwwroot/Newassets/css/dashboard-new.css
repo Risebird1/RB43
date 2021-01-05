@@ -1158,11 +1158,29 @@ table.journey td.cadSkill {
 .interviewer-comment .talk-bubble [data-tooltip]:before {
     width: 400px;
 }
+table.interviewertable td.cadName {
+    width: 200px;
+}
+table.interviewertable td.cadLast {
+    width: 100px;
+}
 
+table.interviewertable td.cadEmail {
+    width: 100px;
+}
+
+.interviewertable td.interview-com {
+    width: 200px;
+}
+.interviewertable .action a{color:#fff}
 table.journey th, table.journey td {
     border-right: 1px solid #dee2e6 !important;
     max-width: 187px;
     vertical-align: top !important;
+}
+table.interviewertable th, table.interviewertable td {
+    vertical-align: top !important;
+    padding: 5px 0px;
 }
 
 .video-info [data-tooltip]:before, .video-title [data-tooltip]:before {
