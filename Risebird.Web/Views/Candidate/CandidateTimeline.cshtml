@@ -280,9 +280,6 @@
 
 
 
-
-
-
                                                         @if (!string.IsNullOrEmpty(item.PrimarySkill))
                                                         {
                                                             <td class="text-left pl15">
@@ -738,7 +735,9 @@
 
                 }
             }
-            else {<td></td>}
+            else {
+                html += '<td></td>';
+            }
             if (data[i].candidateEmailId != null && data[i].candidateEmailId != "") {
                 if (data[i].candidateEmailId.length > 20) {
 
@@ -754,7 +753,9 @@
 
                 }
             }
-            else {<td></td>}
+            else {
+                html += '<td></td>';
+            }
 
             if (data[i].primarySkill != null && data[i].primarySkill != "") {
                 html += '   <td class="text-left pl15">' + data[i].primarySkill + ' </td>';
@@ -787,9 +788,7 @@
                     html += '     <div class="event2Bubble">';
                     html += '        <div class="eventTime">';
                     html += '     <div class="DayDigit">' + data[i].scheduleStatus[j].date + '</div>';
-                    /**/
                     html += '      <div class="Day">' + data[i].scheduleStatus[j].day + '<div class="MonthYear">' + data[i].scheduleStatus[j].statusDate + '<br /><i class="fa fa-clock" style="font-size:14px;"></i> ' + data[i].scheduleStatus[j].time+'</div></div></div>';
-    /**/
     html += '   <div class="eventTitle">' + data[i].scheduleStatus[j].status + '</div></div></div></div></div>';
 
 }
