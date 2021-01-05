@@ -47,7 +47,7 @@
 
                 <div class="pull-right">
                     <div class="selectedmeeting">
-                       
+
                         @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
                         <div id="meeting_filter" class="dataTables_filter pull-left mt-20" style="margin-right:10px;">
 
@@ -138,23 +138,25 @@
                                                             <tr id="@item.imid" data-changes="1">
                                                                 <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
                                                                 <td> @item.interviewDate </td>
-                                                                @if (item.IsOnline == 1 && item.candidateName.Length > 25)
+                                                                @if (item.candidateName != null && item.candidateName != "")
                                                                 {
-                                                                    <td>
-                                                                        <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 18)...  </a>
-                                                                    </td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    @if (item.candidateName.Length > 25)
+                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 25)
                                                                     {
-
-
-
-                                                                        <td class="cadName">
-                                                                            <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 25)... </a>
+                                                                        <td>
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 25)...  </a>
                                                                         </td>
                                                                     }
+                                                                    else
+                                                                    {
+                                                                        @if (item.candidateName.Length > 25)
+                                                                        {
+
+
+
+                                                                            <td class="cadName">
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 25)... </a>
+                                                                            </td>
+                                                                        }
 
                                                                     else
                                                                     {
@@ -192,23 +194,23 @@
                                                                 <td> @item.MeetingStatusStatusDesc </td>
                                                                 <td> @item.intervieweStatusStatDesc </td>
 
-                                                                <td class="text-right action">
-                                                                    @if (ViewBag.ProfileName == "client")
-                                                                    {
-                                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="btn-call"><i class="fa fa-thumbs-up"></i></span>
-                                                                    }
-                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                    {
-                                                                        <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
-                                                                        <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
+                                                            <td class="text-right action">
+                                                                @if (ViewBag.ProfileName == "client")
+                                                                {
+                                                                    <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="btn-call"><i class="fa fa-thumbs-up"></i></span>
+                                                                }
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
+                                                                    <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn-call"><i class="fa fa-phone"></i></span>
+                                                                    <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>
 
-                                                                    }
-                                                                </td>
-
-
+                                                                }
+                                                            </td>
 
 
-                                                            </tr>
+
+
+                                                        </tr>
 
 
                                                             <tr class="collapse @item.imid">
@@ -235,14 +237,17 @@
                                                                             <td>
                                                                                 @item.NextLevelApprovalStat
                                                                             </td>
+
+
+
+
+
                                                                             <td class="interview-com">
-
                                                                                 <div id="section">
-                                                                                    @if (!String.IsNullOrEmpty(item.ApprovalComments))
+                                                                                    @if (item.ApprovalComments != null && item.ApprovalComments != "")
                                                                                     {
-                                                                                        if (item.ApprovalComments.Length > 40)
+                                                                                        @if (item.ApprovalComments.Length > 40)
                                                                                         {
-
                                                                                             <div class="article">
                                                                                                 <p style="margin-bottom:0px;">
                                                                                                     @item.ApprovalComments.Substring(0, 40)
@@ -260,17 +265,28 @@
                                                                                                     @item.ApprovalComments.Substring(0, @item.ApprovalComments.Length - 1)
                                                                                                 </p>
                                                                                             </div>
-                                                                                        }
-                                                                                        <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
-                                                                                    }
+                                                                                        }}
                                                                                     else
-                                                                                    {
-                                                                                        <div class="article"> <p></p></div>
-                                                                                    }
+                                                                                    { <div></div>}
+
+
+
+
+
+
+
+                                                                                    <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
+
 
                                                                                 </div>
 
                                                                             </td>
+
+
+
+
+
+
 
 
                                                                             <td>
@@ -279,7 +295,7 @@
                                                                             <td class="interview-com">
 
                                                                                 <div id="section">
-                                                                                    @if (!String.IsNullOrEmpty(item.FinalComments))
+                                                                                    @if (item.FinalComments != null && item.FinalComments != "")
                                                                                     {
                                                                                         @if (item.FinalComments.Length > 40)
                                                                                         {
@@ -299,23 +315,28 @@
                                                                                                 <p>
                                                                                                     @item.FinalComments.Substring(0, @item.FinalComments.Length - 1)
                                                                                                 </p>
-                                                                                            </div>}
-                                                                                        <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
-                                                                                    }
-
+                                                                                            </div>
+                                                                                        }}
                                                                                     else
-                                                                                    {<div class="article">
+                                                                                    { <div></div>}
 
-                                                                                            <p>
 
-                                                                                            </p>
-                                                                                        </div>}
+
+
+
+
+
+                                                                                    <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
 
 
                                                                                 </div>
 
-
                                                                             </td>
+
+
+
+
+
                                                                         </tr>
                                                                     </table>
                                                                 </td>
@@ -581,19 +602,22 @@
             html += ' <tr id="' + data[i].imid + '" data-changes="1">';
             html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += '  <td> ' + data[i].interviewDate + ' </td>';
-            if (data[i].isOnline == 1 && data[i].candidateName.length > 18) {
-                html += '   <td> <a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 18) + '...  </a></td> ';
-            }
-            else {
-                if (data[i].candidateName.length > 20) {
-                    html += '  <td class="cadName"> <a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span>' + data[i].candidateName.substring(0, 20) + '... </a></td>';
+            if (data[i].candidateName != null && data[i].candidateName != "") {
+                if (data[i].isOnline == 1 && data[i].candidateName.length > 25) {
+                    html += '   <td> <a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 25) + '...  </a></td> ';
                 }
-
                 else {
-                    html += '  <td class="cadName"> <a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a> </td> ';
-                }
-            }
+                    if (data[i].candidateName.length > 25) {
+                        html += '  <td class="cadName"> <a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span>' + data[i].candidateName.substring(0, 25) + '... </a></td>';
+                    }
 
+                    else {
+                        html += '  <td class="cadName"> <a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a> </td> ';
+                    }
+                }
+
+            }
+            else { html += '<td></td>'; }
             html += '  <td> <a id="reportId" target="_blank" title="Report Link" href="/Interview/AddReport?interviewId=' + data[i].imid + '&irfId=' + irfid + '">Report</a></td>';
             if (data[i].resumeLink != null && data[i].resumeLink != "") {
                 html += '      <td> <a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a> </td>';
@@ -616,7 +640,8 @@
                 }
                 else { html += ' <td></td>'; }
             }
-            
+
+
 
             html += '    <td> ' + data[i].confirmationStatus + '</td>';
             html += '  <td> ' + data[i].meetingStatusStatusDesc + ' </td>';
@@ -633,7 +658,7 @@
                 html += ' <span onclick="hangUp()" title="Hang up" class="btn-call btn-danger  hangUpButton"><i class="fa fa-phone"></i></span>';
                 html += '     </td>';
             }
-            
+
             html += '     </tr>';
             html += '   <tr class="collapse ' + data[i].imid + '">';
             html += '  <td colspan="999" class="child-section">';
@@ -656,52 +681,46 @@
             html += '   <td> ' + data[i].preferredLocation + '</td>';
             html += '   <td>' + data[i].staffingAgency + '</td>';
             html += '    <td>  ' + data[i].nextLevelApprovalStat + ' </td>';
-            html += '    <td class="interview-com">';
-            html += '     <div id="section">';
-            if (data[i].approvalComments != null && data[i].approvalComments != '') {
+            html += '<td class="interview-com">';
+            html += ' <div id="section">';
+            if (data[i].approvalComments != null && data[i].approvalComments != "") {
                 if (data[i].approvalComments.length > 40) {
-
-                    html += '  <div class="article"> <p style="margin-bottom:0px;">' + data[i].approvalComments.substring(0, 40) + ' </p> ';
-                    html += ' <p class="moretext_' + data[i].imid + ' moretext">' + data[i].approvalComments.substring(40, parseInt(data[i].approvalComments.length) - 40) + '</p>';
-
-                    html += '   </div>';
+                    html += '                                                   <div class="article">';
+                    html += '                                              <p style="margin-bottom:0px;">' + data[i].approvalComments.substring(0, 40) + '</p>';
+                    html += '                   <p class="moretext_' + data[i].imid + ' moretext">' + data[i].approvalComments.substring(35, data[i].approvalComments.length - 40) + '</p>';
+                    html += '</div>';
                 }
                 else {
-                    html += '   <div class="article"><p> ' + data[i].approvalComments.substring(0, parseInt(data[i].approvalComments.length) - 1) + ' </p></div> ';
-
+                    html += '<div class="article"><p>' + data[i].approvalComments.substring(0, data[i].approvalComments.length - 1) + '</p></div>';
                 }
-                html += '    <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
             }
             else {
-                html += '   <div class="article"> <p></p></div>';
+                html += '<div></div>';
             }
-
-            html += '   </div>';
-            html += '  </td>';
+            html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
+            html += '</div>';
+            html += ' </td>';
             html += '   <td> ' + data[i].finalSelectionStat + '</td>';
-            html += '   <td class="interview-com">';
-
-            html += '  <div id="section">';
-            if (data[i].finalComments != null && data[i].finalComments != '') {
+            html += '<td class="interview-com">';
+            html += ' <div id="section">';
+            if (data[i].finalComments != null && data[i].finalComments != "") {
                 if (data[i].finalComments.length > 40) {
-                    html += '    <div class="article"> ';
-                    html += '   < p style = "margin-bottom:0px;" >' + data[i].finalComments.substring(0, 40) + ' </p> ';
-                    html += '  <p class="moretext_' + data[i].imid + ' moretext">' + data[i].finalComments.substring(40, data[i].finalComments.length - 40) + ' </p>';
-                    html += '   </div>';
+                    html += '                                                   <div class="article">';
+                    html += '                                              <p style="margin-bottom:0px;">' + data[i].finalComments.substring(0, 40) + '</p>';
+                    html += '                   <p class="moretext_' + data[i].imid + ' moretext">' + data[i].finalComments.substring(35, data[i].finalComments.length - 40) + '</p>';
+                    html += '</div>';
                 }
                 else {
-                    html += ' <div class="article">';
-                    html += '   <p> ' + data[i].finalComments.substring(0, data[i].finalComments.length - 1) + '</p>';
-                    html += ' </div>';
+                    html += '<div class="article"><p>' + data[i].finalComments.substring(0, data[i].finalComments.length - 1) + '</p></div>';
                 }
-                html += '    <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
             }
             else {
-                html += '<div class="article"> <p></p></div>';
+                html += '<div></div>';
             }
+            html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
+            html += '</div>';
+            html += ' </td>';
 
-            html += '  </div>';
-            html += '  </td>';
             html += ' </tr>';
             html += '   </table>';
             html += '   </td>';
@@ -728,7 +747,7 @@
             } else {
                 break;
             }
-            if (pagecount <= 10 && i == pagecount) {
+            if (pagecount <= 10 && i == pagecount && i != 1) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
                 html += '<li class="PagedList-skipToNext"><a href="/IRF/SelectedInterviewMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                 html += '<li class="PagedList-skipToLast"><a href="/IRF/SelectedInterviewMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';

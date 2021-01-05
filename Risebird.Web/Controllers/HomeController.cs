@@ -28,7 +28,8 @@ namespace Risebird.Web.Controllers
                 //You get the user’s first and last name below:
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
-                string emailId = userClaims?.FindFirst("emails")?.Value;
+               string emailId = userClaims?.FindFirst("emails")?.Value;
+               // string emailId = "ramanaidu.m@mphasis.com";
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId).GroupBy(p => p.functionName).Select(g => g.First()).ToList();
                 var settings = _settingsService.GetAllSettings();
                 var currenttheme = _userService.GetCurrenttheme(emailId);
@@ -38,6 +39,22 @@ namespace Risebird.Web.Controllers
                 }
                 else
                     HttpContext.Session.SetString("Currenttheme", currenttheme);
+
+                if (menus.Count > 0)
+                {
+
+                    if (String.IsNullOrEmpty(menus.FirstOrDefault().LogoLink))
+                    {
+                        HttpContext.Session.SetString("Logo", "");
+                    }
+                    else
+                        HttpContext.Session.SetString("Logo", menus.FirstOrDefault().LogoLink);
+
+                }
+                else
+                {
+                    HttpContext.Session.SetString("Logo", "");
+                }
                 if (settings != null)
                 {
                     HttpContext.Session.SetString("settings", JsonConvert.SerializeObject(settings));
@@ -45,6 +62,7 @@ namespace Risebird.Web.Controllers
                 }
                 if (menus != null)
                 {
+                   
                     HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                     HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject(menus.FirstOrDefault()?.profileName));
                     HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null));

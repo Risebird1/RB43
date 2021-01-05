@@ -6858,9 +6858,9 @@ Created using IcoMoon - icomoon.io
         .off-canvas-sidebar .logo a.logo-mini {
             opacity: 1;
             float: left;
-            width: 34px;
+            width: 68px;
             text-align: center;
-            margin-left: 10px;
+            margin-left: -1px;
             margin-right: 12px;
         }
 

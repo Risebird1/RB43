@@ -25,12 +25,23 @@ else
         Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"
     -->
     <div class="logo">
-        <a href="#" class="simple-text logo-mini" >
+        <a href="#" class="simple-text logo-mini">
+            @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
+            {
+                <img style="position:relative;top:0px;" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />}
+            else { <img style="position:relative;top:0px;" src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />}
 
-            <img style="position:relative;top:10px;" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
         </a>
         <a href="#" class="simple-text logo-normal">
-            <img class="logoimage" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" style="width: 50%; padding-top:20px;  ">
+
+            @if (String.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
+            {
+                <img class="logoimage" style=" width: 75%; padding-top: 3px;" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />}
+            else
+            { <img class="logoimage" style=" width: 75%; padding-top: 3px;" src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />}
+
+
+            
         </a>
         <div class="navbar-minimize">
             <button id="minimizeSidebar" class="btn btn-simple btn-icon btn-neutral btn-round">
