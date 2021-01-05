@@ -93,7 +93,7 @@
                                                     <th>Email Id</th>
 
                                                     <th>Primary Skills</th>
-                                                    <th>Resume Link</th>
+                                                   
                                                     <th>Approved</th>
 
                                                     <th>No Of Interview</th>
@@ -111,7 +111,7 @@
                                                     <th>Email Id</th>
                                                   
                                                     <th>Primary Skills</th>
-                                                    <th>Resume Link</th>
+                                                  
                                                     <th>Approved</th>
                                                    
                                                     <th>No Of Interview</th>
@@ -126,6 +126,8 @@
                                                 {
                                                     <tr id=@item.id data-changes="1">
                                                         <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                      
+                                                        
                                                         <td>@item.FirstName</td>
 
                                                         <td>@item.EmailId</td>
@@ -134,14 +136,14 @@
 
 
                                                             <div id="section">
-                                                                @if (item.PrimarySkill.Length > 40)
+                                                                @if (item.PrimarySkill.Length > 30)
                                                                 {
                                                                     <div class="article">
                                                                         <p style="margin-bottom:0px;">
-                                                                            @item.PrimarySkill.Substring(0, 40)
+                                                                            @item.PrimarySkill.Substring(0, 30)
                                                                         </p>
                                                                         <p class="moretext_@item.id moretext">
-                                                                            @item.PrimarySkill.Substring(40, @item.PrimarySkill.Length - 40)
+                                                                            @item.PrimarySkill.Substring(30, @item.PrimarySkill.Length - 30)
                                                                         </p>
                                                                     </div>
                                                                 }
@@ -161,7 +163,7 @@
 
 
                                                         </td>
-                                                        <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
+                                                        
 
                                                         @if (@item.IsApproved == true)
                                                         {
@@ -202,13 +204,14 @@
                                                                 <tr>
                                                                     <th>Last Name</th>
                                                                     <th>Mobile Number</th>
+                                                                    <th>Resume</th>
                                                                     <th>Slots</th>
-                                                                    </tr>
+                                                                </tr>
 
                                                                 <tr>
                                                                     <td>@item.LastName</td>
                                                                     <td>@item.MobileNumber</td>
-
+                                                                    <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
                                                                     <td>
 
                                                                         @item.Slots
@@ -360,7 +363,11 @@
 
 
 <script>
+    function DeleteEntityfromEnvironmentJson(userId) {
+        var emailId = $('#hidemail' + userId).val();
+        DeleteEntityfromEnvironment(userId, emailId);
 
+    }
 
     function DeleteEntityfromEnvironment(userId, EmailId) {
 
@@ -449,14 +456,14 @@
 <script>
 
     function searchResult() {
-      
+
         $.ajax({
             type: "POST",
             url: "/User/InterviewersJson",
             data: { 'searchValue': $('#txtmeeting_filter').val() },
             success: function (data) {
                 if (data != "failed") {
-                  
+
                     bindtableData(data.result);
                     bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
                 }
@@ -473,8 +480,9 @@
         }
 
         for (var i = 0; i < data.length; i++) {
+            
+            html += '<input type="hidden" id="hidname' + data[i].id + '" value="'+data[i].firstName+'"/><tr id=' + data[i].id + ' data-changes="1">';
 
-            html += '<tr id=' + data[i].id + ' data-changes="1">';
             html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].id + '" data-target=".' + data[i].id + '" class="detail-row" onclick="changeicon(' + data[i].id + ')">&nbsp;</td>';
 
 
@@ -485,14 +493,14 @@
                 html += '  <td class="cadName"><a onclick=""> ' + data[i].firstName + ' </a></td>';
             }
 
-            html += '  <td>' + data[i].emailId + '</td>';
+            html += '  <td>' + data[i].emailId + '<input id="hidemail' + data[i].id + '" type="hidden" value="' + data[i].emailId + '"/></td>';
 
             html += '<td class="interview-com">';
             html += ' <div id="section">';
-            if (data[i].primarySkill.length > 35) {
+            if (data[i].primarySkill.length > 30) {
                 html += '  <div class="article">';
-                html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 35) + '</p>';
-                html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(35, data[i].primarySkill.length - 35) + '</p>';
+                html += '  <p style="margin-bottom:0px;">' + data[i].primarySkill.substring(0, 30) + '</p>';
+                html += '   <p class="moretext_' + data[i].id + ' moretext">' + data[i].primarySkill.substring(35, data[i].primarySkill.length - 30) + '</p>';
                 html += '</div>';
             }
             else {
@@ -503,7 +511,7 @@
             html += '</div>';
             html += ' </td>';
 
-            html += '   <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink + '>Resume</a></td>';
+            
 
             if (data[i].isApproved == true) {
                 html += '<td>Approved</td>';
@@ -511,50 +519,53 @@
             else {
                 html += ' <td>Not Approved</td>';
             }
-
             html += ' <td class="text-center">' + data[i].noOfInterview + '</td>';
             html += '  <td class="text-center">' + data[i].successRate + '</td>';
             html += '   <td class="text-center action">';
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Edit">';
-            html += ' <span onclick="location.href = "/User/EditInterviewer?id=' + data[i].id + '" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>';
+            html += ' <a href = "/User/EditInterviewer/' + data[i].id + '" title="Click here to edit interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></a>';
             html += '  </button>';
             html += ' <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">';
-            html += '  <span onclick="javascript:DeleteEntityfromEnvironment(' + data[i].id + ',' + data[i].emailId + ');" title="Click here to delete interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>';
+            html += '  <span onclick="javascript:DeleteEntityfromEnvironmentJson(' + data[i].id + ');" title="Click here to delete interviewer" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>';
             html += ' </button>';
             html += '  <button class="mdc-fab app-fab--absolute" aria-label="Edit">';
-            html += ' <span onclick="location.href = "/User/AssessmentForApproval?EmailAddress= '+ data[i].emailId + '&id= ' + data[i].id + '" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></span>';
+            html += ' <a href = "/User/AssessmentForApproval?EmailAddress= ' + data[i].emailId + '&id= ' + data[i].id + '" title="Assessments" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" /></svg></a>';
             html += '  </button>';
             html += '</td>';
             html += ' <td>';
             if (data[i].mobileNumber != null && data[i].mobileNumber != "") {
-          
-                html += '   <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the interviewer." onclick="CallButtonClick(' + data[i].firstName + ',' + data[i].mobileNumber + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
 
-}
-html += ' </td>';
-html += '  </tr>';
+                html += '   <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the interviewer." onclick="CallButtonClickJson(' + data[i].id + ',' + data[i].mobileNumber + ')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span></span>';
+
+            }
+            html += ' </td>';
+            html += '  </tr>';
 
 
-html += '   <tr class="collapse '+ data[i].id + '">';
+            html += '   <tr class="collapse ' + data[i].id + '">';
 
-html += ' <td colspan="999" class="child-section">';
-html += ' <table class="table table-striped">';
-html += '  <tr>';
-html += ' <th>Last Name</th>';
-html += ' <th>Mobile Number</th>';
-html += '  <th>Slots</th>';
-html += '   </tr>';
+            html += ' <td colspan="999" class="child-section">';
+            html += ' <table class="table table-striped">';
+            html += '  <tr>';
+            html += ' <th>Last Name</th>';
+            html += ' <th>Mobile Number</th>';
+            html += ' <th>Resume</th>';
+            html += '  <th>Slots</th>';
+            html += '   </tr>';
 
-html += '  <tr>';
-html += '   <td>' + data[i].lastName + '</td>';
-html += '  <td>' + data[i].mobileNumber + '</td>';
+            html += '  <tr>';
+            html += '   <td>' + data[i].lastName + '</td>';
 
-html += '  <td> ' + data[i].slots + '</td>';
-html += '  </tr>';
+            html += '  <td>' + data[i].mobileNumber + '</td>';
+         
+            html += '  <td><a id="resumeId" target="_blank" title="Resume" href=' + data[i].resumeLink+'>Resume</a></td>';
 
-html += '   </table>';
-html += '   </td>';
-html += '   </tr>';
+    html += '  <td> ' + data[i].slots + '</td>';
+    html += '  </tr>';
+
+    html += '   </table>';
+    html += '   </td>';
+    html += '   </tr>';
 
 
 
@@ -570,22 +581,22 @@ var html = '';
 html += '<div class="pagination-container">';
 html += '<ul class="pagination">';
 for (var i = 1; i <= pagecount; i++) {
-if (i == 1) {
-    html += '   <li class="active"><span>1</span></li>';
-} else if (i <= 10) {
-    html += '<li><a href="/User/Interviewers?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
-} else if (i == 11) {
-    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-    html += '<li class="PagedList-skipToNext"><a href="/User/Interviewers?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-    html += '<li class="PagedList-skipToLast"><a href="/User/Interviewers?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-} else {
-    break;
-}
-if (pagecount <= 10 && i == pagecount) {
-    html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-    html += '<li class="PagedList-skipToNext"><a href="/User/Interviewers?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-    html += '<li class="PagedList-skipToLast"><a href="/User/Interviewers?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-}
+    if (i == 1) {
+        html += '   <li class="active"><span>1</span></li>';
+    } else if (i <= 10) {
+        html += '<li><a href="/User/Interviewers?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+    } else if (i == 11) {
+        html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+        html += '<li class="PagedList-skipToNext"><a href="/User/Interviewers?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+        html += '<li class="PagedList-skipToLast"><a href="/User/Interviewers?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+    } else {
+        break;
+    }
+    if (pagecount <= 10 && i == pagecount) {
+        html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+        html += '<li class="PagedList-skipToNext"><a href="/User/Interviewers?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+        html += '<li class="PagedList-skipToLast"><a href="/User/Interviewers?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+    }
 }
 html += '</ul>';
 html += '</div>';
@@ -647,7 +658,13 @@ $("#divmeetingentries").empty().html(pagestartdetails);
         setTimeout(afterTimeOut, 2000);
 
     });
+    function CallButtonClickJson(id,phoneNumber ) {
 
+        var name = $('#hidname' + id).val();
+
+        CallButtonClick(name, phoneNumber);
+
+    }
     function CallButtonClick(name, phoneNumber) {
         interviewer = name;
         // Get the modal
@@ -668,6 +685,29 @@ $("#divmeetingentries").empty().html(pagestartdetails);
 </script>
 
 <script>
+
+
+    $(document).ready(function () {
+
+        $(".dataTables_filter").keyup(function (e) {
+
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            searchResult();
+        });
+
+
+
+
+    });
     var start = document.getElementById('start');
     start.focus();
 
