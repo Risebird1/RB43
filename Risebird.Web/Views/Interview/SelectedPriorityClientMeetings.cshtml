@@ -446,12 +446,12 @@
                                                         else
                                                         {
 
-                                                            @if (item.candidateName.Length > 35)
+                                                            @if (item.candidateName.Length > 30)
                                                             {
 
 
                                                                 <td class="cadName">
-                                                                    <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 35)... </a>
+                                                                    <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 30)... </a>
                                                                 </td>
                                                             }
 
@@ -467,77 +467,89 @@
                                                         }
 
                                                     }
-                                                    else { <td></td>}
+                                                    else
+                                                    {
+                                                        <td></td>
+}
 
 
-                                                        @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                    @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                    {
+
+                                                        @if (item.JDTiltle.Split("|")[0].Length > 35)
                                                         {
 
-                                                            @if (item.JDTiltle.Split("|")[0].Length > 35)
-                                                            {
 
-
-                                                                <td class="cadSkill">
-                                                                    <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 35)... </a>
-                                                                </td>
-                                                            }
-
-
-                                                            else
-                                                            {
-                                                                <td class="cadSkill">
-                                                                    <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
-                                                                </td>
-                                                            }
-
+                                                            <td class="cadSkill">
+                                                                <a onclick="" data-tooltip="@item.JDTiltle.Split("|")[0]"> @item.JDTiltle.Split("|")[0].Substring(0, 35)... </a>
+                                                            </td>
                                                         }
 
 
-
-
-
-
-
-                                                        @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "")
-                                                        {
-                                                            <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
-                                                        }
                                                         else
                                                         {
-                                                            <td>No Video</td>
+                                                            <td class="cadSkill">
+                                                                <a onclick=""> @item.JDTiltle.Split("|")[0] </a>
+                                                            </td>
                                                         }
 
+                                                    }
 
-                                                        <td class="interview-com">
-                                                            <div id="section">
+                                                    else
+                                                    {
+                                                        <td></td>
+}
 
 
-                                                                @if (item.InterviewerComment != null && item.InterviewerComment != "")
+
+
+
+                                                    @if ((item.MeetingStatus == 4) && item.VideoLink != null && item.VideoLink != "")
+                                                    {
+                                                        <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Video</td>
+                                                    }
+
+
+                                                    <td class="interview-com">
+                                                        <div id="section">
+                                                            @if (item.InterviewerComment != null && item.InterviewerComment != "")
+                                                            {
+                                                                @if (item.InterviewerComment.Length > 40)
                                                                 {
-                                                                    @if (item.InterviewerComment.Length > 40)
-                                                                    {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.InterviewerComment.Substring(0, 40)
-                                                                            </p>
-                                                                            <p class="moretext_@item.imid moretext">
-                                                                                @item.InterviewerComment.Substring(40, @item.InterviewerComment.Length - 40)
-                                                                            </p>
-                                                                        </div>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article">
-
-                                                                            <p>
-                                                                                @item.InterviewerComment.Substring(0, @item.InterviewerComment.Length - 1)
-                                                                            </p>
-                                                                        </div>}
+                                                                    <div class="article">
+                                                                        <p style="margin-bottom:0px;">
+                                                                            @item.InterviewerComment.Substring(0, 40)
+                                                                        </p>
+                                                                        <p class="moretext_@item.imid moretext">
+                                                                            @item.InterviewerComment.Substring(40, @item.InterviewerComment.Length - 40)
+                                                                        </p>
+                                                                    </div>
                                                                 }
+                                                                else
+                                                                {
+                                                                    <div class="article">
+
+                                                                        <p>
+                                                                            @item.InterviewerComment.Substring(0, @item.InterviewerComment.Length - 1)
+                                                                        </p>
+                                                                    </div>
+                                                                }}
+                                                            else { <div></div>}
 
 
-                                                                <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
-                                                            </div>
+
+
+
+
+
+                                                            <a onclick="moreless(@item.imid)" class="moreless-button" value="Readmore" id="read_@item.imid" href="#">Read more</a>
+
+
+                                                        </div>
 
                                                         </td>
 
@@ -1458,20 +1470,26 @@
             html += '<tr id=' + data[i].imid + ' data-changes="1">';
             html += '                                                <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += '                                       <td class="interviewdate"> ' + data[i].interviewDate + '<input type="hidden" id="hidcandidate_' + data[i].imid + '" value="' + data[i].candidateName + '" </td>';
-            if (data[i].isOnline == 1 && data[i].candidateName.length > 30) {
-                html += '  <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 30) + '... </a> </td>';
-            }
-            else {
 
-                if (data[i].candidateName != null && data[i].candidateName != "") {
-                    if (data[i].candidateName.length > 35) {
-                        html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 35) + '... </a></td>';
+            if (data[i].candidateName != null && data[i].candidateName != "") {
+                if (data[i].isOnline == 1 && data[i].candidateName.length > 30) {
+                    html += '  <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>' + data[i].candidateName.substring(0, 30) + '... </a> </td>';
+                }
+                else {
+
+
+                    if (data[i].candidateName.length > 30) {
+                        html += '<td class="cadName"><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 30) + '... </a></td>';
                     }
                     else {
                         html += '  <td class="cadName"><a onclick=""><span class="dot"></span> ' + data[i].candidateName + ' </a></td>';
                     }
                 }
             }
+            else {
+                html += '<td></td>';
+            }
+            
 
             if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
                 if (data[i].jdTiltle.split("|")[0].length > 35) {
@@ -1480,6 +1498,9 @@
                 else {
                     html += '     <td class="cadSkill"><a onclick=""> ' + data[i].jdTiltle.split("|")[0] + ' </a></td>';
                 }
+            }
+            else {
+                html += '<td></td>';
             }
             if ((data[i].meetingStatus == 4) && data[i].videoLink != null && data[i].videoLink != "") {
                 html += '<td> <a id="videoId" target="_blank" title="Video" href=' + data[i].videoLink + '>Video</a> </td>';
@@ -1499,7 +1520,10 @@
                      else {
                          html += '<div class="article"><p>' + data[i].interviewerComment.substring(0, data[i].interviewerComment.length - 1) + '</p></div>';
                      }
-                 }
+            }
+             else {
+                 html += '<div></div>';
+             }
                  html += ' <a onclick="moreless(' + data[i].imid + ')" class="moreless-button" value="Readmore" id="read_' + data[i].imid + '" href="#">Read more</a>';
                  html += '</div>';
                  html += ' </td>';
@@ -1603,7 +1627,7 @@
             } else {
                 break;
             }
-            if (pagecount <= 10 && i == pagecount) {
+            if (pagecount <= 10 && i == pagecount && i!=1) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
                 html += '<li class="PagedList-skipToNext"><a href="/Interview/SelectedPriorityClientMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                 html += '<li class="PagedList-skipToLast"><a href="/Interview/SelectedPriorityClientMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';

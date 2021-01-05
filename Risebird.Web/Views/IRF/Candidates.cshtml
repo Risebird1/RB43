@@ -111,14 +111,12 @@
                                                     <thead>
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
-                                                          
                                                             <th>Candidate Email</th>
                                                             <th>RB Attempts</th>
                                                             <th>Resume</th>
                                                             <th>Coded Resume</th>
                                                             <th>Invite Sent</th>
                                                             <th>Confirmation</th>
-                                                        
                                                             <th>Joinability</th>
                                                             <th>Selectability</th>
                                                             <th> Actions </th>
@@ -197,6 +195,10 @@
                                                                         <a onclick=""> @item.EmailId </a>
                                                                     </td>
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
                                                             }
                                                                 <td class="text-center">@item.AttemptsCount</td>
                                                                 @if (item.ResumeLink != null && item.ResumeLink != "")
@@ -384,6 +386,10 @@
                                                                                     </td>
                                                                                 }
                                                                             }
+
+                                                                            else { 
+                                                                                <td></td>
+                                                                            }
                                                                                 @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
                                                                                 {
                                                                                     <td class="text-center">@item.ClientHRAttemptContact.Substring(0, 13)... </td>
@@ -440,9 +446,6 @@
                                                                                 {
                                                                                     <td></td>
                                                                                 }
-
-
-
 
                                                                                 @if (item.interviewDate != null)
                                                                                 {
@@ -1047,21 +1050,23 @@
 
 
 
-                 if (data[i].emailId != null && data[i].emailId != "")
-                     {
-                         if (data[i].emailId.length > 20) {
+                if (data[i].emailId != null && data[i].emailId != "") {
+                    if (data[i].emailId.length > 20) {
 
-                             html += '  <td class="cadEmail">';
-                             html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 20) + '... </a>';
-                             html += '   </td>';
-                         }
+                        html += '  <td class="cadEmail">';
+                        html += ' <a onclick="" data-tooltip="' + data[i].emailId + '"> ' + data[i].emailId.substring(0, 20) + '... </a>';
+                        html += '   </td>';
+                    }
 
-                         else {
-                             html += '   <td class="cadEmail">';
-                             html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
-                             html += ' </td>';
-                         }
-                     }
+                    else {
+                        html += '   <td class="cadEmail">';
+                        html += '  <a onclick=""> ' + data[i].emailId + ' </a>';
+                        html += ' </td>';
+                    }
+                }
+                else {
+                    html += '<td></td>';
+                }
                      html += ' <td class="text-center"' + data[i].attemptsCount + '</td>';
 
 
@@ -1081,10 +1086,6 @@
                      html += '  <td class="text-center">' + data[i].totalInvites + '</td>';
 
                      html += ' <td class="text-center">' + data[i].inviteConfirmation + '</td>';
-
-
-
-
 
                      html += '  <td class="text-center" style="color:' + joinabilityColor + ';">';
                      html += '  <b>' + data[i].joinabilityScore + '</b>';
@@ -1224,7 +1225,9 @@
 
                 }
 
-
+                else {
+                    html += '<td></td>';
+                }
                      if (data[i].clientHRAttemptContact != null) {
                          html += '  <td class="text-center">' + data[i].clientHRAttemptContact + '</td>';
 
@@ -1344,7 +1347,7 @@
                 } else {
                     break;
                 }
-                if (pagecount <= 10 && i == pagecount) {
+                if (pagecount <= 10 && i == pagecount && i != 1) {
                     html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
                     html += '<li class="PagedList-skipToNext"><a href="/IRF/Candidates?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                     html += '<li class="PagedList-skipToLast"><a href="/IRF/Candidates?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
