@@ -100,7 +100,7 @@
                                                             <th id='start' style="border-right: 0px !important;"></th>
                                                             <th style="border-left: 0px !important;" id='start'>Invite Count</th>
                                                             <th>Candidate Name</th>
-                                                          
+
                                                             <th>Interview Date</th>
                                                             <th>Primary Skill</th>
                                                             <th>Confirmation Status</th>
@@ -115,7 +115,7 @@
                                                             <th style="border-right: 0px !important;"></th>
                                                             <th style="border-right: 0px !important;">Invite Count</th>
                                                             <th>Candidate Name</th>
-                                                           
+
                                                             <th>Interview Date</th>
                                                             <th>Primary Skill</th>
                                                             <th>Confirmation Status</th>
@@ -128,49 +128,64 @@
                                                     <tbody id="tblbodyMultipleCandidateInvites">
                                                         @foreach (var item in Model)
                                                         {
-                                                        <tr id="@item.imid" data-changes="1">
-                                                            <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
-                                                            <td> @item.InviteCount </td>
-                                                            @if (item.candidateName.Length > 25)
-                                                            {
-                                                        <td class="cadName"> @item.candidateName.Substring(0, 25)...</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="cadName"> @item.candidateName</td>
-                                                            }
-                                                            <td> @item.interviewDate </td>
-                                                            @if (item.JDTiltle.Split("|")[0].Length > 30)
-                                                            {
-                                                        <td> @item.JDTiltle.Split("|")[0].Substring(0, 30)... </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td> @item.JDTiltle.Split("|")[0] </td>
-}
-                                                            @if (item.confirmationStatus.Trim() == "Cancelled")
-                                                            {
-                                                                <td class="text-center">
-
-                                                                    <a style="color:red"> @item.confirmationStatus</a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td class="text-center"> @item.confirmationStatus</td>
-                                                            }
-                                                            <td> @item.MeetingStatusStatusDesc</td>
-                                                            <td> @item.intervieweStatusStatDesc</td>
-
-                                                            <td class="text-right action">
-                                                                @if (item.IsAdmin && item.MeetingStatusStatusDesc != "Completed")
+                                                            <tr id="@item.imid" data-changes="1">
+                                                                <td style="width:10px;" data-toggle="collapse" id="@item.imid" data-target=".@item.imid" class="detail-row" onclick="changeicon('@item.imid')">&nbsp;</td>
+                                                                <td> @item.InviteCount </td>
+                                                                @if (item.candidateName != null && item.candidateName != "")
                                                                 {
-
-                                                                    <span class="mdc-fab app-fab--absolute trash-btn" onclick="location.href = '@Url.Action("DeleteInterview", "Interview", new { id = item.imid,controllerName="IRF",irfId= item.IRFId})'" title="Delete Interview"><i class="far fa  fa-trash"></i></span>
-
+                                                                    @if (item.candidateName.Length > 25)
+                                                                    {
+                                                                        <td class="cadName"> @item.candidateName.Substring(0, 25)...</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td class="cadName"> @item.candidateName</td>
+                                                                    }
                                                                 }
-                                                            </td>
-                                                        </tr>
+                                                                else
+                                                                {
+                                                                    <td></td>
+                                                                }
+                                                                <td> @item.interviewDate </td>
+
+                                                                @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
+                                                                {
+                                                                    @if (item.JDTiltle.Split("|")[0].Length > 30)
+                                                                    {
+                                                                        <td> @item.JDTiltle.Split("|")[0].Substring(0, 30)... </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td> @item.JDTiltle.Split("|")[0] </td>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td></td>
+}
+                                                                @if (item.confirmationStatus.Trim() == "Cancelled")
+                                                                {
+                                                                    <td class="text-center">
+
+                                                                        <a style="color:red"> @item.confirmationStatus</a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td class="text-center"> @item.confirmationStatus</td>
+                                                                }
+                                                                <td> @item.MeetingStatusStatusDesc</td>
+                                                                <td> @item.intervieweStatusStatDesc</td>
+
+                                                                <td class="text-right action">
+                                                                    @if (item.IsAdmin && item.MeetingStatusStatusDesc != "Completed")
+                                                                    {
+
+                                                                        <span class="mdc-fab app-fab--absolute trash-btn" onclick="location.href = '@Url.Action("DeleteInterview", "Interview", new { id = item.imid,controllerName="IRF",irfId= item.IRFId})'" title="Delete Interview"><i class="far fa  fa-trash"></i></span>
+
+                                                                    }
+                                                                </td>
+                                                            </tr>
 
 
                                                             <tr class="collapse @item.imid">
@@ -302,7 +317,7 @@
             searchResult();
         });
     });
-  
+
     function searchResult() {
         $.ajax({
             type: "POST",
@@ -310,7 +325,7 @@
             data: { 'searchValue': $('#txtmeeting_filter').val() },
             success: function (data) {
                 if (data != "failed") {
-              
+
                     bindtableData(data.result);
                     bindPages(data.totalPage, data.startPage, data.endPage, data.totalentry);
                 }
@@ -319,7 +334,7 @@
     }
 
     function bindtableData(data) {
- 
+
         var html = '';
         if (data.length == 0) {
             html += '  <tr>';
@@ -331,19 +346,25 @@
             html += ' <tr id="' + data[i].imid + '" data-changes="1">';
             html += '  <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += '   <td> ' + data[i].inviteCount + ' </td>';
-            if (data[i].candidateName.length > 25) {
-                html += '   <td class="cadName"> ' + data[i].candidateName.substring(0, 25) + '...</td>';
+            if (data[i].candidateName != null && data[i].candidateName != "") {
+                if (data[i].candidateName.length > 25) {
+                    html += '   <td class="cadName"> ' + data[i].candidateName.substring(0, 25) + '...</td>';
+                }
+                else {
+                    html += ' <td class="cadName"> ' + data[i].candidateName + '</td>';
+                }
             }
-            else {
-                html += ' <td class="cadName"> ' + data[i].candidateName + '</td>';
-            }
+            else { html += '<td></td>'; }
             html += '  <td>' + data[i].interviewDate + ' </td>';
-            if (data[i].jdTiltle.split("|")[0].length > 30) {
-                html += '  <td>' + data[i].jdTiltle.split("|")[0].substring(0, 30) + '... </td>';
+            if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
+                if (data[i].jdTiltle.split("|")[0].length > 30) {
+                    html += '  <td>' + data[i].jdTiltle.split("|")[0].substring(0, 30) + '... </td>';
+                }
+                else {
+                    html += '  <td> ' + data[i].jdTiltle.split("|")[0] + ' </td>';
+                }
             }
-            else {
-                html += '  <td> ' + data[i].jdTiltle.split("|")[0] + ' </td>';
-            }
+            else { html += '<td></td>'; }
             if (data[i].confirmationStatus.trim() == "Cancelled") {
                 html += ' <td class="text-center"><a style="color:red">' + data[i].confirmationStatus + '</a> </td>';
 
@@ -357,7 +378,7 @@
             html += '    <td class="text-right action">';
             if (data[i].isAdmin && data[i].meetingStatusStatusDesc != "Completed") {
 
-                html += '   <span class="mdc-fab app-fab--absolute trash-btn" onclick="location.href = "/Interview/DeleteInterview?id = ' + data[i].imid + '&controllerName=IRF&irfId=' + data[i].irfId+'" title="Delete Interview"><i class="far fa  fa-trash"></i></span>';
+                html += '   <span class="mdc-fab app-fab--absolute trash-btn" onclick="location.href = "/Interview/DeleteInterview?id = ' + data[i].imid + '&controllerName=IRF&irfId=' + data[i].irfId + '" title="Delete Interview"><i class="far fa  fa-trash"></i></span>';
 
             }
             html += ' </td>';
@@ -381,14 +402,15 @@
                 html += '  <td>' + data[i].clientHrContact + ' </td>';
             }
             else {
-                html += '  <td></td>';}
-  
+                html += '  <td></td>';
+            }
+
             html += ' <td>' + data[i].mobileNumber + '</td>';
             if (data[i].staffingAgency != null) {
                 html += ' <td>' + data[i].staffingAgency + '</td>';
             }
-            else { html += '  <td></td>';}
-            html += '   <td>' + data[i].irfId+'</td>';
+            else { html += '  <td></td>'; }
+            html += '   <td>' + data[i].irfId + '</td>';
 
 
             html += ' </tr>';
@@ -397,42 +419,42 @@
             html += '   </td>';
             html += '  </tr>';
 
-}
-$("#tblbodyMultipleCandidateInvites").empty().html(html);
-}
-
-
-
-function bindPages(pagecount, startpage, endpage, totalcount) {
-var html = '';
-html += '<div class="pagination-container">';
-html += '<ul class="pagination">';
-for (var i = 1; i <= pagecount; i++) {
-    if (i == 1) {
-        html += '   <li class="active"><span>1</span></li>';
-    } else if (i <= 10) {
-        html += '<li><a href="/IRF/MultipleCandidateInvites?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
-    } else if (i == 11) {
-        html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-        html += '<li class="PagedList-skipToNext"><a href="/IRF/MultipleCandidateInvites?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-        html += '<li class="PagedList-skipToLast"><a href="/IRF/MultipleCandidateInvites?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-    } else {
-        break;
+        }
+        $("#tblbodyMultipleCandidateInvites").empty().html(html);
     }
-    if (pagecount <= 10 && i == pagecount) {
-        html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
-        html += '<li class="PagedList-skipToNext"><a href="/IRF/MultipleCandidateInvites?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
-        html += '<li class="PagedList-skipToLast"><a href="/IRF/MultipleCandidateInvites?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
-    }
-}
-html += '</ul>';
-html += '</div>';
-$("#divmeetingpages").empty().html(html);
-var pagestartdetails = '';
-pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
-$("#divmeetingentries").empty().html(pagestartdetails);
 
-}
+
+
+    function bindPages(pagecount, startpage, endpage, totalcount) {
+        var html = '';
+        html += '<div class="pagination-container">';
+        html += '<ul class="pagination">';
+        for (var i = 1; i <= pagecount; i++) {
+            if (i == 1) {
+                html += '   <li class="active"><span>1</span></li>';
+            } else if (i <= 10) {
+                html += '<li><a href="/IRF/MultipleCandidateInvites?Page=' + i + '&searchValue=' + $('#txtmeeting_filter').val() + '">' + i + '</a></li>';
+            } else if (i == 11) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/IRF/MultipleCandidateInvites?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/IRF/MultipleCandidateInvites?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            } else {
+                break;
+            }
+            if (pagecount <= 10 && i == pagecount && i != 1) {
+                html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
+                html += '<li class="PagedList-skipToNext"><a href="/IRF/MultipleCandidateInvites?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
+                html += '<li class="PagedList-skipToLast"><a href="/IRF/MultipleCandidateInvites?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';
+            }
+        }
+        html += '</ul>';
+        html += '</div>';
+        $("#divmeetingpages").empty().html(html);
+        var pagestartdetails = '';
+        pagestartdetails += 'Showing ' + startpage + ' to ' + endpage + ' of ' + totalcount + ' entries';
+        $("#divmeetingentries").empty().html(pagestartdetails);
+
+    }
 </script>
 
 <script type="text/javascript">
