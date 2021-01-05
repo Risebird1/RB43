@@ -478,6 +478,7 @@
 
                                                         @if (item.candidateName != null && item.candidateName != "")
                                                         {
+
                                                             @if (item.IsOnline == 1 && item.candidateName.Length > 18)
                                                             {
                                                                 <td>
@@ -533,6 +534,10 @@
                                                                 </td>
                                                             }
                                                         }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                         @if (item.JDTiltle.Split("|")[0] != null && item.JDTiltle.Split("|")[0] != "")
                                                         {
 
@@ -554,6 +559,8 @@
                                                                 </td>
                                                             }
                                                         }
+
+                                                        else { <td></td>}
                                                         @if (item.confirmationStatus.Trim() == "Cancelled")
                                                         {
                                                             <td class="text-center">
@@ -880,17 +887,24 @@
             html += '  <tr id="' + data[i].imid + '" data-changes="1">';
             html += ' <td style="width:10px;" data-toggle="collapse" id="' + data[i].imid + '" data-target=".' + data[i].imid + '" class="detail-row" onclick="changeicon(' + data[i].imid + ')">&nbsp;</td>';
             html += ' <td> ' + data[i].interviewDate + ' </td>';
-            if (data[i].IsOnline == 1 && data[i].candidateName.length > 18) {
-                html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 18) + '...</a> </td>';
-            } else {
+            if (data[i].candidateName != null && data[i].candidateName != "") {
+                if (data[i].IsOnline == 1 && data[i].candidateName.length > 18) {
+                    html += ' <td><a onclick="directopenChat(' + data[i].candidateEmail + ')"><span class="dot" style="background-color:green"></span>    ' + data[i].candidateName.substring(0, 18) + '...</a> </td>';
+                }
+                else {
 
-                if (data[i].candidateName != null && data[i].candidateName != "") {
+
                     if (data[i].candidateName.length > 18) {
                         html += ' <td><a onclick="" data-tooltip="' + data[i].candidateName + '"><span class="dot"></span> ' + data[i].candidateName.substring(0, 18) + '...  </a> </td>';
-                    } else {
+                    }
+                    else {
                         html += ' <td>' + data[i].candidateName + ' </td>';
                     }
+
                 }
+            }
+            else {
+                html += '<td></td>';
             }
 
             if (data[i].candidateEmail != null && data[i].candidateEmail != "") {
@@ -901,6 +915,7 @@
                 }
 
             }
+            else { html += '<td></td>';}
             if (data[i].jdTiltle.split("|")[0] != null && data[i].jdTiltle.split("|")[0] != "") {
                 if (data[i].jdTiltle.split("|")[0].length > 18) {
                     html += '<td title="' + + data[i].jdTiltle.split("|")[0] + '">' + data[i].jdTiltle.split("|")[0].substring(0, 18) + '...</td>';
@@ -908,7 +923,7 @@
                     html += '<td>' + data[i].jdTiltle.split("|")[0] + '</td>';
                 }
             }
-
+            else { html += '<td></td>'; }
 
 
 
@@ -918,14 +933,14 @@
             else {
                 html += '<td class="text-center"> '+data[i].confirmationStatus+'</td>';
             }
-            if (data[i].interviewDate > new Date() && data[i].confirmationStatus.trim() != "Cancelled")
-                                                    {
+
+            if (data[i].interviewDate > new Date() && data[i].confirmationStatus.trim() != "Cancelled") {
                 html += '                                        <td>Scheduled</td>';
             }
             else if (data[i].meetingStatusStatusDesc == null)
             {
                 html += '<td></td>';
-                            }
+               }
                                                     else
                                                     {
                 html += '<td>'+ data[i].meetingStatusStatusDesc+'</td>';
@@ -1029,7 +1044,7 @@
             } else {
                 break;
             }
-            if (pagecount <= 10 && i == pagecount) {
+            if (pagecount <= 10 && i == pagecount && i != 1) {
                 html += '<li class="disabled PagedList-ellipses"><a>…</a></li>';
                 html += '<li class="PagedList-skipToNext"><a href="/Interview/AllPriorityClientMeetings?Page=2&searchValue=' + $('#txtmeeting_filter').val() + '" rel="next">&gt;</a></li>';
                 html += '<li class="PagedList-skipToLast"><a href="/Interview/AllPriorityClientMeetings?Page=' + pagecount + '&searchValue=' + $('#txtmeeting_filter').val() + '">&gt;&gt;</a></li>';

@@ -229,46 +229,54 @@
                                                         @foreach (var item in Model)
                                                         {
                                                     <tr>
-
-                                                        @if (item.CandidateName.Length > 20)
+                                                        @if (item.CandidateName != null && item.CandidateName != "")
                                                         {
+                                                            @if (item.CandidateName.Length > 20)
+                                                            {
 
 
-                                                            <td class="cadName text-left pl15">
-                                                                <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName.Substring(0, 20)... </a>
-                                                            </td>
+                                                                <td class="cadName text-left pl15">
+                                                                    <a onclick="" data-tooltip="@item.CandidateName"> @item.CandidateName.Substring(0, 20)... </a>
+                                                                </td>
+                                                            }
+
+
+                                                            else
+                                                            {
+                                                                <td class="text-left pl15">
+                                                                    <a onclick=""> @item.CandidateName </a>
+                                                                </td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {<td></td>
                                                         }
 
+                                                        @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
+                                                        {
+                                                            @if (item.CandidateEmailId.Length > 20)
+                                                            {
 
+
+                                                                <td class="cadEmail text-left pl15">
+                                                                    <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 20)... </a>
+                                                                </td>
+                                                            }
+
+
+                                                            else
+                                                            {
+                                                                <td class="cadEmail text-left pl15">
+                                                                    @item.CandidateEmailId
+                                                                </td>
+                                                            }
+
+
+                                                        }
                                                         else
                                                         {
-                                                            <td class="text-left pl15">
-                                                                <a onclick=""> @item.CandidateName </a>
-                                                            </td>
+                                                            <td></td>
                                                         }
-
-
-
-
-                                                        @if (item.CandidateEmailId.Length > 20)
-                                                        {
-
-
-                                                            <td class="cadEmail text-left pl15">
-                                                                <a onclick="" data-tooltip="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 20)... </a>
-                                                            </td>
-                                                        }
-
-
-                                                        else
-                                                        {
-                                                            <td class="cadEmail text-left pl15">
-                                                                @item.CandidateEmailId
-                                                            </td>
-                                                        }
-
-
-
 
 
 
@@ -287,30 +295,30 @@
                                                                 <p></p>
                                                             </td>
                                                         }
-                                                      
-
-                                                            @if (!string.IsNullOrEmpty(item.HREmail))
-                                                            {
-
-                                                                <td class="cadEmail text-left pl15">
-                                                                    <a onclick="" data-tooltip="@item.HREmail">@item.HREmail </a>
-                                                                </td>
 
 
+                                                        @if (!string.IsNullOrEmpty(item.HREmail))
+                                                        {
 
-                                                            }
+                                                            <td class="cadEmail text-left pl15">
+                                                                <a onclick="" data-tooltip="@item.HREmail">@item.HREmail </a>
+                                                            </td>
 
 
 
-                                                            else
-                                                            {
-                                                                <td class="text-left pl15">
-                                                                    <p></p>
-                                                                </td>
-                                                            }
-                                                    
+                                                        }
 
-                                                     
+
+
+                                                        else
+                                                        {
+                                                            <td class="text-left pl15">
+                                                                <p></p>
+                                                            </td>
+                                                        }
+
+
+
 
                                                         @*@if (item.OnboardingDetails != null)
         {
@@ -716,33 +724,37 @@
         }
         for (var i = 0; i < data.length; i++) {
             html += ' <tr>';
-            if (data[i].candidateName.length > 20) {
+            if (data[i].candidateName != null && data[i].candidateName != "") {
+                if (data[i].candidateName.length > 20) {
 
 
-                html += '    <td class="cadName text-left pl15"> <a onclick="" data-tooltip="' + data[i].candidateName + '">' + data[i].candidateName.substring(0, 20) + '... </a></td>';
+                    html += '    <td class="cadName text-left pl15"> <a onclick="" data-tooltip="' + data[i].candidateName + '">' + data[i].candidateName.substring(0, 20) + '... </a></td>';
+                }
+
+
+                else {
+                    html += '   <td class="text-left pl15">    <a onclick=""> ' + data[i].candidateName + '</a> </td>';
+
+
+                }
             }
+            else {<td></td>}
+            if (data[i].candidateEmailId != null && data[i].candidateEmailId != "") {
+                if (data[i].candidateEmailId.length > 20) {
 
 
-            else {
-                html += '   <td class="text-left pl15">    <a onclick=""> ' + data[i].candidateName + '</a> </td>';
+                    html += '    <td class="cadEmail text-left pl15">   <a onclick="" data-tooltip="' + data[i].candidateEmailId + '"> ' + data[i].candidateEmailId.substring(0, 20) + '... </a> </td>';
+
+                }
 
 
+                else {
+                    html += '     <td class="cadEmail text-left pl15">' + data[i].candidateEmailId + ' </td>';
+
+
+                }
             }
-
-
-            if (data[i].candidateEmailId.length > 20) {
-
-
-                html += '    <td class="cadEmail text-left pl15">   <a onclick="" data-tooltip="' + data[i].candidateEmailId + '"> ' + data[i].candidateEmailId.substring(0, 20) + '... </a> </td>';
-
-            }
-
-
-            else {
-                html += '     <td class="cadEmail text-left pl15">' + data[i].candidateEmailId + ' </td>';
-
-
-            }
+            else {<td></td>}
 
             if (data[i].primarySkill != null && data[i].primarySkill != "") {
                 html += '   <td class="text-left pl15">' + data[i].primarySkill + ' </td>';
